@@ -1,0 +1,29 @@
+{
+  "task": "robocasa/pretrain_human300",
+  "instantiate_s": 2.1,
+  "params_total": 85842444,
+  "params_encoder": 22632448,
+  "params_dino": 22056576,
+  "params_dit": 63209996,
+  "loss": 1.2552622556686401,
+  "fwd_s": 0.3,
+  "bwd_s": 0.6,
+  "dino_grad_sum": 19282.916884437203,
+  "dino_params_with_grad": 174,
+  "predict_s": 1.6,
+  "action_shape": [
+    1,
+    8,
+    12
+  ],
+  "action_pred_shape": [
+    1,
+    10,
+    12
+  ],
+  "official": {
+    "params_total": 106025196,
+    "params_encoder": 42450144,
+    "obs_feature_dim": 969
+  }
+}

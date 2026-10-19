@@ -1,0 +1,21 @@
+{
+  "map_ok": true,
+  "vocab": {
+    "11": 0,
+    "23": 1,
+    "45": 2,
+    "60": 3
+  },
+  "attach_ok": true,
+  "edge_cases_ok": true,
+  "alignment": {
+    "ok_case": true,
+    "bad_case_ok": false,
+    "bad_case_n_mismatch": 5
+  },
+  "factory_stub_ok": true,
+  "factory_official": "SKIP（缺依赖：robosuite）",
+  "factory_ok": true,
+  "lazy_load_ok": true,
+  "all_ok": true
+}

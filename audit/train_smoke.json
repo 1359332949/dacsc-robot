@@ -1,0 +1,46 @@
+{
+  "steps": 8,
+  "batch_size": 8,
+  "run_seconds": 18.5,
+  "device": "mps",
+  "steps_per_sec": 0.43,
+  "n_checkpoints": 0,
+  "checkpoint_names": [],
+  "n_log_lines": 8,
+  "loss_first": 1.2854729890823364,
+  "loss_last": 1.2201737016439438,
+  "loss_decreased": true,
+  "gate_mean_before": 0.899999737739563,
+  "gate_mean_after": 0.9000160694122314,
+  "gate_max_delta": 0.0012192726135253906,
+  "gate_n_changed": 4607,
+  "suppression_after": 0.09998393058776855,
+  "u_disc_mean": 0.8207218647003174,
+  "u_disc_top5": [
+    [
+      0,
+      293,
+      3.791
+    ],
+    [
+      10,
+      208,
+      3.766
+    ],
+    [
+      9,
+      208,
+      3.453
+    ],
+    [
+      8,
+      79,
+      3.444
+    ],
+    [
+      10,
+      236,
+      3.372
+    ]
+  ]
+}

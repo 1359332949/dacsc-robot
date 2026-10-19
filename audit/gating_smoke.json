@@ -1,0 +1,57 @@
+{
+  "identity_max_abs_diff": 8.344650268554688e-06,
+  "identity_rel_diff": 4.991701296594412e-06,
+  "gate_params": 4608,
+  "total_params": 85856394,
+  "u_disc_dgcd": {
+    "single_domain_max": 0.0,
+    "multi_domain_max": 13.5980863571167,
+    "shape": [
+      12,
+      384
+    ]
+  },
+  "u_disc_kl_gauss": {
+    "single_domain_max": 0.0,
+    "multi_domain_max": 9.428547859191895,
+    "shape": [
+      12,
+      384
+    ]
+  },
+  "gate_moved": 8.064508438110352e-05,
+  "action_importance": {
+    "ready": true,
+    "v_mean": 1.927675839397125e-06,
+    "v_max": 0.00014335953164845705
+  },
+  "gate_report": {
+    "enable_gating": true,
+    "n_layers": 12,
+    "n_channels_total": 4608,
+    "layer_indices": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "g_mean": 0.9989979863166809,
+    "g_min": 0.9989193677902222,
+    "g_max": 0.9990737438201904,
+    "suppression_ratio": 0.0010020136833190918,
+    "action_importance": {
+      "ready": true,
+      "v_mean": 1.927675839397125e-06,
+      "v_max": 0.00014335953164845705
+    },
+    "gate_step": 8
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "coral_same": 0.0,
+  "coral_diff": 33.42601013183594,
+  "rsc_keep_ratio": 0.75,
+  "grad_reverse_value": -2.0,
+  "dgcd_single_domain": 0.0,
+  "dgcd_score_true_diff_channels": 0.35204800963401794,
+  "dgcd_score_same_channels": 0.24682924151420593,
+  "dgcd_ratio": 1.426281616693119,
+  "all_ok": true
+}

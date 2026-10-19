@@ -1,0 +1,23 @@
+# Local-only environment / caches
+.venv/
+.cache/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.DS_Store
+.idea/
+
+# Large data and run outputs
+data/robocasa365
+runs/
+wandb/
+*.ckpt
+*.pth
+*.mp4
+*.zip
+*.log
+
+# Vendored third-party repositories (483MB)
+# Only our modified config files are force-added to git.
+repos/
