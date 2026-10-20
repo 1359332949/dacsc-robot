@@ -31,6 +31,8 @@ class CNNChannelDropoutPolicy(DiffusionTransformerHybridImagePolicy):
                  cnn_domain_group_size: int = 5,
                  cnn_domain_lambda: float = 1.0,
                  cnn_domain_grl: float = 0.25,
+                 cnn_domain_head_lr: float = 1.0e-3,
+                 cnn_grl_warmup_steps: int = 10,
                  cnn_diagnostics_every: int = 20,
                  cnn_train_only: bool = True,
                  **kwargs):
@@ -40,6 +42,7 @@ class CNNChannelDropoutPolicy(DiffusionTransformerHybridImagePolicy):
         self.cnn_domain_id_min = int(cnn_domain_id_min)
         self.cnn_domain_group_size = max(int(cnn_domain_group_size), 1)
         self.cnn_diagnostics_every = int(cnn_diagnostics_every)
+        self.cnn_domain_head_lr = float(cnn_domain_head_lr)
         self._cnn_step = 0
         self._last_cnn_metrics = {}
         self._last_dp_loss_t = None
@@ -56,6 +59,7 @@ class CNNChannelDropoutPolicy(DiffusionTransformerHybridImagePolicy):
             num_domains=self.cnn_num_domains,
             domain_lambda=cnn_domain_lambda,
             domain_grl=cnn_domain_grl,
+            grl_warmup_steps=cnn_grl_warmup_steps,
             train_only=cnn_train_only,
         )
         log.info("CNN dropout: mode=%s views=%d layers=%s selection=%s "
@@ -63,6 +67,28 @@ class CNNChannelDropoutPolicy(DiffusionTransformerHybridImagePolicy):
                  self.cnn_dropout_mode, len(self.cnn_controllers),
                  cnn_layer_indices, cnn_layer_selection, cnn_drop_ratio,
                  cnn_progressive)
+
+    def get_optimizer(self, transformer_weight_decay, obs_encoder_weight_decay,
+                      learning_rate, betas):
+        """Keep the official groups but give the DomainDrop heads their own LR."""
+        domain_params = []
+        for controller in self.cnn_controllers:
+            heads = getattr(controller, "domain_heads", None)
+            if heads is not None:
+                domain_params.extend(list(heads.parameters()))
+        domain_ids = {id(p) for p in domain_params}
+        obs_params = [p for p in self.obs_encoder.parameters()
+                      if id(p) not in domain_ids]
+        optim_groups = self.model.get_optim_groups(
+            weight_decay=transformer_weight_decay)
+        optim_groups.append({"params": obs_params,
+                             "weight_decay": obs_encoder_weight_decay})
+        if domain_params:
+            optim_groups.append({"params": domain_params,
+                                 "weight_decay": 0.0,
+                                 "lr": self.cnn_domain_head_lr})
+        return torch.optim.AdamW(
+            optim_groups, lr=learning_rate, betas=betas)
 
     def compute_loss(self, batch):
         if not torch.is_grad_enabled():

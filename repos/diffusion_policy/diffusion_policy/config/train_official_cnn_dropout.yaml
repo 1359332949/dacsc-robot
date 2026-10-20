@@ -18,5 +18,7 @@ policy:
   cnn_domain_group_size: 5
   cnn_domain_lambda: 1.0
   cnn_domain_grl: 0.25
+  cnn_domain_head_lr: 1.0e-3
+  cnn_grl_warmup_steps: 10
   cnn_diagnostics_every: 20
   cnn_train_only: true

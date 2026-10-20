@@ -17,6 +17,8 @@ MAX_GROUPS="${MAX_GROUPS:-6}"
 NUM_DOMAINS="${NUM_DOMAINS:-10}"
 DOMAIN_LAMBDA="${DOMAIN_LAMBDA:-1.0}"
 DOMAIN_GRL="${DOMAIN_GRL:-0.25}"
+DOMAIN_HEAD_LR="${DOMAIN_HEAD_LR:-1.0e-3}"
+GRL_WARMUP="${GRL_WARMUP:-10}"
 mkdir -p "$OUT"
 cd "$ROOT"
 
@@ -82,7 +84,9 @@ for group in $GROUP_LIST; do
           policy.cnn_dropout_mode=domaindrop policy.cnn_layer_selection=fixed \
           "policy.cnn_layer_indices=[7]" policy.cnn_drop_ratio=0.33 \
           policy.cnn_domain_lambda="$DOMAIN_LAMBDA" \
-          policy.cnn_domain_grl="$DOMAIN_GRL"
+          policy.cnn_domain_grl="$DOMAIN_GRL" \
+          policy.cnn_domain_head_lr="$DOMAIN_HEAD_LR" \
+          policy.cnn_grl_warmup_steps="$GRL_WARMUP"
       done
       ;;
     place)

@@ -39,8 +39,8 @@ class CNNChannelDropoutController(nn.Module):
                  drop_ratio: float = 0.33, recover: bool = True,
                  progressive: bool = False, velocity: float = 50.0,
                  num_domains: int = 10, domain_lambda: float = 1.0,
-                 domain_grl: float = 0.25, train_only: bool = True,
-                 eps: float = 1e-6):
+                 domain_grl: float = 0.25, grl_warmup_steps: int = 10,
+                 train_only: bool = True, eps: float = 1e-6):
         super().__init__()
         if mode not in self.MODES:
             raise ValueError(f"unknown cnn_dropout_mode={mode}")
@@ -55,6 +55,7 @@ class CNNChannelDropoutController(nn.Module):
         self.num_domains = int(num_domains)
         self.domain_lambda = float(domain_lambda)
         self.domain_grl = float(domain_grl)
+        self.grl_warmup_steps = max(int(grl_warmup_steps), 1)
         self.train_only = bool(train_only)
         self.eps = float(eps)
         self.channels = [int(layer.lang_proj.out_features) // 2
@@ -152,13 +153,15 @@ class CNNChannelDropoutController(nn.Module):
 
         if self.mode == "domaindrop" and did is not None:
             gap = feature.mean(dim=(2, 3))
-            logits = self.domain_heads[layer_idx](
-                grad_reverse(gap, self.domain_grl))
+            grl = self.domain_grl * min(
+                1.0, float(self.step) / self.grl_warmup_steps)
+            logits = self.domain_heads[layer_idx](grad_reverse(gap, grl))
             aux = F.cross_entropy(logits, did)
             self._aux.append(self.domain_lambda * aux)
             self._metrics[f"domain_loss_{layer_idx}"] = float(aux.detach())
             self._metrics[f"domain_acc_{layer_idx}"] = float(
                 (logits.argmax(dim=1) == did).float().mean())
+            self._metrics[f"grl_{layer_idx}"] = float(grl)
 
         self._metrics[f"ratio_{layer_idx}"] = float(ratio)
         self._metrics[f"keep_frac_{layer_idx}"] = float(
