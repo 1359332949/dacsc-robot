@@ -79,6 +79,8 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
                  token_style_alpha: float = 0.5,
                  token_style_action_weight: float = 1.0,
                  token_style_protect_ratio: float = 0.0,
+                 token_style_stage: str = "resampler",
+                 token_style_stats: str = "meanstd",
                  token_style_importance_every: int = 4,
                  token_style_momentum: float = 0.9,
                  token_style_diagnostics_every: int = 50,
@@ -182,6 +184,8 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
             token_style_alpha=token_style_alpha,
             token_style_action_weight=token_style_action_weight,
             token_style_protect_ratio=token_style_protect_ratio,
+            token_style_stage=token_style_stage,
+            token_style_stats=token_style_stats,
         )
         self.flow_matching = bool(flow_matching)
         self.flow_time_scale = float(flow_time_scale)
@@ -234,6 +238,9 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
         if self.token_style_mode != "none":
             if not use_resampler:
                 raise ValueError("token_style_mode 需要 use_resampler=True")
+            if (self.token_style_mode == "cross_style_stats_action_aware"
+                    and token_style_stage != "resampler"):
+                raise ValueError("action-aware token style 目前只支持 resampler stage")
             if self.token_style_mode == "cross_style_stats_action_aware":
                 from dacsc.token_style import TokenImportanceEMA
                 self.token_importance = TokenImportanceEMA(

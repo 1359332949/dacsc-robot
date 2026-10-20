@@ -88,6 +88,35 @@ for group in $GROUP_LIST; do
           policy.token_style_momentum=0.9
       done
       ;;
+    mean)
+      for seed in $SEEDS; do
+        run_one mean "$seed" \
+          policy.token_style_mode=cross_style_stats \
+          policy.token_style_stats=mean
+      done
+      ;;
+    patch25)
+      for seed in $SEEDS; do
+        run_one patch25 "$seed" \
+          policy.token_style_mode=cross_style_stats \
+          policy.token_style_stage=patch policy.token_style_alpha=0.25
+      done
+      ;;
+    patch50)
+      for seed in $SEEDS; do
+        run_one patch50 "$seed" \
+          policy.token_style_mode=cross_style_stats \
+          policy.token_style_stage=patch policy.token_style_alpha=0.5
+      done
+      ;;
+    patchmean)
+      for seed in $SEEDS; do
+        run_one patchmean "$seed" \
+          policy.token_style_mode=cross_style_stats \
+          policy.token_style_stage=patch policy.token_style_stats=mean \
+          policy.token_style_alpha=0.25
+      done
+      ;;
     *)
       echo "[unknown group] $group" >&2
       exit 2

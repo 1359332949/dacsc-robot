@@ -94,7 +94,7 @@ class TokenStyleModulator(nn.Module):
 
     def __init__(self, mode: str = "none", alpha: float = 0.5,
                  action_weight: float = 1.0, protect_ratio: float = 0.0,
-                 eps: float = 1e-5):
+                 stats: str = "meanstd", eps: float = 1e-5):
         super().__init__()
         if mode not in self.MODES:
             raise ValueError(f"unknown token_style_mode={mode}")
@@ -102,6 +102,9 @@ class TokenStyleModulator(nn.Module):
         self.alpha = float(alpha)
         self.action_weight = float(action_weight)
         self.protect_ratio = float(protect_ratio)
+        if stats not in ("meanstd", "mean", "std"):
+            raise ValueError(f"unknown token_style_stats={stats}")
+        self.stats = str(stats)
         self.eps = float(eps)
         # K-length buffer; empty until the first action-importance update.
         self.register_buffer("action_importance", torch.zeros(0), persistent=False)
@@ -116,7 +119,8 @@ class TokenStyleModulator(nn.Module):
 
     def summary(self) -> Dict[str, float | str]:
         out: Dict[str, float | str] = {"mode": self.mode, "alpha": self.alpha,
-                                       "protect_ratio": self.protect_ratio}
+                                       "protect_ratio": self.protect_ratio,
+                                       "stats": self.stats}
         for k, v in self.last_stats_t.items():
             out[k] = float(v)
         return out
@@ -162,8 +166,13 @@ class TokenStyleModulator(nn.Module):
         self.last_donor = donor.detach()
         mu_d = mu[donor]
         sigma_d = sigma[donor]
-        z_mod = (z - mu[:, None, :]) / sigma[:, None, :] \
-            * sigma_d[:, None, :] + mu_d[:, None, :]
+        z_norm = (z - mu[:, None, :]) / sigma[:, None, :]
+        if self.stats == "meanstd":
+            z_mod = z_norm * sigma_d[:, None, :] + mu_d[:, None, :]
+        elif self.stats == "mean":
+            z_mod = z - mu[:, None, :] + mu_d[:, None, :]
+        else:  # std only
+            z_mod = z_norm * sigma_d[:, None, :] + mu[:, None, :]
 
         alpha = torch.full((n, K, 1), self.alpha, device=z.device, dtype=z.dtype)
         if self.mode == "cross_style_stats_action_aware":

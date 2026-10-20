@@ -103,7 +103,9 @@ class DINOv2ObsEncoder(nn.Module):
                  token_style_mode: str = "none",
                  token_style_alpha: float = 0.5,
                  token_style_action_weight: float = 1.0,
-                 token_style_protect_ratio: float = 0.0):
+                 token_style_protect_ratio: float = 0.0,
+                 token_style_stage: str = "resampler",
+                 token_style_stats: str = "meanstd"):
         super().__init__()
         assert pool in ("mean", "meanmax"), f"v1 只实现 mean/meanmax，收到 {pool}"
         self.shape_meta = shape_meta
@@ -157,10 +159,16 @@ class DINOv2ObsEncoder(nn.Module):
                 if "lang_emb" in obs_meta else None)
             if token_style_mode != "none":
                 from dacsc.token_style import TokenStyleModulator
+                if token_style_stage not in ("resampler", "patch"):
+                    raise ValueError(f"unknown token_style_stage={token_style_stage}")
+                self.token_style_stage = str(token_style_stage)
                 self.token_style = TokenStyleModulator(
                     mode=token_style_mode, alpha=token_style_alpha,
                     action_weight=token_style_action_weight,
-                    protect_ratio=token_style_protect_ratio)
+                    protect_ratio=token_style_protect_ratio,
+                    stats=token_style_stats)
+        if self.token_style is None:
+            self.token_style_stage = "resampler"
 
         self.crop = _Crop224(crop_size, random_crop)
         self.register_buffer("img_mean", _IMAGENET_MEAN.clone(), persistent=False)
@@ -211,13 +219,19 @@ class DINOv2ObsEncoder(nn.Module):
         # 把 V 个视角并到 batch 维，一次前向（共享权重）
         cat = torch.stack(imgs, dim=1).reshape(B * V, *imgs[0].shape[1:])
         feats = self.dino.forward_features(cat)["x_norm_patchtokens"]   # (B*V, T, d)
+        if self.token_style is not None and self.token_style_stage == "patch":
+            _, T, Dp = feats.shape
+            feats_style = feats.reshape(B, V, T, Dp)
+            feats = self.token_style(
+                feats_style, domain_ids=self.current_domain_ids,
+                training=self.training).reshape(B * V, T, Dp)
         if self.use_resampler:
             lang = obs_dict.get("lang_emb", None)
             if lang is not None:
                 lang = lang[:, None, :].expand(B, V, lang.shape[-1]).reshape(B * V, -1)
             tokens = self.resampler(feats, lang)                # (B*V, K, token_dim)
             tokens = tokens.reshape(B, V, self.resampler_num_queries, self.token_dim)
-            if self.token_style is not None:
+            if self.token_style is not None and self.token_style_stage == "resampler":
                 tokens = self.token_style(
                     tokens, domain_ids=self.current_domain_ids,
                     training=self.training)

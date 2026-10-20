@@ -44,6 +44,25 @@ def main():
         "style": style.summary(),
     })
 
+    # Patch-stage variant: style statistics are applied before the resampler.
+    pp, _ = build_policy(
+        enable_gating=False, use_resampler=True, flow_matching=True,
+        resampler_num_queries=4, resampler_dim=64, num_inference_steps=2,
+        token_style_mode="cross_style_stats", token_style_stage="patch",
+        token_style_stats="mean", token_style_alpha=0.5,
+        token_style_diagnostics_every=1)
+    pp.train()
+    loss_p = pp.compute_loss(batch)
+    loss_p.backward()
+    style_p = pp.obs_encoder.token_style
+    diff_p = float(style_p.last_stats_t["diff_domain_frac"])
+    assert diff_p > 0.8, diff_p
+    print("TOKEN_STYLE_PATCH_OK", {
+        "loss": float(loss_p.detach()),
+        "diff_domain_frac": diff_p,
+        "style": style_p.summary(),
+    })
+
 
 if __name__ == "__main__":
     main()
