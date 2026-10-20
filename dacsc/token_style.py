@@ -90,7 +90,8 @@ class TokenStyleModulator(nn.Module):
     """AdaIN-style token statistics modulation with optional action protection."""
 
     MODES = ("none", "random_stats", "cross_style_stats",
-             "cross_style_stats_action_aware", "normalize")
+             "cross_style_stats_action_aware", "normalize",
+             "normalize_action_aware")
 
     def __init__(self, mode: str = "none", alpha: float = 0.5,
                  action_weight: float = 1.0, protect_ratio: float = 0.0,
@@ -107,7 +108,7 @@ class TokenStyleModulator(nn.Module):
             raise ValueError(f"unknown token_style_stats={stats}")
         self.stats = str(stats)
         self.eps = float(eps)
-        if mode == "normalize":
+        if mode in ("normalize", "normalize_action_aware"):
             if dim is None:
                 raise ValueError("normalize mode requires dim")
             self.norm_gamma = nn.Parameter(torch.ones(int(dim)))
@@ -136,22 +137,34 @@ class TokenStyleModulator(nn.Module):
         """tokens: (B, V, K, D) -> (B, V, K, D)."""
         if self.mode == "none" or self.alpha <= 0:
             return tokens
-        if not training and self.mode != "normalize":
+        if not training and self.mode not in ("normalize", "normalize_action_aware"):
             return tokens
         B, V, K, D = tokens.shape
         z = tokens.reshape(B * V, K, D)
         n = z.shape[0]
         mu = z.mean(dim=1)                                      # (N, D)
         sigma = z.std(dim=1, unbiased=False).clamp_min(self.eps)
-        if self.mode == "normalize":
+        if self.mode in ("normalize", "normalize_action_aware"):
             z_norm = (z - mu[:, None, :]) / sigma[:, None, :]
-            out = z_norm * self.norm_gamma[None, None, :] + self.norm_beta[None, None, :]
+            out_norm = (z_norm * self.norm_gamma[None, None, :]
+                        + self.norm_beta[None, None, :])
+            keep_w = torch.zeros((1, K, 1), device=z.device, dtype=z.dtype)
+            if self.mode == "normalize_action_aware":
+                imp = self.action_importance.to(device=z.device, dtype=z.dtype)
+                if imp.numel() == K:
+                    keep_w = (self.action_weight
+                              * imp.clamp(0.0, 1.0))[None, :, None]
+                    if self.protect_ratio > 0:
+                        k = max(1, min(K, int(round(self.protect_ratio * K))))
+                        top = torch.topk(imp, k, largest=True).indices
+                        keep_w[:, top, :] = 1.0
+            out = (1.0 - keep_w) * out_norm + keep_w * z
             with torch.no_grad():
                 self.last_stats_t = {
                     "mod_abs_mean": (out - z).abs().mean(),
                     "stat_delta": mu.abs().mean(),
                     "diff_domain_frac": z.new_zeros(()),
-                    "action_weight_mean": z.new_ones(()),
+                    "action_weight_mean": (1.0 - keep_w).mean(),
                 }
             return out.reshape(B, V, K, D)
 

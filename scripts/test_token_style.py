@@ -86,6 +86,18 @@ def main():
                               torch.ones(B * V, D), atol=2e-4)
     print("⑥ canonical token normalization: ✓")
 
+    # Action-aware normalization keeps the most action-important tokens in
+    # their original (un-normalized) space.
+    mna = TokenStyleModulator(mode="normalize_action_aware", dim=D,
+                              action_weight=1.0, protect_ratio=0.25)
+    imp2 = torch.tensor([0.0, 0.2, 0.4, 0.6, 0.8, 1.0, 0.3, 0.1])
+    mna.set_action_importance(imp2)
+    outna = mna(tokens, did, training=True)
+    dna = (outna - tokens).abs().mean(dim=(0, 1, 3))
+    assert dna[4].item() < 1e-5 and dna[5].item() < 1e-5, dna
+    assert dna[0].item() > 1e-4, dna
+    print("⑦ action-aware normalization: ✓", dna.tolist())
+
     print("token style tests: PASS")
     return 0
 

@@ -128,6 +128,15 @@ for group in $GROUP_LIST; do
           policy.token_style_mode=normalize policy.token_style_stage=patch
       done
       ;;
+    norm_action)
+      for seed in $SEEDS; do
+        run_one norm_action "$seed" \
+          policy.token_style_mode=normalize_action_aware \
+          policy.token_style_action_weight=1.0 \
+          policy.token_style_protect_ratio=0.2 \
+          policy.token_style_importance_every=4
+      done
+      ;;
     *)
       echo "[unknown group] $group" >&2
       exit 2
