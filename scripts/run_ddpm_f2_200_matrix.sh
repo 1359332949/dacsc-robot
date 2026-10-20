@@ -14,7 +14,7 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 OUT="${1:-/hy-tmp/runs/ddpm_f2_200}"
 STEPS="${STEPS:-201}"
 SEEDS="${SEEDS:-42 43 44}"
-GROUPS="${GROUPS:-no_mask random D F2}"
+GROUP_LIST="${GROUP_LIST:-no_mask random D F2}"
 mkdir -p "$OUT"
 cd "$ROOT"
 
@@ -54,7 +54,7 @@ run_one() {
   return $rc
 }
 
-for group in $GROUPS; do
+for group in $GROUP_LIST; do
   case "$group" in
     no_mask)
       for seed in $SEEDS; do
