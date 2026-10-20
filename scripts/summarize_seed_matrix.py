@@ -14,6 +14,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("root", type=Path)
     ap.add_argument("--step", type=int, default=50)
+    ap.add_argument("--csv", type=Path, default=None)
     args = ap.parse_args()
     rows = []
     for log in sorted(args.root.glob("*/train.log")):
@@ -53,6 +54,17 @@ def main():
         if found is not None:
             row.update({k: found.get(k) for k in KEYS})
         rows.append(row)
+
+    if args.csv is not None:
+        import csv
+        fields = ["group", "seed", *KEYS, "train_action_mse", "train_loss"]
+        args.csv.parent.mkdir(parents=True, exist_ok=True)
+        with args.csv.open("w", newline="") as f:
+            w = csv.DictWriter(f, fieldnames=fields)
+            w.writeheader()
+            for r in sorted(rows, key=lambda x: (x["group"], x["seed"])):
+                w.writerow({k: r.get(k) for k in fields})
+        print(f"wrote {args.csv}")
 
     by = defaultdict(list)
     for r in rows:
