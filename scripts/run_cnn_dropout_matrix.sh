@@ -11,21 +11,27 @@ OUT="${1:-/hy-tmp/runs/cnn_dropout_matrix}"
 STEPS="${STEPS:-51}"
 SEEDS="${SEEDS:-42 43 44}"
 GROUP_LIST="${GROUP_LIST:-none random domaindrop place dgcd}"
+BATCH="${BATCH:-192}"
+DOMAIN_GROUP_SIZE="${DOMAIN_GROUP_SIZE:-5}"
+MAX_GROUPS="${MAX_GROUPS:-6}"
+NUM_DOMAINS="${NUM_DOMAINS:-10}"
 mkdir -p "$OUT"
 cd "$ROOT"
 
 COMMON=(
-  dataloader.batch_size=192 dataloader.num_workers=4
+  dataloader.batch_size="$BATCH" dataloader.num_workers=4
   val_dataloader.batch_size=32 val_dataloader.num_workers=4
   training.num_epochs=1 training.max_train_steps="$STEPS"
   training.lr_warmup_steps=20 training.checkpoint_every=1000
   training.sample_every=1000 training.val_every=null
   checkpoint.save_last_ckpt=false checkpoint.topk.k=0
   task.dataset.domain_balance=true
-  task.dataset.domain_batch_size=192
-  task.dataset.domain_group_size=5
+  task.dataset.domain_batch_size="$BATCH"
+  task.dataset.domain_group_size="$DOMAIN_GROUP_SIZE"
   task.dataset.domain_samples_per_group=32
-  task.dataset.domain_max_groups_per_batch=6
+  task.dataset.domain_max_groups_per_batch="$MAX_GROUPS"
+  policy.cnn_num_domains="$NUM_DOMAINS"
+  policy.cnn_domain_group_size="$DOMAIN_GROUP_SIZE"
   logging.mode=disabled
   policy.cnn_diagnostics_every=10
 )
@@ -73,7 +79,6 @@ for group in $GROUP_LIST; do
         run_one domaindrop "$seed" \
           policy.cnn_dropout_mode=domaindrop policy.cnn_layer_selection=fixed \
           "policy.cnn_layer_indices=[7]" policy.cnn_drop_ratio=0.33 \
-          policy.cnn_num_domains=10 policy.cnn_domain_group_size=5 \
           policy.cnn_domain_lambda=1.0 policy.cnn_domain_grl=0.25
       done
       ;;
