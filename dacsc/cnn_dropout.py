@@ -63,7 +63,9 @@ class CNNChannelDropoutController(nn.Module):
 
         if self.mode == "domaindrop":
             self.domain_heads = nn.ModuleList([
-                nn.Linear(c, self.num_domains) for c in self.channels])
+                nn.Sequential(nn.LayerNorm(c),
+                              nn.Linear(c, self.num_domains))
+                for c in self.channels])
         if self.mode == "dgcd":
             self.dgcd = nn.ModuleList([DgCDScorer() for _ in self.channels])
 
@@ -127,7 +129,7 @@ class CNNChannelDropoutController(nn.Module):
         if self.mode == "domaindrop":
             if did is None:
                 return torch.rand_like(gap)
-            weight = self.domain_heads[layer_idx].weight[did].detach()
+            weight = self.domain_heads[layer_idx][-1].weight[did].detach()
             score = feature.detach() * weight[:, :, None, None]
             smin = score.amin(dim=1, keepdim=True)
             smax = score.amax(dim=1, keepdim=True)

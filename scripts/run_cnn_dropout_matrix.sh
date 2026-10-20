@@ -15,6 +15,8 @@ BATCH="${BATCH:-192}"
 DOMAIN_GROUP_SIZE="${DOMAIN_GROUP_SIZE:-5}"
 MAX_GROUPS="${MAX_GROUPS:-6}"
 NUM_DOMAINS="${NUM_DOMAINS:-10}"
+DOMAIN_LAMBDA="${DOMAIN_LAMBDA:-1.0}"
+DOMAIN_GRL="${DOMAIN_GRL:-0.25}"
 mkdir -p "$OUT"
 cd "$ROOT"
 
@@ -79,7 +81,8 @@ for group in $GROUP_LIST; do
         run_one domaindrop "$seed" \
           policy.cnn_dropout_mode=domaindrop policy.cnn_layer_selection=fixed \
           "policy.cnn_layer_indices=[7]" policy.cnn_drop_ratio=0.33 \
-          policy.cnn_domain_lambda=1.0 policy.cnn_domain_grl=0.25
+          policy.cnn_domain_lambda="$DOMAIN_LAMBDA" \
+          policy.cnn_domain_grl="$DOMAIN_GRL"
       done
       ;;
     place)

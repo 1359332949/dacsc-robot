@@ -71,7 +71,7 @@ def main():
     loss = pd.compute_loss(b)
     loss.backward()
     assert torch.isfinite(loss), loss
-    heads = [m.domain_heads[7] for m in pd.cnn_controllers]
+    heads = [m.domain_heads[7][-1] for m in pd.cnn_controllers]
     assert all(h.weight.grad is not None and h.weight.grad.abs().sum() > 0
                for h in heads)
     print("DOMAINDROP_OK", pd.cnn_report()["metrics"])
