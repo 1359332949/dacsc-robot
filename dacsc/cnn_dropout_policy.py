@@ -27,6 +27,7 @@ class CNNChannelDropoutPolicy(DiffusionTransformerHybridImagePolicy):
                  cnn_progressive: bool = False,
                  cnn_velocity: float = 50.0,
                  cnn_num_domains: int = 10,
+                 cnn_domain_key: str = "style",
                  cnn_domain_id_min: int = 11,
                  cnn_domain_group_size: int = 5,
                  cnn_domain_lambda: float = 1.0,
@@ -41,6 +42,7 @@ class CNNChannelDropoutPolicy(DiffusionTransformerHybridImagePolicy):
         super().__init__(**kwargs)
         self.cnn_dropout_mode = str(cnn_dropout_mode)
         self.cnn_num_domains = int(cnn_num_domains)
+        self.cnn_domain_key = str(cnn_domain_key)
         self.cnn_domain_id_min = int(cnn_domain_id_min)
         self.cnn_domain_group_size = max(int(cnn_domain_group_size), 1)
         self.cnn_diagnostics_every = int(cnn_diagnostics_every)
@@ -98,7 +100,12 @@ class CNNChannelDropoutPolicy(DiffusionTransformerHybridImagePolicy):
         if not torch.is_grad_enabled():
             return super().compute_loss(batch)
 
-        did = batch.get("domain_id", None)
+        if self.cnn_domain_key == "layout":
+            did = batch.get("layout_id", None)
+        elif self.cnn_domain_key == "task":
+            did = batch.get("task_id", None)
+        else:
+            did = batch.get("domain_id", None)
         did_idx = None
         if did is not None:
             did = did.repeat_interleave(int(self.n_obs_steps))

@@ -14,6 +14,7 @@ policy:
   cnn_progressive: false
   cnn_velocity: 50.0
   cnn_num_domains: 10
+  cnn_domain_key: style
   cnn_domain_id_min: 11
   cnn_domain_group_size: 5
   cnn_domain_lambda: 1.0
@@ -21,6 +22,6 @@ policy:
   cnn_domain_head_lr: 1.0e-3
   cnn_grl_warmup_steps: 10
   cnn_layer_wise_prob: 1.0
-  cnn_domain_head_norm: false
+  cnn_domain_head_norm: none
   cnn_diagnostics_every: 20
   cnn_train_only: true

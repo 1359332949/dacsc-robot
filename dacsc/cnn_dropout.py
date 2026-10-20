@@ -23,6 +23,26 @@ from dacsc.dg_methods import DgCDScorer, grad_reverse
 from dacsc.hard_gate import wrs_mask
 
 
+class GlobalStandardize(nn.Module):
+    """Per-dimension running standardization that preserves sample differences."""
+
+    def __init__(self, dim: int, momentum: float = 0.1, eps: float = 1e-5):
+        super().__init__()
+        self.register_buffer("mean", torch.zeros(dim))
+        self.register_buffer("var", torch.ones(dim))
+        self.momentum = float(momentum)
+        self.eps = float(eps)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        if self.training:
+            mean = x.mean(dim=0)
+            var = x.var(dim=0, unbiased=False)
+            self.mean.mul_(1.0 - self.momentum).add_(self.momentum * mean.detach())
+            self.var.mul_(1.0 - self.momentum).add_(self.momentum * var.detach())
+            return (x - mean) / (var + self.eps).sqrt()
+        return (x - self.mean) / (self.var + self.eps).sqrt()
+
+
 class CNNChannelDropoutController(nn.Module):
     MODES = ("none", "place", "domaindrop", "domaindrop_norm", "dgcd")
 
@@ -52,7 +72,15 @@ class CNNChannelDropoutController(nn.Module):
         self.domain_lambda = float(domain_lambda)
         self.domain_grl = float(domain_grl)
         self.grl_warmup_steps = max(int(grl_warmup_steps), 1)
-        self.domain_head_norm = bool(domain_head_norm) or mode == "domaindrop_norm"
+        if isinstance(domain_head_norm, bool):
+            domain_head_norm = "layer" if domain_head_norm else "none"
+        if mode == "domaindrop_norm":
+            domain_head_norm = "layer"
+        self.domain_head_norm = str(domain_head_norm).lower()
+        if self.domain_head_norm in ("true", "1"):
+            self.domain_head_norm = "layer"
+        if self.domain_head_norm not in ("none", "layer", "global"):
+            raise ValueError(f"unknown domain_head_norm={domain_head_norm}")
         self.train_only = bool(train_only)
         self.eps = float(eps)
 
@@ -73,8 +101,12 @@ class CNNChannelDropoutController(nn.Module):
             for i in self.domain_layers:
                 c = self.channels[i]
                 base = nn.Linear(c, self.num_domains)
-                head = (nn.Sequential(nn.LayerNorm(c), base)
-                        if self.domain_head_norm else base)
+                if self.domain_head_norm == "layer":
+                    head = nn.Sequential(nn.LayerNorm(c), base)
+                elif self.domain_head_norm == "global":
+                    head = nn.Sequential(GlobalStandardize(c), base)
+                else:
+                    head = base
                 self.domain_heads[str(i)] = head
         if self.mode == "dgcd":
             self.dgcd = nn.ModuleDict({
