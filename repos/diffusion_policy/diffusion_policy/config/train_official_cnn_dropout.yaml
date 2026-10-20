@@ -1,0 +1,22 @@
+defaults:
+  - train_diffusion_transformer_bs192
+  - _self_
+
+name: train_official_cnn_dropout
+
+policy:
+  _target_: dacsc.cnn_dropout_policy.CNNChannelDropoutPolicy
+  cnn_dropout_mode: none
+  cnn_layer_selection: fixed
+  cnn_layer_indices: [7]
+  cnn_drop_ratio: 0.33
+  cnn_recover: true
+  cnn_progressive: false
+  cnn_velocity: 50.0
+  cnn_num_domains: 10
+  cnn_domain_id_min: 11
+  cnn_domain_group_size: 5
+  cnn_domain_lambda: 1.0
+  cnn_domain_grl: 0.25
+  cnn_diagnostics_every: 20
+  cnn_train_only: true
