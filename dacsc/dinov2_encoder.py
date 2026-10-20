@@ -139,43 +139,52 @@ class DINOv2ObsEncoder(nn.Module):
         self.use_resampler = bool(use_resampler)
         self.resampler_num_queries = int(resampler_num_queries)
         self.resampler_dim = int(resampler_dim)
+        self.token_dim = self.resampler_dim if self.use_resampler else self.feature_dim
         self.resampler = None
         if self.use_resampler:
             from dacsc.resampler import LearnedQueryResampler
             self.resampler = LearnedQueryResampler(
                 in_dim=d, out_dim=self.resampler_dim,
                 num_queries=self.resampler_num_queries,
-                n_heads=int(resampler_heads), dropout=float(resampler_dropout))
+                n_heads=int(resampler_heads), dropout=float(resampler_dropout),
+                lang_dim=int(obs_meta["lang_emb"]["shape"][0])
+                if "lang_emb" in obs_meta else None)
 
         self.crop = _Crop224(crop_size, random_crop)
         self.register_buffer("img_mean", _IMAGENET_MEAN.clone(), persistent=False)
         self.register_buffer("img_std", _IMAGENET_STD.clone(), persistent=False)
 
         n_views = len(self.rgb_keys)
-        if self.use_resampler:
-            per_view_in = self.resampler_num_queries * self.resampler_dim
-        else:
-            per_view_in = d * (2 if pool == "meanmax" else 1)
+        self.n_views = n_views
+        per_view_in = d * (2 if pool == "meanmax" else 1)
         self.view_proj = nn.Sequential(
             nn.Linear(per_view_in, view_feat_dim), nn.ReLU(),
-            nn.Linear(view_feat_dim, view_feat_dim))
+            nn.Linear(view_feat_dim, view_feat_dim)) if not self.use_resampler else None
 
         low_dim_total = sum(int(obs_meta[k]["shape"][0]) for k in self.low_dim_keys)
         self.low_dim_net = nn.Sequential(
             nn.Linear(low_dim_total, low_dim_feat_dim), nn.ReLU(),
             nn.Linear(low_dim_feat_dim, low_dim_feat_dim))
+        self.low_token_proj = (nn.Linear(low_dim_feat_dim, self.token_dim)
+                               if self.use_resampler else None)
 
         self.fuse = nn.Sequential(
             nn.Linear(n_views * view_feat_dim + low_dim_feat_dim, feature_dim),
             nn.ReLU(),
-            nn.Linear(feature_dim, feature_dim))
+            nn.Linear(feature_dim, feature_dim)) if not self.use_resampler else None
 
         # 供门控/分析使用的缓存（v2/v3 会用到）
         self.last_patch_tokens: Dict[str, torch.Tensor] = {}
 
     # ---- 供官方脚手架调用 ----
     def output_shape(self):
-        return [self.feature_dim]
+        return [self.token_dim]
+
+    @property
+    def tokens_per_obs(self) -> int:
+        if self.use_resampler:
+            return 1 + self.n_views * self.resampler_num_queries
+        return 1
 
     def _encode_views(self, obs_dict: Dict[str, torch.Tensor]) -> torch.Tensor:
         """每个视角独立编码，**共享同一套 DINOv2 权重**（CoRP 的做法）。"""
@@ -191,22 +200,37 @@ class DINOv2ObsEncoder(nn.Module):
         cat = torch.stack(imgs, dim=1).reshape(B * V, *imgs[0].shape[1:])
         feats = self.dino.forward_features(cat)["x_norm_patchtokens"]   # (B*V, T, d)
         if self.use_resampler:
-            pooled = self.resampler(feats)                       # (B*V, K*out_dim)
-        elif self.pool == "meanmax":
+            lang = obs_dict.get("lang_emb", None)
+            if lang is not None:
+                lang = lang[:, None, :].expand(B, V, lang.shape[-1]).reshape(B * V, -1)
+            tokens = self.resampler(feats, lang)                # (B*V, K, token_dim)
+            tokens = tokens.reshape(B, V, self.resampler_num_queries, self.token_dim)
+            self.last_patch_tokens = {
+                "resampled_tokens": tokens.detach(),
+                "patch_tokens": feats.detach(),
+                "resampled": True,
+            }
+            return tokens
+        if self.pool == "meanmax":
             pooled = torch.cat([feats.mean(dim=1), feats.amax(dim=1)], dim=-1)
         else:
             pooled = feats.mean(dim=1)                          # (B*V, d)
-        pf = pooled.reshape(B, V, -1)                           # (B, V, D)
+        pf = pooled.reshape(B, V, -1)                           # (B, V, view_in)
         self.last_patch_tokens = {
             "pooled": pf.detach(),
             "patch_tokens": feats.detach(),
-            "resampled": self.use_resampler,
+            "resampled": False,
         }
         return pf
 
     def forward(self, obs_dict: Dict[str, torch.Tensor]) -> torch.Tensor:
-        pf = self._encode_views(obs_dict)                       # (B, V, view_in)
-        vf = self.view_proj(pf).reshape(pf.shape[0], -1)        # (B, V*view_feat)
+        vt = self._encode_views(obs_dict)
         low = torch.cat([obs_dict[k] for k in self.low_dim_keys], dim=-1)
         lf = self.low_dim_net(low)
-        return self.fuse(torch.cat([vf, lf], dim=-1))           # (B, feature_dim)
+        if self.use_resampler:
+            # One low-dim/language token + K tokens per camera view.
+            low_tok = self.low_token_proj(lf).unsqueeze(1)       # (B,1,D)
+            visual = vt.reshape(vt.shape[0], -1, self.token_dim) # (B,V*K,D)
+            return torch.cat([low_tok, visual], dim=1)            # (B,1+V*K,D)
+        vf = self.view_proj(vt).reshape(vt.shape[0], -1)
+        return self.fuse(torch.cat([vf, lf], dim=-1))

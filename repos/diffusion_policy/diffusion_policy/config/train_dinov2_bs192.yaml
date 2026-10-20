@@ -133,14 +133,14 @@ ema:
   max_value: 0.9999
 
 dataloader:
-  batch_size: 192
+  batch_size: 30            # safe default; official 192 may OOM with resampler/flow
   num_workers: 8          # 官方为 64，本机建议降低
   shuffle: True
   pin_memory: True
   persistent_workers: False
 
 val_dataloader:
-  batch_size: 192
+  batch_size: 8             # safe default for held-out validation
   num_workers: 8
   shuffle: False
   pin_memory: True
@@ -161,15 +161,15 @@ training:
   resume: False
   lr_scheduler: cosine
   lr_warmup_steps: 1000
-  num_epochs: 1000
+  num_epochs: 1              # max_train_steps is PER EPOCH
   gradient_accumulate_every: 1
   use_ema: True
   rollout_every: null
   checkpoint_every: 100
-  val_every: 50
+  val_every: 50             # epoch-level, not step-level
   sample_every: 50
-  max_train_steps: 500
-  max_val_steps: 32        # 32 batches × val batch_size(8) = 256 held-out samples
+  max_train_steps: 51       # per epoch; default total = 51 with num_epochs=1
+  max_val_steps: 32         # 32 batches × val batch_size(8) = 256 samples
   tqdm_interval_sec: 1.0
 
 logging:

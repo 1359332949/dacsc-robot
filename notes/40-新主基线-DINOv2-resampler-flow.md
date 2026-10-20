@@ -14,20 +14,24 @@
 
 - `dacsc/resampler.py`
   - learned-query cross-attention
-  - 每个视角 256 patch tokens → K=48 query tokens
-  - 查询特征投影后拼接为每视角条件向量
+  - 每个视角 256 patch tokens → `[K, token_dim]` 的 K 个 token
+  - 语言 FiLM 调制 learned query
+  - **不 flatten 成单个 256 维向量**
 - `dacsc/dinov2_encoder.py`
   - `use_resampler`
+  - 输出 `[1 + V*K, token_dim]` 的条件 token 序列
   - 保留 `last_patch_tokens["patch_tokens"]` 供诊断
 - `dacsc/policy.py`
   - `flow_matching`
   - rectified-flow velocity loss：`v = x1 - x0`
   - Euler flow sampling
   - DDPM 和 flow matching 共用同一 DINOv2 / 门控 / 动作保护链路
+  - resampler 分支把 `To*(1+V*K)` 个条件 token 送入 DiT
 - `train_dinov2_flow.yaml`
   - `use_resampler: true`
   - `flow_matching: true`
   - `num_inference_steps: 10`
+  - 安全默认：`batch_size=30`、`num_epochs=1`、`max_train_steps=51`
 
 门控仍然插在 DINOv2 block 输出上、在 resampler 之前；这里的“channel”应表述为 **ViT token 特征维度门控**。
 

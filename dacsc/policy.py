@@ -170,6 +170,8 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
         )
         self.flow_matching = bool(flow_matching)
         self.flow_time_scale = float(flow_time_scale)
+        if use_resampler and not self.flow_matching:
+            raise ValueError("use_resampler=True 当前要求 flow_matching=True")
         if freeze_obs_encoder:
             for p in obs_encoder.parameters():
                 p.requires_grad_(False)
@@ -180,6 +182,10 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
 
         # ---------- 以下脚手架复制自官方 __init__（官方文件不动）----------
         obs_feature_dim = obs_encoder.output_shape()[0]
+        self.tokens_per_obs = int(obs_encoder.tokens_per_obs)
+        model_obs_tokens = int(n_obs_steps) * self.tokens_per_obs
+        if not obs_as_cond:
+            assert self.tokens_per_obs == 1, "resampler token output 目前只支持 obs_as_cond=True"
         input_dim = action_dim if obs_as_cond else (obs_feature_dim + action_dim)
         output_dim = input_dim
         cond_dim = obs_feature_dim if obs_as_cond else 0
@@ -188,7 +194,7 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
             input_dim=input_dim,
             output_dim=output_dim,
             horizon=horizon,
-            n_obs_steps=n_obs_steps,
+            n_obs_steps=model_obs_tokens,
             cond_dim=cond_dim,
             n_layer=n_layer,
             n_head=n_head,
@@ -214,6 +220,7 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
         self.normalizer = LinearNormalizer()
         self.horizon = horizon
         self.obs_feature_dim = obs_feature_dim
+        self.model_obs_tokens = model_obs_tokens
         self.action_dim = action_dim
         self.n_action_steps = n_action_steps
         self.n_obs_steps = n_obs_steps
@@ -883,6 +890,40 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
             log.info("GATE_METRICS %s", json.dumps(self._last_gate_metrics, sort_keys=True))
         return aux
 
+    def predict_action(self, obs_dict):
+        """Override only for token-conditioned resampler; scalar path uses base."""
+        if self.tokens_per_obs == 1:
+            return super().predict_action(obs_dict)
+        assert "past_action" not in obs_dict
+        nobs = self.normalizer.normalize(obs_dict)
+        value = next(iter(nobs.values()))
+        B, _ = value.shape[:2]
+        To = int(self.n_obs_steps)
+        T = int(self.horizon)
+        Da = int(self.action_dim)
+        this_nobs = {
+            k: v[:, :To, ...].reshape(-1, *v.shape[2:])
+            for k, v in nobs.items()
+        }
+        feat = self.obs_encoder(this_nobs)
+        cond = feat.reshape(B, To * self.tokens_per_obs, -1)
+        shape = (B, T, Da)
+        if self.pred_action_steps_only:
+            shape = (B, self.n_action_steps, Da)
+        cond_data = torch.zeros(shape, device=self.device, dtype=self.dtype)
+        cond_mask = torch.zeros_like(cond_data, dtype=torch.bool)
+        nsample = self.conditional_sample(
+            cond_data, cond_mask, cond=cond, **self.kwargs)
+        naction_pred = nsample[..., :Da]
+        action_pred = self.normalizer["action"].unnormalize(naction_pred)
+        if self.pred_action_steps_only:
+            action = action_pred
+        else:
+            start = To - 1
+            end = start + self.n_action_steps
+            action = action_pred[:, start:end]
+        return {"action": action, "action_pred": action_pred}
+
     # ---------- ★ 动作头：DDPM 或 rectified-flow matching ----------
     def _base_loss(self, batch):
         if self.flow_matching:
@@ -899,7 +940,8 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
             k: v[:, :To, ...].reshape(-1, *v.shape[2:])
             for k, v in nobs.items()
         }
-        cond = self.obs_encoder(this_nobs).reshape(B, To, -1)
+        feat = self.obs_encoder(this_nobs)
+        cond = feat.reshape(B, To * self.tokens_per_obs, -1)
         trajectory = nactions
         if self.pred_action_steps_only:
             start = To - 1

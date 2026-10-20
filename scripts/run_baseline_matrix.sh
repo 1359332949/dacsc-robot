@@ -28,5 +28,5 @@ run_one() {
 }
 
 run_one no_mask policy.enable_gating=false
-run_one dfr_head policy.enable_gating=false policy.freeze_obs_encoder=true
+run_one frozen_encoder_head policy.enable_gating=false policy.freeze_obs_encoder=true
 echo BASELINE_MATRIX_DONE

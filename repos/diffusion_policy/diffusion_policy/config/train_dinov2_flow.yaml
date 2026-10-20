@@ -26,6 +26,7 @@ policy:
 
   shape_meta: ${shape_meta}
 
+  # Kept only for the official base-class constructor. The flow path ignores it.
   noise_scheduler:
     _target_: diffusers.schedulers.scheduling_ddpm.DDPMScheduler
     num_train_timesteps: 100
@@ -102,6 +103,7 @@ policy:
   layout_id_min: 11
   layout_num: 50
   layout_stats_momentum: 0.99
+  token_score_pool: meanmax        # token-level mean+max
   action_importance_impl: rsc    # rsc = 梯度分位数；taylor = EMA
                                  # rsc    = 梯度分位数掩码（DomainBed RSC, MIT）
   rsc_drop_fraction: 0.3
@@ -132,14 +134,14 @@ ema:
   max_value: 0.9999
 
 dataloader:
-  batch_size: 192
+  batch_size: 30            # safe default; official 192 may OOM with resampler/flow
   num_workers: 8          # 官方为 64，本机建议降低
   shuffle: True
   pin_memory: True
   persistent_workers: False
 
 val_dataloader:
-  batch_size: 192
+  batch_size: 8             # safe default for held-out validation
   num_workers: 8
   shuffle: False
   pin_memory: True
@@ -160,15 +162,15 @@ training:
   resume: False
   lr_scheduler: cosine
   lr_warmup_steps: 1000
-  num_epochs: 1000
+  num_epochs: 1              # max_train_steps is PER EPOCH
   gradient_accumulate_every: 1
   use_ema: True
   rollout_every: null
   checkpoint_every: 100
-  val_every: 50
+  val_every: 50             # epoch-level, not step-level
   sample_every: 50
-  max_train_steps: 500
-  max_val_steps: 32        # 32 batches × val batch_size(8) = 256 held-out samples
+  max_train_steps: 51       # per epoch; default total = 51 with num_epochs=1
+  max_val_steps: 32         # 32 batches × val batch_size(8) = 256 samples
   tqdm_interval_sec: 1.0
 
 logging:
