@@ -18,6 +18,7 @@ NUM_DOMAINS="${NUM_DOMAINS:-10}"
 POLICY_DOMAIN_GROUP_SIZE="${POLICY_DOMAIN_GROUP_SIZE:-$DOMAIN_GROUP_SIZE}"
 POLICY_NUM_DOMAINS="${POLICY_NUM_DOMAINS:-$NUM_DOMAINS}"
 DOMAIN_KEY="${DOMAIN_KEY:-style}"
+FREEZE_BACKBONE="${FREEZE_BACKBONE:-false}"
 DOMAIN_LAMBDA="${DOMAIN_LAMBDA:-1.0}"
 DOMAIN_GRL="${DOMAIN_GRL:-0.25}"
 DOMAIN_HEAD_LR="${DOMAIN_HEAD_LR:-1.0e-3}"
@@ -45,6 +46,7 @@ COMMON=(
   policy.cnn_num_domains="$POLICY_NUM_DOMAINS"
   policy.cnn_domain_group_size="$POLICY_DOMAIN_GROUP_SIZE"
   policy.cnn_domain_key="$DOMAIN_KEY"
+  policy.cnn_freeze_backbone="$FREEZE_BACKBONE"
   logging.mode=disabled
   policy.cnn_diagnostics_every=10
 )

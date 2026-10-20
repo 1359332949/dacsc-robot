@@ -23,5 +23,6 @@ policy:
   cnn_grl_warmup_steps: 10
   cnn_layer_wise_prob: 1.0
   cnn_domain_head_norm: none
+  cnn_freeze_backbone: false
   cnn_diagnostics_every: 20
   cnn_train_only: true

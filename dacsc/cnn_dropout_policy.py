@@ -36,6 +36,7 @@ class CNNChannelDropoutPolicy(DiffusionTransformerHybridImagePolicy):
                  cnn_grl_warmup_steps: int = 10,
                  cnn_layer_wise_prob: float = 1.0,
                  cnn_domain_head_norm: bool = False,
+                 cnn_freeze_backbone: bool = False,
                  cnn_diagnostics_every: int = 20,
                  cnn_train_only: bool = True,
                  **kwargs):
@@ -51,6 +52,7 @@ class CNNChannelDropoutPolicy(DiffusionTransformerHybridImagePolicy):
         self._last_cnn_metrics = {}
         self._last_dp_loss_t = None
         self._last_aux_loss_t = None
+        self.cnn_freeze_backbone = bool(cnn_freeze_backbone)
         self.cnn_controllers = install_cnn_dropout(
             self.obs_encoder,
             mode=self.cnn_dropout_mode,
@@ -68,6 +70,14 @@ class CNNChannelDropoutPolicy(DiffusionTransformerHybridImagePolicy):
             domain_head_norm=cnn_domain_head_norm,
             train_only=cnn_train_only,
         )
+        if self.cnn_freeze_backbone:
+            for p in self.obs_encoder.parameters():
+                p.requires_grad_(False)
+            for controller in self.cnn_controllers:
+                heads = getattr(controller, "domain_heads", None)
+                if heads is not None:
+                    for p in heads.parameters():
+                        p.requires_grad_(True)
         log.info("CNN dropout: mode=%s views=%d layers=%s selection=%s "
                  "ratio=%.3f progressive=%s",
                  self.cnn_dropout_mode, len(self.cnn_controllers),
