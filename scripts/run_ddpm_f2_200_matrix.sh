@@ -2,6 +2,9 @@
 # DDPM phase-1 mechanism matrix at 200 steps:
 #   no_mask / random 33% / D / F2  ×  seeds 42,43,44
 # Uses the controlled DDPM baseline (train_dinov2_bs192), not flow.
+# STEPS=201 means 201 update steps (indices 0..200), so the final
+# step200 gate on/off probe is included. The old 51-step runs used 51
+# for the same reason (indices 0..50).
 set -uo pipefail
 export WANDB_MODE=disabled
 export WANDB_DISABLED=true
@@ -9,7 +12,7 @@ export WANDB_SILENT=true
 export OTEL_SDK_DISABLED=true
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 OUT="${1:-/hy-tmp/runs/ddpm_f2_200}"
-STEPS="${STEPS:-200}"
+STEPS="${STEPS:-201}"
 SEEDS="${SEEDS:-42 43 44}"
 GROUPS="${GROUPS:-no_mask random D F2}"
 mkdir -p "$OUT"
