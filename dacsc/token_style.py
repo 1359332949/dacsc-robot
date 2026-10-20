@@ -93,13 +93,15 @@ class TokenStyleModulator(nn.Module):
              "cross_style_stats_action_aware")
 
     def __init__(self, mode: str = "none", alpha: float = 0.5,
-                 action_weight: float = 1.0, eps: float = 1e-5):
+                 action_weight: float = 1.0, protect_ratio: float = 0.0,
+                 eps: float = 1e-5):
         super().__init__()
         if mode not in self.MODES:
             raise ValueError(f"unknown token_style_mode={mode}")
         self.mode = str(mode)
         self.alpha = float(alpha)
         self.action_weight = float(action_weight)
+        self.protect_ratio = float(protect_ratio)
         self.eps = float(eps)
         # K-length buffer; empty until the first action-importance update.
         self.register_buffer("action_importance", torch.zeros(0), persistent=False)
@@ -113,7 +115,8 @@ class TokenStyleModulator(nn.Module):
             self.action_importance = value.detach().float()
 
     def summary(self) -> Dict[str, float | str]:
-        out: Dict[str, float | str] = {"mode": self.mode, "alpha": self.alpha}
+        out: Dict[str, float | str] = {"mode": self.mode, "alpha": self.alpha,
+                                       "protect_ratio": self.protect_ratio}
         for k, v in self.last_stats_t.items():
             out[k] = float(v)
         return out
@@ -168,6 +171,10 @@ class TokenStyleModulator(nn.Module):
             if imp.numel() == K:
                 alpha = alpha * (1.0 - self.action_weight
                                  * imp.clamp(0.0, 1.0)[None, :, None])
+                if self.protect_ratio > 0:
+                    k = max(1, min(K, int(round(self.protect_ratio * K))))
+                    top = torch.topk(imp, k, largest=True).indices
+                    alpha[:, top, :] = 0.0
         out = (1.0 - alpha) * z + alpha * z_mod
 
         # Keep diagnostics as device scalars; the policy reads them only on

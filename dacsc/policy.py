@@ -78,6 +78,7 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
                  token_style_mode: str = "none",
                  token_style_alpha: float = 0.5,
                  token_style_action_weight: float = 1.0,
+                 token_style_protect_ratio: float = 0.0,
                  token_style_importance_every: int = 4,
                  token_style_momentum: float = 0.9,
                  token_style_diagnostics_every: int = 50,
@@ -180,6 +181,7 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
             token_style_mode=token_style_mode,
             token_style_alpha=token_style_alpha,
             token_style_action_weight=token_style_action_weight,
+            token_style_protect_ratio=token_style_protect_ratio,
         )
         self.flow_matching = bool(flow_matching)
         self.flow_time_scale = float(flow_time_scale)

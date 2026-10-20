@@ -53,7 +53,17 @@ def main():
     delta = (outa - tokens).abs().mean(dim=(0, 1, 3))
     assert delta[1].item() < 0.05 * delta[0].item(), delta
     assert delta[3].item() < 0.05 * delta[2].item(), delta
-    print("④ action-aware token weighting: ✓", delta.tolist())
+    # Top-k protection zeros modulation on the most action-important tokens
+    # even when the linear action_weight is disabled.
+    mp = TokenStyleModulator(mode="cross_style_stats_action_aware",
+                             alpha=1.0, action_weight=0.0, protect_ratio=0.25)
+    imp = torch.tensor([0.0, 0.2, 0.4, 0.6, 0.8, 1.0, 0.3, 0.1])
+    mp.set_action_importance(imp)
+    outp = mp(tokens, did, training=True)
+    dp = (outp - tokens).abs().mean(dim=(0, 1, 3))
+    assert dp[4].item() < 1e-5 and dp[5].item() < 1e-5, dp
+    assert dp[0].item() > 1e-4, dp
+    print("④ action-aware token weighting + top-k protection: ✓", delta.tolist())
 
     # TokenImportanceEMA reads |token * grad| and normalizes to [0,1].
     t = torch.randn(6, K, D, requires_grad=True)

@@ -102,7 +102,8 @@ class DINOv2ObsEncoder(nn.Module):
                  resampler_dropout: float = 0.0,
                  token_style_mode: str = "none",
                  token_style_alpha: float = 0.5,
-                 token_style_action_weight: float = 1.0):
+                 token_style_action_weight: float = 1.0,
+                 token_style_protect_ratio: float = 0.0):
         super().__init__()
         assert pool in ("mean", "meanmax"), f"v1 只实现 mean/meanmax，收到 {pool}"
         self.shape_meta = shape_meta
@@ -158,7 +159,8 @@ class DINOv2ObsEncoder(nn.Module):
                 from dacsc.token_style import TokenStyleModulator
                 self.token_style = TokenStyleModulator(
                     mode=token_style_mode, alpha=token_style_alpha,
-                    action_weight=token_style_action_weight)
+                    action_weight=token_style_action_weight,
+                    protect_ratio=token_style_protect_ratio)
 
         self.crop = _Crop224(crop_size, random_crop)
         self.register_buffer("img_mean", _IMAGENET_MEAN.clone(), persistent=False)

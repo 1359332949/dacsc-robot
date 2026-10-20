@@ -73,6 +73,17 @@ for group in $GROUP_LIST; do
         run_one action "$seed" \
           policy.token_style_mode=cross_style_stats_action_aware \
           policy.token_style_action_weight=1.0 \
+          policy.token_style_protect_ratio=0.2 \
+          policy.token_style_importance_every=4 \
+          policy.token_style_momentum=0.9
+      done
+      ;;
+    action30)
+      for seed in $SEEDS; do
+        run_one action30 "$seed" \
+          policy.token_style_mode=cross_style_stats_action_aware \
+          policy.token_style_action_weight=1.0 \
+          policy.token_style_protect_ratio=0.3 \
           policy.token_style_importance_every=4 \
           policy.token_style_momentum=0.9
       done

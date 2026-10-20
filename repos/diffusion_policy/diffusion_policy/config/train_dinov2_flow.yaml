@@ -59,6 +59,7 @@ policy:
   token_style_mode: none    # none | random_stats | cross_style_stats | cross_style_stats_action_aware
   token_style_alpha: 0.5
   token_style_action_weight: 1.0
+  token_style_protect_ratio: 0.0
   token_style_importance_every: 4
   token_style_momentum: 0.9
   token_style_diagnostics_every: 50
