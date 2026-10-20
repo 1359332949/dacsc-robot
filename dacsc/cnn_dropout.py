@@ -135,7 +135,7 @@ class CNNChannelDropoutController(nn.Module):
             return score.mean(dim=(2, 3))
         raise ValueError(f"unknown cnn_dropout_mode={self.mode}")
 
-    def _apply(self, feature: torch.Tensor, layer_idx: int) -> torch.Tensor:
+    def _apply_dropout(self, feature: torch.Tensor, layer_idx: int) -> torch.Tensor:
         ratio = self.current_ratio()
         if ratio <= 0:
             self._metrics[f"ratio_{layer_idx}"] = 0.0
@@ -173,7 +173,7 @@ class CNNChannelDropoutController(nn.Module):
                 self._active_layers = self.selected_layers()
             if layer_idx not in self._active_layers:
                 return output
-            return self._apply(output, layer_idx)
+            return self._apply_dropout(output, layer_idx)
         return _hook
 
     def aux_loss(self) -> torch.Tensor | None:
