@@ -232,6 +232,8 @@ def make_domain_cotraining_class(LerobotCotrainingDataset,   # 官方多数据�
             self._domain_group_size = int(kwargs.pop("domain_group_size", 5))
             self._domain_samples_per_group = int(
                 kwargs.pop("domain_samples_per_group", 3))
+            self._domain_max_groups_per_batch = kwargs.pop(
+                "domain_max_groups_per_batch", None)
             self._val_style_min = kwargs.pop("val_style_min", None)
             self._val_style_max = kwargs.pop("val_style_max", None)
             self._val_max_steps = int(kwargs.pop("val_max_steps", 2048))
@@ -261,7 +263,8 @@ def make_domain_cotraining_class(LerobotCotrainingDataset,   # 官方多数据�
                 self, batch_size=self._domain_batch_size,
                 domain_id_min=self._domain_id_min,
                 domain_group_size=self._domain_group_size,
-                samples_per_domain=self._domain_samples_per_group)
+                samples_per_domain=self._domain_samples_per_group,
+                max_groups_per_batch=self._domain_max_groups_per_batch)
             smp._build()
             idx = []
             for g in groups:
@@ -287,7 +290,8 @@ def make_domain_cotraining_class(LerobotCotrainingDataset,   # 官方多数据�
                 self, batch_size=self._domain_batch_size,
                 domain_id_min=self._domain_id_min,
                 domain_group_size=self._domain_group_size,
-                samples_per_domain=self._domain_samples_per_group)
+                samples_per_domain=self._domain_samples_per_group,
+                max_groups_per_batch=self._domain_max_groups_per_batch)
 
     _DomainLerobotCotrainingDataset.__name__ = "DomainLerobotCotrainingDataset"
     return _DomainLerobotCotrainingDataset

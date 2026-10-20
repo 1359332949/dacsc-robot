@@ -60,8 +60,8 @@ policy:
   hard_drop_ratio: 0.33
   hard_mask_temperature: 0.1
   hard_mask_mode: gumbel_ste     # topk_ste 保留作基线
-  hard_mask_domain_shared: false # true: 同粗域共享 Gumbel 噪声，保持域结构
-  hard_selection_mode: linear     # linear | two_stage（域候选内再保护动作通道）
+  hard_mask_domain_shared: true  # 同 style 共享 Gumbel 噪声，保持域结构
+  hard_selection_mode: two_stage  # 域候选内再保护动作通道
   hard_candidate_ratio: 0.6
   hard_action_protect_ratio: 0.2
   hard_action_lambda: 1.0
@@ -72,11 +72,11 @@ policy:
   hard_clean_importance_every: 4  # 每 4 步 clean forward 估 Taylor v
   hard_train_only: true           # 训练时 dropout，推理默认关闭
   domain_id_min: 11                # pretrain style_id 11..60
-  domain_group_size: 5             # 每 5 个 style 合并成一个粗域
+  domain_group_size: 1             # 单 style 一个域
   domain_head_lr: 1.0e-3            # 50 类域头，先用 1e-3
   gate_layer_indices: null      # soft 模式：null = 全部 12 层
   gate_init: 0.999              # 初始接近恒等（验证过：相对差 5e-6，注入无害）
-  num_domains: 10               # 50 个 style 合并为 10 个粗粒度外观域
+  num_domains: 50               # 单 style 一个域
   gate_rho_max: 0.3             # 目标平均抑制比例
   gate_rho_warmup_steps: 10000  # 渐进抑制（借鉴 PLACE）
   gate_lambda_d: 1.0            # 域敏感项权重
@@ -88,8 +88,12 @@ policy:
   domain_score_mode: dgcd        # dgcd = DgCD 官方实现移植（CIMM'24, MIT）
                                  # kl_gauss = 我们早期自研的逐通道高斯 KL（消融对照）
   dgcd_rho: 0.05                 # DgCD 官方量级（soft/DgCD 消融）
-  dgcd_group_smooth: 0.0         # >0: 向粗域原型平滑，验证同域 mask 一致性
-  dgcd_domain_center: false       # true: 去掉跨域共享通道成分
+  dgcd_group_smooth: 1.0         # 同 style 内共享域分数
+  dgcd_domain_center: true        # 去掉跨域共享通道成分
+  layout_residual: true           # domain score 去掉 layout/view 均值
+  layout_id_min: 11
+  layout_num: 50
+  layout_stats_momentum: 0.99
   action_importance_impl: rsc    # rsc = 梯度分位数；taylor = EMA
                                  # rsc    = 梯度分位数掩码（DomainBed RSC, MIT）
   rsc_drop_fraction: 0.3
@@ -156,7 +160,7 @@ training:
   val_every: 50
   sample_every: 50
   max_train_steps: 500
-  max_val_steps: null
+  max_val_steps: 32        # 32 batches × val batch_size(8) = 256 held-out samples
   tqdm_interval_sec: 1.0
 
 logging:

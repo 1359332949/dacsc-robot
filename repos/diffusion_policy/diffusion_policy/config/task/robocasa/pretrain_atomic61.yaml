@@ -139,10 +139,11 @@ dataset:
     - /hy-tmp/datasets/robocasa365/v1.0/pretrain/atomic/TurnOnToasterOven/20250820/lerobot
     - /hy-tmp/datasets/robocasa365/v1.0/pretrain/atomic/TurnSinkSpout/20250820/lerobot
   domain_balance: true
-  domain_batch_size: 32
+  domain_batch_size: 30
   domain_id_min: 11
-  domain_group_size: 5
+  domain_group_size: 1
   domain_samples_per_group: 3
+  domain_max_groups_per_batch: 10
   val_style_min: 41
   val_style_max: 50
   val_max_steps: 2048

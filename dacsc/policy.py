@@ -124,6 +124,10 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
                  dgcd_rho: float = 1e-3,
                  dgcd_group_smooth: float = 0.0,
                  dgcd_domain_center: bool = False,
+                 layout_residual: bool = False,
+                 layout_id_min: int = 11,
+                 layout_num: int = 50,
+                 layout_stats_momentum: float = 0.99,
                  action_importance_impl: str = "taylor",  # "taylor" | "rsc"
                  rsc_drop_fraction: float = 0.3,
                  lambda_coral: float = 0.0,          # >0 时加入 Deep CORAL 项
@@ -222,6 +226,12 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
         self._last_gate_metrics: dict = {}
         self._current_mask_info: dict = {}
         self._current_domain_ids = None
+        self._current_layout_ids = None
+        self._stats_update_enabled = True
+        self.layout_residual_enabled = bool(layout_residual)
+        self.layout_id_min = int(layout_id_min)
+        self.layout_num = int(layout_num)
+        self.layout_stats_momentum = float(layout_stats_momentum)
 
         if self.enable_gating:
             assert gate_mode in ("soft", "hard"), f"未知 gate_mode={gate_mode}"
@@ -293,6 +303,11 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
                     domain_center=bool(dgcd_domain_center))
                 self.hard_domain_mode = str(hard_domain_mode)
                 self.hard_num_domains = int(num_domains)
+                n_views = len(obs_encoder.rgb_keys)
+                self.register_buffer(
+                    "_layout_mean", torch.zeros(self.layout_num, n_views, hidden))
+                self.register_buffer(
+                    "_layout_seen", torch.zeros(self.layout_num, n_views, dtype=torch.bool))
                 if self.hard_domain_mode == "classifier":
                     self.domain_head = nn.Linear(hidden, int(num_domains))
                     self.hard_dgcd = None
@@ -491,6 +506,9 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
         """
         if not self.use_action_importance:
             return
+        # validation 在 torch.no_grad() 下运行，不能做 clean_loss.backward()
+        if not torch.is_grad_enabled():
+            return
         every = int(self.hard_cfg.get("clean_importance_every", 0))
         if every <= 0:
             return
@@ -533,6 +551,49 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
                 max(int(self.hard_cfg["domain_group_size"]), 1)).clamp(
             0, int(self.hard_num_domains) - 1)
 
+    def _expanded_layout_indices(self, n_actual: int, device):
+        did = self._current_layout_ids
+        if did is None:
+            return None
+        n_views = len(self.obs_encoder.rgb_keys)
+        did_exp = did.repeat_interleave(int(self.n_obs_steps) * n_views)
+        if did_exp.shape[0] < n_actual:
+            did_exp = did_exp.repeat((n_actual + did_exp.shape[0] - 1)
+                                     // did_exp.shape[0])
+        did_exp = did_exp[:n_actual].to(device=device, dtype=torch.long)
+        return (did_exp - int(self.layout_id_min)).clamp(0, int(self.layout_num) - 1)
+
+    @torch.no_grad()
+    def _layout_residual(self, pooled: torch.Tensor, layout_idx):
+        """用每个 layout 的在线通道均值去掉 geometry/task 共享分量。"""
+        if (not self.layout_residual_enabled or layout_idx is None
+                or not hasattr(self, "_layout_mean")):
+            return pooled, 0.0, 0
+        n_views = self._layout_mean.shape[1]
+        idx = layout_idx.to(device=pooled.device, dtype=torch.long)
+        view = torch.arange(pooled.shape[0], device=pooled.device) % n_views
+        key = idx * n_views + view
+        mean_flat = self._layout_mean.reshape(-1, self._layout_mean.shape[-1])
+        seen_flat = self._layout_seen.reshape(-1)
+        seen = seen_flat[key]
+        resid = pooled.detach().clone()
+        if seen.any():
+            resid[seen] = resid[seen] - mean_flat[key[seen]].to(resid)
+        frac = float(seen.float().mean())
+        n_seen = int(seen_flat.sum())
+        if self.training and self._stats_update_enabled:
+            p = pooled.detach()
+            m = self.layout_stats_momentum
+            for k in key.unique(sorted=True).tolist():
+                mask = key == k
+                bm = p[mask].mean(dim=0)
+                if bool(seen_flat[k]):
+                    mean_flat[k] = m * mean_flat[k] + (1.0 - m) * bm
+                else:
+                    mean_flat[k] = bm
+                    seen_flat[k] = True
+        return resid, frac, n_seen
+
     def _build_hard_mask(self, feat: torch.Tensor, layer: int) -> torch.Tensor:
         """由**当前 batch 的 pre-gate 特征**生成当前 batch 的 mask。
 
@@ -543,7 +604,10 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
         if did_idx is None:
             return torch.ones((feat.shape[0], feat.shape[-1]), device=feat.device,
                               dtype=feat.dtype)
-        pooled = feat.mean(dim=1)                       # (N, C)
+        pooled_raw = feat.mean(dim=1)                   # (N, C)
+        layout_idx = self._expanded_layout_indices(feat.shape[0], feat.device)
+        pooled, layout_resid_frac, layout_seen_count = self._layout_residual(
+            pooled_raw, layout_idx)
 
         if self.hard_domain_mode == "random":
             u_raw = torch.randn_like(pooled)
@@ -648,6 +712,8 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
             "scores": scores.detach(), "u": u.detach(), "v": v_vec.detach(),
             "v_raw_std": float(v_raw_std), "v_ready": bool(v_ready),
             "eligible_frac": float(eligible_frac),
+            "layout_resid_frac": float(layout_resid_frac),
+            "layout_seen_count": int(layout_seen_count),
             "mask_iou_same": float(iou_same),
             "mask_iou_diff": float(iou_diff),
             "mask_iou_gap": float(iou_gap),
@@ -674,6 +740,8 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
         old_mask = self.hard_controller.mask
         old_build = self.hard_controller.build_enabled
         old_dom = self._current_domain_ids
+        old_layout = self._current_layout_ids
+        old_stats_update = self._stats_update_enabled
         old_info = self._current_mask_info
         old_collect = self._collect
         cpu_state = torch.random.get_rng_state()
@@ -681,6 +749,8 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
         seed = 1234567 + int(self._gate_step)
         try:
             self._current_domain_ids = batch.get("domain_id", None)
+            self._current_layout_ids = batch.get("layout_id", None)
+            self._stats_update_enabled = False
             self._hard_probe_metrics = {}
             for name, build in (("on", True), ("off", False)):
                 self._collect = {}
@@ -700,7 +770,9 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
             self.hard_controller.mask = old_mask
             self.hard_controller.build_enabled = old_build
             self._current_domain_ids = old_dom
+            self._current_layout_ids = old_layout
             self._current_mask_info = old_info
+            self._stats_update_enabled = old_stats_update
             self._collect = old_collect
             torch.random.set_rng_state(cpu_state)
             if cuda_state is not None:
@@ -755,6 +827,8 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
             "v_raw_rel_std": float(ai_summary.get("raw_rel_std", 0.0)),
             "selection_mode": str(self.hard_cfg.get("selection_mode", "linear")),
             "eligible_frac": float(info.get("eligible_frac", 1.0)),
+            "layout_resid_frac": float(info.get("layout_resid_frac", 0.0)),
+            "layout_seen_count": int(info.get("layout_seen_count", 0)),
             "consistency": float(cons.detach()),
             "mask_mode": str(self.hard_cfg["mask_mode"]),
             "mask_iou_same": float(info["mask_iou_same"]),
@@ -786,6 +860,10 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
 
     # ---------- ★ 在官方 compute_loss 之上追加 L_gate ----------
     def compute_loss(self, batch):
+        # 验证/导出在 no_grad 下运行：只算 DP loss，不生成 mask、不更新统计、
+        # 不推进 gate_step，也不写 GATE_METRICS。
+        if not torch.is_grad_enabled():
+            return super().compute_loss(batch)
         clean_every = (int(self.hard_cfg.get("clean_importance_every", 0))
                        if hasattr(self, "hard_cfg") else 0)
         # 1) 仅在关闭 clean-forward 时，才回退到上一轮梯度估计 Taylor v。
@@ -802,6 +880,7 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
             self.hard_controller.set_mask(None)
             self.hard_controller.build_enabled = True
             self._current_domain_ids = batch.get("domain_id", None)
+            self._current_layout_ids = batch.get("layout_id", None)
             self._current_mask_info = {}
         loss = super().compute_loss(batch)
         if not self.enable_gating:

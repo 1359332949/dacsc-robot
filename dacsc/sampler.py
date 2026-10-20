@@ -16,12 +16,14 @@ class DomainBalancedSampler(Sampler):
     """
     def __init__(self, dataset, batch_size: int = 32, domain_id_min: int = 11,
                  domain_group_size: int = 5, samples_per_domain: int = 3,
-                 seed: int = 42):
+                 max_groups_per_batch: int | None = None, seed: int = 42):
         self.dataset = dataset
         self.batch_size = int(batch_size)
         self.domain_id_min = int(domain_id_min)
         self.domain_group_size = max(int(domain_group_size), 1)
         self.samples_per_domain = int(samples_per_domain)
+        self.max_groups_per_batch = (None if max_groups_per_batch is None
+                                     else int(max_groups_per_batch))
         self.seed = int(seed)
         self.epoch = 0
         self._groups = None
@@ -39,6 +41,7 @@ class DomainBalancedSampler(Sampler):
             "seed": self.seed,
             "domain_id_min": self.domain_id_min,
             "domain_group_size": self.domain_group_size,
+            "max_groups_per_batch": self.max_groups_per_batch,
             "datasets": [str(getattr(d, "dataset_path", "")) for d in ds_list],
         }
         h = hashlib.sha1(repr(signature).encode()).hexdigest()[:16]
@@ -83,8 +86,13 @@ class DomainBalancedSampler(Sampler):
         if self._groups is None:
             self._build()
         rng = random.Random(self.seed + self.epoch)
-        group_ids = sorted(self._groups)
+        group_ids_all = sorted(self._groups)
         for _ in range(self._n_batches):
+            if (self.max_groups_per_batch is not None
+                    and self.max_groups_per_batch < len(group_ids_all)):
+                group_ids = rng.sample(group_ids_all, self.max_groups_per_batch)
+            else:
+                group_ids = group_ids_all
             out = []
             for g in group_ids:
                 pool = self._groups[g]
