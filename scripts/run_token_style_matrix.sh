@@ -117,6 +117,17 @@ for group in $GROUP_LIST; do
           policy.token_style_alpha=0.25
       done
       ;;
+    norm_res)
+      for seed in $SEEDS; do
+        run_one norm_res "$seed" policy.token_style_mode=normalize
+      done
+      ;;
+    norm_patch)
+      for seed in $SEEDS; do
+        run_one norm_patch "$seed" \
+          policy.token_style_mode=normalize policy.token_style_stage=patch
+      done
+      ;;
     *)
       echo "[unknown group] $group" >&2
       exit 2

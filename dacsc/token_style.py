@@ -90,11 +90,12 @@ class TokenStyleModulator(nn.Module):
     """AdaIN-style token statistics modulation with optional action protection."""
 
     MODES = ("none", "random_stats", "cross_style_stats",
-             "cross_style_stats_action_aware")
+             "cross_style_stats_action_aware", "normalize")
 
     def __init__(self, mode: str = "none", alpha: float = 0.5,
                  action_weight: float = 1.0, protect_ratio: float = 0.0,
-                 stats: str = "meanstd", eps: float = 1e-5):
+                 stats: str = "meanstd", dim: int | None = None,
+                 eps: float = 1e-5):
         super().__init__()
         if mode not in self.MODES:
             raise ValueError(f"unknown token_style_mode={mode}")
@@ -106,6 +107,11 @@ class TokenStyleModulator(nn.Module):
             raise ValueError(f"unknown token_style_stats={stats}")
         self.stats = str(stats)
         self.eps = float(eps)
+        if mode == "normalize":
+            if dim is None:
+                raise ValueError("normalize mode requires dim")
+            self.norm_gamma = nn.Parameter(torch.ones(int(dim)))
+            self.norm_beta = nn.Parameter(torch.zeros(int(dim)))
         # K-length buffer; empty until the first action-importance update.
         self.register_buffer("action_importance", torch.zeros(0), persistent=False)
         self.last_stats_t: Dict[str, torch.Tensor] = {}
@@ -128,13 +134,26 @@ class TokenStyleModulator(nn.Module):
     def forward(self, tokens: torch.Tensor, domain_ids: torch.Tensor | None = None,
                 training: bool = True) -> torch.Tensor:
         """tokens: (B, V, K, D) -> (B, V, K, D)."""
-        if not training or self.mode == "none" or self.alpha <= 0:
+        if self.mode == "none" or self.alpha <= 0:
+            return tokens
+        if not training and self.mode != "normalize":
             return tokens
         B, V, K, D = tokens.shape
         z = tokens.reshape(B * V, K, D)
         n = z.shape[0]
         mu = z.mean(dim=1)                                      # (N, D)
         sigma = z.std(dim=1, unbiased=False).clamp_min(self.eps)
+        if self.mode == "normalize":
+            z_norm = (z - mu[:, None, :]) / sigma[:, None, :]
+            out = z_norm * self.norm_gamma[None, None, :] + self.norm_beta[None, None, :]
+            with torch.no_grad():
+                self.last_stats_t = {
+                    "mod_abs_mean": (out - z).abs().mean(),
+                    "stat_delta": mu.abs().mean(),
+                    "diff_domain_frac": z.new_zeros(()),
+                    "action_weight_mean": z.new_ones(()),
+                }
+            return out.reshape(B, V, K, D)
 
         d = None
         if domain_ids is not None:

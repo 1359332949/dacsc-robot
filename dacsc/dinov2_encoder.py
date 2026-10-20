@@ -166,7 +166,8 @@ class DINOv2ObsEncoder(nn.Module):
                     mode=token_style_mode, alpha=token_style_alpha,
                     action_weight=token_style_action_weight,
                     protect_ratio=token_style_protect_ratio,
-                    stats=token_style_stats)
+                    stats=token_style_stats,
+                    dim=(self.token_dim if token_style_stage == "resampler" else d))
         if self.token_style is None:
             self.token_style_stage = "resampler"
 

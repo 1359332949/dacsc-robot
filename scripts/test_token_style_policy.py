@@ -63,6 +63,25 @@ def main():
         "style": style_p.summary(),
     })
 
+    # Canonical normalization must be trainable end-to-end.
+    pn, _ = build_policy(
+        enable_gating=False, use_resampler=True, flow_matching=True,
+        resampler_num_queries=4, resampler_dim=64, num_inference_steps=2,
+        token_style_mode="normalize", token_style_stage="resampler",
+        token_style_diagnostics_every=1)
+    pn.train()
+    loss_n = pn.compute_loss(batch)
+    loss_n.backward()
+    gamma = pn.obs_encoder.token_style.norm_gamma
+    beta = pn.obs_encoder.token_style.norm_beta
+    assert gamma.grad is not None and beta.grad is not None
+    assert gamma.grad.abs().sum() > 0
+    print("TOKEN_STYLE_NORMALIZE_OK", {
+        "loss": float(loss_n.detach()),
+        "gamma_grad": float(gamma.grad.abs().sum()),
+        "beta_grad": float(beta.grad.abs().sum()),
+    })
+
 
 if __name__ == "__main__":
     main()

@@ -76,6 +76,16 @@ def main():
     assert float(n[-1]) > float(n[0])
     print("⑤ token action importance EMA: ✓", ema.summary())
 
+    # Canonical token normalization applies in both train and eval and removes
+    # per-sample/per-view mean/std without injecting a donor's content.
+    mn = TokenStyleModulator(mode="normalize", dim=D)
+    for training in (True, False):
+        outn = mn(tokens, did, training=training).reshape(B * V, K, D)
+        assert torch.allclose(outn.mean(dim=1), torch.zeros(B * V, D), atol=2e-5)
+        assert torch.allclose(outn.std(dim=1, unbiased=False),
+                              torch.ones(B * V, D), atol=2e-4)
+    print("⑥ canonical token normalization: ✓")
+
     print("token style tests: PASS")
     return 0
 
