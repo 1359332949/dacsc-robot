@@ -33,6 +33,8 @@ class CNNChannelDropoutPolicy(DiffusionTransformerHybridImagePolicy):
                  cnn_domain_grl: float = 0.25,
                  cnn_domain_head_lr: float = 1.0e-3,
                  cnn_grl_warmup_steps: int = 10,
+                 cnn_layer_wise_prob: float = 1.0,
+                 cnn_domain_head_norm: bool = False,
                  cnn_diagnostics_every: int = 20,
                  cnn_train_only: bool = True,
                  **kwargs):
@@ -60,6 +62,8 @@ class CNNChannelDropoutPolicy(DiffusionTransformerHybridImagePolicy):
             domain_lambda=cnn_domain_lambda,
             domain_grl=cnn_domain_grl,
             grl_warmup_steps=cnn_grl_warmup_steps,
+            layer_wise_prob=cnn_layer_wise_prob,
+            domain_head_norm=cnn_domain_head_norm,
             train_only=cnn_train_only,
         )
         log.info("CNN dropout: mode=%s views=%d layers=%s selection=%s "

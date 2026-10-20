@@ -20,5 +20,7 @@ policy:
   cnn_domain_grl: 0.25
   cnn_domain_head_lr: 1.0e-3
   cnn_grl_warmup_steps: 10
+  cnn_layer_wise_prob: 1.0
+  cnn_domain_head_norm: false
   cnn_diagnostics_every: 20
   cnn_train_only: true

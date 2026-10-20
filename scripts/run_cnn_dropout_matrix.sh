@@ -19,6 +19,11 @@ DOMAIN_LAMBDA="${DOMAIN_LAMBDA:-1.0}"
 DOMAIN_GRL="${DOMAIN_GRL:-0.25}"
 DOMAIN_HEAD_LR="${DOMAIN_HEAD_LR:-1.0e-3}"
 GRL_WARMUP="${GRL_WARMUP:-10}"
+LAYER_SELECTION="${LAYER_SELECTION:-stage_end_random}"
+LAYER_INDICES="${LAYER_INDICES:-[7]}"
+LAYER_WISE_PROB="${LAYER_WISE_PROB:-0.8}"
+DOMAIN_HEAD_NORM="${DOMAIN_HEAD_NORM:-false}"
+DOMAIN_MODE="${DOMAIN_MODE:-domaindrop}"
 mkdir -p "$OUT"
 cd "$ROOT"
 
@@ -81,12 +86,16 @@ for group in $GROUP_LIST; do
     domaindrop)
       for seed in $SEEDS; do
         run_one domaindrop "$seed" \
-          policy.cnn_dropout_mode=domaindrop policy.cnn_layer_selection=fixed \
-          "policy.cnn_layer_indices=[7]" policy.cnn_drop_ratio=0.33 \
+          policy.cnn_dropout_mode="$DOMAIN_MODE" \
+          policy.cnn_layer_selection="$LAYER_SELECTION" \
+          "policy.cnn_layer_indices=$LAYER_INDICES" \
+          policy.cnn_drop_ratio=0.33 \
           policy.cnn_domain_lambda="$DOMAIN_LAMBDA" \
           policy.cnn_domain_grl="$DOMAIN_GRL" \
           policy.cnn_domain_head_lr="$DOMAIN_HEAD_LR" \
-          policy.cnn_grl_warmup_steps="$GRL_WARMUP"
+          policy.cnn_grl_warmup_steps="$GRL_WARMUP" \
+          policy.cnn_layer_wise_prob="$LAYER_WISE_PROB" \
+          policy.cnn_domain_head_norm="$DOMAIN_HEAD_NORM"
       done
       ;;
     place)

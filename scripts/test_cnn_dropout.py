@@ -63,18 +63,25 @@ def main():
     print("PLACE_OK", metrics)
 
     # DomainDrop: domain head + GRL auxiliary loss.
-    pd, cfg = build("domaindrop", cnn_layer_selection="fixed",
-                    cnn_layer_indices=[7], cnn_num_domains=10,
-                    cnn_domain_group_size=5, cnn_drop_ratio=0.33,
+    pd, cfg = build("domaindrop_norm", cnn_layer_selection="stage_end_random",
+                    cnn_layer_wise_prob=0.8, cnn_num_domains=3,
+                    cnn_domain_group_size=20, cnn_drop_ratio=0.33,
                     cnn_diagnostics_every=1)
     pd.train()
     loss = pd.compute_loss(b)
     loss.backward()
     assert torch.isfinite(loss), loss
-    heads = [m.domain_heads[7][-1] for m in pd.cnn_controllers]
-    assert all(h.weight.grad is not None and h.weight.grad.abs().sum() > 0
-               for h in heads)
-    print("DOMAINDROP_OK", pd.cnn_report()["metrics"])
+    heads = []
+    for m in pd.cnn_controllers:
+        assert set(m.domain_heads.keys()) == {"1", "3", "5", "7"}
+        for key in ("1", "3", "5", "7"):
+            h = m.domain_heads[key][-1]
+            heads.append(h)
+            assert h.weight.grad is not None and h.weight.grad.abs().sum() > 0
+    metrics = pd.cnn_report()["metrics"]
+    assert any("view0_domain_loss_1" in k for k in metrics), metrics
+    assert any("view0_domain_loss_7" in k for k in metrics), metrics
+    print("DOMAINDROP_OK", metrics)
 
     # DgCD: discrepancy-guided WRS on the same FiLM layer.
     pg, cfg = build("dgcd", cnn_layer_selection="fixed",
