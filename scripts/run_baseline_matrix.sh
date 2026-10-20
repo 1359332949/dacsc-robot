@@ -20,7 +20,7 @@ run_one() {
   local dir="$OUT/$name"
   mkdir -p "$dir"
   echo "=== $name -> $dir ==="
-  WANDB_MODE=disabled bash scripts/run_real_train.sh "${COMMON[@]}" \
+  DACSC_CONFIG_NAME=train_dinov2_bs192 WANDB_MODE=disabled bash scripts/run_real_train.sh "${COMMON[@]}" \
     hydra.run.dir="$dir" "$@" > "$dir/train.log" 2>&1
   local rc=$?
   echo "$name rc=$rc"

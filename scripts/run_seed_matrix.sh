@@ -29,7 +29,7 @@ run_one() {
     return 0
   fi
   echo "=== $group seed=$seed -> $dir ==="
-  WANDB_MODE=disabled bash scripts/run_real_train.sh \
+  DACSC_CONFIG_NAME=train_dinov2_bs192 WANDB_MODE=disabled bash scripts/run_real_train.sh \
     "${COMMON[@]}" training.seed="$seed" task.dataset.seed="$seed" \
     hydra.run.dir="$dir" "$@" > "$dir/train.log" 2>&1
   local rc=$?

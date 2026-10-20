@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 # 真实 RoboCasa365 atomic61 训练启动器。
+# 默认使用新主基线 flow；DDPM 受控基线请显式设置 DACSC_CONFIG_NAME=train_dinov2_bs192。
 # 用法：
 #   bash scripts/run_real_train.sh
-#   bash scripts/run_real_train.sh dataloader.batch_size=32 training.max_train_steps=20000
+#   DACSC_CONFIG_NAME=train_dinov2_bs192 bash scripts/run_real_train.sh ...
 set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-CONFIG_NAME="${DACSC_CONFIG_NAME:-train_dinov2_bs192}"
+CONFIG_NAME="${DACSC_CONFIG_NAME:-train_dinov2_flow}"
 CLIP_PATH="${DACSC_CLIP_PATH:-/hy-tmp/models/clip-vit-large-patch14}"
 if [ ! -d "$CLIP_PATH" ]; then
   echo "找不到本地 CLIP: $CLIP_PATH"

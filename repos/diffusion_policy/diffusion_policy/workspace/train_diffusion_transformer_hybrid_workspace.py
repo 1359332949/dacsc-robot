@@ -78,7 +78,7 @@ class TrainDiffusionTransformerHybridWorkspace(BaseWorkspace):
 
         if cfg.training.debug:
             cfg.logging.project = "debug"
-        
+
         wandb_cfg = OmegaConf.to_container(cfg.logging, resolve=True)
 
         wandb_cfg.pop('project')
@@ -114,7 +114,7 @@ class TrainDiffusionTransformerHybridWorkspace(BaseWorkspace):
             if lastest_ckpt_path.is_file():
                 accelerator.print(f"Resuming from checkpoint {lastest_ckpt_path}")
                 self.load_checkpoint(path=lastest_ckpt_path)
-        
+
         if "ckpt_path" in cfg.task and cfg.task.ckpt_path is not None:
             accelerator.print(f"Initializing from checkpoint {cfg.task.ckpt_path}")
             if cfg.training.resume:
@@ -139,7 +139,7 @@ class TrainDiffusionTransformerHybridWorkspace(BaseWorkspace):
         if accelerator.is_main_process:
             normalizer = dataset.get_normalizer()
             pickle.dump(normalizer, open(normalizer_path, 'wb'))
-        
+
         # load normalizer on all processes
         accelerator.wait_for_everyone()
         normalizer = pickle.load(open(normalizer_path, 'rb'))
@@ -212,7 +212,7 @@ class TrainDiffusionTransformerHybridWorkspace(BaseWorkspace):
         device = self.model.device
         if self.ema_model is not None:
             self.ema_model.to(device)
-        
+
         # save batch for sampling
         train_sampling_batch = None
 
@@ -240,7 +240,7 @@ class TrainDiffusionTransformerHybridWorkspace(BaseWorkspace):
                 # tqdm_kwargs = {}
                 # if max_train_steps is not None:
                 #     tqdm_kwargs["total"] = max_train_steps
-                # with tqdm.tqdm(train_dataloader, desc=f"Training epoch {self.epoch}", 
+                # with tqdm.tqdm(train_dataloader, desc=f"Training epoch {self.epoch}",
                 #         leave=False, mininterval=cfg.training.tqdm_interval_sec, **tqdm_kwargs) as tepoch:
                 #     for batch_idx, batch in enumerate(tepoch):
 
@@ -270,7 +270,7 @@ class TrainDiffusionTransformerHybridWorkspace(BaseWorkspace):
                         self.optimizer.step()
                         self.optimizer.zero_grad()
                         lr_scheduler.step()
-                    
+
                     # update ema
                     if cfg.training.use_ema:
                         ema.step(accelerator.unwrap_model(self.model))
@@ -325,7 +325,7 @@ class TrainDiffusionTransformerHybridWorkspace(BaseWorkspace):
                             # close and discard env_runner
                             env_runner.close()
                             del env_runner
-                        
+
                         accelerator.wait_for_everyone()
 
                 # run validation (DACSC: restored; held-out styles 41-50)
@@ -353,7 +353,7 @@ class TrainDiffusionTransformerHybridWorkspace(BaseWorkspace):
                             batch = dict_apply(train_sampling_batch, lambda x: x.to(device, non_blocking=True))
                             obs_dict = batch['obs']
                             gt_action = batch['action']
-                            
+
                             result = policy.predict_action(obs_dict)
                             pred_action = result['action_pred']
                             mse = torch.nn.functional.mse_loss(pred_action, gt_action)
@@ -364,9 +364,9 @@ class TrainDiffusionTransformerHybridWorkspace(BaseWorkspace):
                             del result
                             del pred_action
                             del mse
-                    
+
                     accelerator.wait_for_everyone()
-                
+
                 # checkpoint
                 if self.epoch > 0 and (self.epoch % cfg.training.checkpoint_every) == 0:
                     if accelerator.is_main_process:
@@ -383,7 +383,7 @@ class TrainDiffusionTransformerHybridWorkspace(BaseWorkspace):
                         for key, value in step_log.items():
                             new_key = key.replace('/', '_')
                             metric_dict[new_key] = value
-                        
+
                         # We can't copy the last checkpoint here
                         # since save_checkpoint uses threads.
                         # therefore at this point the file might have been empty!
@@ -393,7 +393,7 @@ class TrainDiffusionTransformerHybridWorkspace(BaseWorkspace):
                             self.save_checkpoint(path=topk_ckpt_path)
 
                         self.model = model_ddp
-                    
+
                     accelerator.wait_for_everyone()
                 # ========= eval end for this epoch ==========
 
@@ -407,7 +407,7 @@ class TrainDiffusionTransformerHybridWorkspace(BaseWorkspace):
 
 @hydra.main(
     version_base=None,
-    config_path=str(pathlib.Path(__file__).parent.parent.joinpath("config")), 
+    config_path=str(pathlib.Path(__file__).parent.parent.joinpath("config")),
     config_name=pathlib.Path(__file__).stem)
 def main(cfg):
     workspace = TrainDiffusionTransformerHybridWorkspace(cfg)

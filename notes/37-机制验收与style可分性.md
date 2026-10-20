@@ -72,7 +72,7 @@ drop-IoU gap: 0.009
 score_cos_gap: 0.037
 ```
 
-10 个粗域的原型高度相似，top-k 通道排序几乎共享。  
+10 个粗域的原型高度相似，top-k 通道排序几乎共享。
 因此 A 组的 gate 提升主要来自 33% dropout 正则，而不是域选择。
 
 ### 2.3 group smooth 恢复了同域一致性
@@ -95,7 +95,7 @@ B → C：
 gap: 0.214 → 0.044
 ```
 
-Gumbel 噪声逐样本独立采样，导致同一 style 的 mask 也被打散。  
+Gumbel 噪声逐样本独立采样，导致同一 style 的 mask 也被打散。
 改成 domain-shared noise 后，同域 mask 严格一致。
 
 ### 2.5 domain center 是最有效的修复
@@ -128,7 +128,7 @@ gate on/off: -18.7% → -22.4%
 v_raw_rel_std: 0.348
 ```
 
-动作保护提高了 gate 收益，但显著削弱域选择性。  
+动作保护提高了 gate 收益，但显著削弱域选择性。
 因此不建议继续手调 `λ`，应改为两阶段：
 
 ```text
@@ -192,7 +192,7 @@ OpenDrawer + CloseDrawer + PickPlaceCounterToMicrowave
 
 因此：
 
-> style_id 不是噪声，但当前表示主要被 layout/task 主导。  
+> style_id 不是噪声，但当前表示主要被 layout/task 主导。
 > 直接按连续 style ID 分组没有视觉依据。
 
 ---

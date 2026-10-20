@@ -1,7 +1,7 @@
 # SWAD 对比记录（后续可选）
 
-来源：Cha et al., **SWAD: Domain Generalization by Seeking Flat Minima**, NeurIPS 2021  
-论文：https://arxiv.org/abs/2102.08604  
+来源：Cha et al., **SWAD: Domain Generalization by Seeking Flat Minima**, NeurIPS 2021
+论文：https://arxiv.org/abs/2102.08604
 官方代码：https://github.com/khanrc/swad （MIT）
 
 ## 它做什么

@@ -45,11 +45,11 @@ policy:
   # ---- DINOv2 观测编码器（我们的）----
   dino_backbone: dinov2_vits14     # CoRP 用的就是它（22.1M）
   crop_size: 224                   # 必须是 14 的倍数（256 会报错）
-  view_feat_dim: 256
+  view_feat_dim: 256              # ignored by resampler path
   low_dim_feat_dim: 128
-  feature_dim: 256                 # → obs_feature_dim
+  feature_dim: 256                # ignored by resampler path; token_dim=resampler_dim
   freeze_dino: False               # ★ CoRP 4.4：冻结会掉约 20 分，必须联合微调
-  freeze_obs_encoder: false        # DFR-like baseline: 冻结整个观测编码器，只训动作头
+  freeze_obs_encoder: false        # frozen_encoder_head baseline, not strict DFR
   use_resampler: true              # CoRP-style learned-query token compressor
   resampler_num_queries: 48
   resampler_dim: 64

@@ -2,7 +2,7 @@
 
 ## 1. 背景
 
-在连续 `style 11–15` 粗分组下，DgCD 的域原型平均余弦约 0.80，mask 近似静态。  
+在连续 `style 11–15` 粗分组下，DgCD 的域原型平均余弦约 0.80，mask 近似静态。
 D/E/F 证明 `domain center` 与 `two-stage 动作保护` 有效，但连续 ID 分组缺乏视觉依据。
 
 本轮先不跑长训练，只修正域定义和 domain score。
