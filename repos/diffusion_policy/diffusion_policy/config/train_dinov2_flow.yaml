@@ -55,6 +55,13 @@ policy:
   resampler_dim: 64
   resampler_heads: 6
   resampler_dropout: 0.0
+  # ---- token-level style statistics (requires use_resampler) ----
+  token_style_mode: none    # none | random_stats | cross_style_stats | cross_style_stats_action_aware
+  token_style_alpha: 0.5
+  token_style_action_weight: 1.0
+  token_style_importance_every: 4
+  token_style_momentum: 0.9
+  token_style_diagnostics_every: 50
   flow_matching: true              # rectified-flow action head
   flow_time_scale: 1000.0
   dino_pretrained: True            # 消融：false = 随机初始化 ViT-S/14

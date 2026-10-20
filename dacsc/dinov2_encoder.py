@@ -99,7 +99,10 @@ class DINOv2ObsEncoder(nn.Module):
                  resampler_num_queries: int = 48,
                  resampler_dim: int = 64,
                  resampler_heads: int = 6,
-                 resampler_dropout: float = 0.0):
+                 resampler_dropout: float = 0.0,
+                 token_style_mode: str = "none",
+                 token_style_alpha: float = 0.5,
+                 token_style_action_weight: float = 1.0):
         super().__init__()
         assert pool in ("mean", "meanmax"), f"v1 只实现 mean/meanmax，收到 {pool}"
         self.shape_meta = shape_meta
@@ -141,6 +144,8 @@ class DINOv2ObsEncoder(nn.Module):
         self.resampler_dim = int(resampler_dim)
         self.token_dim = self.resampler_dim if self.use_resampler else self.feature_dim
         self.resampler = None
+        self.token_style = None
+        self.current_domain_ids = None
         if self.use_resampler:
             from dacsc.resampler import LearnedQueryResampler
             self.resampler = LearnedQueryResampler(
@@ -149,6 +154,11 @@ class DINOv2ObsEncoder(nn.Module):
                 n_heads=int(resampler_heads), dropout=float(resampler_dropout),
                 lang_dim=int(obs_meta["lang_emb"]["shape"][0])
                 if "lang_emb" in obs_meta else None)
+            if token_style_mode != "none":
+                from dacsc.token_style import TokenStyleModulator
+                self.token_style = TokenStyleModulator(
+                    mode=token_style_mode, alpha=token_style_alpha,
+                    action_weight=token_style_action_weight)
 
         self.crop = _Crop224(crop_size, random_crop)
         self.register_buffer("img_mean", _IMAGENET_MEAN.clone(), persistent=False)
@@ -205,6 +215,10 @@ class DINOv2ObsEncoder(nn.Module):
                 lang = lang[:, None, :].expand(B, V, lang.shape[-1]).reshape(B * V, -1)
             tokens = self.resampler(feats, lang)                # (B*V, K, token_dim)
             tokens = tokens.reshape(B, V, self.resampler_num_queries, self.token_dim)
+            if self.token_style is not None:
+                tokens = self.token_style(
+                    tokens, domain_ids=self.current_domain_ids,
+                    training=self.training)
             self.last_patch_tokens = {
                 "resampled_tokens": tokens.detach(),
                 "patch_tokens": feats.detach(),

@@ -74,6 +74,13 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
                  resampler_dim: int = 64,
                  resampler_heads: int = 6,
                  resampler_dropout: float = 0.0,
+                 # ---- token-level style statistics ----
+                 token_style_mode: str = "none",
+                 token_style_alpha: float = 0.5,
+                 token_style_action_weight: float = 1.0,
+                 token_style_importance_every: int = 4,
+                 token_style_momentum: float = 0.9,
+                 token_style_diagnostics_every: int = 50,
                  # ---- DiT 架构（默认与官方 bs192 配置一致）----
                  n_layer: int = 8,
                  n_cond_layers: int = 0,
@@ -170,6 +177,9 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
             resampler_dim=resampler_dim,
             resampler_heads=resampler_heads,
             resampler_dropout=resampler_dropout,
+            token_style_mode=token_style_mode,
+            token_style_alpha=token_style_alpha,
+            token_style_action_weight=token_style_action_weight,
         )
         self.flow_matching = bool(flow_matching)
         self.flow_time_scale = float(flow_time_scale)
@@ -211,6 +221,29 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
         )
 
         self.obs_encoder = obs_encoder
+        self.token_style_mode = str(token_style_mode)
+        self.token_style_importance_every = int(token_style_importance_every)
+        self.token_style_diagnostics_every = int(token_style_diagnostics_every)
+        self.token_importance = None
+        self._style_step = 0
+        self._collect_token_importance = False
+        self._last_resampler_output = None
+        self._resampler_hook = None
+        if self.token_style_mode != "none":
+            if not use_resampler:
+                raise ValueError("token_style_mode 需要 use_resampler=True")
+            if self.token_style_mode == "cross_style_stats_action_aware":
+                from dacsc.token_style import TokenImportanceEMA
+                self.token_importance = TokenImportanceEMA(
+                    int(resampler_num_queries), momentum=token_style_momentum)
+
+                def _resampler_hook(module, inputs, output):
+                    if self._collect_token_importance and output.requires_grad:
+                        output.retain_grad()
+                        self._last_resampler_output = output
+
+                self._resampler_hook = obs_encoder.resampler.register_forward_hook(
+                    _resampler_hook)
         self.model = model
         self.noise_scheduler = noise_scheduler
         self.mask_generator = LowdimMaskGenerator(
@@ -468,23 +501,30 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
         if self.action_importance is not None:
             for k, v in self.action_importance.state_dict().items():
                 sd[f"_dacsc_action_importance.{k}"] = v
+        if self.token_importance is not None:
+            for k, v in self.token_importance.state_dict().items():
+                sd[f"_dacsc_token_importance.{k}"] = v
         sd["_dacsc_gate_step"] = torch.tensor(self._gate_step, dtype=torch.long)
         return sd
 
     def load_state_dict(self, state_dict, strict: bool = True, **kwargs):
         sd = dict(state_dict)
-        extras_dom, extras_imp = {}, {}
+        extras_dom, extras_imp, extras_tok = {}, {}, {}
         for k in list(sd.keys()):
             if k.startswith("_dacsc_domain_stats."):
                 extras_dom[k.split(".", 1)[1]] = sd.pop(k)
             elif k.startswith("_dacsc_action_importance."):
                 extras_imp[k.split(".", 1)[1]] = sd.pop(k)
+            elif k.startswith("_dacsc_token_importance."):
+                extras_tok[k.split(".", 1)[1]] = sd.pop(k)
         gate_step = sd.pop("_dacsc_gate_step", None)
         result = super().load_state_dict(sd, strict=strict, **kwargs)
         if extras_dom and self.domain_stats is not None:
             self.domain_stats.load_state_dict(extras_dom)
         if extras_imp and self.action_importance is not None:
             self.action_importance.load_state_dict(extras_imp)
+        if extras_tok and self.token_importance is not None:
+            self.token_importance.load_state_dict(extras_tok)
         if gate_step is not None:
             self._gate_step = int(gate_step.item())
         return result
@@ -573,6 +613,83 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
             self._prev_post_gate = []
             self.zero_grad(set_to_none=True)
             self._collect.clear()
+
+    def _maybe_clean_token_importance(self, batch):
+        """Clean-forward token importance for action-aware style modulation.
+
+        The resampler output is captured by a forward hook during a clean
+        forward.  This path is intentionally used only when hard gating is off;
+        combining it with the hard-gate clean pass would require merging two
+        backward graphs.
+        """
+        if self.token_importance is None:
+            return
+        if self.enable_gating:
+            if not getattr(self, "_token_clean_skip_warned", False):
+                log.warning("token-style clean importance skipped while hard gating is enabled")
+                self._token_clean_skip_warned = True
+            return
+        every = int(self.token_style_importance_every)
+        if every <= 0:
+            return
+        if not hasattr(self, "_token_imp_counter"):
+            self._token_imp_counter = 0
+        self._token_imp_counter += 1
+        if self._token_imp_counter % every != 0:
+            return
+        style = self.obs_encoder.token_style
+        old_alpha = style.alpha
+        old_collect = self._collect_token_importance
+        hc = getattr(self, "hard_controller", None)
+        old_build = hc.build_enabled if hc is not None else None
+        old_mask = hc.mask if hc is not None else None
+        style.alpha = 0.0
+        self._collect_token_importance = True
+        self._last_resampler_output = None
+        if hc is not None:
+            hc.build_enabled = False
+            hc.mask = None
+        try:
+            clean_loss = self._base_loss(batch)
+            clean_loss.backward()
+            if self._last_resampler_output is not None:
+                self.token_importance.update_from_tensor(self._last_resampler_output)
+        finally:
+            style.alpha = old_alpha
+            self._collect_token_importance = old_collect
+            self._last_resampler_output = None
+            if hc is not None:
+                hc.build_enabled = old_build
+                hc.mask = old_mask
+            self.zero_grad(set_to_none=True)
+
+    def _log_token_style(self, loss):
+        step = self._style_step
+        self._style_step += 1
+        if self.token_style_mode == "none":
+            return
+        every = int(self.token_style_diagnostics_every)
+        if every <= 0 or step % every != 0:
+            return
+        style = self.obs_encoder.token_style
+        stats = style.summary() if style is not None else {}
+        ti = (self.token_importance.summary()
+              if self.token_importance is not None else {})
+        payload = {
+            "step": int(step),
+            "mode": self.token_style_mode,
+            "alpha": float(stats.get("alpha", 0.0)),
+            "loss": float(loss.detach()),
+            "mod_abs_mean": float(stats.get("mod_abs_mean", 0.0)),
+            "stat_delta": float(stats.get("stat_delta", 0.0)),
+            "diff_domain_frac": float(stats.get("diff_domain_frac", 0.0)),
+            "action_weight_mean": float(stats.get("action_weight_mean", 0.0)),
+            "token_importance_ready": bool(ti.get("ready", False)),
+            "token_importance_mean": float(ti.get("mean", 0.0)),
+            "token_importance_std": float(ti.get("std", 0.0)),
+            "token_importance_max": float(ti.get("max", 0.0)),
+        }
+        log.info("TOKEN_STYLE %s", json.dumps(payload, sort_keys=True))
 
     # ---------- ★ v2 hard gate：当前 batch 内生成 per-sample mask ----------
     def _expanded_domain_indices(self, n_actual: int, device):
@@ -1075,7 +1192,20 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
             self._current_domain_ids = batch.get("domain_id", None)
             self._current_layout_ids = batch.get("layout_id", None)
             self._current_mask_info = {}
+        if self.token_style_mode != "none":
+            did = batch.get("domain_id", None)
+            if did is not None:
+                did = did.repeat_interleave(int(self.n_obs_steps))
+            self.obs_encoder.current_domain_ids = did
+            style_mod = self.obs_encoder.token_style
+            if style_mod is not None and self.token_importance is not None:
+                style_mod.set_action_importance(
+                    self.token_importance.normalized()
+                    if self.token_importance.ready() else None)
         loss = self._base_loss(batch)
+        if self.token_style_mode != "none":
+            self._log_token_style(loss)
+            self._maybe_clean_token_importance(batch)
         if not self.enable_gating:
             return loss
         if self.gate_mode == "hard":
