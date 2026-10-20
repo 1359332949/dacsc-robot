@@ -37,7 +37,7 @@ class TaskLabeledDataset(Dataset):
     def __init__(self, dataset):
         self.dataset = dataset
         self.task_map = {id(ds): i for i, ds in enumerate(dataset.datasets)}
-        self.task_names = [getattr(ds, "dataset_path", str(i))
+        self.task_names = [str(getattr(ds, "dataset_path", str(i)))
                            for i, ds in enumerate(dataset.datasets)]
 
     def __len__(self):
@@ -231,10 +231,22 @@ def main():
     ap.add_argument("--batches", type=int, default=20)
     ap.add_argument("--batch", type=int, default=96)
     ap.add_argument("--out", type=Path, default=ROOT / "audit/cnn_domain_audit.json")
+    ap.add_argument("--cache", type=Path, default=Path("/hy-tmp/runs/cnn_domain_cache.pt"))
     args = ap.parse_args()
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     cfg = compose_cfg(args.batch)
-    feats, labels, task_names, policy = collect(cfg, args.batches, device)
+    if args.cache.exists():
+        obj = torch.load(args.cache, map_location="cpu", weights_only=False)
+        feats = obj["feats"]
+        labels = obj["labels"]
+        task_names = obj["task_names"]
+        print("loaded feature cache", args.cache)
+    else:
+        feats, labels, task_names, policy = collect(cfg, args.batches, device)
+        args.cache.parent.mkdir(parents=True, exist_ok=True)
+        torch.save({"feats": feats, "labels": labels,
+                    "task_names": task_names}, args.cache)
+        print("wrote feature cache", args.cache)
     print("collected", {k: tuple(v.shape) for k, v in feats.items()},
           "labels", {k: tuple(v.shape) for k, v in labels.items()})
 
