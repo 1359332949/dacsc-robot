@@ -603,8 +603,7 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
         return (did_exp - int(self.layout_id_min)).clamp(0, int(self.layout_num) - 1)
 
     @torch.no_grad()
-    def _layout_residual(self, pooled: torch.Tensor, layout_idx,
-                         collect_metrics: bool = False):
+    def _layout_residual(self, pooled: torch.Tensor, layout_idx):
         """用每个 layout 的在线通道均值去掉 geometry/task 共享分量。
 
         统计更新用 bincount + index_add 一次完成，避免每个 layout 一次
@@ -612,7 +611,8 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
         """
         if (not self.layout_residual_enabled or layout_idx is None
                 or not hasattr(self, "_layout_mean")):
-            return pooled, 0.0, 0
+            return (pooled, pooled.new_zeros(()),
+                    torch.zeros((), dtype=torch.long, device=pooled.device))
         n_views = self._layout_mean.shape[1]
         idx = layout_idx.to(device=pooled.device, dtype=torch.long)
         view = torch.arange(pooled.shape[0], device=pooled.device) % n_views
@@ -623,9 +623,9 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
         resid = pooled.detach().clone()
         if seen.any():
             resid[seen] = resid[seen] - mean_flat[key[seen]].to(resid)
-        # 只用于日志；非诊断步不做 GPU→CPU 同步。
-        frac = float(seen.float().mean()) if collect_metrics else 0.0
-        n_seen = int(seen_flat.sum()) if collect_metrics else 0
+        # 保持为设备标量，只在日志步回读一次，避免每个 step 同步。
+        frac = seen.float().mean()
+        n_seen = seen_flat.sum()
         if self.training and self._stats_update_enabled:
             p = pooled.detach()
             n_keys = mean_flat.shape[0]
@@ -682,8 +682,8 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
         else:
             pooled_raw = feat.mean(dim=1)               # (N, C)
         layout_idx = self._expanded_layout_indices(feat.shape[0], feat.device)
-        pooled, layout_resid_frac, layout_seen_count = self._layout_residual(
-            pooled_raw, layout_idx, collect_metrics=do_diag)
+        pooled, layout_resid_frac_t, layout_seen_count_t = self._layout_residual(
+            pooled_raw, layout_idx)
 
         if self.hard_domain_mode == "random":
             u_raw = torch.randn_like(pooled)
@@ -820,8 +820,8 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
             "scores": scores.detach(), "u": u.detach(), "v": v_vec.detach(),
             "v_raw_std_t": v_raw_std, "v_ready": bool(v_ready),
             "eligible_frac_t": eligible_frac,
-            "layout_resid_frac": float(layout_resid_frac),
-            "layout_seen_count": int(layout_seen_count),
+            "layout_resid_frac_t": layout_resid_frac_t,
+            "layout_seen_count_t": layout_seen_count_t,
             "diagnostics_every": int(every),
             "diagnostics_done": bool(do_diag),
             "diag": dict(self._last_diag),
@@ -932,8 +932,8 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
                 "v_raw_rel_std": float(ai_summary.get("raw_rel_std", 0.0)),
                 "selection_mode": str(self.hard_cfg.get("selection_mode", "linear")),
                 "eligible_frac": float(info["eligible_frac_t"]),
-                "layout_resid_frac": float(info.get("layout_resid_frac", 0.0)),
-                "layout_seen_count": int(info.get("layout_seen_count", 0)),
+                "layout_resid_frac": float(info.get("layout_resid_frac_t", 0.0)),
+                "layout_seen_count": int(info.get("layout_seen_count_t", 0)),
                 "consistency": float(cons.detach()),
                 "mask_mode": str(self.hard_cfg["mask_mode"]),
                 "diagnostics_every": int(info.get("diagnostics_every", 0)),
