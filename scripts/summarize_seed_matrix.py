@@ -13,6 +13,7 @@ KEYS = ["drop_iou_same", "drop_iou_diff", "drop_iou_gap",
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("root", type=Path)
+    ap.add_argument("--step", type=int, default=50)
     args = ap.parse_args()
     rows = []
     for log in sorted(args.root.glob("*/train.log")):
@@ -30,18 +31,19 @@ def main():
                 d = json.loads(mm.group(1))
             except Exception:
                 continue
-            if int(d.get("step", -1)) == 50:
+            if int(d.get("step", -1)) == args.step:
                 found = d
         if found is None:
-            print(f"[missing step50] {run}")
+            print(f"[missing step{args.step}] {run}")
             continue
         rows.append({"group": group, "seed": seed, **{k: found.get(k) for k in KEYS}})
 
     by = defaultdict(list)
     for r in rows:
         by[r["group"]].append(r)
-    keys = ["drop_iou_gap", "drop_iou_sample_gap", "gate_rel_delta", "v_raw_rel_std", "dp_loss"]
-    print(f"runs={len(rows)}")
+    keys = ["drop_iou_gap", "drop_iou_sample_gap", "gate_rel_delta",
+            "gate_on_mse", "gate_off_mse", "v_raw_rel_std", "dp_loss"]
+    print(f"runs={len(rows)} step={args.step}")
     for group in sorted(by):
         print(f"\n[{group}] n={len(by[group])}")
         for k in keys:
