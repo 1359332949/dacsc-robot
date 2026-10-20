@@ -83,8 +83,9 @@ def install_hard_gates(dino, controller: HardMaskController,
             selected = controller.layer == layer_idx
             if selected and collect is not None:
                 collect.setdefault("pre_gate", []).append((layer_idx, output.detach()))
-                if retain_pre_grad and output.requires_grad:
-                    output.retain_grad()
+                if retain_pre_grad:
+                    if output.requires_grad:
+                        output.retain_grad()
                     collect.setdefault("pre_gate_live", []).append((layer_idx, output))
             # 只用当前 batch 自己的特征生成本 batch 的 per-sample mask。
             if (selected and dino.training and controller.build_enabled
@@ -133,27 +134,57 @@ def gumbel_ste_mask(scores: torch.Tensor, drop_ratio: float = 0.33,
     return mask * c / mask.sum(dim=1, keepdim=True).clamp_min(1e-8)
 
 
+def _pairwise_domain_means(values: torch.Tensor, domain_ids: torch.Tensor):
+    """Upper-triangle pair means within/across domains, with one CPU sync.
+
+    ``values`` is an (N, N) similarity/IoU matrix.  All aggregation stays on
+    the tensor device; only the final two scalars are copied back together.
+    """
+    n = values.shape[0]
+    if n < 2:
+        return 0.0, 0.0, 0.0
+    d = domain_ids.detach().view(-1).to(device=values.device, dtype=torch.long)
+    same = d[:, None] == d[None, :]
+    upper = torch.triu(
+        torch.ones((n, n), dtype=torch.bool, device=values.device), diagonal=1)
+    same_v = values[upper & same]
+    diff_v = values[upper & ~same]
+    zero = values.new_zeros(())
+    stats = torch.stack([
+        same_v.mean() if same_v.numel() else zero,
+        diff_v.mean() if diff_v.numel() else zero,
+    ])
+    s_mean, d_mean = stats.tolist()
+    return float(s_mean), float(d_mean), float(s_mean - d_mean)
+
+
 def mask_iou_by_domain(mask: torch.Tensor, domain_ids: torch.Tensor,
                        drop: bool = False):
-    """返回 (same-domain mean IoU, different-domain mean IoU, gap)。
+    """Vectorized same/different-domain IoU. No per-pair CPU sync.
 
-    drop=False 计算保留通道 IoU；drop=True 计算被丢弃通道 IoU。
-    后者对 33% sparse mask 的域选择性更敏感。
+    drop=False: IoU of kept channels; drop=True: IoU of dropped channels.
+    ``mask`` is (N, C); a channel is dropped when its forward value is <= 0.
     """
     keep = (mask.detach() <= 0) if drop else (mask.detach() > 0)
-    same, diff = [], []
-    n = keep.shape[0]
-    for i in range(n):
-        for j in range(i + 1, n):
-            inter = (keep[i] & keep[j]).sum().item()
-            union = (keep[i] | keep[j]).sum().item()
-            if union == 0:
-                continue
-            v = inter / union
-            (same if int(domain_ids[i]) == int(domain_ids[j]) else diff).append(v)
-    s = sum(same) / len(same) if same else 0.0
-    d = sum(diff) / len(diff) if diff else 0.0
-    return s, d, s - d
+    x = keep.to(torch.float32)
+    if x.shape[0] < 2:
+        return 0.0, 0.0, 0.0
+    inter = x @ x.t()
+    sums = x.sum(dim=1)
+    union = sums[:, None] + sums[None, :] - inter
+    # Preserve the old semantics: pairs with an empty union are ignored
+    # instead of being averaged in as zero.
+    iou = torch.where(union > 0, inter / union.clamp_min(1.0),
+                      torch.zeros_like(inter))
+    return _pairwise_domain_means(iou, domain_ids)
+
+
+def score_separation_by_domain(scores: torch.Tensor, domain_ids: torch.Tensor):
+    """Vectorized same/different-domain cosine similarity of channel scores."""
+    z = torch.nn.functional.normalize(scores.detach().float(), dim=1)
+    if z.shape[0] < 2:
+        return 0.0, 0.0, 0.0
+    return _pairwise_domain_means(z @ z.t(), domain_ids)
 
 
 def remove_hard_gates(handles) -> None:
@@ -161,15 +192,36 @@ def remove_hard_gates(handles) -> None:
         h.remove()
 
 
-def score_separation_by_domain(scores: torch.Tensor, domain_ids: torch.Tensor):
-    """域分数在通道空间中的同域/异域余弦相似度（越大越相似）。"""
-    z = torch.nn.functional.normalize(scores.detach().float(), dim=1)
-    same, diff = [], []
-    n = z.shape[0]
-    for i in range(n):
-        for j in range(i + 1, n):
-            v = float((z[i] * z[j]).sum())
-            (same if int(domain_ids[i]) == int(domain_ids[j]) else diff).append(v)
-    s = sum(same) / len(same) if same else 0.0
-    d = sum(diff) / len(diff) if diff else 0.0
-    return s, d, s - d
+def wrs_mask(scores: torch.Tensor, drop_ratio: float = 0.33,
+             recover: bool = True, normalize: str = "per_sample",
+             eps: float = 1e-6) -> torch.Tensor:
+    """Official-style weighted random sampling mask.
+
+    The number of dropped channels is exactly ``int(drop_ratio * C)``.
+    ``normalize`` controls optional recovery scaling:
+      - per_sample: each row keeps mean activation 1
+      - global: whole mask keeps mean activation 1 (DgCD-style)
+      - none: raw 0/1 mask
+    """
+    n, c = scores.shape
+    k = max(0, min(int(float(drop_ratio) * c), c))
+    if k == 0:
+        return torch.ones_like(scores)
+    lo = scores.min(dim=1, keepdim=True).values
+    hi = scores.max(dim=1, keepdim=True).values
+    pos = ((scores - lo) / (hi - lo).clamp_min(eps)).clamp(0.0, 1.0 - eps)
+    r = torch.rand_like(scores).clamp_(eps, 1.0 - eps)
+    key = r.pow(1.0 / pos.clamp_min(eps))
+    idx = torch.topk(key, k, dim=1, largest=True).indices
+    drop = torch.zeros_like(scores)
+    drop.scatter_(1, idx, 1.0)
+    keep = 1.0 - drop
+    if not recover:
+        return keep
+    if normalize == "global":
+        return keep * keep.numel() / keep.sum().clamp_min(1.0)
+    if normalize == "per_sample":
+        return keep * c / keep.sum(dim=1, keepdim=True).clamp_min(1.0)
+    if normalize == "none":
+        return keep
+    raise ValueError(f"unknown WRS normalize={normalize}")

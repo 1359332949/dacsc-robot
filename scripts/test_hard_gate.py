@@ -9,7 +9,39 @@ import torch
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
 from dacsc.hard_gate import (HardMaskController, topk_ste_mask,  # noqa: E402
-                             gumbel_ste_mask, mask_iou_by_domain)
+                             gumbel_ste_mask, wrs_mask, mask_iou_by_domain,
+                             score_separation_by_domain)
+
+
+def _ref_iou(mask, did, drop=False):
+    """Old O(N^2) implementation, kept only as a test oracle."""
+    keep = (mask <= 0) if drop else (mask > 0)
+    same, diff = [], []
+    n = keep.shape[0]
+    for i in range(n):
+        for j in range(i + 1, n):
+            inter = (keep[i] & keep[j]).sum().item()
+            union = (keep[i] | keep[j]).sum().item()
+            if union == 0:
+                continue
+            v = inter / union
+            (same if int(did[i]) == int(did[j]) else diff).append(v)
+    a = sum(same) / len(same) if same else 0.0
+    b = sum(diff) / len(diff) if diff else 0.0
+    return a, b, a - b
+
+
+def _ref_score_cos(scores, did):
+    z = torch.nn.functional.normalize(scores.float(), dim=1)
+    same, diff = [], []
+    n = z.shape[0]
+    for i in range(n):
+        for j in range(i + 1, n):
+            v = float((z[i] * z[j]).sum())
+            (same if int(did[i]) == int(did[j]) else diff).append(v)
+    a = sum(same) / len(same) if same else 0.0
+    b = sum(diff) / len(diff) if diff else 0.0
+    return a, b, a - b
 from test_gating import build_policy, dummy_obs  # noqa: E402
 
 
@@ -35,6 +67,30 @@ def main():
     assert torch.equal((gm[2] > 0), (gm[3] > 0))
     assert not torch.equal((gm[0] > 0), (gm[2] > 0))
     print("①b domain-shared Gumbel: ✓")
+    wm = wrs_mask(torch.randn(5, 384), drop_ratio=0.33)
+    expected_keep = 384 - int(0.33 * 384)
+    assert wm.shape == (5, 384)
+    assert torch.equal((wm > 0).sum(dim=1), torch.full((5,), expected_keep))
+    assert torch.allclose(wm.sum(dim=1), torch.full((5,), 384.0), atol=1e-4)
+    wg = wrs_mask(torch.randn(5, 384), drop_ratio=0.33, normalize="global")
+    assert torch.allclose(wg.sum(), torch.tensor(5 * 384.0), atol=1e-4)
+    print("①c official-style WRS: ✓", "per-sample keep", expected_keep)
+
+    # 1d) vectorized diagnostics must match the old pair loop exactly enough.
+    torch.manual_seed(3)
+    m = topk_ste_mask(torch.randn(12, 32), drop_ratio=0.33, temperature=0.1)
+    did = torch.tensor([0, 0, 0, 1, 1, 2, 2, 2, 3, 3, 3, 3])
+    for drop in (False, True):
+        got = mask_iou_by_domain(m, did, drop=drop)
+        ref = _ref_iou(m, did, drop=drop)
+        assert max(abs(a - b) for a, b in zip(got, ref)) < 1e-5, (got, ref)
+    sc = torch.randn(12, 32)
+    got = score_separation_by_domain(sc, did)
+    ref = _ref_score_cos(sc, did)
+    assert max(abs(a - b) for a, b in zip(got, ref)) < 1e-5, (got, ref)
+    # Empty-union pairs are ignored rather than counted as zero IoU.
+    assert mask_iou_by_domain(torch.zeros(4, 8), torch.tensor([0, 0, 1, 1])) == (0.0, 0.0, 0.0)
+    print("①d vectorized IoU/score diagnostics match pair-loop oracle: ✓")
 
     # 2) 训练/推理开关
     ctl = HardMaskController([0, 3, 6, 9], train_only=True)
@@ -81,6 +137,36 @@ def main():
     ai = p.action_importance.summary()
     assert ai["ready"] and ai["v_std"] > 0.1 and ai["raw_nonzero"] > 0, ai
     print("④ action importance:", ai)
+    # 5) classifier domain head must still train when action importance is off.
+    pc, _ = build_policy(enable_gating=True, gate_mode="hard", num_domains=4,
+                         hard_drop_ratio=0.33, hard_layer_indices=[0, 3, 6, 9],
+                         hard_consistency_weight=0.0, domain_id_min=0,
+                         hard_mask_mode="gumbel_ste", action_importance_impl="rsc",
+                         use_action_importance=False, hard_domain_mode="classifier")
+    pc.train()
+    pc._collect.clear()
+    loss_c = pc.compute_loss(batch)
+    loss_c.backward()
+    assert pc.domain_head.weight.grad is not None
+    assert pc.domain_head.weight.grad.abs().sum() > 0
+    print("⑤ classifier trains without action importance: ✓")
+
+    # 6) O(N^2) diagnostics run only every N steps; other steps carry forward.
+    pd, _ = build_policy(enable_gating=True, gate_mode="hard", num_domains=4,
+                         hard_drop_ratio=0.33, hard_layer_indices=[0, 3, 6, 9],
+                         hard_consistency_weight=0.0, domain_id_min=0,
+                         hard_mask_mode="gumbel_ste", action_importance_impl="rsc",
+                         hard_clean_importance_every=1,
+                         gate_diagnostics_every=2)
+    pd.train()
+    for step in range(3):
+        pd._collect.clear()
+        pd.compute_loss(batch).backward()
+        info = pd._current_mask_info
+        assert info["diagnostics_done"] == (step % 2 == 0), (step, info["diagnostics_done"])
+        expected_step = step if step % 2 == 0 else 0
+        assert info["diag"]["step"] == expected_step, (step, info["diag"]["step"])
+    print("⑥ diagnostics cadence + carry-forward: ✓")
     print("hard gate tests: PASS")
     return 0
 

@@ -36,7 +36,7 @@ from dacsc.domain_stats import DomainActivationStats, make_domain_scorer
 from dacsc.gating import DINOv2GateBank, install_gates, gate_summary, remove_gates
 from dacsc.hard_gate import (HardMaskController, install_hard_gates,
                              remove_hard_gates, topk_ste_mask, gumbel_ste_mask,
-                             mask_iou_by_domain, score_separation_by_domain)
+                             wrs_mask, mask_iou_by_domain, score_separation_by_domain)
 from dacsc.dg_methods import DgCDScorer, grad_reverse
 from dacsc.losses import (ActionImportanceEMA, ActionImportanceRSC, choose_rho,
                           coral_from_domains, gate_regularizer)
@@ -107,6 +107,7 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
                  use_action_importance: bool = True,
                  gate_weight_decay: float = 0.0,
                  gate_learning_rate: float | None = None,
+                 gate_diagnostics_every: int = 50,
                  # ---- v2 hard gate ----
                  gate_mode: str = "soft",
                  hard_layer_indices: list | None = None,
@@ -117,6 +118,8 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
                  hard_selection_mode: str = "linear",  # linear | two_stage
                  hard_candidate_ratio: float = 0.6,
                  hard_action_protect_ratio: float = 0.2,
+                 hard_wrs_recover: bool = True,
+                 hard_wrs_normalize: str = "per_sample",
                  hard_action_lambda: float = 1.0,
                  hard_domain_lambda: float = 1.0,
                  hard_domain_grl: float = 0.25,
@@ -241,6 +244,7 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
             weight_decay=float(gate_weight_decay),
             learning_rate=gate_learning_rate)
         self.use_action_importance = bool(use_action_importance)
+        self.gate_diagnostics_every = int(gate_diagnostics_every)
         self.gate_bank = None
         self.domain_stats = None
         self.action_importance = None
@@ -318,6 +322,8 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
                     selection_mode=str(hard_selection_mode),
                     candidate_ratio=float(hard_candidate_ratio),
                     protect_ratio=float(hard_action_protect_ratio),
+                    wrs_recover=bool(hard_wrs_recover),
+                    wrs_normalize=str(hard_wrs_normalize),
                     action_lambda=float(hard_action_lambda),
                     domain_lambda=float(hard_domain_lambda),
                     domain_grl=float(hard_domain_grl),
@@ -361,10 +367,12 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
                             num_channels=hidden)
                 # hook 在 forward 内用当前 batch 特征现场生成 mask。
                 self.hard_controller.set_mask_builder(self._build_hard_mask)
+                need_pre_grad = (self.use_action_importance or
+                                 self.hard_domain_mode == "classifier")
                 self._gate_handles = install_hard_gates(
                     dino, self.hard_controller, collect=self._collect,
                     retain_post_grad=self.use_action_importance,
-                    retain_pre_grad=self.use_action_importance)
+                    retain_pre_grad=need_pre_grad)
                 log.info("hard gate 启用：layers=%s drop=%.2f temp=%.2f "
                          "action_lambda=%.2f domain_grl=%.2f",
                          self.hard_layer_indices, hard_drop_ratio,
@@ -439,10 +447,12 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
         if not self.enable_gating or self._gate_handles:
             return
         if self.gate_mode == "hard":
+            need_pre_grad = (self.use_action_importance or
+                             self.hard_domain_mode == "classifier")
             self._gate_handles = install_hard_gates(
                 self.obs_encoder.dino, self.hard_controller, collect=self._collect,
                 retain_post_grad=self.use_action_importance,
-                retain_pre_grad=self.use_action_importance)
+                retain_pre_grad=need_pre_grad)
         else:
             self._gate_handles = install_gates(
                 self.obs_encoder.dino, self.gate_bank, collect=self._collect,
@@ -593,8 +603,13 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
         return (did_exp - int(self.layout_id_min)).clamp(0, int(self.layout_num) - 1)
 
     @torch.no_grad()
-    def _layout_residual(self, pooled: torch.Tensor, layout_idx):
-        """用每个 layout 的在线通道均值去掉 geometry/task 共享分量。"""
+    def _layout_residual(self, pooled: torch.Tensor, layout_idx,
+                         collect_metrics: bool = False):
+        """用每个 layout 的在线通道均值去掉 geometry/task 共享分量。
+
+        统计更新用 bincount + index_add 一次完成，避免每个 layout 一次
+        Python 循环和多次 GPU kernel 启动；日志标量只在诊断步回读。
+        """
         if (not self.layout_residual_enabled or layout_idx is None
                 or not hasattr(self, "_layout_mean")):
             return pooled, 0.0, 0
@@ -608,19 +623,26 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
         resid = pooled.detach().clone()
         if seen.any():
             resid[seen] = resid[seen] - mean_flat[key[seen]].to(resid)
-        frac = float(seen.float().mean())
-        n_seen = int(seen_flat.sum())
+        # 只用于日志；非诊断步不做 GPU→CPU 同步。
+        frac = float(seen.float().mean()) if collect_metrics else 0.0
+        n_seen = int(seen_flat.sum()) if collect_metrics else 0
         if self.training and self._stats_update_enabled:
             p = pooled.detach()
-            m = self.layout_stats_momentum
-            for k in key.unique(sorted=True).tolist():
-                mask = key == k
-                bm = p[mask].mean(dim=0)
-                if bool(seen_flat[k]):
-                    mean_flat[k] = m * mean_flat[k] + (1.0 - m) * bm
-                else:
-                    mean_flat[k] = bm
-                    seen_flat[k] = True
+            n_keys = mean_flat.shape[0]
+            counts = torch.bincount(key, minlength=n_keys)
+            ids = torch.nonzero(counts > 0, as_tuple=False).view(-1)
+            if ids.numel():
+                sums = p.new_zeros((n_keys, p.shape[1]))
+                sums.index_add_(0, key, p)
+                batch_mean = sums[ids] / counts[ids, None].to(p.dtype)
+                m = float(self.layout_stats_momentum)
+                was_seen = seen_flat[ids]
+                updated = torch.where(
+                    was_seen[:, None],
+                    m * mean_flat[ids].to(p.dtype) + (1.0 - m) * batch_mean,
+                    batch_mean)
+                mean_flat[ids] = updated.to(mean_flat.dtype)
+                seen_flat[ids] = True
         return resid, frac, n_seen
 
     def _build_hard_mask(self, feat: torch.Tensor, layer: int) -> torch.Tensor:
@@ -628,7 +650,29 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
 
         feat: (B*To*V, T, C)，已 detach；这里只产生扰动 mask，
         不把 DgCD/域分数反传到视觉主干。
+
+        诊断相关计算（IoU / score cosine / 原型相似度 / 各类 sqrt 统计）
+        默认只在 ``gate_diagnostics_every`` 步执行；普通 step 只保留轻量
+        mask 生成，避免每步 O(N²) 的 pair 统计拖住 GPU。
         """
+        every = int(getattr(self, "gate_diagnostics_every", 0) or 0)
+        do_diag = bool(
+            every > 0 and (self._gate_step % every == 0)
+            and not getattr(self, "_diag_suppressed", False))
+        if not hasattr(self, "_last_diag"):
+            self._last_diag = {
+                "step": -1,
+                "mask_iou_same": 0.0, "mask_iou_diff": 0.0, "mask_iou_gap": 0.0,
+                "mask_iou_sample_same": 0.0, "mask_iou_sample_diff": 0.0,
+                "mask_iou_sample_gap": 0.0,
+                "drop_iou_same": 0.0, "drop_iou_diff": 0.0, "drop_iou_gap": 0.0,
+                "drop_iou_sample_same": 0.0, "drop_iou_sample_diff": 0.0,
+                "drop_iou_sample_gap": 0.0,
+                "score_cos_same": 0.0, "score_cos_diff": 0.0,
+                "score_cos_gap": 0.0,
+                "proto_cos_mean": 0.0, "proto_cos_max": 0.0,
+            }
+
         did_idx = self._expanded_domain_indices(feat.shape[0], feat.device)
         if did_idx is None:
             return torch.ones((feat.shape[0], feat.shape[-1]), device=feat.device,
@@ -639,14 +683,12 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
             pooled_raw = feat.mean(dim=1)               # (N, C)
         layout_idx = self._expanded_layout_indices(feat.shape[0], feat.device)
         pooled, layout_resid_frac, layout_seen_count = self._layout_residual(
-            pooled_raw, layout_idx)
+            pooled_raw, layout_idx, collect_metrics=do_diag)
 
         if self.hard_domain_mode == "random":
             u_raw = torch.randn_like(pooled)
-            domain_logits = None
         elif self.hard_domain_mode == "dgcd":
             u_raw = self.hard_dgcd.score(pooled.detach(), did_idx)
-            domain_logits = None
         else:
             # 只读域头权重形成通道分数；域损失在 _compute_hard_aux 中另算。
             u_raw = self.domain_head.weight[did_idx] * pooled.detach()
@@ -663,25 +705,29 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
                                                  device=u.device, dtype=u.dtype))
         proto = (sums / counts.clamp_min(1.0)).detach()
         active = counts[:, 0] > 0
-        if bool(self.hard_cfg.get("domain_center", False)) and int(active.sum()) >= 2:
+        if bool(self.hard_cfg.get("domain_center", False)):
             # 去掉所有 style 共有的公共通道成分，只保留跨域差异。
-            proto[active] = proto[active] - proto[active].mean(dim=0, keepdim=True)
-        pn = F.normalize(proto[active].float(), dim=1)
-        if pn.shape[0] >= 2:
-            cm = pn @ pn.t()
-            iu = torch.triu_indices(pn.shape[0], pn.shape[0], offset=1)
-            proto_cos = cm[iu[0], iu[1]]
-            proto_cos_mean = float(proto_cos.mean())
-            proto_cos_max = float(proto_cos.max())
-        else:
-            proto_cos_mean, proto_cos_max = 0.0, 0.0
+            # 用张量条件避免每个 step 都为 int(active.sum()) 同步。
+            centered = proto[active] - proto[active].mean(dim=0, keepdim=True)
+            proto[active] = torch.where(active.sum() >= 2, centered, proto[active])
+        proto_cos_mean = proto_cos_max = 0.0
+        if do_diag:
+            pn = F.normalize(proto[active].float(), dim=1)
+            if pn.shape[0] >= 2:
+                cm = pn @ pn.t()
+                tri = torch.triu(
+                    torch.ones((pn.shape[0], pn.shape[0]), dtype=torch.bool,
+                               device=pn.device), diagonal=1)
+                pc = cm[tri]
+                proto_cos_mean = float(pc.mean())
+                proto_cos_max = float(pc.max())
         if gs > 0:
             u = (1.0 - gs) * u + gs * proto[did_idx]
             u = (u - u.mean(dim=1, keepdim=True)) / u.std(
                 dim=1, keepdim=True, unbiased=False).clamp_min(1e-6)
 
         v_vec = torch.zeros(feat.shape[-1], device=feat.device, dtype=feat.dtype)
-        v_raw_std = 0.0
+        v_raw_std = feat.new_zeros(())
         v_ready = False
         if self.action_importance is not None and self.action_importance.ready():
             ai = self.action_importance
@@ -691,11 +737,11 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
                     if hasattr(ai, "raw_value") else ai.value[li].to(feat.device)
                 v_vec = ai.value[li].to(device=feat.device, dtype=feat.dtype)
                 v_vec = (v_vec - v_vec.mean()) / v_vec.std().clamp_min(1e-6)
-                v_raw_std = float(raw.std())
+                v_raw_std = raw.std()
                 v_ready = True
 
         sel_mode = str(self.hard_cfg.get("selection_mode", "linear"))
-        eligible_frac = 1.0
+        eligible_frac = u.new_ones(())
         if sel_mode == "two_stage" and v_ready:
             # 两阶段：先按域分数选候选，再在候选里排除动作关键通道。
             # 不再让 u 和 v 线性相减，避免动作项把域排序整体压平。
@@ -709,7 +755,7 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
             prot_thr = (torch.topk(v_vec, k_prot, largest=True).values[-1]
                         if k_prot > 0 else torch.tensor(float("inf"), device=u.device))
             eligible = cand & (v_vec[None, :] < prot_thr)
-            eligible_frac = float(eligible.float().mean())
+            eligible_frac = eligible.float().mean()
             # 候选优先；候选不足 k 时再按 u 补齐（不会丢动作关键通道的硬保护）。
             scores = u + 10.0 * eligible.to(u.dtype) - 1e-3 * v_vec[None, :]
         else:
@@ -721,48 +767,64 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
                 temperature=float(self.hard_cfg["temperature"]),
                 group_ids=did_idx,
                 domain_shared=bool(self.hard_cfg.get("domain_shared", False)))
+        elif mode in ("dgcd_wrs", "domaindrop_wrs"):
+            mask = wrs_mask(
+                scores, drop_ratio=float(self.hard_cfg["drop_ratio"]),
+                recover=bool(self.hard_cfg.get("wrs_recover", True)),
+                normalize=str(self.hard_cfg.get("wrs_normalize", "per_sample")))
         else:
             mask = topk_ste_mask(
                 scores, drop_ratio=float(self.hard_cfg["drop_ratio"]),
                 temperature=float(self.hard_cfg["temperature"]))
+
         # 确定性 mask 用于判断“分数本身是否真的有域选择性”；
-        # 随机 mask 的 IoU 只反映采样噪声。
-        mask_det = topk_ste_mask(
-            scores, drop_ratio=float(self.hard_cfg["drop_ratio"]),
-            temperature=float(self.hard_cfg["temperature"]))
-        iou_same, iou_diff, iou_gap = mask_iou_by_domain(mask_det, did_idx)
-        iou_s_samp, iou_d_samp, iou_g_samp = mask_iou_by_domain(mask, did_idx)
-        drop_same, drop_diff, drop_gap = mask_iou_by_domain(mask_det, did_idx, drop=True)
-        drop_s_samp, drop_d_samp, drop_g_samp = mask_iou_by_domain(
-            mask, did_idx, drop=True)
-        cos_same, cos_diff, cos_gap = score_separation_by_domain(scores, did_idx)
+        # 只有诊断步才需要，避免普通 step 再做一次 top-k。
+        mask_det = None
+        if do_diag:
+            mask_det = topk_ste_mask(
+                scores, drop_ratio=float(self.hard_cfg["drop_ratio"]),
+                temperature=float(self.hard_cfg["temperature"]))
+            iou_same, iou_diff, iou_gap = mask_iou_by_domain(mask_det, did_idx)
+            iou_s_samp, iou_d_samp, iou_g_samp = mask_iou_by_domain(mask, did_idx)
+            drop_same, drop_diff, drop_gap = mask_iou_by_domain(
+                mask_det, did_idx, drop=True)
+            drop_s_samp, drop_d_samp, drop_g_samp = mask_iou_by_domain(
+                mask, did_idx, drop=True)
+            cos_same, cos_diff, cos_gap = score_separation_by_domain(scores, did_idx)
+            self._last_diag = {
+                "step": int(self._gate_step),
+                "mask_iou_same": float(iou_same),
+                "mask_iou_diff": float(iou_diff),
+                "mask_iou_gap": float(iou_gap),
+                "mask_iou_sample_same": float(iou_s_samp),
+                "mask_iou_sample_diff": float(iou_d_samp),
+                "mask_iou_sample_gap": float(iou_g_samp),
+                "drop_iou_same": float(drop_same),
+                "drop_iou_diff": float(drop_diff),
+                "drop_iou_gap": float(drop_gap),
+                "drop_iou_sample_same": float(drop_s_samp),
+                "drop_iou_sample_diff": float(drop_d_samp),
+                "drop_iou_sample_gap": float(drop_g_samp),
+                "score_cos_same": float(cos_same),
+                "score_cos_diff": float(cos_diff),
+                "score_cos_gap": float(cos_gap),
+                "proto_cos_mean": float(proto_cos_mean),
+                "proto_cos_max": float(proto_cos_max),
+            }
 
         self.hard_masks[layer] = mask.detach()
         self._current_mask_info = {
             "layer": int(layer), "did_idx": did_idx.detach(),
-            "mask": mask.detach(), "mask_det": mask_det.detach(),
+            "mask": mask.detach(),
+            "mask_det": mask_det.detach() if mask_det is not None else None,
             "scores": scores.detach(), "u": u.detach(), "v": v_vec.detach(),
-            "v_raw_std": float(v_raw_std), "v_ready": bool(v_ready),
-            "eligible_frac": float(eligible_frac),
+            "v_raw_std_t": v_raw_std, "v_ready": bool(v_ready),
+            "eligible_frac_t": eligible_frac,
             "layout_resid_frac": float(layout_resid_frac),
             "layout_seen_count": int(layout_seen_count),
-            "mask_iou_same": float(iou_same),
-            "mask_iou_diff": float(iou_diff),
-            "mask_iou_gap": float(iou_gap),
-            "mask_iou_sample_same": float(iou_s_samp),
-            "mask_iou_sample_diff": float(iou_d_samp),
-            "mask_iou_sample_gap": float(iou_g_samp),
-            "drop_iou_same": float(drop_same),
-            "drop_iou_diff": float(drop_diff),
-            "drop_iou_gap": float(drop_gap),
-            "drop_iou_sample_same": float(drop_s_samp),
-            "drop_iou_sample_diff": float(drop_d_samp),
-            "drop_iou_sample_gap": float(drop_g_samp),
-            "score_cos_same": float(cos_same),
-            "score_cos_diff": float(cos_diff),
-            "score_cos_gap": float(cos_gap),
-            "proto_cos_mean": float(proto_cos_mean),
-            "proto_cos_max": float(proto_cos_max),
+            "diagnostics_every": int(every),
+            "diagnostics_done": bool(do_diag),
+            "diag": dict(self._last_diag),
         }
         return mask
 
@@ -776,6 +838,7 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
         old_stats_update = self._stats_update_enabled
         old_info = self._current_mask_info
         old_collect = self._collect
+        old_suppress = getattr(self, "_diag_suppressed", False)
         cpu_state = torch.random.get_rng_state()
         cuda_state = torch.cuda.get_rng_state_all() if torch.cuda.is_available() else None
         seed = 1234567 + int(self._gate_step)
@@ -783,6 +846,9 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
             self._current_domain_ids = batch.get("domain_id", None)
             self._current_layout_ids = batch.get("layout_id", None)
             self._stats_update_enabled = False
+            # 主训练前向已经记录过本 step 的诊断；probe 的额外两次
+            # forward 不再重复 O(N²) 统计。
+            self._diag_suppressed = True
             self._hard_probe_metrics = {}
             for name, build in (("on", True), ("off", False)):
                 self._collect = {}
@@ -806,6 +872,7 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
             self._current_mask_info = old_info
             self._stats_update_enabled = old_stats_update
             self._collect = old_collect
+            self._diag_suppressed = old_suppress
             torch.random.set_rng_state(cpu_state)
             if cuda_state is not None:
                 torch.cuda.set_rng_state_all(cuda_state)
@@ -840,54 +907,66 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
         mask = info["mask"]
         step_now = self._gate_step
         self._gate_step += 1
-        keep_frac = float((mask > 0).float().mean())
-        ai_summary = (self.action_importance.summary()
-                      if self.action_importance is not None else {})
-        self._last_gate_metrics = {
-            "step": int(step_now), "mode": "hard", "layer": layer,
-            "drop_ratio": float(self.hard_cfg["drop_ratio"]),
-            "mask_keep_fraction": keep_frac,
-            "suppression": float(1.0 - keep_frac),
-            "domain_loss": float(domain_loss.detach()),
-            "domain_acc": (float((domain_logits.argmax(1) == did_idx).float().mean())
-                           if domain_logits is not None else 0.0),
-            "u_std": float(info["u"].std()),
-            "v_ready": bool(info["v_ready"]),
-            "v_std": float(info["v"].std()),
-            "v_raw_std": float(info["v_raw_std"]),
-            "v_raw_mean": float(ai_summary.get("raw_mean", 0.0)),
-            "v_raw_rel_std": float(ai_summary.get("raw_rel_std", 0.0)),
-            "selection_mode": str(self.hard_cfg.get("selection_mode", "linear")),
-            "eligible_frac": float(info.get("eligible_frac", 1.0)),
-            "layout_resid_frac": float(info.get("layout_resid_frac", 0.0)),
-            "layout_seen_count": int(info.get("layout_seen_count", 0)),
-            "consistency": float(cons.detach()),
-            "mask_mode": str(self.hard_cfg["mask_mode"]),
-            "mask_iou_same": float(info["mask_iou_same"]),
-            "mask_iou_diff": float(info["mask_iou_diff"]),
-            "mask_iou_gap": float(info["mask_iou_gap"]),
-            "mask_iou_sample_same": float(info["mask_iou_sample_same"]),
-            "mask_iou_sample_diff": float(info["mask_iou_sample_diff"]),
-            "mask_iou_sample_gap": float(info["mask_iou_sample_gap"]),
-            "drop_iou_same": float(info["drop_iou_same"]),
-            "drop_iou_diff": float(info["drop_iou_diff"]),
-            "drop_iou_gap": float(info["drop_iou_gap"]),
-            "drop_iou_sample_same": float(info["drop_iou_sample_same"]),
-            "drop_iou_sample_diff": float(info["drop_iou_sample_diff"]),
-            "drop_iou_sample_gap": float(info["drop_iou_sample_gap"]),
-            "score_cos_same": float(info["score_cos_same"]),
-            "score_cos_diff": float(info["score_cos_diff"]),
-            "score_cos_gap": float(info["score_cos_gap"]),
-            "proto_cos_mean": float(info["proto_cos_mean"]),
-            "proto_cos_max": float(info["proto_cos_max"]),
-            "dp_loss": float(dp_loss.detach()),
-            "aux_loss": float(aux.detach()),
-        }
+        # 指标只在 step 0 / 20 的倍数记录。普通 step 不做任何 GPU→CPU
+        # 回读，避免把训练循环拖成“等 Python 读标量”。
+        should_log = (step_now == 0 or step_now % 20 == 0
+                      or step_now % 50 == 0)
+        if should_log:
+            keep_frac = float((mask > 0).float().mean())
+            ai_summary = (self.action_importance.summary()
+                          if self.action_importance is not None else {})
+            diag = info.get("diag", {})
+            self._last_gate_metrics = {
+                "step": int(step_now), "mode": "hard", "layer": layer,
+                "drop_ratio": float(self.hard_cfg["drop_ratio"]),
+                "mask_keep_fraction": keep_frac,
+                "suppression": float(1.0 - keep_frac),
+                "domain_loss": float(domain_loss.detach()),
+                "domain_acc": (float((domain_logits.argmax(1) == did_idx).float().mean())
+                               if domain_logits is not None else 0.0),
+                "u_std": float(info["u"].std()),
+                "v_ready": bool(info["v_ready"]),
+                "v_std": float(info["v"].std()),
+                "v_raw_std": float(info["v_raw_std_t"]),
+                "v_raw_mean": float(ai_summary.get("raw_mean", 0.0)),
+                "v_raw_rel_std": float(ai_summary.get("raw_rel_std", 0.0)),
+                "selection_mode": str(self.hard_cfg.get("selection_mode", "linear")),
+                "eligible_frac": float(info["eligible_frac_t"]),
+                "layout_resid_frac": float(info.get("layout_resid_frac", 0.0)),
+                "layout_seen_count": int(info.get("layout_seen_count", 0)),
+                "consistency": float(cons.detach()),
+                "mask_mode": str(self.hard_cfg["mask_mode"]),
+                "diagnostics_every": int(info.get("diagnostics_every", 0)),
+                "diagnostics_done": bool(info.get("diagnostics_done", False)),
+                "diagnostics_step": int(diag.get("step", -1)),
+                "mask_iou_same": float(diag.get("mask_iou_same", 0.0)),
+                "mask_iou_diff": float(diag.get("mask_iou_diff", 0.0)),
+                "mask_iou_gap": float(diag.get("mask_iou_gap", 0.0)),
+                "mask_iou_sample_same": float(diag.get("mask_iou_sample_same", 0.0)),
+                "mask_iou_sample_diff": float(diag.get("mask_iou_sample_diff", 0.0)),
+                "mask_iou_sample_gap": float(diag.get("mask_iou_sample_gap", 0.0)),
+                "drop_iou_same": float(diag.get("drop_iou_same", 0.0)),
+                "drop_iou_diff": float(diag.get("drop_iou_diff", 0.0)),
+                "drop_iou_gap": float(diag.get("drop_iou_gap", 0.0)),
+                "drop_iou_sample_same": float(diag.get("drop_iou_sample_same", 0.0)),
+                "drop_iou_sample_diff": float(diag.get("drop_iou_sample_diff", 0.0)),
+                "drop_iou_sample_gap": float(diag.get("drop_iou_sample_gap", 0.0)),
+                "score_cos_same": float(diag.get("score_cos_same", 0.0)),
+                "score_cos_diff": float(diag.get("score_cos_diff", 0.0)),
+                "score_cos_gap": float(diag.get("score_cos_gap", 0.0)),
+                "proto_cos_mean": float(diag.get("proto_cos_mean", 0.0)),
+                "proto_cos_max": float(diag.get("proto_cos_max", 0.0)),
+                "dp_loss": float(dp_loss.detach()),
+                "aux_loss": float(aux.detach()),
+            }
         if step_now % 50 == 0:
             self._probe_gate_effect(batch)
-            self._last_gate_metrics.update(getattr(self, "_hard_probe_metrics", {}))
-        if step_now % 20 == 0 or step_now % 50 == 0:
-            log.info("GATE_METRICS %s", json.dumps(self._last_gate_metrics, sort_keys=True))
+            if self._last_gate_metrics:
+                self._last_gate_metrics.update(
+                    getattr(self, "_hard_probe_metrics", {}))
+        if should_log:
+            log.info("GATE_METRICS %s",
+                     json.dumps(self._last_gate_metrics, sort_keys=True))
         return aux
 
     def predict_action(self, obs_dict):

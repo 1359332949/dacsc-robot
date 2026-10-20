@@ -22,7 +22,7 @@ ROOT = Path(__file__).resolve().parent.parent
 DP_CONFIG = ROOT / "repos" / "diffusion_policy" / "diffusion_policy" / "config"
 
 
-def build_policy(enable_gating=True, gate_init=0.999, num_domains=4, **over):
+def build_policy(enable_gating=True, gate_init=0.999, num_domains=4, use_action_importance=True, **over):
     import hydra
     OmegaConf.register_new_resolver("eval", eval, replace=True)
     with hydra.initialize_config_dir(config_dir=str(DP_CONFIG), version_base=None):
@@ -33,7 +33,7 @@ def build_policy(enable_gating=True, gate_init=0.999, num_domains=4, **over):
     pol = dict(cfg.policy)
     pol["_target_"] = "dacsc.policy.RoboCasaDINOv2Policy"
     pol.update(enable_gating=enable_gating, gate_init=gate_init, num_domains=num_domains,
-               gate_layer_indices=None, use_action_importance=True, **over)
+               gate_layer_indices=None, use_action_importance=use_action_importance, **over)
     p = hydra.utils.instantiate(pol)
     from diffusion_policy.model.common.normalizer import LinearNormalizer
     nz = LinearNormalizer()

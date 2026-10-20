@@ -73,6 +73,8 @@ policy:
   hard_selection_mode: two_stage  # 域候选内再保护动作通道
   hard_candidate_ratio: 0.6
   hard_action_protect_ratio: 0.2
+  hard_wrs_recover: true            # DgCD/DomainDrop WRS recovery switch
+  hard_wrs_normalize: per_sample    # per_sample | global | none
   hard_action_lambda: 1.0
   hard_domain_mode: dgcd          # dgcd = per-sample 分布差异；classifier = 弱分类器消融
   hard_domain_lambda: 0.1          # 仅 classifier 模式使用
@@ -113,6 +115,7 @@ policy:
   #   dg/dη ≈ 0.001，g 空间的实际步长只有 lr×0.001。设为 1e-2 相当于把
   #   g 空间步长拉回到 ~1e-5/步，长训练下才能收敛到有效抑制。
   gate_learning_rate: 1.0e-2     # soft 模式门控 lr
+  gate_diagnostics_every: 50      # full IoU/cosine diagnostics every N steps
 
   # ---- DiT（与官方 bs192 一致）----
   n_layer: 12
