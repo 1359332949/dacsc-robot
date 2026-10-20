@@ -42,6 +42,8 @@ class CNNChannelDropoutPolicy(DiffusionTransformerHybridImagePolicy):
         self.cnn_diagnostics_every = int(cnn_diagnostics_every)
         self._cnn_step = 0
         self._last_cnn_metrics = {}
+        self._last_dp_loss_t = None
+        self._last_aux_loss_t = None
         self.cnn_controllers = install_cnn_dropout(
             self.obs_encoder,
             mode=self.cnn_dropout_mode,
@@ -79,15 +81,21 @@ class CNNChannelDropoutPolicy(DiffusionTransformerHybridImagePolicy):
             controller.set_context(did_idx, self._cnn_step)
 
         loss = super().compute_loss(batch)
+        self._last_dp_loss_t = loss.detach()
         aux = [c.aux_loss() for c in self.cnn_controllers]
         aux = [a for a in aux if a is not None]
-        if aux:
-            loss = loss + torch.stack(aux).mean()
+        aux_mean = torch.stack(aux).mean() if aux else None
+        self._last_aux_loss_t = (aux_mean.detach() if aux_mean is not None else None)
+        if aux_mean is not None:
+            loss = loss + aux_mean
 
         self._cnn_step += 1
         every = self.cnn_diagnostics_every
         if every > 0 and self._cnn_step % every == 0:
-            metrics = {"step": self._cnn_step, "mode": self.cnn_dropout_mode}
+            metrics = {"step": self._cnn_step, "mode": self.cnn_dropout_mode,
+                       "dp_loss": float(self._last_dp_loss_t),
+                       "aux_loss": (float(self._last_aux_loss_t)
+                                    if self._last_aux_loss_t is not None else 0.0)}
             for i, controller in enumerate(self.cnn_controllers):
                 for k, v in controller.summary().items():
                     metrics[f"view{i}_{k}"] = v

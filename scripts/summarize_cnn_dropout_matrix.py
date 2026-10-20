@@ -53,6 +53,8 @@ def main():
         row = {"group": group, "seed": seed, "train_action_mse": mse,
                "train_loss": train_loss}
         if found:
+            row["dp_loss"] = found.get("dp_loss")
+            row["aux_loss"] = found.get("aux_loss")
             row["keep_frac"] = _avg_views(found, "_keep_frac_7")
             row["ratio"] = _avg_views(found, "_ratio_7")
             row["domain_loss"] = _avg_views(found, "_domain_loss_7")
@@ -63,7 +65,8 @@ def main():
 
     if args.csv is not None:
         fields = ["group", "seed", "train_action_mse", "train_loss",
-                  "keep_frac", "ratio", "domain_loss", "domain_acc"]
+                  "dp_loss", "aux_loss", "keep_frac", "ratio",
+                  "domain_loss", "domain_acc"]
         args.csv.parent.mkdir(parents=True, exist_ok=True)
         with args.csv.open("w", newline="") as f:
             w = csv.DictWriter(f, fieldnames=fields)
@@ -78,8 +81,8 @@ def main():
     print(f"runs={len(rows)} step={args.step}")
     for group in sorted(by):
         print(f"\n[{group}] n={len(by[group])}")
-        for k in ["train_action_mse", "train_loss", "keep_frac", "ratio",
-                  "domain_loss", "domain_acc"]:
+        for k in ["train_action_mse", "train_loss", "dp_loss", "aux_loss",
+                  "keep_frac", "ratio", "domain_loss", "domain_acc"]:
             vals = [float(x[k]) for x in by[group] if x.get(k) is not None]
             if not vals:
                 continue
