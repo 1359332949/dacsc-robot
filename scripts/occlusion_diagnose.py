@@ -56,8 +56,6 @@ def build_policy_and_batch(ckpt: Path, batch_size: int, device: str):
 
 
 def scores_for_batch(policy, batch, layer: int | None):
-    print("DEBUG policy_device", policy.device, "normalizer_device", policy.normalizer.device)
-    print("DEBUG obs_devices", {k: str(v.device) for k, v in batch["obs"].items()})
     policy.train()
     policy._stats_update_enabled = False
     policy._current_domain_ids = batch.get("domain_id", None)
