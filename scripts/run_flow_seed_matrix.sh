@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 # Flow K48 mechanism matrix: no-mask / random mask / domain gate × seeds 42,43,44.
 set -uo pipefail
+export WANDB_MODE=disabled
+export WANDB_DISABLED=true
+export WANDB_SILENT=true
+export OTEL_SDK_DISABLED=true
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 OUT="${1:-/hy-tmp/runs/flow_seed_matrix}"
 mkdir -p "$OUT"
@@ -12,7 +16,7 @@ COMMON=(
   training.num_epochs=1 training.max_train_steps=51
   training.lr_warmup_steps=20 training.checkpoint_every=1000
   training.sample_every=1000 training.val_every=null checkpoint.topk.k=1
-  task.dataset.domain_batch_size=30
+  task.dataset.domain_batch_size=30 logging.mode=disabled
   policy.hard_mask_mode=gumbel_ste
   policy.action_importance_impl=rsc
   "policy.hard_layer_indices=[11]"
@@ -28,7 +32,7 @@ run_one() {
   fi
   echo "=== $group seed=$seed -> $dir ==="
   DACSC_CONFIG_NAME=train_dinov2_flow WANDB_MODE=disabled \
-    bash scripts/run_real_train.sh "${COMMON[@]}" \
+    timeout 1800 bash scripts/run_real_train.sh "${COMMON[@]}" \
     training.seed="$seed" task.dataset.seed="$seed" \
     hydra.run.dir="$dir" "$@" > "$dir/train.log" 2>&1
   local rc=$?

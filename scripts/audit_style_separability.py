@@ -118,6 +118,7 @@ def main():
     ap.add_argument("--frame-frac", type=float, default=0.5)
     ap.add_argument("--k", type=int, default=10)
     ap.add_argument("--out", type=Path, default=Path("/hy-tmp/runs/style_separability.json"))
+    ap.add_argument("--require-cuda", action="store_true")
     args = ap.parse_args()
 
     meta, paths = [], []
@@ -134,7 +135,10 @@ def main():
     if not meta:
         raise SystemExit("没有找到样本")
 
+    if args.require_cuda and not torch.cuda.is_available():
+        raise SystemExit("DACSC audit: CUDA 不可用")
     device = "cuda" if torch.cuda.is_available() else "cpu"
+    print(f"DACSC audit device: {device}")
     net = load_dinov2("dinov2_vits14", pretrained=True).to(device).eval()
     feats = []
     bs = 32

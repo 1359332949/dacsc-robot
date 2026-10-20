@@ -176,7 +176,7 @@ training:
 logging:
   project: dacsc_dinov2
   resume: False
-  mode: offline            # 避免依赖 wandb 联网；需要时改 online
+  mode: disabled           # 机制实验不初始化 W&B/OTel
   name: ${now:%Y.%m.%d-%H.%M.%S}_${name}_${task_name}
   tags: ["${name}", "${task_name}", "${exp_name}"]
   id: null

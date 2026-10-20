@@ -74,20 +74,22 @@ class TrainDiffusionTransformerHybridWorkspace(BaseWorkspace):
         timeout_handler = InitProcessGroupKwargs(timeout=timedelta(hours=3)) # have processes wait up to 3 hours for evals to finish
         cfg = copy.deepcopy(self.cfg)
         # set split_batches=True so that effective batch size stays the same regardless of num GPUs
-        accelerator = Accelerator(log_with='wandb', kwargs_handlers=[ddp_kwargs, timeout_handler], split_batches=True)
+        log_with = None if str(cfg.logging.get("mode", "online")) == "disabled" else "wandb"
+        accelerator = Accelerator(log_with=log_with,
+                                   kwargs_handlers=[ddp_kwargs, timeout_handler],
+                                   split_batches=True)
 
         if cfg.training.debug:
             cfg.logging.project = "debug"
 
-        wandb_cfg = OmegaConf.to_container(cfg.logging, resolve=True)
-
-        wandb_cfg.pop('project')
-
-        accelerator.init_trackers(
-            project_name=cfg.logging.project,
-            config=OmegaConf.to_container(cfg, resolve=True),
-            init_kwargs={"wandb": wandb_cfg}
-        )
+        if log_with is not None:
+            wandb_cfg = OmegaConf.to_container(cfg.logging, resolve=True)
+            wandb_cfg.pop('project')
+            accelerator.init_trackers(
+                project_name=cfg.logging.project,
+                config=OmegaConf.to_container(cfg, resolve=True),
+                init_kwargs={"wandb": wandb_cfg}
+            )
 
         # wandb_run = wandb.init(
         #     dir=str(self.output_dir),
@@ -210,6 +212,10 @@ class TrainDiffusionTransformerHybridWorkspace(BaseWorkspace):
         print("dataloader length:", len(train_dataloader))
         print("dataset length:", len(dataset))
         device = self.model.device
+        assert device.type == "cuda", (
+            f"DACSC: 训练设备不是 CUDA，而是 {device!r}；拒绝静默 CPU 回退")
+        print("DACSC training device:", device,
+              "|", torch.cuda.get_device_name(device))
         if self.ema_model is not None:
             self.ema_model.to(device)
 
@@ -368,7 +374,7 @@ class TrainDiffusionTransformerHybridWorkspace(BaseWorkspace):
                     accelerator.wait_for_everyone()
 
                 # checkpoint
-                if self.epoch > 0 and (self.epoch % cfg.training.checkpoint_every) == 0:
+                if self.epoch >= 0 and (self.epoch % cfg.training.checkpoint_every) == 0:
                     if accelerator.is_main_process:
                         model_ddp = self.model
                         self.model = accelerator.unwrap_model(self.model)

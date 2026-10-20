@@ -16,8 +16,19 @@ fi
 export DACSC_CLIP_PATH="$CLIP_PATH"
 export TRANSFORMERS_OFFLINE=1
 export HF_HUB_OFFLINE=1
+export CUDA_VISIBLE_DEVICES="${CUDA_VISIBLE_DEVICES:-0}"
 export WANDB_MODE=disabled
+export WANDB_DISABLED=true
 export WANDB_SILENT=true
+export OTEL_SDK_DISABLED=true
+
+python3 - <<'PY'
+import torch
+if not torch.cuda.is_available():
+    raise SystemExit("DACSC: CUDA 不可用，拒绝启动训练（禁止静默 CPU 回退）")
+p = torch.cuda.get_device_properties(0)
+print(f"DACSC GPU: {torch.cuda.get_device_name(0)} | {p.total_memory/1024**3:.1f} GiB")
+PY
 cd "$ROOT/repos/diffusion_policy"
 python3 -c 'import dacsc.compat; import runpy; runpy.run_path("train.py", run_name="__main__")' \
   --config-name="$CONFIG_NAME" \

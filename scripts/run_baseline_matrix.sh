@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 # Baselines before any long training: no-mask ERM and DFR-like frozen-encoder head retraining.
 set -uo pipefail
+export WANDB_MODE=disabled
+export WANDB_DISABLED=true
+export WANDB_SILENT=true
+export OTEL_SDK_DISABLED=true
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 OUT="${1:-/hy-tmp/runs/baseline_matrix}"
 mkdir -p "$OUT"
@@ -20,7 +24,7 @@ run_one() {
   local dir="$OUT/$name"
   mkdir -p "$dir"
   echo "=== $name -> $dir ==="
-  DACSC_CONFIG_NAME=train_dinov2_bs192 WANDB_MODE=disabled bash scripts/run_real_train.sh "${COMMON[@]}" \
+  DACSC_CONFIG_NAME=train_dinov2_bs192 WANDB_MODE=disabled timeout 1800 bash scripts/run_real_train.sh "${COMMON[@]}" \
     hydra.run.dir="$dir" "$@" > "$dir/train.log" 2>&1
   local rc=$?
   echo "$name rc=$rc"
