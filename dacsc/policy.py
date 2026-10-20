@@ -69,6 +69,11 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
                  pool: str = "mean",
                  dino_pretrained: bool = True,
                  dino_unfreeze_last_n_blocks: int | None = None,
+                 use_resampler: bool = False,
+                 resampler_num_queries: int = 48,
+                 resampler_dim: int = 64,
+                 resampler_heads: int = 6,
+                 resampler_dropout: float = 0.0,
                  # ---- DiT 架构（默认与官方 bs192 配置一致）----
                  n_layer: int = 8,
                  n_cond_layers: int = 0,
@@ -80,6 +85,8 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
                  time_as_cond: bool = True,
                  obs_as_cond: bool = True,
                  pred_action_steps_only: bool = False,
+                 flow_matching: bool = False,
+                 flow_time_scale: float = 1000.0,
                  # ---- 官方配置里存在、但本策略不需要的参数（显式接收以免漏进 kwargs）----
                  # DINOv2 自己做裁剪与归一化，故忽略 crop_shape / vision_backbone 等
                  vision_backbone: str = "resnet18",
@@ -129,6 +136,7 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
                  layout_id_min: int = 11,
                  layout_num: int = 50,
                  layout_stats_momentum: float = 0.99,
+                 token_score_pool: str = "mean",  # mean | meanmax
                  action_importance_impl: str = "taylor",  # "taylor" | "rsc"
                  rsc_drop_fraction: float = 0.3,
                  lambda_coral: float = 0.0,          # >0 时加入 Deep CORAL 项
@@ -154,7 +162,14 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
             pool=pool,
             pretrained=dino_pretrained,
             unfreeze_last_n_blocks=dino_unfreeze_last_n_blocks,
+            use_resampler=use_resampler,
+            resampler_num_queries=resampler_num_queries,
+            resampler_dim=resampler_dim,
+            resampler_heads=resampler_heads,
+            resampler_dropout=resampler_dropout,
         )
+        self.flow_matching = bool(flow_matching)
+        self.flow_time_scale = float(flow_time_scale)
         if freeze_obs_encoder:
             for p in obs_encoder.parameters():
                 p.requires_grad_(False)
@@ -238,6 +253,7 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
         self.layout_id_min = int(layout_id_min)
         self.layout_num = int(layout_num)
         self.layout_stats_momentum = float(layout_stats_momentum)
+        self.token_score_pool = str(token_score_pool)
 
         if self.enable_gating:
             assert gate_mode in ("soft", "hard"), f"未知 gate_mode={gate_mode}"
@@ -529,7 +545,7 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
         self.hard_controller.build_enabled = False
         self._collect.clear()
         try:
-            clean_loss = super().compute_loss(batch)
+            clean_loss = self._base_loss(batch)
             clean_loss.backward()
             pre = self._collect.get("pre_gate_live", [])
             if pre:
@@ -610,7 +626,10 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
         if did_idx is None:
             return torch.ones((feat.shape[0], feat.shape[-1]), device=feat.device,
                               dtype=feat.dtype)
-        pooled_raw = feat.mean(dim=1)                   # (N, C)
+        if self.token_score_pool == "meanmax":
+            pooled_raw = 0.5 * (feat.mean(dim=1) + feat.amax(dim=1))
+        else:
+            pooled_raw = feat.mean(dim=1)               # (N, C)
         layout_idx = self._expanded_layout_indices(feat.shape[0], feat.device)
         pooled, layout_resid_frac, layout_seen_count = self._layout_residual(
             pooled_raw, layout_idx)
@@ -766,7 +785,7 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
                 torch.manual_seed(seed)
                 if torch.cuda.is_available():
                     torch.cuda.manual_seed_all(seed)
-                loss = super().compute_loss(batch)
+                loss = self._base_loss(batch)
                 self._hard_probe_metrics[f"gate_{name}_mse"] = float(loss.detach())
             on = self._hard_probe_metrics["gate_on_mse"]
             off = self._hard_probe_metrics["gate_off_mse"]
@@ -864,12 +883,59 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
             log.info("GATE_METRICS %s", json.dumps(self._last_gate_metrics, sort_keys=True))
         return aux
 
+    # ---------- ★ 动作头：DDPM 或 rectified-flow matching ----------
+    def _base_loss(self, batch):
+        if self.flow_matching:
+            return self._flow_loss(batch)
+        return super().compute_loss(batch)
+
+    def _flow_loss(self, batch):
+        """Rectified flow matching loss: predict velocity x1-x0."""
+        nobs = self.normalizer.normalize(batch["obs"])
+        nactions = self.normalizer["action"].normalize(batch["action"])
+        B = int(nactions.shape[0])
+        To = int(self.n_obs_steps)
+        this_nobs = {
+            k: v[:, :To, ...].reshape(-1, *v.shape[2:])
+            for k, v in nobs.items()
+        }
+        cond = self.obs_encoder(this_nobs).reshape(B, To, -1)
+        trajectory = nactions
+        if self.pred_action_steps_only:
+            start = To - 1
+            trajectory = nactions[:, start:start + self.n_action_steps]
+        x0 = torch.randn_like(trajectory)
+        t = torch.rand((B, 1, 1), device=trajectory.device, dtype=trajectory.dtype)
+        xt = (1.0 - t) * x0 + t * trajectory
+        target = trajectory - x0
+        ts = t.reshape(B) * self.flow_time_scale
+        pred = self.model(xt, ts, cond)
+        return F.mse_loss(pred, target)
+
+    def conditional_sample(self, condition_data, condition_mask,
+                           cond=None, generator=None, **kwargs):
+        if not self.flow_matching:
+            return super().conditional_sample(
+                condition_data, condition_mask, cond=cond,
+                generator=generator, **kwargs)
+        B, T, Da = condition_data.shape
+        x = torch.randn(condition_data.shape, dtype=condition_data.dtype,
+                        device=condition_data.device, generator=generator)
+        steps = max(1, int(self.num_inference_steps))
+        for i in range(steps):
+            t = torch.full((B,), i / float(steps),
+                           dtype=x.dtype, device=x.device)
+            v = self.model(x, t * self.flow_time_scale, cond)
+            x = x + v / float(steps)
+            x[condition_mask] = condition_data[condition_mask]
+        return x
+
     # ---------- ★ 在官方 compute_loss 之上追加 L_gate ----------
     def compute_loss(self, batch):
         # 验证/导出在 no_grad 下运行：只算 DP loss，不生成 mask、不更新统计、
         # 不推进 gate_step，也不写 GATE_METRICS。
         if not torch.is_grad_enabled():
-            return super().compute_loss(batch)
+            return self._base_loss(batch)
         clean_every = (int(self.hard_cfg.get("clean_importance_every", 0))
                        if hasattr(self, "hard_cfg") else 0)
         # 1) 仅在关闭 clean-forward 时，才回退到上一轮梯度估计 Taylor v。
@@ -888,7 +954,7 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
             self._current_domain_ids = batch.get("domain_id", None)
             self._current_layout_ids = batch.get("layout_id", None)
             self._current_mask_info = {}
-        loss = super().compute_loss(batch)
+        loss = self._base_loss(batch)
         if not self.enable_gating:
             return loss
         if self.gate_mode == "hard":

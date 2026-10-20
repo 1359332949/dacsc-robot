@@ -94,7 +94,12 @@ class DINOv2ObsEncoder(nn.Module):
                  random_crop: bool = True,
                  pool: str = "mean",
                  pretrained: bool = True,
-                 unfreeze_last_n_blocks: int | None = None):
+                 unfreeze_last_n_blocks: int | None = None,
+                 use_resampler: bool = False,
+                 resampler_num_queries: int = 48,
+                 resampler_dim: int = 64,
+                 resampler_heads: int = 6,
+                 resampler_dropout: float = 0.0):
         super().__init__()
         assert pool in ("mean", "meanmax"), f"v1 只实现 mean/meanmax，收到 {pool}"
         self.shape_meta = shape_meta
@@ -131,12 +136,26 @@ class DINOv2ObsEncoder(nn.Module):
                 for p in self.dino.norm.parameters():
                     p.requires_grad_(True)
 
+        self.use_resampler = bool(use_resampler)
+        self.resampler_num_queries = int(resampler_num_queries)
+        self.resampler_dim = int(resampler_dim)
+        self.resampler = None
+        if self.use_resampler:
+            from dacsc.resampler import LearnedQueryResampler
+            self.resampler = LearnedQueryResampler(
+                in_dim=d, out_dim=self.resampler_dim,
+                num_queries=self.resampler_num_queries,
+                n_heads=int(resampler_heads), dropout=float(resampler_dropout))
+
         self.crop = _Crop224(crop_size, random_crop)
         self.register_buffer("img_mean", _IMAGENET_MEAN.clone(), persistent=False)
         self.register_buffer("img_std", _IMAGENET_STD.clone(), persistent=False)
 
         n_views = len(self.rgb_keys)
-        per_view_in = d * (2 if pool == "meanmax" else 1)
+        if self.use_resampler:
+            per_view_in = self.resampler_num_queries * self.resampler_dim
+        else:
+            per_view_in = d * (2 if pool == "meanmax" else 1)
         self.view_proj = nn.Sequential(
             nn.Linear(per_view_in, view_feat_dim), nn.ReLU(),
             nn.Linear(view_feat_dim, view_feat_dim))
@@ -171,12 +190,18 @@ class DINOv2ObsEncoder(nn.Module):
         # 把 V 个视角并到 batch 维，一次前向（共享权重）
         cat = torch.stack(imgs, dim=1).reshape(B * V, *imgs[0].shape[1:])
         feats = self.dino.forward_features(cat)["x_norm_patchtokens"]   # (B*V, T, d)
-        if self.pool == "meanmax":
+        if self.use_resampler:
+            pooled = self.resampler(feats)                       # (B*V, K*out_dim)
+        elif self.pool == "meanmax":
             pooled = torch.cat([feats.mean(dim=1), feats.amax(dim=1)], dim=-1)
         else:
             pooled = feats.mean(dim=1)                          # (B*V, d)
-        pf = pooled.reshape(B, V, -1)                           # (B, V, d)
-        self.last_patch_tokens = {"pooled": pf.detach()}
+        pf = pooled.reshape(B, V, -1)                           # (B, V, D)
+        self.last_patch_tokens = {
+            "pooled": pf.detach(),
+            "patch_tokens": feats.detach(),
+            "resampled": self.use_resampler,
+        }
         return pf
 
     def forward(self, obs_dict: Dict[str, torch.Tensor]) -> torch.Tensor:

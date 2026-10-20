@@ -49,6 +49,13 @@ policy:
   feature_dim: 256                 # → obs_feature_dim
   freeze_dino: False               # ★ CoRP 4.4：冻结会掉约 20 分，必须联合微调
   freeze_obs_encoder: false        # DFR-like baseline: 冻结整个观测编码器，只训动作头
+  use_resampler: false             # CoRP-style learned-query token compressor
+  resampler_num_queries: 48
+  resampler_dim: 64
+  resampler_heads: 6
+  resampler_dropout: 0.0
+  flow_matching: false             # DDPM baseline by default
+  flow_time_scale: 1000.0
   dino_pretrained: True            # 消融：false = 随机初始化 ViT-S/14
   dino_unfreeze_last_n_blocks: null # 消融：4 = 只微调最后 4 个 block
   random_crop: True
@@ -95,6 +102,7 @@ policy:
   layout_id_min: 11
   layout_num: 50
   layout_stats_momentum: 0.99
+  token_score_pool: mean           # mean | meanmax
   action_importance_impl: rsc    # rsc = 梯度分位数；taylor = EMA
                                  # rsc    = 梯度分位数掩码（DomainBed RSC, MIT）
   rsc_drop_fraction: 0.3
