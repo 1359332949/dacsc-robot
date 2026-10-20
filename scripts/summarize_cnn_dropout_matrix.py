@@ -8,8 +8,9 @@ from pathlib import Path
 PAT = re.compile(r"CNN_DROPOUT (\{.*\})")
 
 
-def _avg_views(d, suffix):
-    vals = [float(v) for k, v in d.items() if k.startswith("view") and k.endswith(suffix)]
+def _avg_metric(d, prefix):
+    pat = re.compile(rf"^view\d+_{prefix}_\d+$")
+    vals = [float(v) for k, v in d.items() if pat.match(k)]
     return sum(vals) / len(vals) if vals else None
 
 
@@ -55,10 +56,13 @@ def main():
         if found:
             row["dp_loss"] = found.get("dp_loss")
             row["aux_loss"] = found.get("aux_loss")
-            row["keep_frac"] = _avg_views(found, "_keep_frac_7")
-            row["ratio"] = _avg_views(found, "_ratio_7")
-            row["domain_loss"] = _avg_views(found, "_domain_loss_7")
-            row["domain_acc"] = _avg_views(found, "_domain_acc_7")
+            row["keep_frac"] = _avg_metric(found, "keep_frac")
+            row["ratio"] = _avg_metric(found, "ratio")
+            row["domain_loss"] = _avg_metric(found, "domain_loss")
+            row["domain_acc"] = _avg_metric(found, "domain_acc")
+            row["feature_norm"] = _avg_metric(found, "feature_norm")
+            row["logit_norm"] = _avg_metric(found, "logit_norm")
+            row["grl"] = _avg_metric(found, "grl")
         else:
             print(f"[missing step{args.step}] {run}")
         rows.append(row)
@@ -66,7 +70,8 @@ def main():
     if args.csv is not None:
         fields = ["group", "seed", "train_action_mse", "train_loss",
                   "dp_loss", "aux_loss", "keep_frac", "ratio",
-                  "domain_loss", "domain_acc"]
+                  "domain_loss", "domain_acc", "feature_norm",
+                  "logit_norm", "grl"]
         args.csv.parent.mkdir(parents=True, exist_ok=True)
         with args.csv.open("w", newline="") as f:
             w = csv.DictWriter(f, fieldnames=fields)
@@ -82,7 +87,8 @@ def main():
     for group in sorted(by):
         print(f"\n[{group}] n={len(by[group])}")
         for k in ["train_action_mse", "train_loss", "dp_loss", "aux_loss",
-                  "keep_frac", "ratio", "domain_loss", "domain_acc"]:
+                  "keep_frac", "ratio", "domain_loss", "domain_acc",
+                  "feature_norm", "logit_norm", "grl"]:
             vals = [float(x[k]) for x in by[group] if x.get(k) is not None]
             if not vals:
                 continue
