@@ -12,7 +12,7 @@ COMMON=(
   val_dataloader.batch_size=8 val_dataloader.num_workers=2
   training.num_epochs=1 training.max_train_steps=51
   training.lr_warmup_steps=20 training.checkpoint_every=1000
-  training.sample_every=1000 training.val_every=1000 checkpoint.topk.k=1
+  training.sample_every=1000 training.val_every=null checkpoint.topk.k=1
   task.dataset.domain_batch_size=30
   policy.hard_mask_mode=gumbel_ste
   policy.hard_domain_mode=dgcd

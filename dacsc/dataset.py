@@ -245,6 +245,7 @@ def make_domain_cotraining_class(LerobotCotrainingDataset,   # 官方多数据�
                 super().__init__(*args, **kwargs)
             finally:
                 _mod.LerobotDataset = orig
+            self._domain_seed = int(getattr(self, "seed", 42))
             # 汇总各子数据集的统计，便于日志检查
             self.domain_stats_all = [getattr(d, "domain_stats", {}) for d in self.datasets]
             self._val_indices = self._build_style_val_indices()
@@ -264,7 +265,8 @@ def make_domain_cotraining_class(LerobotCotrainingDataset,   # 官方多数据�
                 domain_id_min=self._domain_id_min,
                 domain_group_size=self._domain_group_size,
                 samples_per_domain=self._domain_samples_per_group,
-                max_groups_per_batch=self._domain_max_groups_per_batch)
+                max_groups_per_batch=self._domain_max_groups_per_batch,
+                seed=self._domain_seed)
             smp._build()
             idx = []
             for g in groups:
@@ -291,7 +293,8 @@ def make_domain_cotraining_class(LerobotCotrainingDataset,   # 官方多数据�
                 domain_id_min=self._domain_id_min,
                 domain_group_size=self._domain_group_size,
                 samples_per_domain=self._domain_samples_per_group,
-                max_groups_per_batch=self._domain_max_groups_per_batch)
+                max_groups_per_batch=self._domain_max_groups_per_batch,
+                seed=self._domain_seed)
 
     _DomainLerobotCotrainingDataset.__name__ = "DomainLerobotCotrainingDataset"
     return _DomainLerobotCotrainingDataset

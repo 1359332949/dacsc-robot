@@ -48,6 +48,7 @@ policy:
   low_dim_feat_dim: 128
   feature_dim: 256                 # → obs_feature_dim
   freeze_dino: False               # ★ CoRP 4.4：冻结会掉约 20 分，必须联合微调
+  freeze_obs_encoder: false        # DFR-like baseline: 冻结整个观测编码器，只训动作头
   dino_pretrained: True            # 消融：false = 随机初始化 ViT-S/14
   dino_unfreeze_last_n_blocks: null # 消融：4 = 只微调最后 4 个 block
   random_crop: True

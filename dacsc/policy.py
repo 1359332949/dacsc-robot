@@ -64,6 +64,7 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
                  low_dim_feat_dim: int = 128,
                  feature_dim: int = 256,
                  freeze_dino: bool = False,
+                 freeze_obs_encoder: bool = False,
                  random_crop: bool = True,
                  pool: str = "mean",
                  dino_pretrained: bool = True,
@@ -154,8 +155,13 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
             pretrained=dino_pretrained,
             unfreeze_last_n_blocks=dino_unfreeze_last_n_blocks,
         )
-        log.info("DINOv2 obs encoder: backbone=%s views=%d feature_dim=%d freeze=%s",
-                 dino_backbone, len(obs_encoder.rgb_keys), feature_dim, freeze_dino)
+        if freeze_obs_encoder:
+            for p in obs_encoder.parameters():
+                p.requires_grad_(False)
+        log.info("DINOv2 obs encoder: backbone=%s views=%d feature_dim=%d "
+                 "freeze_dino=%s freeze_obs_encoder=%s",
+                 dino_backbone, len(obs_encoder.rgb_keys), feature_dim,
+                 freeze_dino, freeze_obs_encoder)
 
         # ---------- 以下脚手架复制自官方 __init__（官方文件不动）----------
         obs_feature_dim = obs_encoder.output_shape()[0]
