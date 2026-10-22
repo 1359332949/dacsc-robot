@@ -97,3 +97,18 @@ val/test 各 32 batches = 256 samples
 ```
 
 只有 random-mask 的基线方差稳定后，才实现原生 source styles 11-30、20 类、DINOv2 微调、多 block GRL/WRS 的 DomainDrop 消融。
+
+
+## 6. 结果定位
+
+这组 flow 实验仅用于验证：
+
+```text
+严格 split
+paired protocol
+center crop
+val/test 指标链路
+seed 方差
+```
+
+它不是论文主 baseline，也不再作为后续 DomainDrop 的唯一平台。主实验切换到 CoRP-RoboCasa；旧 flow 只保留为工程对照。

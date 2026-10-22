@@ -68,11 +68,9 @@ success rate 不下降
 ## 5. 主基线
 
 ```text
-微调 DINOv2
-+ resampler
-+ flow matching / DDPM
-+ 动作头
-+ 数据多样性
+Official CoRP on LIBERO
+→ CoRP-RoboCasa interface adaptation
+→ no-gate CoRP-RoboCasa baseline
 ```
 
-DomainDrop / PLACE / DgCD 只作为受控消融。
+旧自定义 flow 只保留为工程验证，不作为论文主结果。DomainDrop / PLACE / DgCD 只作为受控消融。

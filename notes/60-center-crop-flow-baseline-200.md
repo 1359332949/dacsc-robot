@@ -101,34 +101,23 @@ random-mask 显著有害                            ❌
 
 > **在统一 center-crop、200 步、5 seeds 的受控比较中，random 33% mask 的 test action MSE 平均高约 5.0%，方向在 5 个 seed 中一致，但 95% 区间仍轻微跨 0。因此这是一个稳定基线和不利趋势，不是一个已证明的显著效应。**
 
-## 5. 下一步
+## 5. 结果定位与下一步
 
-当前可以进入的是 **DINOv2-DomainDrop 的消融实现与 51/200 步对照**，但必须先满足：
-
-```text
-DINOv2 微调，不冻结
-domain label = source style_id 11-30
-num_domains = 20
-选定的多个 DINOv2 block 各接 domain head
-所有 head 正常更新，通过 GRL 反传
-随机选一个 block 做 D-WRS mask
-```
-
-对照必须是：
+这组 200 步 flow 结果仅用于工程验证和噪声估计：
 
 ```text
-no mask
-random mask
-DomainDrop
+验证 paired protocol / center crop / val-test 链路
+确认 200 步明显比 51 步稳定
+为迁移到 CoRP 前的工程风险提供参考
 ```
 
-验收不是“比 no-mask 好”，而是：
+它不是论文主 baseline。主实验切换到：
 
 ```text
-DomainDrop val_action_mse 不差于 random mask
-DomainDrop test_action_mse 有改善趋势
-3-5 seeds 方向一致
-success rate 不下降
+Official CoRP inference baseline on LIBERO
+→ CoRP-RoboCasa interface adaptation
+→ no-gate CoRP-RoboCasa baseline
+→ 再比较 random visual mask / domain-sensitive visual gate
 ```
 
-如果做不到，就写负结果，不进入 2k。
+P0 官方保真审计见 `notes/61-corp-official-p0-audit.md`。
