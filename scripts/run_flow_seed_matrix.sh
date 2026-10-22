@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Strict-split flow baseline matrix: no-mask / random mask × seeds 42,43,44.
+# Strict-split, unified-center-crop flow baseline: no-mask / random mask.
 # DomainDrop is opt-in only after these baselines are stable.
 set -uo pipefail
 export WANDB_MODE=disabled
@@ -7,7 +7,7 @@ export WANDB_DISABLED=true
 export WANDB_SILENT=true
 export OTEL_SDK_DISABLED=true
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-OUT="${1:-/hy-tmp/runs/strict_flow_baseline_51_paired}"
+OUT="${1:-/hy-tmp/runs/strict_flow_centercrop_baseline_51}"
 GROUP_LIST="${GROUP_LIST:-flow_no_mask flow_random}"
 SEEDS="${SEEDS:-42 43 44 45 46}"
 mkdir -p "$OUT"

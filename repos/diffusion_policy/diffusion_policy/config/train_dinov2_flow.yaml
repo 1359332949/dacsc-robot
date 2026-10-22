@@ -69,7 +69,7 @@ policy:
   flow_time_scale: 1000.0
   dino_pretrained: True            # 消融：false = 随机初始化 ViT-S/14
   dino_unfreeze_last_n_blocks: null # 消融：4 = 只微调最后 4 个 block
-  random_crop: True
+  random_crop: False                # unified center crop for train/val/test baseline
   pool: mean
 
   # ---- ★ 通道门控（soft 为旧消融，hard 为 v2 主方法）----
