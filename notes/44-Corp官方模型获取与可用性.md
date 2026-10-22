@@ -12,7 +12,7 @@
 
 ```text
 /hy-tmp/models/corp/CoRP
-/hy-tmp/models/corp/corp_libero.pt
+/hy-tmp/models/corp/CoRP/checkpoints/corp_libero.pt
 ```
 
 权重：
@@ -23,6 +23,10 @@ sha256: f933ab03c1a4664f7a11690645cdd5fa81788a5b98db81913024f7a23326dfe6
 ```
 
 GitHub LFS 在服务器上约 2.5 MB/s，约 1.5 分钟完成，不需要第三方镜像。
+
+## 官方 P0 验证（2026-10-22）
+
+完整审计见 `notes/61-corp-official-p0-audit.md`。官方 checkpoint 已通过严格加载、fp32/bf16 smoke，并在 LIBERO Spatial 10 tasks × 1 episode 上得到 9/10。
 
 ## 官方 smoke
 

@@ -1,0 +1,30 @@
+{
+  "checkpoint": "/hy-tmp/models/corp/CoRP/checkpoints/corp_libero.pt",
+  "seed": 7,
+  "precision": "bf16",
+  "episodes": 3,
+  "successes": 3,
+  "success_rate": 1.0,
+  "protocol": {
+    "settling_steps": 10,
+    "camera_size": 256,
+    "camera_rotation": 180,
+    "max_steps": {
+      "libero_spatial": 220,
+      "libero_object": 280,
+      "libero_goal": 300,
+      "libero_10": 520
+    },
+    "action_horizon": 12,
+    "euler_steps": 10
+  },
+  "suites": [
+    {
+      "suite": "libero_spatial",
+      "episodes": 3,
+      "successes": 3,
+      "success_rate": 1.0,
+      "elapsed_seconds": 18.571986593771726
+    }
+  ]
+}
