@@ -8,20 +8,22 @@ OUT="${1:-/hy-tmp/runs/domain_head_validation}"
 STEPS="${STEPS:-51}"
 SEEDS="${SEEDS:-42}"
 CHECKPOINT="${CHECKPOINT:-/hy-tmp/runs/domain_head_warmstart.pt}"
+BATCH="${BATCH:-48}"
+SAMPLES_PER_GROUP="${SAMPLES_PER_GROUP:-16}"
 mkdir -p "$OUT"
 cd "$ROOT"
 
 COMMON=(
-  dataloader.batch_size=96 dataloader.num_workers=4
-  val_dataloader.batch_size=16 val_dataloader.num_workers=2
+  dataloader.batch_size="$BATCH" dataloader.num_workers=4
+  val_dataloader.batch_size=8 val_dataloader.num_workers=2
   training.num_epochs=1 training.max_train_steps="$STEPS"
   training.lr_warmup_steps=20 training.checkpoint_every=1000
   training.sample_every=1000 training.val_every=null
   checkpoint.save_last_ckpt=false checkpoint.topk.k=0
   task.dataset.domain_balance=true
-  task.dataset.domain_batch_size=96
+  task.dataset.domain_batch_size="$BATCH"
   task.dataset.domain_group_size=20
-  task.dataset.domain_samples_per_group=32
+  task.dataset.domain_samples_per_group="$SAMPLES_PER_GROUP"
   task.dataset.domain_max_groups_per_batch=3
   logging.mode=disabled
   policy.enable_gating=false
