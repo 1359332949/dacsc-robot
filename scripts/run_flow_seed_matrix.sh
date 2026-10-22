@@ -8,7 +8,7 @@ export WANDB_SILENT=true
 export OTEL_SDK_DISABLED=true
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 OUT="${1:-/hy-tmp/runs/strict_flow_baseline_51}"
-GROUPS="${GROUPS:-flow_no_mask flow_random}"
+GROUP_LIST="${GROUP_LIST:-flow_no_mask flow_random}"
 mkdir -p "$OUT"
 cd "$ROOT"
 
@@ -44,7 +44,7 @@ run_one() {
   return $rc
 }
 
-for group in $GROUPS; do
+for group in $GROUP_LIST; do
   case "$group" in
     flow_no_mask)
       for seed in 42 43 44; do
