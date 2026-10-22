@@ -8,11 +8,26 @@
 
 结果：
 
-- `audit/pure_dino_style_full/results.json`
-- `audit/pure_dino_style_full/summary.csv`
+- `audit/pure_dino_style_full/results.json`（完整指标、confusion matrix、support）
+- `audit/pure_dino_style_full/summary.csv`（真正的 CSV，58 行 + 表头，12KB）
 - `audit/pure_dino_style_full/label_audit.json`
 - `audit/pure_dino_style_full/selected_episodes.jsonl`
 - `audit/pure_dino_style_full/contact_sheet.png`
+
+## 0. summary.csv 修复
+
+之前 `summary.csv` 实际上是一份 `results.json` 的 JSON 副本，不是 CSV。  
+现已修复：
+
+- `scripts/audit_pure_dino_style.py` 使用 `write_summary_csv()`；
+- 新增 `scripts/export_pure_dino_summary.py`，可从任意 `results.json` 重新生成；
+- 生成前会删除旧的 symlink/hardlink，避免再写回 JSON；
+- 新 `summary.csv`：59 行（1 行表头 + 58 条结果），12KB；
+- 已用 `results.json` 的 `results` 列表逐行核对：
+  - 行数 58；
+  - `feature/label/classifier` 一致；
+  - `episode_balanced_acc/frame_balanced_acc` 一致。
+- 完整 confusion matrix 仍以 `results.json` 为准。
 
 ## 1. 标签审计
 
@@ -74,6 +89,9 @@ CLS：
 
 控制后明显下降，说明全局 probe 确实借用了一部分 task/layout 线索；  
 但在同一 task、同一 layout 内仍然高于随机 0.333，说明 **style 本身仍有可识别信号**。
+
+注意：same-task 控制只有 2/3/1 个 val episode，support 很小，结论不可靠；  
+same-layout 的 support 更好，0.532 是更可信的控制结果。
 
 ## 5. 与之前 ResNet18 DomainDrop 的关系
 

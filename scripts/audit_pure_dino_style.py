@@ -328,6 +328,30 @@ def feature_matrix(obj, mode: str):
     return X, frame_meta
 
 
+
+
+def write_summary_csv(results, path: Path):
+    path = Path(path)
+    if path.exists() or path.is_symlink():
+        path.unlink()
+    fields = [
+        "feature", "label", "classifier", "control_value",
+        "episode_balanced_acc", "episode_macro_f1",
+        "frame_balanced_acc", "frame_macro_f1",
+        "n_train_episodes", "n_val_episodes",
+        "n_train_frames", "n_val_frames",
+        "episode_support", "frame_support",
+    ]
+    with path.open("w", newline="", encoding="utf-8") as f:
+        w = csv.DictWriter(f, fieldnames=fields, extrasaction="ignore")
+        w.writeheader()
+        for r in results:
+            row = {k: r.get(k) for k in fields}
+            for key in ("episode_support", "frame_support"):
+                row[key] = json.dumps(r.get(key), separators=(",", ":"))
+            w.writerow(row)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--root", type=Path, default=Path("/hy-tmp/datasets/robocasa365"))
@@ -459,15 +483,7 @@ def main():
                    "styles": style_stats, "split": dict(split_stats),
                    "label_support": support, "sample_images": sample_info,
                    "task_names": task_names, "results": results}, f, indent=2)
-    fields = ["feature", "label", "classifier", "control_value",
-              "episode_balanced_acc", "episode_macro_f1",
-              "frame_balanced_acc", "frame_macro_f1",
-              "n_train_episodes", "n_val_episodes"]
-    with (args.out / "summary.csv").open("w", newline="") as f:
-        w = csv.DictWriter(f, fieldnames=fields, extrasaction="ignore")
-        w.writeheader()
-        for r in results:
-            w.writerow(r)
+    write_summary_csv(results, args.out / "summary.csv")
     print("wrote", args.out)
 
 
