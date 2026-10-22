@@ -73,7 +73,7 @@ policy:
   pool: mean
 
   # ---- ★ 通道门控（soft 为旧消融，hard 为 v2 主方法）----
-  enable_gating: True
+  enable_gating: False               # DomainDrop/PLACE/DgCD are opt-in ablations only
   gate_mode: hard                 # hard = per-sample top-k hard mask + STE
   hard_layer_indices: [11]        # v2 probe: 先固定最后一层；null = 随机 1 层
   hard_drop_ratio: 0.33
