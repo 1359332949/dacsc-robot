@@ -5,6 +5,8 @@ import argparse, csv, json, math, re
 from collections import defaultdict
 from pathlib import Path
 
+from metric_utils import read_run_metrics
+
 PAT = re.compile(r"CNN_DROPOUT (\{.*\})")
 
 
@@ -38,21 +40,12 @@ def main():
                 continue
             if int(d.get("step", -1)) == args.step:
                 found = d
-        mse = None
-        train_loss = None
-        logs = log.parent / "logs.json.txt"
-        if logs.exists():
-            for line in logs.read_text(errors="ignore").splitlines():
-                try:
-                    d = json.loads(line)
-                except Exception:
-                    continue
-                if d.get("train_action_mse_error") is not None:
-                    mse = float(d["train_action_mse_error"])
-                if d.get("train_loss") is not None:
-                    train_loss = float(d["train_loss"])
-        row = {"group": group, "seed": seed, "train_action_mse": mse,
-               "train_loss": train_loss}
+        metrics = read_run_metrics(log.parent)
+        if metrics["val_action_mse"] is None:
+            print(f"[missing val_action_mse] {run}")
+        if metrics["test_action_mse"] is None:
+            print(f"[missing test_action_mse] {run}")
+        row = {"group": group, "seed": seed, **metrics}
         if found:
             row["dp_loss"] = found.get("dp_loss")
             row["aux_loss"] = found.get("aux_loss")
@@ -68,7 +61,9 @@ def main():
         rows.append(row)
 
     if args.csv is not None:
-        fields = ["group", "seed", "train_action_mse", "train_loss",
+        fields = ["group", "seed", "val_action_mse", "val_samples",
+                  "val_batches", "test_action_mse", "test_samples",
+                  "test_batches", "train_action_mse", "train_loss",
                   "dp_loss", "aux_loss", "keep_frac", "ratio",
                   "domain_loss", "domain_acc", "feature_norm",
                   "logit_norm", "grl"]
@@ -86,9 +81,9 @@ def main():
     print(f"runs={len(rows)} step={args.step}")
     for group in sorted(by):
         print(f"\n[{group}] n={len(by[group])}")
-        for k in ["train_action_mse", "train_loss", "dp_loss", "aux_loss",
-                  "keep_frac", "ratio", "domain_loss", "domain_acc",
-                  "feature_norm", "logit_norm", "grl"]:
+        for k in ["val_action_mse", "test_action_mse", "train_action_mse",
+                  "train_loss", "dp_loss", "aux_loss", "keep_frac", "ratio",
+                  "domain_loss", "domain_acc", "feature_norm", "logit_norm", "grl"]:
             vals = [float(x[k]) for x in by[group] if x.get(k) is not None]
             if not vals:
                 continue

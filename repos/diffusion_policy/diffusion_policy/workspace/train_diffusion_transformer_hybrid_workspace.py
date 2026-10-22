@@ -8,8 +8,10 @@ if __name__ == "__main__":
     os.chdir(ROOT_DIR)
 
 import os
+import json
 import hydra
 import torch
+import torch.nn.functional as F
 from omegaconf import OmegaConf
 import pathlib
 from torch.utils.data import DataLoader
@@ -68,6 +70,63 @@ class TrainDiffusionTransformerHybridWorkspace(BaseWorkspace):
         # configure training state
         self.global_step = 0
         self.epoch = 0
+        self.best_val_action_mse = None
+        self.best_val_step = None
+        self.best_val_state = None
+
+    def _track_best_val(self, policy, action_mse, global_step):
+        """Keep the val-selected weights for the final, one-shot test."""
+        if self.best_val_action_mse is None or action_mse < self.best_val_action_mse:
+            self.best_val_action_mse = float(action_mse)
+            self.best_val_step = int(global_step)
+            self.best_val_state = {
+                k: v.detach().cpu().clone() for k, v in policy.state_dict().items()
+            }
+
+    @torch.no_grad()
+    def _action_mse(self, policy, dataloader, device, max_steps=None, seed=12345):
+        """Held-out action MSE from ``predict_action``, never training loss.
+
+        The reduction is kept on-device and converted to a Python float only
+        once, avoiding a synchronization for every validation batch.
+        """
+        if dataloader is None or len(dataloader) == 0:
+            return None
+        cpu_state = torch.random.get_rng_state()
+        cuda_state = torch.cuda.get_rng_state_all() if torch.cuda.is_available() else None
+        was_training = policy.training
+        mse_sum = None
+        n_samples = 0
+        n_batches = 0
+        try:
+            torch.manual_seed(seed)
+            if torch.cuda.is_available():
+                torch.cuda.manual_seed_all(seed)
+            policy.eval()
+            for i, batch in enumerate(dataloader):
+                if max_steps is not None and i >= int(max_steps):
+                    break
+                batch = dict_apply(batch, lambda x: x.to(device, non_blocking=True))
+                pred = policy.predict_action(batch["obs"])["action_pred"]
+                gt = batch["action"]
+                mse = F.mse_loss(pred, gt)
+                b = int(gt.shape[0])
+                term = mse.detach() * b
+                mse_sum = term if mse_sum is None else mse_sum + term
+                n_samples += b
+                n_batches += 1
+        finally:
+            policy.train(was_training)
+            torch.random.set_rng_state(cpu_state)
+            if cuda_state is not None:
+                torch.cuda.set_rng_state_all(cuda_state)
+        if mse_sum is None:
+            return None
+        return {
+            "action_mse": float(mse_sum / max(n_samples, 1)),
+            "samples": int(n_samples),
+            "batches": int(n_batches),
+        }
 
     def run(self):
         ddp_kwargs = DistributedDataParallelKwargs(find_unused_parameters=True)
@@ -146,9 +205,14 @@ class TrainDiffusionTransformerHybridWorkspace(BaseWorkspace):
         accelerator.wait_for_everyone()
         normalizer = pickle.load(open(normalizer_path, 'rb'))
 
-        # configure validation dataset
+        # configure validation and held-out test datasets
         val_dataset = dataset.get_validation_dataset()
         val_dataloader = DataLoader(val_dataset, **cfg.val_dataloader)
+        test_dataset = dataset.get_test_dataset() if hasattr(dataset, "get_test_dataset") else None
+        test_dataloader = (DataLoader(test_dataset, **cfg.val_dataloader)
+                           if test_dataset is not None and len(test_dataset) > 0 else None)
+        print(f"DACSC split: val={len(val_dataset)} steps, "
+              f"test={0 if test_dataset is None else len(test_dataset)} steps", flush=True)
 
         self.model.set_normalizer(normalizer)
         if cfg.training.use_ema:
@@ -299,6 +363,34 @@ class TrainDiffusionTransformerHybridWorkspace(BaseWorkspace):
                         json_logger.log(step_log)
                         self.global_step += 1
 
+                    # step-based held-out action MSE (never uses the test split)
+                    val_every_steps = int(cfg.training.get("val_every_steps", 0) or 0)
+                    if (val_every_steps > 0
+                            and (batch_idx + 1) % val_every_steps == 0
+                            and batch_idx + 1 < cfg.training.max_train_steps
+                            and accelerator.is_main_process):
+                        policy_step = accelerator.unwrap_model(self.model)
+                        if cfg.training.use_ema:
+                            policy_step = self.ema_model
+                        val_step = self._action_mse(
+                            policy_step, val_dataloader, device,
+                            max_steps=cfg.training.max_val_steps)
+                        if val_step is not None:
+                            self._track_best_val(
+                                policy_step, val_step["action_mse"], self.global_step)
+                            json_logger.log({
+                                "val_action_mse": val_step["action_mse"],
+                                "val_action_mse_step": val_step["action_mse"],
+                                "val_samples": val_step["samples"],
+                                "val_batches": val_step["batches"],
+                                "global_step": self.global_step,
+                                "epoch": self.epoch,
+                            })
+                            print(f"[VAL_STEP] step={batch_idx + 1} "
+                                  f"val_action_mse={val_step['action_mse']:.6f} "
+                                  f"samples={val_step['samples']}", flush=True)
+                        self.model.train()
+
                     # if (cfg.training.max_train_steps is not None) \
                     #     and batch_idx >= (cfg.training.max_train_steps-1):
                     #     break
@@ -334,7 +426,7 @@ class TrainDiffusionTransformerHybridWorkspace(BaseWorkspace):
 
                         accelerator.wait_for_everyone()
 
-                # run validation (DACSC: restored; held-out styles 41-50)
+                # run validation (DACSC: held-out styles 31-40; test is 41-50)
                 if cfg.training.val_every is not None and (self.epoch % cfg.training.val_every) == 0:
                     with torch.no_grad():
                         val_losses = list()
@@ -342,7 +434,7 @@ class TrainDiffusionTransformerHybridWorkspace(BaseWorkspace):
                                 leave=False, mininterval=cfg.training.tqdm_interval_sec) as tepoch:
                             for batch_idx, batch in enumerate(tepoch):
                                 batch = dict_apply(batch, lambda x: x.to(device, non_blocking=True))
-                                loss = self.model.compute_loss(batch)
+                                loss = policy.compute_loss(batch)
                                 val_losses.append(loss.detach().float())
                                 if (cfg.training.max_val_steps is not None) \
                                     and batch_idx >= (cfg.training.max_val_steps-1):
@@ -350,6 +442,17 @@ class TrainDiffusionTransformerHybridWorkspace(BaseWorkspace):
                         if len(val_losses) > 0:
                             val_loss = torch.stack(val_losses).mean().item()
                             step_log['val_loss'] = val_loss
+                        val_result = self._action_mse(
+                            policy, val_dataloader, device,
+                            max_steps=cfg.training.max_val_steps)
+                        if val_result is not None:
+                            self._track_best_val(
+                                policy, val_result["action_mse"], self.global_step)
+                            step_log['val_action_mse'] = val_result["action_mse"]
+                            step_log['val_samples'] = val_result["samples"]
+                            step_log['val_batches'] = val_result["batches"]
+                            print(f"[VAL] val_action_mse={val_result['action_mse']:.6f} "
+                                  f"samples={val_result['samples']}", flush=True)
 
                 # run diffusion sampling on a training batch
                 if (self.epoch % cfg.training.sample_every) == 0:
@@ -393,7 +496,13 @@ class TrainDiffusionTransformerHybridWorkspace(BaseWorkspace):
                         # We can't copy the last checkpoint here
                         # since save_checkpoint uses threads.
                         # therefore at this point the file might have been empty!
-                        topk_ckpt_path = topk_manager.get_ckpt_path(metric_dict)
+                        # Never rank a checkpoint without its held-out monitor
+                        # metric; TopKCheckpointManager's fallback (-1) would
+                        # otherwise look artificially optimal for mode=min.
+                        if cfg.checkpoint.topk.monitor_key in metric_dict:
+                            topk_ckpt_path = topk_manager.get_ckpt_path(metric_dict)
+                        else:
+                            topk_ckpt_path = None
 
                         if topk_ckpt_path is not None:
                             self.save_checkpoint(path=topk_ckpt_path)
@@ -409,6 +518,43 @@ class TrainDiffusionTransformerHybridWorkspace(BaseWorkspace):
                 json_logger.log(step_log)
                 self.global_step += 1
                 self.epoch += 1
+
+        # Final held-out test evaluation: once, after training, never used
+        # for early stopping or checkpoint selection.
+        if test_dataloader is not None and accelerator.is_main_process:
+            policy = accelerator.unwrap_model(self.model)
+            if cfg.training.use_ema:
+                policy = self.ema_model
+            if self.best_val_state is None:
+                raise RuntimeError(
+                    "held-out test requested without any val_action_mse; "
+                    "refusing to select a model by train loss")
+            policy.load_state_dict({
+                k: v.to(device) if torch.is_tensor(v) else v
+                for k, v in self.best_val_state.items()
+            })
+            test_result = self._action_mse(
+                policy, test_dataloader, device,
+                max_steps=cfg.training.get("max_test_steps",
+                                           cfg.training.max_val_steps))
+            if test_result is None:
+                raise RuntimeError("held-out test split produced no batches")
+            test_metrics = {
+                "test_action_mse": test_result["action_mse"],
+                "test_samples": test_result["samples"],
+                "test_batches": test_result["batches"],
+                "test_dataset_steps": len(test_dataset),
+                "test_style_min": int(getattr(dataset, "_test_style_min", -1)),
+                "test_style_max": int(getattr(dataset, "_test_style_max", -1)),
+                "selected_by": "val_action_mse",
+                "best_val_action_mse": self.best_val_action_mse,
+                "best_val_step": self.best_val_step,
+            }
+            with open(os.path.join(self.output_dir, "test_metrics.json"), "w") as f:
+                json.dump(test_metrics, f, indent=2)
+            print(f"[TEST] test_action_mse={test_result['action_mse']:.6f} "
+                  f"samples={test_result['samples']}", flush=True)
+        accelerator.wait_for_everyone()
         accelerator.end_training()
 
 @hydra.main(

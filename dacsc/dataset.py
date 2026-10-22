@@ -22,9 +22,11 @@ import functools
 import json
 import re
 import logging
+import random
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
+import numpy as np
 import torch
 from torch.utils.data import Subset
 
@@ -234,9 +236,22 @@ def make_domain_cotraining_class(LerobotCotrainingDataset,   # 官方多数据�
                 kwargs.pop("domain_samples_per_group", 3))
             self._domain_max_groups_per_batch = kwargs.pop(
                 "domain_max_groups_per_batch", None)
-            self._val_style_min = kwargs.pop("val_style_min", None)
-            self._val_style_max = kwargs.pop("val_style_max", None)
+            self._train_style_min = int(kwargs.pop("train_style_min", 11))
+            self._train_style_max = int(kwargs.pop("train_style_max", 30))
+            self._val_style_min = int(kwargs.pop("val_style_min", 31))
+            self._val_style_max = int(kwargs.pop("val_style_max", 40))
+            self._test_style_min = int(kwargs.pop("test_style_min", 41))
+            self._test_style_max = int(kwargs.pop("test_style_max", 50))
+            self._reserved_style_min = int(
+                kwargs.pop("reserved_style_min", 51))
+            self._reserved_style_max = int(
+                kwargs.pop("reserved_style_max", 60))
             self._val_max_steps = int(kwargs.pop("val_max_steps", 2048))
+            self._test_max_steps = int(kwargs.pop("test_max_steps", 2048))
+            self._train_only_normalizer = bool(
+                kwargs.pop("train_only_normalizer", True))
+            self._normalizer_max_steps = int(
+                kwargs.pop("normalizer_max_steps", 512))
             import diffusion_policy.dataset.lerobot_dataset as _mod
             orig = _mod.LerobotDataset
             _mod.LerobotDataset = functools.partial(
@@ -246,43 +261,166 @@ def make_domain_cotraining_class(LerobotCotrainingDataset,   # 官方多数据�
             finally:
                 _mod.LerobotDataset = orig
             self._domain_seed = int(getattr(self, "seed", 42))
-            # 汇总各子数据集的统计，便于日志检查
             self.domain_stats_all = [getattr(d, "domain_stats", {}) for d in self.datasets]
-            self._val_indices = self._build_style_val_indices()
+            (self._train_indices, self._val_indices,
+             self._test_indices) = self._build_style_split_indices()
 
-        def _build_style_val_indices(self):
-            """从 domain sampler 缓存中取 style 41–50 的索引，作为留出验证集。"""
-            if self._val_style_min is None or self._val_style_max is None:
-                return []
-            lo, hi = int(self._val_style_min), int(self._val_style_max)
-            groups = sorted({
-                max(0, (s - self._domain_id_min) // self._domain_group_size)
-                for s in range(lo, hi + 1)
-            })
+        def _build_style_split_indices(self):
+            """Build disjoint train/val/test indices by raw style IDs.
+
+            The split unit is the episode/style: every frame of a style belongs
+            to exactly one split. Capped val/test sets are sampled evenly from
+            every style and shuffled deterministically so a short DataLoader
+            scan cannot silently evaluate only the first style.
+            """
+            ranges = {
+                "train": (self._train_style_min, self._train_style_max),
+                "val": (self._val_style_min, self._val_style_max),
+                "test": (self._test_style_min, self._test_style_max),
+                "reserved": (self._reserved_style_min,
+                             self._reserved_style_max),
+            }
+            names = list(ranges)
+            # Reserved styles 51-60 are never policy train/val/test data.
+            for i, left in enumerate(names):
+                for right in names[i + 1:]:
+                    llo, lhi = ranges[left]
+                    rlo, rhi = ranges[right]
+                    assert lhi < rlo or rhi < llo, (
+                        f"{left} and {right} style ranges overlap: "
+                        f"{left}={llo}-{lhi}, {right}={rlo}-{rhi}")
+
             from dacsc.sampler import DomainBalancedSampler
             smp = DomainBalancedSampler(
                 self, batch_size=self._domain_batch_size,
                 domain_id_min=self._domain_id_min,
-                domain_group_size=self._domain_group_size,
-                samples_per_domain=self._domain_samples_per_group,
-                max_groups_per_batch=self._domain_max_groups_per_batch,
-                seed=self._domain_seed)
+                domain_group_size=1,
+                samples_per_domain=1,
+                max_groups_per_batch=None,
+                seed=self._domain_seed,
+                allowed_styles=None)
             smp._build()
-            idx = []
-            for g in groups:
-                idx.extend(smp._groups.get(g, []))
-            idx = sorted(set(int(i) for i in idx))
-            if len(idx) > self._val_max_steps:
-                step = max(1, len(idx) // self._val_max_steps)
-                idx = idx[::step][:self._val_max_steps]
-            print(f"[DomainLerobotCotrainingDataset] val styles {lo}-{hi}: "
-                  f"{len(idx)} steps, groups={groups}", flush=True)
-            return idx
+            style_to_indices = {
+                int(style) + self._domain_id_min: sorted(set(int(i) for i in idx))
+                for style, idx in smp._groups.items()
+            }
+
+            def take_evenly(values, k):
+                if k >= len(values):
+                    return list(values)
+                if k <= 0:
+                    return []
+                if k == 1:
+                    return [values[len(values) // 2]]
+                last = len(values) - 1
+                return [values[int(round(j * last / (k - 1)))]
+                        for j in range(k)]
+
+            def collect(lo: int, hi: int, cap: int | None, tag: str):
+                styles = list(range(int(lo), int(hi) + 1))
+                missing = [x for x in styles if not style_to_indices.get(x)]
+                assert not missing, f"{tag} styles have no indices: {missing}"
+                per_style = [style_to_indices[x] for x in styles]
+                if cap and sum(map(len, per_style)) > cap:
+                    base, extra = divmod(int(cap), len(styles))
+                    per_style = [
+                        take_evenly(x, base + (j < extra))
+                        for j, x in enumerate(per_style)
+                    ]
+                # Round-robin first, then shuffle: the cap keeps every style,
+                # while the order avoids consecutive single-style batches.
+                out = []
+                for offset in range(max(len(x) for x in per_style)):
+                    for x in per_style:
+                        if offset < len(x):
+                            out.append(x[offset])
+                random.Random(self._domain_seed + int(lo) * 1009 + int(hi)).shuffle(out)
+                return out
+
+            train = collect(self._train_style_min, self._train_style_max,
+                            None, "train")
+            val = collect(self._val_style_min, self._val_style_max,
+                          self._val_max_steps, "val")
+            test = collect(self._test_style_min, self._test_style_max,
+                           self._test_max_steps, "test")
+            self._style_to_indices = style_to_indices
+            assert set(train).isdisjoint(val), "train/val indices overlap"
+            assert set(train).isdisjoint(test), "train/test indices overlap"
+            assert set(val).isdisjoint(test), "val/test indices overlap"
+            print(f"[DomainLerobotCotrainingDataset] split styles "
+                  f"train={self._train_style_min}-{self._train_style_max} "
+                  f"({len(train)} steps), "
+                  f"val={self._val_style_min}-{self._val_style_max} "
+                  f"({len(val)} steps), "
+                  f"test={self._test_style_min}-{self._test_style_max} "
+                  f"({len(test)} steps)", flush=True)
+            return train, val, test
 
         def get_validation_dataset(self):
-            if not self._val_indices:
-                return Subset(self, [])
             return Subset(self, self._val_indices)
+
+        def get_test_dataset(self):
+            return Subset(self, self._test_indices)
+
+        def get_normalizer(self, **kwargs):
+            """Fit state statistics on training styles only.
+
+            The parent implementation uses merged task metadata, which is
+            computed over every style, including held-out test styles. That is
+            an information leak even when the sampler itself is guarded.
+            """
+            if not self._train_only_normalizer:
+                return super().get_normalizer(**kwargs)
+
+            from diffusion_policy.model.common.normalizer import (
+                LinearNormalizer, SingleFieldLinearNormalizer)
+            from diffusion_policy.common.normalize_util import (
+                array_to_stats, get_identity_normalizer_from_stat,
+                get_image_range_normalizer, get_range_normalizer_from_stat)
+            from robomimic.macros import LANG_EMB_KEY
+
+            normalizer = LinearNormalizer()
+            normalizer['action'] = SingleFieldLinearNormalizer.create_manual(
+                scale=np.ones((self.action_size), dtype=np.float32),
+                offset=np.zeros((self.action_size), dtype=np.float32),
+                input_stats_dict={},
+            )
+
+            if not self._train_indices:
+                raise RuntimeError("cannot fit normalizer: empty train split")
+            stride = max(1, len(self._train_indices) // self._normalizer_max_steps)
+            sampled = self._train_indices[::stride][:self._normalizer_max_steps]
+            for key, lerobot_keys in self.lowdim_keys.items():
+                assert len(lerobot_keys) == 1, (
+                    f"multiple lerobot keys for {key} not supported")
+                chunks = []
+                for global_idx in sampled:
+                    ds, traj, base_index = self.sample_step(int(global_idx))
+                    ds.curr_traj_data = ds.get_trajectory_data(traj)
+                    chunks.append(ds.get_state_or_action(
+                        traj, "state", lerobot_keys[0], base_index))
+                stat = array_to_stats(np.concatenate(chunks, axis=0).astype(np.float32))
+                if key.endswith(('pos', 'qpos')):
+                    this_normalizer = get_range_normalizer_from_stat(stat)
+                elif key.endswith(('quat', 'sin', 'cos')):
+                    this_normalizer = get_identity_normalizer_from_stat(stat)
+                else:
+                    raise RuntimeError(f"unsupported lowdim key {key}")
+                normalizer[key] = this_normalizer
+
+            if self.lang_emb is not None:
+                dim = int(np.prod(self.lang_emb["shape"]))
+                normalizer[LANG_EMB_KEY] = SingleFieldLinearNormalizer.create_manual(
+                    scale=np.ones((dim,), dtype=np.float32),
+                    offset=np.zeros((dim,), dtype=np.float32),
+                    input_stats_dict={},
+                )
+            for key in self.rgb_keys:
+                normalizer[key] = get_image_range_normalizer()
+            print("[DomainLerobotCotrainingDataset] fitted train-only normalizer "
+                  f"on {len(sampled)} steps from styles "
+                  f"{self._train_style_min}-{self._train_style_max}", flush=True)
+            return normalizer
 
         def get_dataset_sampler(self):
             if not self._domain_balance:
@@ -294,7 +432,9 @@ def make_domain_cotraining_class(LerobotCotrainingDataset,   # 官方多数据�
                 domain_group_size=self._domain_group_size,
                 samples_per_domain=self._domain_samples_per_group,
                 max_groups_per_batch=self._domain_max_groups_per_batch,
-                seed=self._domain_seed)
+                seed=self._domain_seed,
+                allowed_styles=set(range(self._train_style_min,
+                                         self._train_style_max + 1)))
 
     _DomainLerobotCotrainingDataset.__name__ = "DomainLerobotCotrainingDataset"
     return _DomainLerobotCotrainingDataset

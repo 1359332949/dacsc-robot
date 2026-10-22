@@ -5,6 +5,8 @@ import argparse, json, math, re
 from collections import defaultdict
 from pathlib import Path
 
+from metric_utils import read_run_metrics
+
 PAT = re.compile(r"GATE_METRICS (\{.*\})")
 KEYS = ["drop_iou_gap", "drop_iou_sample_gap", "gate_rel_delta",
         "v_raw_rel_std", "eligible_frac"]
@@ -34,29 +36,18 @@ def main():
                 continue
             if int(x.get("step", -1)) == 50:
                 gate = x
-        if group == "flow_no_mask":
-            jl = d / "logs.json.txt"
-            last = None
-            if jl.exists():
-                for line in jl.read_text(errors="ignore").splitlines():
-                    try:
-                        x = json.loads(line)
-                    except Exception:
-                        continue
-                    if "train_action_mse_error" in x:
-                        last = x
-            if last is None:
-                missing.append(d.name)
-                continue
-            rows.append({"group": group, "seed": seed,
-                         "train_loss": last.get("train_loss"),
-                         "action_mse": last.get("train_action_mse_error")})
-        else:
-            if gate is None:
-                missing.append(d.name)
-                continue
-            rows.append({"group": group, "seed": seed,
-                         **{k: gate.get(k) for k in KEYS}})
+        metrics = read_run_metrics(d)
+        if group != "flow_no_mask" and gate is None:
+            missing.append(d.name)
+            continue
+        if metrics["val_action_mse"] is None:
+            print(f"[missing val_action_mse] {d.name}")
+        if metrics["test_action_mse"] is None:
+            print(f"[missing test_action_mse] {d.name}")
+        row = {"group": group, "seed": seed, **metrics}
+        if gate is not None:
+            row.update({k: gate.get(k) for k in KEYS})
+        rows.append(row)
     by = defaultdict(list)
     for r in rows:
         by[r["group"]].append(r)
@@ -64,7 +55,8 @@ def main():
     for group in sorted(by):
         print(f"\n[{group}] n={len(by[group])}")
         keys = ["drop_iou_gap", "drop_iou_sample_gap", "gate_rel_delta",
-                "v_raw_rel_std", "eligible_frac", "train_loss", "action_mse"]
+                "v_raw_rel_std", "eligible_frac", "val_action_mse",
+                "test_action_mse", "train_action_mse", "train_loss"]
         for k in keys:
             vals = [float(r[k]) for r in by[group] if r.get(k) is not None]
             if not vals:

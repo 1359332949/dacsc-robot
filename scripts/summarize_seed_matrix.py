@@ -5,6 +5,8 @@ import argparse, json, math, re
 from collections import defaultdict
 from pathlib import Path
 
+from metric_utils import read_run_metrics
+
 PAT = re.compile(r"GATE_METRICS (\{.*\})")
 KEYS = ["drop_iou_same", "drop_iou_diff", "drop_iou_gap",
         "drop_iou_sample_gap", "gate_rel_delta", "v_raw_rel_std", "dp_loss"]
@@ -34,30 +36,24 @@ def main():
                 continue
             if int(d.get("step", -1)) == args.step:
                 found = d
-        train_action_mse = None
-        train_loss = None
-        logs = log.parent / "logs.json.txt"
-        if logs.exists():
-            for line in logs.read_text(errors="ignore").splitlines():
-                try:
-                    d = json.loads(line)
-                except Exception:
-                    continue
-                if d.get("train_action_mse_error") is not None:
-                    train_action_mse = float(d["train_action_mse_error"])
-                if d.get("train_loss") is not None:
-                    train_loss = float(d["train_loss"])
+        metrics = read_run_metrics(log.parent)
         if found is None:
             print(f"[missing step{args.step}] {run}")
-        row = {"group": group, "seed": seed,
-               "train_action_mse": train_action_mse, "train_loss": train_loss}
+        if metrics["val_action_mse"] is None:
+            print(f"[missing val_action_mse] {run}")
+        if metrics["test_action_mse"] is None:
+            print(f"[missing test_action_mse] {run}")
+        row = {"group": group, "seed": seed, **metrics}
         if found is not None:
             row.update({k: found.get(k) for k in KEYS})
         rows.append(row)
 
     if args.csv is not None:
         import csv
-        fields = ["group", "seed", *KEYS, "train_action_mse", "train_loss"]
+        fields = ["group", "seed", *KEYS, "val_action_mse",
+                  "val_samples", "val_batches", "test_action_mse",
+                  "test_samples", "test_batches", "train_action_mse",
+                  "train_loss"]
         args.csv.parent.mkdir(parents=True, exist_ok=True)
         with args.csv.open("w", newline="") as f:
             w = csv.DictWriter(f, fieldnames=fields)
@@ -71,7 +67,8 @@ def main():
         by[r["group"]].append(r)
     keys = ["drop_iou_gap", "drop_iou_sample_gap", "gate_rel_delta",
             "gate_on_mse", "gate_off_mse", "v_raw_rel_std", "dp_loss",
-            "train_action_mse", "train_loss"]
+            "val_action_mse", "test_action_mse", "train_action_mse",
+            "train_loss"]
     print(f"runs={len(rows)} step={args.step}")
     for group in sorted(by):
         print(f"\n[{group}] n={len(by[group])}")

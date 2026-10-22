@@ -5,6 +5,8 @@ import argparse, csv, json, math, re
 from collections import defaultdict
 from pathlib import Path
 
+from metric_utils import read_run_metrics
+
 PAT = re.compile(r"TOKEN_STYLE (\{.*\})")
 KEYS = ["loss", "mod_abs_mean", "stat_delta", "diff_domain_frac",
         "action_weight_mean", "token_importance_mean"]
@@ -34,17 +36,12 @@ def main():
                 continue
             if int(d.get("step", -1)) == args.step:
                 found = d
-        mse = None
-        logs = log.parent / "logs.json.txt"
-        if logs.exists():
-            for line in logs.read_text(errors="ignore").splitlines():
-                try:
-                    d = json.loads(line)
-                except Exception:
-                    continue
-                if d.get("train_action_mse_error") is not None:
-                    mse = float(d["train_action_mse_error"])
-        row = {"group": group, "seed": seed, "train_action_mse": mse}
+        metrics = read_run_metrics(log.parent)
+        if metrics["val_action_mse"] is None:
+            print(f"[missing val_action_mse] {run}")
+        if metrics["test_action_mse"] is None:
+            print(f"[missing test_action_mse] {run}")
+        row = {"group": group, "seed": seed, **metrics}
         if found is not None:
             row.update({k: found.get(k) for k in KEYS})
         else:
@@ -52,7 +49,9 @@ def main():
         rows.append(row)
 
     if args.csv is not None:
-        fields = ["group", "seed", *KEYS, "train_action_mse"]
+        fields = ["group", "seed", *KEYS, "val_action_mse", "val_samples",
+                  "val_batches", "test_action_mse", "test_samples",
+                  "test_batches", "train_action_mse", "train_loss"]
         args.csv.parent.mkdir(parents=True, exist_ok=True)
         with args.csv.open("w", newline="") as f:
             w = csv.DictWriter(f, fieldnames=fields)
@@ -67,7 +66,8 @@ def main():
     print(f"runs={len(rows)} step={args.step}")
     for group in sorted(by):
         print(f"\n[{group}] n={len(by[group])}")
-        for k in [*KEYS, "train_action_mse"]:
+        for k in [*KEYS, "val_action_mse", "test_action_mse",
+                  "train_action_mse", "train_loss"]:
             vals = [float(x[k]) for x in by[group] if x.get(k) is not None]
             if not vals:
                 continue

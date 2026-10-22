@@ -80,7 +80,7 @@ def select_episodes(rows, per_group: int, seed: int, balance_by: str = "style"):
     buckets = defaultdict(list)
     for r in rows:
         if balance_by == "layout":
-            key = max(0, min(9, (r["layout"] - 11) // 5))
+            key = r["layout"]
         else:
             key = r["style"]
         buckets[key].append(r)
@@ -365,7 +365,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--root", type=Path, default=Path("/hy-tmp/datasets/robocasa365"))
     ap.add_argument("--per-style", "--per-group", dest="per_style", type=int, default=10)
-    ap.add_argument("--balance-by", choices=["style", "layout"], default="style")
+    ap.add_argument("--balance-by", choices=["style", "layout"], default="style",
+                    help="balance sampling by the native style_id or layout_id")
     ap.add_argument("--frames", type=int, default=3)
     ap.add_argument("--batch-size", type=int, default=64)
     ap.add_argument("--cache", type=Path, default=Path("/hy-tmp/runs/pure_dino_style_features.pt"))
@@ -410,12 +411,11 @@ def main():
     episode = np.array([ep_map[k] for k in ep_keys], dtype=np.int64)
     task_names = sorted(set(task.tolist()))
     task_rank = {t: i for i, t in enumerate(task_names)}
-    task10 = np.array([task_rank[t] * 10 // max(len(task_names), 1) for t in task])
+    # Only native labels from ep_meta.json / episode metadata are audited.
     labels = {
-        "style50": style - 11,
-        "coarse3": np.clip((style - 11) // 20, 0, 2),
-        "layout10": np.clip((layout - 11) // 5, 0, 9),
-        "task10": task10,
+        "style": style,
+        "layout": layout,
+        "task": np.array([task_rank[t] for t in task], dtype=np.int64),
     }
     split = np.array([m["split"] == "train" for m in meta[::len(VIEWS)]])
     support = {}
@@ -459,10 +459,9 @@ def main():
                       f"frame_bal={m['frame']['balanced_acc']:.3f} "
                       f"ep_bal={m['episode']['balanced_acc']:.3f}")
 
-    # controlled subsets: same task / same layout for coarse3
+    # Controlled subsets keep the native style label; no synthetic regrouping.
     for control in ("same_task", "same_layout"):
         if control == "same_task":
-            # task with the most distinct styles among selected episodes
             cand = Counter(task.tolist())
             best = max(task_names, key=lambda t: (len(set(style[task == t])), cand[t]))
             mask = task == best
@@ -474,17 +473,22 @@ def main():
             mask = layout == best
             chosen = int(best)
         X, _ = feature_matrix(obj, "robot0_agentview_left:patch")
-        y = labels["coarse3"][mask]
+        y = style[mask]
         e = episode[mask]
         s = split[mask]
         m = probe(X[mask], torch.from_numpy(y), torch.from_numpy(e),
                   torch.from_numpy(s), "linear", seed=0)
         if m is not None:
             row = {"feature": "robot0_agentview_left:patch",
-                   "label": f"{control}_coarse3", "classifier": "linear",
+                   "label": f"{control}_style", "classifier": "linear",
                    "control_value": chosen,
+                   "classes": m["classes"],
                    **{f"frame_{k}": v for k, v in m["frame"].items()},
-                   **{f"episode_{k}": v for k, v in m["episode"].items()}}
+                   **{f"episode_{k}": v for k, v in m["episode"].items()},
+                   "n_train_frames": m["n_train_frames"],
+                   "n_val_frames": m["n_val_frames"],
+                   "n_train_episodes": m["n_train_episodes"],
+                   "n_val_episodes": m["n_val_episodes"]}
             results.append(row)
             print(f"{control:12s} {chosen} ep_bal={m['episode']['balanced_acc']:.3f}")
 

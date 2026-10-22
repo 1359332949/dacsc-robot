@@ -12,9 +12,9 @@ STEPS="${STEPS:-51}"
 SEEDS="${SEEDS:-42 43 44}"
 GROUP_LIST="${GROUP_LIST:-none random domaindrop place dgcd}"
 BATCH="${BATCH:-192}"
-DOMAIN_GROUP_SIZE="${DOMAIN_GROUP_SIZE:-5}"
+DOMAIN_GROUP_SIZE="${DOMAIN_GROUP_SIZE:-1}"
 MAX_GROUPS="${MAX_GROUPS:-6}"
-NUM_DOMAINS="${NUM_DOMAINS:-10}"
+NUM_DOMAINS="${NUM_DOMAINS:-50}"
 POLICY_DOMAIN_GROUP_SIZE="${POLICY_DOMAIN_GROUP_SIZE:-$DOMAIN_GROUP_SIZE}"
 POLICY_NUM_DOMAINS="${POLICY_NUM_DOMAINS:-$NUM_DOMAINS}"
 DOMAIN_KEY="${DOMAIN_KEY:-style}"
@@ -36,7 +36,7 @@ COMMON=(
   val_dataloader.batch_size=32 val_dataloader.num_workers=4
   training.num_epochs=1 training.max_train_steps="$STEPS"
   training.lr_warmup_steps=20 training.checkpoint_every=1000
-  training.sample_every=1000 training.val_every=null
+  training.sample_every=1000 training.val_every=50 training.val_every_steps=50 training.max_val_steps=4 training.max_test_steps=4
   checkpoint.save_last_ckpt=false checkpoint.topk.k=0
   task.dataset.domain_balance=true
   task.dataset.domain_batch_size="$BATCH"

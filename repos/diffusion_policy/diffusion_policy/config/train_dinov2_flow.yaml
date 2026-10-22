@@ -65,11 +65,6 @@ policy:
   token_style_importance_every: 4
   token_style_momentum: 0.9
   token_style_diagnostics_every: 50
-  # ---- frozen right-agentview DINOv2 domain branch (validation only) ----
-  domain_head_checkpoint: null
-  domain_head_feature: patch_mean
-  domain_head_log_every: 5
-  domain_head_aux_weight: 0.0
   flow_matching: true              # rectified-flow action head
   flow_time_scale: 1000.0
   dino_pretrained: True            # 消融：false = 随机初始化 ViT-S/14
@@ -185,10 +180,12 @@ training:
   use_ema: True
   rollout_every: null
   checkpoint_every: 100
-  val_every: 50             # epoch-level, not step-level
+  val_every: 50             # epoch-level; also runs once at end of a 51-step smoke
+  val_every_steps: 50       # held-out val inside long epochs; never uses test
   sample_every: 50
   max_train_steps: 51       # per epoch; default total = 51 with num_epochs=1
-  max_val_steps: 32         # 32 batches × val batch_size(8) = 256 samples
+  max_val_steps: 32         # max validation batches (styles 31-40)
+  max_test_steps: 32        # final-only test batches (styles 41-50)
   tqdm_interval_sec: 1.0
 
 logging:
@@ -202,10 +199,10 @@ logging:
 
 checkpoint:
   topk:
-    monitor_key: test_mean_score
-    mode: max
+    monitor_key: val_action_mse
+    mode: min
     k: 20
-    format_str: 'epoch={epoch:04d}-test_mean_score={test_mean_score:.3f}.ckpt'
+    format_str: 'global_step={global_step:06d}-val_action_mse={val_action_mse:.6f}.ckpt'
   save_last_ckpt: True
   save_last_snapshot: False
 

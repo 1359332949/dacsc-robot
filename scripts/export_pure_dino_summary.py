@@ -33,7 +33,7 @@ def write_summary_csv(results, path: Path):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("root", type=Path,
-                    default=Path("/hy-tmp/runs/pure_dino_style_full"))
+                    default=Path("/hy-tmp/runs/pure_dino_style_native"))
     ap.add_argument("--out", type=Path, default=None)
     args = ap.parse_args()
     root = args.root

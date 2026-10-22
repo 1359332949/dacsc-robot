@@ -16,7 +16,8 @@ class DomainBalancedSampler(Sampler):
     """
     def __init__(self, dataset, batch_size: int = 32, domain_id_min: int = 11,
                  domain_group_size: int = 5, samples_per_domain: int = 3,
-                 max_groups_per_batch: int | None = None, seed: int = 42):
+                 max_groups_per_batch: int | None = None, seed: int = 42,
+                 allowed_styles: set[int] | None = None):
         self.dataset = dataset
         self.batch_size = int(batch_size)
         self.domain_id_min = int(domain_id_min)
@@ -25,10 +26,12 @@ class DomainBalancedSampler(Sampler):
         self.max_groups_per_batch = (None if max_groups_per_batch is None
                                      else int(max_groups_per_batch))
         self.seed = int(seed)
+        self.allowed_styles = (None if allowed_styles is None
+                               else {int(s) for s in allowed_styles})
         self.epoch = 0
         self._groups = None
         self._all = None
-        self._n_batches = max(1, len(dataset) // self.batch_size)
+        self._eligible_count = None
 
     def set_epoch(self, epoch: int):
         self.epoch = int(epoch)
@@ -42,6 +45,8 @@ class DomainBalancedSampler(Sampler):
             "domain_id_min": self.domain_id_min,
             "domain_group_size": self.domain_group_size,
             "max_groups_per_batch": self.max_groups_per_batch,
+            "allowed_styles": (None if self.allowed_styles is None
+                               else sorted(self.allowed_styles)),
             "datasets": [str(getattr(d, "dataset_path", "")) for d in ds_list],
         }
         h = hashlib.sha1(repr(signature).encode()).hexdigest()[:16]
@@ -55,6 +60,7 @@ class DomainBalancedSampler(Sampler):
                 obj = pickle.load(f)
             self._groups = obj["groups"]
             self._all = obj["all"]
+            self._eligible_count = len(self._all)
             print(f"[DomainBalancedSampler] cache hit: {cache}")
             return
         groups = defaultdict(list)
@@ -65,13 +71,24 @@ class DomainBalancedSampler(Sampler):
             pair = mapping.get(int(traj), (None, None))
             style = pair[0]
             if style is None:
+                # A style allowlist is a leakage barrier: never fall back to an
+                # unlabeled sample that may belong to val/test.
+                if self.allowed_styles is not None:
+                    continue
                 group = -1
             else:
-                group = max(0, (int(style) - self.domain_id_min) // self.domain_group_size)
+                style = int(style)
+                if (self.allowed_styles is not None
+                        and style not in self.allowed_styles):
+                    continue
+                group = max(0, (style - self.domain_id_min) // self.domain_group_size)
             groups[group].append(i)
             all_indices.append(i)
         self._groups = {k: v for k, v in groups.items() if k >= 0 and v}
-        self._all = all_indices
+        # Derive the fill pool only from admissible groups. This makes it
+        # impossible for unlabeled/out-of-split indices to enter a batch.
+        self._all = [i for k in sorted(self._groups) for i in self._groups[k]]
+        self._eligible_count = len(self._all)
         if not self._groups:
             raise RuntimeError("DomainBalancedSampler 没有找到可用的 domain 分组")
         os.makedirs(os.path.dirname(cache), exist_ok=True)
@@ -87,7 +104,8 @@ class DomainBalancedSampler(Sampler):
             self._build()
         rng = random.Random(self.seed + self.epoch)
         group_ids_all = sorted(self._groups)
-        for _ in range(self._n_batches):
+        n_batches = max(1, int(self._eligible_count or 0) // self.batch_size)
+        for _ in range(n_batches):
             if (self.max_groups_per_batch is not None
                     and self.max_groups_per_batch < len(group_ids_all)):
                 group_ids = rng.sample(group_ids_all, self.max_groups_per_batch)
@@ -105,4 +123,7 @@ class DomainBalancedSampler(Sampler):
             yield from out[:self.batch_size]
 
     def __len__(self):
-        return self._n_batches * self.batch_size
+        if self._groups is None:
+            self._build()
+        n_batches = max(1, int(self._eligible_count or 0) // self.batch_size)
+        return n_batches * self.batch_size
