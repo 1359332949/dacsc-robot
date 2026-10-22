@@ -82,7 +82,18 @@ same-layout coarse3：✅ 0.532，仍是可靠 style 控制
 > 更合理的下一步是直接用有效的 coarse3 head（离线 0.658）做 51 步 no-mask 在线验证；  
 > layout 若要作为 sanity，需要重新定义成更可分的 layout 聚类/受控 layout 子集，而不是连续 ID 的 10 组。
 
-## 6. warm-start 状态
+## 6. 在线验证
+
+见 `notes/54-frozen-domain-head-validation.md`：
+
+```text
+coarse3 online: 0.544 ± 0.068, CE 1.020  ✅
+layout10 online: 0.169 ± 0.054, CE 2.283 ❌ acc
+```
+
+coarse3 已通过 no-mask 在线验收；layout10 不再作为主 sanity gate。
+
+## 7. warm-start 状态
 
 - 右侧 agentview + frozen DINOv2 branch 已接入策略；
 - 2-class layout head 已替换为 10-class layout-balanced head；

@@ -1,0 +1,11 @@
+DOMAIN_HEAD {"coarse3_acc": 0.6041666865348816, "coarse3_loss": 0.7870252728462219, "feature_norm": 18.82980728149414, "layout10_acc": 0.125, "layout10_loss": 2.2343411445617676, "step": 0}
+DOMAIN_HEAD {"coarse3_acc": 0.5833333730697632, "coarse3_loss": 1.1069508790969849, "feature_norm": 18.93695640563965, "layout10_acc": 0.1458333432674408, "layout10_loss": 2.3634254932403564, "step": 5}
+DOMAIN_HEAD {"coarse3_acc": 0.5416666865348816, "coarse3_loss": 1.0858423709869385, "feature_norm": 18.90736198425293, "layout10_acc": 0.2083333432674408, "layout10_loss": 2.2840421199798584, "step": 10}
+DOMAIN_HEAD {"coarse3_acc": 0.4375, "coarse3_loss": 1.1186643838882446, "feature_norm": 18.796146392822266, "layout10_acc": 0.2708333432674408, "layout10_loss": 2.249042510986328, "step": 15}
+DOMAIN_HEAD {"coarse3_acc": 0.6458333730697632, "coarse3_loss": 1.106265902519226, "feature_norm": 19.784160614013672, "layout10_acc": 0.125, "layout10_loss": 2.266686201095581, "step": 20}
+DOMAIN_HEAD {"coarse3_acc": 0.4791666865348816, "coarse3_loss": 0.98883056640625, "feature_norm": 19.235794067382812, "layout10_acc": 0.2291666716337204, "layout10_loss": 2.2505147457122803, "step": 25}
+DOMAIN_HEAD {"coarse3_acc": 0.5208333730697632, "coarse3_loss": 1.057197093963623, "feature_norm": 18.951488494873047, "layout10_acc": 0.1875, "layout10_loss": 2.2795121669769287, "step": 30}
+DOMAIN_HEAD {"coarse3_acc": 0.5208333730697632, "coarse3_loss": 1.0996335744857788, "feature_norm": 20.218692779541016, "layout10_acc": 0.125, "layout10_loss": 2.2917301654815674, "step": 35}
+DOMAIN_HEAD {"coarse3_acc": 0.5, "coarse3_loss": 1.031050682067871, "feature_norm": 19.136611938476562, "layout10_acc": 0.1458333432674408, "layout10_loss": 2.3366153240203857, "step": 40}
+DOMAIN_HEAD {"coarse3_acc": 0.625, "coarse3_loss": 0.8583972454071045, "feature_norm": 19.100753784179688, "layout10_acc": 0.125, "layout10_loss": 2.2976675033569336, "step": 45}
+DOMAIN_HEAD {"coarse3_acc": 0.625, "coarse3_loss": 0.8346156477928162, "feature_norm": 18.713275909423828, "layout10_acc": 0.1041666716337204, "layout10_loss": 2.2918455600738525, "step": 50}

@@ -43,6 +43,8 @@ class FrozenDINOv2DomainHead(nn.Module):
             self.register_buffer(f"{name}_bias", head["bias"].float())
             self.register_buffer(f"{name}_mean", head.get("mean", ckpt["mean"]).float())
             self.register_buffer(f"{name}_std", head.get("std", ckpt["std"]).float())
+            self.register_buffer(f"{name}_temperature",
+                                 torch.tensor(float(head.get("temperature", 1.0))))
         self.register_buffer("img_mean", IMAGENET_MEAN, persistent=False)
         self.register_buffer("img_std", IMAGENET_STD, persistent=False)
         self.dino = load_dinov2("dinov2_vits14", pretrained=True)
@@ -69,8 +71,12 @@ class FrozenDINOv2DomainHead(nn.Module):
                     / self.layout10_std.to(feat))
         f_coarse = ((feat - self.coarse3_mean.to(feat))
                     / self.coarse3_std.to(feat))
-        layout = f_layout @ self.layout10_weight.to(feat).t() + self.layout10_bias.to(feat)
-        coarse = f_coarse @ self.coarse3_weight.to(feat).t() + self.coarse3_bias.to(feat)
+        layout = ((f_layout @ self.layout10_weight.to(feat).t()
+                   + self.layout10_bias.to(feat))
+                  / self.layout10_temperature.to(feat))
+        coarse = ((f_coarse @ self.coarse3_weight.to(feat).t()
+                   + self.coarse3_bias.to(feat))
+                  / self.coarse3_temperature.to(feat))
         return {"layout10": layout, "coarse3": coarse,
                 "feature_norm": f_coarse.norm(dim=1).mean()}
 
