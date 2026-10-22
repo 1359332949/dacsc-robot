@@ -348,14 +348,6 @@ def main():
         style_stats[s] = {"episodes": len(eps),
                           "tasks": len({r["task"] for r in eps}),
                           "layouts": len({r["layout"] for r in eps})}
-    split_style = defaultdict(lambda: {"train": 0, "val": 0})
-    for e in selected:
-        split_style[e["style"]][e["split"]] += 1
-    with (args.out / "label_audit.json").open("w") as f:
-        json.dump({"label_source": "extras/episode_*/ep_meta.json",
-                   "n_episodes": len(rows), "styles": style_stats,
-                   "selected_style_split": dict(split_style)}, f, indent=2)
-
     selected = select_episodes(rows, args.per_style, seed=42)
     print(f"selected {len(selected)} episodes")
     sample_info = save_samples(selected, args.out / "samples")
@@ -363,6 +355,10 @@ def main():
     split_stats = defaultdict(lambda: {"train": 0, "val": 0})
     for e in selected:
         split_stats[e["style"]][e["split"]] += 1
+    with (args.out / "label_audit.json").open("w") as f:
+        json.dump({"label_source": "extras/episode_*/ep_meta.json",
+                   "n_episodes": len(rows), "styles": style_stats,
+                   "selected_style_split": dict(split_stats)}, f, indent=2)
     with (args.out / "selected_episodes.jsonl").open("w") as f:
         for e in selected:
             f.write(json.dumps({k: e[k] for k in
