@@ -10,15 +10,17 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 OUT="${1:-/hy-tmp/runs/strict_flow_centercrop_baseline_51}"
 GROUP_LIST="${GROUP_LIST:-flow_no_mask flow_random}"
 SEEDS="${SEEDS:-42 43 44 45 46}"
+STEPS="${STEPS:-51}"
+MAX_EVAL_BATCHES="${MAX_EVAL_BATCHES:-16}"
 mkdir -p "$OUT"
 cd "$ROOT"
 
 COMMON=(
   dataloader.batch_size=30 dataloader.num_workers=4
   val_dataloader.batch_size=8 val_dataloader.num_workers=2
-  training.num_epochs=1 training.max_train_steps=51
+  training.num_epochs=1 training.max_train_steps="$STEPS"
   training.lr_warmup_steps=20 training.checkpoint_every=1000
-  training.sample_every=1000 training.val_every=50 training.val_every_steps=0 training.max_val_steps=16 training.max_test_steps=16
+  training.sample_every=1000 training.val_every=50 training.val_every_steps=0 training.max_val_steps="$MAX_EVAL_BATCHES" training.max_test_steps="$MAX_EVAL_BATCHES"
   checkpoint.save_last_ckpt=false checkpoint.topk.k=0
   task.dataset.domain_batch_size=30 logging.mode=disabled
   policy.hard_mask_mode=gumbel_ste
