@@ -1,0 +1,11 @@
+{
+  "test_action_mse": 0.3023265600204468,
+  "test_samples": 256,
+  "test_batches": 32,
+  "test_dataset_steps": 2048,
+  "test_style_min": 41,
+  "test_style_max": 50,
+  "selected_by": "val_action_mse",
+  "best_val_action_mse": 0.2993660867214203,
+  "best_val_step": 200
+}
