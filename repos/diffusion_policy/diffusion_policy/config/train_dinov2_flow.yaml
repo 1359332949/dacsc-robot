@@ -65,6 +65,11 @@ policy:
   token_style_importance_every: 4
   token_style_momentum: 0.9
   token_style_diagnostics_every: 50
+  # ---- frozen right-agentview DINOv2 domain branch (validation only) ----
+  domain_head_checkpoint: null
+  domain_head_feature: patch_mean
+  domain_head_log_every: 5
+  domain_head_aux_weight: 0.0
   flow_matching: true              # rectified-flow action head
   flow_time_scale: 1000.0
   dino_pretrained: True            # 消融：false = 随机初始化 ViT-S/14

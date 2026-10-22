@@ -76,25 +76,34 @@ def scan(root: Path):
     return rows
 
 
-def select_episodes(rows, per_style: int, seed: int):
-    by_style = defaultdict(list)
+def select_episodes(rows, per_group: int, seed: int, balance_by: str = "style"):
+    buckets = defaultdict(list)
     for r in rows:
-        by_style[r["style"]].append(r)
+        if balance_by == "layout":
+            key = max(0, min(9, (r["layout"] - 11) // 5))
+        else:
+            key = r["style"]
+        buckets[key].append(r)
     rng = random.Random(seed)
     selected = []
-    for style, eps in sorted(by_style.items()):
-        groups = defaultdict(list)
+    for group, eps in sorted(buckets.items()):
+        sub = defaultdict(list)
         for e in eps:
-            groups[(e["layout"], e["task"])].append(e)
-        for g in groups.values():
+            # For layout balance, diversify style/task; for style balance,
+            # diversify layout/task (the original behavior).
+            if balance_by == "layout":
+                sub[(e["style"], e["task"])].append(e)
+            else:
+                sub[(e["layout"], e["task"])].append(e)
+        for g in sub.values():
             rng.shuffle(g)
-        keys = sorted(groups)
+        keys = sorted(sub)
         picked = []
-        while len(picked) < min(per_style, len(eps)):
+        while len(picked) < min(per_group, len(eps)):
             for k in keys:
-                if groups[k] and len(picked) < per_style:
-                    picked.append(groups[k].pop())
-            if all(not groups[k] for k in keys):
+                if sub[k] and len(picked) < per_group:
+                    picked.append(sub[k].pop())
+            if all(not sub[k] for k in keys):
                 break
         rng.shuffle(picked)
         n_val = 1 if len(picked) >= 2 else 0
@@ -355,7 +364,8 @@ def write_summary_csv(results, path: Path):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--root", type=Path, default=Path("/hy-tmp/datasets/robocasa365"))
-    ap.add_argument("--per-style", type=int, default=10)
+    ap.add_argument("--per-style", "--per-group", dest="per_style", type=int, default=10)
+    ap.add_argument("--balance-by", choices=["style", "layout"], default="style")
     ap.add_argument("--frames", type=int, default=3)
     ap.add_argument("--batch-size", type=int, default=64)
     ap.add_argument("--cache", type=Path, default=Path("/hy-tmp/runs/pure_dino_style_features.pt"))
@@ -372,7 +382,7 @@ def main():
         style_stats[s] = {"episodes": len(eps),
                           "tasks": len({r["task"] for r in eps}),
                           "layouts": len({r["layout"] for r in eps})}
-    selected = select_episodes(rows, args.per_style, seed=42)
+    selected = select_episodes(rows, args.per_style, seed=42, balance_by=args.balance_by)
     print(f"selected {len(selected)} episodes")
     sample_info = save_samples(selected, args.out / "samples")
     print("sample images", sample_info)

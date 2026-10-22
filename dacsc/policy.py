@@ -84,6 +84,11 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
                  token_style_importance_every: int = 4,
                  token_style_momentum: float = 0.9,
                  token_style_diagnostics_every: int = 50,
+                 # ---- frozen right-agentview DINOv2 domain branch ----
+                 domain_head_checkpoint: str | None = None,
+                 domain_head_feature: str = "patch_mean",
+                 domain_head_log_every: int = 5,
+                 domain_head_aux_weight: float = 0.0,
                  # ---- DiT 架构（默认与官方 bs192 配置一致）----
                  n_layer: int = 8,
                  n_cond_layers: int = 0,
@@ -256,6 +261,15 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
                 self._resampler_hook = obs_encoder.resampler.register_forward_hook(
                     _resampler_hook)
         self.model = model
+        self.domain_head_branch = None
+        self.domain_head_step = 0
+        self.domain_head_log_every = int(domain_head_log_every)
+        self.domain_head_aux_weight = float(domain_head_aux_weight)
+        self._last_domain_metrics = {}
+        if domain_head_checkpoint:
+            from dacsc.frozen_domain_head import FrozenDINOv2DomainHead
+            self.domain_head_branch = FrozenDINOv2DomainHead(
+                domain_head_checkpoint, feature=domain_head_feature)
         self.noise_scheduler = noise_scheduler
         self.mask_generator = LowdimMaskGenerator(
             action_dim=action_dim,
@@ -1180,11 +1194,52 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
         return x
 
     # ---------- ★ 在官方 compute_loss 之上追加 L_gate ----------
+    @torch.no_grad()
+    def _log_domain_head(self, batch):
+        """Validate the warm-started frozen domain head on the current batch."""
+        if self.domain_head_branch is None:
+            return
+        right = batch.get("obs", {}).get("robot0_agentview_right_image")
+        if right is None:
+            return
+        B, To = right.shape[:2]
+        out = self.domain_head_branch(right.reshape(B * To, *right.shape[2:]))
+        layout_logits = out["layout10"].reshape(B, To, -1).mean(dim=1)
+        coarse_logits = out["coarse3"].reshape(B, To, -1).mean(dim=1)
+        style = batch.get("domain_id")
+        layout = batch.get("layout_id")
+        if style is None or layout is None:
+            return
+        layout_y = ((layout - 11) // 5).clamp(0, 9)
+        coarse_y = ((style - 11) // 20).clamp(0, 2)
+        layout_loss = F.cross_entropy(layout_logits, layout_y)
+        coarse_loss = F.cross_entropy(coarse_logits, coarse_y)
+        layout_acc = (layout_logits.argmax(dim=1) == layout_y).float().mean()
+        coarse_acc = (coarse_logits.argmax(dim=1) == coarse_y).float().mean()
+        step = self.domain_head_step
+        self.domain_head_step += 1
+        self._last_domain_metrics = {
+            "step": int(step),
+            "layout10_loss": float(layout_loss),
+            "layout10_acc": float(layout_acc),
+            "coarse3_loss": float(coarse_loss),
+            "coarse3_acc": float(coarse_acc),
+            "feature_norm": float(out["feature_norm"]),
+        }
+        if self.domain_head_log_every > 0 and step % self.domain_head_log_every == 0:
+            log.info("DOMAIN_HEAD %s", json.dumps(self._last_domain_metrics,
+                                                    sort_keys=True))
+
+    def domain_head_report(self):
+        return dict(self._last_domain_metrics)
+
     def compute_loss(self, batch):
         # 验证/导出在 no_grad 下运行：只算 DP loss，不生成 mask、不更新统计、
         # 不推进 gate_step，也不写 GATE_METRICS。
         if not torch.is_grad_enabled():
             return self._base_loss(batch)
+        if self.domain_head_branch is not None:
+            self._log_domain_head(batch)
         clean_every = (int(self.hard_cfg.get("clean_importance_every", 0))
                        if hasattr(self, "hard_cfg") else 0)
         # 1) 仅在关闭 clean-forward 时，才回退到上一轮梯度估计 Taylor v。

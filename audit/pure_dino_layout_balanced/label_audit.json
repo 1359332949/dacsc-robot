@@ -1,0 +1,270 @@
+{
+  "label_source": "extras/episode_*/ep_meta.json",
+  "n_episodes": 6935,
+  "styles": {
+    "11": {
+      "episodes": 141,
+      "tasks": 53,
+      "layouts": 42
+    },
+    "12": {
+      "episodes": 158,
+      "tasks": 56,
+      "layouts": 50
+    },
+    "13": {
+      "episodes": 137,
+      "tasks": 53,
+      "layouts": 46
+    },
+    "14": {
+      "episodes": 149,
+      "tasks": 54,
+      "layouts": 48
+    },
+    "15": {
+      "episodes": 155,
+      "tasks": 56,
+      "layouts": 48
+    },
+    "16": {
+      "episodes": 142,
+      "tasks": 57,
+      "layouts": 47
+    },
+    "17": {
+      "episodes": 130,
+      "tasks": 49,
+      "layouts": 45
+    },
+    "18": {
+      "episodes": 133,
+      "tasks": 51,
+      "layouts": 44
+    },
+    "19": {
+      "episodes": 149,
+      "tasks": 53,
+      "layouts": 47
+    },
+    "20": {
+      "episodes": 145,
+      "tasks": 52,
+      "layouts": 47
+    },
+    "21": {
+      "episodes": 146,
+      "tasks": 55,
+      "layouts": 46
+    },
+    "22": {
+      "episodes": 149,
+      "tasks": 53,
+      "layouts": 47
+    },
+    "23": {
+      "episodes": 127,
+      "tasks": 48,
+      "layouts": 46
+    },
+    "24": {
+      "episodes": 130,
+      "tasks": 48,
+      "layouts": 47
+    },
+    "25": {
+      "episodes": 119,
+      "tasks": 49,
+      "layouts": 45
+    },
+    "26": {
+      "episodes": 169,
+      "tasks": 54,
+      "layouts": 46
+    },
+    "27": {
+      "episodes": 113,
+      "tasks": 47,
+      "layouts": 42
+    },
+    "28": {
+      "episodes": 148,
+      "tasks": 53,
+      "layouts": 48
+    },
+    "29": {
+      "episodes": 157,
+      "tasks": 57,
+      "layouts": 48
+    },
+    "30": {
+      "episodes": 142,
+      "tasks": 54,
+      "layouts": 49
+    },
+    "31": {
+      "episodes": 133,
+      "tasks": 52,
+      "layouts": 47
+    },
+    "32": {
+      "episodes": 146,
+      "tasks": 48,
+      "layouts": 49
+    },
+    "33": {
+      "episodes": 123,
+      "tasks": 52,
+      "layouts": 42
+    },
+    "34": {
+      "episodes": 161,
+      "tasks": 55,
+      "layouts": 46
+    },
+    "35": {
+      "episodes": 149,
+      "tasks": 54,
+      "layouts": 48
+    },
+    "36": {
+      "episodes": 132,
+      "tasks": 52,
+      "layouts": 46
+    },
+    "37": {
+      "episodes": 121,
+      "tasks": 48,
+      "layouts": 45
+    },
+    "38": {
+      "episodes": 119,
+      "tasks": 47,
+      "layouts": 49
+    },
+    "39": {
+      "episodes": 165,
+      "tasks": 54,
+      "layouts": 46
+    },
+    "40": {
+      "episodes": 139,
+      "tasks": 50,
+      "layouts": 45
+    },
+    "41": {
+      "episodes": 132,
+      "tasks": 52,
+      "layouts": 45
+    },
+    "42": {
+      "episodes": 144,
+      "tasks": 58,
+      "layouts": 45
+    },
+    "43": {
+      "episodes": 124,
+      "tasks": 51,
+      "layouts": 49
+    },
+    "44": {
+      "episodes": 147,
+      "tasks": 48,
+      "layouts": 47
+    },
+    "45": {
+      "episodes": 147,
+      "tasks": 56,
+      "layouts": 45
+    },
+    "46": {
+      "episodes": 139,
+      "tasks": 54,
+      "layouts": 47
+    },
+    "47": {
+      "episodes": 98,
+      "tasks": 46,
+      "layouts": 44
+    },
+    "48": {
+      "episodes": 138,
+      "tasks": 48,
+      "layouts": 45
+    },
+    "49": {
+      "episodes": 126,
+      "tasks": 48,
+      "layouts": 46
+    },
+    "50": {
+      "episodes": 111,
+      "tasks": 48,
+      "layouts": 40
+    },
+    "51": {
+      "episodes": 161,
+      "tasks": 55,
+      "layouts": 50
+    },
+    "52": {
+      "episodes": 128,
+      "tasks": 48,
+      "layouts": 49
+    },
+    "53": {
+      "episodes": 167,
+      "tasks": 58,
+      "layouts": 49
+    },
+    "54": {
+      "episodes": 150,
+      "tasks": 55,
+      "layouts": 43
+    },
+    "55": {
+      "episodes": 129,
+      "tasks": 51,
+      "layouts": 43
+    },
+    "56": {
+      "episodes": 131,
+      "tasks": 53,
+      "layouts": 45
+    },
+    "57": {
+      "episodes": 100,
+      "tasks": 51,
+      "layouts": 46
+    },
+    "58": {
+      "episodes": 161,
+      "tasks": 56,
+      "layouts": 49
+    },
+    "59": {
+      "episodes": 142,
+      "tasks": 52,
+      "layouts": 46
+    },
+    "60": {
+      "episodes": 133,
+      "tasks": 52,
+      "layouts": 47
+    }
+  },
+  "selected_style_split": {
+    "11": {
+      "train": 88,
+      "val": 39
+    },
+    "12": {
+      "train": 51,
+      "val": 21
+    },
+    "13": {
+      "train": 1,
+      "val": 0
+    }
+  }
+}
