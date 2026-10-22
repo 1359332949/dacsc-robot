@@ -1,0 +1,47 @@
+[robosuite WARNING] No private macro file found! (macros.py:53)
+[robosuite WARNING] It is recommended to use a private macro file (macros.py:54)
+[robosuite WARNING] To setup, run: python /hy-tmp/models/corp/CoRP/.venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (macros.py:55)
+Gym has been unmaintained since 2022 and does not support NumPy 2.0 amongst other critical functionality.
+Please upgrade to Gymnasium, the maintained drop-in replacement of Gym, or contact the authors of your software and request that they upgrade.
+See the migration guide at https://gymnasium.farama.org/introduction/migration_guide/ for additional information.
+[info] using task orders [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+libero_spatial task=0 episode=0 success=1 steps=78
+libero_spatial task=1 episode=0 success=1 steps=111
+libero_spatial task=2 episode=0 success=1 steps=93
+libero_spatial task=3 episode=0 success=1 steps=84
+libero_spatial task=4 episode=0 success=1 steps=128
+libero_spatial task=5 episode=0 success=1 steps=98
+libero_spatial task=6 episode=0 success=1 steps=107
+libero_spatial task=7 episode=0 success=1 steps=105
+libero_spatial task=8 episode=0 success=0 steps=220
+libero_spatial task=9 episode=0 success=1 steps=117
+{
+  "checkpoint": "/hy-tmp/models/corp/CoRP/checkpoints/corp_libero.pt",
+  "seed": 7,
+  "precision": "bf16",
+  "episodes": 10,
+  "successes": 9,
+  "success_rate": 0.9,
+  "protocol": {
+    "settling_steps": 10,
+    "camera_size": 256,
+    "camera_rotation": 180,
+    "max_steps": {
+      "libero_spatial": 220,
+      "libero_object": 280,
+      "libero_goal": 300,
+      "libero_10": 520
+    },
+    "action_horizon": 12,
+    "euler_steps": 10
+  },
+  "suites": [
+    {
+      "suite": "libero_spatial",
+      "episodes": 10,
+      "successes": 9,
+      "success_rate": 0.9,
+      "elapsed_seconds": 63.68888678308576
+    }
+  ]
+}
