@@ -94,10 +94,10 @@ policy:
   hard_train_only: true           # 训练时 dropout，推理默认关闭
   domain_id_min: 11                # pretrain style_id 11..60
   domain_group_size: 1             # 单 style 一个域
-  domain_head_lr: 1.0e-3            # 50 类域头，先用 1e-3
+  domain_head_lr: 1.0e-3            # 20 类 source-style 域头
   gate_layer_indices: null      # soft 模式：null = 全部 12 层
   gate_init: 0.999              # 初始接近恒等（验证过：相对差 5e-6，注入无害）
-  num_domains: 50               # 单 style 一个域
+  num_domains: 20               # source styles 11-30, one class per style
   gate_rho_max: 0.3             # 目标平均抑制比例
   gate_rho_warmup_steps: 10000  # 渐进抑制（借鉴 PLACE）
   gate_lambda_d: 1.0            # 域敏感项权重

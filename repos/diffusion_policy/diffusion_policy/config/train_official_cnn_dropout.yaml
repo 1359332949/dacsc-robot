@@ -13,7 +13,7 @@ policy:
   cnn_recover: true
   cnn_progressive: false
   cnn_velocity: 50.0
-  cnn_num_domains: 50
+  cnn_num_domains: 20
   cnn_domain_key: style
   cnn_domain_id_min: 11
   cnn_domain_group_size: 1

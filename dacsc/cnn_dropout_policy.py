@@ -26,7 +26,7 @@ class CNNChannelDropoutPolicy(DiffusionTransformerHybridImagePolicy):
                  cnn_recover: bool = True,
                  cnn_progressive: bool = False,
                  cnn_velocity: float = 50.0,
-                 cnn_num_domains: int = 50,
+                 cnn_num_domains: int = 20,
                  cnn_domain_key: str = "style",
                  cnn_domain_id_min: int = 11,
                  cnn_domain_group_size: int = 1,
