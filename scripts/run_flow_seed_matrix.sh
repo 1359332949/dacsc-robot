@@ -1,12 +1,14 @@
 #!/usr/bin/env bash
-# Flow K48 mechanism matrix: no-mask / random mask / domain gate × seeds 42,43,44.
+# Strict-split flow baseline matrix: no-mask / random mask × seeds 42,43,44.
+# DomainDrop is opt-in only after these baselines are stable.
 set -uo pipefail
 export WANDB_MODE=disabled
 export WANDB_DISABLED=true
 export WANDB_SILENT=true
 export OTEL_SDK_DISABLED=true
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-OUT="${1:-/hy-tmp/runs/flow_seed_matrix}"
+OUT="${1:-/hy-tmp/runs/strict_flow_baseline_51}"
+GROUPS="${GROUPS:-flow_no_mask flow_random}"
 mkdir -p "$OUT"
 cd "$ROOT"
 
@@ -15,7 +17,8 @@ COMMON=(
   val_dataloader.batch_size=8 val_dataloader.num_workers=2
   training.num_epochs=1 training.max_train_steps=51
   training.lr_warmup_steps=20 training.checkpoint_every=1000
-  training.sample_every=1000 training.val_every=50 training.val_every_steps=50 training.max_val_steps=4 training.max_test_steps=4 checkpoint.topk.k=1
+  training.sample_every=1000 training.val_every=50 training.val_every_steps=0 training.max_val_steps=16 training.max_test_steps=16
+  checkpoint.save_last_ckpt=false checkpoint.topk.k=0
   task.dataset.domain_batch_size=30 logging.mode=disabled
   policy.hard_mask_mode=gumbel_ste
   policy.action_importance_impl=rsc
@@ -41,22 +44,26 @@ run_one() {
   return $rc
 }
 
-for seed in 42 43 44; do
-  run_one flow_no_mask "$seed" policy.enable_gating=false
+for group in $GROUPS; do
+  case "$group" in
+    flow_no_mask)
+      for seed in 42 43 44; do
+        run_one flow_no_mask "$seed" policy.enable_gating=false
+      done
+      ;;
+    flow_random)
+      for seed in 42 43 44; do
+        run_one flow_random "$seed" \
+          policy.enable_gating=true policy.use_action_importance=false \
+          policy.hard_domain_mode=random policy.hard_mask_domain_shared=false \
+          policy.dgcd_group_smooth=0.0 policy.dgcd_domain_center=false \
+          policy.hard_selection_mode=linear
+      done
+      ;;
+    *)
+      echo "[unknown group] $group" >&2
+      exit 2
+      ;;
+  esac
 done
-for seed in 42 43 44; do
-  run_one flow_random "$seed" \
-    policy.enable_gating=true policy.use_action_importance=false \
-    policy.hard_domain_mode=random policy.hard_mask_domain_shared=false \
-    policy.dgcd_group_smooth=0.0 policy.dgcd_domain_center=false \
-    policy.hard_selection_mode=linear
-done
-for seed in 42 43 44; do
-  run_one flow_domain "$seed" \
-    policy.enable_gating=true policy.use_action_importance=true \
-    policy.hard_domain_mode=dgcd policy.hard_mask_domain_shared=true \
-    policy.dgcd_group_smooth=1.0 policy.dgcd_domain_center=true \
-    policy.hard_selection_mode=two_stage policy.hard_candidate_ratio=0.6 \
-    policy.hard_action_protect_ratio=0.2 policy.hard_clean_importance_every=4
-done
-echo FLOW_MATRIX_DONE
+echo STRICT_FLOW_BASELINE_DONE

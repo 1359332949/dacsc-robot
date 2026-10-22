@@ -56,7 +56,9 @@ def main():
         print(f"\n[{group}] n={len(by[group])}")
         keys = ["drop_iou_gap", "drop_iou_sample_gap", "gate_rel_delta",
                 "v_raw_rel_std", "eligible_frac", "val_action_mse",
-                "test_action_mse", "train_action_mse", "train_loss"]
+                "val_samples", "val_batches", "test_action_mse",
+                "test_samples", "test_batches", "train_action_mse",
+                "train_loss"]
         for k in keys:
             vals = [float(r[k]) for r in by[group] if r.get(k) is not None]
             if not vals:
