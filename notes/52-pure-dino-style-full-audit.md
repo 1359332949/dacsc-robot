@@ -50,7 +50,7 @@
 |---|---|---|---:|---:|
 | style50 | right agentview patch mean | linear | **0.520** | 0.493 |
 | coarse3 | right agentview CLS | linear | **0.683** | 0.617 |
-| layout10 | left agentview patch mean | MLP | **0.500** | 0.498 |
+| layout10 | left agentview patch mean | MLP | 0.500（无效：仅 2 类） | 0.498 |
 | task10 | wrist patch mean | MLP | 0.575 | 0.494 |
 
 ## 3. 哪个视角有 style
@@ -78,6 +78,20 @@ CLS：
 2. **腕部相机几乎看不到 style**（style50 仅 0.17，接近随机）；
 3. 三视角 concat **没有超过右 agentview**，说明 style 信号主要已经在右 agentview 中；
 4. CLS 的 coarse3 很强，但 style50 弱于 patch mean。
+
+## 3.1 ⚠️ layout10 的 support 有问题
+
+选中的 400 episodes 只覆盖 layout IDs **11–17**，因此 layout10 只有 2 个类：
+
+```text
+layout10 class 0: 294 train / 98 val episodes
+layout10 class 1:   6 train /  2 val episodes
+```
+
+所以 `layout10 = 0.500` 是 **二分类 chance 水平**，不是“0.50 vs 0.10”。
+
+这个结果**不能**说明 layout 可分，也不能用作 layout sanity check。  
+必须重新做 layout-balanced 采样（10 个 layout10 组各取足够 episode），再训练 layout10 head。
 
 ## 4. 控制 task/layout
 
