@@ -7,8 +7,9 @@ export WANDB_DISABLED=true
 export WANDB_SILENT=true
 export OTEL_SDK_DISABLED=true
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-OUT="${1:-/hy-tmp/runs/strict_flow_baseline_51}"
+OUT="${1:-/hy-tmp/runs/strict_flow_baseline_51_paired}"
 GROUP_LIST="${GROUP_LIST:-flow_no_mask flow_random}"
+SEEDS="${SEEDS:-42 43 44 45 46}"
 mkdir -p "$OUT"
 cd "$ROOT"
 
@@ -47,12 +48,16 @@ run_one() {
 for group in $GROUP_LIST; do
   case "$group" in
     flow_no_mask)
-      for seed in 42 43 44; do
-        run_one flow_no_mask "$seed" policy.enable_gating=false
+      for seed in $SEEDS; do
+        run_one flow_no_mask "$seed" \
+          policy.enable_gating=false policy.use_action_importance=false \
+          policy.hard_domain_mode=random policy.hard_mask_domain_shared=false \
+          policy.dgcd_group_smooth=0.0 policy.dgcd_domain_center=false \
+          policy.hard_selection_mode=linear
       done
       ;;
     flow_random)
-      for seed in 42 43 44; do
+      for seed in $SEEDS; do
         run_one flow_random "$seed" \
           policy.enable_gating=true policy.use_action_importance=false \
           policy.hard_domain_mode=random policy.hard_mask_domain_shared=false \
