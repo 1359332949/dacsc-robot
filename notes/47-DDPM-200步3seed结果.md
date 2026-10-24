@@ -1,3 +1,7 @@
+> ⚠️ **范围限定（2026-10-24）**
+> 本结论来自 **legacy DDPM channel gate**，**不是 CoRP 结论**。
+> 引用时必须写明 "legacy DDPM path"。
+
 # 47 - DDPM 200 步 3-seed 结果：51 步正信号是瞬态的
 
 日期：2026-10-20  

@@ -1,3 +1,7 @@
+> ⚠️ **范围限定（2026-10-24）**
+> 本结论来自 **legacy custom flow policy**（CLIP + 12-layer DiT），**不是 CoRP 结论**。
+> 只能作为工程 baseline，不能作为 CoRP 主结果。
+
 # 60 - 统一 center-crop 的 200 步 no-mask / random-mask 5-seed baseline
 
 日期：2026-10-22
