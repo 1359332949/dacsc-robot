@@ -85,6 +85,34 @@ def read_episode_meta(dataset_path: str | Path) -> dict[int, dict]:
     return out
 
 
+def apply_image_shift(img: torch.Tensor, shift: str) -> torch.Tensor:
+    """img: [3,H,W] float [0,1]。appearance shift，用于 eval 的 clean vs shifted 对照。"""
+    if shift == "none":
+        return img
+    if img.dim() == 4:
+        return torch.stack([apply_image_shift(x, shift) for x in img])
+    from PIL import Image, ImageEnhance
+    device = img.device
+    arr = (img.detach().cpu().clamp(0, 1).permute(1, 2, 0).numpy() * 255.0).astype(np.uint8)
+    pil = Image.fromarray(arr)
+    if shift == "grayscale":
+        pil = pil.convert("L").convert("RGB")
+    elif shift == "low_contrast":
+        pil = ImageEnhance.Contrast(pil).enhance(0.3)
+    elif shift == "color_jitter":
+        pil = ImageEnhance.Brightness(pil).enhance(1.6)
+        pil = ImageEnhance.Contrast(pil).enhance(1.6)
+        pil = ImageEnhance.Color(pil).enhance(2.2)
+    elif shift == "hue_shift":
+        hsv = np.asarray(pil.convert("HSV")).copy()
+        hsv[..., 0] = (hsv[..., 0].astype(np.int16) + 128) % 256
+        pil = Image.fromarray(hsv, "HSV").convert("RGB")
+    else:
+        raise ValueError(f"unknown shift {shift!r}")
+    out = np.asarray(pil, dtype=np.float32) / 255.0
+    return torch.from_numpy(out).permute(2, 0, 1).contiguous().to(device)
+
+
 class CorpRoboCasaDataset(Dataset):
     """多任务 atomic 数据集 + 原生 style 过滤。"""
 
@@ -99,9 +127,11 @@ class CorpRoboCasaDataset(Dataset):
         use_cache: bool = True,
         episode_residues: set[int] | None = None,
         episode_mod: int = 10,
+        shift: str = "none",
     ) -> None:
         self.horizon = horizon
         self.image_size = image_size
+        self.shift = str(shift)
         self.datasets: list[LerobotDataset] = []
         self.flat: list[tuple[int, int, int, str, str]] = []  # (ds_idx, frame_idx, style, lang, task)
         self.style_ids = set(range(style_min, style_max + 1))
@@ -148,6 +178,7 @@ class CorpRoboCasaDataset(Dataset):
                 img.unsqueeze(0), size=(self.image_size, self.image_size),
                 mode="bilinear", align_corners=False, antialias=True,
             ).squeeze(0)
+            img = apply_image_shift(img, self.shift)
             images[view] = (img - IMAGENET_MEAN) / IMAGENET_STD
         state = torch.cat([
             obs["robot0_base_to_eef_pos"][0],

@@ -22,7 +22,8 @@ _REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(_REPO_ROOT))
 
 from dacsc.corp_data import (  # noqa: E402
-    CorpRoboCasaDataset, LinearNormalizer, collate_corp,
+    IMAGENET_MEAN, IMAGENET_STD, CorpRoboCasaDataset, LinearNormalizer,
+    apply_image_shift, collate_corp,
 )
 from dacsc.corp_robocasa import (  # noqa: E402
     ROBOCASA_CORP_CONFIG, load_corp_robocasa,
@@ -113,7 +114,8 @@ def balanced_loader(dataset, batch_size, per_task, seed, num_workers=0):
 
 
 @torch.no_grad()
-def evaluate(model, loader, norm, device, max_batches, euler_steps):
+def evaluate(model, loader, norm, device, max_batches, euler_steps,
+             shift: str = "none"):
     """返回 overall / per-dim / per-task MSE。
 
     action 维度顺序（与 shape_meta 的 lerobot_keys 拼接顺序一致）：
@@ -131,8 +133,16 @@ def evaluate(model, loader, norm, device, max_batches, euler_steps):
         if i >= max_batches:
             break
         b = move_batch(batch, norm, device)
+        images = b["images"]
+        if shift != "none":
+            mean = IMAGENET_MEAN.to(device).view(1, 3, 1, 1)
+            std = IMAGENET_STD.to(device).view(1, 3, 1, 1)
+            images = {
+                k: (apply_image_shift(v * std + mean, shift) - mean) / std
+                for k, v in images.items()
+            }
         with torch.autocast("cuda", dtype=torch.bfloat16):
-            pred = model.sample_action(b["images"], b["state"], b["instruction"],
+            pred = model.sample_action(images, b["state"], b["instruction"],
                                        num_steps=euler_steps,
                                        domain_ids=b["style_id"])
         pred = norm.unnormalize_action(pred.float())
@@ -180,6 +190,9 @@ def main() -> int:
     ap.add_argument("--token-style-protect-ratio", type=float, default=0.0)
     ap.add_argument("--token-style-stats", default="meanstd",
                     choices=["meanstd", "mean", "std"])
+    ap.add_argument("--eval-shift", default="color_jitter",
+                    choices=["none", "grayscale", "color_jitter",
+                             "low_contrast", "hue_shift"])
     args = ap.parse_args()
 
     set_seed(args.seed)
@@ -275,6 +288,15 @@ def main() -> int:
             src_mse, val_mse = src_eval["overall"], val_eval["overall"]
             print(f"  step {step}: source_mse={src_mse:.4f} val_mse={val_mse:.4f} "
                   f"gap={val_mse-src_mse:+.4f} ({dt1+dt2:.1f}s)", flush=True)
+            src_shift_eval, dt3 = evaluate(
+                model, source_loader, norm, device, len(source_loader),
+                args.euler_steps, shift=args.eval_shift)
+            val_shift_eval, dt4 = evaluate(
+                model, val_loader, norm, device, len(val_loader),
+                args.euler_steps, shift=args.eval_shift)
+            print(f"    shifted({args.eval_shift}): "
+                  f"source={src_shift_eval['overall']:.4f} "
+                  f"val={val_shift_eval['overall']:.4f} ({dt3+dt4:.1f}s)", flush=True)
             print("    per-dim source:", {k: round(v, 4) for k, v in src_eval["per_dim"].items()},
                   flush=True)
             print("    per-dim val   :", {k: round(v, 4) for k, v in val_eval["per_dim"].items()},
@@ -286,6 +308,11 @@ def main() -> int:
                             "val_per_dim": val_eval["per_dim"],
                             "source_per_task": src_eval["per_task"],
                             "val_per_task": val_eval["per_task"],
+                            "eval_shift": args.eval_shift,
+                            "source_shift_mse": src_shift_eval["overall"],
+                            "val_shift_mse": val_shift_eval["overall"],
+                            "source_shift_per_dim": src_shift_eval["per_dim"],
+                            "val_shift_per_dim": val_shift_eval["per_dim"],
                             "train_loss": float(loss)})
             model.train()
 
