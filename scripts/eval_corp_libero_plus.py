@@ -14,6 +14,7 @@ from pathlib import Path
 
 import numpy as np
 import torch
+from PIL import Image, ImageEnhance
 from scipy import ndimage as ndi
 
 CORP = Path("/hy-tmp/models/corp/CoRP")
@@ -44,14 +45,37 @@ def select_tasks(classification: dict, suite: str, categories: list[str], per_ca
     return out
 
 
-def blur_observation(obs: dict, sigma: float) -> dict:
-    if sigma <= 0:
+def _apply_shift(arr: np.ndarray, shift: str) -> np.ndarray:
+    if shift == "none":
+        return arr
+    img = Image.fromarray(np.asarray(arr, dtype=np.uint8))
+    if shift == "grayscale":
+        return np.asarray(img.convert("L").convert("RGB"))
+    if shift == "low_contrast":
+        return np.asarray(ImageEnhance.Contrast(img).enhance(0.3))
+    if shift == "color_jitter":
+        img = ImageEnhance.Brightness(img).enhance(1.6)
+        img = ImageEnhance.Contrast(img).enhance(1.6)
+        img = ImageEnhance.Color(img).enhance(2.2)
+        return np.asarray(img)
+    if shift == "hue_shift":
+        hsv = np.asarray(img.convert("HSV")).copy()
+        hsv[..., 0] = (hsv[..., 0].astype(np.int16) + 128) % 256
+        return np.asarray(Image.fromarray(hsv, "HSV").convert("RGB"))
+    return arr
+
+
+def corrupt_observation(obs: dict, sigma: float, shift: str = "none") -> dict:
+    if sigma <= 0 and shift == "none":
         return obs
     out = dict(obs)
     for key in ("agentview_image", "robot0_eye_in_hand_image"):
-        if key in out:
-            arr = np.asarray(out[key], dtype=np.float32)
-            out[key] = ndi.gaussian_filter(arr, sigma=(sigma, sigma, 0)).astype(np.uint8)
+        if key not in out:
+            continue
+        arr = _apply_shift(np.asarray(out[key], dtype=np.uint8), shift)
+        if sigma > 0:
+            arr = ndi.gaussian_filter(arr.astype(np.float32), sigma=(sigma, sigma, 0)).astype(np.uint8)
+        out[key] = arr
     return out
 
 
@@ -62,6 +86,8 @@ def main() -> int:
     ap.add_argument("--categories", default=",".join(CATEGORIES))
     ap.add_argument("--per-category", type=int, default=2)
     ap.add_argument("--blur-sigma", type=float, default=0.0)
+    ap.add_argument("--shift", default="none",
+                    choices=["none", "grayscale", "color_jitter", "low_contrast", "hue_shift"])
     ap.add_argument("--episodes-per-task", type=int, default=1)
     ap.add_argument("--seed", type=int, default=7)
     ap.add_argument("--device", default="cuda:0")
@@ -133,7 +159,7 @@ def main() -> int:
                         if success or done:
                             break
                     while not success and not done and steps < MAX_STEPS[args.suite]:
-                        batch = policy_observation(blur_observation(observation, args.blur_sigma), task.language, policy)
+                        batch = policy_observation(corrupt_observation(observation, args.blur_sigma, args.shift), task.language, policy)
                         with torch.autocast(device_type=device.type,
                                             dtype=torch.bfloat16,
                                             enabled=device.type == "cuda" and args.precision == "bf16"):
