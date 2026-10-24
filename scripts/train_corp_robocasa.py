@@ -32,6 +32,26 @@ from dacsc.corp_robocasa import (  # noqa: E402
 DATA_ROOT = Path("/hy-tmp/datasets/robocasa365/v1.0/pretrain/atomic")
 CKPT = Path("/hy-tmp/models/corp/CoRP/checkpoints/corp_libero.pt")
 
+
+class ModelEMA:
+    """Simple EMA of the full state_dict (floating tensors only)."""
+
+    def __init__(self, model, decay: float = 0.999) -> None:
+        self.decay = float(decay)
+        self.shadow = {k: v.detach().clone() for k, v in model.state_dict().items()}
+
+    @torch.no_grad()
+    def update(self, model) -> None:
+        d = self.decay
+        for k, v in model.state_dict().items():
+            if k not in self.shadow:
+                continue
+            if v.dtype.is_floating_point:
+                self.shadow[k].mul_(d).add_(v.detach(), alpha=1.0 - d)
+            else:
+                self.shadow[k].copy_(v)
+
+
 # action 维度顺序（shape_meta 拼接顺序）。
 ACTION_GROUPS: dict[str, slice] = {
     "eef_position": slice(0, 3),
@@ -167,12 +187,14 @@ def evaluate(model, loader, norm, device, max_batches, euler_steps,
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--steps", type=int, default=51)
-    ap.add_argument("--batch-size", type=int, default=16)
+    ap.add_argument("--batch-size", type=int, default=30)
     ap.add_argument("--eval-batch-size", type=int, default=16)
     ap.add_argument("--max-val-batches", type=int, default=16)
     ap.add_argument("--max-test-batches", type=int, default=16)
     ap.add_argument("--per-task-eval", type=int, default=16)
-    ap.add_argument("--lr", type=float, default=1e-4)
+    ap.add_argument("--lr", type=float, default=5e-5)
+    ap.add_argument("--ema-decay", type=float, default=0.999,
+                    help="0 disables EMA")
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--max-tasks", type=int, default=0)
     ap.add_argument("--eval-every", type=int, default=50)
@@ -239,6 +261,7 @@ def main() -> int:
 
     params = [p for p in model.parameters() if p.requires_grad]
     opt = torch.optim.AdamW(params, lr=args.lr, weight_decay=1e-4, betas=(0.9, 0.95))
+    ema = ModelEMA(model, args.ema_decay) if args.ema_decay > 0 else None
     sched = torch.optim.lr_scheduler.LambdaLR(
         opt, lambda s: min(1.0, (s + 1) / max(1, args.steps // 10)))
 
@@ -274,6 +297,8 @@ def main() -> int:
             model.update_action_importance()
         torch.nn.utils.clip_grad_norm_(params, 1.0)
         opt.step()
+        if ema is not None:
+            ema.update(model)
         sched.step()
         if step % 5 == 0 or step == args.steps - 1:
             print(f"step {step:4d} loss {float(loss):.4f} "
@@ -281,6 +306,10 @@ def main() -> int:
                   flush=True)
         step += 1
         if step % args.eval_every == 0 or step == args.steps:
+            ema_backup = None
+            if ema is not None:
+                ema_backup = {k: v.detach().clone() for k, v in model.state_dict().items()}
+                model.load_state_dict(ema.shadow)
             src_eval, dt1 = evaluate(model, source_loader, norm, device,
                                      len(source_loader), args.euler_steps)
             val_eval, dt2 = evaluate(model, val_loader, norm, device,
@@ -314,9 +343,15 @@ def main() -> int:
                             "source_shift_per_dim": src_shift_eval["per_dim"],
                             "val_shift_per_dim": val_shift_eval["per_dim"],
                             "train_loss": float(loss)})
+            if ema_backup is not None:
+                model.load_state_dict(ema_backup)
             model.train()
 
     result = {"args": vars(args), "merge": {k: merge[k] for k in ("copied", "random_init")},
+              "budget": {"batch_size": args.batch_size, "steps": args.steps,
+                         "lr": args.lr, "ema_decay": args.ema_decay,
+                         "grad_clip": 1.0, "precision": "bf16",
+                         "n_obs_steps": 1},
               "n_train": len(train_ds), "n_val": len(val_ds), "metrics": metrics}
     if args.run_test:
         test_ds = build_dataset(tasks, (41, 50), args.horizon, 224, True)
@@ -335,7 +370,17 @@ def main() -> int:
     torch.save({
         "format": "corp_robocasa_adapted_v1",
         "config": ROBOCASA_CORP_CONFIG,
-        "model": model.state_dict(),
+        "model": ema.shadow if ema is not None else model.state_dict(),
+        "raw_model": model.state_dict(),
+        "budget": {
+            "batch_size": args.batch_size,
+            "steps": args.steps,
+            "lr": args.lr,
+            "ema_decay": args.ema_decay,
+            "grad_clip": 1.0,
+            "precision": "bf16",
+            "n_obs_steps": 1,
+        },
         "normalizer": {
             "state_mean": norm.state_mean.cpu(),
             "state_std": norm.state_std.cpu(),
