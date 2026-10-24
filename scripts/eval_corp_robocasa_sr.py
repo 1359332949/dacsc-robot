@@ -16,7 +16,7 @@ sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "repos" / "robocasa"))
 
 from dacsc.corp_robocasa import load_adapted_checkpoint  # noqa: E402
-from dacsc.corp_data import LinearNormalizer  # noqa: E402
+from dacsc.corp_data import LinearNormalizer, apply_image_shift  # noqa: E402
 from dacsc.corp_robocasa import ROBOCASA_CORP_CONFIG  # noqa: E402
 from robocasa.wrappers.gym_wrapper import RoboCasaGymEnv  # noqa: E402
 from robocasa.utils.env_utils import convert_action  # noqa: E402
@@ -31,7 +31,7 @@ MEAN = torch.tensor([0.485, 0.456, 0.406]).view(3, 1, 1)
 STD = torch.tensor([0.229, 0.224, 0.225]).view(3, 1, 1)
 
 
-def policy_inputs(obs, lang, norm, device, blur_sigma=0.0):
+def policy_inputs(obs, lang, norm, device, blur_sigma=0.0, shift="none"):
     images = {}
     for v in VIEWS:
         img = np.asarray(obs[OBS_KEY[v]], dtype=np.uint8)  # HWC
@@ -41,6 +41,7 @@ def policy_inputs(obs, lang, norm, device, blur_sigma=0.0):
         pil = pil.resize((224, 224), Image.Resampling.BILINEAR)
         arr = np.asarray(pil, dtype=np.float32) / 255.0
         x = torch.from_numpy(arr).permute(2, 0, 1).contiguous()
+        x = apply_image_shift(x, shift)
         images[v] = ((x - MEAN) / STD).unsqueeze(0).to(device)
     state = torch.cat([
         torch.as_tensor(obs["state.end_effector_position_relative"], dtype=torch.float32),
@@ -60,6 +61,9 @@ def main() -> int:
     ap.add_argument("--max-steps", type=int, default=600)
     ap.add_argument("--action-steps", type=int, default=8)
     ap.add_argument("--blur-sigma", type=float, default=0.0)
+    ap.add_argument("--shift", default="none",
+                    choices=["none", "grayscale", "color_jitter",
+                             "low_contrast", "hue_shift"])
     ap.add_argument("--device", default="cuda:0")
     ap.add_argument("--out", default="/hy-tmp/runs/corp_robocasa_sr/sr.json")
     args = ap.parse_args()
@@ -86,7 +90,8 @@ def main() -> int:
             lang = env.env.get_ep_meta().get("lang", args.task)
             success, steps = False, 0
             while not success and steps < args.max_steps:
-                images, state, instr = policy_inputs(obs, lang, norm, device, args.blur_sigma)
+                images, state, instr = policy_inputs(
+                    obs, lang, norm, device, args.blur_sigma, args.shift)
                 with torch.no_grad():
                     chunk = model.sample_action(images, state, instr).float().cpu().numpy()[0]
                 for a in chunk[:args.action_steps]:
@@ -98,7 +103,7 @@ def main() -> int:
             rec_styles = getattr(env.env, "style_ids", None)
             records.append({"episode": ep, "style_ids": styles,
                             "actual_style": rec_styles,
-                            "blur_sigma": args.blur_sigma,
+                            "blur_sigma": args.blur_sigma, "shift": args.shift,
                             "success": success, "steps": steps})
             print(f"[{args.task}] ep={ep} style={styles} blur={args.blur_sigma} "
                   f"success={int(success)} steps={steps}", flush=True)
@@ -107,6 +112,7 @@ def main() -> int:
 
     sr = sum(r["success"] for r in records) / len(records)
     out = {"task": args.task, "styles": styles, "blur_sigma": args.blur_sigma,
+           "shift": args.shift,
            "episodes": len(records), "successes": sum(r["success"] for r in records),
            "success_rate": sr, "elapsed_seconds": time.monotonic() - started}
     Path(args.out).parent.mkdir(parents=True, exist_ok=True)
