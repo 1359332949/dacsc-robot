@@ -14,6 +14,7 @@ from pathlib import Path
 
 import numpy as np
 import torch
+from scipy import ndimage as ndi
 
 CORP = Path("/hy-tmp/models/corp/CoRP")
 sys.path.insert(0, str(CORP))
@@ -43,12 +44,24 @@ def select_tasks(classification: dict, suite: str, categories: list[str], per_ca
     return out
 
 
+def blur_observation(obs: dict, sigma: float) -> dict:
+    if sigma <= 0:
+        return obs
+    out = dict(obs)
+    for key in ("agentview_image", "robot0_eye_in_hand_image"):
+        if key in out:
+            arr = np.asarray(out[key], dtype=np.float32)
+            out[key] = ndi.gaussian_filter(arr, sigma=(sigma, sigma, 0)).astype(np.uint8)
+    return out
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--checkpoint", type=Path, default=CORP / "checkpoints" / "corp_libero.pt")
     ap.add_argument("--suite", default="libero_spatial", choices=list(MAX_STEPS))
     ap.add_argument("--categories", default=",".join(CATEGORIES))
     ap.add_argument("--per-category", type=int, default=2)
+    ap.add_argument("--blur-sigma", type=float, default=0.0)
     ap.add_argument("--episodes-per-task", type=int, default=1)
     ap.add_argument("--seed", type=int, default=7)
     ap.add_argument("--device", default="cuda:0")
@@ -120,7 +133,7 @@ def main() -> int:
                         if success or done:
                             break
                     while not success and not done and steps < MAX_STEPS[args.suite]:
-                        batch = policy_observation(observation, task.language, policy)
+                        batch = policy_observation(blur_observation(observation, args.blur_sigma), task.language, policy)
                         with torch.autocast(device_type=device.type,
                                             dtype=torch.bfloat16,
                                             enabled=device.type == "cuda" and args.precision == "bf16"):
