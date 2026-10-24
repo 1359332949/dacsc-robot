@@ -103,10 +103,11 @@ class CorpRoboCasaDataset(Dataset):
         self.horizon = horizon
         self.image_size = image_size
         self.datasets: list[LerobotDataset] = []
-        self.flat: list[tuple[int, int, int, str]] = []  # (ds_idx, frame_idx, style, lang)
+        self.flat: list[tuple[int, int, int, str, str]] = []  # (ds_idx, frame_idx, style, lang, task)
         self.style_ids = set(range(style_min, style_max + 1))
 
         for ds_idx, path in enumerate(dataset_paths):
+            task_name = Path(path).parent.parent.name
             ds = LerobotDataset(
                 shape_meta=SHAPE_META,
                 dataset_path=str(path),
@@ -125,7 +126,7 @@ class CorpRoboCasaDataset(Dataset):
                     continue
                 if episode_residues is not None and (int(traj_id) % episode_mod) not in episode_residues:
                     continue
-                self.flat.append((ds_idx, frame_idx, int(m["style_id"]), m["lang"] or ""))
+                self.flat.append((ds_idx, frame_idx, int(m["style_id"]), m["lang"] or "", task_name))
                 n_kept += 1
             self.datasets.append(ds)
             print(f"[CorpRoboCasaDataset] {Path(path).parent.parent.name}: "
@@ -137,7 +138,7 @@ class CorpRoboCasaDataset(Dataset):
         return len(self.flat)
 
     def __getitem__(self, i: int) -> dict:
-        ds_idx, frame_idx, style_id, lang = self.flat[i]
+        ds_idx, frame_idx, style_id, lang, task_name = self.flat[i]
         sample = self.datasets[ds_idx][frame_idx]
         obs = sample["obs"]
         images = {}
@@ -159,6 +160,7 @@ class CorpRoboCasaDataset(Dataset):
             "action": sample["action"],
             "instruction": lang,
             "style_id": torch.tensor(style_id, dtype=torch.long),
+            "task": task_name,
         }
 
 
@@ -210,4 +212,5 @@ def collate_corp(batch: list[dict]) -> dict:
         "action": torch.stack([b["action"] for b in batch]),
         "instruction": [b["instruction"] for b in batch],
         "style_id": torch.stack([b["style_id"] for b in batch]),
+        "task": [b["task"] for b in batch],
     }

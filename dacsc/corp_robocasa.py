@@ -249,3 +249,19 @@ def _merge_view_params(
                 dst[i] = src[j].clone()
         model_sd[key] = dst
         partial.append(key)
+
+
+def load_adapted_checkpoint(
+    path: str | Path,
+    *,
+    device: str | torch.device = "cpu",
+) -> tuple[CorpRoboCasa, tuple[torch.Tensor, torch.Tensor]]:
+    """加载本仓库 P2 训练保存的 corp_robocasa_adapted_v1 checkpoint。"""
+    payload = torch.load(Path(path).expanduser().resolve(), map_location="cpu",
+                         weights_only=False)
+    if payload.get("format") != "corp_robocasa_adapted_v1":
+        raise ValueError("expected a corp_robocasa_adapted_v1 checkpoint")
+    model = CorpRoboCasa(payload["config"])
+    model.load_state_dict(payload["model"])
+    norm = payload["normalizer"]
+    return model.to(device).eval(), (norm["state_mean"], norm["state_std"])

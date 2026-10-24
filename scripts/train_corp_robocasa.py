@@ -16,7 +16,7 @@ from pathlib import Path
 import numpy as np
 import torch
 from torch.nn import functional as F
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, Subset
 
 _REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(_REPO_ROOT))
@@ -30,6 +30,15 @@ from dacsc.corp_robocasa import (  # noqa: E402
 
 DATA_ROOT = Path("/hy-tmp/datasets/robocasa365/v1.0/pretrain/atomic")
 CKPT = Path("/hy-tmp/models/corp/CoRP/checkpoints/corp_libero.pt")
+
+# action 维度顺序（shape_meta 拼接顺序）。
+ACTION_GROUPS: dict[str, slice] = {
+    "eef_position": slice(0, 3),
+    "eef_rotation": slice(3, 6),
+    "gripper_close": slice(6, 7),
+    "base_motion": slice(7, 11),
+    "control_mode": slice(11, 12),
+}
 
 
 def all_task_paths(max_tasks: int = 0) -> list[str]:
@@ -71,10 +80,42 @@ def move_batch(batch, norm, device):
     }
 
 
+def balanced_indices(dataset, per_task: int, seed: int = 0) -> list[int]:
+    """每个 task 最多取 per_task 帧，保证 per-task MSE 覆盖全部 61 个 task。"""
+    by_task: dict[str, list[int]] = {}
+    for i, entry in enumerate(dataset.flat):
+        by_task.setdefault(entry[4], []).append(i)
+    rng = random.Random(seed)
+    out: list[int] = []
+    for task in sorted(by_task):
+        idx = by_task[task][:]
+        rng.shuffle(idx)
+        out.extend(idx[:per_task])
+    return out
+
+
+def balanced_loader(dataset, batch_size, per_task, seed, num_workers=0):
+    subset = Subset(dataset, balanced_indices(dataset, per_task, seed))
+    return DataLoader(
+        subset, batch_size=batch_size, shuffle=False,
+        num_workers=num_workers, collate_fn=collate_corp, pin_memory=True,
+    )
+
+
 @torch.no_grad()
 def evaluate(model, loader, norm, device, max_batches, euler_steps):
+    """返回 overall / per-dim / per-task MSE。
+
+    action 维度顺序（与 shape_meta 的 lerobot_keys 拼接顺序一致）：
+        eef_position(0:3) + eef_rotation(3:6) + gripper_close(6:7)
+        + base_motion(7:11) + control_mode(11:12)
+    """
     model.eval()
     total, n = 0.0, 0
+    group_sum = {g: 0.0 for g in ACTION_GROUPS}
+    group_n = {g: 0 for g in ACTION_GROUPS}
+    task_sum: dict[str, float] = {}
+    task_n: dict[str, int] = {}
     t0 = time.time()
     for i, batch in enumerate(loader):
         if i >= max_batches:
@@ -85,9 +126,21 @@ def evaluate(model, loader, norm, device, max_batches, euler_steps):
                                        num_steps=euler_steps)
         pred = norm.unnormalize_action(pred.float())
         target = b["action"].float()
-        total += F.mse_loss(pred, target, reduction="sum").item()
+        se = (pred - target) ** 2
+        total += se.sum().item()
         n += target.numel()
-    return total / max(n, 1), time.time() - t0
+        for g, sl in ACTION_GROUPS.items():
+            group_sum[g] += se[..., sl].sum().item()
+            group_n[g] += target[..., sl].numel()
+        for j, task in enumerate(batch["task"]):
+            task_sum[task] = task_sum.get(task, 0.0) + se[j].sum().item()
+            task_n[task] = task_n.get(task, 0) + se[j].numel()
+    out = {
+        "overall": total / max(n, 1),
+        "per_dim": {g: group_sum[g] / max(group_n[g], 1) for g in ACTION_GROUPS},
+        "per_task": {t: task_sum[t] / max(task_n[t], 1) for t in task_sum},
+    }
+    return out, time.time() - t0
 
 
 def main() -> int:
@@ -97,6 +150,7 @@ def main() -> int:
     ap.add_argument("--eval-batch-size", type=int, default=16)
     ap.add_argument("--max-val-batches", type=int, default=16)
     ap.add_argument("--max-test-batches", type=int, default=16)
+    ap.add_argument("--per-task-eval", type=int, default=16)
     ap.add_argument("--lr", type=float, default=1e-4)
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--max-tasks", type=int, default=0)
@@ -142,14 +196,11 @@ def main() -> int:
         num_workers=args.num_workers, collate_fn=collate_corp,
         pin_memory=True, drop_last=True,
     )
-    val_loader = DataLoader(
-        val_ds, batch_size=args.eval_batch_size, shuffle=False,
-        num_workers=args.num_workers, collate_fn=collate_corp, pin_memory=True,
-    )
-    source_loader = DataLoader(
-        source_ds, batch_size=args.eval_batch_size, shuffle=False,
-        num_workers=args.num_workers, collate_fn=collate_corp, pin_memory=True,
-    )
+    # 评测用 per-task 均衡采样，保证 61 个 task 都被覆盖。
+    val_loader = balanced_loader(val_ds, args.eval_batch_size,
+                                 args.per_task_eval, args.seed + 1)
+    source_loader = balanced_loader(source_ds, args.eval_batch_size,
+                                    args.per_task_eval, args.seed + 2)
 
     metrics = []
     it = iter(train_loader)
@@ -176,15 +227,24 @@ def main() -> int:
                   flush=True)
         step += 1
         if step % args.eval_every == 0 or step == args.steps:
-            src_mse, dt1 = evaluate(model, source_loader, norm, device,
-                                    args.max_val_batches, args.euler_steps)
-            val_mse, dt2 = evaluate(model, val_loader, norm, device,
-                                    args.max_val_batches, args.euler_steps)
+            src_eval, dt1 = evaluate(model, source_loader, norm, device,
+                                     len(source_loader), args.euler_steps)
+            val_eval, dt2 = evaluate(model, val_loader, norm, device,
+                                     len(val_loader), args.euler_steps)
+            src_mse, val_mse = src_eval["overall"], val_eval["overall"]
             print(f"  step {step}: source_mse={src_mse:.4f} val_mse={val_mse:.4f} "
                   f"gap={val_mse-src_mse:+.4f} ({dt1+dt2:.1f}s)", flush=True)
+            print("    per-dim source:", {k: round(v, 4) for k, v in src_eval["per_dim"].items()},
+                  flush=True)
+            print("    per-dim val   :", {k: round(v, 4) for k, v in val_eval["per_dim"].items()},
+                  flush=True)
             metrics.append({"step": step, "source_action_mse": src_mse,
                             "val_action_mse": val_mse,
                             "style_gap": val_mse - src_mse,
+                            "source_per_dim": src_eval["per_dim"],
+                            "val_per_dim": val_eval["per_dim"],
+                            "source_per_task": src_eval["per_task"],
+                            "val_per_task": val_eval["per_task"],
                             "train_loss": float(loss)})
             model.train()
 
@@ -192,17 +252,29 @@ def main() -> int:
               "n_train": len(train_ds), "n_val": len(val_ds), "metrics": metrics}
     if args.run_test:
         test_ds = build_dataset(tasks, (41, 50), args.horizon, 224, True)
-        test_loader = DataLoader(
-            test_ds, batch_size=args.eval_batch_size, shuffle=False,
-            num_workers=args.num_workers, collate_fn=collate_corp, pin_memory=True)
-        test_mse, dt = evaluate(model, test_loader, norm, device,
-                                args.max_test_batches, args.euler_steps)
+        test_loader = balanced_loader(test_ds, args.eval_batch_size,
+                                      args.per_task_eval, args.seed + 3)
+        test_eval, dt = evaluate(model, test_loader, norm, device,
+                                 len(test_loader), args.euler_steps)
         result["n_test"] = len(test_ds)
-        result["test_action_mse"] = test_mse
-        print(f"TEST action_mse={test_mse:.4f} ({dt:.1f}s)", flush=True)
+        result["test_action_mse"] = test_eval["overall"]
+        result["test_per_dim"] = test_eval["per_dim"]
+        result["test_per_task"] = test_eval["per_task"]
+        print(f"TEST action_mse={test_eval['overall']:.4f} ({dt:.1f}s)", flush=True)
+        print("  per-dim test:", {k: round(v, 4) for k, v in test_eval["per_dim"].items()},
+              flush=True)
 
+    torch.save({
+        "format": "corp_robocasa_adapted_v1",
+        "config": ROBOCASA_CORP_CONFIG,
+        "model": model.state_dict(),
+        "normalizer": {
+            "state_mean": norm.state_mean.cpu(),
+            "state_std": norm.state_std.cpu(),
+        },
+    }, out / "model.pt")
     (out / "result.json").write_text(json.dumps(result, indent=2, ensure_ascii=False))
-    print("DONE ->", out / "result.json", flush=True)
+    print("DONE ->", out / "result.json", "| model.pt", flush=True)
     return 0
 
 
