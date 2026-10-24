@@ -100,9 +100,11 @@ def main() -> int:
                     success = bool(info.get("success", False))
                     if success or done or steps >= args.max_steps:
                         break
-            rec_styles = getattr(env.env, "style_ids", None)
+            actual_style = getattr(env.env, "style_id", None)
+            actual_layout = getattr(env.env, "layout_id", None)
             records.append({"episode": ep, "style_ids": styles,
-                            "actual_style": rec_styles,
+                            "actual_style": actual_style,
+                            "actual_layout": actual_layout,
                             "blur_sigma": args.blur_sigma, "shift": args.shift,
                             "success": success, "steps": steps})
             print(f"[{args.task}] ep={ep} style={styles} blur={args.blur_sigma} "
