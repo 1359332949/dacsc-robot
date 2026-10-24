@@ -102,6 +102,8 @@ def main() -> int:
                         break
             actual_style = getattr(env.env, "style_id", None)
             actual_layout = getattr(env.env, "layout_id", None)
+            actual_style = int(actual_style) if actual_style is not None else None
+            actual_layout = int(actual_layout) if actual_layout is not None else None
             records.append({"episode": ep, "style_ids": styles,
                             "actual_style": actual_style,
                             "actual_layout": actual_layout,
