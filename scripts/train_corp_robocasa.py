@@ -82,16 +82,23 @@ def move_batch(batch, norm, device):
 
 
 def balanced_indices(dataset, per_task: int, seed: int = 0) -> list[int]:
-    """每个 task 最多取 per_task 帧，保证 per-task MSE 覆盖全部 61 个 task。"""
-    by_task: dict[str, list[int]] = {}
+    """每个 task 取 per_task 帧，并在该 task 内部的各 style 间尽量均分。
+
+    按 (task, style) 分层，避免 per-task gap 被 style 采样偏差污染；
+    当 style 数多于 per_task 时，每个 style 至少 1 帧（总数可能略超 per_task）。
+    """
+    by_task: dict[str, dict[int, list[int]]] = {}
     for i, entry in enumerate(dataset.flat):
-        by_task.setdefault(entry[4], []).append(i)
+        by_task.setdefault(entry[4], {}).setdefault(entry[2], []).append(i)
     rng = random.Random(seed)
     out: list[int] = []
     for task in sorted(by_task):
-        idx = by_task[task][:]
-        rng.shuffle(idx)
-        out.extend(idx[:per_task])
+        styles = sorted(by_task[task])
+        per_style = max(1, per_task // len(styles))
+        for style in styles:
+            idx = by_task[task][style][:]
+            rng.shuffle(idx)
+            out.extend(idx[:per_style])
     return out
 
 
@@ -243,6 +250,8 @@ def main() -> int:
                 domain_ids=b["style_id"])
         opt.zero_grad(set_to_none=True)
         loss.backward()
+        if getattr(model, "token_style", None) is not None:
+            model.update_action_importance()
         torch.nn.utils.clip_grad_norm_(params, 1.0)
         opt.step()
         sched.step()

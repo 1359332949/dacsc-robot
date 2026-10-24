@@ -13,7 +13,10 @@
   · DgCD 的"环境"按**域标签**切分，而不是硬编码每 32 个样本一块
   · 输入张量形状适配我们的 (N, T, C)（ViT token 序列）
 """
+
 from __future__ import annotations
+
+import warnings
 
 from typing import List, Optional, Sequence
 
@@ -193,7 +196,12 @@ class DgCDScorer(nn.Module):
         env_slices = [torch.nonzero(d == u, as_tuple=False).view(-1) for u in uniq]
         env_slices = [sl for sl in env_slices if sl.numel() >= 2]
         if len(env_slices) < 2:
-            return torch.zeros_like(x)              # 只有一个域 → 无差异可言
+            warnings.warn(
+                f"DgCDScorer.score: only {len(env_slices)} domain(s) with >=2 "
+                f"samples (unique={len(uniq)}); returning zeros. "
+                "Use a domain-balanced sampler so each domain has >=2 samples.",
+                RuntimeWarning, stacklevel=2)
+            return torch.zeros_like(x)
 
         # score() 会在 DINOv2 forward hook 内被调用；外层可能处于 no_grad
         # （推理/冻结分支），但 DgCD 的 scaler 对抗步必须显式开启 autograd。

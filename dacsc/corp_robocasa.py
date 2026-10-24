@@ -132,39 +132,57 @@ class CorpRoboCasa(nn.Module):
         self.action_horizon = int(config["action_horizon"])
         self.representation_extractor = RepresentationExtractor(config)
         self.action_generator = DiTActionGenerator(config)
-        # token-level style statistics modulation（patch tokens, pre-resampler）
+        # token-level style statistics modulation（patch tokens, pre-resampler）。
+        # 用 forward hook 插入，避免复制官方 RepresentationExtractor.forward。
         self.token_style = token_style
+        self._current_domain_ids: torch.Tensor | None = None
+        self._last_style_tokens: torch.Tensor | None = None
+        self._token_importance: torch.Tensor | None = None
+        self._style_handle = None
+        if token_style is not None:
+            self._style_handle = (
+                self.representation_extractor.visual_encoder.register_forward_hook(
+                    self._token_style_hook))
+
+    def _token_style_hook(self, module, inputs, output):
+        """visual_encoder 输出 (B*V,T,D) -> (B,V,T,D) -> 调制 -> 还原。"""
+        if self.token_style is None:
+            return output
+        b = output.shape[0] // len(self.view_names)
+        z = output.reshape(b, len(self.view_names), *output.shape[1:])
+        if self.training:
+            z = z * 1.0
+            z.retain_grad()
+            self._last_style_tokens = z
+        z = self.token_style(
+            z, domain_ids=self._current_domain_ids, training=self.training)
+        return z.reshape(output.shape)
 
     def extract(self, images: dict[str, torch.Tensor], state: torch.Tensor,
                 instruction, domain_ids: torch.Tensor | None = None) -> Representation:
         """返回 Representation。images: {view: [B,3,224,224]}，state: [B,state_dim]。"""
-        re = self.representation_extractor
-        if self.token_style is None:
-            return re(images=images, state=state, instruction=instruction)
-        # 手工复现官方 RepresentationExtractor.forward，并在
-        # x_norm_patchtokens 之后、resampler 之前插入 token-level 调制。
-        batch_size = state.shape[0]
-        patches = re.visual_encoder(
-            torch.cat([images[name] for name in self.view_names], dim=0)
-        )  # (B*V, T, D)
-        _, t, d = patches.shape
-        z = patches.reshape(batch_size, len(self.view_names), t, d)
-        z = self.token_style(z, domain_ids=domain_ids, training=self.training)
-        patches = z.reshape(batch_size * len(self.view_names), t, d)
-        patch_tokens = {
-            name: patches[index * batch_size:(index + 1) * batch_size]
-            for index, name in enumerate(self.view_names)
-        }
-        language_tokens, pooled_language = re.language_encoder(instruction)
-        visual_tokens = re.cross_attention_resampler(patch_tokens, pooled_language)
-        visual_language = torch.cat(
-            [visual_tokens, language_tokens.to(visual_tokens.dtype)], dim=1)
-        state_token = re.state_encoder(state)
-        return Representation(
-            tokens=torch.cat([visual_language, state_token], dim=1),
-            pooled_language=pooled_language,
-            action_dtype=visual_language.dtype,
-        )
+        self._current_domain_ids = domain_ids
+        try:
+            return self.representation_extractor(
+                images=images, state=state, instruction=instruction)
+        finally:
+            self._current_domain_ids = None
+
+    def update_action_importance(self, momentum: float = 0.9) -> dict | None:
+        """用 patch-token 梯度更新 action importance（供 *_action_aware 使用）。"""
+        z = self._last_style_tokens
+        self._last_style_tokens = None
+        if self.token_style is None or z is None or z.grad is None:
+            return None
+        score = (z.detach() * z.grad.detach()).abs().mean(dim=(0, 1, 3))
+        score = score / score.sum().clamp_min(1e-8)
+        if self._token_importance is None:
+            self._token_importance = score
+        else:
+            self._token_importance = (
+                momentum * self._token_importance + (1.0 - momentum) * score)
+        self.token_style.set_action_importance(self._token_importance)
+        return self.token_style.summary()
 
     def flow_matching_loss(
         self,
