@@ -9,4 +9,5 @@ export SHIFT="${SHIFT:-none}"
 STYLES=11-30 OUT="$OUT/source" bash "$(dirname "$0")/run_corp_sr_tasks.sh"
 STYLES=31-40 OUT="$OUT/val" bash "$(dirname "$0")/run_corp_sr_tasks.sh"
 STYLES=41-50 OUT="$OUT/test" bash "$(dirname "$0")/run_corp_sr_tasks.sh"
+python3 "$(dirname "$0")/aggregate_sr.py" "$OUT"
 echo SPLIT_DONE
