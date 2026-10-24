@@ -71,7 +71,7 @@ def corrupt_observation(obs: dict, sigma: float, shift: str = "none") -> dict:
     out = dict(obs)
     for key in ("agentview_image", "robot0_eye_in_hand_image"):
         if key not in out:
-            continue
+            raise KeyError(f"corrupt_observation: missing observation key {key!r}")
         arr = _apply_shift(np.asarray(out[key], dtype=np.uint8), shift)
         if sigma > 0:
             arr = ndi.gaussian_filter(arr.astype(np.float32), sigma=(sigma, sigma, 0)).astype(np.uint8)
@@ -170,7 +170,9 @@ def main() -> int:
                             success = is_success(env, info, reward, done)
                             if success or done or steps >= MAX_STEPS[args.suite]:
                                 break
-                    rec = {"suite": args.suite, "category": cat, "task": name,
+                    rec = {"suite": args.suite, "shift": args.shift,
+                           "blur_sigma": args.blur_sigma,
+                           "category": cat, "task": name,
                            "task_id": task_id, "episode": episode, "seed": seed,
                            "success": bool(success), "policy_steps": steps,
                            "language": task.language}
@@ -186,6 +188,8 @@ def main() -> int:
         by_cat.setdefault(r["category"], []).append(int(r["success"]))
     summary = {
         "suite": args.suite,
+        "shift": args.shift,
+        "blur_sigma": args.blur_sigma,
         "checkpoint": str(args.checkpoint),
         "episodes": len(records),
         "successes": sum(int(r["success"]) for r in records),

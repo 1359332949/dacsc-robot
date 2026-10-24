@@ -59,6 +59,8 @@ def set_seed(seed: int) -> None:
     np.random.seed(seed)
     torch.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
 
 
 def build_dataset(tasks, split, horizon, image_size, use_cache,
@@ -200,8 +202,8 @@ def main() -> int:
     norm = LinearNormalizer.fit(train_ds, max_steps=512)
     print("normalizer fitted on train styles", flush=True)
 
-    model, merge = load_corp_robocasa(CKPT, config=ROBOCASA_CORP_CONFIG, device=device)
     token_style_cfg = None
+    token_style = None
     if args.token_style_mode != "none":
         from dacsc.token_style import TokenStyleModulator
         token_style_cfg = {
@@ -212,8 +214,12 @@ def main() -> int:
             "stats": args.token_style_stats,
             "dim": 384,
         }
-        model.token_style = TokenStyleModulator(**token_style_cfg).to(device)
+        token_style = TokenStyleModulator(**token_style_cfg).to(device)
         print(f"token_style enabled: {token_style_cfg}", flush=True)
+    model, merge = load_corp_robocasa(
+        CKPT, config=ROBOCASA_CORP_CONFIG, device=device, token_style=token_style)
+    if token_style is not None:
+        assert model._style_handle is not None, "token_style hook not registered"
     model.train()
     print(f"model loaded: copied={merge['copied']} random={merge['random_init']}", flush=True)
 

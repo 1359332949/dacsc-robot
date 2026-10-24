@@ -1,4 +1,4 @@
-"""Token-level style-statistics modulation for the learned-query resampler.
+"""Token-level style-statistics modulation for a token sequence (patch or resampler).
 
 Motivation
 ----------
@@ -12,10 +12,11 @@ those of a donor sample:
 
 `random_stats` uses an arbitrary donor.  `cross_style_stats` prefers a donor
 from a different style/domain.  The optional action-aware variant reduces the
-mixing strength on resampler queries that are action-important.
+mixing strength on tokens that are action-important.
 """
 from __future__ import annotations
 
+import warnings
 from typing import Dict
 
 import torch
@@ -117,6 +118,14 @@ class TokenStyleModulator(nn.Module):
         self.register_buffer("action_importance", torch.zeros(0), persistent=False)
         self.last_stats_t: Dict[str, torch.Tensor] = {}
         self.last_donor: torch.Tensor | None = None
+        # 独立 RNG：donor 采样不能污染 flow-matching 的全局 RNG（paired 协议）。
+        self._donor_gen: torch.Generator | None = None
+
+    def _generator(self, device) -> torch.Generator:
+        if self._donor_gen is None or self._donor_gen.device != device:
+            self._donor_gen = torch.Generator(device=device)
+            self._donor_gen.manual_seed(0)
+        return self._donor_gen
 
     def set_action_importance(self, value: torch.Tensor | None) -> None:
         if value is None:
@@ -151,6 +160,10 @@ class TokenStyleModulator(nn.Module):
             keep_w = torch.zeros((1, K, 1), device=z.device, dtype=z.dtype)
             if self.mode == "normalize_action_aware":
                 imp = self.action_importance.to(device=z.device, dtype=z.dtype)
+                if imp.numel() != K:
+                    warnings.warn(
+                        f"action_importance size {imp.numel()} != K={K}; "
+                        "action-aware weighting disabled", RuntimeWarning, stacklevel=2)
                 if imp.numel() == K:
                     keep_w = (self.action_weight
                               * imp.clamp(0.0, 1.0))[None, :, None]
@@ -179,7 +192,13 @@ class TokenStyleModulator(nn.Module):
         row_dom = (d[:, None].repeat(1, V).reshape(-1)
                    if d is not None else None)
 
-        donor = torch.randint(0, n, (n,), device=z.device)
+        if (self.mode in ("cross_style_stats", "cross_style_stats_action_aware")
+                and row_dom is None):
+            warnings.warn(
+                "domain_ids is None; cross_style_stats falls back to random donors",
+                RuntimeWarning, stacklevel=2)
+        gen = self._generator(z.device)
+        donor = torch.randint(0, n, (n,), device=z.device, generator=gen)
         if (self.mode in ("cross_style_stats", "cross_style_stats_action_aware")
                 and row_dom is not None and n > 1):
             same = row_dom[donor] == row_dom
@@ -189,7 +208,8 @@ class TokenStyleModulator(nn.Module):
                 if not same.any():
                     break
                 idx = torch.nonzero(same, as_tuple=False).view(-1)
-                donor[idx] = torch.randint(0, n, (idx.numel(),), device=z.device)
+                donor[idx] = torch.randint(
+                    0, n, (idx.numel(),), device=z.device, generator=gen)
                 same = row_dom[donor] == row_dom
         if n > 1:
             self_idx = torch.arange(n, device=z.device)

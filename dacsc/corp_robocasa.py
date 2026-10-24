@@ -134,11 +134,19 @@ class CorpRoboCasa(nn.Module):
         self.action_generator = DiTActionGenerator(config)
         # token-level style statistics modulation（patch tokens, pre-resampler）。
         # 用 forward hook 插入，避免复制官方 RepresentationExtractor.forward。
-        self.token_style = token_style
         self._current_domain_ids: torch.Tensor | None = None
         self._last_style_tokens: torch.Tensor | None = None
         self._token_importance: torch.Tensor | None = None
         self._style_handle = None
+        self.token_style = None
+        self.set_token_style(token_style)
+
+    def set_token_style(self, token_style: nn.Module | None) -> None:
+        """注册/替换 token_style hook；晚赋值必须走这里，不能直接改属性。"""
+        if self._style_handle is not None:
+            self._style_handle.remove()
+            self._style_handle = None
+        self.token_style = token_style
         if token_style is not None:
             self._style_handle = (
                 self.representation_extractor.visual_encoder.register_forward_hook(
@@ -168,7 +176,8 @@ class CorpRoboCasa(nn.Module):
         finally:
             self._current_domain_ids = None
 
-    def update_action_importance(self, momentum: float = 0.9) -> dict | None:
+    def update_action_importance(self, momentum: float = 0.9,
+                                 return_summary: bool = False) -> dict | None:
         """用 patch-token 梯度更新 action importance（供 *_action_aware 使用）。"""
         z = self._last_style_tokens
         self._last_style_tokens = None
@@ -182,7 +191,7 @@ class CorpRoboCasa(nn.Module):
             self._token_importance = (
                 momentum * self._token_importance + (1.0 - momentum) * score)
         self.token_style.set_action_importance(self._token_importance)
-        return self.token_style.summary()
+        return self.token_style.summary() if return_summary else None
 
     def flow_matching_loss(
         self,
@@ -198,20 +207,22 @@ class CorpRoboCasa(nn.Module):
         因此线性路径 x_tau=(1-tau)*eps+tau*x0，目标速度 v=x0-eps，
         loss=MSE(v_theta(x_tau,tau), v)。
         """
-        representation = self.extract(images, state, instruction, domain_ids=domain_ids)
-        action = action.to(dtype=representation.action_dtype)
         device = action.device
         b = action.shape[0]
         eps = torch.randn_like(action)
         # 论文: tau ~ Beta(1.0, 1.5)，不是 Uniform(0,1)
         tau = torch.distributions.Beta(1.0, 1.5).sample((b,)).to(device=device, dtype=action.dtype)
+        # 先生成 flow noise / tau，再 extract；token_style 的 RNG 消耗不会改变 flow noise。
+        representation = self.extract(images, state, instruction, domain_ids=domain_ids)
+        action = action.to(dtype=representation.action_dtype)
+        eps = eps.to(dtype=representation.action_dtype)
         # 必须与官方 DiTActionGenerator.sample 的 Euler 积分方向一致：
         #   x(0)=eps(noise) -> x(1)=action(data), dx/dtau = action - eps
         x_tau = eps * (1.0 - tau[:, None, None]) + action * tau[:, None, None]
         target = action - eps
         prefix = self.action_generator.prepare_prefix(representation)
         pred = self.action_generator(x_tau, tau, prefix)
-        return F.mse_loss(pred, target)
+        return F.mse_loss(pred.float(), target.float())
 
     @torch.no_grad()
     def sample_action(
@@ -232,6 +243,7 @@ def load_corp_robocasa(
     *,
     config: dict = ROBOCASA_CORP_CONFIG,
     device: str | torch.device = "cpu",
+    token_style: nn.Module | None = None,
 ) -> tuple[CorpRoboCasa, dict]:
     """从官方 corp_libero.pt 加载共享权重，接口层随机初始化，并返回可审计报告。"""
     checkpoint = Path(checkpoint).expanduser().resolve()
@@ -240,7 +252,9 @@ def load_corp_robocasa(
         raise ValueError("expected a corp_libero_v2 checkpoint")
     libero_sd: dict[str, torch.Tensor] = payload["model"]
 
-    model = CorpRoboCasa(config)
+    model = CorpRoboCasa(config, token_style=token_style)
+    if token_style is not None:
+        assert model._style_handle is not None, "token_style hook not registered"
     model_sd = model.state_dict()
 
     copied: list[str] = []
@@ -314,6 +328,9 @@ def load_adapted_checkpoint(
         from dacsc.token_style import TokenStyleModulator
         token_style = TokenStyleModulator(**ts_cfg)
     model = CorpRoboCasa(payload["config"], token_style=token_style)
-    model.load_state_dict(payload["model"], strict=False)
+    missing, unexpected = model.load_state_dict(payload["model"], strict=False)
+    assert not unexpected, f"unexpected checkpoint keys: {unexpected}"
+    allowed_missing = {k for k in missing if k.startswith("token_style.")}
+    assert set(missing) <= allowed_missing, f"missing checkpoint keys: {missing}"
     norm = payload["normalizer"]
     return model.to(device).eval(), (norm["state_mean"], norm["state_std"])
