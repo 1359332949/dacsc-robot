@@ -1,0 +1,151 @@
+"""LIBERO-Plus paired multi-shift eval: same task/env/initial-state, multiple shifts.
+
+Usage:
+  python scripts/eval_corp_libero_plus_paired.py --suite libero_spatial \
+    --per-category 2 --shifts none,grayscale,color_jitter,low_contrast,hue_shift
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import sys
+import time
+from pathlib import Path
+
+import numpy as np
+import torch
+
+CORP = Path("/hy-tmp/models/corp/CoRP")
+sys.path.insert(0, str(CORP))
+sys.path.insert(0, str(CORP / "scripts"))
+sys.path.insert(0, "/root/dacsc-robot/scripts")
+
+from evaluate_libero import (  # noqa: E402
+    CAMERA_SIZE, DUMMY_ACTION, MAX_STEPS, SETTLING_STEPS,
+    configure_libero, is_success, policy_observation,
+)
+from eval_corp_libero_plus import corrupt_observation, select_tasks  # noqa: E402
+from corp import load_policy  # noqa: E402
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--checkpoint", type=Path, default=CORP / "checkpoints" / "corp_libero.pt")
+    ap.add_argument("--suite", default="libero_spatial", choices=list(MAX_STEPS))
+    ap.add_argument("--categories", default="Camera Viewpoints,Robot Initial States,Language Instructions,Light Conditions,Background Textures,Sensor Noise,Objects Layout")
+    ap.add_argument("--per-category", type=int, default=2)
+    ap.add_argument("--episodes-per-task", type=int, default=1)
+    ap.add_argument("--shifts", default="none,grayscale,color_jitter,low_contrast,hue_shift")
+    ap.add_argument("--seed", type=int, default=7)
+    ap.add_argument("--device", default="cuda:0")
+    ap.add_argument("--precision", choices=["fp32", "bf16"], default="bf16")
+    ap.add_argument("--render-gpu", type=int, default=0)
+    ap.add_argument("--libero-src", type=Path, default=Path("/hy-tmp/repos/LIBERO-plus"))
+    ap.add_argument("--libero-config-path", type=Path,
+                    default=Path("/hy-tmp/repos/LIBERO-plus/.cache/libero"))
+    ap.add_argument("--output-dir", type=Path, default=Path("/hy-tmp/runs/libero_paired"))
+    args = ap.parse_args()
+    categories = [c.strip() for c in args.categories.split(",") if c.strip()]
+    shifts = [s.strip() for s in args.shifts.split(",") if s.strip()]
+
+    configure_libero(args)
+    from libero.libero import benchmark, get_libero_path
+    from libero.libero.envs import OffScreenRenderEnv
+
+    suite = benchmark.get_benchmark(args.suite)()
+    name_to_id = {n: i for i, n in enumerate(suite.get_task_names())}
+    classification = json.loads(
+        (args.libero_src / "libero" / "libero" / "benchmark" /
+         "task_classification.json").read_text()
+    )
+    selected = select_tasks(classification, args.suite, categories, args.per_category)
+    print(f"suite={args.suite} n_tasks={suite.n_tasks} selected={len(selected)} shifts={shifts}", flush=True)
+
+    policy = load_policy(args.checkpoint, device=args.device)
+    _orig_load = torch.load
+    def _trusted_load(*a, **kw):
+        kw.setdefault("weights_only", False)
+        return _orig_load(*a, **kw)
+    torch.load = _trusted_load
+
+    args.output_dir.mkdir(parents=True, exist_ok=True)
+    records = []
+    device = torch.device(args.device)
+    started = time.monotonic()
+    with (args.output_dir / f"{args.suite}.jsonl").open("w") as output:
+        for entry in selected:
+            cat, name = entry["category"], entry["name"]
+            if name not in name_to_id:
+                continue
+            task_id = name_to_id[name]
+            task = suite.get_task(task_id)
+            bddl = Path(get_libero_path("bddl_files")) / task.problem_folder / task.bddl_file
+            initial_states = suite.get_task_init_states(task_id)
+            env = OffScreenRenderEnv(bddl_file_name=str(bddl), camera_heights=CAMERA_SIZE,
+                                     camera_widths=CAMERA_SIZE, render_gpu_device_id=args.render_gpu)
+            try:
+                for episode in range(args.episodes_per_task):
+                    seed = args.seed + task_id * 1000 + episode
+                    for shift in shifts:
+                        np.random.seed(seed)
+                        torch.manual_seed(seed)
+                        if torch.cuda.is_available():
+                            torch.cuda.manual_seed_all(seed)
+                        env.seed(seed)
+                        env.reset()
+                        observation = env.set_init_state(initial_states[episode])
+                        success, done, steps = False, False, 0
+                        for _ in range(SETTLING_STEPS):
+                            observation, reward, done, info = env.step(DUMMY_ACTION)
+                            success = is_success(env, info, reward, done)
+                            if success or done:
+                                break
+                        while not success and not done and steps < MAX_STEPS[args.suite]:
+                            batch = policy_observation(
+                                corrupt_observation(observation, 0.0, shift), task.language, policy)
+                            with torch.autocast(device_type=device.type, dtype=torch.bfloat16,
+                                                enabled=device.type == "cuda" and args.precision == "bf16"):
+                                chunk = policy.predict(batch)[0].float().cpu().numpy()
+                            for action in chunk:
+                                observation, reward, done, info = env.step(np.clip(action, -1.0, 1.0))
+                                steps += 1
+                                success = is_success(env, info, reward, done)
+                                if success or done or steps >= MAX_STEPS[args.suite]:
+                                    break
+                        rec = {"suite": args.suite, "shift": shift, "blur_sigma": 0.0,
+                               "category": cat, "task": name, "task_id": task_id,
+                               "episode": episode, "seed": seed,
+                               "success": bool(success), "policy_steps": steps,
+                               "language": task.language}
+                        output.write(json.dumps(rec) + "\n")
+                        output.flush()
+                        records.append(rec)
+                        print(f"[{shift}] {cat} task={task_id} success={int(success)} steps={steps}",
+                              flush=True)
+            finally:
+                env.close()
+
+    by_shift: dict[str, dict] = {}
+    for shift in shifts:
+        rs = [r for r in records if r["shift"] == shift]
+        cats: dict[str, list[int]] = {}
+        for r in rs:
+            cats.setdefault(r["category"], []).append(int(r["success"]))
+        by_shift[shift] = {
+            "episodes": len(rs),
+            "successes": sum(int(r["success"]) for r in rs),
+            "success_rate": (sum(int(r["success"]) for r in rs) / len(rs)) if rs else 0.0,
+            "by_category": {c: {"n": len(v), "successes": sum(v),
+                                "success_rate": sum(v) / len(v)} for c, v in cats.items()},
+        }
+    summary = {"suite": args.suite, "shift": ",".join(shifts), "blur_sigma": 0.0,
+               "checkpoint": str(args.checkpoint), "paired": True,
+               "episodes": len(records), "by_shift": by_shift,
+               "elapsed_seconds": time.monotonic() - started}
+    (args.output_dir / "summary.json").write_text(json.dumps(summary, indent=2) + "\n")
+    print(json.dumps(summary, indent=2))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

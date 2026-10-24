@@ -213,6 +213,7 @@ def main() -> int:
             "protect_ratio": args.token_style_protect_ratio,
             "stats": args.token_style_stats,
             "dim": 384,
+            "donor_seed": args.seed,
         }
         token_style = TokenStyleModulator(**token_style_cfg).to(device)
         print(f"token_style enabled: {token_style_cfg}", flush=True)

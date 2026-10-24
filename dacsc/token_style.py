@@ -97,7 +97,7 @@ class TokenStyleModulator(nn.Module):
     def __init__(self, mode: str = "none", alpha: float = 0.5,
                  action_weight: float = 1.0, protect_ratio: float = 0.0,
                  stats: str = "meanstd", dim: int | None = None,
-                 eps: float = 1e-5):
+                 eps: float = 1e-5, donor_seed: int = 0):
         super().__init__()
         if mode not in self.MODES:
             raise ValueError(f"unknown token_style_mode={mode}")
@@ -109,6 +109,7 @@ class TokenStyleModulator(nn.Module):
             raise ValueError(f"unknown token_style_stats={stats}")
         self.stats = str(stats)
         self.eps = float(eps)
+        self.donor_seed = int(donor_seed)
         if mode in ("normalize", "normalize_action_aware"):
             if dim is None:
                 raise ValueError("normalize mode requires dim")
@@ -124,7 +125,7 @@ class TokenStyleModulator(nn.Module):
     def _generator(self, device) -> torch.Generator:
         if self._donor_gen is None or self._donor_gen.device != device:
             self._donor_gen = torch.Generator(device=device)
-            self._donor_gen.manual_seed(0)
+            self._donor_gen.manual_seed(self.donor_seed)
         return self._donor_gen
 
     def set_action_importance(self, value: torch.Tensor | None) -> None:
