@@ -86,31 +86,31 @@ def read_episode_meta(dataset_path: str | Path) -> dict[int, dict]:
 
 
 def apply_image_shift(img: torch.Tensor, shift: str) -> torch.Tensor:
-    """img: [3,H,W] float [0,1]。appearance shift，用于 eval 的 clean vs shifted 对照。"""
+    """GPU-vectorized appearance shift; img: [...,3,H,W] float [0,1].
+
+    用 torch 张量操作替代逐张 PIL，避免 eval 时 CPU-bound。
+    """
     if shift == "none":
         return img
-    if img.dim() == 4:
-        return torch.stack([apply_image_shift(x, shift) for x in img])
-    from PIL import Image, ImageEnhance
-    device = img.device
-    arr = (img.detach().cpu().clamp(0, 1).permute(1, 2, 0).numpy() * 255.0).astype(np.uint8)
-    pil = Image.fromarray(arr)
+    x = img
     if shift == "grayscale":
-        pil = pil.convert("L").convert("RGB")
-    elif shift == "low_contrast":
-        pil = ImageEnhance.Contrast(pil).enhance(0.3)
-    elif shift == "color_jitter":
-        pil = ImageEnhance.Brightness(pil).enhance(1.6)
-        pil = ImageEnhance.Contrast(pil).enhance(1.6)
-        pil = ImageEnhance.Color(pil).enhance(2.2)
-    elif shift == "hue_shift":
-        hsv = np.asarray(pil.convert("HSV")).copy()
-        hsv[..., 0] = (hsv[..., 0].astype(np.int16) + 128) % 256
-        pil = Image.fromarray(hsv, "HSV").convert("RGB")
-    else:
-        raise ValueError(f"unknown shift {shift!r}")
-    out = np.asarray(pil, dtype=np.float32) / 255.0
-    return torch.from_numpy(out).permute(2, 0, 1).contiguous().to(device)
+        gray = (0.299 * x[..., 0:1, :, :] + 0.587 * x[..., 1:2, :, :]
+                + 0.114 * x[..., 2:3, :, :])
+        return gray.expand_as(x).clamp(0.0, 1.0)
+    if shift == "low_contrast":
+        mean = x.mean(dim=(-2, -1), keepdim=True)
+        return ((x - mean) * 0.3 + mean).clamp(0.0, 1.0)
+    if shift == "color_jitter":
+        x = (x * 1.6).clamp(0.0, 1.0)                       # brightness
+        mean = x.mean(dim=(-2, -1), keepdim=True)
+        x = ((x - mean) * 1.6 + mean).clamp(0.0, 1.0)        # contrast
+        gray = (0.299 * x[..., 0:1, :, :] + 0.587 * x[..., 1:2, :, :]
+                + 0.114 * x[..., 2:3, :, :])
+        return (gray + (x - gray) * 2.2).clamp(0.0, 1.0)     # saturation
+    if shift == "hue_shift":
+        # deterministic channel rotation, a cheap hue-shift approximation
+        return x[..., [1, 2, 0], :, :]
+    raise ValueError(f"unknown shift {shift!r}")
 
 
 class CorpRoboCasaDataset(Dataset):
