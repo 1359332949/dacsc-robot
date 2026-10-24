@@ -77,6 +77,7 @@ def move_batch(batch, norm, device):
         "state": norm.normalize_state(batch["state"].to(device)),
         "instruction": batch["instruction"],
         "action": batch["action"].to(device),
+        "style_id": batch["style_id"].to(device),
     }
 
 
@@ -123,7 +124,8 @@ def evaluate(model, loader, norm, device, max_batches, euler_steps):
         b = move_batch(batch, norm, device)
         with torch.autocast("cuda", dtype=torch.bfloat16):
             pred = model.sample_action(b["images"], b["state"], b["instruction"],
-                                       num_steps=euler_steps)
+                                       num_steps=euler_steps,
+                                       domain_ids=b["style_id"])
         pred = norm.unnormalize_action(pred.float())
         target = b["action"].float()
         se = (pred - target) ** 2
@@ -160,6 +162,15 @@ def main() -> int:
     ap.add_argument("--num-workers", type=int, default=4)
     ap.add_argument("--out-dir", type=str, default="/hy-tmp/runs/corp_robocasa_p2")
     ap.add_argument("--run-test", action="store_true")
+    ap.add_argument("--token-style-mode", default="none",
+                    choices=["none", "random_stats", "cross_style_stats",
+                             "cross_style_stats_action_aware", "normalize",
+                             "normalize_action_aware"])
+    ap.add_argument("--token-style-alpha", type=float, default=0.5)
+    ap.add_argument("--token-style-action-weight", type=float, default=1.0)
+    ap.add_argument("--token-style-protect-ratio", type=float, default=0.0)
+    ap.add_argument("--token-style-stats", default="meanstd",
+                    choices=["meanstd", "mean", "std"])
     args = ap.parse_args()
 
     set_seed(args.seed)
@@ -183,6 +194,19 @@ def main() -> int:
     print("normalizer fitted on train styles", flush=True)
 
     model, merge = load_corp_robocasa(CKPT, config=ROBOCASA_CORP_CONFIG, device=device)
+    token_style_cfg = None
+    if args.token_style_mode != "none":
+        from dacsc.token_style import TokenStyleModulator
+        token_style_cfg = {
+            "mode": args.token_style_mode,
+            "alpha": args.token_style_alpha,
+            "action_weight": args.token_style_action_weight,
+            "protect_ratio": args.token_style_protect_ratio,
+            "stats": args.token_style_stats,
+            "dim": 384,
+        }
+        model.token_style = TokenStyleModulator(**token_style_cfg).to(device)
+        print(f"token_style enabled: {token_style_cfg}", flush=True)
     model.train()
     print(f"model loaded: copied={merge['copied']} random={merge['random_init']}", flush=True)
 
@@ -215,7 +239,8 @@ def main() -> int:
         b = move_batch(batch, norm, device)
         with torch.autocast("cuda", dtype=torch.bfloat16):
             loss = model.flow_matching_loss(
-                b["images"], b["state"], b["instruction"], b["action"])
+                b["images"], b["state"], b["instruction"], b["action"],
+                domain_ids=b["style_id"])
         opt.zero_grad(set_to_none=True)
         loss.backward()
         torch.nn.utils.clip_grad_norm_(params, 1.0)
@@ -272,6 +297,7 @@ def main() -> int:
             "state_mean": norm.state_mean.cpu(),
             "state_std": norm.state_std.cpu(),
         },
+        "token_style": token_style_cfg,
     }, out / "model.pt")
     (out / "result.json").write_text(json.dumps(result, indent=2, ensure_ascii=False))
     print("DONE ->", out / "result.json", "| model.pt", flush=True)

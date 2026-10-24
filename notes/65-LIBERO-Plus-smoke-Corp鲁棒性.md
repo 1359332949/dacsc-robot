@@ -1,7 +1,7 @@
 # 65 - CoRP 在 LIBERO-Plus 上的初步鲁棒性 smoke
 
 日期：2026-10-24
-checkpoint：官方 `corp_libero.pt`
+checkpoint：**官方 CoRP（LIBERO 训练）`corp_libero.pt`**
 suite：`libero_spatial`
 采样：每扰动类别 2 个 task × 1 episode
 环境：`/hy-tmp/models/corp/CoRP/.venv`（robosuite 1.4.1）+ LIBERO-Plus assets（9.5G）
@@ -18,6 +18,15 @@ suite：`libero_spatial`
 | Sensor Noise | 2/2 |
 | Objects Layout | 2/2 |
 | **合计** | **14/14 = 100%** |
+
+## 口径（必须写清楚）
+
+```text
+本文测的是：官方 CoRP（LIBERO 训练）在 LIBERO-Plus 上的零样本鲁棒性
+不是：     我们的 CoRP-RoboCasa（atomic61 适配版）在 LIBERO-Plus 上
+```
+
+两者模型不同，不能混写。
 
 ## 含义（初步）
 

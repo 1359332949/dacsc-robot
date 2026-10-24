@@ -95,8 +95,11 @@ def install_hard_gates(dino, controller: HardMaskController,
                         output.retain_grad()
                     collect.setdefault("pre_gate_live", []).append((layer_idx, output))
             # 只用当前 batch 自己的特征生成本 batch 的 per-sample mask。
-            if (selected and dino.training and controller.build_enabled
-                    and controller.mask_builder is not None):
+            # train_only=True: 只在训练期重建（eval 关闭）；
+            # train_only=False: 推理期必须用**当前观测**重建，不能沿用训练 batch 的 stale mask。
+            if (selected and controller.build_enabled
+                    and controller.mask_builder is not None
+                    and (dino.training or not controller.train_only)):
                 mask = controller.mask_builder(output.detach(), layer_idx)
                 controller.set_mask(mask)
             out = controller.apply(output, layer_idx, training=bool(dino.training))

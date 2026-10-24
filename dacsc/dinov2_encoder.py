@@ -225,7 +225,10 @@ class DINOv2ObsEncoder(nn.Module):
         hc = getattr(self, "hard_controller", None)
         if (hc is not None
                 and getattr(self, "gate_position", "block_pre_norm") == "post_norm_tokens"):
-            if self.training and hc.build_enabled and hc.mask_builder is not None:
+            # train_only=True: eval 不重建、apply 直接返回；
+            # train_only=False: eval 也必须用当前观测重建 mask（不能沿用 stale mask）。
+            if (hc.build_enabled and hc.mask_builder is not None
+                    and (self.training or not hc.train_only)):
                 hc.set_mask(hc.mask_builder(feats.detach(), -1))
             feats = hc.apply(feats, -1, training=bool(self.training))
         if self.token_style is not None and self.token_style_stage == "patch":

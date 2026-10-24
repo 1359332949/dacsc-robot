@@ -1114,6 +1114,15 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
 
     def predict_action(self, obs_dict):
         """Override only for token-conditioned resampler; scalar path uses base."""
+        # 推理期通道选择（train_only=False）必须在 eval 时选层并允许重建 mask。
+        hc = getattr(self, "hard_controller", None)
+        if (self.enable_gating and self.gate_mode == "hard" and hc is not None
+                and not hc.train_only):
+            if getattr(self, "gate_position", "block_pre_norm") == "post_norm_tokens":
+                hc.layer = -1
+            else:
+                hc.select_layer()
+            hc.build_enabled = True
         if self.tokens_per_obs == 1:
             return super().predict_action(obs_dict)
         assert "past_action" not in obs_dict

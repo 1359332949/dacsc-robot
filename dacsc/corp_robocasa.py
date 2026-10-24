@@ -59,7 +59,7 @@ if str(_CORP_REPO) not in sys.path:
     sys.path.insert(0, str(_CORP_REPO))
 
 from corp.action_generator import DiTActionGenerator  # noqa: E402
-from corp.representation.extractor import RepresentationExtractor  # noqa: E402
+from corp.representation.extractor import Representation, RepresentationExtractor  # noqa: E402
 
 
 # RoboCasa 真实接口（来自数据集 meta/modality.json，61/61 atomic task 一致）：
@@ -122,7 +122,8 @@ OFFICIAL_VIEW_NAMES: list[str] = ["agentview", "eye_in_hand"]
 class CorpRoboCasa(nn.Module):
     """两阶段 CoRP，接口适配到 RoboCasa。"""
 
-    def __init__(self, config: dict = ROBOCASA_CORP_CONFIG) -> None:
+    def __init__(self, config: dict = ROBOCASA_CORP_CONFIG,
+                 token_style: nn.Module | None = None) -> None:
         super().__init__()
         self.config = config
         self.view_names = tuple(config["view_names"])
@@ -131,12 +132,38 @@ class CorpRoboCasa(nn.Module):
         self.action_horizon = int(config["action_horizon"])
         self.representation_extractor = RepresentationExtractor(config)
         self.action_generator = DiTActionGenerator(config)
+        # token-level style statistics modulation（patch tokens, pre-resampler）
+        self.token_style = token_style
 
     def extract(self, images: dict[str, torch.Tensor], state: torch.Tensor,
-                instruction) -> object:
+                instruction, domain_ids: torch.Tensor | None = None) -> Representation:
         """返回 Representation。images: {view: [B,3,224,224]}，state: [B,state_dim]。"""
-        return self.representation_extractor(
-            images=images, state=state, instruction=instruction
+        re = self.representation_extractor
+        if self.token_style is None:
+            return re(images=images, state=state, instruction=instruction)
+        # 手工复现官方 RepresentationExtractor.forward，并在
+        # x_norm_patchtokens 之后、resampler 之前插入 token-level 调制。
+        batch_size = state.shape[0]
+        patches = re.visual_encoder(
+            torch.cat([images[name] for name in self.view_names], dim=0)
+        )  # (B*V, T, D)
+        _, t, d = patches.shape
+        z = patches.reshape(batch_size, len(self.view_names), t, d)
+        z = self.token_style(z, domain_ids=domain_ids, training=self.training)
+        patches = z.reshape(batch_size * len(self.view_names), t, d)
+        patch_tokens = {
+            name: patches[index * batch_size:(index + 1) * batch_size]
+            for index, name in enumerate(self.view_names)
+        }
+        language_tokens, pooled_language = re.language_encoder(instruction)
+        visual_tokens = re.cross_attention_resampler(patch_tokens, pooled_language)
+        visual_language = torch.cat(
+            [visual_tokens, language_tokens.to(visual_tokens.dtype)], dim=1)
+        state_token = re.state_encoder(state)
+        return Representation(
+            tokens=torch.cat([visual_language, state_token], dim=1),
+            pooled_language=pooled_language,
+            action_dtype=visual_language.dtype,
         )
 
     def flow_matching_loss(
@@ -145,6 +172,7 @@ class CorpRoboCasa(nn.Module):
         state: torch.Tensor,
         instruction,
         action: torch.Tensor,
+        domain_ids: torch.Tensor | None = None,
     ) -> torch.Tensor:
         """Rectified-flow velocity loss（与官方 sample() 的积分方向严格一致）。
 
@@ -152,7 +180,7 @@ class CorpRoboCasa(nn.Module):
         因此线性路径 x_tau=(1-tau)*eps+tau*x0，目标速度 v=x0-eps，
         loss=MSE(v_theta(x_tau,tau), v)。
         """
-        representation = self.extract(images, state, instruction)
+        representation = self.extract(images, state, instruction, domain_ids=domain_ids)
         action = action.to(dtype=representation.action_dtype)
         device = action.device
         b = action.shape[0]
@@ -174,9 +202,10 @@ class CorpRoboCasa(nn.Module):
         state: torch.Tensor,
         instruction,
         num_steps: int | None = None,
+        domain_ids: torch.Tensor | None = None,
     ) -> torch.Tensor:
         """返回归一化动作 [B, action_horizon, action_dim]（由调用方反归一化）。"""
-        representation = self.extract(images, state, instruction)
+        representation = self.extract(images, state, instruction, domain_ids=domain_ids)
         return self.action_generator.sample(representation, num_steps=num_steps)
 
 
@@ -261,7 +290,12 @@ def load_adapted_checkpoint(
                          weights_only=False)
     if payload.get("format") != "corp_robocasa_adapted_v1":
         raise ValueError("expected a corp_robocasa_adapted_v1 checkpoint")
-    model = CorpRoboCasa(payload["config"])
-    model.load_state_dict(payload["model"])
+    token_style = None
+    ts_cfg = payload.get("token_style")
+    if ts_cfg:
+        from dacsc.token_style import TokenStyleModulator
+        token_style = TokenStyleModulator(**ts_cfg)
+    model = CorpRoboCasa(payload["config"], token_style=token_style)
+    model.load_state_dict(payload["model"], strict=False)
     norm = payload["normalizer"]
     return model.to(device).eval(), (norm["state_mean"], norm["state_std"])
