@@ -220,6 +220,14 @@ class DINOv2ObsEncoder(nn.Module):
         # 把 V 个视角并到 batch 维，一次前向（共享权重）
         cat = torch.stack(imgs, dim=1).reshape(B * V, *imgs[0].shape[1:])
         feats = self.dino.forward_features(cat)["x_norm_patchtokens"]   # (B*V, T, d)
+        # gate_position="post_norm_tokens"：在最终 LayerNorm 之后、resampler 之前干预。
+        # 这样排除"block 输出 × mask → 最终 LayerNorm 把 mask 抵消"的解释。
+        hc = getattr(self, "hard_controller", None)
+        if (hc is not None
+                and getattr(self, "gate_position", "block_pre_norm") == "post_norm_tokens"):
+            if self.training and hc.build_enabled and hc.mask_builder is not None:
+                hc.set_mask(hc.mask_builder(feats.detach(), -1))
+            feats = hc.apply(feats, -1, training=bool(self.training))
         if self.token_style is not None and self.token_style_stage == "patch":
             _, T, Dp = feats.shape
             feats_style = feats.reshape(B, V, T, Dp)

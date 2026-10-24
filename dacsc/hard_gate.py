@@ -4,7 +4,9 @@
   · 前向：每个样本选 top-k 通道丢弃，mask 为 0/1，并按 C/sum(mask) 重归一化
   · 反向：用 sigmoid 软 mask 的 straight-through（前向硬、反向软）
   · 每个训练 step 随机选 1 层；其它层恒等
-  · 训练时启用，推理时可由 `train_only` 关闭
+  · `train_only=True`  → 训练期正则：train 生效、eval 关闭（DomainDrop/PLACE 官方做法）
+  · `train_only=False` → 推理期通道选择：train/eval 都生效，必须重新评测
+    两种语义不能混用；对外表述必须与所选口径一致。
 """
 from __future__ import annotations
 import random
@@ -39,6 +41,11 @@ class HardMaskController:
         self.mask = mask
 
     def apply(self, x: torch.Tensor, layer_idx: int, training: bool) -> torch.Tensor:
+        """按 mask 干预通道。
+
+        train_only=True 时仅训练期生效（eval 直接返回 x）；False 时 train/eval
+        都生效。这样同一份代码可以明确区分"训练期正则"与"推理期通道选择"。
+        """
         if self.layer != layer_idx or self.mask is None:
             return x
         if self.train_only and not training:

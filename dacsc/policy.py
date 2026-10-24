@@ -136,6 +136,7 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
                  hard_consistency_weight: float = 0.0,
                  hard_clean_importance_every: int = 4,
                  hard_train_only: bool = True,
+                 gate_position: str = "block_pre_norm",
                  hard_domain_mode: str = "classifier",  # classifier | dgcd
                  domain_id_min: int = 11,
                  domain_group_size: int = 1,
@@ -354,6 +355,11 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
                                            if hard_layer_indices is None
                                            else [int(x) for x in hard_layer_indices])
                 assert self.hard_layer_indices, "hard_layer_indices 不能为空"
+                if gate_position not in ("block_pre_norm", "post_norm_tokens"):
+                    raise ValueError(
+                        f"gate_position must be block_pre_norm|post_norm_tokens, "
+                        f"got {gate_position}")
+                self.gate_position = str(gate_position)
                 self.hard_controller = HardMaskController(
                     self.hard_layer_indices, drop_ratio=hard_drop_ratio,
                     temperature=hard_mask_temperature, train_only=hard_train_only)
@@ -379,7 +385,8 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
                     domain_group_size=int(domain_group_size),
                     domain_head_lr=domain_head_lr,
                     group_smooth=float(dgcd_group_smooth),
-                    domain_center=bool(dgcd_domain_center))
+                    domain_center=bool(dgcd_domain_center),
+                    gate_position=str(gate_position))
                 self.hard_domain_mode = str(hard_domain_mode)
                 self.hard_num_domains = int(num_domains)
                 n_views = len(obs_encoder.rgb_keys)
@@ -409,18 +416,26 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
                         self.action_importance = ActionImportanceEMA(
                             layer_indices=self.hard_layer_indices,
                             num_channels=hidden)
-                # hook 在 forward 内用当前 batch 特征现场生成 mask。
+                # mask 在 forward 内用当前 batch 特征现场生成。
                 self.hard_controller.set_mask_builder(self._build_hard_mask)
                 need_pre_grad = (self.use_action_importance or
                                  self.hard_domain_mode == "classifier")
-                self._gate_handles = install_hard_gates(
-                    dino, self.hard_controller, collect=self._collect,
-                    retain_post_grad=self.use_action_importance,
-                    retain_pre_grad=need_pre_grad)
+                if self.gate_position == "post_norm_tokens":
+                    # 在 DINOv2 最终 LayerNorm 之后、resampler 之前施加；
+                    # 不注册 block hook，避开 LayerNorm 对 mask 的抵消。
+                    obs_encoder.hard_controller = self.hard_controller
+                    obs_encoder.gate_position = "post_norm_tokens"
+                    self._gate_handles = []
+                else:
+                    self._gate_handles = install_hard_gates(
+                        dino, self.hard_controller, collect=self._collect,
+                        retain_post_grad=self.use_action_importance,
+                        retain_pre_grad=need_pre_grad)
                 log.info("hard gate 启用：layers=%s drop=%.2f temp=%.2f "
-                         "action_lambda=%.2f domain_grl=%.2f",
+                         "action_lambda=%.2f domain_grl=%.2f position=%s",
                          self.hard_layer_indices, hard_drop_ratio,
-                         hard_mask_temperature, hard_action_lambda, hard_domain_grl)
+                         hard_mask_temperature, hard_action_lambda,
+                         hard_domain_grl, self.gate_position)
         else:
             self.gate_mode = "off"
 
@@ -1197,7 +1212,10 @@ class RoboCasaDINOv2Policy(DiffusionTransformerHybridImagePolicy):
         self._collect.clear()
         self._last_cond_features = None
         if self.enable_gating and self.gate_mode == "hard":
-            self.hard_controller.select_layer()
+            if getattr(self, "gate_position", "block_pre_norm") == "post_norm_tokens":
+                self.hard_controller.layer = -1
+            else:
+                self.hard_controller.select_layer()
             self.hard_controller.set_mask(None)
             self.hard_controller.build_enabled = True
             self._current_domain_ids = batch.get("domain_id", None)
