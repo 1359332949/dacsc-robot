@@ -169,6 +169,10 @@ class CorpRoboCasa(nn.Module):
     def extract(self, images: dict[str, torch.Tensor], state: torch.Tensor,
                 instruction, domain_ids: torch.Tensor | None = None) -> Representation:
         """返回 Representation。images: {view: [B,3,224,224]}，state: [B,state_dim]。"""
+        if self.token_style is not None and self._style_handle is None:
+            raise RuntimeError(
+                "token_style is set but no forward hook is registered; "
+                "use set_token_style() instead of assigning token_style directly")
         self._current_domain_ids = domain_ids
         try:
             return self.representation_extractor(
