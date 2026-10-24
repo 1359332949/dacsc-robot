@@ -9,9 +9,10 @@ OUT="${OUT:-/hy-tmp/runs/token_style_200_3seed}"
 SHIFT="${SHIFT:-color_jitter}"
 PER_TASK_EVAL="${PER_TASK_EVAL:-8}"
 WORKERS="${WORKERS:-0}"
+MODES="${MODES:-none random_stats cross_style_stats cross_style_stats_action_aware}"
 mkdir -p "$OUT"
 for SEED in 42 43 44; do
-  for MODE in none random_stats cross_style_stats cross_style_stats_action_aware; do
+  for MODE in $MODES; do
     D="$OUT/$MODE/seed_$SEED"
     mkdir -p "$D"
     echo "[seed=$SEED mode=$MODE]"

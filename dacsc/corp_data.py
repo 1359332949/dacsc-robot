@@ -108,8 +108,23 @@ def apply_image_shift(img: torch.Tensor, shift: str) -> torch.Tensor:
                 + 0.114 * x[..., 2:3, :, :])
         return (gray + (x - gray) * 2.2).clamp(0.0, 1.0)     # saturation
     if shift == "hue_shift":
-        # deterministic channel rotation, a cheap hue-shift approximation
-        return x[..., [1, 2, 0], :, :]
+        # Standard RGB hue-rotation matrix (180 degrees).
+        import math
+        theta = math.pi
+        c, s = math.cos(theta), math.sin(theta)
+        m = torch.tensor([
+            [0.213 + c * 0.787 - s * 0.213,
+             0.715 - c * 0.715 - s * 0.715,
+             0.072 - c * 0.072 + s * 0.928],
+            [0.213 - c * 0.213 + s * 0.143,
+             0.715 + c * 0.285 + s * 0.140,
+             0.072 - c * 0.072 - s * 0.283],
+            [0.213 - c * 0.213 - s * 0.787,
+             0.715 - c * 0.715 + s * 0.715,
+             0.072 + c * 0.928 + s * 0.072],
+        ], device=x.device, dtype=x.dtype)
+        channels_last = x.movedim(-3, -1)
+        return (channels_last @ m.T).movedim(-1, -3).clamp(0.0, 1.0)
     raise ValueError(f"unknown shift {shift!r}")
 
 
