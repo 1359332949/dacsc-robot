@@ -68,7 +68,13 @@ def main() -> int:
     model, (m, s) = load_adapted_checkpoint(args.model, device=device)
     norm = LinearNormalizer(m, s)
     model.eval()
-    styles = [int(x) for x in args.styles.split(",")]
+    styles = []
+    for part in args.styles.split(","):
+        if "-" in part:
+            a, b = map(int, part.split("-", 1))
+            styles.extend(range(a, b + 1))
+        else:
+            styles.append(int(part))
 
     env = RoboCasaGymEnv(env_name=args.task, split=None, obj_instance_split="pretrain",
                          style_ids=styles, camera_widths=256, camera_heights=256)
