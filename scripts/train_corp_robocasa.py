@@ -198,6 +198,8 @@ def main() -> int:
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--max-tasks", type=int, default=0)
     ap.add_argument("--eval-every", type=int, default=50)
+    ap.add_argument("--save-every", type=int, default=0,
+                    help="0 = save only at the end")
     ap.add_argument("--euler-steps", type=int, default=10)
     ap.add_argument("--horizon", type=int, default=10)
     ap.add_argument("--num-workers", type=int, default=4)
@@ -262,6 +264,29 @@ def main() -> int:
     params = [p for p in model.parameters() if p.requires_grad]
     opt = torch.optim.AdamW(params, lr=args.lr, weight_decay=1e-4, betas=(0.9, 0.95))
     ema = ModelEMA(model, args.ema_decay) if args.ema_decay > 0 else None
+
+    def save_checkpoint(path):
+        torch.save({
+            "format": "corp_robocasa_adapted_v1",
+            "config": ROBOCASA_CORP_CONFIG,
+            "model": ema.shadow if ema is not None else model.state_dict(),
+            "raw_model": model.state_dict(),
+            "budget": {
+                "batch_size": args.batch_size,
+                "steps": args.steps,
+                "lr": args.lr,
+                "ema_decay": args.ema_decay,
+                "grad_clip": 1.0,
+                "precision": "bf16",
+                "n_obs_steps": 1,
+            },
+            "normalizer": {
+                "state_mean": norm.state_mean.cpu(),
+                "state_std": norm.state_std.cpu(),
+            },
+            "token_style": token_style_cfg,
+        }, path)
+
     sched = torch.optim.lr_scheduler.LambdaLR(
         opt, lambda s: min(1.0, (s + 1) / max(1, args.steps // 10)))
 
@@ -346,6 +371,9 @@ def main() -> int:
             if ema_backup is not None:
                 model.load_state_dict(ema_backup)
             model.train()
+            if args.save_every > 0 and step % args.save_every == 0:
+                save_checkpoint(out / f"model_step{step}.pt")
+                print(f"  saved model_step{step}.pt", flush=True)
 
     result = {"args": vars(args), "merge": {k: merge[k] for k in ("copied", "random_init")},
               "budget": {"batch_size": args.batch_size, "steps": args.steps,
@@ -367,26 +395,7 @@ def main() -> int:
         print("  per-dim test:", {k: round(v, 4) for k, v in test_eval["per_dim"].items()},
               flush=True)
 
-    torch.save({
-        "format": "corp_robocasa_adapted_v1",
-        "config": ROBOCASA_CORP_CONFIG,
-        "model": ema.shadow if ema is not None else model.state_dict(),
-        "raw_model": model.state_dict(),
-        "budget": {
-            "batch_size": args.batch_size,
-            "steps": args.steps,
-            "lr": args.lr,
-            "ema_decay": args.ema_decay,
-            "grad_clip": 1.0,
-            "precision": "bf16",
-            "n_obs_steps": 1,
-        },
-        "normalizer": {
-            "state_mean": norm.state_mean.cpu(),
-            "state_std": norm.state_std.cpu(),
-        },
-        "token_style": token_style_cfg,
-    }, out / "model.pt")
+    save_checkpoint(out / "model.pt")
     (out / "result.json").write_text(json.dumps(result, indent=2, ensure_ascii=False))
     print("DONE ->", out / "result.json", "| model.pt", flush=True)
     return 0
