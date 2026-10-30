@@ -33,7 +33,7 @@ from torch.nn import functional as F
 from dacsc.corp_images import image_contract
 
 _REPO_ROOT = Path(__file__).resolve().parents[1]
-CHECKPOINT_FORMAT = "corp_robocasa_v2"
+CHECKPOINT_FORMAT = "corp_robocasa_v3"
 OBJECTIVE = "corp_masked_flow_repeat_last_v1"
 CORP_STYLE_MODES = (
     "none",
@@ -485,6 +485,7 @@ def load_adapted_checkpoint(
         "seed": payload["run_args"]["seed"],
         "budget": payload["budget"],
         "intervention": payload["token_style"],
+        "pixel_augmentation": payload["pixel_augmentation"],
         "optimization": payload["optimization"],
         "initialization_sha256": payload["initialization_sha256"],
         "data_metadata_sha256": order["metadata_sha256"],

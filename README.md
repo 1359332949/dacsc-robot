@@ -15,6 +15,7 @@
 | RoboCasa 视频与动作读取 | 官方 DP `LerobotDataset`，已移除旧 CLIP cache 私有补丁 |
 | RoboCasa 重放与 task horizon | 官方 `playback_dataset.reset_to` / `get_task_horizon` |
 | 图像处理 | Torchvision functional / Pillow bilinear resize |
+| 像素训练增广 | Torchvision `ColorJitter(.4, .4, .4, hue=0)`，与固定评测扰动独立 |
 | 参数 EMA | PyTorch `AveragedModel` / `get_ema_multi_avg_fn` |
 | 输出互斥 | `filelock.FileLock` |
 
@@ -40,7 +41,8 @@ PYTHONPATH=repos/CoRP .venv/bin/python repos/CoRP/scripts/smoke_test.py --device
 [RoboCasa 官方说明](https://robocasa.ai/docs/build/html/introduction/installation.html)。
 官方 CoRP LIBERO 环境和 RoboCasa 环境的 NumPy/MuJoCo 等约束不同，分别管理；
 不要使用已删除的“一键混装”脚本。`audit/corp_pipeline_local_validation.json` 保留a147242底座的历史验证，
-当前指标/统计代码的验证及源码hash以 `audit/standard_metrics_local_validation.json` 为准。
+指标/统计改动的历史验证见 `audit/standard_metrics_local_validation.json`；本轮训练增广验证及源码hash见
+`audit/pixel_augmentation_local_validation.json`。
 安装/下载官方 demo 的依赖、模型和仿真资产属于准备步骤；本轮未运行任何安装仿真环境或训练任务。
 
 ## 当前入口
@@ -59,7 +61,7 @@ RoboCasa 数据根目录使用 `--data-root` 或 `DACSC_DATA_ROOT`，其下应�
 `v1.0/pretrain/atomic/<Task>/<date>/lerobot`。CoRP 源码通过 `CORP_REPO` 或 `repos/CoRP` 定位。
 所有入口 `--help` 可在不启动训练的情况下查看参数。
 
-当前 checkpoint 为 `corp_robocasa_v2`，SR schema 为 `corp_robocasa_sr_v4`，action指标为 `corp_action_mse_v1`。
+当前 checkpoint 为 `corp_robocasa_v3`，SR schema 为 `corp_robocasa_sr_v5`，action指标仍为 `corp_action_mse_v1`。
 旧 loss、图像变换、donor 或评测协议的文件不转换、不兼容、不混入新对比。
 test 默认封存，只有最终评估显式启用。真实 RoboCasa/CUDA 的复核仍待服务器环境验证。
 
@@ -67,6 +69,19 @@ test 默认封存，只有最终评估显式启用。真实 RoboCasa/CUDA 的复
 逐episode support分开报告；跨seed的SD使用ddof=1、区间调用SciPy Student-t/SEM。
 单seed或零观察变异不报假精确CI；统计工具不启动模型或训练。定义与manifest例子见当前协议末节。
 指标改进的本地证据见 `audit/standard_metrics_local_validation.json`。
+
+## 像素训练增广基线
+
+`--train-augmentation color_jitter --token-style-mode none` 直接使用 Torchvision 随机
+`ColorJitter(brightness=.4, contrast=.4, saturation=.4, hue=0)`。
+强度参考 [timm 通用 ImageNet 训练配方](https://github.com/huggingface/pytorch-image-models/blob/main/timm/data/transforms_factory.py)，
+**不是 CoRP 官方训练增广的复现**，也不引入分类任务的 crop/flip。
+
+只在 source train 的 resize 后、ImageNet normalize 前生效；每个观测独立抽样，三视角共用一次抽样。
+使用独立 RNG 并随完整训练状态恢复，不消耗 flow 的全局 RNG。验证、测试、推理和 normalizer 拟合不使用随机增广。
+`--eval-shift color_jitter` 仍是固定强度、固定顺序的评测 stress，两者不能混称。
+当前像素基线与 token-style 互斥，默认都关闭；runner 通过 `TRAIN_AUGMENTATION=color_jitter MODES=none`
+选择像素基线，输出路径为 `$OUT/$TRAIN_AUGMENTATION/$MODE/seed_$SEED`。本轮没有执行该训练入口。
 
 ## 本地交付
 

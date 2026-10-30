@@ -182,6 +182,7 @@ class MaskedObjectiveTests(unittest.TestCase):
             "style_id": torch.tensor([11]),
             "task": ["Task"],
             "action_mask": torch.tensor([[True, False]]),
+            "image_space": "imagenet_normalized",
             "episode": [0],
             "frame": [0],
         }
@@ -330,6 +331,7 @@ class UpstreamInfrastructureTests(unittest.TestCase):
                 horizon=10,
                 resume=path,
                 steps=10,
+                train_augmentation="none",
             )
             with patch.object(train, "set_seed"), patch.object(
                 torch.cuda, "is_available", return_value=True

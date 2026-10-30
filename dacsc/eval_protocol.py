@@ -8,7 +8,7 @@ from pathlib import Path
 from dacsc.corp_images import image_contract
 from dacsc.upstream import verify_upstream
 
-PROTOCOL_VERSION = "corp_robocasa_sr_v4"
+PROTOCOL_VERSION = "corp_robocasa_sr_v5"
 PROTOCOL_KEYS = {
     "version",
     "checkpoint_sha256",
@@ -96,6 +96,7 @@ def validate_training_origin(origin: dict) -> None:
         "data_metadata_sha256",
         "data_length",
         "intervention",
+        "pixel_augmentation",
     }
     if (
         set(origin) != expected
@@ -121,3 +122,14 @@ def validate_training_origin(origin: dict) -> None:
         raise ValueError(
             "intervention donor seed must match its recorded training seed"
         )
+    pixel = origin["pixel_augmentation"]
+    if pixel is not None:
+        from dacsc.pixel_augmentation import pixel_augmentation_contract
+
+        if (
+            pixel != pixel_augmentation_contract("color_jitter", origin["seed"])
+            or intervention is not None
+        ):
+            raise ValueError(
+                "invalid training pixel recipe or unsupported combined interventions"
+            )

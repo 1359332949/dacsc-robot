@@ -19,7 +19,7 @@ from pathlib import Path
 
 import torch
 from torch.utils.data import Dataset
-from dacsc.corp_images import IMAGE_SIZE, prepare_image
+from dacsc.corp_images import IMAGE_SIZE, prepare_image, resize_rgb
 
 _REPO_ROOT = Path(__file__).resolve().parents[1]
 _DP_REPO = _REPO_ROOT / "repos" / "diffusion_policy"
@@ -129,7 +129,19 @@ class CorpRoboCasaDataset(Dataset):
         episode_residues: set[int] | None = None,
         episode_mod: int = 10,
         shift: str = "none",
+        normalize_images: bool = True,
     ) -> None:
+        if type(normalize_images) is not bool:
+            raise ValueError("normalize_images must be boolean")
+        if not normalize_images and (
+            (style_min, style_max) != (11, 30)
+            or episode_mod != 10
+            or episode_residues != set(range(9))
+            or shift != "none"
+        ):
+            raise ValueError(
+                "raw RGB is reserved for source-training pixel augmentation, never evaluation"
+            )
         from dacsc.upstream import verify_upstream
 
         verify_upstream(["robocasa", "diffusion_policy"])
@@ -138,6 +150,7 @@ class CorpRoboCasaDataset(Dataset):
         self.horizon = horizon
         self.image_size = image_size
         self.shift = str(shift)
+        self.normalize_images = normalize_images
         self.datasets: list[LerobotDataset] = []
         # dataset, reader index, native style, instruction, task, episode, frame, episode length
         self.flat: list[tuple[int, int, int, str, str, int, int, int]] = []
@@ -210,7 +223,11 @@ class CorpRoboCasaDataset(Dataset):
         obs = sample["obs"]
         images = {}
         for view, key in VIEW_TO_KEY.items():
-            images[view] = prepare_image(obs[key][0], self.shift, self.image_size)
+            images[view] = (
+                prepare_image(obs[key][0], self.shift, self.image_size)
+                if self.normalize_images
+                else resize_rgb(obs[key][0], self.image_size)
+            )
         state = torch.cat(
             [
                 obs["robot0_base_to_eef_pos"][0],
@@ -226,6 +243,7 @@ class CorpRoboCasaDataset(Dataset):
         action[~valid] = action[int(valid.sum()) - 1].clone()
         return {
             "images": images,
+            "image_space": "imagenet_normalized" if self.normalize_images else "rgb01",
             "state": state,
             "action": action,
             "action_mask": valid,
@@ -320,9 +338,13 @@ class LinearNormalizer:
 
 
 def collate_corp(batch: list[dict]) -> dict:
+    spaces = {b["image_space"] for b in batch}
+    if len(spaces) != 1 or not spaces <= {"imagenet_normalized", "rgb01"}:
+        raise ValueError("one batch must use one explicit image space")
     views = list(batch[0]["images"].keys())
     return {
         "images": {v: torch.stack([b["images"][v] for b in batch]) for v in views},
+        "image_space": batch[0]["image_space"],
         "state": torch.stack([b["state"] for b in batch]),
         "action": torch.stack([b["action"] for b in batch]),
         "action_mask": torch.stack([b["action_mask"] for b in batch]),

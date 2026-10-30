@@ -252,6 +252,7 @@ class MSEDefinitionsTests(unittest.TestCase):
             "state": torch.zeros(1, 9),
             "action": torch.ones(1, 2, 12),
             "action_mask": torch.tensor([[True, False]]),
+            "image_space": "imagenet_normalized",
             "instruction": ["fixture"],
             "style_id": torch.tensor([31]),
             "task": ["A"],
@@ -284,6 +285,10 @@ class SeedStatisticsTests(unittest.TestCase):
 
     def test_training_origin_is_loaded_from_checkpoint_not_evaluation_seed(self):
         import dacsc.corp_robocasa as corp
+        from dacsc.pixel_augmentation import (
+            TrainingPixelAugmentation,
+            pixel_augmentation_contract,
+        )
 
         with tempfile.TemporaryDirectory() as d:
             path = Path(d) / "adapted.pt"
@@ -296,6 +301,7 @@ class SeedStatisticsTests(unittest.TestCase):
                 "config": corp.ROBOCASA_CORP_CONFIG,
                 "model": tiny_corp().state_dict(),
                 "token_style": None,
+                "pixel_augmentation": None,
                 "normalizer": {
                     "state_mean": torch.zeros(9),
                     "state_std": torch.ones(9),
@@ -311,14 +317,21 @@ class SeedStatisticsTests(unittest.TestCase):
                     }
                 },
             }
-            torch.save(payload, path)
-            with patch.object(
-                corp, "RepresentationExtractor", side_effect=tiny_extractor
-            ), patch.object(
-                corp, "DiTActionGenerator", side_effect=lambda _: nn.Linear(2, 2)
-            ):
-                model, _ = corp.load_adapted_checkpoint(path)
-            self.assertEqual(model.evaluation_origin, origin)
+            for pixel in (None, pixel_augmentation_contract("color_jitter", 43)):
+                payload["pixel_augmentation"] = pixel
+                origin["pixel_augmentation"] = pixel
+                torch.save(payload, path)
+                with patch.object(
+                    corp, "RepresentationExtractor", side_effect=tiny_extractor
+                ), patch.object(
+                    corp, "DiTActionGenerator", side_effect=lambda _: nn.Linear(2, 2)
+                ), patch.object(
+                    TrainingPixelAugmentation,
+                    "__init__",
+                    side_effect=AssertionError("inference constructed training jitter"),
+                ):
+                    model, _ = corp.load_adapted_checkpoint(path)
+                self.assertEqual(model.evaluation_origin, origin)
 
     def test_standard_numpy_sample_sd_and_scipy_student_t_use_training_seed_df(self):
         with patch("scipy.stats.t.interval", wraps=stats.t.interval) as interval:

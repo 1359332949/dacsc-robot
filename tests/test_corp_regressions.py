@@ -112,6 +112,7 @@ def training_origin_fixture(seed=42):
         "data_metadata_sha256": "d" * 64,
         "data_length": 100,
         "intervention": None,
+        "pixel_augmentation": None,
     }
 
 
@@ -699,6 +700,7 @@ class TrainingStateTests(unittest.TestCase):
             "action": torch.zeros(2, 10, 12),
             "instruction": ["a", "b"],
             "action_mask": torch.ones(2, 10, dtype=torch.bool),
+            "image_space": "imagenet_normalized",
             "episode": [0, 0],
             "frame": [0, 0],
             "style_id": torch.tensor([11, 12]),

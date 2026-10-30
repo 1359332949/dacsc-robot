@@ -1,6 +1,6 @@
 # 当前实验协议：CoRP-RoboCasa / appearance shift
 
-2026-10-29。本文件是唯一当前执行协议，替代旧 notes/71、72。
+2026-10-30。本文件是唯一当前执行协议，替代旧 notes/71、72。
 
 ## 研究问题和证据边界
 
@@ -86,6 +86,40 @@ LIBERO 直接复用官方 observation conversion，外观 adapter 作用在其 r
 强度、顺序、位置、Torchvision 版本全部写入结果；严重 clipping 可能丢失任务线索，须检查样图和任务语义。
 新旧 PIL/逐通道 contrast/hue matrix/pre-resize blur 结果不能合并。blur/noise 只作辅助，A问题保持外观变化。
 
+### 标准像素训练增广基线
+
+直接使用 [Torchvision `ColorJitter`](https://docs.pytorch.org/vision/main/generated/torchvision.transforms.ColorJitter.html)：
+`ColorJitter(brightness=.4, contrast=.4, saturation=.4, hue=0)`。
+各非零因子从 `[.6, 1.4]` 均匀抽样，运算顺序也由上游随机抽样；不重写因子采样或颜色运算。
+`.4/.4/.4` 无 hue 的配方参考 [timm `transforms_imagenet_train`](https://github.com/huggingface/pytorch-image-models/blob/main/timm/data/transforms_factory.py)
+的通用 `color_jitter=.4` 设置。它是独立对照，**不是 CoRP 官方训练配方，也不是整套 timm 增广的复现**。
+不复制分类用 random crop、flip 或标签混合，保持动作/state/语言及时间索引不变。
+
+| 入口 | 随机性和作用范围 |
+| --- | --- |
+| `--train-augmentation none` | 默认；训练图像不做像素增广 |
+| `--train-augmentation color_jitter` | 仅训练 styles11–30、episode `%10 != 9`；随机 ColorJitter |
+| `--eval-shift color_jitter` | 前表的固定 `1.6/1.6/2.2` stress，不是训练增广 |
+
+训练顺序为 Pillow resize224 → RGB `[0,1]` → 随机 ColorJitter → ImageNet normalize。
+启用时 dataset 只在 source-training 角色输出带 `image_space=rgb01` 的图像，实际 ColorJitter 在
+训练主进程中调用；不在 DataLoader worker 内持有随机增广对象。其余路径输出
+`image_space=imagenet_normalized`，`move_batch` 拒绝对已归一化图像二次增广，也拒绝将 raw RGB 直接送入评测。
+normalizer 只读取训练 state/action，不调用随机图像增广。
+
+每个观测单独调用一次 ColorJitter，三个视角作为其 leading dimension 共用同一抽样；不同观测独立抽样。
+这是本项目明确的多视角适配规则，不宣称是 CoRP 官方设置。因子/顺序使用上游 Torch CPU RNG，
+通过 PyTorch `torch.random.fork_rng(devices=[])` 和私有 CPU generator 隔离全局 flow RNG，
+run seed 初始化、完整保存/恢复其状态。CUDA 像素运算和 BF16 管线仍需真实环境验证。
+
+首轮只比较单项干预：像素增广启用时要求 `--token-style-mode none`，组合直接报错，不自动回退。
+runner 可选 `TRAIN_AUGMENTATION=color_jitter MODES=none`，输出
+`$OUT/$TRAIN_AUGMENTATION/$MODE/seed_$SEED`；默认 `TRAIN_AUGMENTATION=none`。
+训练结果、checkpoint 及评测的 `training_origin.pixel_augmentation` 保存算子、强度、顺序抽样规则、
+位置、Torch/Torchvision 版本和 seed；无增广也必须显式记录 null。评测只读取该溯源，不重建或执行训练增广。
+方法配对允许像素/特征干预不同；同一策略的条件配对要求该字段完全相同。
+不得把不同库版本或缺少该字段的旧结果混入当前比较。
+
 ## donor 与动作保护契约
 
 训练期 statistics mixing：eval 返回原视觉特征，不需要 style、task 或动作标签计算 donor。
@@ -114,11 +148,11 @@ SR命令中的style范围必须逐段升序、唯一且落在原生pretrain ID 1
 `STEPS` 必须显式声明；默认只跑 none。正式预算、EMA、任务集、训练 seeds 必须在比较前冻结，
 不能根据 test 结果反复调整。51/200步只用于工程检查，2k/10k也不自动构成学会任务的证据。
 
-CPU/CUDA RNG、optimizer、scheduler、EMA、donor、importance、DataLoader位置完整保存；
+CPU/CUDA RNG、optimizer、scheduler、EMA、donor、importance、像素增广RNG、DataLoader位置完整保存；
 checkpoint原子替换，保存独立于评测周期。精确续训目前要求 workers=0、同数据路径/metadata/预算/架构。
 不能把一个2k预算改写成10k后称为同预算的完整 resume；新的预算需另立实验。
 已完成预算的 checkpoint 不再走训练 resume；显式使用独立 evaluator，避免将保存点之前的 metrics 当作最终评测。
-模型格式为 `corp_robocasa_v2`，保存 raw/EMA/实际完成步数、初始化权重 digest、图像/上游契约和预算。
+模型格式为 `corp_robocasa_v3`、训练状态版本3，保存 raw/EMA/实际完成步数、初始化权重 digest、图像/上游契约和预算。
 旧格式不迁移。test 默认不执行。
 
 ## 评测与判定
@@ -129,7 +163,7 @@ SR source 为训练 styles 下新生成的冻结场景，不是数据中的 `%10
 scene manifest 保存模型 XML、仿真状态、metadata 和 RNG；之后调用官方重放，再核对 state/style/layout。
 
 聚合必须检查任务清单、episode数、manifest digest、checkpoint SHA256、条件、推理预算、source/val范围和完整性。
-schema `corp_robocasa_sr_v4` 保存实际训练seed、预算、优化配方、初始化及训练数据digest，不接受旧JSON冒充完整配对记录。
+schema `corp_robocasa_sr_v5` 保存实际训练seed、预算、优化配方、像素/特征增广、初始化及训练数据digest，不接受旧JSON冒充完整配对记录。
 写入前锁文件，日志禁止截断；中断/失败不能产生“全完成”的汇总。
 旧进程不遵守新锁，以后部署前须确认旧 writer 退出，再使用新目录；本轮未远程部署。
 

@@ -75,8 +75,11 @@ def _training_identity(origin: dict, *, include_intervention: bool) -> dict:
     if include_intervention:
         if identity["intervention"] is not None:
             identity["intervention"].pop("donor_seed")
+        if identity["pixel_augmentation"] is not None:
+            identity["pixel_augmentation"].pop("seed")
     else:
         identity.pop("intervention")
+        identity.pop("pixel_augmentation")
     return identity
 
 

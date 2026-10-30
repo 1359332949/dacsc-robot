@@ -128,10 +128,10 @@ def evaluation_state(model, ema=None, seed: int = 0):
 
 
 def training_state(
-    model, optimizer, scheduler, ema, *, step: int, data_order: dict
+    model, optimizer, scheduler, ema, *, step: int, data_order: dict, augmentation=None
 ) -> dict:
     return {
-        "version": 2,
+        "version": 3,
         "step": step,
         "optimizer": optimizer.state_dict(),
         "scheduler": scheduler.state_dict(),
@@ -139,16 +139,19 @@ def training_state(
         "rng": capture_rng(),
         "data_order": data_order,
         "runtime": model.training_runtime_state(),
+        "augmentation": None if augmentation is None else augmentation.state_dict(),
     }
 
 
-def restore_training_state(payload: dict, model, optimizer, scheduler, ema) -> int:
+def restore_training_state(
+    payload: dict, model, optimizer, scheduler, ema, *, augmentation=None
+) -> int:
     if "training_state" not in payload:
         raise ValueError(
             "checkpoint contains inference weights only; exact resume is unavailable"
         )
     state = payload["training_state"]
-    if state["version"] != 2:
+    if state["version"] != 3:
         raise ValueError("unsupported training checkpoint version")
     if (state["ema"] is None) != (ema is None):
         raise ValueError("EMA setting differs from the resume checkpoint")
@@ -158,6 +161,10 @@ def restore_training_state(payload: dict, model, optimizer, scheduler, ema) -> i
     if ema is not None:
         ema.load_state_dict(state["ema"])
     model.load_training_runtime_state(state["runtime"])
+    if (state["augmentation"] is None) != (augmentation is None):
+        raise ValueError("training augmentation setting differs from checkpoint")
+    if augmentation is not None:
+        augmentation.load_state_dict(state["augmentation"])
     restore_rng(state["rng"])
     return state["step"]
 

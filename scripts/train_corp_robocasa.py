@@ -54,6 +54,11 @@ from dacsc.run_output import entry_output  # noqa: E402
 from dacsc.upstream import verify_upstream, verify_release_checkpoint
 from scripts.check_data_layout import default_root
 from dacsc.action_metrics import ACTION_GROUPS, MSE_SCHEMA, action_mse_summary
+from dacsc.pixel_augmentation import (
+    TRAIN_AUGMENTATIONS,
+    TrainingPixelAugmentation,
+    pixel_augmentation_contract,
+)
 
 DATA_ROOT = default_root()
 CKPT = _CORP_REPO / "checkpoints/corp_libero.pt"
@@ -84,7 +89,16 @@ def set_seed(seed: int) -> None:
     torch.backends.cudnn.benchmark = False
 
 
-def build_dataset(tasks, split, horizon, image_size, use_cache, episode_residues=None):
+def build_dataset(
+    tasks,
+    split,
+    horizon,
+    image_size,
+    use_cache,
+    episode_residues=None,
+    *,
+    normalize_images=True,
+):
     lo, hi = split
     return CorpRoboCasaDataset(
         tasks,
@@ -94,14 +108,28 @@ def build_dataset(tasks, split, horizon, image_size, use_cache, episode_residues
         image_size=image_size,
         use_cache=use_cache,
         episode_residues=episode_residues,
+        normalize_images=normalize_images,
     )
 
 
-def move_batch(batch, norm, device):
+def move_batch(batch, norm, device, *, pixel_augmentation=None):
+    images = {k: v.to(device, non_blocking=True) for k, v in batch["images"].items()}
+    if batch["image_space"] == "rgb01":
+        if pixel_augmentation is None:
+            raise ValueError(
+                "raw RGB cannot enter evaluation or training without an explicit training augmentation"
+            )
+        views = list(images)
+        augmented = pixel_augmentation(torch.stack([images[v] for v in views], dim=1))
+        images = {v: augmented[:, i] for i, v in enumerate(views)}
+    elif (
+        batch["image_space"] != "imagenet_normalized" or pixel_augmentation is not None
+    ):
+        raise ValueError(
+            "pixel training augmentation requires raw RGB, not normalized/evaluation images"
+        )
     return {
-        "images": {
-            k: v.to(device, non_blocking=True) for k, v in batch["images"].items()
-        },
+        "images": images,
         "state": norm.normalize_state(batch["state"].to(device)),
         "instruction": batch["instruction"],
         "action": batch["action"].to(device),
@@ -276,6 +304,12 @@ def main() -> int:
     )
     ap.add_argument("--run-test", action="store_true")
     ap.add_argument(
+        "--train-augmentation",
+        choices=TRAIN_AUGMENTATIONS,
+        default="none",
+        help="Train-only Torchvision photometric baseline; separate from --eval-shift",
+    )
+    ap.add_argument(
         "--token-style-mode",
         default="none",
         choices=CORP_STYLE_MODES,
@@ -292,6 +326,10 @@ def main() -> int:
         choices=["none", "grayscale", "color_jitter", "low_contrast", "hue_shift"],
     )
     args = ap.parse_args()
+    if args.train_augmentation != "none" and args.token_style_mode != "none":
+        ap.error(
+            "the pixel baseline uses token-style-mode=none; combined methods require a separate protocol"
+        )
     if args.steps <= 0 or args.eval_every <= 0 or args.save_every < 0:
         ap.error("steps/eval-every must be positive and save-every nonnegative")
     if args.horizon != ROBOCASA_CORP_CONFIG["action_horizon"]:
@@ -326,7 +364,13 @@ def run(args, out: Path) -> int:
     print(f"tasks={len(tasks)}", flush=True)
     t0 = time.time()
     train_ds = build_dataset(
-        tasks, (11, 30), args.horizon, 224, True, episode_residues=set(range(9))
+        tasks,
+        (11, 30),
+        args.horizon,
+        224,
+        True,
+        episode_residues=set(range(9)),
+        normalize_images=args.train_augmentation == "none",
     )  # 90% source train
     source_ds = build_dataset(
         tasks, (11, 30), args.horizon, 224, True, episode_residues={9}
@@ -379,6 +423,16 @@ def run(args, out: Path) -> int:
     else:
         norm = LinearNormalizer.fit(train_ds, max_steps=512)
         print("normalizer fitted on train styles", flush=True)
+
+    pixel_config = pixel_augmentation_contract(args.train_augmentation, args.seed)
+    pixel_augmentation = (
+        TrainingPixelAugmentation(args.seed) if pixel_config is not None else None
+    )
+    if (
+        resume_payload is not None
+        and resume_payload["pixel_augmentation"] != pixel_config
+    ):
+        raise ValueError("resume training pixel augmentation differs from checkpoint")
 
     token_style_cfg = None
     token_style = None
@@ -460,6 +514,7 @@ def run(args, out: Path) -> int:
                     "state_std": norm.state_std.cpu(),
                 },
                 "token_style": token_style_cfg,
+                "pixel_augmentation": pixel_config,
                 "merge": merge,
                 "training_runtime": runtime,
                 "run_args": {
@@ -480,6 +535,7 @@ def run(args, out: Path) -> int:
                         "dataset_length": len(train_ds),
                         "metadata_sha256": train_ds.support()["metadata_sha256"],
                     },
+                    augmentation=pixel_augmentation,
                 ),
             },
             path,
@@ -526,7 +582,9 @@ def run(args, out: Path) -> int:
         ]
         for _ in range(batches_in_epoch):
             next(it)
-        step = restore_training_state(resume_payload, model, opt, sched, ema)
+        step = restore_training_state(
+            resume_payload, model, opt, sched, ema, augmentation=pixel_augmentation
+        )
         if step > args.steps:
             raise ValueError("resume checkpoint exceeds the total step budget")
         print(f"resumed at completed step {step}", flush=True)
@@ -540,7 +598,7 @@ def run(args, out: Path) -> int:
             batches_in_epoch = 0
             batch = next(it)
         batches_in_epoch += 1
-        b = move_batch(batch, norm, device)
+        b = move_batch(batch, norm, device, pixel_augmentation=pixel_augmentation)
         with torch.autocast("cuda", dtype=torch.bfloat16):
             loss = model.flow_matching_loss(
                 b["images"],
@@ -689,6 +747,7 @@ def run(args, out: Path) -> int:
 
     result = {
         "metric_schema": MSE_SCHEMA,
+        "pixel_augmentation": pixel_config,
         "args": {
             key: str(value) if isinstance(value, Path) else value
             for key, value in vars(args).items()
