@@ -8,7 +8,7 @@ from pathlib import Path
 from dacsc.corp_images import image_contract
 from dacsc.upstream import verify_upstream
 
-PROTOCOL_VERSION = "corp_robocasa_sr_v3"
+PROTOCOL_VERSION = "corp_robocasa_sr_v4"
 PROTOCOL_KEYS = {
     "version",
     "checkpoint_sha256",
@@ -24,6 +24,7 @@ PROTOCOL_KEYS = {
     "horizon_source",
     "images",
     "upstream",
+    "training",
 }
 
 
@@ -47,6 +48,7 @@ def validate_protocol(protocol: dict) -> None:
             "SR result has an unsupported/incomplete protocol; rerun evaluation"
         )
     require_digest(protocol["checkpoint_sha256"])
+    validate_training_origin(protocol["training"])
     if protocol["images"] != image_contract():
         raise ValueError(
             "image implementation/parameters differ from the frozen protocol"
@@ -83,3 +85,39 @@ def validate_protocol(protocol: dict) -> None:
         raise ValueError("invalid inference budget")
     if protocol["action_steps"] > protocol["action_horizon"]:
         raise ValueError("action chunk execution exceeds the prediction horizon")
+
+
+def validate_training_origin(origin: dict) -> None:
+    expected = {
+        "seed",
+        "budget",
+        "optimization",
+        "initialization_sha256",
+        "data_metadata_sha256",
+        "data_length",
+        "intervention",
+    }
+    if (
+        set(origin) != expected
+        or type(origin["seed"]) is not int
+        or type(origin["data_length"]) is not int
+        or origin["data_length"] <= 0
+    ):
+        raise ValueError("missing/invalid training origin for seed-level comparison")
+    require_digest(origin["initialization_sha256"])
+    require_digest(origin["data_metadata_sha256"])
+    if (
+        not isinstance(origin["budget"], dict)
+        or not origin["budget"]
+        or not isinstance(origin["optimization"], dict)
+        or not origin["optimization"]
+    ):
+        raise ValueError("training budget and optimization recipe are required")
+    intervention = origin["intervention"]
+    if intervention is not None and (
+        not isinstance(intervention, dict)
+        or intervention.get("donor_seed") != origin["seed"]
+    ):
+        raise ValueError(
+            "intervention donor seed must match its recorded training seed"
+        )

@@ -39,7 +39,8 @@ PYTHONPATH=repos/CoRP .venv/bin/python repos/CoRP/scripts/smoke_test.py --device
 环境安装遵循 [CoRP 官方说明](https://github.com/corp-policy/CoRP) 和
 [RoboCasa 官方说明](https://robocasa.ai/docs/build/html/introduction/installation.html)。
 官方 CoRP LIBERO 环境和 RoboCasa 环境的 NumPy/MuJoCo 等约束不同，分别管理；
-不要使用已删除的“一键混装”脚本。本地验证环境记录在 `audit/corp_pipeline_local_validation.json`。
+不要使用已删除的“一键混装”脚本。`audit/corp_pipeline_local_validation.json` 保留a147242底座的历史验证，
+当前指标/统计代码的验证及源码hash以 `audit/standard_metrics_local_validation.json` 为准。
 安装/下载官方 demo 的依赖、模型和仿真资产属于准备步骤；本轮未运行任何安装仿真环境或训练任务。
 
 ## 当前入口
@@ -51,15 +52,21 @@ PYTHONPATH=repos/CoRP .venv/bin/python repos/CoRP/scripts/smoke_test.py --device
 | held-out 离线 MSE | `scripts/eval_corp_robocasa.py` |
 | RoboCasa 单任务 SR | `scripts/eval_corp_robocasa_sr.py` |
 | 多任务 source/val SR 与严格聚合 | `scripts/run_corp_sr_split.sh` |
+| 已完成评测的严格配对与跨训练seed统计 | `scripts/compare_corp_evaluations.py`，仅文件分析 |
 | LIBERO-Plus 外观条件扩展 | `scripts/eval_corp_libero_plus.py`；直接委托官方 `evaluate_suite` |
 
 RoboCasa 数据根目录使用 `--data-root` 或 `DACSC_DATA_ROOT`，其下应有
 `v1.0/pretrain/atomic/<Task>/<date>/lerobot`。CoRP 源码通过 `CORP_REPO` 或 `repos/CoRP` 定位。
 所有入口 `--help` 可在不启动训练的情况下查看参数。
 
-当前 checkpoint 为 `corp_robocasa_v2`，SR schema 为 `corp_robocasa_sr_v3`。
+当前 checkpoint 为 `corp_robocasa_v2`，SR schema 为 `corp_robocasa_sr_v4`，action指标为 `corp_action_mse_v1`。
 旧 loss、图像变换、donor 或评测协议的文件不转换、不兼容、不混入新对比。
 test 默认封存，只有最终评估显式启用。真实 RoboCasa/CUDA 的复核仍待服务器环境验证。
+
+指标计算直接用PyTorch、NumPy和SciPy，不创建加权总分。micro/task-macro MSE、五组/12维误差及
+逐episode support分开报告；跨seed的SD使用ddof=1、区间调用SciPy Student-t/SEM。
+单seed或零观察变异不报假精确CI；统计工具不启动模型或训练。定义与manifest例子见当前协议末节。
+指标改进的本地证据见 `audit/standard_metrics_local_validation.json`。
 
 ## 本地交付
 

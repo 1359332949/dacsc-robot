@@ -129,7 +129,8 @@ SR source 为训练 styles 下新生成的冻结场景，不是数据中的 `%10
 scene manifest 保存模型 XML、仿真状态、metadata 和 RNG；之后调用官方重放，再核对 state/style/layout。
 
 聚合必须检查任务清单、episode数、manifest digest、checkpoint SHA256、条件、推理预算、source/val范围和完整性。
-schema `corp_robocasa_sr_v3` 不接受旧 JSON。写入前锁文件，日志禁止截断；中断/失败不能产生“全完成”的汇总。
+schema `corp_robocasa_sr_v4` 保存实际训练seed、预算、优化配方、初始化及训练数据digest，不接受旧JSON冒充完整配对记录。
+写入前锁文件，日志禁止截断；中断/失败不能产生“全完成”的汇总。
 旧进程不遵守新锁，以后部署前须确认旧 writer 退出，再使用新目录；本轮未远程部署。
 
 实验顺序固定：
@@ -153,3 +154,76 @@ RoboCasa GT replay：直接使用其 `scripts/dataset_scripts/playback_dataset.p
 
 `tests/` 的 fixture 是可控依赖叶模块，回归实际项目接口及实际官方函数；它们不能输出科研 success 结论。
 本地真实官方 checkpoint smoke/适配器检查通过，也不能替代仿真闭环、CUDA、真实视频reader和长期训练验证。
+
+## 标准指标与统计口径（2026-10-30）
+
+不创建自定义加权总分、robustness index 或自动“方法有效”判定。
+
+| 内容 | 直接复用的开源计算 | 报告口径 |
+| --- | --- | --- |
+| action squared errors | [PyTorch `F.mse_loss(reduction='none')`](https://docs.pytorch.org/docs/stable/generated/torch.nn.functional.mse_loss.html) | padding不参与任何分子/分母，原始未裁剪动作命令 |
+| micro MSE | NumPy `sum` | 全部有效预测位置 ×12维的均值，延续原MSE定义 |
+| task-macro MSE | NumPy `mean` | 每个task的MSE等权平均，与micro并列，不另设动作组权重 |
+| 分组/12维MSE | 同一份逐维平方误差的标准均值 | 五个动作组与12个真实分量分开命名 |
+| success rate | 官方success判定；官方相同的成功次数/episode次数 | 主指标为每task成功率的等权平均；不改成功判据 |
+| 跨训练seed的mean/SD | NumPy `mean` / `std(ddof=1)` | 独立单位为训练seed；不将帧/episode重复当作模型seed |
+| 均值与配对差值的区间 | [SciPy `sem`](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.sem.html) + `stats.t.interval` | 默认95%，近似正态独立seed估计假设；不手写t临界值或bootstrap循环 |
+
+单seed没有样本SD/CI，输出null；观察到零seed变异（含机器精度舍入）不输出假精确CI。
+CI只描述固定有限评测集条件下的训练seed变异，不代替场景抽样CI，也不证明总体无风险。
+Student-t近似区间可能超出rate的[0,1]边界，不自行截断，也不将它冒充二项episode概率区间。
+小样本的t近似有局限，不能把CI单独当成论文有效性门槛；既定3–5训练seed要求不因episode很多而降低。
+
+CoRP论文以success rate为主；其NMAE、R²来自另外训练的冻结表征probe。本项目的策略MSE是工程辅助，
+不是该probe的复现，也不在本轮新增probe训练。
+
+### 明细和命名
+
+action指标schema为 `corp_action_mse_v1`，删除歧义字段 `overall` / `per_dim`。
+新字段为 `micro_action_mse`、`macro_task_action_mse`、`per_action_group_mse`、
+`per_action_dimension_mse`、`per_task_action_mse`；12维名字使用原始命令分量编号，不假定厘米或角度单位。
+保存每帧 `(task,episode,frame,style_id)`、12维平方误差和、有效预测位置数，并按episode聚合。
+相邻帧和重叠未来动作位置不是新的独立episode。H10预测误差不同于实际执行8步后的控制效果；
+保留原始未裁剪MSE，不偷偷用裁剪后/离散化后的误差替代。
+
+训练中的完整明细写入 `action_metrics_stepN.json`，checkpoint仅保存摘要和明细文件digest，
+避免每个checkpoint重复累积大量帧记录。正式比较使用保存checkpoint的独立MSE评测文件，
+不能把无checkpoint身份的训练诊断文件当作最终评测。
+
+### 严格配对的离线汇总入口
+
+`scripts/compare_corp_evaluations.py` 只读取已完成的文件，不执行推理、仿真或训练。
+比较方向固定 **right − left**：SR正值表示right更好；MSE正值表示right误差更大。
+SR差值同时报告百分点（fraction差值×100）。MSE相对变化分母为0时输出null，不加epsilon制造百分比。
+
+方法比较必须同一评测条件；条件比较必须同一个checkpoint。
+SR逐一核对 `(task, manifest_sha256, policy_seed)` 与原生style/layout；
+MSE逐一核对 `(task,episode,frame)`、style、有效位置、metadata/选样digest、eval seed、batch size、Euler步数和精度。
+同一个comparison所有训练seed固定相同评测样本集；预算、优化配方、训练数据、初始化必须一致，
+方法/参数配置不允许随seed改变。训练seed从checkpoint元信息获取，不从目录名猜测。
+source和val场景不同，不能用相同episode编号作配对；它们之间只保留描述性分布差值。
+缺样本、错seed、换场景、不同预算直接报错，不取交集、不静默丢seed。
+
+SR比较manifest示例（路径相对manifest目录；数据必须已按SR v4生成）：
+
+```json
+{
+  "kind": "sr", "comparison": "methods", "split": "val",
+  "tasks": ["CloseFridge", "OpenDrawer"], "episodes_per_task": 10,
+  "runs": [
+    {"training_seed": 42, "left": "baseline/seed42/val", "right": "candidate/seed42/val"},
+    {"training_seed": 43, "left": "baseline/seed43/val", "right": "candidate/seed43/val"},
+    {"training_seed": 44, "left": "baseline/seed44/val", "right": "candidate/seed44/val"}
+  ]
+}
+```
+
+MSE使用 `kind: "mse"`，left/right指向独立评测JSON文件；增加 `left_condition` / `right_condition`。
+方法比较两条件相同；clean-vs-shift比较使用 `comparison: "conditions"`，可指向同一评测文件的不同条件。
+例如none和color_jitter分别报告，不能只用缩小的gap掩盖clean性能损失。
+
+```bash
+python scripts/compare_corp_evaluations.py --manifest comparison.json --out comparison_summary.json
+```
+
+本工具当前验证RoboCasa输出格式；LIBERO原生报告继续沿用官方入口，不用旧legacy parser猜读当前CoRP文件。

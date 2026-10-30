@@ -182,6 +182,8 @@ class MaskedObjectiveTests(unittest.TestCase):
             "style_id": torch.tensor([11]),
             "task": ["Task"],
             "action_mask": torch.tensor([[True, False]]),
+            "episode": [0],
+            "frame": [0],
         }
         result, _ = evaluate(
             Policy(),
@@ -191,9 +193,9 @@ class MaskedObjectiveTests(unittest.TestCase):
             1,
             10,
         )
-        self.assertEqual(result["overall"], 1.0)
-        self.assertEqual(result["per_task"]["Task"], 1.0)
-        self.assertTrue(all(x == 1 for x in result["per_dim"].values()))
+        self.assertEqual(result["micro_action_mse"], 1.0)
+        self.assertEqual(result["per_task_action_mse"]["Task"], 1.0)
+        self.assertTrue(all(x == 1 for x in result["per_action_group_mse"].values()))
         self.assertEqual(result["valid_action_scalars"], 12)
 
 

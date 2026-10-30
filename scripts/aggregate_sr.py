@@ -7,6 +7,7 @@ import json
 import math
 from pathlib import Path
 import sys
+import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from dacsc.eval_protocol import require_digest, validate_protocol
@@ -104,19 +105,21 @@ def agg(dir_path: Path, expected_tasks: list[str], episodes: int) -> dict:
                 for r in sorted(records, key=lambda r: r["episode"])
             ],
         }
-        all_records.extend(records)
+        all_records.extend({"task": task, **record} for record in records)
     n = episodes * len(tasks)
     s = sum(t["successes"] for t in tasks.values())
     return {
         "episodes": n,
         "successes": s,
         "success_rate": s / n,
-        "macro_task_success_rate": sum(t["success_rate"] for t in tasks.values())
-        / len(tasks),
+        "macro_task_success_rate": float(
+            np.mean([t["success_rate"] for t in tasks.values()])
+        ),
         "tasks": tasks,
         "per_style": native_support(all_records, "actual_style"),
         "per_layout": native_support(all_records, "actual_layout"),
         "protocol": identity,
+        "records": all_records,
     }
 
 

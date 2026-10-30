@@ -480,4 +480,17 @@ def load_adapted_checkpoint(
             payload["training_runtime"], restore_donor_rng=False
         )
     norm = payload["normalizer"]
+    order = payload["training_state"]["data_order"]
+    model.evaluation_origin = {
+        "seed": payload["run_args"]["seed"],
+        "budget": payload["budget"],
+        "intervention": payload["token_style"],
+        "optimization": payload["optimization"],
+        "initialization_sha256": payload["initialization_sha256"],
+        "data_metadata_sha256": order["metadata_sha256"],
+        "data_length": order["dataset_length"],
+    }
+    from dacsc.eval_protocol import validate_training_origin
+
+    validate_training_origin(model.evaluation_origin)
     return model.to(device).eval(), (norm["state_mean"], norm["state_std"])

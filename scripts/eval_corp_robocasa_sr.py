@@ -140,6 +140,7 @@ def run(args) -> int:
         "horizon_source": "robocasa.utils.dataset_registry_utils.get_task_horizon",
         "images": image_contract(),
         "upstream": upstream,
+        "training": model.evaluation_origin,
     }
 
     env = RoboCasaGymEnv(

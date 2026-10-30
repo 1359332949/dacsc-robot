@@ -103,6 +103,18 @@ def official_registry_modules():
     }
 
 
+def training_origin_fixture(seed=42):
+    return {
+        "seed": seed,
+        "budget": {"steps": 2000, "batch_size": 30, "lr": 5e-5},
+        "optimization": {"optimizer": "torch.optim.AdamW"},
+        "initialization_sha256": "c" * 64,
+        "data_metadata_sha256": "d" * 64,
+        "data_length": 100,
+        "intervention": None,
+    }
+
+
 def sr_payload(task, successes, split):
     styles = list(range(31, 41)) if split == "val" else list(range(11, 31))
     protocol = {
@@ -120,6 +132,7 @@ def sr_payload(task, successes, split):
         "horizon_source": "robocasa.utils.dataset_registry_utils.get_task_horizon",
         "images": image_contract(),
         "upstream": verify_upstream(),
+        "training": training_origin_fixture(),
     }
     return {
         "protocol": protocol,
@@ -561,6 +574,7 @@ class RolloutTests(unittest.TestCase):
         class Policy:
             action_horizon = 10
             config = corp.ROBOCASA_CORP_CONFIG
+            evaluation_origin = training_origin_fixture()
 
             def eval(self):
                 return self
@@ -685,6 +699,8 @@ class TrainingStateTests(unittest.TestCase):
             "action": torch.zeros(2, 10, 12),
             "instruction": ["a", "b"],
             "action_mask": torch.ones(2, 10, dtype=torch.bool),
+            "episode": [0, 0],
+            "frame": [0, 0],
             "style_id": torch.tensor([11, 12]),
             "task": ["A", "B"],
         }

@@ -26,6 +26,7 @@ from train_corp_robocasa import (  # noqa: E402
     evaluate,
 )
 from scripts.check_data_layout import default_root
+from dacsc.action_metrics import MSE_SCHEMA
 
 
 def main() -> int:
@@ -52,6 +53,7 @@ def main() -> int:
 def run(args) -> int:
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    checkpoint_digest = file_sha256(Path(args.model))
     model, (mean, std) = load_adapted_checkpoint(args.model, device=device)
     if args.horizon != model.action_horizon:
         raise ValueError("evaluation horizon differs from the checkpoint")
@@ -61,14 +63,18 @@ def run(args) -> int:
     tasks = all_task_paths(args.max_tasks, args.data_root)
     print(f"tasks={len(tasks)}", flush=True)
     result = {
+        "schema": MSE_SCHEMA,
         "model": args.model,
-        "checkpoint_sha256": file_sha256(Path(args.model)),
+        "checkpoint_sha256": checkpoint_digest,
         "images": image_contract(),
         "objective": OBJECTIVE,
         "upstream": verify_upstream(),
         "per_task": args.per_task,
         "euler_steps": args.euler_steps,
         "precision": "bf16" if device.type == "cuda" else "fp32",
+        "eval_seed": 123,
+        "evaluation_batch_size": args.batch_size,
+        "training": model.evaluation_origin,
         "splits": {},
     }
 
@@ -88,7 +94,7 @@ def run(args) -> int:
             )
             conditions[shift] = {**ev, "elapsed_sec": dt}
             print(
-                f"{name}/{shift}: overall={ev['overall']:.4f} n={len(loader.dataset)} ({dt:.1f}s)",
+                f"{name}/{shift}: micro_action_mse={ev['micro_action_mse']:.4f} macro_task_action_mse={ev['macro_task_action_mse']:.4f} n={len(loader.dataset)} ({dt:.1f}s)",
                 flush=True,
             )
         result["splits"][name] = {
@@ -98,7 +104,9 @@ def run(args) -> int:
 
     if file_sha256(Path(args.model)) != result["checkpoint_sha256"]:
         raise RuntimeError("checkpoint changed during evaluation")
-    Path(args.out).write_text(json.dumps(result, indent=2, ensure_ascii=False))
+    Path(args.out).write_text(
+        json.dumps(result, indent=2, ensure_ascii=False, allow_nan=False)
+    )
     print("DONE ->", args.out)
     return 0
 

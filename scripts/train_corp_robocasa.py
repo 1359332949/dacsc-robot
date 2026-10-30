@@ -17,6 +17,7 @@ from pathlib import Path
 
 import numpy as np
 import torch
+from torch.nn import functional as F
 from torch.utils.data import DataLoader, Subset
 
 _REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -52,19 +53,10 @@ from dacsc.training_state import (  # noqa: E402
 from dacsc.run_output import entry_output  # noqa: E402
 from dacsc.upstream import verify_upstream, verify_release_checkpoint
 from scripts.check_data_layout import default_root
+from dacsc.action_metrics import ACTION_GROUPS, MSE_SCHEMA, action_mse_summary
 
 DATA_ROOT = default_root()
 CKPT = _CORP_REPO / "checkpoints/corp_libero.pt"
-
-
-# action 维度顺序（shape_meta 拼接顺序）。
-ACTION_GROUPS: dict[str, slice] = {
-    "eef_position": slice(0, 3),
-    "eef_rotation": slice(3, 6),
-    "gripper_close": slice(6, 7),
-    "base_motion": slice(7, 11),
-    "control_mode": slice(11, 12),
-}
 
 
 def all_task_paths(max_tasks: int = 0, data_root: Path = DATA_ROOT) -> list[str]:
@@ -170,18 +162,15 @@ def evaluate(
 
 @torch.no_grad()
 def _evaluate(model, loader, norm, device, max_batches, euler_steps, shift):
-    """返回 overall / per-dim / per-task MSE。
+    """Return standard masked scalar, task-macro, group and twelve-axis MSE.
 
     action 维度顺序（与 shape_meta 的 lerobot_keys 拼接顺序一致）：
         eef_position(0:3) + eef_rotation(3:6) + gripper_close(6:7)
         + base_motion(7:11) + control_mode(11:12)
     """
     model.eval()
-    total, n = 0.0, 0
-    group_sum = {g: 0.0 for g in ACTION_GROUPS}
-    group_n = {g: 0 for g in ACTION_GROUPS}
-    task_sum: dict[str, float] = {}
-    task_n: dict[str, int] = {}
+    records = []
+    horizon = None
     t0 = time.time()
     for i, batch in enumerate(loader):
         if i >= max_batches:
@@ -218,25 +207,34 @@ def _evaluate(model, loader, norm, device, max_batches, euler_steps, shift):
             or not valid.any()
         ):
             raise ValueError("invalid evaluation action mask")
-        se = (pred - target) ** 2
+        if horizon is not None and horizon != target.shape[1]:
+            raise ValueError("mixed prediction horizons in one evaluation")
+        horizon = target.shape[1]
+        se = F.mse_loss(pred.float(), target.float(), reduction="none")
         if not torch.isfinite(se[valid]).all():
             raise FloatingPointError("nonfinite evaluation actions")
-        total += se[valid].sum().item()
-        n += se[valid].numel()
-        for g, sl in ACTION_GROUPS.items():
-            group_sum[g] += se[..., sl][valid].sum().item()
-            group_n[g] += se[..., sl][valid].numel()
+        # One device transfer per batch; masked-out errors cannot enter any sum.
+        sums = (
+            se.masked_fill(~valid[..., None], 0)
+            .sum(dim=1, dtype=torch.float64)
+            .cpu()
+            .tolist()
+        )
+        positions = valid.sum(dim=1).cpu().tolist()
+        styles = batch["style_id"].tolist()
         for j, task in enumerate(batch["task"]):
-            task_sum[task] = task_sum.get(task, 0.0) + se[j][valid[j]].sum().item()
-            task_n[task] = task_n.get(task, 0) + se[j][valid[j]].numel()
-    if not n:
-        raise ValueError("evaluation produced no valid actions")
-    out = {
-        "overall": total / max(n, 1),
-        "per_dim": {g: group_sum[g] / max(group_n[g], 1) for g in ACTION_GROUPS},
-        "per_task": {t: task_sum[t] / max(task_n[t], 1) for t in task_sum},
-        "valid_action_scalars": n,
-    }
+            records.append(
+                {
+                    "task": task,
+                    "episode": batch["episode"][j],
+                    "frame": batch["frame"][j],
+                    "style_id": styles[j],
+                    "valid_action_positions": positions[j],
+                    "squared_error_sum": sums[j],
+                }
+            )
+    out = action_mse_summary(records)
+    out["prediction_horizon"] = horizon
     return out, time.time() - t0
 
 
@@ -355,6 +353,10 @@ def run(args, out: Path) -> int:
                 "training budget is already complete; use the standalone evaluator "
                 "instead of resuming or publishing potentially stale metrics"
             )
+        if resume_payload.get("metric_schema") != MSE_SCHEMA:
+            raise ValueError(
+                "resume metric schema differs; legacy metric histories are unsupported"
+            )
         saved_args = resume_payload["run_args"]
         # Reporting/checkpoint cadence and destination may change; training may not.
         mutable = {
@@ -435,6 +437,7 @@ def run(args, out: Path) -> int:
         atomic_torch_save(
             {
                 "format": CHECKPOINT_FORMAT,
+                "metric_schema": MSE_SCHEMA,
                 "objective": OBJECTIVE,
                 "images": image_contract(),
                 "upstream": upstream,
@@ -586,7 +589,10 @@ def run(args, out: Path) -> int:
                 args.euler_steps,
                 ema=ema,
             )
-            src_mse, val_mse = src_eval["overall"], val_eval["overall"]
+            src_mse, val_mse = (
+                src_eval["micro_action_mse"],
+                val_eval["micro_action_mse"],
+            )
             print(
                 f"  step {step}: source_mse={src_mse:.4f} val_mse={val_mse:.4f} "
                 f"gap={val_mse-src_mse:+.4f} ({dt1+dt2:.1f}s)",
@@ -614,43 +620,75 @@ def run(args, out: Path) -> int:
             )
             print(
                 f"    shifted({args.eval_shift}): "
-                f"source={src_shift_eval['overall']:.4f} "
-                f"val={val_shift_eval['overall']:.4f} ({dt3+dt4:.1f}s)",
+                f"source={src_shift_eval['micro_action_mse']:.4f} "
+                f"val={val_shift_eval['micro_action_mse']:.4f} ({dt3+dt4:.1f}s)",
                 flush=True,
             )
             print(
-                "    per-dim source:",
-                {k: round(v, 4) for k, v in src_eval["per_dim"].items()},
+                "    per-action-group source:",
+                {k: round(v, 4) for k, v in src_eval["per_action_group_mse"].items()},
                 flush=True,
             )
             print(
-                "    per-dim val   :",
-                {k: round(v, 4) for k, v in val_eval["per_dim"].items()},
+                "    per-action-group val   :",
+                {k: round(v, 4) for k, v in val_eval["per_action_group_mse"].items()},
                 flush=True,
             )
+            # Keep frame/episode detail on disk, not duplicated in every checkpoint.
+            detail = {
+                "schema": MSE_SCHEMA,
+                "scope": "training_diagnostic",
+                "step": step,
+                "source": {"clean": src_eval, "shifted": src_shift_eval},
+                "val": {"clean": val_eval, "shifted": val_shift_eval},
+                "shift": args.eval_shift,
+                "eval_seed": 123,
+            }
+            metrics_path = out / f"action_metrics_step{step}.json"
+            tmp = metrics_path.with_suffix(".json.tmp")
+            tmp.write_text(json.dumps(detail, allow_nan=False))
+            tmp.replace(metrics_path)
+            from dacsc.eval_protocol import file_sha256
+
             metrics.append(
                 {
                     "step": step,
-                    "source_action_mse": src_mse,
-                    "val_action_mse": val_mse,
-                    "style_gap": val_mse - src_mse,
-                    "source_per_dim": src_eval["per_dim"],
-                    "val_per_dim": val_eval["per_dim"],
-                    "source_per_task": src_eval["per_task"],
-                    "val_per_task": val_eval["per_task"],
+                    "schema": MSE_SCHEMA,
                     "eval_shift": args.eval_shift,
-                    "source_shift_mse": src_shift_eval["overall"],
-                    "val_shift_mse": val_shift_eval["overall"],
-                    "source_shift_per_dim": src_shift_eval["per_dim"],
-                    "val_shift_per_dim": val_shift_eval["per_dim"],
-                    "source_shift_per_task": src_shift_eval["per_task"],
-                    "val_shift_per_task": val_shift_eval["per_task"],
-                    "train_loss": float(loss),
+                    "source": {
+                        k: v
+                        for k, v in src_eval.items()
+                        if k not in ("records", "per_episode")
+                    },
+                    "val": {
+                        k: v
+                        for k, v in val_eval.items()
+                        if k not in ("records", "per_episode")
+                    },
+                    "source_shifted": {
+                        k: v
+                        for k, v in src_shift_eval.items()
+                        if k not in ("records", "per_episode")
+                    },
+                    "val_shifted": {
+                        k: v
+                        for k, v in val_shift_eval.items()
+                        if k not in ("records", "per_episode")
+                    },
+                    "val_minus_source_micro_action_mse": val_mse - src_mse,
+                    "val_minus_source_macro_task_action_mse": val_eval[
+                        "macro_task_action_mse"
+                    ]
+                    - src_eval["macro_task_action_mse"],
+                    "detail_file": metrics_path.name,
+                    "detail_sha256": file_sha256(metrics_path),
+                    "train_flow_loss": float(loss),
                 }
             )
             model.train()
 
     result = {
+        "metric_schema": MSE_SCHEMA,
         "args": {
             key: str(value) if isinstance(value, Path) else value
             for key, value in vars(args).items()
@@ -696,13 +734,9 @@ def run(args, out: Path) -> int:
             ema=ema,
         )
         result["n_test"] = len(test_ds)
-        result["test_action_mse"] = test_eval["overall"]
-        result["test_per_dim"] = test_eval["per_dim"]
-        result["test_per_task"] = test_eval["per_task"]
-        print(f"TEST action_mse={test_eval['overall']:.4f} ({dt:.1f}s)", flush=True)
+        result["test"] = test_eval
         print(
-            "  per-dim test:",
-            {k: round(v, 4) for k, v in test_eval["per_dim"].items()},
+            f"TEST micro_action_mse={test_eval['micro_action_mse']:.4f} macro_task_action_mse={test_eval['macro_task_action_mse']:.4f} ({dt:.1f}s)",
             flush=True,
         )
 
