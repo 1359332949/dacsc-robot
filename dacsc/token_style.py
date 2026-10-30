@@ -2,18 +2,25 @@
 
 Motivation
 ----------
-The channel-level hard gate was shown to select domain-sensitive dimensions that
-are not action-causal (notes/43, notes/47).  This module instead leaves the
-token content intact and replaces its first/second-order feature statistics with
-those of a donor sample:
+This project adapter mixes feature statistics across samples; it is not a full
+TFS-ViT implementation and does not establish that action information is preserved.
+For each recipient it constructs:
 
     z_norm = (z - mu) / sigma
     z_mod  = z_norm * sigma_donor + mu_donor
 
-`random_stats` uses an arbitrary donor.  `cross_style_stats` prefers a donor
-from a different style/domain.  The optional action-aware variant reduces the
+`random_stats` uses TFS-ViT's sample permutation (self-pairs are allowed).
+`cross_style_stats` samples exactly from different-style samples. For multiple
+views, a sample pair shares its donor across cameras and preserves camera index.
+Donors are NOT task-conditioned; this is not a same-task appearance intervention.
+The optional action-aware variant reduces the
 mixing strength on tokens that are action-important.
+
+Upstream: TFS-ViT domainbed/pretrained_models/DeiT_models/models.py,
+FeatureStylization.forward (MIT): detached statistics and torch.randperm(B).
+Different-style eligibility and multi-view pairing are explicit adaptations.
 """
+
 from __future__ import annotations
 
 import warnings
@@ -66,9 +73,11 @@ class TokenImportanceEMA:
         return self._seen
 
     def state_dict(self) -> Dict[str, torch.Tensor | bool | float]:
-        return {"value": self.value.detach().cpu(),
-                "seen": bool(self._seen),
-                "momentum": float(self.momentum)}
+        return {
+            "value": self.value.detach().cpu(),
+            "seen": bool(self._seen),
+            "momentum": float(self.momentum),
+        }
 
     def load_state_dict(self, sd: Dict) -> None:
         if "value" in sd:
@@ -81,23 +90,37 @@ class TokenImportanceEMA:
     def summary(self) -> Dict[str, float | bool]:
         if not self._seen or self.value.numel() == 0:
             return {"ready": False, "mean": 0.0, "std": 0.0, "max": 0.0}
-        return {"ready": True,
-                "mean": float(self.value.mean()),
-                "std": float(self.value.std()) if self.value.numel() > 1 else 0.0,
-                "max": float(self.value.max())}
+        return {
+            "ready": True,
+            "mean": float(self.value.mean()),
+            "std": float(self.value.std()) if self.value.numel() > 1 else 0.0,
+            "max": float(self.value.max()),
+        }
 
 
 class TokenStyleModulator(nn.Module):
     """AdaIN-style token statistics modulation with optional action protection."""
 
-    MODES = ("none", "random_stats", "cross_style_stats",
-             "cross_style_stats_action_aware", "normalize",
-             "normalize_action_aware")
+    MODES = (
+        "none",
+        "random_stats",
+        "cross_style_stats",
+        "cross_style_stats_action_aware",
+        "normalize",
+        "normalize_action_aware",
+    )
 
-    def __init__(self, mode: str = "none", alpha: float = 0.5,
-                 action_weight: float = 1.0, protect_ratio: float = 0.0,
-                 stats: str = "meanstd", dim: int | None = None,
-                 eps: float = 1e-5, donor_seed: int = 0):
+    def __init__(
+        self,
+        mode: str = "none",
+        alpha: float = 0.5,
+        action_weight: float = 1.0,
+        protect_ratio: float = 0.0,
+        stats: str = "meanstd",
+        dim: int | None = None,
+        eps: float = 1e-5,
+        donor_seed: int = 0,
+    ):
         super().__init__()
         if mode not in self.MODES:
             raise ValueError(f"unknown token_style_mode={mode}")
@@ -130,20 +153,52 @@ class TokenStyleModulator(nn.Module):
 
     def set_action_importance(self, value: torch.Tensor | None) -> None:
         if value is None:
-            self.action_importance = torch.zeros(0, device=self.action_importance.device)
+            self.action_importance = torch.zeros(
+                0, device=self.action_importance.device
+            )
         else:
+            if value.ndim != 1:
+                raise ValueError(
+                    "action importance must be a one-dimensional patch-position vector"
+                )
             self.action_importance = value.detach().float()
 
+    def donor_contract(self) -> dict:
+        cross_style = self.mode in (
+            "cross_style_stats",
+            "cross_style_stats_action_aware",
+        )
+        return {
+            "version": "sample_pair_v2",
+            "task_conditioned": False,
+            "pairing": (
+                "different_style_with_replacement"
+                if cross_style
+                else "batch_permutation"
+            ),
+            "view_pairing": "corresponding_view",
+            "statistics_gradient": "detached",
+        }
+
     def summary(self) -> Dict[str, float | str]:
-        out: Dict[str, float | str] = {"mode": self.mode, "alpha": self.alpha,
-                                       "protect_ratio": self.protect_ratio,
-                                       "stats": self.stats}
+        out: Dict[str, float | str] = {
+            "mode": self.mode,
+            "alpha": self.alpha,
+            "protect_ratio": self.protect_ratio,
+            "stats": self.stats,
+        }
+        if self.mode not in ("none", "normalize", "normalize_action_aware"):
+            out["donor_rule"] = self.donor_contract()["pairing"]
         for k, v in self.last_stats_t.items():
             out[k] = float(v)
         return out
 
-    def forward(self, tokens: torch.Tensor, domain_ids: torch.Tensor | None = None,
-                training: bool = True) -> torch.Tensor:
+    def forward(
+        self,
+        tokens: torch.Tensor,
+        domain_ids: torch.Tensor | None = None,
+        training: bool = True,
+    ) -> torch.Tensor:
         """tokens: (B, V, K, D) -> (B, V, K, D)."""
         if self.mode == "none" or self.alpha <= 0:
             return tokens
@@ -152,22 +207,25 @@ class TokenStyleModulator(nn.Module):
         B, V, K, D = tokens.shape
         z = tokens.reshape(B * V, K, D)
         n = z.shape[0]
-        mu = z.mean(dim=1)                                      # (N, D)
+        mu = z.mean(dim=1)  # (N, D)
         sigma = z.std(dim=1, unbiased=False).clamp_min(self.eps)
         if self.mode in ("normalize", "normalize_action_aware"):
             z_norm = (z - mu[:, None, :]) / sigma[:, None, :]
-            out_norm = (z_norm * self.norm_gamma[None, None, :]
-                        + self.norm_beta[None, None, :])
+            out_norm = (
+                z_norm * self.norm_gamma[None, None, :] + self.norm_beta[None, None, :]
+            )
             keep_w = torch.zeros((1, K, 1), device=z.device, dtype=z.dtype)
             if self.mode == "normalize_action_aware":
                 imp = self.action_importance.to(device=z.device, dtype=z.dtype)
                 if imp.numel() != K:
                     warnings.warn(
                         f"action_importance size {imp.numel()} != K={K}; "
-                        "action-aware weighting disabled", RuntimeWarning, stacklevel=2)
+                        "action-aware weighting disabled",
+                        RuntimeWarning,
+                        stacklevel=2,
+                    )
                 if imp.numel() == K:
-                    keep_w = (self.action_weight
-                              * imp.clamp(0.0, 1.0))[None, :, None]
+                    keep_w = (self.action_weight * imp.clamp(0.0, 1.0))[None, :, None]
                     if self.protect_ratio > 0:
                         k = max(1, min(K, int(round(self.protect_ratio * K))))
                         top = torch.topk(imp, k, largest=True).indices
@@ -184,39 +242,35 @@ class TokenStyleModulator(nn.Module):
 
         d = None
         if domain_ids is not None:
-            d = domain_ids.detach().view(-1).to(device=z.device, dtype=torch.long)
-            if d.numel() != B:
-                if d.numel() == 0:
-                    d = None
-                else:
-                    d = d.repeat((B + d.numel() - 1) // d.numel())[:B]
-        row_dom = (d[:, None].repeat(1, V).reshape(-1)
-                   if d is not None else None)
-
-        if (self.mode in ("cross_style_stats", "cross_style_stats_action_aware")
-                and row_dom is None):
-            warnings.warn(
-                "domain_ids is None; cross_style_stats falls back to random donors",
-                RuntimeWarning, stacklevel=2)
+            if (
+                domain_ids.ndim != 1
+                or domain_ids.numel() != B
+                or domain_ids.is_floating_point()
+            ):
+                raise ValueError(
+                    "domain_ids must contain one integer native style ID per sample"
+                )
+            d = domain_ids.detach().to(device=z.device, dtype=torch.long)
         gen = self._generator(z.device)
-        donor = torch.randint(0, n, (n,), device=z.device, generator=gen)
-        if (self.mode in ("cross_style_stats", "cross_style_stats_action_aware")
-                and row_dom is not None and n > 1):
-            same = row_dom[donor] == row_dom
-            # Prefer a different-domain donor; a few resamples are enough for
-            # the 10-style × 3-sample batches used in the mechanism probes.
-            for _ in range(8):
-                if not same.any():
-                    break
-                idx = torch.nonzero(same, as_tuple=False).view(-1)
-                donor[idx] = torch.randint(
-                    0, n, (idx.numel(),), device=z.device, generator=gen)
-                same = row_dom[donor] == row_dom
-        if n > 1:
-            self_idx = torch.arange(n, device=z.device)
-            donor = torch.where(donor == self_idx, (donor + 1) % n, donor)
-
+        if self.mode in ("cross_style_stats", "cross_style_stats_action_aware"):
+            if d is None or d.unique().numel() < 2:
+                raise ValueError(
+                    "cross_style_stats requires >=2 native styles in the batch; no random fallback"
+                )
+            # Exact conditional sampling with PyTorch; unlike bounded rejection,
+            # this stays cross-style even for highly imbalanced style counts.
+            eligible = (d[:, None] != d[None, :]).float()
+            sample_donor = torch.multinomial(eligible, 1, generator=gen).squeeze(1)
+        else:
+            sample_donor = torch.randperm(B, device=z.device, generator=gen)
+        donor = (sample_donor[:, None] * V + torch.arange(V, device=z.device)).reshape(
+            -1
+        )
+        row_dom = None if d is None else d.repeat_interleave(V)
         self.last_donor = donor.detach()
+        # TFS-ViT / MixStyle detach statistics; gradients flow through normalized
+        # recipient content, not across samples through donor mean/std.
+        mu, sigma = mu.detach(), sigma.detach()
         mu_d = mu[donor]
         sigma_d = sigma[donor]
         z_norm = (z - mu[:, None, :]) / sigma[:, None, :]
@@ -230,9 +284,14 @@ class TokenStyleModulator(nn.Module):
         alpha = torch.full((n, K, 1), self.alpha, device=z.device, dtype=z.dtype)
         if self.mode == "cross_style_stats_action_aware":
             imp = self.action_importance.to(device=z.device, dtype=z.dtype)
+            if imp.numel() not in (0, K):
+                raise ValueError(
+                    "action importance length differs from the current patch-token count"
+                )
             if imp.numel() == K:
-                alpha = alpha * (1.0 - self.action_weight
-                                 * imp.clamp(0.0, 1.0)[None, :, None])
+                alpha = alpha * (
+                    1.0 - self.action_weight * imp.clamp(0.0, 1.0)[None, :, None]
+                )
                 if self.protect_ratio > 0:
                     k = max(1, min(K, int(round(self.protect_ratio * K))))
                     top = torch.topk(imp, k, largest=True).indices
@@ -242,12 +301,18 @@ class TokenStyleModulator(nn.Module):
         # Keep diagnostics as device scalars; the policy reads them only on
         # logging steps, avoiding a per-step GPU→CPU sync.
         with torch.no_grad():
-            diff_dom = (row_dom[donor] != row_dom).float().mean() \
-                if row_dom is not None else z.new_zeros(())
+            diff_dom = (
+                (row_dom[donor] != row_dom).float().mean()
+                if row_dom is not None
+                else z.new_zeros(())
+            )
             self.last_stats_t = {
                 "mod_abs_mean": (out - z).abs().mean(),
                 "stat_delta": (mu_d - mu).abs().mean(),
                 "diff_domain_frac": diff_dom,
                 "action_weight_mean": alpha.mean(),
+                "self_donor_frac": (sample_donor == torch.arange(B, device=z.device))
+                .float()
+                .mean(),
             }
         return out.reshape(B, V, K, D)

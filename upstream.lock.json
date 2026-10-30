@@ -1,0 +1,35 @@
+{
+  "CoRP": {
+    "url": "https://github.com/corp-policy/CoRP",
+    "revision": "52445740aa9517ae396cc8fb14bae8fe5922f118",
+    "checkpoint_sha256": "f933ab03c1a4664f7a11690645cdd5fa81788a5b98db81913024f7a23326dfe6",
+    "files": {
+      "corp/checkpoint.py": "f07fae21599f54f157e9630f28d0af20b1db226ffc611878bd7ab90e53e1ce10",
+      "corp/representation/extractor.py": "385c66cf90ad294210ea84418ca2c83726eac7dadc5d3bf4ffc0a42035377e34",
+      "corp/action_generator.py": "9bc64e228f934e8fcf5b927669b3a6c0cf4300735b7e973150436eeef3a289d9",
+      "corp/preprocessing.py": "5a869a4726de857752c1120edd87d8dc3e8e155d2e8b9ce56f16721fc1a947fd",
+      "scripts/smoke_test.py": "f8e8f42f61c32c16d020902f5a865767c6d22004c6263069a55e6c71e8b5993a",
+      "scripts/evaluate_libero.py": "8ec144c71cfcd3c0cab9d1b505d432062424487970575a4ff83c2bd0613d066a"
+    }
+  },
+  "robocasa": {
+    "url": "https://github.com/robocasa/robocasa",
+    "revision": "dc73a8ce18e4b8947e8df2ae2958245ca823f3b4",
+    "files": {
+      "robocasa/models/scenes/scene_registry.py": "284f4b019d50f3960045666c461e54e8663dbcaf2f68ac19ff4cbc60c30e4901",
+      "robocasa/utils/dataset_registry.py": "23e8e31bb56bae80de86c34eafadfe32dd1e1eba6608376152ba9fdda5532a4b",
+      "robocasa/utils/dataset_registry_utils.py": "9ea74602711ab9c499314bc3d94c4b61db6fe85bebf616cce573b9d39ba02e3b",
+      "robocasa/utils/env_utils.py": "2543d593897008b104c0fa7bb83c987675b4e583ae519b324de98f99c71a5fcd",
+      "robocasa/utils/groot_utils/groot_dataset.py": "bc49581295eb8200818b5957c6f81c630d20a4a5c427256cad03827b3c00eec7",
+      "robocasa/wrappers/gym_wrapper.py": "356d61ca9e4b777ca0515323d38167cb7560b837cb37ea460f16ba01b4cf2d49",
+      "robocasa/scripts/dataset_scripts/playback_dataset.py": "9a3556e941f364862177e85d339b519f657d9be8308f76a09c642b560a9ceba7"
+    }
+  },
+  "diffusion_policy": {
+    "url": "https://github.com/robocasa-benchmark/diffusion_policy",
+    "revision": "41212698b6f481ed92a55f0d5f1778ec56bea417",
+    "files": {
+      "diffusion_policy/dataset/lerobot_dataset.py": "83cd41c888014b8f05e279b8746f44301d8e4d6271167ba44eabd9252e97d64f"
+    }
+  }
+}

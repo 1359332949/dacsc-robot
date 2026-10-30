@@ -30,25 +30,47 @@ from pathlib import Path
 import torch
 from torch import nn
 from torch.nn import functional as F
+from dacsc.corp_images import image_contract
 
 _REPO_ROOT = Path(__file__).resolve().parents[1]
+CHECKPOINT_FORMAT = "corp_robocasa_v2"
+OBJECTIVE = "corp_masked_flow_repeat_last_v1"
+CORP_STYLE_MODES = (
+    "none",
+    "random_stats",
+    "cross_style_stats",
+    "cross_style_stats_action_aware",
+)
+
+
+def masked_action_mse(
+    pred: torch.Tensor, target: torch.Tensor, mask: torch.Tensor
+) -> torch.Tensor:
+    """CoRP Eq.5: average over valid action positions and dimensions only."""
+    if (
+        pred.shape != target.shape
+        or mask.dtype != torch.bool
+        or mask.shape != target.shape[:2]
+    ):
+        raise ValueError(
+            "action mask must be boolean [B,H] for matching [B,H,D] actions"
+        )
+    if not mask.any():
+        raise ValueError("action batch has no valid positions")
+    loss = F.mse_loss(pred[mask].float(), target[mask].float())
+    if not torch.isfinite(loss):
+        raise FloatingPointError(
+            "nonfinite flow loss; refusing to update model parameters"
+        )
+    return loss
 
 
 def _resolve_corp_repo() -> Path:
-    """定位官方 CoRP 源码。
-
-    优先级：环境变量 CORP_REPO > <repo_root>/repos/CoRP > /hy-tmp/models/corp/CoRP。
-    本地开发用第二种，服务器用第三种（或显式设置 CORP_REPO）。
-    """
-    candidates = []
+    """Use the explicit checkout or the project checkout; invalid configuration fails."""
     env = os.environ.get("CORP_REPO")
-    if env:
-        candidates.append(Path(env).expanduser())
-    candidates.append(_REPO_ROOT / "repos" / "CoRP")
-    candidates.append(Path("/hy-tmp/models/corp/CoRP"))
-    for cand in candidates:
-        if (cand / "corp" / "policy.py").is_file():
-            return cand.resolve()
+    candidate = Path(env).expanduser() if env else _REPO_ROOT / "repos" / "CoRP"
+    if (candidate / "corp" / "policy.py").is_file():
+        return candidate.resolve()
     raise FileNotFoundError(
         "找不到官方 CoRP 源码；请设置 CORP_REPO 指向含 corp/ 的仓库根目录"
     )
@@ -59,7 +81,10 @@ if str(_CORP_REPO) not in sys.path:
     sys.path.insert(0, str(_CORP_REPO))
 
 from corp.action_generator import DiTActionGenerator  # noqa: E402
-from corp.representation.extractor import Representation, RepresentationExtractor  # noqa: E402
+from corp.representation.extractor import (
+    Representation,
+    RepresentationExtractor,
+)  # noqa: E402
 
 
 # RoboCasa 真实接口（来自数据集 meta/modality.json，61/61 atomic task 一致）：
@@ -122,8 +147,9 @@ OFFICIAL_VIEW_NAMES: list[str] = ["agentview", "eye_in_hand"]
 class CorpRoboCasa(nn.Module):
     """两阶段 CoRP，接口适配到 RoboCasa。"""
 
-    def __init__(self, config: dict = ROBOCASA_CORP_CONFIG,
-                 token_style: nn.Module | None = None) -> None:
+    def __init__(
+        self, config: dict = ROBOCASA_CORP_CONFIG, token_style: nn.Module | None = None
+    ) -> None:
         super().__init__()
         self.config = config
         self.view_names = tuple(config["view_names"])
@@ -150,52 +176,113 @@ class CorpRoboCasa(nn.Module):
         if token_style is not None:
             self._style_handle = (
                 self.representation_extractor.visual_encoder.register_forward_hook(
-                    self._token_style_hook))
+                    self._token_style_hook
+                )
+            )
 
     def _token_style_hook(self, module, inputs, output):
         """visual_encoder 输出 (B*V,T,D) -> (B,V,T,D) -> 调制 -> 还原。"""
         if self.token_style is None:
             return output
+        if output.shape[0] % len(self.view_names):
+            raise ValueError("visual batch must be divisible by the view count")
         b = output.shape[0] // len(self.view_names)
-        z = output.reshape(b, len(self.view_names), *output.shape[1:])
-        if self.training:
+        # Official extractor concatenates whole view batches: [V, B, T, D].
+        z = output.reshape(len(self.view_names), b, *output.shape[1:]).transpose(0, 1)
+        if self.training and torch.is_grad_enabled() and z.requires_grad:
             z = z * 1.0
             z.retain_grad()
             self._last_style_tokens = z
         z = self.token_style(
-            z, domain_ids=self._current_domain_ids, training=self.training)
-        return z.reshape(output.shape)
+            z, domain_ids=self._current_domain_ids, training=self.training
+        )
+        return z.transpose(0, 1).reshape(output.shape)
 
-    def extract(self, images: dict[str, torch.Tensor], state: torch.Tensor,
-                instruction, domain_ids: torch.Tensor | None = None) -> Representation:
+    def extract(
+        self,
+        images: dict[str, torch.Tensor],
+        state: torch.Tensor,
+        instruction,
+        domain_ids: torch.Tensor | None = None,
+    ) -> Representation:
         """返回 Representation。images: {view: [B,3,224,224]}，state: [B,state_dim]。"""
         if self.token_style is not None and self._style_handle is None:
             raise RuntimeError(
                 "token_style is set but no forward hook is registered; "
-                "use set_token_style() instead of assigning token_style directly")
+                "use set_token_style() instead of assigning token_style directly"
+            )
         self._current_domain_ids = domain_ids
         try:
             return self.representation_extractor(
-                images=images, state=state, instruction=instruction)
+                images=images, state=state, instruction=instruction
+            )
         finally:
             self._current_domain_ids = None
 
-    def update_action_importance(self, momentum: float = 0.9,
-                                 return_summary: bool = False) -> dict | None:
+    def update_action_importance(
+        self, momentum: float = 0.9, return_summary: bool = False
+    ) -> dict | None:
         """用 patch-token 梯度更新 action importance（供 *_action_aware 使用）。"""
         z = self._last_style_tokens
         self._last_style_tokens = None
         if self.token_style is None or z is None or z.grad is None:
             return None
-        score = (z.detach() * z.grad.detach()).abs().mean(dim=(0, 1, 3))
+        score = (z.detach().float() * z.grad.detach().float()).abs().mean(dim=(0, 1, 3))
         score = score / score.sum().clamp_min(1e-8)
         if self._token_importance is None:
             self._token_importance = score
         else:
             self._token_importance = (
-                momentum * self._token_importance + (1.0 - momentum) * score)
-        self.token_style.set_action_importance(self._token_importance)
+                momentum * self._token_importance + (1.0 - momentum) * score
+            )
+        # The modulator expects protection strengths, not a probability mass.
+        lo, hi = self._token_importance.amin(), self._token_importance.amax()
+        protection = ((self._token_importance - lo) / (hi - lo).clamp_min(1e-12)).clamp(
+            0, 1
+        )
+        self.token_style.set_action_importance(protection)
         return self.token_style.summary() if return_summary else None
+
+    def training_runtime_state(self) -> dict:
+        ts = self.token_style
+        return {
+            "token_importance": self._token_importance,
+            "action_importance": None if ts is None else ts.action_importance,
+            "donor_rng": (
+                None
+                if ts is None or ts._donor_gen is None
+                else ts._donor_gen.get_state()
+            ),
+            "donor_device": (
+                None
+                if ts is None or ts._donor_gen is None
+                else str(ts._donor_gen.device)
+            ),
+            "donor_contract": None if ts is None else ts.donor_contract(),
+        }
+
+    def load_training_runtime_state(
+        self, state: dict, *, restore_donor_rng: bool = True
+    ) -> None:
+        device = next(self.parameters()).device
+        value = state["token_importance"]
+        self._token_importance = None if value is None else value.to(device)
+        self._last_style_tokens = None
+        if self.token_style is not None:
+            if state["donor_contract"] != self.token_style.donor_contract():
+                raise ValueError(
+                    "checkpoint donor rule differs from the current implementation"
+                )
+            value = state["action_importance"]
+            self.token_style.set_action_importance(
+                None if value is None else value.to(device)
+            )
+            if restore_donor_rng and state["donor_rng"] is not None:
+                if state["donor_device"] != str(device):
+                    raise ValueError(
+                        "donor RNG device differs; exact resume requires the same device"
+                    )
+                self.token_style._generator(device).set_state(state["donor_rng"].cpu())
 
     def flow_matching_loss(
         self,
@@ -203,6 +290,7 @@ class CorpRoboCasa(nn.Module):
         state: torch.Tensor,
         instruction,
         action: torch.Tensor,
+        action_mask: torch.Tensor,
         domain_ids: torch.Tensor | None = None,
     ) -> torch.Tensor:
         """Rectified-flow velocity loss（与官方 sample() 的积分方向严格一致）。
@@ -215,7 +303,11 @@ class CorpRoboCasa(nn.Module):
         b = action.shape[0]
         eps = torch.randn_like(action)
         # 论文: tau ~ Beta(1.0, 1.5)，不是 Uniform(0,1)
-        tau = torch.distributions.Beta(1.0, 1.5).sample((b,)).to(device=device, dtype=action.dtype)
+        tau = (
+            torch.distributions.Beta(1.0, 1.5)
+            .sample((b,))
+            .to(device=device, dtype=action.dtype)
+        )
         # 先生成 flow noise / tau，再 extract；token_style 的 RNG 消耗不会改变 flow noise。
         representation = self.extract(images, state, instruction, domain_ids=domain_ids)
         action = action.to(dtype=representation.action_dtype)
@@ -226,7 +318,7 @@ class CorpRoboCasa(nn.Module):
         target = action - eps
         prefix = self.action_generator.prepare_prefix(representation)
         pred = self.action_generator(x_tau, tau, prefix)
-        return F.mse_loss(pred.float(), target.float())
+        return masked_action_mse(pred, target, action_mask)
 
     @torch.no_grad()
     def sample_action(
@@ -251,10 +343,20 @@ def load_corp_robocasa(
 ) -> tuple[CorpRoboCasa, dict]:
     """从官方 corp_libero.pt 加载共享权重，接口层随机初始化，并返回可审计报告。"""
     checkpoint = Path(checkpoint).expanduser().resolve()
-    payload = torch.load(checkpoint, map_location="cpu", weights_only=True)
-    if not isinstance(payload, dict) or payload.get("format") != "corp_libero_v2":
-        raise ValueError("expected a corp_libero_v2 checkpoint")
-    libero_sd: dict[str, torch.Tensor] = payload["model"]
+    from dacsc.upstream import verify_upstream
+
+    verify_upstream(["CoRP"])
+    # Use the release loader: validates config_sha256, normalizer and ALL source keys.
+    from corp.checkpoint import load_policy
+
+    source = load_policy(checkpoint, device="cpu")
+    interface_fields = {"view_names", "state_dim", "action_dim", "action_horizon"}
+    for key in set(source.config) | set(config):
+        if key not in interface_fields and source.config.get(key) != config.get(key):
+            raise ValueError(f"unsupported CoRP architecture change: {key}")
+    if source.config["view_names"] != OFFICIAL_VIEW_NAMES:
+        raise ValueError("source checkpoint has an unsupported camera-view contract")
+    libero_sd = source.state_dict()
 
     model = CorpRoboCasa(config, token_style=token_style)
     if token_style is not None:
@@ -264,16 +366,36 @@ def load_corp_robocasa(
     copied: list[str] = []
     random_init: list[str] = []
     partial: list[str] = []
+    interface_keys = {
+        "representation_extractor.state_encoder.projection.weight",
+        "action_generator.action_projection.weight",
+        "action_generator.velocity_projection.weight",
+        "action_generator.velocity_projection.bias",
+    }
+    view_keys = {
+        "representation_extractor.cross_attention_resampler.queries",
+        "representation_extractor.cross_attention_resampler.view_embedding",
+    }
+    if set(libero_sd) - set(model_sd):
+        raise ValueError(f"unmapped source weights: {set(libero_sd) - set(model_sd)}")
 
     for key, tensor in model_sd.items():
         if key not in libero_sd:
+            if not key.startswith("token_style."):
+                raise ValueError(f"missing shared source weight: {key}")
             random_init.append(key)
             continue
         src = libero_sd[key]
+        if key in view_keys:
+            if src.shape[1:] != tensor.shape[1:]:
+                raise ValueError(f"invalid view weight shape: {key}")
+            continue
         if src.shape == tensor.shape:
             model_sd[key] = src.clone()
             copied.append(key)
         else:
+            if key not in interface_keys:
+                raise ValueError(f"unexpected shared weight shape mismatch: {key}")
             random_init.append(key)
 
     # 部分迁移：view query / view embedding（[3,...] vs [2,...]）。
@@ -283,10 +405,10 @@ def load_corp_robocasa(
     report = {
         "total": len(model_sd),
         "copied": len(copied) + len(partial),
-        "random_init": len(random_init) - len(partial),
+        "random_init": len(random_init),
         "copied_keys": copied,
         "partial_keys": partial,
-        "random_init_keys": [k for k in random_init if k not in partial],
+        "random_init_keys": random_init,
     }
     return model.to(device).eval(), report
 
@@ -304,10 +426,12 @@ def _merge_view_params(
     ve_key = f"{prefix}.view_embedding"
     for key, off_names in ((q_key, OFFICIAL_VIEW_NAMES), (ve_key, OFFICIAL_VIEW_NAMES)):
         if key not in libero_sd or key not in model_sd:
-            continue
+            raise ValueError(f"missing required view weight: {key}")
         src = libero_sd[key]  # [2, ...]
-        dst = model_sd[key]   # [3, ...]
+        dst = model_sd[key]  # [3, ...]
         for i, name in enumerate(view_names):
+            if name not in VIEW_TO_OFFICIAL:
+                raise ValueError(f"no declared view mapping: {name}")
             off = VIEW_TO_OFFICIAL.get(name)
             if off is not None and off in off_names:
                 j = off_names.index(off)
@@ -321,20 +445,39 @@ def load_adapted_checkpoint(
     *,
     device: str | torch.device = "cpu",
 ) -> tuple[CorpRoboCasa, tuple[torch.Tensor, torch.Tensor]]:
-    """加载本仓库 P2 训练保存的 corp_robocasa_adapted_v1 checkpoint。"""
-    payload = torch.load(Path(path).expanduser().resolve(), map_location="cpu",
-                         weights_only=False)
-    if payload.get("format") != "corp_robocasa_adapted_v1":
-        raise ValueError("expected a corp_robocasa_adapted_v1 checkpoint")
+    """Load the current masked-loss/image contract; old experiment files are rejected."""
+    payload = torch.load(
+        Path(path).expanduser().resolve(), map_location="cpu", weights_only=False
+    )
+    from dacsc.upstream import verify_upstream
+
+    if (
+        payload.get("format") != CHECKPOINT_FORMAT
+        or payload.get("objective") != OBJECTIVE
+        or payload.get("images") != image_contract()
+        or payload.get("upstream") != verify_upstream()
+    ):
+        raise ValueError(
+            "checkpoint training/image contract differs; legacy loading is unsupported"
+        )
     token_style = None
     ts_cfg = payload.get("token_style")
     if ts_cfg:
+        if ts_cfg.get("mode") not in CORP_STYLE_MODES[1:]:
+            raise ValueError("token-style mode is outside the current CoRP protocol")
         from dacsc.token_style import TokenStyleModulator
+
         token_style = TokenStyleModulator(**ts_cfg)
+        if "training_runtime" not in payload:
+            raise ValueError(
+                "token-style checkpoint lacks its donor contract; legacy loading is unsupported"
+            )
     model = CorpRoboCasa(payload["config"], token_style=token_style)
-    missing, unexpected = model.load_state_dict(payload["model"], strict=False)
-    assert not unexpected, f"unexpected checkpoint keys: {unexpected}"
-    allowed_missing = {k for k in missing if k.startswith("token_style.")}
-    assert set(missing) <= allowed_missing, f"missing checkpoint keys: {missing}"
+    model.load_state_dict(payload["model"], strict=True)
+    model.to(device)
+    if "training_runtime" in payload:
+        model.load_training_runtime_state(
+            payload["training_runtime"], restore_donor_rng=False
+        )
     norm = payload["normalizer"]
     return model.to(device).eval(), (norm["state_mean"], norm["state_std"])

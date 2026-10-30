@@ -1,131 +1,68 @@
-# DACSC-Robot 工作区
+# DACSC-Robot
 
-机器人视觉策略在**未见外观域**下的动作泛化研究。
+研究紧凑机器人策略在未见外观条件下的闭环泛化。当前使用 **CoRP adapted to RoboCasa**，
+先验证能完成任务的无干预基线，再检验视觉表示增广。方法效果尚未成立。
 
-## 关键结论
+**唯一当前执行协议：[EXPERIMENT_PROTOCOL.md](docs/EXPERIMENT_PROTOCOL.md)。**
+`notes/` 是历史记录；`docs/legacy/`、legacy DP/channel-gate 脚本不能作为 CoRP 主实验入口。
 
-- **数据源（已定）**：**RoboCasa365**，使用官方 `pretrain/atomic` 人类示范；每条 episode 都有
-  `style_id`/`layout_id`，第一阶段 61 个任务、6,935 条 episode。
-- **基线（已锁定）**：RoboCasa 官方 Diffusion Policy fork（`robocasa-benchmark/diffusion_policy` +
-  `robomimic@robocasa-dp`），`H=10 / n_obs=2 / n_action=8`。
-- **我们的主干**：DINOv2 ViT-S/14（多视角共享、联合微调）→ learned-query resampler → DiT/L1 动作头。
-- **RoboSaGA 不是 base**，是对比方法；**XPolicyLab 是后期扩展基线的工具箱**，不是第一阶段的运行依赖。
+## 先复用上游
 
-## 目录约定（数据与代码分离）
+| 环节 | 实际调用 |
+| --- | --- |
+| CoRP 模型与严格加载 | 官方 `corp` 模块、`corp.checkpoint.load_policy` |
+| 官方模型 smoke / 标准 LIBERO rollout | `repos/CoRP/scripts/smoke_test.py` / `evaluate_libero.py` |
+| RoboCasa 视频与动作读取 | 官方 DP `LerobotDataset`，已移除旧 CLIP cache 私有补丁 |
+| RoboCasa 重放与 task horizon | 官方 `playback_dataset.reset_to` / `get_task_horizon` |
+| 图像处理 | Torchvision functional / Pillow bilinear resize |
+| 参数 EMA | PyTorch `AveragedModel` / `get_ema_multi_avg_fn` |
+| 输出互斥 | `filelock.FileLock` |
 
-```text
-~/dacsc-robot/                         # 代码、配置、脚本
-~/datasets/robocasa365/                # 数据集（本机；5.3 GB）
-  v1.0/pretrain/atomic/<Task>/<date>/lerobot/
-~/dacsc-robot/runs/                    # 训练输出/checkpoint（后续创建）
-~/.cache/dacsc-robot/                  # 可删除缓存
+`upstream.lock.json` 固定源码 revision 和被调用入口文件的 SHA256；运行前检查，
+不自动打补丁，不静默降级。仅覆盖清单中的文件，不代替整个仿真环境的版本验证。
+token statistics、不同 style donor 和 action-aware 是本工程适配，**不是完整 TFS-ViT 复现**。
 
-# AutoDL 上：
-/root/dacsc-robot/                     # 代码放系统盘
-/root/autodl-tmp/datasets/robocasa365/ # 数据放数据盘
-/root/autodl-tmp/runs/dacsc-robot/     # 训练产物放数据盘
+## 本地验证，不启动训练
 
-# 恒源云上：
-/root/dacsc-robot/                     # 或你的 HOME 下
-/hy-tmp/datasets/robocasa365/          # 数据放数据盘
-/hy-tmp/runs/dacsc-robot/              # 训练产物放数据盘
-```
-
-统一用 `DACSC_DATA_ROOT` 指定数据集根目录；不设置时，脚本会自动选择
-`~/datasets/robocasa365`（本机）、`/root/autodl-tmp/datasets/robocasa365`（AutoDL）
-或 `/hy-tmp/datasets/robocasa365`（恒源云）。
-
-## 我们的代码（官方仓库零修改）
-
-```
-dacsc/                       我们的包
-  compat.py                  diffusers 版本差异的兼容 shim
-  dinov2_encoder.py          DINOv2 观测编码器（多视角共享权重）
-  policy.py                  RoboCasaDINOv2Policy（继承官方策略）
-  gating.py                  通道门控（ChannelGate + 注入/卸载）
-  domain_stats.py            跨域激活统计 → u^disc（KL）
-  losses.py                  L_gate 正则 + 渐进预算 + 动作重要性 EMA
-  dataset.py                 域标签接入（style_id / layout_id）
-  stub_dataset.py            合成数据集（外观依赖域、动作不依赖域）
-```
-
-## 目录
-
-```
-notes/
-  01-参考代码调研.md           参考仓库全清单、成熟度评级、六个坑
-  02-Robo家族2025-2026调研.md  ★ 为什么选 XPolicyLab，2025-2026 Robo* 生态全图
-  03-已拉取仓库清单.md         已拉取的 17 个仓库与体积
-docs/
-  DACSC-Robot-方法定义与实验设计.md     当前方法文档（v0.2）
-  baseline_audit_real/                  阶段 1 基线审计（真实仓库 + 真实 torch）
-scripts/
-  fetch_repos.py             拉取参考仓库（可续传、gzip 校验、tarball 缓存）
-  fetch_robosaga_subset.py   只抓 RoboSaGA 核心源码（~200KB，替代 680MB 全量）
-  audit_dataset.py           阶段 0：数据审计（纯标准库）
-  audit_baseline.py          阶段 1：基线静态审计（torch 可选）
-  fetch_robocasa365_modelscope.py ★ RoboCasa365 数据下载（ModelScope，可续传/自动审计）
-  check_data_layout.py       ★ 数据路径与 style/layout 标签完整性检查
-  audit_baseline_runtime.py  ★ 运行时审计：CPU 上真实实例化基线并前向
-  fetch_dinov2.py            ★ 拉取+验证 DINOv2 backbone（CoRP 用的那个）
-  setup_env.sh               ★ 一键建环境（venv + .pth 让三个包可导入）
-  test_dinov2_policy.py      ★ CPU 冒烟测试（4 项检查 + 与官方基线对比）
-  test_gating.py             ★ 门控 6 项测试（含"恒等门控不改变基线"）
-  test_domain_labels.py      ★ 域标签 7 项测试（含标签错位安全网）
-  train_smoke_test.py        ★ 本机 MPS 端到端训练烟测（走官方 workspace.run()）
-repos/                       17 个已拉取仓库（见 notes/03）
-audit/                       审计输出
-```
-
-## 已验证的基线事实（真实仓库 + 真实 torch 运行）
-
-```yaml
-camera_views: [robot0_agentview_left, robot0_agentview_right, robot0_eye_in_hand]
-image_size: [256, 256]      # → crop [224, 224]
-visual_encoder: ResNet18ConvFiLM   # native_import 实测，8 个 conv block
-horizon: 10 / n_obs_steps: 2 / n_action_steps: 8 / batch_size: 192
-policy_backbone: DiT (12 层, n_cond_layers 4, n_head 8, n_emb 512)
-action_dim: 12
-```
-
-8 个 conv block 输出（224×224 输入，hook 实测）：
-`[64,56,56] [64,56,56] [128,28,28] [128,28,28] [256,14,14] [256,14,14] [512,7,7] [512,7,7]`
-每块后接 FiLM（语言 768 维，episode 级）。**SpatialSoftmax 在 block 8 之后** —— 门控必须插在它之前。
-
-每任务 horizon：317 个任务，300–7200 步（v1.0.1 起全部 ×1.5，均为 150 的倍数）。
-
-## 常用命令
+在已有依赖环境中，从仓库根目录运行：
 
 ```bash
-python3 scripts/fetch_repos.py --list                 # 看清单
-python3 scripts/fetch_repos.py --group core           # 拉官方基线栈
-python3 scripts/fetch_robosaga_subset.py              # RoboSaGA 核心源码
-python3 scripts/check_data_layout.py                               # 检查现有数据
-python3 scripts/fetch_robocasa365_modelscope.py --list --split pretrain --kind atomic
-python3 scripts/fetch_robocasa365_modelscope.py --preset atomic-all --audit
-/tmp/venv_torch/bin/python scripts/audit_baseline.py \
-    --dp-repo repos/diffusion_policy --robomimic-repo repos/robomimic \
-    --robocasa-repo repos/robocasa --out audit/baseline
+.venv/bin/python -m dacsc.upstream
+.venv/bin/python -m unittest discover -s tests -v
+PYTHONPATH=repos/CoRP .venv/bin/python repos/CoRP/scripts/smoke_test.py --device cpu
 ```
 
-## 已验证可用（2026-10-16）
+第三条直接使用官方 demo，检查真实发布权重 checksum、严格加载、参数量和动作生成。
+`tests/` 保留数据/模型接口、mask、共享权重 EMA、donor、断点恢复、配对和拒绝错误输入的回归。
+其中叶模块假环境仅用于本地契约验证，不能当作真实仿真成功率。
 
-- **本机 MPS 完整训练跑通**：官方 `workspace.run()`，8 步 loss 1.2855→1.2202，
-  **4607/4608 个门控被更新**，u^disc 成功识别域敏感通道（~2.3 s/步 @ bs=8）（notes/21）
+环境安装遵循 [CoRP 官方说明](https://github.com/corp-policy/CoRP) 和
+[RoboCasa 官方说明](https://robocasa.ai/docs/build/html/introduction/installation.html)。
+官方 CoRP LIBERO 环境和 RoboCasa 环境的 NumPy/MuJoCo 等约束不同，分别管理；
+不要使用已删除的“一键混装”脚本。本地验证环境记录在 `audit/corp_pipeline_local_validation.json`。
+安装/下载官方 demo 的依赖、模型和仿真资产属于准备步骤；本轮未运行任何安装仿真环境或训练任务。
 
-- **数据集域标签**：batch 含 `domain_id`（style_id）/ `layout_id`，7 项测试通过，
-  含**标签对齐安全网**（能检出 extras 序号与 episode_index 错位）（notes/20）
+## 当前入口
 
-- **DINOv2 策略 v1 跑通**：编码器换成 DINOv2 ViT-S/14，总参数 85.84M，
-  `predict_action` 输出 `[1,8,12]` 与官方一致，**梯度能流到 DINOv2（联合微调生效）**（notes/18）
+| 工作 | 入口 |
+| --- | --- |
+| CoRP-RoboCasa 训练适配 | `scripts/train_corp_robocasa.py`；必须显式传 `--steps` |
+| 顺序运行统一预算 | `scripts/run_corp_experiment.sh`；默认只有 `none`，必须指定 `STEPS`、新 `OUT` |
+| held-out 离线 MSE | `scripts/eval_corp_robocasa.py` |
+| RoboCasa 单任务 SR | `scripts/eval_corp_robocasa_sr.py` |
+| 多任务 source/val SR 与严格聚合 | `scripts/run_corp_sr_split.sh` |
+| LIBERO-Plus 外观条件扩展 | `scripts/eval_corp_libero_plus.py`；直接委托官方 `evaluate_suite` |
 
-- **官方 DP 基线**：CPU 上跑通，106.03 M 参数，输出 `action [1,8,12]`（notes/06）
-- **DINOv2 ViT-S/14**：本地加载跑通，22.1 M 参数，`224×224 → [1,256,384]`（notes/16）
-  - 代码从 codeload、权重从 Meta CDN（**4.9 MB/s**）拉取，绕过被拦的 github.com
-- **网络快慢取决于主机**：GitHub ~38 KB/s，Meta CDN ~4.9 MB/s
+RoboCasa 数据根目录使用 `--data-root` 或 `DACSC_DATA_ROOT`，其下应有
+`v1.0/pretrain/atomic/<Task>/<date>/lerobot`。CoRP 源码通过 `CORP_REPO` 或 `repos/CoRP` 定位。
+所有入口 `--help` 可在不启动训练的情况下查看参数。
 
-## 环境限制（重要）
+当前 checkpoint 为 `corp_robocasa_v2`，SR schema 为 `corp_robocasa_sr_v3`。
+旧 loss、图像变换、donor 或评测协议的文件不转换、不兼容、不混入新对比。
+test 默认封存，只有最终评估显式启用。真实 RoboCasa/CUDA 的复核仍待服务器环境验证。
 
-- 本机到 `github.com` 的 git 协议不可达，仅 `codeload`/`api`/`raw` 可达 → 用 tarball 快照，`git clone` 需换网络
-- 本机到 `huggingface.co` **完全不可达** → RoboCasa 数据与官方 checkpoint 需在能上 HF 的机器上取
-- 实测 GitHub 吞吐约 27–55 KB/s，大仓库耗时长；tarball 缓存在 `repos/.cache/`（~200MB，可删）
+## 本地交付
+
+提交并保持工作区干净后，`bash scripts/pack_for_server.sh /path/to/new/output` 使用标准
+`git archive` 导出完整已提交代码（包括根目录manifest、测试和协议），拒绝覆盖已有包。
+它不上传、不部署，不再混入本机未跟踪的第三方源码/权重；上游依赖按锁定revision准备。

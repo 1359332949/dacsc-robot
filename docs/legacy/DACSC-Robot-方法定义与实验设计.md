@@ -1,5 +1,8 @@
 # DACSC-Robot 方法定义与实验设计
 
+> **历史设计，已退出当前实验协议。** 本文保留早期 DP/channel-gate 的设计来源，
+> 不代表 CoRP 方法或验证结果。当前唯一执行协议为 `docs/EXPERIMENT_PROTOCOL.md`。
+
 > 版本：v0.2（数据与基线审计版）
 > 状态：方法定义与实验方案，尚未声称实验结论
 > 主策略：Diffusion Policy（RoboCasa 官方 fork，已锁定）

@@ -1,4 +1,5 @@
 """独立评测 CoRP-RoboCasa checkpoint：per-dim / per-task MSE（高样本量）。"""
+
 from __future__ import annotations
 
 import argparse
@@ -8,69 +9,95 @@ from pathlib import Path
 
 import torch
 
-sys.path.insert(0, "/root/dacsc-robot")
-sys.path.insert(0, "/root/dacsc-robot/scripts")
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(ROOT / "scripts"))
 
 from dacsc.corp_data import LinearNormalizer  # noqa: E402
-from dacsc.corp_robocasa import load_adapted_checkpoint  # noqa: E402
+from dacsc.corp_robocasa import load_adapted_checkpoint, OBJECTIVE  # noqa: E402
+from dacsc.corp_images import SHIFTS, image_contract
+from dacsc.eval_protocol import file_sha256
+from dacsc.upstream import verify_upstream
+from dacsc.run_output import entry_file
 from train_corp_robocasa import (  # noqa: E402
-    all_task_paths, balanced_loader, build_dataset, evaluate,
+    all_task_paths,
+    balanced_loader,
+    build_dataset,
+    evaluate,
 )
+from scripts.check_data_layout import default_root
 
 
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--model", required=True)
+    ap.add_argument("--data-root", type=Path, default=default_root())
     ap.add_argument("--per-task", type=int, default=32)
     ap.add_argument("--batch-size", type=int, default=16)
     ap.add_argument("--euler-steps", type=int, default=10)
     ap.add_argument("--horizon", type=int, default=10)
     ap.add_argument("--max-tasks", type=int, default=0)
-    ap.add_argument("--out", type=str, default="/hy-tmp/runs/corp_robocasa_eval/eval.json")
+    ap.add_argument("--run-test", action="store_true", help="Final evaluation only")
+    ap.add_argument(
+        "--shifts", nargs="+", choices=SHIFTS, default=["none", "color_jitter"]
+    )
+    ap.add_argument("--out", type=str, required=True)
     args = ap.parse_args()
+    if min(args.per_task, args.batch_size, args.euler_steps) <= 0:
+        ap.error("support, batch-size and Euler steps must be positive")
+    with entry_file(Path(args.out)):
+        return run(args)
+
+
+def run(args) -> int:
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model, (mean, std) = load_adapted_checkpoint(args.model, device=device)
+    if args.horizon != model.action_horizon:
+        raise ValueError("evaluation horizon differs from the checkpoint")
     norm = LinearNormalizer(mean, std)
     print(f"loaded {args.model}, device={device}", flush=True)
 
-    tasks = all_task_paths(args.max_tasks)
+    tasks = all_task_paths(args.max_tasks, args.data_root)
     print(f"tasks={len(tasks)}", flush=True)
-    result = {"model": args.model, "per_task": args.per_task, "splits": {}}
+    result = {
+        "model": args.model,
+        "checkpoint_sha256": file_sha256(Path(args.model)),
+        "images": image_contract(),
+        "objective": OBJECTIVE,
+        "upstream": verify_upstream(),
+        "per_task": args.per_task,
+        "euler_steps": args.euler_steps,
+        "precision": "bf16" if device.type == "cuda" else "fp32",
+        "splits": {},
+    }
 
-    for name, (lo, hi) in (("source", (11, 30)), ("val", (31, 40)), ("test", (41, 50))):
-        residues = set(range(9)) if name == "source" else None
-        ds = build_dataset(tasks, (lo, hi), args.horizon, 224, True,
-                           episode_residues=residues)
+    splits = [("source", (11, 30)), ("val", (31, 40))]
+    if args.run_test:
+        splits.append(("test", (41, 50)))
+    for name, (lo, hi) in splits:
+        residues = {9} if name == "source" else None
+        ds = build_dataset(
+            tasks, (lo, hi), args.horizon, 224, True, episode_residues=residues
+        )
         loader = balanced_loader(ds, args.batch_size, args.per_task, seed=123)
-        ev, dt = evaluate(model, loader, norm, device, len(loader), args.euler_steps)
+        conditions = {}
+        for shift in args.shifts:
+            ev, dt = evaluate(
+                model, loader, norm, device, len(loader), args.euler_steps, shift=shift
+            )
+            conditions[shift] = {**ev, "elapsed_sec": dt}
+            print(
+                f"{name}/{shift}: overall={ev['overall']:.4f} n={len(loader.dataset)} ({dt:.1f}s)",
+                flush=True,
+            )
         result["splits"][name] = {
-            "n_frames_total": len(ds),
-            "n_eval_samples": len(loader.dataset),
-            "overall": ev["overall"],
-            "per_dim": ev["per_dim"],
-            "per_task": ev["per_task"],
-            "elapsed_sec": dt,
+            "support": ds.support(loader.dataset.indices),
+            "conditions": conditions,
         }
-        print(f"{name}: overall={ev['overall']:.4f} n={len(loader.dataset)} ({dt:.1f}s)",
-              flush=True)
-        print(f"  per_dim: {[ (k, round(v,4)) for k,v in ev['per_dim'].items() ]}",
-              flush=True)
 
-    src = result["splits"]["source"]["per_task"]
-    for name in ("val", "test"):
-        cur = result["splits"][name]["per_task"]
-        gap = {t: cur[t] - src[t] for t in src if t in cur}
-        result["splits"][name]["per_task_gap_vs_source"] = gap
-        ranked = sorted(gap.items(), key=lambda x: x[1], reverse=True)
-        print(f"\n{name} worst 10 vs source:")
-        for t, g in ranked[:10]:
-            print(f"  {t:36s} {g:+.4f}")
-        print(f"{name} best 10 vs source:")
-        for t, g in ranked[-10:]:
-            print(f"  {t:36s} {g:+.4f}")
-
-    Path(args.out).parent.mkdir(parents=True, exist_ok=True)
+    if file_sha256(Path(args.model)) != result["checkpoint_sha256"]:
+        raise RuntimeError("checkpoint changed during evaluation")
     Path(args.out).write_text(json.dumps(result, indent=2, ensure_ascii=False))
     print("DONE ->", args.out)
     return 0

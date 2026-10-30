@@ -1,0 +1,1450 @@
+{
+  "status": "passed_for_local_scope_only",
+  "date": "2026-10-30",
+  "server_connected": false,
+  "training_started": false,
+  "python": "3.11.15",
+  "packages": {
+    "torch": "2.14.1",
+    "torchvision": "0.29.1",
+    "numpy": "2.4.6",
+    "Pillow": "12.3.0",
+    "transformers": "5.20.0",
+    "filelock": "4.2.0",
+    "scipy": "1.17.1"
+  },
+  "upstream": {
+    "lock_sha256": "34a18c5954a6c5d9c955c99d217e61c45bc63e3d06533ea2ba4647559fe99bcb",
+    "revisions": {
+      "CoRP": "52445740aa9517ae396cc8fb14bae8fe5922f118",
+      "robocasa": "dc73a8ce18e4b8947e8df2ae2958245ca823f3b4",
+      "diffusion_policy": "41212698b6f481ed92a55f0d5f1778ec56bea417"
+    }
+  },
+  "official_checkpoint_sha256": "f933ab03c1a4664f7a11690645cdd5fa81788a5b98db81913024f7a23326dfe6",
+  "tests": {
+    "run": 56,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "details": "test_invalid_missing_duplicate_or_unaligned_metadata_never_silently_disappears (test_corp_pipeline.DatasetTests.test_invalid_missing_duplicate_or_unaligned_metadata_never_silently_disappears) ... ok\ntest_mask_repeat_last_native_split_and_independent_support (test_corp_pipeline.DatasetTests.test_mask_repeat_last_native_split_and_independent_support) ... ok\ntest_sr_style_ranges_fail_before_a_mixed_reverse_range_can_disappear (test_corp_pipeline.DatasetTests.test_sr_style_ranges_fail_before_a_mixed_reverse_range_can_disappear) ... ok\ntest_nonfinite_valid_loss_fails_before_an_optimizer_can_use_it (test_corp_pipeline.MaskedObjectiveTests.test_nonfinite_valid_loss_fails_before_an_optimizer_can_use_it) ... ok\ntest_offline_metrics_exclude_tail_for_every_action_group_and_task (test_corp_pipeline.MaskedObjectiveTests.test_offline_metrics_exclude_tail_for_every_action_group_and_task) ... ok\ntest_padding_errors_never_enter_loss_denominator_or_gradient (test_corp_pipeline.MaskedObjectiveTests.test_padding_errors_never_enter_loss_denominator_or_gradient) ... ok\ntest_batched_operators_match_torchvision_exactly (test_corp_pipeline.OfficialImageTests.test_batched_operators_match_torchvision_exactly) ... ok\ntest_dataset_float_and_simulator_uint8_share_official_pil_resize (test_corp_pipeline.OfficialImageTests.test_dataset_float_and_simulator_uint8_share_official_pil_resize) ... ok\ntest_solid_red_contrast_and_hue_match_upstream_not_custom_rgb_math (test_corp_pipeline.OfficialImageTests.test_solid_red_contrast_and_hue_match_upstream_not_custom_rgb_math) ... ok\ntest_real_release_adapter_hook_masked_loss_and_ema_state (test_corp_pipeline.ReleasedAdapterTests.test_real_release_adapter_hook_masked_loss_and_ema_state) ... ok\ntest_bad_release_checkpoint_is_rejected_before_model_loading (test_corp_pipeline.UpstreamInfrastructureTests.test_bad_release_checkpoint_is_rejected_before_model_loading) ... ok\ntest_completed_budget_does_not_resume_or_publish_pre_eval_metrics (test_corp_pipeline.UpstreamInfrastructureTests.test_completed_budget_does_not_resume_or_publish_pre_eval_metrics) ... ok\ntest_ema_uses_pytorch_and_dynamic_donor_buffer_is_not_averaged (test_corp_pipeline.UpstreamInfrastructureTests.test_ema_uses_pytorch_and_dynamic_donor_buffer_is_not_averaged) ... ok\ntest_explicit_invalid_checkout_does_not_fall_back_to_another_model_source (test_corp_pipeline.UpstreamInfrastructureTests.test_explicit_invalid_checkout_does_not_fall_back_to_another_model_source) ... ok\ntest_normalizer_rejects_corrupt_or_wrong_dimension_statistics (test_corp_pipeline.UpstreamInfrastructureTests.test_normalizer_rejects_corrupt_or_wrong_dimension_statistics) ... ok\ntest_packaging_exports_committed_manifest_and_tests_and_rejects_dirty_sources (test_corp_pipeline.UpstreamInfrastructureTests.test_packaging_exports_committed_manifest_and_tests_and_rejects_dirty_sources) ... ok\ntest_runner_forwards_one_budget_and_stops_after_failure (test_corp_pipeline.UpstreamInfrastructureTests.test_runner_forwards_one_budget_and_stops_after_failure) ... ok\ntest_shared_weights_keep_one_ema_value_for_all_state_dict_aliases (test_corp_pipeline.UpstreamInfrastructureTests.test_shared_weights_keep_one_ema_value_for_all_state_dict_aliases) ... ok\ntest_source_hash_tampering_fails_without_network (test_corp_pipeline.UpstreamInfrastructureTests.test_source_hash_tampering_fails_without_network) ... ok\ntest_cli_failure_does_not_publish_summary (test_corp_regressions.AggregationTests.test_cli_failure_does_not_publish_summary) ... ok\ntest_missing_extra_truncated_and_corrupt_results_fail (test_corp_regressions.AggregationTests.test_missing_extra_truncated_and_corrupt_results_fail) ... ok\ntest_nested_json_is_not_silently_zero (test_corp_regressions.AggregationTests.test_nested_json_is_not_silently_zero) ... ok\ntest_split_runner_defaults_to_source_val_and_auto_aggregates (test_corp_regressions.AggregationTests.test_split_runner_defaults_to_source_val_and_auto_aggregates) ... ok\ntest_done_exits_outer_loop_and_stochastic_policy_is_paired (test_corp_regressions.RolloutTests.test_done_exits_outer_loop_and_stochastic_policy_is_paired) ... ok\ntest_invalid_policy_chunks_fail_instead_of_hanging_or_clipping_nan (test_corp_regressions.RolloutTests.test_invalid_policy_chunks_fail_instead_of_hanging_or_clipping_nan) ... ok\ntest_manifest_replays_state_labels_and_policy_noise (test_corp_regressions.RolloutTests.test_manifest_replays_state_labels_and_policy_noise) ... ok\ntest_sr_entrypoint_writes_native_json_and_reuses_manifest (test_corp_regressions.RolloutTests.test_sr_entrypoint_writes_native_json_and_reuses_manifest) ... ok\ntest_checkpoint_resume_matches_uninterrupted_next_update_and_data (test_corp_regressions.TrainingStateTests.test_checkpoint_resume_matches_uninterrupted_next_update_and_data) ... ok\ntest_clean_shift_and_test_eval_all_use_same_ema_and_noise (test_corp_regressions.TrainingStateTests.test_clean_shift_and_test_eval_all_use_same_ema_and_noise) ... ok\ntest_ema_weights_and_rng_restore_even_after_exception (test_corp_regressions.TrainingStateTests.test_ema_weights_and_rng_restore_even_after_exception) ... ok\ntest_donor_rng_and_protection_resume_exactly (test_corp_regressions.ViewOrderTests.test_donor_rng_and_protection_resume_exactly) ... ok\ntest_importance_changes_modulation_not_just_nonzero (test_corp_regressions.ViewOrderTests.test_importance_changes_modulation_not_just_nonzero) ... ok\ntest_load_path_registers_hook_and_checkpoint_load_is_strict (test_corp_regressions.ViewOrderTests.test_load_path_registers_hook_and_checkpoint_load_is_strict) ... ok\ntest_noop_style_preserves_official_output_and_no_grad_train_is_safe (test_corp_regressions.ViewOrderTests.test_noop_style_preserves_official_output_and_no_grad_train_is_safe) ... ok\ntest_official_view_major_order_and_label_alignment (test_corp_regressions.ViewOrderTests.test_official_view_major_order_and_label_alignment) ... ok\ntest_official_loop_keeps_state_indices_and_policy_noise_paired_across_shifts (test_official_libero_adapter.ReleasedLoopTests.test_official_loop_keeps_state_indices_and_policy_noise_paired_across_shifts) ... ok\ntest_changed_or_missing_donor_contract_cannot_be_loaded (test_upstream_contracts.DonorRulesTests.test_changed_or_missing_donor_contract_cannot_be_loaded) ... ok\ntest_cross_style_is_exact_even_under_29_to_1_imbalance (test_upstream_contracts.DonorRulesTests.test_cross_style_is_exact_even_under_29_to_1_imbalance) ... ok\ntest_donor_statistics_are_detached_as_in_upstream (test_upstream_contracts.DonorRulesTests.test_donor_statistics_are_detached_as_in_upstream) ... ok\ntest_missing_malformed_or_single_style_labels_raise_without_fallback (test_upstream_contracts.DonorRulesTests.test_missing_malformed_or_single_style_labels_raise_without_fallback) ... ok\ntest_random_donor_matches_upstream_sample_permutation_and_preserves_view (test_upstream_contracts.DonorRulesTests.test_random_donor_matches_upstream_sample_permutation_and_preserves_view) ... ok\ntest_topk_action_protection_changes_actual_modulation (test_upstream_contracts.DonorRulesTests.test_topk_action_protection_changes_actual_modulation) ... ok\ntest_wrong_action_importance_cannot_silently_disable_protection (test_upstream_contracts.DonorRulesTests.test_wrong_action_importance_cannot_silently_disable_protection) ... ok\ntest_cross_split_identity_and_native_styles_are_validated (test_upstream_contracts.ExperimentIdentityTests.test_cross_split_identity_and_native_styles_are_validated) ... ok\ntest_mixed_checkpoint_shift_seed_or_inference_budget_is_rejected (test_upstream_contracts.ExperimentIdentityTests.test_mixed_checkpoint_shift_seed_or_inference_budget_is_rejected) ... ok\ntest_old_schema_and_record_condition_mismatch_fail (test_upstream_contracts.ExperimentIdentityTests.test_old_schema_and_record_condition_mismatch_fail) ... ok\ntest_coherent_checkpoint_metadata_cannot_enable_retired_normalization_modes (test_upstream_contracts.OfficialCheckpointTests.test_coherent_checkpoint_metadata_cannot_enable_retired_normalization_modes) ... ok\ntest_release_loader_rejects_missing_extra_shape_and_digest_errors (test_upstream_contracts.OfficialCheckpointTests.test_release_loader_rejects_missing_extra_shape_and_digest_errors) ... ok\ntest_out_of_pretrain_layout_never_enters_frozen_manifest (test_upstream_contracts.OfficialRegistryTests.test_out_of_pretrain_layout_never_enters_frozen_manifest) ... ok\ntest_replay_rejects_changed_layout_allowlist (test_upstream_contracts.OfficialRegistryTests.test_replay_rejects_changed_layout_allowlist) ... ok\ntest_upstream_task_horizons_and_pretrain_layout_group (test_upstream_contracts.OfficialRegistryTests.test_upstream_task_horizons_and_pretrain_layout_group) ... ok\ntest_existing_logs_and_results_are_never_overwritten (test_upstream_contracts.OutputOwnershipTests.test_existing_logs_and_results_are_never_overwritten) ... ok\ntest_matrix_runner_stops_on_first_failed_interpreter (test_upstream_contracts.OutputOwnershipTests.test_matrix_runner_stops_on_first_failed_interpreter) ... ok\ntest_other_process_cannot_write_or_truncate_locked_directory (test_upstream_contracts.OutputOwnershipTests.test_other_process_cannot_write_or_truncate_locked_directory) ... ok\ntest_result_file_lock_precedes_log_creation (test_upstream_contracts.OutputOwnershipTests.test_result_file_lock_precedes_log_creation) ... ok\ntest_same_process_entry_shares_lock_and_child_failure_propagates (test_upstream_contracts.OutputOwnershipTests.test_same_process_entry_shares_lock_and_child_failure_propagates) ... ok\n\n----------------------------------------------------------------------\nRan 56 tests in 10.349s\n\nOK\n"
+  },
+  "official_smoke": {
+    "command": "PYTHONPATH=repos/CoRP .venv/bin/python repos/CoRP/scripts/smoke_test.py --device cpu",
+    "returncode": 0,
+    "stdout": "device=cpu precision=fp32 parameters=48689159 action_shape=(1, 12, 7)\nsha256=f933ab03c1a4664f7a11690645cdd5fa81788a5b98db81913024f7a23326dfe6\nsmoke_ok\n"
+  },
+  "cli_help_passed": [
+    "train_corp_robocasa.py",
+    "eval_corp_robocasa.py",
+    "eval_corp_robocasa_sr.py",
+    "eval_corp_libero_plus.py",
+    "aggregate_sr.py"
+  ],
+  "compile_and_bash_and_diff_checks": "passed",
+  "metadata_only_audit": {
+    "tasks": 61,
+    "episodes": {
+      "val": 1388,
+      "train": 2579,
+      "test": 1306,
+      "reserve": 1402,
+      "source": 260
+    },
+    "frames": {
+      "val": 275479,
+      "train": 501594,
+      "test": 265528,
+      "reserve": 280649,
+      "source": 52706
+    },
+    "per_task_support": {
+      "AdjustToasterOvenTemperature": {
+        "train": {
+          "episodes": 40,
+          "styles": 19
+        },
+        "source": {
+          "episodes": 4,
+          "styles": 4
+        },
+        "val": {
+          "episodes": 30,
+          "styles": 9
+        },
+        "test": {
+          "episodes": 16,
+          "styles": 8
+        },
+        "reserve": {
+          "episodes": 17,
+          "styles": 9
+        }
+      },
+      "AdjustWaterTemperature": {
+        "train": {
+          "episodes": 46,
+          "styles": 18
+        },
+        "source": {
+          "episodes": 6,
+          "styles": 5
+        },
+        "val": {
+          "episodes": 22,
+          "styles": 8
+        },
+        "test": {
+          "episodes": 19,
+          "styles": 9
+        },
+        "reserve": {
+          "episodes": 13,
+          "styles": 8
+        }
+      },
+      "CloseBlenderLid": {
+        "train": {
+          "episodes": 33,
+          "styles": 14
+        },
+        "source": {
+          "episodes": 3,
+          "styles": 3
+        },
+        "val": {
+          "episodes": 26,
+          "styles": 9
+        },
+        "test": {
+          "episodes": 24,
+          "styles": 8
+        },
+        "reserve": {
+          "episodes": 20,
+          "styles": 8
+        }
+      },
+      "CloseCabinet": {
+        "train": {
+          "episodes": 38,
+          "styles": 19
+        },
+        "source": {
+          "episodes": 4,
+          "styles": 3
+        },
+        "val": {
+          "episodes": 19,
+          "styles": 7
+        },
+        "test": {
+          "episodes": 23,
+          "styles": 8
+        },
+        "reserve": {
+          "episodes": 21,
+          "styles": 9
+        }
+      },
+      "CloseDishwasher": {
+        "train": {
+          "episodes": 36,
+          "styles": 18
+        },
+        "source": {
+          "episodes": 3,
+          "styles": 3
+        },
+        "val": {
+          "episodes": 21,
+          "styles": 10
+        },
+        "test": {
+          "episodes": 32,
+          "styles": 9
+        },
+        "reserve": {
+          "episodes": 19,
+          "styles": 8
+        }
+      },
+      "CloseDrawer": {
+        "train": {
+          "episodes": 38,
+          "styles": 16
+        },
+        "source": {
+          "episodes": 4,
+          "styles": 4
+        },
+        "val": {
+          "episodes": 27,
+          "styles": 8
+        },
+        "test": {
+          "episodes": 22,
+          "styles": 10
+        },
+        "reserve": {
+          "episodes": 19,
+          "styles": 8
+        }
+      },
+      "CloseElectricKettleLid": {
+        "train": {
+          "episodes": 45,
+          "styles": 19
+        },
+        "source": {
+          "episodes": 3,
+          "styles": 3
+        },
+        "val": {
+          "episodes": 24,
+          "styles": 9
+        },
+        "test": {
+          "episodes": 12,
+          "styles": 6
+        },
+        "reserve": {
+          "episodes": 18,
+          "styles": 9
+        }
+      },
+      "CloseFridge": {
+        "train": {
+          "episodes": 33,
+          "styles": 16
+        },
+        "source": {
+          "episodes": 4,
+          "styles": 3
+        },
+        "val": {
+          "episodes": 19,
+          "styles": 9
+        },
+        "test": {
+          "episodes": 29,
+          "styles": 10
+        },
+        "reserve": {
+          "episodes": 21,
+          "styles": 9
+        }
+      },
+      "CloseFridgeDrawer": {
+        "train": {
+          "episodes": 39,
+          "styles": 14
+        },
+        "source": {
+          "episodes": 3,
+          "styles": 3
+        },
+        "val": {
+          "episodes": 21,
+          "styles": 6
+        },
+        "test": {
+          "episodes": 20,
+          "styles": 7
+        },
+        "reserve": {
+          "episodes": 28,
+          "styles": 9
+        }
+      },
+      "CloseMicrowave": {
+        "train": {
+          "episodes": 44,
+          "styles": 18
+        },
+        "source": {
+          "episodes": 4,
+          "styles": 4
+        },
+        "val": {
+          "episodes": 17,
+          "styles": 9
+        },
+        "test": {
+          "episodes": 19,
+          "styles": 7
+        },
+        "reserve": {
+          "episodes": 21,
+          "styles": 8
+        }
+      },
+      "CloseOven": {
+        "train": {
+          "episodes": 41,
+          "styles": 17
+        },
+        "source": {
+          "episodes": 1,
+          "styles": 1
+        },
+        "val": {
+          "episodes": 15,
+          "styles": 7
+        },
+        "test": {
+          "episodes": 24,
+          "styles": 10
+        },
+        "reserve": {
+          "episodes": 26,
+          "styles": 7
+        }
+      },
+      "CloseStandMixerHead": {
+        "train": {
+          "episodes": 45,
+          "styles": 18
+        },
+        "source": {
+          "episodes": 5,
+          "styles": 3
+        },
+        "val": {
+          "episodes": 19,
+          "styles": 10
+        },
+        "test": {
+          "episodes": 17,
+          "styles": 8
+        },
+        "reserve": {
+          "episodes": 24,
+          "styles": 8
+        }
+      },
+      "CloseToasterOvenDoor": {
+        "train": {
+          "episodes": 38,
+          "styles": 19
+        },
+        "source": {
+          "episodes": 4,
+          "styles": 4
+        },
+        "val": {
+          "episodes": 29,
+          "styles": 10
+        },
+        "test": {
+          "episodes": 18,
+          "styles": 9
+        },
+        "reserve": {
+          "episodes": 21,
+          "styles": 9
+        }
+      },
+      "CoffeeServeMug": {
+        "train": {
+          "episodes": 36,
+          "styles": 16
+        },
+        "source": {
+          "episodes": 3,
+          "styles": 3
+        },
+        "val": {
+          "episodes": 27,
+          "styles": 8
+        },
+        "test": {
+          "episodes": 23,
+          "styles": 8
+        },
+        "reserve": {
+          "episodes": 19,
+          "styles": 7
+        }
+      },
+      "CoffeeSetupMug": {
+        "train": {
+          "episodes": 39,
+          "styles": 15
+        },
+        "source": {
+          "episodes": 3,
+          "styles": 3
+        },
+        "val": {
+          "episodes": 28,
+          "styles": 9
+        },
+        "test": {
+          "episodes": 18,
+          "styles": 8
+        },
+        "reserve": {
+          "episodes": 17,
+          "styles": 9
+        }
+      },
+      "NavigateKitchen": {
+        "train": {
+          "episodes": 182,
+          "styles": 20
+        },
+        "source": {
+          "episodes": 17,
+          "styles": 14
+        },
+        "val": {
+          "episodes": 102,
+          "styles": 10
+        },
+        "test": {
+          "episodes": 92,
+          "styles": 10
+        },
+        "reserve": {
+          "episodes": 110,
+          "styles": 10
+        }
+      },
+      "OpenBlenderLid": {
+        "train": {
+          "episodes": 42,
+          "styles": 16
+        },
+        "source": {
+          "episodes": 6,
+          "styles": 5
+        },
+        "val": {
+          "episodes": 20,
+          "styles": 8
+        },
+        "test": {
+          "episodes": 16,
+          "styles": 9
+        },
+        "reserve": {
+          "episodes": 22,
+          "styles": 7
+        }
+      },
+      "OpenCabinet": {
+        "train": {
+          "episodes": 34,
+          "styles": 16
+        },
+        "source": {
+          "episodes": 4,
+          "styles": 4
+        },
+        "val": {
+          "episodes": 25,
+          "styles": 9
+        },
+        "test": {
+          "episodes": 23,
+          "styles": 10
+        },
+        "reserve": {
+          "episodes": 21,
+          "styles": 8
+        }
+      },
+      "OpenDishwasher": {
+        "train": {
+          "episodes": 41,
+          "styles": 17
+        },
+        "source": {
+          "episodes": 5,
+          "styles": 4
+        },
+        "val": {
+          "episodes": 16,
+          "styles": 7
+        },
+        "test": {
+          "episodes": 24,
+          "styles": 10
+        },
+        "reserve": {
+          "episodes": 25,
+          "styles": 8
+        }
+      },
+      "OpenDrawer": {
+        "train": {
+          "episodes": 43,
+          "styles": 16
+        },
+        "source": {
+          "episodes": 2,
+          "styles": 2
+        },
+        "val": {
+          "episodes": 23,
+          "styles": 9
+        },
+        "test": {
+          "episodes": 17,
+          "styles": 7
+        },
+        "reserve": {
+          "episodes": 17,
+          "styles": 8
+        }
+      },
+      "OpenElectricKettleLid": {
+        "train": {
+          "episodes": 35,
+          "styles": 16
+        },
+        "source": {
+          "episodes": 2,
+          "styles": 1
+        },
+        "val": {
+          "episodes": 28,
+          "styles": 10
+        },
+        "test": {
+          "episodes": 18,
+          "styles": 8
+        },
+        "reserve": {
+          "episodes": 27,
+          "styles": 10
+        }
+      },
+      "OpenFridge": {
+        "train": {
+          "episodes": 43,
+          "styles": 17
+        },
+        "source": {
+          "episodes": 5,
+          "styles": 4
+        },
+        "val": {
+          "episodes": 17,
+          "styles": 8
+        },
+        "test": {
+          "episodes": 24,
+          "styles": 10
+        },
+        "reserve": {
+          "episodes": 16,
+          "styles": 9
+        }
+      },
+      "OpenFridgeDrawer": {
+        "train": {
+          "episodes": 53,
+          "styles": 14
+        },
+        "source": {
+          "episodes": 5,
+          "styles": 5
+        },
+        "val": {
+          "episodes": 11,
+          "styles": 6
+        },
+        "test": {
+          "episodes": 15,
+          "styles": 8
+        },
+        "reserve": {
+          "episodes": 23,
+          "styles": 9
+        }
+      },
+      "OpenMicrowave": {
+        "train": {
+          "episodes": 32,
+          "styles": 17
+        },
+        "source": {
+          "episodes": 3,
+          "styles": 3
+        },
+        "val": {
+          "episodes": 26,
+          "styles": 9
+        },
+        "test": {
+          "episodes": 15,
+          "styles": 9
+        },
+        "reserve": {
+          "episodes": 29,
+          "styles": 10
+        }
+      },
+      "OpenOven": {
+        "train": {
+          "episodes": 36,
+          "styles": 14
+        },
+        "source": {
+          "episodes": 4,
+          "styles": 4
+        },
+        "val": {
+          "episodes": 26,
+          "styles": 10
+        },
+        "test": {
+          "episodes": 22,
+          "styles": 10
+        },
+        "reserve": {
+          "episodes": 20,
+          "styles": 9
+        }
+      },
+      "OpenStandMixerHead": {
+        "train": {
+          "episodes": 36,
+          "styles": 16
+        },
+        "source": {
+          "episodes": 4,
+          "styles": 3
+        },
+        "val": {
+          "episodes": 20,
+          "styles": 10
+        },
+        "test": {
+          "episodes": 19,
+          "styles": 8
+        },
+        "reserve": {
+          "episodes": 30,
+          "styles": 10
+        }
+      },
+      "OpenToasterOvenDoor": {
+        "train": {
+          "episodes": 38,
+          "styles": 15
+        },
+        "source": {
+          "episodes": 5,
+          "styles": 5
+        },
+        "val": {
+          "episodes": 16,
+          "styles": 8
+        },
+        "test": {
+          "episodes": 23,
+          "styles": 9
+        },
+        "reserve": {
+          "episodes": 23,
+          "styles": 10
+        }
+      },
+      "PickPlaceCabinetToCounter": {
+        "train": {
+          "episodes": 43,
+          "styles": 17
+        },
+        "source": {
+          "episodes": 5,
+          "styles": 5
+        },
+        "val": {
+          "episodes": 26,
+          "styles": 8
+        },
+        "test": {
+          "episodes": 13,
+          "styles": 8
+        },
+        "reserve": {
+          "episodes": 19,
+          "styles": 10
+        }
+      },
+      "PickPlaceCounterToBlender": {
+        "train": {
+          "episodes": 44,
+          "styles": 17
+        },
+        "source": {
+          "episodes": 8,
+          "styles": 6
+        },
+        "val": {
+          "episodes": 23,
+          "styles": 8
+        },
+        "test": {
+          "episodes": 21,
+          "styles": 5
+        },
+        "reserve": {
+          "episodes": 10,
+          "styles": 6
+        }
+      },
+      "PickPlaceCounterToCabinet": {
+        "train": {
+          "episodes": 38,
+          "styles": 16
+        },
+        "source": {
+          "episodes": 5,
+          "styles": 5
+        },
+        "val": {
+          "episodes": 24,
+          "styles": 8
+        },
+        "test": {
+          "episodes": 24,
+          "styles": 8
+        },
+        "reserve": {
+          "episodes": 17,
+          "styles": 9
+        }
+      },
+      "PickPlaceCounterToDrawer": {
+        "train": {
+          "episodes": 43,
+          "styles": 17
+        },
+        "source": {
+          "episodes": 4,
+          "styles": 4
+        },
+        "val": {
+          "episodes": 21,
+          "styles": 9
+        },
+        "test": {
+          "episodes": 19,
+          "styles": 8
+        },
+        "reserve": {
+          "episodes": 20,
+          "styles": 9
+        }
+      },
+      "PickPlaceCounterToMicrowave": {
+        "train": {
+          "episodes": 43,
+          "styles": 19
+        },
+        "source": {
+          "episodes": 3,
+          "styles": 3
+        },
+        "val": {
+          "episodes": 20,
+          "styles": 7
+        },
+        "test": {
+          "episodes": 19,
+          "styles": 9
+        },
+        "reserve": {
+          "episodes": 25,
+          "styles": 10
+        }
+      },
+      "PickPlaceCounterToOven": {
+        "train": {
+          "episodes": 42,
+          "styles": 18
+        },
+        "source": {
+          "episodes": 3,
+          "styles": 3
+        },
+        "val": {
+          "episodes": 23,
+          "styles": 10
+        },
+        "test": {
+          "episodes": 25,
+          "styles": 9
+        },
+        "reserve": {
+          "episodes": 18,
+          "styles": 9
+        }
+      },
+      "PickPlaceCounterToSink": {
+        "train": {
+          "episodes": 44,
+          "styles": 18
+        },
+        "source": {
+          "episodes": 4,
+          "styles": 3
+        },
+        "val": {
+          "episodes": 18,
+          "styles": 9
+        },
+        "test": {
+          "episodes": 15,
+          "styles": 7
+        },
+        "reserve": {
+          "episodes": 27,
+          "styles": 8
+        }
+      },
+      "PickPlaceCounterToStandMixer": {
+        "train": {
+          "episodes": 42,
+          "styles": 18
+        },
+        "source": {
+          "episodes": 3,
+          "styles": 2
+        },
+        "val": {
+          "episodes": 23,
+          "styles": 8
+        },
+        "test": {
+          "episodes": 18,
+          "styles": 8
+        },
+        "reserve": {
+          "episodes": 21,
+          "styles": 7
+        }
+      },
+      "PickPlaceCounterToStove": {
+        "train": {
+          "episodes": 41,
+          "styles": 17
+        },
+        "source": {
+          "episodes": 5,
+          "styles": 4
+        },
+        "val": {
+          "episodes": 19,
+          "styles": 8
+        },
+        "test": {
+          "episodes": 21,
+          "styles": 9
+        },
+        "reserve": {
+          "episodes": 22,
+          "styles": 10
+        }
+      },
+      "PickPlaceCounterToToasterOven": {
+        "train": {
+          "episodes": 34,
+          "styles": 19
+        },
+        "source": {
+          "episodes": 4,
+          "styles": 4
+        },
+        "val": {
+          "episodes": 17,
+          "styles": 8
+        },
+        "test": {
+          "episodes": 22,
+          "styles": 9
+        },
+        "reserve": {
+          "episodes": 31,
+          "styles": 10
+        }
+      },
+      "PickPlaceDrawerToCounter": {
+        "train": {
+          "episodes": 36,
+          "styles": 19
+        },
+        "source": {
+          "episodes": 5,
+          "styles": 4
+        },
+        "val": {
+          "episodes": 14,
+          "styles": 7
+        },
+        "test": {
+          "episodes": 21,
+          "styles": 8
+        },
+        "reserve": {
+          "episodes": 27,
+          "styles": 10
+        }
+      },
+      "PickPlaceFridgeDrawerToShelf": {
+        "train": {
+          "episodes": 38,
+          "styles": 15
+        },
+        "source": {
+          "episodes": 5,
+          "styles": 5
+        },
+        "val": {
+          "episodes": 25,
+          "styles": 7
+        },
+        "test": {
+          "episodes": 17,
+          "styles": 9
+        },
+        "reserve": {
+          "episodes": 21,
+          "styles": 9
+        }
+      },
+      "PickPlaceFridgeShelfToDrawer": {
+        "train": {
+          "episodes": 36,
+          "styles": 14
+        },
+        "source": {
+          "episodes": 5,
+          "styles": 4
+        },
+        "val": {
+          "episodes": 24,
+          "styles": 6
+        },
+        "test": {
+          "episodes": 22,
+          "styles": 8
+        },
+        "reserve": {
+          "episodes": 24,
+          "styles": 8
+        }
+      },
+      "PickPlaceMicrowaveToCounter": {
+        "train": {
+          "episodes": 39,
+          "styles": 17
+        },
+        "source": {
+          "episodes": 3,
+          "styles": 3
+        },
+        "val": {
+          "episodes": 21,
+          "styles": 9
+        },
+        "test": {
+          "episodes": 29,
+          "styles": 9
+        },
+        "reserve": {
+          "episodes": 20,
+          "styles": 7
+        }
+      },
+      "PickPlaceSinkToCounter": {
+        "train": {
+          "episodes": 47,
+          "styles": 19
+        },
+        "source": {
+          "episodes": 6,
+          "styles": 6
+        },
+        "val": {
+          "episodes": 21,
+          "styles": 9
+        },
+        "test": {
+          "episodes": 20,
+          "styles": 8
+        },
+        "reserve": {
+          "episodes": 14,
+          "styles": 8
+        }
+      },
+      "PickPlaceStoveToCounter": {
+        "train": {
+          "episodes": 43,
+          "styles": 18
+        },
+        "source": {
+          "episodes": 7,
+          "styles": 7
+        },
+        "val": {
+          "episodes": 22,
+          "styles": 9
+        },
+        "test": {
+          "episodes": 16,
+          "styles": 8
+        },
+        "reserve": {
+          "episodes": 21,
+          "styles": 10
+        }
+      },
+      "PickPlaceToasterOvenToCounter": {
+        "train": {
+          "episodes": 40,
+          "styles": 19
+        },
+        "source": {
+          "episodes": 3,
+          "styles": 3
+        },
+        "val": {
+          "episodes": 21,
+          "styles": 7
+        },
+        "test": {
+          "episodes": 20,
+          "styles": 8
+        },
+        "reserve": {
+          "episodes": 22,
+          "styles": 9
+        }
+      },
+      "PickPlaceToasterToCounter": {
+        "train": {
+          "episodes": 35,
+          "styles": 13
+        },
+        "source": {
+          "episodes": 3,
+          "styles": 3
+        },
+        "val": {
+          "episodes": 15,
+          "styles": 6
+        },
+        "test": {
+          "episodes": 29,
+          "styles": 9
+        },
+        "reserve": {
+          "episodes": 23,
+          "styles": 9
+        }
+      },
+      "PreheatOven": {
+        "train": {
+          "episodes": 40,
+          "styles": 16
+        },
+        "source": {
+          "episodes": 2,
+          "styles": 2
+        },
+        "val": {
+          "episodes": 27,
+          "styles": 8
+        },
+        "test": {
+          "episodes": 18,
+          "styles": 9
+        },
+        "reserve": {
+          "episodes": 20,
+          "styles": 8
+        }
+      },
+      "SlideDishwasherRack": {
+        "train": {
+          "episodes": 32,
+          "styles": 16
+        },
+        "source": {
+          "episodes": 5,
+          "styles": 4
+        },
+        "val": {
+          "episodes": 22,
+          "styles": 10
+        },
+        "test": {
+          "episodes": 23,
+          "styles": 9
+        },
+        "reserve": {
+          "episodes": 18,
+          "styles": 10
+        }
+      },
+      "SlideOvenRack": {
+        "train": {
+          "episodes": 42,
+          "styles": 17
+        },
+        "source": {
+          "episodes": 3,
+          "styles": 3
+        },
+        "val": {
+          "episodes": 15,
+          "styles": 7
+        },
+        "test": {
+          "episodes": 26,
+          "styles": 8
+        },
+        "reserve": {
+          "episodes": 27,
+          "styles": 9
+        }
+      },
+      "SlideToasterOvenRack": {
+        "train": {
+          "episodes": 43,
+          "styles": 18
+        },
+        "source": {
+          "episodes": 2,
+          "styles": 2
+        },
+        "val": {
+          "episodes": 13,
+          "styles": 9
+        },
+        "test": {
+          "episodes": 26,
+          "styles": 10
+        },
+        "reserve": {
+          "episodes": 21,
+          "styles": 8
+        }
+      },
+      "StartCoffeeMachine": {
+        "train": {
+          "episodes": 51,
+          "styles": 18
+        },
+        "source": {
+          "episodes": 5,
+          "styles": 3
+        },
+        "val": {
+          "episodes": 19,
+          "styles": 10
+        },
+        "test": {
+          "episodes": 15,
+          "styles": 8
+        },
+        "reserve": {
+          "episodes": 18,
+          "styles": 10
+        }
+      },
+      "TurnOffMicrowave": {
+        "train": {
+          "episodes": 38,
+          "styles": 17
+        },
+        "source": {
+          "episodes": 4,
+          "styles": 3
+        },
+        "val": {
+          "episodes": 23,
+          "styles": 9
+        },
+        "test": {
+          "episodes": 18,
+          "styles": 10
+        },
+        "reserve": {
+          "episodes": 25,
+          "styles": 8
+        }
+      },
+      "TurnOffSinkFaucet": {
+        "train": {
+          "episodes": 36,
+          "styles": 14
+        },
+        "source": {
+          "episodes": 4,
+          "styles": 4
+        },
+        "val": {
+          "episodes": 27,
+          "styles": 9
+        },
+        "test": {
+          "episodes": 18,
+          "styles": 8
+        },
+        "reserve": {
+          "episodes": 21,
+          "styles": 8
+        }
+      },
+      "TurnOffStove": {
+        "train": {
+          "episodes": 41,
+          "styles": 18
+        },
+        "source": {
+          "episodes": 4,
+          "styles": 4
+        },
+        "val": {
+          "episodes": 29,
+          "styles": 10
+        },
+        "test": {
+          "episodes": 17,
+          "styles": 7
+        },
+        "reserve": {
+          "episodes": 18,
+          "styles": 8
+        }
+      },
+      "TurnOnBlender": {
+        "train": {
+          "episodes": 49,
+          "styles": 16
+        },
+        "source": {
+          "episodes": 5,
+          "styles": 4
+        },
+        "val": {
+          "episodes": 14,
+          "styles": 6
+        },
+        "test": {
+          "episodes": 15,
+          "styles": 6
+        },
+        "reserve": {
+          "episodes": 24,
+          "styles": 9
+        }
+      },
+      "TurnOnElectricKettle": {
+        "train": {
+          "episodes": 43,
+          "styles": 15
+        },
+        "source": {
+          "episodes": 4,
+          "styles": 3
+        },
+        "val": {
+          "episodes": 16,
+          "styles": 8
+        },
+        "test": {
+          "episodes": 23,
+          "styles": 9
+        },
+        "reserve": {
+          "episodes": 22,
+          "styles": 10
+        }
+      },
+      "TurnOnMicrowave": {
+        "train": {
+          "episodes": 36,
+          "styles": 16
+        },
+        "source": {
+          "episodes": 5,
+          "styles": 5
+        },
+        "val": {
+          "episodes": 22,
+          "styles": 9
+        },
+        "test": {
+          "episodes": 19,
+          "styles": 9
+        },
+        "reserve": {
+          "episodes": 25,
+          "styles": 10
+        }
+      },
+      "TurnOnSinkFaucet": {
+        "train": {
+          "episodes": 37,
+          "styles": 16
+        },
+        "source": {
+          "episodes": 4,
+          "styles": 4
+        },
+        "val": {
+          "episodes": 21,
+          "styles": 8
+        },
+        "test": {
+          "episodes": 23,
+          "styles": 9
+        },
+        "reserve": {
+          "episodes": 22,
+          "styles": 8
+        }
+      },
+      "TurnOnStove": {
+        "train": {
+          "episodes": 35,
+          "styles": 18
+        },
+        "source": {
+          "episodes": 3,
+          "styles": 3
+        },
+        "val": {
+          "episodes": 27,
+          "styles": 10
+        },
+        "test": {
+          "episodes": 13,
+          "styles": 5
+        },
+        "reserve": {
+          "episodes": 26,
+          "styles": 10
+        }
+      },
+      "TurnOnToaster": {
+        "train": {
+          "episodes": 42,
+          "styles": 17
+        },
+        "source": {
+          "episodes": 2,
+          "styles": 2
+        },
+        "val": {
+          "episodes": 15,
+          "styles": 8
+        },
+        "test": {
+          "episodes": 22,
+          "styles": 8
+        },
+        "reserve": {
+          "episodes": 27,
+          "styles": 9
+        }
+      },
+      "TurnOnToasterOven": {
+        "train": {
+          "episodes": 40,
+          "styles": 15
+        },
+        "source": {
+          "episodes": 6,
+          "styles": 6
+        },
+        "val": {
+          "episodes": 28,
+          "styles": 8
+        },
+        "test": {
+          "episodes": 14,
+          "styles": 7
+        },
+        "reserve": {
+          "episodes": 15,
+          "styles": 6
+        }
+      },
+      "TurnSinkSpout": {
+        "train": {
+          "episodes": 40,
+          "styles": 16
+        },
+        "source": {
+          "episodes": 5,
+          "styles": 4
+        },
+        "val": {
+          "episodes": 19,
+          "styles": 8
+        },
+        "test": {
+          "episodes": 21,
+          "styles": 7
+        },
+        "reserve": {
+          "episodes": 24,
+          "styles": 9
+        }
+      }
+    },
+    "modality_interface_checks": "61 tasks: 3 views, selected state 3+4+2, action 3+3+1+4+1",
+    "train_padded_action_position_fraction_H10": 0.02313723848371392,
+    "video_decoding": false,
+    "policy_test_split_evaluation": false
+  },
+  "project_files_sha256": {
+    "README.md": "fc6f1d8cbebba8fd974adfbec4455123f49b11f7d85157dfeecd93bb8b73d9fc",
+    "dacsc/corp_data.py": "a0968d7cc69acc54129ebf83b0ca636b6c48d6de4e1da9317675ec0aa5d52c11",
+    "dacsc/corp_images.py": "f954f0745b20ca38b84cb90c09b1228aecfe5b1c895aa3f235e8c4c465034d9f",
+    "dacsc/corp_robocasa.py": "4fcf482e8e039d48c87e081486f9ff73430bc7ed3b8d55f26a19a18258dc9b5a",
+    "dacsc/eval_protocol.py": "8256e8d5d5d9805a9d15ffad448e4bb69fd667338b45339a1c33458d639756b6",
+    "dacsc/rollout_protocol.py": "f6ba203de2c1ebf2eb7ad953a5b88e35ee04bfdcd774e2d0ed0572fc3ac4fec2",
+    "dacsc/run_output.py": "03f977dc0074d5665707bea529c55510f649ff96b659f4f69b2202c5e3fad11f",
+    "dacsc/token_style.py": "9deb11beb91368de9443ec2eec323a51e01f919684d423495ab0a0d06e47d7f7",
+    "dacsc/training_state.py": "86f57e9774e086278a725ebb875a18143e953adf2c36cde747a5792465e9bec8",
+    "dacsc/upstream.py": "45faa65690bd81c31bbc64fab7b03ad2d97c18e8163c675255d5f3ac0b45f89d",
+    "docs/EXPERIMENT_PROTOCOL.md": "a6fc092e5a936d38cfa30a9b9a50ad5e4a18a32c937ea619934ae8a0aadfa6fc",
+    "notes/82-上游优先清理与本地验证.md": "64cad0687d7073ebe6e22fdbdd221177343e565de4a4512c71ba4bc482ecbf62",
+    "scripts/aggregate_sr.py": "04f9779f84a38743a9744479743c112380ab433eacfa0771e64c999105d0dc9f",
+    "scripts/eval_corp_libero_plus.py": "c882ba3515e3ff0bfd8986239865e0735e76ed287ed600f9848b4f381264dd51",
+    "scripts/eval_corp_robocasa.py": "23905058b813bd6b14233c27ae27bd8fe5514f847b5d5a1582fba5c5826880c2",
+    "scripts/eval_corp_robocasa_sr.py": "4105649766a7b35fe8fc3ddb51b66f4c173ce72c728abb907dc549fdfd6b80d6",
+    "scripts/pack_for_server.sh": "6dadaa51bf859ab7aa5b1629d72a32ddea4008b8df5332360668916ec91699bf",
+    "scripts/run_corp_experiment.sh": "25f7b0c8a117e55a06ad3c10e428ae6a3e3696be98db045437f1e4cf251ab390",
+    "scripts/run_corp_sr_split.sh": "3da90356ca5424c421a0ee493c233570b99495372d05741fbb5c3839aae140a5",
+    "scripts/run_corp_sr_tasks.sh": "9e0781605dfb28f8654cb6f73773795649be9c3628cdb37ca185f8164149b3b8",
+    "scripts/train_corp_robocasa.py": "d0e34e814f8b764a97e5942a95b2ee1b87124481df9c1e6bd887c014acb537be",
+    "tests/test_corp_pipeline.py": "75d2a02c45547d1f6e17a4c13e4706117cbf63f267151ec8d7d044d3cdb03b69",
+    "tests/test_corp_regressions.py": "82ea7fbbf1f88206008f2507f72f93474e8d7b50a66ff596f4f1df485ed779c0",
+    "tests/test_official_libero_adapter.py": "8ed314e894d8824292d800920512cd47e39a89179b474fa35b0b8d61347d9ca9",
+    "tests/test_upstream_contracts.py": "fce9935d5d51c7ca3f3b25cf4549039f10926733c8696296a5efc4366990a5e1",
+    "upstream.lock.json": "34a18c5954a6c5d9c955c99d217e61c45bc63e3d06533ea2ba4647559fe99bcb"
+  },
+  "not_verified": [
+    "CUDA/BF16",
+    "real MuJoCo reset/rollout",
+    "real video reader/resume",
+    "training convergence or success-rate/method effect"
+  ],
+  "review_base_commit": "7e436d666a4f7a87fede164a9837c1b0b3d86983",
+  "precommit_review": [
+    "ascending/unique pretrain style ranges",
+    "declared CoRP checkpoint modes only",
+    "clean committed snapshot packaging with git archive"
+  ]
+}

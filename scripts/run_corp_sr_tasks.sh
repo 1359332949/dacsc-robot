@@ -1,19 +1,27 @@
 #!/usr/bin/env bash
 # Multi-task success-rate evaluation for CoRP-RoboCasa.
 set -euo pipefail
-ROOT="/root/dacsc-robot"
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 MODEL="${MODEL:?set MODEL=/path/to/model.pt}"
 OUT="${OUT:?set OUT=/path/out}"
 TASKS="${TASKS:-CloseFridge OpenFridge CloseDrawer OpenDrawer CloseCabinet OpenCabinet TurnOnStove TurnOffStove PickPlaceCounterToCabinet PickPlaceCabinetToCounter}"
 STYLES="${STYLES:-11-30}"
 EPISODES="${EPISODES:-10}"
-MAX_STEPS="${MAX_STEPS:-600}"
+PY="${PY:-python3}"
 SHIFT="${SHIFT:-none}"
+MANIFEST_DIR="${MANIFEST_DIR:?set MANIFEST_DIR=/path/to/frozen/split_manifest}"
+MANIFEST_MODE="${MANIFEST_MODE:-replay}"
+if [[ -n "${MAX_STEPS+x}" ]]; then
+  echo "MAX_STEPS is unsupported; horizons come from the official task registry" >&2
+  exit 2
+fi
 mkdir -p "$OUT"
 for T in $TASKS; do
   echo "[eval] $T styles=$STYLES shift=$SHIFT"
-  MUJOCO_GL=egl python3 "$ROOT/scripts/eval_corp_robocasa_sr.py" \
+  MUJOCO_GL=egl PYTHONPATH="$ROOT" "$PY" -m dacsc.run_output --file \
+    --out "$OUT/$T.json" --log "$T.log" -- "$ROOT/scripts/eval_corp_robocasa_sr.py" \
     --model "$MODEL" --task "$T" --styles "$STYLES" --episodes "$EPISODES" \
-    --max-steps "$MAX_STEPS" --shift "$SHIFT" --out "$OUT/$T.json" > "$OUT/$T.log" 2>&1
+    --manifest-dir "$MANIFEST_DIR/$T" --manifest-mode "$MANIFEST_MODE" \
+    --shift "$SHIFT" --out "$OUT/$T.json"
 done
 echo ALL_DONE
