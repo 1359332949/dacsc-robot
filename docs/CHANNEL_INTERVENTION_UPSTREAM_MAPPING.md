@@ -1,6 +1,6 @@
 # CoRP通道干预：上游代码映射与最小分析方案
 
-2026-10-30。**上游映射部分是静态源码分析，不是方法效果验证。**
+2026-11-02更新（始于2026-10-30）。**上游映射部分是静态源码分析，不是方法效果验证。**
 此前静态审计未执行模型；后续只读采集的本地CPU实现/验证单列于末节，不能混同为上游完整方法或闭环验证。
 只读采集没有运行作者notebook、安装依赖、下载新权重、连接GPU服务器或进行反向/参数更新。
 完整回归中的既有合成fixture断点测试包含微型参数更新，不是新训练或真实数据训练；本轮没有启动训练任务。
@@ -13,10 +13,13 @@
 
 “embedding通道/FFN神经元”选择的是特征对象，“token-channel”选择的是位置相关作用方式，三者不是互斥架构：
 既可有token×embedding坐标，也可有token×FFN神经元。DaViT的channel-token attention又是另一种通道间交互算子。
+当前问题是“外观变化如何经视觉FFN与resampler影响动作”，不等于预先决定给CoRP加gate。
+ToaSt补充选择/压缩参考；Registers看位置与异常响应，NeuronPath看输出影响路径，FFN steering/Action Atlas看行为干预。
+上述分工不意味着已证明某种选择能保留正确动作，详见[研究问题和证据边界](EXPERIMENT_PROTOCOL.md#研究问题和证据边界)。
 
 ## 来源固定与证据范围
 
-从作者仓库页面核对revision，并下载固定commit的原始文件到临时分析目录；Git克隆网络失败，未取得完整checkout。
+原有五套来源从作者仓库页面核对revision，并下载固定commit的原始文件到临时分析目录；Git克隆网络失败，未取得完整checkout。
 下表和JSON中的固定URL/逐文件SHA256足以定位本次读过的源码，不声称完整仓库或运行环境已经验收。
 没有把这些来源加进生产`upstream.lock.json`，也没有把上游代码复制成新的项目方法。
 
@@ -27,12 +30,14 @@
 | [DaViT作者仓库][D-repo] | `fc79470d99babab23e45e0087790fa23cfd10a02` | `ChannelAttention`、`ChannelBlock`、空间/通道block组合、依赖与权重边界 |
 | [FFN steering作者仓库][S-repo] | `559c0f25a3cc5a20fc8b804774a88415404e0d22` | VLM value-vector提取/词表投影、OpenVLA down-projection覆写hook、π0投影权重键 |
 | [Action Atlas作者仓库][A-repo] | `6025c47658d4f63891daf4be66757489db0e0949` | 模型适配器的真实注册点、capture/replay、残差位置、SAE pooling/write-back协议 |
-| 当前CoRP底座 | `52445740aa9517ae396cc8fb14bae8fe5922f118` | vendor DINOv2、visual encoder、extractor、resampler；项目代码基于`7efc94a` |
+| [ToaSt所列公开仓库][T-repo]（作者关联待确认） | `ae435be8b8999bacbcaf90a6cf1c01f884e083cf` | `channel_importance`、两种选择API、`ToastBlock`、attention替换、README来源；仅本次静态阅读 |
+| 当前CoRP底座 | `52445740aa9517ae396cc8fb14bae8fe5922f118` | vendor DINOv2、visual encoder、extractor、resampler；现有只读入口为项目`d51a043`，本轮不改执行代码 |
 
 文件hash、符号行号、读取范围、下载失败记录与未执行项见[静态审计记录](../audit/channel_upstream_static_audit.json)。
 NeuronPath和DaViT根LICENSE均为MIT；Registers的整体授权本轮不作推定，不把其DINOv2子树的许可自动扩展为整个仓库许可。
 新增两套具身源码的固定URL、hash、符号行号及静态核验范围单列于[具身FFN审计记录](../audit/embodied_ffn_upstream_static_audit.json)。
 本轮没有安装、导入或运行它们，没有将其加入分析运行依赖锁，也没有更换当前采集器。
+ToaSt新增快照的来源、逐文件hash及未确认项单列于下节，不回写上述历史审计JSON，不加入运行依赖锁。
 
 ## 三篇主读论文：五行卡片
 
@@ -52,6 +57,59 @@ NeuronPath、DaViT保留为相邻工具/结构参考，不再把“具身模型�
 [FFN steering](https://arxiv.org/html/2509.00328v1)、
 [Action Atlas v5](https://arxiv.org/html/2603.19233v5)。
 论文报告是作者证据，不是本项目复现。仅把VLA换成CoRP或重复内部干预，不足以自动构成新意。
+
+## ToaSt：通道选择参考与源码适配边界
+
+论文：[ToaSt: Token Channel Selection and Structured Pruning for Efficient ViT，arXiv:2602.15720v1](https://arxiv.org/html/2602.15720v1)。
+其目标是视觉任务的精度/计算权衡，不能由此推出机器人外观鲁棒性。本文把论文描述与所列仓库源码分别标注，
+不把“根据token响应选channel”“联合token/channel预算”“逐token独立mask”混为一件事。
+
+### 五行卡片
+
+| 问题 | ToaSt及CoRP边界 |
+| --- | --- |
+| 操作什么？ | 论文讨论FFN通道选择和attention结构剪枝；所列实现区分fc1输入embedding通道与fc2输入FFN中间通道 |
+| 为什么选它？ | 基于激活、CLS及attention引导的patch信息作计算筛选；不是域标签或动作错误评分 |
+| 怎么动它？ | 共享通道选择的mask或缩窄表示；不是每个patch独立的一张通道mask |
+| 怎样验证？ | 作者报告分类/检测精度与效率；当前项目没有复现这些数值，也未验证动作或闭环收益 |
+| 哪些不能直接搬到CoRP？ | CLS分类依据、跨batch/视角聚合、随机采样、attention/residual改写及剪枝配方；只挂GELU选择不等于完整ToaSt |
+
+### 来源身份与读取范围
+
+2026-11-02从GitHub仓库页面的`currentOid`取得revision，读取该固定commit的三份原文件；没有安装、导入、运行或修改源码。
+[README][T-readme]自称官方实现，但论文标题、作者和arXiv/OpenReview链接仍为TODO。
+**仓库与作者/论文的关联尚未闭环确认，不将其列为已验证官方复现，也不采信README中的会议信息作为独立出版证据。**
+全文忠实性、完整attention结构剪枝、dense执行路径、其他骨干分支及许可证范围尚未逐项验收。
+
+| 固定快照文件 | SHA256 |
+| --- | --- |
+| `README.md` | `722235a5d5666ec1e72f48a7321ae0d9b1a82644db41c1aa6a5041b32f86e3e2` |
+| `toast/token_channel.py` | `3abc9a85fc8a5e62e66469f843bafea695bb85cf017557f3afa74a375558c6df` |
+| `toast/patch.py` | `e3c497c9ef7c6f00a5d0ecef42de2927fe307cc0975573853f64d698c20b187b` |
+
+### 具体位置与复用边界
+
+| 固定源码/符号 | 实际操作 | 对CoRP的限制或推论 |
+| --- | --- | --- |
+| [channel_importance][T-score] | `[B,N,C]→[C]`，跨batch/token聚合 | 若直接输入CoRP的`3B`视觉批，不同观测和相机将共同决定选择；这不是逐观测或逐token选择 |
+| 同函数的CLS/patch项 | CLS幅值、先跨batch平均的attention和patch幅值；随机采样可传generator | 分类CLS依据不能自动迁移到丢弃最终CLS的CoRP；默认全局随机采样也不能污染flow配对噪声 |
+| [select_channels_masked/dense][T-select] | 共享mask或按kept indices缩窄 | 前者不保证实际加速；后者还需消费方切片，不能把tensor变窄后当作接口未变。dense调用链本轮未验收 |
+| [ToastBlock.forward][T-block]：fc1侧 | norm2前选择embedding，并用所选值作残差 | 会同时改变残差与MLP输入，不是单纯FFN中间神经元hook |
+| 同forward：fc2侧 | GELU/drop后、fc2前选择中间通道 | 最接近当前1536维观察位置，但原选择对CLS和patch共享；仅适配这一侧需明确命名为局部改动 |
+| [ToastAttention.forward][T-attn]、[apply_toast][T-apply] | 显式attention与类替换，首block不裁剪 | timm类型和CoRP vendor类型不同，且原SDPA执行路径会改变；不得装入当前只读验证包后宣称基线完全不变 |
+
+这些是源码事实及从当前CoRP接口作出的静态适配判断，不是CoRP运行结果。
+论文Eq.6与所列代码的跨batch聚合、归一化是否完全等价，尚未数值核验；不能以函数同名宣称保真。
+若以后使用缺attention的均匀权重分支，须单列其定义，不称为完整attention-guided算法。
+更换CLS权重、batch聚合粒度或选取位置都属于方法适配；本轮不实现这些改动、不计算新排名、不新增门控或实验入口。
+
+### 对当前只读计划的影响
+
+保持现有R0/R1：记录原始GELU/raw block、显式区分CLS/patch/相机，不取attention map、不替换SDPA。
+观察到外观响应后，还需有效同模型策略及局部/反向/随机对照，才能讨论动作作用；ToaSt评分不直接命名为动作重要性。
+完整clean表示恢复只作恢复性正对照；共享与位置条件通道的必要性、resampler传递机制仍按协议另行取证。
+不修改模型或只读验收入口；文档随新commit在新目录重打包，旧包原样保留。
+更新文档与交付包不因补充这篇文献而授权部署方法或训练。
 
 ## CoRP实际调用链：先确定对象
 
@@ -122,7 +180,7 @@ CoRP的attention用PyTorch SDPA，没有显式的attention softmax identity模�
 | [ActivationInjectionHook][A-hooks]、[cross_task_injection_v2][A-inject] | 按逐调用list回放；存储耗尽或shape不合时返回原输出；统计注入次数/shape mismatch | 同shape不等于同物理时刻或同token身份；若未来适配，必须核对调用键/时序/次数，不能把未注入或静默跳过当作无效机制 |
 | [ActivationCollector][A-hooks] | 可保留每token，也可`mean(dim=1)`；`gated=True`时每环境step只收一次，避免DiT多次去噪重复记录 | CoRP视觉编码每次extract调用一次，DiT每个Euler步都会调用；不能用同一个step计数合并两者，不能无条件平均patch/action token |
 | [ResidualSite / SmolVLAResidualSite][A-sites] | 常规路径在完整层output capture/edit；Smol专用路径读post-attention norm输入、结合MLP输出重建残差，并通过MLP写回差量 | 这些是不同于裸MLP日志的专用算子。CoRP无同样wrapper接口，不复制该写回公式来改视觉层 |
-| [reconstruction_hooks.py][A-recon] | 明确区分per-token替换、mean-pool广播替换、mean-pool差量写回；工厂函数检查pooling匹配 | SAE训练位置、归一化与重建协议必须一致；不存在可直接用于CoRP视觉FFN的作者SAE，当前不训练SAE或接入重建 |
+| [reconstruction_hooks.py][A-recon] | 明确区分per-token替换、mean-pool广播替换、mean-pool差量写回；工厂函数检查pooling匹配 | SAE训练位置、归一化与重建协议必须一致；本次已核对路径未确认可直接用于CoRP视觉FFN的作者SAE，当前不训练SAE或接入重建 |
 
 [论文D.4](https://arxiv.org/html/2603.19233v5#A4.SS4)将整层残差和MLP写入区别报告；
 [F.2](https://arxiv.org/html/2603.19233v5)的motor-primitive词表关联分析针对PaliGemma FFN权重，
@@ -165,6 +223,8 @@ CoRP的attention用PyTorch SDPA，没有显式的attention softmax identity模�
 ## 哪些可以直接复用，哪些需要适配
 
 这里“直接复用”表示保留原函数/算子定义，不表示本轮已经执行通过。
+优先复用已确认来源的原实现与官方基础库；先核对适用条件，再只补必要接口，不为沿用名字而猜测重写缺失算法。
+来源待确认的ToaSt仓库保持静态参考，不加入执行依赖。
 
 | 内容 | 分类 | 本轮决定 |
 | --- | --- | --- |
@@ -176,6 +236,7 @@ CoRP的attention用PyTorch SDPA，没有显式的attention softmax identity模�
 | DaViT ChannelAttention原类 | 可复用原算子，但放入CoRP是新的架构适配 | 不是当前最小gate，不加入模型 |
 | FFN steering的权重/词表投影 | 可以参考固定输出方向的定义；VLM词表映射不适用 | 只建立映射，不导入作者模型，不给DINO单元贴语义标签 |
 | Action Atlas的capture、分组及回放原型 | 只读记录思想可借鉴；主动回放、pooling和路径位置需要适配 | 保留现有已验证采集器，不新增SAE、注入或框架依赖 |
+| ToaSt所列实现的通道选择函数/Block封装 | 评分定义可供对照，来源身份、batch/CLS及attention/residual语义需先验收 | 当前仅静态映射；不导入运行、不改SDPA、不把局部FFN适配称为完整复现 |
 | 动态token-channel selector、动作保护评分或训练损失 | 此次固定版本源码没有提供当前CoRP可直接调用的完整方法 | 属于待设计项，本轮不自行补写 |
 
 ## 三种对象对CoRP的适合程度
@@ -184,7 +245,7 @@ CoRP的attention用PyTorch SDPA，没有显式的attention softmax identity模�
 | --- | --- | --- | --- |
 | embedding通道 | visual encoder最终norm后的384维输出，或block残差流坐标 | 输出hook最容易，维度和checkpoint不变 | 坐标混合、层位置差异；作为低成本同预算对照，不把384维自动解释为语义单元 |
 | FFN神经元 | `blocks[l].mlp.act`的1536维GELU输出 | 与Registers/NeuronPath的中间对象最接近；现成可hook模块，无需替换attention | 仍无动作/域语义保证；前后还有fc2/残差；优先作为机制审计对象 |
-| token-channel | 对embedding或FFN引入随token变化的选择 | 可表达不同位置的不同干预 | 不是前三篇提供的现成CoRP选择器；位置对齐、门控生成与参数容量引入额外问题，后置考虑 |
+| token-channel | 对embedding或FFN引入随token变化的选择 | 可表达不同位置的不同干预 | 本次核对路径未确认可直接用于当前CoRP的逐位置选择器；所读ToaSt也不是独立`g[t,c]`。位置对齐、容量和预算需另验 |
 
 共享384维gate只需384个开度，共享FFN gate对应1536个开度；完整patch×embedding mask有256×384个元素，
 patch×FFN mask有256×1536个元素。这是掩码元素数量，不等于一定新增同样多的可学习参数。
@@ -283,7 +344,8 @@ patch_ffn = frame.ffn[0][:, :, 1:, :]
 1. 核对官方源hash、实际reader/import路径、解码后端、视频/元数据身份。使用官方`LerobotDataset.__getitem__`，不改解码器，不用contact sheet或合成图冒充真实帧。
 2. 每个观测只解码一次三个相机的原始RGB，缓存该批原始像素及hash。先用两观测batch验证三视角顺序，随后保持相同样本和batch划分；尾批可以为1，不补伪样本凑batch。
 3. 调用现有`prepare_image`，走Pillow resize224、固定条件、ImageNet normalize；相机保持左/腕/右的官方view-major拼接。
-   不做crop/翻转，不给RoboCasa加LIBERO旋转，不实例化训练`ColorJitter`或token-style模块。
+   模型前向不做crop/翻转，不给RoboCasa加LIBERO旋转，不使用训练`ColorJitter`或token-style模块。
+   现有入口另行实例化训练`ColorJitter`，只作与Torchvision的算子/RNG一致性验收；其输出不进入模型前向，与固定评测条件分开。
 4. 同一份预处理tensor分别做无hook与只读hook前向。固定checkpoint、模式、batch、精度和Torch RNG起点，
    在CPU FP32、`eval()`与`inference_mode()`下比较视觉输出；完整策略项满足前述normalizer条件时再比较representation/动作。
 5. 输出必须有限且`torch.equal`（或`rtol=0, atol=0`）成立。校验原始257位置与输出256个patch的身份，
@@ -353,3 +415,10 @@ RoboCasa新接口未学会任务时，不计算并解释动作重要性，更不
 [A-inject]: https://github.com/CWRU-AISM/action-atlas/blob/6025c47658d4f63891daf4be66757489db0e0949/experiments/cross_task_injection_v2.py#L162-L217
 [A-sites]: https://github.com/CWRU-AISM/action-atlas/blob/6025c47658d4f63891daf4be66757489db0e0949/experiments/hooks.py#L174-L230
 [A-recon]: https://github.com/CWRU-AISM/action-atlas/blob/6025c47658d4f63891daf4be66757489db0e0949/experiments/reconstruction_hooks.py#L144-L254
+[T-repo]: https://github.com/SHANNonLab-HUFS/ToaSt/tree/ae435be8b8999bacbcaf90a6cf1c01f884e083cf
+[T-readme]: https://github.com/SHANNonLab-HUFS/ToaSt/blob/ae435be8b8999bacbcaf90a6cf1c01f884e083cf/README.md#L1-L5
+[T-score]: https://github.com/SHANNonLab-HUFS/ToaSt/blob/ae435be8b8999bacbcaf90a6cf1c01f884e083cf/toast/token_channel.py#L46-L91
+[T-select]: https://github.com/SHANNonLab-HUFS/ToaSt/blob/ae435be8b8999bacbcaf90a6cf1c01f884e083cf/toast/token_channel.py#L94-L157
+[T-attn]: https://github.com/SHANNonLab-HUFS/ToaSt/blob/ae435be8b8999bacbcaf90a6cf1c01f884e083cf/toast/patch.py#L36-L62
+[T-block]: https://github.com/SHANNonLab-HUFS/ToaSt/blob/ae435be8b8999bacbcaf90a6cf1c01f884e083cf/toast/patch.py#L65-L139
+[T-apply]: https://github.com/SHANNonLab-HUFS/ToaSt/blob/ae435be8b8999bacbcaf90a6cf1c01f884e083cf/toast/patch.py#L142-L200
