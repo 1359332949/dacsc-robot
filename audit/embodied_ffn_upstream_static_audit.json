@@ -1,0 +1,522 @@
+{
+  "schema": "embodied_ffn_upstream_static_audit_v1",
+  "created_at_utc": "2026-10-30T09:49:32.496729+00:00",
+  "status": "static_source_review_completed_no_experiments",
+  "project_base_commit": "7efc94a78013b7e3b18bfec14e97c307bd213418",
+  "scope": "Author source reading and documentation only. No imports/execution of downloaded code, dependency installation, new method, forward/backward, real video validation, server connection or training.",
+  "repositories": [
+    {
+      "name": "steering",
+      "repo": "Physical-AI-Safety-Institute/mechanistic-steering-vlas",
+      "revision": "559c0f25a3cc5a20fc8b804774a88415404e0d22"
+    },
+    {
+      "name": "atlas",
+      "repo": "CWRU-AISM/action-atlas",
+      "revision": "6025c47658d4f63891daf4be66757489db0e0949"
+    }
+  ],
+  "revision_resolution": "Author repository HTML currentOid; files retrieved from raw.githubusercontent.com at immutable commit URLs",
+  "local_snapshot_directory": "/tmp/dacsc-embodied-source-audit-1793352963158",
+  "source_files": [
+    {
+      "name": "steering",
+      "repo": "Physical-AI-Safety-Institute/mechanistic-steering-vlas",
+      "revision": "559c0f25a3cc5a20fc8b804774a88415404e0d22",
+      "path": "README.md",
+      "url": "https://raw.githubusercontent.com/Physical-AI-Safety-Institute/mechanistic-steering-vlas/559c0f25a3cc5a20fc8b804774a88415404e0d22/README.md",
+      "bytes": 7249,
+      "sha256": "fb16a311b80e6dfdda3bd5bd43758930e4321a531a6298fbc452fc95f0696bdd"
+    },
+    {
+      "name": "steering",
+      "repo": "Physical-AI-Safety-Institute/mechanistic-steering-vlas",
+      "revision": "559c0f25a3cc5a20fc8b804774a88415404e0d22",
+      "path": "pyproject.toml",
+      "url": "https://raw.githubusercontent.com/Physical-AI-Safety-Institute/mechanistic-steering-vlas/559c0f25a3cc5a20fc8b804774a88415404e0d22/pyproject.toml",
+      "bytes": 391,
+      "sha256": "f6a7b517c15c4548f8890bad2d67336ac378b65452c7c5e9fa22477dcd3274a8"
+    },
+    {
+      "name": "atlas",
+      "repo": "CWRU-AISM/action-atlas",
+      "revision": "6025c47658d4f63891daf4be66757489db0e0949",
+      "path": "README.md",
+      "url": "https://raw.githubusercontent.com/CWRU-AISM/action-atlas/6025c47658d4f63891daf4be66757489db0e0949/README.md",
+      "bytes": 9678,
+      "sha256": "3b7898da97c4d79a15c3ab70113c97d9709d13df88c4f1ef3f0ca576c2d92746"
+    },
+    {
+      "name": "atlas",
+      "repo": "CWRU-AISM/action-atlas",
+      "revision": "6025c47658d4f63891daf4be66757489db0e0949",
+      "path": "pyproject.toml",
+      "url": "https://raw.githubusercontent.com/CWRU-AISM/action-atlas/6025c47658d4f63891daf4be66757489db0e0949/pyproject.toml",
+      "bytes": 837,
+      "sha256": "8196018d6b2d764b269f005dc09efab170265c792b48d929b67f9dd79212c050"
+    },
+    {
+      "name": "atlas",
+      "repo": "CWRU-AISM/action-atlas",
+      "revision": "6025c47658d4f63891daf4be66757489db0e0949",
+      "path": "LICENSE",
+      "url": "https://raw.githubusercontent.com/CWRU-AISM/action-atlas/6025c47658d4f63891daf4be66757489db0e0949/LICENSE",
+      "bytes": 709,
+      "sha256": "7ecd8ce1d30b8aa26232f5c7c878cca53bc273547ce52f1678f955154746e64f"
+    },
+    {
+      "name": "steering",
+      "repo": "Physical-AI-Safety-Institute/mechanistic-steering-vlas",
+      "revision": "559c0f25a3cc5a20fc8b804774a88415404e0d22",
+      "path": "src/ffn_value_vectors/extract.py",
+      "url": "https://raw.githubusercontent.com/Physical-AI-Safety-Institute/mechanistic-steering-vlas/559c0f25a3cc5a20fc8b804774a88415404e0d22/src/ffn_value_vectors/extract.py",
+      "bytes": 9837,
+      "sha256": "0993a8127873c9970352c27edcfc50ccbd0f844e1a3cc8cebe28f6b649d28f29"
+    },
+    {
+      "name": "steering",
+      "repo": "Physical-AI-Safety-Institute/mechanistic-steering-vlas",
+      "revision": "559c0f25a3cc5a20fc8b804774a88415404e0d22",
+      "path": "openvla/ffn_value_vectors/scripts/run_ffn_value_projection.py",
+      "url": "https://raw.githubusercontent.com/Physical-AI-Safety-Institute/mechanistic-steering-vlas/559c0f25a3cc5a20fc8b804774a88415404e0d22/openvla/ffn_value_vectors/scripts/run_ffn_value_projection.py",
+      "bytes": 1105,
+      "sha256": "90949b71f0f5c2eb8e5f8a8ffdda24d42a067ab11ac71b0ef4b594c3448192e2"
+    },
+    {
+      "name": "atlas",
+      "repo": "CWRU-AISM/action-atlas",
+      "revision": "6025c47658d4f63891daf4be66757489db0e0949",
+      "path": "experiments/model_adapters.py",
+      "url": "https://raw.githubusercontent.com/CWRU-AISM/action-atlas/6025c47658d4f63891daf4be66757489db0e0949/experiments/model_adapters.py",
+      "bytes": 35093,
+      "sha256": "c7255b58f30fa7aa371d0f74ac4c9cb36a8ce371da3e0349ae72d06fca939f40"
+    },
+    {
+      "name": "atlas",
+      "repo": "CWRU-AISM/action-atlas",
+      "revision": "6025c47658d4f63891daf4be66757489db0e0949",
+      "path": "experiments/hooks.py",
+      "url": "https://raw.githubusercontent.com/CWRU-AISM/action-atlas/6025c47658d4f63891daf4be66757489db0e0949/experiments/hooks.py",
+      "bytes": 7458,
+      "sha256": "3b9eda30f496579870b4c3c8736b90a4b424567cf433b57898823f2e9f0ed2f4"
+    },
+    {
+      "name": "atlas",
+      "repo": "CWRU-AISM/action-atlas",
+      "revision": "6025c47658d4f63891daf4be66757489db0e0949",
+      "path": "experiments/reconstruction_hooks.py",
+      "url": "https://raw.githubusercontent.com/CWRU-AISM/action-atlas/6025c47658d4f63891daf4be66757489db0e0949/experiments/reconstruction_hooks.py",
+      "bytes": 10016,
+      "sha256": "51918544315cf145364a855080657446fc3ad51169cdbbcb47c1b4e198d85700"
+    },
+    {
+      "name": "atlas",
+      "repo": "CWRU-AISM/action-atlas",
+      "revision": "6025c47658d4f63891daf4be66757489db0e0949",
+      "path": "experiments/cross_task_injection.py",
+      "url": "https://raw.githubusercontent.com/CWRU-AISM/action-atlas/6025c47658d4f63891daf4be66757489db0e0949/experiments/cross_task_injection.py",
+      "bytes": 9538,
+      "sha256": "b6bb83f8b28587a35e6d21e2a6ade22442ed84ad4a14a84cc7e88e34049298f7"
+    },
+    {
+      "name": "atlas",
+      "repo": "CWRU-AISM/action-atlas",
+      "revision": "6025c47658d4f63891daf4be66757489db0e0949",
+      "path": "experiments/cross_task_injection_v2.py",
+      "url": "https://raw.githubusercontent.com/CWRU-AISM/action-atlas/6025c47658d4f63891daf4be66757489db0e0949/experiments/cross_task_injection_v2.py",
+      "bytes": 14246,
+      "sha256": "c3c80631a8c8bf0701c9b0f1fc6f22fe02e808ff141decb548f495197b070df0"
+    },
+    {
+      "name": "atlas",
+      "repo": "CWRU-AISM/action-atlas",
+      "revision": "6025c47658d4f63891daf4be66757489db0e0949",
+      "path": "experiments/grid_ablation.py",
+      "url": "https://raw.githubusercontent.com/CWRU-AISM/action-atlas/6025c47658d4f63891daf4be66757489db0e0949/experiments/grid_ablation.py",
+      "bytes": 11227,
+      "sha256": "f923e9956d6f394a1e050d9557e0e707dee1ee17816b87d3a424c6ce97ab37bb"
+    },
+    {
+      "name": "atlas",
+      "repo": "CWRU-AISM/action-atlas",
+      "revision": "6025c47658d4f63891daf4be66757489db0e0949",
+      "path": "experiments/sae_hooks.py",
+      "url": "https://raw.githubusercontent.com/CWRU-AISM/action-atlas/6025c47658d4f63891daf4be66757489db0e0949/experiments/sae_hooks.py",
+      "bytes": 11573,
+      "sha256": "5e4d8770f4a05e903caacafa73c4748c902fbd85e9c47fc8d58adfdbb293b61a"
+    },
+    {
+      "name": "atlas",
+      "repo": "CWRU-AISM/action-atlas",
+      "revision": "6025c47658d4f63891daf4be66757489db0e0949",
+      "path": "experiments/libero_utils.py",
+      "url": "https://raw.githubusercontent.com/CWRU-AISM/action-atlas/6025c47658d4f63891daf4be66757489db0e0949/experiments/libero_utils.py",
+      "bytes": 3819,
+      "sha256": "df135a39ee8c7969631cbc6b34d3a9c16580de0e92b66909767625550ea13fc7"
+    },
+    {
+      "name": "atlas",
+      "repo": "CWRU-AISM/action-atlas",
+      "revision": "6025c47658d4f63891daf4be66757489db0e0949",
+      "path": "experiments/baseline.py",
+      "url": "https://raw.githubusercontent.com/CWRU-AISM/action-atlas/6025c47658d4f63891daf4be66757489db0e0949/experiments/baseline.py",
+      "bytes": 5553,
+      "sha256": "967066bd6ca05800951ce4d07665f4e328a5e8b2b8ea210be97440608961655b"
+    },
+    {
+      "name": "atlas",
+      "repo": "CWRU-AISM/action-atlas",
+      "revision": "6025c47658d4f63891daf4be66757489db0e0949",
+      "path": "experiments/vision_perturbation.py",
+      "url": "https://raw.githubusercontent.com/CWRU-AISM/action-atlas/6025c47658d4f63891daf4be66757489db0e0949/experiments/vision_perturbation.py",
+      "bytes": 6400,
+      "sha256": "3d247cdc6d95cbed0a3db506f8cdcd4d9b85a3ba153ce817a2cb1980a5545b53"
+    },
+    {
+      "name": "atlas",
+      "repo": "CWRU-AISM/action-atlas",
+      "revision": "6025c47658d4f63891daf4be66757489db0e0949",
+      "path": "experiments/README.md",
+      "url": "https://raw.githubusercontent.com/CWRU-AISM/action-atlas/6025c47658d4f63891daf4be66757489db0e0949/experiments/README.md",
+      "bytes": 8456,
+      "sha256": "9c79d64130854167d9cf9036f6b9b50f0c015766ecd11d26dff7fba2363981d7"
+    },
+    {
+      "name": "steering",
+      "repo": "Physical-AI-Safety-Institute/mechanistic-steering-vlas",
+      "revision": "559c0f25a3cc5a20fc8b804774a88415404e0d22",
+      "path": "src/libero_experiments/hooks.py",
+      "url": "https://raw.githubusercontent.com/Physical-AI-Safety-Institute/mechanistic-steering-vlas/559c0f25a3cc5a20fc8b804774a88415404e0d22/src/libero_experiments/hooks.py",
+      "bytes": 1595,
+      "sha256": "aa0a1b83b18b1beb78e4506b308fb715e943766917940beb96ceddb49f80aafc"
+    },
+    {
+      "name": "steering",
+      "repo": "Physical-AI-Safety-Institute/mechanistic-steering-vlas",
+      "revision": "559c0f25a3cc5a20fc8b804774a88415404e0d22",
+      "path": "src/libero_experiments/interventions.py",
+      "url": "https://raw.githubusercontent.com/Physical-AI-Safety-Institute/mechanistic-steering-vlas/559c0f25a3cc5a20fc8b804774a88415404e0d22/src/libero_experiments/interventions.py",
+      "bytes": 628,
+      "sha256": "37e1c481ddbf2b37fceafbba8c9cc5b14a76b79373237fa5fbf040ee43a99288"
+    },
+    {
+      "name": "steering",
+      "repo": "Physical-AI-Safety-Institute/mechanistic-steering-vlas",
+      "revision": "559c0f25a3cc5a20fc8b804774a88415404e0d22",
+      "path": "src/libero_experiments/model.py",
+      "url": "https://raw.githubusercontent.com/Physical-AI-Safety-Institute/mechanistic-steering-vlas/559c0f25a3cc5a20fc8b804774a88415404e0d22/src/libero_experiments/model.py",
+      "bytes": 5358,
+      "sha256": "7b0f46d4f7b33528393c0796e38e803b60bd5a1690e32d26655218b628d2ab85"
+    },
+    {
+      "name": "steering",
+      "repo": "Physical-AI-Safety-Institute/mechanistic-steering-vlas",
+      "revision": "559c0f25a3cc5a20fc8b804774a88415404e0d22",
+      "path": "src/libero_experiments/eval_libero.py",
+      "url": "https://raw.githubusercontent.com/Physical-AI-Safety-Institute/mechanistic-steering-vlas/559c0f25a3cc5a20fc8b804774a88415404e0d22/src/libero_experiments/eval_libero.py",
+      "bytes": 8122,
+      "sha256": "5bf538c24fd948962808ff346ab0cb345ad901cb9c1f7ec66ebf195d42837954"
+    },
+    {
+      "name": "steering",
+      "repo": "Physical-AI-Safety-Institute/mechanistic-steering-vlas",
+      "revision": "559c0f25a3cc5a20fc8b804774a88415404e0d22",
+      "path": "src/openpi_ffn_value_vectors/pi0_extract.py",
+      "url": "https://raw.githubusercontent.com/Physical-AI-Safety-Institute/mechanistic-steering-vlas/559c0f25a3cc5a20fc8b804774a88415404e0d22/src/openpi_ffn_value_vectors/pi0_extract.py",
+      "bytes": 7048,
+      "sha256": "3c94b17c86d702a2823787476133187616d2e4fee0916f9477ca58a0323da53e"
+    },
+    {
+      "name": "steering",
+      "repo": "Physical-AI-Safety-Institute/mechanistic-steering-vlas",
+      "revision": "559c0f25a3cc5a20fc8b804774a88415404e0d22",
+      "path": "src/openpi/models/gemma.py",
+      "url": "https://raw.githubusercontent.com/Physical-AI-Safety-Institute/mechanistic-steering-vlas/559c0f25a3cc5a20fc8b804774a88415404e0d22/src/openpi/models/gemma.py",
+      "bytes": 15711,
+      "sha256": "18b88c48b8878c467efefc899e161c7b30371e599511fd5166c7ed6bafd186f5"
+    },
+    {
+      "name": "steering",
+      "repo": "Physical-AI-Safety-Institute/mechanistic-steering-vlas",
+      "revision": "559c0f25a3cc5a20fc8b804774a88415404e0d22",
+      "path": "src/openpi/models/gemma_fast.py",
+      "url": "https://raw.githubusercontent.com/Physical-AI-Safety-Institute/mechanistic-steering-vlas/559c0f25a3cc5a20fc8b804774a88415404e0d22/src/openpi/models/gemma_fast.py",
+      "bytes": 15643,
+      "sha256": "563c6e1ffd8afa31c406bcb8894a605e87df88f6c075d398d97a57af6bc3aefa"
+    }
+  ],
+  "reviewed_symbols": [
+    {
+      "path": "steering/src/ffn_value_vectors/extract.py",
+      "symbols": [
+        {
+          "name": "extract_value_vectors",
+          "start": 65,
+          "end": 88
+        },
+        {
+          "name": "project_to_vocab_batched",
+          "start": 91,
+          "end": 112
+        }
+      ]
+    },
+    {
+      "path": "steering/src/libero_experiments/hooks.py",
+      "symbols": [
+        {
+          "name": "apply_gate_proj_hooks",
+          "start": 8,
+          "end": 40
+        }
+      ]
+    },
+    {
+      "path": "steering/src/openpi_ffn_value_vectors/pi0_extract.py",
+      "symbols": [
+        {
+          "name": "extract_value_vectors",
+          "start": 78,
+          "end": 100
+        },
+        {
+          "name": "project_to_vocab",
+          "start": 103,
+          "end": 138
+        }
+      ]
+    },
+    {
+      "path": "atlas/experiments/hooks.py",
+      "symbols": [
+        {
+          "name": "ActivationCaptureHook",
+          "start": 57,
+          "end": 77
+        },
+        {
+          "name": "ActivationInjectionHook",
+          "start": 80,
+          "end": 107
+        },
+        {
+          "name": "ActivationCollector",
+          "start": 110,
+          "end": 171
+        },
+        {
+          "name": "ResidualSite",
+          "start": 174,
+          "end": 193
+        },
+        {
+          "name": "SmolVLAResidualSite",
+          "start": 196,
+          "end": 230
+        }
+      ]
+    },
+    {
+      "path": "atlas/experiments/model_adapters.py",
+      "symbols": [
+        {
+          "name": "SmolVLAAdapter",
+          "start": 283,
+          "end": 403
+        },
+        {
+          "name": "GR00TAdapter",
+          "start": 408,
+          "end": 519
+        },
+        {
+          "name": "Pi05Adapter",
+          "start": 524,
+          "end": 652
+        },
+        {
+          "name": "OpenVLAOFTAdapter",
+          "start": 670,
+          "end": 861
+        }
+      ]
+    },
+    {
+      "path": "atlas/experiments/cross_task_injection_v2.py",
+      "symbols": [
+        {
+          "name": "run_baseline_with_capture",
+          "start": 162,
+          "end": 191
+        },
+        {
+          "name": "run_injection",
+          "start": 194,
+          "end": 217
+        }
+      ]
+    },
+    {
+      "path": "atlas/experiments/reconstruction_hooks.py",
+      "symbols": [
+        {
+          "name": "PerTokenReplaceHook",
+          "start": 144,
+          "end": 161
+        },
+        {
+          "name": "MeanPoolReplaceHook",
+          "start": 164,
+          "end": 185
+        },
+        {
+          "name": "MeanPoolDeltaHook",
+          "start": 188,
+          "end": 207
+        },
+        {
+          "name": "make_reconstruction_hook",
+          "start": 217,
+          "end": 254
+        }
+      ]
+    }
+  ],
+  "unsuccessful_locator_attempts": [
+    {
+      "name": "steering",
+      "path": "LICENSE",
+      "kind": "raw",
+      "error": "HTTP Error 404: Not Found"
+    }
+  ],
+  "scope_limits": [
+    "OpenVLA PyTorch projection/overwrite hook inspected; pi0 JAX value-vector key inspected, full JAX runtime intervention chain not audited",
+    "Action Atlas declared module registration inspected; inference firing in its supported models/submodules not tested",
+    "Paper v5 F.2 vocabulary statistics implementation not located/verified as a complete reproducible pipeline",
+    "No ready CoRP adapter, SAE checkpoint, vocabulary head or action-semantic mapping established"
+  ],
+  "findings": [
+    {
+      "id": "S1",
+      "evidence": "extract_value_vectors runs layer.mlp.down_proj on one-hot inputs; project_to_vocab_batched multiplies by language_model.lm_head.weight",
+      "boundary": "Fixed VLM output directions and vocabulary projection, not dynamic visual activation salience"
+    },
+    {
+      "id": "S2",
+      "evidence": "apply_gate_proj_hooks registers a forward hook on down_proj; input[0][...,neuron_ids]=coef then F.linear(weight,bias) returns replacement output",
+      "boundary": "Constant overwrite, in-place input mutation, coef1 is not no-op, default flattened indices assume intermediate_size11008; do not reuse as read-only observer or multiplicative gate"
+    },
+    {
+      "id": "S3",
+      "evidence": "CoRP Mlp.fc2 is Linear1536to384 with bias; block uses ls2 before residual addition",
+      "boundary": "One-hot projection includes shared bias and effective residual write also includes LayerScale; do not label visual directions with T5 vocabulary"
+    },
+    {
+      "id": "S4",
+      "evidence": "pi0_extract reads PaliGemma.llm.layers.mlp.linear; VLM/model loaders and existing-file caches are model-specific",
+      "boundary": "No DINO/CoRP correspondence; do not mix cache artifacts or assume full JAX intervention audited"
+    },
+    {
+      "id": "A1",
+      "evidence": "Pi05Adapter declares expert and paligemma layer groups; OFT Llama layers; SmolVLA groups are layer.mlp; GR00T groups eagle/vlsa/dit",
+      "boundary": "Full residual and MLP writes are not interchangeable; no CoRP group or architecture alias assumed"
+    },
+    {
+      "id": "A2",
+      "evidence": "ActivationInjectionHook returns original output when stored calls are exhausted or shape mismatches, recording counters",
+      "boundary": "Injection must be validated by logical call identity, coverage and mismatches; same shape/call list index alone insufficient for CoRP observations/Euler steps"
+    },
+    {
+      "id": "A3",
+      "evidence": "ActivationCollector can preserve tokens or mean-pool; gated mode collects once per step; ReconstructionHook factory distinguishes pertoken_replace/meanpool_replace/meanpool_delta",
+      "boundary": "Pooling/writeback/training site must match; do not pool away patch/action positions or merge visual calls with denoising calls"
+    },
+    {
+      "id": "A4",
+      "evidence": "ResidualSite hooks full layer output; SmolVLAResidualSite reconstructs r+mlp_output through norm pre-hook and MLP hook",
+      "boundary": "Special goal-steering path is distinct from generic adapter MLP-only hooks; no direct transplantation"
+    },
+    {
+      "id": "P1",
+      "evidence": "Current CoRP dataset returns style/task/episode/frame but not layout in sample dict; original episode metadata contains layout",
+      "boundary": "Real sample manifest must join by original dataset/task/episode rather than assume a missing default"
+    },
+    {
+      "id": "P2",
+      "evidence": "Current rank_register_images accepts single-view clean image preprocessing and no shift parameter",
+      "boundary": "Real clean/shift capture can be specified but no matched shifted detector path implemented; do not quantize transformed PNG as a shortcut to claiming faithful paired ranking"
+    }
+  ],
+  "paper_cards": {
+    "Registers": {
+      "object": "Visual post-GELU FFN and outlier positions",
+      "selection": "High-norm-position activation aggregation",
+      "intervention": "Relocate to extra token and edit original activations",
+      "validation": "Visual artifacts/downstream tasks",
+      "corp_boundary": "Model size, thresholds, indices, extra tokens and logging nodes differ"
+    },
+    "FFN steering": {
+      "object": "VLM FFN output directions and activations",
+      "selection": "Vocabulary-associated clusters",
+      "intervention": "OpenVLA constant overwrite then down-projection recompute",
+      "validation": "Behavior/trajectory/task intervention experiments",
+      "corp_boundary": "No aligned vocabulary head for DINO; operation not channel attenuation"
+    },
+    "Action Atlas": {
+      "object": "Layer residual or architecture-specific MLP write, SAE features; F2 PaliGemma weights separately",
+      "selection": "Pathway/layer grouping, task injection, probes/SAE",
+      "intervention": "Zero, replay, reconstruction or latent edits at registered sites",
+      "validation": "Task/trajectory/rollout evidence",
+      "corp_boundary": "No current CoRP adapter/SAE and different pooling/call/token semantics"
+    }
+  },
+  "real_sample_plan": {
+    "status": "not_executed",
+    "source": "styles11-30, episode_mod10!=9",
+    "maximum": {
+      "tasks": 3,
+      "episodes_per_task": 3,
+      "unique_frames_per_episode": 3,
+      "three_view_observations": 27,
+      "view_frames_per_condition": 81
+    },
+    "selection_seed": 123,
+    "frame_indices": "0,length//2,length-1 with deduplication",
+    "conditions": [
+      "none",
+      "fixed evaluation color_jitter from image_contract"
+    ],
+    "R0": "Real reader, provenance and per-condition unhooked/hooked identity; fail stops R1",
+    "R1": "Same raw frames, retained token/camera identity, descriptive response only",
+    "conditional_full_policy": "Only with traceable current checkpoint and train-only normalizer; otherwise visual-only and full-policy/action not_run",
+    "prohibited": [
+      "Training augmentation during evaluation",
+      "Gates/injection/ablation",
+      "SAE or new scoring",
+      "Test/reserve samples for calibration",
+      "Zero-state or temporary-normalizer substitute",
+      "Claiming shifted official detector ranking from transformed quantized PNGs"
+    ]
+  },
+  "unchanged_runtime_evidence": "Observer/tests/analysis lock bytes match prior 96-test capture report; existing policy/train code matches HEAD. No new runtime tests needed for documentation-only changes.",
+  "project_documents_sha256": {
+    "docs/CHANNEL_INTERVENTION_UPSTREAM_MAPPING.md": "4a21b2a56812d40a211a8acc548aa329f4505febf4701a742a99bd84d9436386",
+    "docs/EXPERIMENT_PROTOCOL.md": "15afe7a53e8eb838e10b16f7c1aa0c9f0f3b9c30fcc69839d863894cf2f130d4"
+  },
+  "not_run": [
+    "Author model/scripts/notebooks",
+    "New inference or activation experiments",
+    "Real video sampling",
+    "CUDA/BF16 validation",
+    "MuJoCo replay",
+    "Any intervention or training"
+  ],
+  "static_checks": {
+    "immutable_source_links_and_ranges": 26,
+    "document_links_and_local_heading_anchors": "passed",
+    "document_and_source_hashes": "passed",
+    "runtime_code_change": "none",
+    "model_experiments": "not_run"
+  }
+}

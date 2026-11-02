@@ -1,0 +1,582 @@
+{
+  "schema": "corp_channel_upstream_static_audit_v1",
+  "created_at_utc": "2026-10-30T07:21:35.570607+00:00",
+  "status": "static_source_review_completed_runtime_not_run",
+  "project_base_commit": "7efc94a78013b7e3b18bfec14e97c307bd213418",
+  "scope": "Local source downloads, reading, AST and byte/hash checks only. No new method implementation, package installation, model execution, checkpoint download or training.",
+  "repositories": [
+    {
+      "name": "registers",
+      "repo": "nickjiang2378/test-time-registers",
+      "revision": "860df43515c8d8e9e90952af25a46c26e4469570"
+    },
+    {
+      "name": "neuronpath",
+      "repo": "foundation-model-research/NeuronPath",
+      "revision": "5f93d0b9f2bcd2061640a3b90117f0087f068734"
+    },
+    {
+      "name": "davit",
+      "repo": "dingmyu/davit",
+      "revision": "fc79470d99babab23e45e0087790fa23cfd10a02"
+    }
+  ],
+  "transport": {
+    "method": "Commit ids read from author GitHub repository HTML currentOid, source files retrieved via raw.githubusercontent.com at fixed revisions",
+    "complete_checkout": false,
+    "git_clone_attempts": "Network timeout / HTTP2 failures; fixed-revision raw files used instead",
+    "local_snapshot_directory": "/tmp/dacsc-channel-upstream-1793344042659"
+  },
+  "source_files": [
+    {
+      "name": "registers",
+      "repo": "nickjiang2378/test-time-registers",
+      "revision": "860df43515c8d8e9e90952af25a46c26e4469570",
+      "path": "README.md",
+      "url": "https://raw.githubusercontent.com/nickjiang2378/test-time-registers/860df43515c8d8e9e90952af25a46c26e4469570/README.md",
+      "bytes": 9931,
+      "sha256": "6b643a988a8814125828a08ae4d7469bd11c838d7aea58527e1d1b33d43c76d2"
+    },
+    {
+      "name": "registers",
+      "repo": "nickjiang2378/test-time-registers",
+      "revision": "860df43515c8d8e9e90952af25a46c26e4469570",
+      "path": "environment.yml",
+      "url": "https://raw.githubusercontent.com/nickjiang2378/test-time-registers/860df43515c8d8e9e90952af25a46c26e4469570/environment.yml",
+      "bytes": 665,
+      "sha256": "8b245c6f8e773839e618a1ab7f693c1a96ec6293b55f96a3ec8f44f8bd6370c5"
+    },
+    {
+      "name": "registers",
+      "repo": "nickjiang2378/test-time-registers",
+      "revision": "860df43515c8d8e9e90952af25a46c26e4469570",
+      "path": "hubconf.py",
+      "url": "https://raw.githubusercontent.com/nickjiang2378/test-time-registers/860df43515c8d8e9e90952af25a46c26e4469570/hubconf.py",
+      "bytes": 936,
+      "sha256": "98bf823363643fb0f33b20c653e9c60fe4911b83d065f67b81289c546c0a61bf"
+    },
+    {
+      "name": "registers",
+      "repo": "nickjiang2378/test-time-registers",
+      "revision": "860df43515c8d8e9e90952af25a46c26e4469570",
+      "path": "shared/algorithms.py",
+      "url": "https://raw.githubusercontent.com/nickjiang2378/test-time-registers/860df43515c8d8e9e90952af25a46c26e4469570/shared/algorithms.py",
+      "bytes": 3216,
+      "sha256": "d9e87882b3f567f732f03389bd9e031cbedbb9de3ecec4a0c79c61c628491c68"
+    },
+    {
+      "name": "registers",
+      "repo": "nickjiang2378/test-time-registers",
+      "revision": "860df43515c8d8e9e90952af25a46c26e4469570",
+      "path": "shared/hook_fn.py",
+      "url": "https://raw.githubusercontent.com/nickjiang2378/test-time-registers/860df43515c8d8e9e90952af25a46c26e4469570/shared/hook_fn.py",
+      "bytes": 2216,
+      "sha256": "b3d27c4b1ca5ba7bec3c4cd40101a8c9939f3dc9749d41e789e5552bf683725e"
+    },
+    {
+      "name": "registers",
+      "repo": "nickjiang2378/test-time-registers",
+      "revision": "860df43515c8d8e9e90952af25a46c26e4469570",
+      "path": "shared/hook_manager.py",
+      "url": "https://raw.githubusercontent.com/nickjiang2378/test-time-registers/860df43515c8d8e9e90952af25a46c26e4469570/shared/hook_manager.py",
+      "bytes": 7462,
+      "sha256": "7452dca73eb80848838c143390f075e189b0d01575b57ec0b3264d701945407d"
+    },
+    {
+      "name": "registers",
+      "repo": "nickjiang2378/test-time-registers",
+      "revision": "860df43515c8d8e9e90952af25a46c26e4469570",
+      "path": "dinov2/dinov2_hook_manager.py",
+      "url": "https://raw.githubusercontent.com/nickjiang2378/test-time-registers/860df43515c8d8e9e90952af25a46c26e4469570/dinov2/dinov2_hook_manager.py",
+      "bytes": 885,
+      "sha256": "61ff09ea7518359ba2340e7121ec9382913b4dde56ec4c3548e8ba2948bb95a0"
+    },
+    {
+      "name": "registers",
+      "repo": "nickjiang2378/test-time-registers",
+      "revision": "860df43515c8d8e9e90952af25a46c26e4469570",
+      "path": "dinov2/dinov2_state.py",
+      "url": "https://raw.githubusercontent.com/nickjiang2378/test-time-registers/860df43515c8d8e9e90952af25a46c26e4469570/dinov2/dinov2_state.py",
+      "bytes": 2174,
+      "sha256": "9abd0f9be73fd46deb792865d469cf54014ae7f78ea7d2a0b935edfc5d7e42bc"
+    },
+    {
+      "name": "registers",
+      "repo": "nickjiang2378/test-time-registers",
+      "revision": "860df43515c8d8e9e90952af25a46c26e4469570",
+      "path": "register_neurons.ipynb",
+      "url": "https://raw.githubusercontent.com/nickjiang2378/test-time-registers/860df43515c8d8e9e90952af25a46c26e4469570/register_neurons.ipynb",
+      "bytes": 22097,
+      "sha256": "3125c9bd92f345a90e84a9373d345309995509f9ee16de842276509275309ed3"
+    },
+    {
+      "name": "registers",
+      "repo": "nickjiang2378/test-time-registers",
+      "revision": "860df43515c8d8e9e90952af25a46c26e4469570",
+      "path": "dinov2_example.ipynb",
+      "url": "https://raw.githubusercontent.com/nickjiang2378/test-time-registers/860df43515c8d8e9e90952af25a46c26e4469570/dinov2_example.ipynb",
+      "bytes": 637846,
+      "sha256": "ee0bb114d1e9a65c1f608fb3cade7cf0fe5f87b9c8193ba037d9190faf5b34b8"
+    },
+    {
+      "name": "neuronpath",
+      "repo": "foundation-model-research/NeuronPath",
+      "revision": "5f93d0b9f2bcd2061640a3b90117f0087f068734",
+      "path": "README.md",
+      "url": "https://raw.githubusercontent.com/foundation-model-research/NeuronPath/5f93d0b9f2bcd2061640a3b90117f0087f068734/README.md",
+      "bytes": 8509,
+      "sha256": "d36ee184a18ecefdb0220c04631235e5d72f4c2d697d7fcda7967efca69bce52"
+    },
+    {
+      "name": "neuronpath",
+      "repo": "foundation-model-research/NeuronPath",
+      "revision": "5f93d0b9f2bcd2061640a3b90117f0087f068734",
+      "path": "LICENSE",
+      "url": "https://raw.githubusercontent.com/foundation-model-research/NeuronPath/5f93d0b9f2bcd2061640a3b90117f0087f068734/LICENSE",
+      "bytes": 1082,
+      "sha256": "aab8de2bb1ddf699f12bc95e6677f46deac113cc036d2bd06874f9548880ffc9"
+    },
+    {
+      "name": "neuronpath",
+      "repo": "foundation-model-research/NeuronPath",
+      "revision": "5f93d0b9f2bcd2061640a3b90117f0087f068734",
+      "path": "requirements.txt",
+      "url": "https://raw.githubusercontent.com/foundation-model-research/NeuronPath/5f93d0b9f2bcd2061640a3b90117f0087f068734/requirements.txt",
+      "bytes": 128,
+      "sha256": "3ae26f125ac7324cd77219f6f604943a0891ac797ded77dff810c64d705979b8"
+    },
+    {
+      "name": "davit",
+      "repo": "dingmyu/davit",
+      "revision": "fc79470d99babab23e45e0087790fa23cfd10a02",
+      "path": "README.md",
+      "url": "https://raw.githubusercontent.com/dingmyu/davit/fc79470d99babab23e45e0087790fa23cfd10a02/README.md",
+      "bytes": 13808,
+      "sha256": "ace73567bd97969b8d1aa8d5ec257443b1a52722c1259535a5b19c4465c69784"
+    },
+    {
+      "name": "davit",
+      "repo": "dingmyu/davit",
+      "revision": "fc79470d99babab23e45e0087790fa23cfd10a02",
+      "path": "LICENSE",
+      "url": "https://raw.githubusercontent.com/dingmyu/davit/fc79470d99babab23e45e0087790fa23cfd10a02/LICENSE",
+      "bytes": 1068,
+      "sha256": "97c2aa323a45d7e54857232e1b061e0c42016200c2133d5d391ada26590857f1"
+    },
+    {
+      "name": "davit",
+      "repo": "dingmyu/davit",
+      "revision": "fc79470d99babab23e45e0087790fa23cfd10a02",
+      "path": "timm/models/davit.py",
+      "url": "https://raw.githubusercontent.com/dingmyu/davit/fc79470d99babab23e45e0087790fa23cfd10a02/timm/models/davit.py",
+      "bytes": 20911,
+      "sha256": "95660d4ff6835d462ab4b221300eba1cb097aa46c0541db1afebf0630b168240"
+    },
+    {
+      "name": "neuronpath",
+      "repo": "foundation-model-research/NeuronPath",
+      "revision": "5f93d0b9f2bcd2061640a3b90117f0087f068734",
+      "path": "path/joint_attr.py",
+      "url": "https://raw.githubusercontent.com/foundation-model-research/NeuronPath/5f93d0b9f2bcd2061640a3b90117f0087f068734/path/joint_attr.py",
+      "bytes": 11713,
+      "sha256": "1fbce83d1a5662421f35236a0ee6786587e3ea718384e2ba905c5bcb9304bb5b"
+    },
+    {
+      "name": "neuronpath",
+      "repo": "foundation-model-research/NeuronPath",
+      "revision": "5f93d0b9f2bcd2061640a3b90117f0087f068734",
+      "path": "path/influence_pattern.py",
+      "url": "https://raw.githubusercontent.com/foundation-model-research/NeuronPath/5f93d0b9f2bcd2061640a3b90117f0087f068734/path/influence_pattern.py",
+      "bytes": 7697,
+      "sha256": "74f8a36525cbc4c83904878bab519c14eb179f9f3d06af5cbe8ff9f17df190da"
+    },
+    {
+      "name": "neuronpath",
+      "repo": "foundation-model-research/NeuronPath",
+      "revision": "5f93d0b9f2bcd2061640a3b90117f0087f068734",
+      "path": "path/joint_attr_mae.py",
+      "url": "https://raw.githubusercontent.com/foundation-model-research/NeuronPath/5f93d0b9f2bcd2061640a3b90117f0087f068734/path/joint_attr_mae.py",
+      "bytes": 12913,
+      "sha256": "f96549f35d100e362fc1dcbeb90db82d719c6f481424b487ea13c5a82fc26eaf"
+    },
+    {
+      "name": "neuronpath",
+      "repo": "foundation-model-research/NeuronPath",
+      "revision": "5f93d0b9f2bcd2061640a3b90117f0087f068734",
+      "path": "models/modeling.py",
+      "url": "https://raw.githubusercontent.com/foundation-model-research/NeuronPath/5f93d0b9f2bcd2061640a3b90117f0087f068734/models/modeling.py",
+      "bytes": 16811,
+      "sha256": "aba883e48d1a1e11851634a3b1821c074d5caf83989e84df6451d1eeaff32c69"
+    },
+    {
+      "name": "neuronpath",
+      "repo": "foundation-model-research/NeuronPath",
+      "revision": "5f93d0b9f2bcd2061640a3b90117f0087f068734",
+      "path": "models/modeling_ip.py",
+      "url": "https://raw.githubusercontent.com/foundation-model-research/NeuronPath/5f93d0b9f2bcd2061640a3b90117f0087f068734/models/modeling_ip.py",
+      "bytes": 18806,
+      "sha256": "79d9c59e89aa9de18be893b575ecfe260e22f83d031491aa25f26f11a5b19ecf"
+    },
+    {
+      "name": "neuronpath",
+      "repo": "foundation-model-research/NeuronPath",
+      "revision": "5f93d0b9f2bcd2061640a3b90117f0087f068734",
+      "path": "models/timm_mlp.py",
+      "url": "https://raw.githubusercontent.com/foundation-model-research/NeuronPath/5f93d0b9f2bcd2061640a3b90117f0087f068734/models/timm_mlp.py",
+      "bytes": 8849,
+      "sha256": "cd04f26ac34b57997dfee3a20e558ef7839aac00b36f76689a37ace41dc18fdc"
+    },
+    {
+      "name": "neuronpath",
+      "repo": "foundation-model-research/NeuronPath",
+      "revision": "5f93d0b9f2bcd2061640a3b90117f0087f068734",
+      "path": "models/timm_vision_transformer.py",
+      "url": "https://raw.githubusercontent.com/foundation-model-research/NeuronPath/5f93d0b9f2bcd2061640a3b90117f0087f068734/models/timm_vision_transformer.py",
+      "bytes": 121509,
+      "sha256": "53d1ae0807477561dcff7284ff3b80c11db935d64b98d080d8c65222f01c1bfb"
+    },
+    {
+      "name": "registers",
+      "repo": "nickjiang2378/test-time-registers",
+      "revision": "860df43515c8d8e9e90952af25a46c26e4469570",
+      "path": "custom_model/custom_hook_manager.py",
+      "url": "https://raw.githubusercontent.com/nickjiang2378/test-time-registers/860df43515c8d8e9e90952af25a46c26e4469570/custom_model/custom_hook_manager.py",
+      "bytes": 401,
+      "sha256": "cbe9b4b16b2d9077769a56a20adc62e1687747ac24c4097dec9f13d5426400d0"
+    },
+    {
+      "name": "registers",
+      "repo": "nickjiang2378/test-time-registers",
+      "revision": "860df43515c8d8e9e90952af25a46c26e4469570",
+      "path": "custom_model/custom_state.py",
+      "url": "https://raw.githubusercontent.com/nickjiang2378/test-time-registers/860df43515c8d8e9e90952af25a46c26e4469570/custom_model/custom_state.py",
+      "bytes": 656,
+      "sha256": "0a610539fb8f21aea9ed52f6d4d083d7a6e4a1bf0fb39fa5516cc2e736f8d019"
+    },
+    {
+      "name": "registers",
+      "repo": "nickjiang2378/test-time-registers",
+      "revision": "860df43515c8d8e9e90952af25a46c26e4469570",
+      "path": "dinov2/dinov2/models/vision_transformer.py",
+      "url": "https://raw.githubusercontent.com/nickjiang2378/test-time-registers/860df43515c8d8e9e90952af25a46c26e4469570/dinov2/dinov2/models/vision_transformer.py",
+      "bytes": 16310,
+      "sha256": "f7d3e732cd585e06b35efbfdb968ea8653a0fc2118ce06e520de77683db02f85"
+    },
+    {
+      "name": "registers",
+      "repo": "nickjiang2378/test-time-registers",
+      "revision": "860df43515c8d8e9e90952af25a46c26e4469570",
+      "path": "dinov2/dinov2/hub/backbones.py",
+      "url": "https://raw.githubusercontent.com/nickjiang2378/test-time-registers/860df43515c8d8e9e90952af25a46c26e4469570/dinov2/dinov2/hub/backbones.py",
+      "bytes": 5799,
+      "sha256": "1239fb3e36f274d28e32c830268f5a09fd29d7b76009d74eb4b83af55762bddc"
+    },
+    {
+      "name": "registers",
+      "repo": "nickjiang2378/test-time-registers",
+      "revision": "860df43515c8d8e9e90952af25a46c26e4469570",
+      "path": "configs/dinov2_large.yaml",
+      "url": "https://raw.githubusercontent.com/nickjiang2378/test-time-registers/860df43515c8d8e9e90952af25a46c26e4469570/configs/dinov2_large.yaml",
+      "bytes": 120,
+      "sha256": "5cda915d7359b06e877fbb9f17023c8cb44e2e7546f1bc8ce31680641e924bf2"
+    },
+    {
+      "name": "registers",
+      "repo": "nickjiang2378/test-time-registers",
+      "revision": "860df43515c8d8e9e90952af25a46c26e4469570",
+      "path": "shared/utils.py",
+      "url": "https://raw.githubusercontent.com/nickjiang2378/test-time-registers/860df43515c8d8e9e90952af25a46c26e4469570/shared/utils.py",
+      "bytes": 4281,
+      "sha256": "cc5cea064f2d3fd0935a623031cb4485b276e9462dbfd449657d4219c457277e"
+    }
+  ],
+  "failed_locator_attempts": [
+    {
+      "name": "davit",
+      "path": "mmseg/models/backbones/davit.py",
+      "error": "HTTP Error 404: Not Found"
+    },
+    {
+      "name": "davit",
+      "path": "mmdet/models/backbones/davit.py",
+      "error": "HTTP Error 404: Not Found"
+    },
+    {
+      "name": "registers",
+      "path": "dinov2/hub/backbones.py",
+      "error": "HTTP Error 404: Not Found"
+    },
+    {
+      "name": "registers",
+      "path": "dinov2/models/vision_transformer.py",
+      "error": "HTTP Error 404: Not Found"
+    }
+  ],
+  "reviewed_symbols": [
+    {
+      "source": "registers",
+      "path": "shared/algorithms.py",
+      "symbols": [
+        {
+          "name": "find_register_neurons",
+          "start": 6,
+          "end": 83
+        }
+      ]
+    },
+    {
+      "source": "registers",
+      "path": "shared/hook_fn.py",
+      "symbols": [
+        {
+          "name": "log_internal",
+          "start": 4,
+          "end": 5
+        },
+        {
+          "name": "activate_on_registers",
+          "start": 13,
+          "end": 46
+        }
+      ]
+    },
+    {
+      "source": "registers",
+      "path": "shared/hook_manager.py",
+      "symbols": [
+        {
+          "name": "initialize_log_hooks",
+          "start": 65,
+          "end": 82
+        },
+        {
+          "name": "finalize",
+          "start": 99,
+          "end": 128
+        }
+      ]
+    },
+    {
+      "source": "registers",
+      "path": "dinov2/dinov2_hook_manager.py",
+      "symbols": [
+        {
+          "name": "neuron_activation_component",
+          "start": 17,
+          "end": 21
+        }
+      ]
+    },
+    {
+      "source": "registers",
+      "path": "dinov2/dinov2/models/vision_transformer.py",
+      "symbols": [
+        {
+          "name": "prepare_tokens_with_masks",
+          "start": 213,
+          "end": 247
+        },
+        {
+          "name": "forward_features",
+          "start": 269,
+          "end": 285
+        }
+      ]
+    },
+    {
+      "source": "registers",
+      "path": "dinov2/dinov2/hub/backbones.py",
+      "symbols": [
+        {
+          "name": "dinov2_vitl14_tt_reg",
+          "start": 86,
+          "end": 98
+        }
+      ]
+    },
+    {
+      "source": "neuronpath",
+      "path": "path/joint_attr.py",
+      "symbols": [
+        {
+          "name": "scaled_input",
+          "start": 29,
+          "end": 34
+        },
+        {
+          "name": "path_scaled_input",
+          "start": 36,
+          "end": 49
+        },
+        {
+          "name": "j_a_score",
+          "start": 51,
+          "end": 74
+        },
+        {
+          "name": "main",
+          "start": 87,
+          "end": 300
+        }
+      ]
+    },
+    {
+      "source": "neuronpath",
+      "path": "models/modeling.py",
+      "symbols": [
+        {
+          "name": "Mlp",
+          "start": 101,
+          "end": 133
+        },
+        {
+          "name": "VisionTransformer",
+          "start": 292,
+          "end": 383
+        }
+      ]
+    },
+    {
+      "source": "neuronpath",
+      "path": "models/modeling_ip.py",
+      "symbols": [
+        {
+          "name": "Mlp",
+          "start": 101,
+          "end": 134
+        },
+        {
+          "name": "VisionTransformer",
+          "start": 306,
+          "end": 421
+        }
+      ]
+    },
+    {
+      "source": "neuronpath",
+      "path": "path/influence_pattern.py",
+      "symbols": [
+        {
+          "name": "main",
+          "start": 49,
+          "end": 206
+        }
+      ]
+    },
+    {
+      "source": "davit",
+      "path": "timm/models/davit.py",
+      "symbols": [
+        {
+          "name": "ChannelAttention",
+          "start": 174,
+          "end": 203
+        },
+        {
+          "name": "ChannelBlock",
+          "start": 206,
+          "end": 248
+        },
+        {
+          "name": "DaViT",
+          "start": 404,
+          "end": 510
+        }
+      ]
+    }
+  ],
+  "local_files_sha256": {
+    "upstream.lock.json": "34a18c5954a6c5d9c955c99d217e61c45bc63e3d06533ea2ba4647559fe99bcb",
+    "repos/CoRP/corp/_vendor/dinov2.py": "c8b267ebbdd13b4188a51b862901eada4e45d1f90962198a140bfb679cfcd43d",
+    "repos/CoRP/corp/representation/visual_encoder.py": "f8bf4d32bb42f18a961109e41901cc0ddb98fc9a420943101c2675aa293beec4",
+    "repos/CoRP/corp/representation/extractor.py": "385c66cf90ad294210ea84418ca2c83726eac7dadc5d3bf4ffc0a42035377e34",
+    "repos/CoRP/corp/representation/cross_attention_resampler.py": "4e86fae7523c5c1a8c6da2bccdbc54cba2fbea8d914fe8eb13202209f51e1fa1",
+    "dacsc/corp_robocasa.py": "7e9a726c4579ea8d74b0ea9e2fde36164908c6c698fa07d4de1dc9fe636b8a2b",
+    "docs/CHANNEL_INTERVENTION_UPSTREAM_MAPPING.md": "9f78b7c4f581b3151b3e4135bddce031bd739817a11231bb828dbf7901125a48",
+    "docs/EXPERIMENT_PROTOCOL.md": "3b1e803f4bc77264b7d2db72f0e5eea6a47e1e7ca3e60f7beb6a2298536c4d06"
+  },
+  "corp_source_bytes_match_locked_git_commit": true,
+  "runtime_code_unchanged": true,
+  "licenses_observed": {
+    "neuronpath": "MIT in root LICENSE",
+    "davit": "MIT in root LICENSE",
+    "registers": "Whole repository license not asserted; no root LICENSE entry in observed root listing; no code copied into project runtime"
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "evidence": "Registers Dinov2HookManager selects mlp.act for a plain MLP; CoRP Mlp is Linear384to1536 -> GELU -> Linear1536to384",
+      "interpretation": "FFN post-GELU activation is the closest matching internal object, not the residual384 coordinate"
+    },
+    {
+      "id": "F2",
+      "evidence": "Registers HookManager logs explicit post-softmax attention unconditionally; CoRP attention uses functional scaled_dot_product_attention without those identity modules",
+      "interpretation": "Upstream manager is not a drop-in adapter; do not replace attention for logging convenience"
+    },
+    {
+      "id": "F3",
+      "evidence": "Registers activate_on_registers indexes output[0]; detector and model state use single-image/author-modified model conventions",
+      "interpretation": "Multi-view3B, logging dtype/device, and data preprocessing require explicit adaptation"
+    },
+    {
+      "id": "F4",
+      "evidence": "Registers config dinov2_large.yaml uses vitl14, norm threshold150, detect layer -2, highest layer17; hub ready TT-register function targets ViT-L",
+      "interpretation": "Cannot copy model indices or threshold into CoRP12-layer ViT-S"
+    },
+    {
+      "id": "F5",
+      "evidence": "Author modified prepare_tokens_with_masks appends registers at the end; forward_features still slices register and patch fields as if registers followed CLS",
+      "interpretation": "Potential semantic mis-slicing for CoRP patch-field reuse despite unchanged patch count; no upstream patch performed"
+    },
+    {
+      "id": "F6",
+      "evidence": "NeuronPath Mlp.forward changes and returns x[:,0]; VisionTransformer uses head(CLS) and target class softmax gradients",
+      "interpretation": "Original path is CLS/classification-specific; not an existing action/patch attribution method"
+    },
+    {
+      "id": "F7",
+      "evidence": "CoRP final block FFN is token-wise, then norm(tokens)[:,1:] discards CLS before resampler",
+      "interpretation": "Static dataflow inference: last-block CLS-FFN-only intervention has no path to final patch output; no numerical/backward experiment run"
+    },
+    {
+      "id": "F8",
+      "evidence": "DaViT ChannelAttention computes grouped scaled K-transpose-times-V softmax and applies to Q-transpose, with learned qkv/proj",
+      "interpretation": "Dense within-group channel interaction is not a diagonal per-channel or token-channel gate; new module changes capacity and initialization"
+    }
+  ],
+  "minimal_plan": {
+    "now": "Documentation/static mapping only",
+    "next_read_only_spec": "Inspect raw block outputs and post-GELU FFN activations with exact CLS/patch/view identity, preserving original forward; adapter not written",
+    "future_intervention_candidate": "Single-source-calibrated-block, patch-only FFN1536 deterministic attenuation shared across tokens and views; identity/random/selected-set controls; no learned dynamic selector implemented",
+    "not_selected": [
+      "AdaIN/statistics mixing as main method",
+      "additional register tokens",
+      "DaViT backbone replacement",
+      "full NeuronPath action/JAS search",
+      "learned token-channel network"
+    ]
+  },
+  "not_verified": [
+    "Imports/execution of fetched author code",
+    "Model-state/logging adapter correctness",
+    "Outlier presence in actual CoRP ViT-S/14",
+    "NeuronPath action-target or patch-token adaptation",
+    "CUDA/BF16 / real video / MuJoCo",
+    "Any clean or shifted action/success effect"
+  ],
+  "activity": {
+    "server_connected": false,
+    "dependencies_installed": false,
+    "third_party_code_executed": false,
+    "new_method_code_written": false,
+    "forward_backward_or_optimizer_run": false,
+    "training_started": false
+  },
+  "static_checks": {
+    "immutable_source_links_and_ranges": 17,
+    "document_links_and_fences": "passed",
+    "downloaded_and_local_hashes": "passed",
+    "runtime_source_unchanged": "passed",
+    "runtime_tests": "not_run"
+  }
+}

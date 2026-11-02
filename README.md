@@ -23,6 +23,10 @@
 不自动打补丁，不静默降级。仅覆盖清单中的文件，不代替整个仿真环境的版本验证。
 token statistics、不同 style donor 和 action-aware 是本工程适配，**不是完整 TFS-ViT 复现**。
 
+通道方向先做只读机制审计，见[上游映射表](docs/CHANNEL_INTERVENTION_UPSTREAM_MAPPING.md)。
+`dacsc/corp_ffn_capture.py`只观察CoRP原block与GELU输出，不接入训练/推理主入口、不替换attention或增加门控。
+其可选分析依赖单独固定于`analysis_upstream.lock.json`；原Registers logger和detector由已核验的外部源文件直接加载。
+
 ## 本地验证，不启动训练
 
 在已有依赖环境中，从仓库根目录运行：
@@ -37,6 +41,12 @@ PYTHONPATH=repos/CoRP .venv/bin/python repos/CoRP/scripts/smoke_test.py --device
 `tests/` 保留数据/模型接口、mask、共享权重 EMA、donor、断点恢复、配对和拒绝错误输入的回归。
 其中叶模块假环境仅用于本地契约验证，不能当作真实仿真成功率。
 
+新增FFN回归要求预先准备`analysis_upstream.lock.json`中Registers固定revision的四个`shared/`源文件。
+可用作者checkout并设置`DACSC_REGISTERS_REPO=/absolute/path/to/test-time-registers`；
+本地默认查找`.cache/analysis_sources/registers/<revision>/`。缺失或hash不符直接失败，测试不联网、不静默跳过。
+它还使用作者源文件的NumPy/Pillow/Matplotlib/tqdm依赖；这不是主训练新增的必需依赖，不修改官方模型或共享环境。
+只读采集的本地证据见`audit/corp_ffn_capture_local_validation.json`；此前86项记录仍对应`7efc94a`快照。
+
 环境安装遵循 [CoRP 官方说明](https://github.com/corp-policy/CoRP) 和
 [RoboCasa 官方说明](https://robocasa.ai/docs/build/html/introduction/installation.html)。
 官方 CoRP LIBERO 环境和 RoboCasa 环境的 NumPy/MuJoCo 等约束不同，分别管理；
@@ -49,6 +59,8 @@ PYTHONPATH=repos/CoRP .venv/bin/python repos/CoRP/scripts/smoke_test.py --device
 
 | 工作 | 入口 |
 | --- | --- |
+| 真实视频/官方CUDA demo/只读FFN验收 | `python -m dacsc.readonly_validation`，见[只读验收操作说明](docs/READONLY_SERVER_VALIDATION.md) |
+| 只准备官方MuJoCo重放命令 | 同上`replay-plan`；不执行仿真 |
 | CoRP-RoboCasa 训练适配 | `scripts/train_corp_robocasa.py`；必须显式传 `--steps` |
 | 顺序运行统一预算 | `scripts/run_corp_experiment.sh`；默认只有 `none`，必须指定 `STEPS`、新 `OUT` |
 | held-out 离线 MSE | `scripts/eval_corp_robocasa.py` |
@@ -88,3 +100,7 @@ test 默认封存，只有最终评估显式启用。真实 RoboCasa/CUDA 的复
 提交并保持工作区干净后，`bash scripts/pack_for_server.sh /path/to/new/output` 使用标准
 `git archive` 导出完整已提交代码（包括根目录manifest、测试和协议），拒绝覆盖已有包。
 它不上传、不部署，不再混入本机未跟踪的第三方源码/权重；上游依赖按锁定revision准备。
+
+只读验收交付使用`python scripts/pack_readonly_validation.py --registers-source SOURCE --out NEW_DIRECTORY`：
+导出标准Git bundle（保留commit身份）、hash固定的作者分析源文件和验收说明。拒绝脏树和覆盖，不连服务器、不安装依赖、不运行模型。
+本地准备验证记录见`audit/readonly_validation_local_preparation.json`：108项回归通过；真实视频、CUDA/BF16和MuJoCo仍为未执行。

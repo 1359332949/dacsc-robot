@@ -1,0 +1,22 @@
+{
+  "Registers": {
+    "url": "https://github.com/nickjiang2378/test-time-registers",
+    "revision": "860df43515c8d8e9e90952af25a46c26e4469570",
+    "scope": "Optional read-only analysis only; not a policy or training dependency",
+    "files": {
+      "shared/algorithms.py": "d9e87882b3f567f732f03389bd9e031cbedbb9de3ecec4a0c79c61c628491c68",
+      "shared/hook_fn.py": "b3d27c4b1ca5ba7bec3c4cd40101a8c9939f3dc9749d41e789e5552bf683725e",
+      "shared/hook_manager.py": "7452dca73eb80848838c143390f075e189b0d01575b57ec0b3264d701945407d",
+      "shared/utils.py": "cc5cea064f2d3fd0935a623031cb4485b276e9462dbfd449657d4219c457277e"
+    }
+  },
+  "CoRPVisual": {
+    "revision": "52445740aa9517ae396cc8fb14bae8fe5922f118",
+    "scope": "Additional visual execution sources for read-only capture; no change to training checkpoint contract",
+    "files": {
+      "corp/_vendor/dinov2.py": "c8b267ebbdd13b4188a51b862901eada4e45d1f90962198a140bfb679cfcd43d",
+      "corp/representation/visual_encoder.py": "f8bf4d32bb42f18a961109e41901cc0ddb98fc9a420943101c2675aa293beec4",
+      "corp/representation/extractor.py": "385c66cf90ad294210ea84418ca2c83726eac7dadc5d3bf4ffc0a42035377e34"
+    }
+  }
+}
