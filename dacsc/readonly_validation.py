@@ -45,6 +45,14 @@ from dacsc.upstream import ROOT, verify_upstream, verify_release_checkpoint
 
 SCHEMA = "corp_readonly_validation_v1"
 VIEWS = tuple(VIEW_TO_KEY)
+RUNTIME_ENVIRONMENT_KEYS = (
+    "python",
+    "platform",
+    "torch",
+    "torchvision",
+    "cuda_runtime",
+    "cudnn",
+)
 
 
 def write_json(path, value):
@@ -107,6 +115,19 @@ def environment():
         "cuda_runtime": torch.version.cuda,
         "cudnn": torch.backends.cudnn.version(),
     }
+
+
+def compatible_runtime(left, right):
+    """Accept separate isolated environments only when their runtime stack matches.
+
+    CoRP and RoboCasa have incompatible NumPy pins. Their interpreters may differ,
+    but a downstream receipt still has to use the same Python/Torch/CUDA stack.
+    """
+    return (
+        isinstance(left, dict)
+        and isinstance(right, dict)
+        and all(left.get(key) == right.get(key) for key in RUNTIME_ENVIRONMENT_KEYS)
+    )
 
 
 def code_identity():
@@ -416,7 +437,7 @@ def passed_artifacts(path, stage, identity):
         or receipt.get("stage") != stage
         or receipt.get("status") != "passed"
         or receipt.get("code") != identity
-        or receipt.get("environment") != environment()
+        or not compatible_runtime(receipt.get("environment"), environment())
         or not receipt.get("artifacts")
     ):
         raise ValueError(f"incompatible or incomplete {stage} receipt")

@@ -29,8 +29,9 @@ CoRP/DP/RoboCasa源码、官方checkpoint及相邻`config.json`、官方依赖�
 
 ## 0. 冻结环境与输出
 
-后续命令在新checkout根目录执行。`python`必须是已核对的环境解释器；视频与CUDA自动阶段使用同一解释器/库版本，
-receipt还核对platform、Torch/Torchvision/CUDA版本，不能拿另一环境的PASS继续。MuJoCo可使用单独的官方仿真环境，需另存其版本/实际import路径。
+后续命令在新checkout根目录执行。CoRP与RoboCasa可分别使用隔离环境，以遵守各自不兼容的依赖约束；
+receipt保存实际解释器路径，并核对Python、平台、Torch/Torchvision/CUDA/cuDNN运行时栈完全一致。
+解释器路径可以不同，但运行时栈不同的PASS不能继续复用。MuJoCo可使用独立的官方仿真环境，需另存其版本/实际import路径。
 
 示意变量先替换成真实绝对路径，不直接照抄占位符：
 

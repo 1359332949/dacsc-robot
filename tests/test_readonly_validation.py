@@ -280,6 +280,21 @@ class ReadOnlyValidationTests(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     rv.passed_artifacts(path, "video", {})
 
+    def test_separate_isolated_envs_require_matching_runtime_stack(self):
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp)
+            data = receipt(path)
+            data["environment"]["executable"] = "/different/isolated/python"
+            rv.write_json(path / "report.json", data)
+            self.assertEqual(
+                rv.passed_artifacts(path, "video", {})["environment"]["executable"],
+                "/different/isolated/python",
+            )
+            data["environment"]["torch"] = "different-runtime"
+            rv.write_json(path / "report.json", data)
+            with self.assertRaises(ValueError):
+                rv.passed_artifacts(path, "video", {})
+
     def test_cpu_cannot_be_reported_as_cuda_and_demo_calls_are_official(self):
         with self.assertRaisesRegex(RuntimeError, "CUDA required"):
             rv.require_cuda("cpu")
