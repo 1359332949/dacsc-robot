@@ -29,6 +29,9 @@ token statistics、不同 style donor 和 action-aware 是本工程适配，**�
 
 ## 本地验证，不启动训练
 
+GPU环境使用独立的CoRP/RoboCasa依赖锁和离线wheelhouse，避免每次现场解析冲突：
+见[GPU环境复现说明](environment/README.md)。
+
 在已有依赖环境中，从仓库根目录运行：
 
 ```bash

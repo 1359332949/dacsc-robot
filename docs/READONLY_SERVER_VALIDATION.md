@@ -33,6 +33,9 @@ CoRP/DP/RoboCasa源码、官方checkpoint及相邻`config.json`、官方依赖�
 receipt保存实际解释器路径，并核对Python、平台、Torch/Torchvision/CUDA/cuDNN运行时栈完全一致。
 解释器路径可以不同，但运行时栈不同的PASS不能继续复用。MuJoCo可使用独立的官方仿真环境，需另存其版本/实际import路径。
 
+优先使用[锁定环境与离线wheelhouse](environment/README.md)一次完成依赖安装和运行时检查，
+不要在新GPU实例上现场试装依赖。
+
 示意变量先替换成真实绝对路径，不直接照抄占位符：
 
 ```bash

@@ -1,0 +1,5 @@
+# Official CoRP runtime. CUDA wheels are selected explicitly by the bootstrap.
+torch==2.11.0
+torchvision==0.26.0
+numpy==1.26.4
+transformers==4.48.1

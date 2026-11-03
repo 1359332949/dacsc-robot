@@ -1,0 +1,14 @@
+{
+  "python": "3.12",
+  "platform": "linux-x86_64",
+  "indices": {
+    "pytorch_cu128": "https://download.pytorch.org/whl/cu128",
+    "python": "https://pypi.tuna.tsinghua.edu.cn/simple"
+  },
+  "robosuite": {
+    "url": "https://github.com/ARISE-Initiative/robosuite.git",
+    "revision": "5ce6643f3092639d08f7b0f90ed1c6a84f50552c",
+    "fallback_wheel": "robosuite==1.5.2",
+    "fallback_scope": "Video-reader bootstrap only; install pinned master before MuJoCo replay."
+  }
+}
