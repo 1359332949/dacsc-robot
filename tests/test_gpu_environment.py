@@ -111,6 +111,7 @@ class GPUEnvironmentContractTests(unittest.TestCase):
             "opencv-python",
             "pynput",
             "termcolor",
+            "transformers",
             "pytest",
             "tqdm",
         }

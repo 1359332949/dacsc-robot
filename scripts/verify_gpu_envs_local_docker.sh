@@ -32,6 +32,7 @@ print(\"CoRP\", torch.__version__, torchvision.__version__, numpy.__version__, t
 "
     PYTHONPATH=/repo/repos/diffusion_policy /tmp/robocasa/bin/python -c "
 import diffusion_policy
+import diffusion_policy.dataset.lerobot_dataset
 import mujoco
 import numpy
 import robocasa

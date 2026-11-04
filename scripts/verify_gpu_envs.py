@@ -20,6 +20,7 @@ def probe(python: str, profile: str) -> dict:
         else (
             "import robomimic\n"
             "import diffusion_policy\n"
+            "import diffusion_policy.dataset.lerobot_dataset\n"
             "import robocasa\n"
             "import robosuite\n"
             "import mujoco\n"
