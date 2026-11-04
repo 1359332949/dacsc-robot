@@ -29,6 +29,10 @@ fp32 / bf16 GPU smoke                             ✅
 
 后者必须明确写成 **CoRP adapted to RoboCasa / our reproduction**，除非官方补充训练代码。
 
+2026-11-04更新：官方发布库仍未增加trainer；项目已按论文Eq.7实现task-classification auxiliary loss，
+并复用PyTorch基础算子与官方`DiTBlock.encode_prefix`。这不会改变本审计结论：
+可以称为“论文公式复现”，不能称为“官方训练代码复现”。
+
 ## 2. 官方发布物事实
 
 ### 2.1 仓库范围

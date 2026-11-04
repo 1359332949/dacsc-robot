@@ -76,9 +76,16 @@ RoboCasa 数据根目录使用 `--data-root` 或 `DACSC_DATA_ROOT`，其下应�
 `v1.0/pretrain/atomic/<Task>/<date>/lerobot`。CoRP 源码通过 `CORP_REPO` 或 `repos/CoRP` 定位。
 所有入口 `--help` 可在不启动训练的情况下查看参数。
 
-当前 checkpoint 为 `corp_robocasa_v3`，SR schema 为 `corp_robocasa_sr_v5`，action指标仍为 `corp_action_mse_v1`。
+当前 checkpoint 为 `corp_robocasa_v4`，SR schema 为 `corp_robocasa_sr_v6`，action指标仍为 `corp_action_mse_v1`。
 旧 loss、图像变换、donor 或评测协议的文件不转换、不兼容、不混入新对比。
 test 默认封存，只有最终评估显式启用。真实 RoboCasa/CUDA 的复核仍待服务器环境验证。
+
+CoRP-RoboCasa 默认启用论文 Eq.7 的 task-classification auxiliary loss：
+`--task-aux-lambda 0.01 --task-aux-depth 1`。任务头只读取 `V×K` 个视觉前缀 token，
+逐 token 做 LayerNorm、取均值并经过跨深度共享 MLP；推理不读取 task label/logits。
+官方 CoRP 发布库只有推理，因此该 trainer/head 是公式复现而非官方训练代码；
+论文未公布 MLP 隐藏宽度，当前固定为 256 并写入 checkpoint、result 和 SR 训练身份。
+`--task-aux-lambda 0` 是显式无辅助损失 ablation，必须与新默认分开报告。
 
 指标计算直接用PyTorch、NumPy和SciPy，不创建加权总分。micro/task-macro MSE、五组/12维误差及
 逐episode support分开报告；跨seed的SD使用ddof=1、区间调用SciPy Student-t/SEM。

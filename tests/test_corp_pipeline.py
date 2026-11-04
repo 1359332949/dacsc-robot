@@ -332,6 +332,8 @@ class UpstreamInfrastructureTests(unittest.TestCase):
                 resume=path,
                 steps=10,
                 train_augmentation="none",
+                task_aux_lambda=0.0,
+                task_aux_depth=1,
             )
             with patch.object(train, "set_seed"), patch.object(
                 torch.cuda, "is_available", return_value=True

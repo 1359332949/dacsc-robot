@@ -8,7 +8,7 @@ from pathlib import Path
 from dacsc.corp_images import image_contract
 from dacsc.upstream import verify_upstream
 
-PROTOCOL_VERSION = "corp_robocasa_sr_v5"
+PROTOCOL_VERSION = "corp_robocasa_sr_v6"
 PROTOCOL_KEYS = {
     "version",
     "checkpoint_sha256",
@@ -97,6 +97,7 @@ def validate_training_origin(origin: dict) -> None:
         "data_length",
         "intervention",
         "pixel_augmentation",
+        "task_aux",
     }
     if (
         set(origin) != expected
@@ -133,3 +134,32 @@ def validate_training_origin(origin: dict) -> None:
             raise ValueError(
                 "invalid training pixel recipe or unsupported combined interventions"
             )
+    task_aux = origin["task_aux"]
+    if task_aux is not None:
+        expected_task_aux = {
+            "num_classes",
+            "loss_weight",
+            "depths",
+            "head_hidden_dim",
+            "task_to_id",
+            "implementation",
+        }
+        if (
+            not isinstance(task_aux, dict)
+            or set(task_aux) != expected_task_aux
+            or type(task_aux["num_classes"]) is not int
+            or task_aux["num_classes"] < 2
+            or not isinstance(task_aux["loss_weight"], (int, float))
+            or not math.isfinite(task_aux["loss_weight"])
+            or task_aux["loss_weight"] <= 0
+            or not isinstance(task_aux["depths"], (list, tuple))
+            or not task_aux["depths"]
+            or any(type(depth) is not int or depth < 0 for depth in task_aux["depths"])
+            or type(task_aux["head_hidden_dim"]) is not int
+            or task_aux["head_hidden_dim"] <= 0
+            or not isinstance(task_aux["task_to_id"], dict)
+            or len(task_aux["task_to_id"]) != task_aux["num_classes"]
+            or not isinstance(task_aux["implementation"], str)
+            or not task_aux["implementation"]
+        ):
+            raise ValueError("invalid task auxiliary training origin")

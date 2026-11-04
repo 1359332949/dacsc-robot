@@ -25,7 +25,9 @@ from __future__ import annotations
 
 import os
 import sys
+from dataclasses import asdict, dataclass
 from pathlib import Path
+import math
 
 import torch
 from torch import nn
@@ -33,14 +35,96 @@ from torch.nn import functional as F
 from dacsc.corp_images import image_contract
 
 _REPO_ROOT = Path(__file__).resolve().parents[1]
-CHECKPOINT_FORMAT = "corp_robocasa_v3"
-OBJECTIVE = "corp_masked_flow_repeat_last_v1"
+CHECKPOINT_FORMAT = "corp_robocasa_v4"
+OBJECTIVE = "corp_masked_flow_repeat_last_v2"
+TASK_AUX_HEAD_HIDDEN_DIM = 256
+TASK_AUX_PROVENANCE = (
+    "CoRP arXiv:2610.08183 Eq.7 reproduction; "
+    "github.com/corp-policy/CoRP@52445740aa9517ae396cc8fb14bae8fe5922f118 "
+    "releases inference only; PyTorch LayerNorm/Linear/GELU/cross_entropy"
+)
 CORP_STYLE_MODES = (
     "none",
     "random_stats",
     "cross_style_stats",
     "cross_style_stats_action_aware",
 )
+
+
+@dataclass(frozen=True)
+class TaskAuxConfig:
+    """Training-only CoRP task-classification objective (paper Eq. 7)."""
+
+    num_classes: int
+    loss_weight: float = 0.01
+    depths: tuple[int, ...] = (1,)
+    head_hidden_dim: int = TASK_AUX_HEAD_HIDDEN_DIM
+
+    def __post_init__(self) -> None:
+        if type(self.num_classes) is not int or self.num_classes < 2:
+            raise ValueError("task auxiliary loss needs at least two classes")
+        if (
+            not math.isfinite(self.loss_weight)
+            or self.loss_weight <= 0
+            or type(self.head_hidden_dim) is not int
+            or self.head_hidden_dim <= 0
+            or not self.depths
+            or any(type(depth) is not int or depth < 0 for depth in self.depths)
+            or len(set(self.depths)) != len(self.depths)
+        ):
+            raise ValueError("invalid task auxiliary loss configuration")
+
+    def to_dict(self) -> dict:
+        return asdict(self)
+
+    @classmethod
+    def from_dict(cls, value: dict) -> "TaskAuxConfig":
+        if not isinstance(value, dict):
+            raise ValueError("task auxiliary checkpoint config must be a dictionary")
+        try:
+            return cls(
+                num_classes=int(value["num_classes"]),
+                loss_weight=float(value["loss_weight"]),
+                depths=tuple(int(depth) for depth in value["depths"]),
+                head_hidden_dim=int(value["head_hidden_dim"]),
+            )
+        except (KeyError, TypeError, ValueError) as exc:
+            raise ValueError("invalid task auxiliary checkpoint config") from exc
+
+
+@dataclass(frozen=True)
+class CorpTrainingLoss:
+    total: torch.Tensor
+    flow: torch.Tensor
+    task: torch.Tensor | None
+
+
+class CoRPTaskAuxiliaryHead(nn.Module):
+    """Paper Eq. 7: per-token LayerNorm, mean over VK visual tokens, small MLP.
+
+    The released CoRP repository contains inference only, so there is no upstream
+    trainer module to import. This class composes PyTorch's public LayerNorm,
+    Linear, GELU and cross-entropy APIs according to the paper, and is shared
+    across the configured DiT prefix depths. The paper does not publish the MLP
+    width; ``TASK_AUX_HEAD_HIDDEN_DIM`` records the explicit reproduction choice.
+    """
+
+    def __init__(self, hidden_dim: int, num_classes: int, head_hidden_dim: int) -> None:
+        super().__init__()
+        self.norm = nn.LayerNorm(hidden_dim)
+        self.mlp = nn.Sequential(
+            nn.Linear(hidden_dim, head_hidden_dim),
+            nn.GELU(),
+            nn.Linear(head_hidden_dim, num_classes),
+        )
+
+    def pool(self, visual_prefix: torch.Tensor) -> torch.Tensor:
+        if visual_prefix.ndim != 3:
+            raise ValueError("visual prefix must be [B,VK,D]")
+        return self.norm(visual_prefix).mean(dim=1)
+
+    def forward(self, visual_prefix: torch.Tensor) -> torch.Tensor:
+        return self.mlp(self.pool(visual_prefix))
 
 
 def masked_action_mse(
@@ -85,7 +169,6 @@ from corp.representation.extractor import (
     Representation,
     RepresentationExtractor,
 )  # noqa: E402
-
 
 # RoboCasa 真实接口（来自数据集 meta/modality.json，61/61 atomic task 一致）：
 #   raw observation.state 16D =
@@ -148,7 +231,10 @@ class CorpRoboCasa(nn.Module):
     """两阶段 CoRP，接口适配到 RoboCasa。"""
 
     def __init__(
-        self, config: dict = ROBOCASA_CORP_CONFIG, token_style: nn.Module | None = None
+        self,
+        config: dict = ROBOCASA_CORP_CONFIG,
+        token_style: nn.Module | None = None,
+        task_aux: TaskAuxConfig | None = None,
     ) -> None:
         super().__init__()
         self.config = config
@@ -158,6 +244,25 @@ class CorpRoboCasa(nn.Module):
         self.action_horizon = int(config["action_horizon"])
         self.representation_extractor = RepresentationExtractor(config)
         self.action_generator = DiTActionGenerator(config)
+        self.task_aux_config = task_aux
+        self.visual_prefix_tokens = len(self.view_names) * int(
+            config["representation_extractor"]["cross_attention_resampler"][
+                "tokens_per_view"
+            ]
+        )
+        self.task_aux_head = (
+            None
+            if task_aux is None
+            else CoRPTaskAuxiliaryHead(
+                hidden_dim=int(config["hidden_dim"]),
+                num_classes=task_aux.num_classes,
+                head_hidden_dim=task_aux.head_hidden_dim,
+            )
+        )
+        if task_aux is not None and any(
+            depth > len(self.action_generator.blocks) for depth in task_aux.depths
+        ):
+            raise ValueError("task auxiliary depth exceeds the DiT prefix depth")
         # token-level style statistics modulation（patch tokens, pre-resampler）。
         # 用 forward hook 插入，避免复制官方 RepresentationExtractor.forward。
         self._current_domain_ids: torch.Tensor | None = None
@@ -220,14 +325,22 @@ class CorpRoboCasa(nn.Module):
             self._current_domain_ids = None
 
     def update_action_importance(
-        self, momentum: float = 0.9, return_summary: bool = False
+        self,
+        momentum: float = 0.9,
+        return_summary: bool = False,
+        gradient: torch.Tensor | None = None,
     ) -> dict | None:
-        """用 patch-token 梯度更新 action importance（供 *_action_aware 使用）。"""
+        """Update action importance from the flow gradient, not the task aux gradient."""
         z = self._last_style_tokens
         self._last_style_tokens = None
-        if self.token_style is None or z is None or z.grad is None:
+        grad = z.grad if z is not None and gradient is None else gradient
+        if self.token_style is None or z is None or grad is None:
             return None
-        score = (z.detach().float() * z.grad.detach().float()).abs().mean(dim=(0, 1, 3))
+        if grad.shape != z.shape:
+            raise ValueError(
+                "action importance gradient shape differs from style tokens"
+            )
+        score = (z.detach().float() * grad.detach().float()).abs().mean(dim=(0, 1, 3))
         score = score / score.sum().clamp_min(1e-8)
         if self._token_importance is None:
             self._token_importance = score
@@ -310,15 +423,138 @@ class CorpRoboCasa(nn.Module):
         )
         # 先生成 flow noise / tau，再 extract；token_style 的 RNG 消耗不会改变 flow noise。
         representation = self.extract(images, state, instruction, domain_ids=domain_ids)
+        prefix = self.action_generator.prepare_prefix(representation)
+        return self._flow_loss_from_prefix(
+            representation, prefix, action, action_mask, eps, tau
+        )
+
+    def training_loss(
+        self,
+        images: dict[str, torch.Tensor],
+        state: torch.Tensor,
+        instruction,
+        action: torch.Tensor,
+        action_mask: torch.Tensor,
+        *,
+        task_labels: torch.Tensor | None,
+        domain_ids: torch.Tensor | None = None,
+    ) -> CorpTrainingLoss:
+        """Return flow loss plus the paper's task-classification auxiliary loss."""
+        if self.task_aux_config is None:
+            if task_labels is not None:
+                raise ValueError(
+                    "task labels were provided but task auxiliary loss is disabled"
+                )
+        else:
+            self._validate_task_labels(task_labels, action.shape[0])
+
+        eps = torch.randn_like(action)
+        tau = (
+            torch.distributions.Beta(1.0, 1.5)
+            .sample((action.shape[0],))
+            .to(device=action.device, dtype=action.dtype)
+        )
+        representation = self.extract(images, state, instruction, domain_ids=domain_ids)
+        prefix, hidden_states = self._prepare_prefix_and_task_hidden(representation)
+        flow = self._flow_loss_from_prefix(
+            representation, prefix, action, action_mask, eps, tau
+        )
+        if self.task_aux_config is None:
+            return CorpTrainingLoss(total=flow, flow=flow, task=None)
+
+        task = self.task_auxiliary_loss(hidden_states, task_labels)
+        if not torch.isfinite(task):
+            raise FloatingPointError(
+                "nonfinite task auxiliary loss; refusing to update model parameters"
+            )
+        total = flow + self.task_aux_config.loss_weight * task
+        if not torch.isfinite(total):
+            raise FloatingPointError(
+                "nonfinite total loss; refusing to update model parameters"
+            )
+        return CorpTrainingLoss(total=total, flow=flow, task=task)
+
+    def task_auxiliary_loss(
+        self, hidden_states: dict[int, torch.Tensor], task_labels: torch.Tensor
+    ) -> torch.Tensor:
+        """CoRP Eq. 7 averaged over the configured shared-head depths."""
+        if self.task_aux_config is None or self.task_aux_head is None:
+            raise ValueError("task auxiliary loss is disabled")
+        if not isinstance(task_labels, torch.Tensor):
+            raise ValueError("task labels must be a tensor")
+        self._validate_task_labels(task_labels, task_labels.shape[0])
+        losses = []
+        for depth in self.task_aux_config.depths:
+            hidden = hidden_states[depth]
+            if hidden.shape[1] < self.visual_prefix_tokens:
+                raise ValueError(
+                    "task auxiliary prefix is shorter than the visual token count"
+                )
+            losses.append(
+                F.cross_entropy(
+                    self.task_aux_head(hidden[:, : self.visual_prefix_tokens]),
+                    task_labels,
+                )
+            )
+        return torch.stack(losses).mean()
+
+    def _flow_loss_from_prefix(
+        self,
+        representation: Representation,
+        prefix,
+        action: torch.Tensor,
+        action_mask: torch.Tensor,
+        eps: torch.Tensor,
+        tau: torch.Tensor,
+    ) -> torch.Tensor:
         action = action.to(dtype=representation.action_dtype)
         eps = eps.to(dtype=representation.action_dtype)
         # 必须与官方 DiTActionGenerator.sample 的 Euler 积分方向一致：
         #   x(0)=eps(noise) -> x(1)=action(data), dx/dtau = action - eps
         x_tau = eps * (1.0 - tau[:, None, None]) + action * tau[:, None, None]
         target = action - eps
-        prefix = self.action_generator.prepare_prefix(representation)
         pred = self.action_generator(x_tau, tau, prefix)
         return masked_action_mse(pred, target, action_mask)
+
+    def _prepare_prefix_and_task_hidden(
+        self, representation: Representation
+    ) -> tuple[list, dict[int, torch.Tensor]]:
+        if self.task_aux_config is None:
+            return self.action_generator.prepare_prefix(representation), {}
+
+        # Mirrors the released DiTActionGenerator.prepare_prefix loop, but keeps
+        # selected official DiTBlock.encode_prefix outputs for Eq. 7.
+        tokens = representation.tokens
+        mask = torch.ones(
+            tokens.shape[1], tokens.shape[1], dtype=torch.bool, device=tokens.device
+        )[None, None]
+        hidden: dict[int, torch.Tensor] = {}
+        if 0 in self.task_aux_config.depths:
+            hidden[0] = tokens
+        caches = []
+        for depth, block in enumerate(self.action_generator.blocks, start=1):
+            tokens, cache = block.encode_prefix(
+                tokens, representation.pooled_language, mask
+            )
+            caches.append(cache)
+            if depth in self.task_aux_config.depths:
+                hidden[depth] = tokens
+        return caches, hidden
+
+    def _validate_task_labels(
+        self, task_labels: torch.Tensor | None, batch_size: int
+    ) -> None:
+        if (
+            not isinstance(task_labels, torch.Tensor)
+            or task_labels.dtype != torch.long
+            or task_labels.shape != (batch_size,)
+        ):
+            raise ValueError("task labels must be a long tensor with shape [B]")
+        if (
+            int(task_labels.min()) < 0
+            or int(task_labels.max()) >= self.task_aux_config.num_classes
+        ):
+            raise ValueError("task label is outside the configured class range")
 
     @torch.no_grad()
     def sample_action(
@@ -340,6 +576,7 @@ def load_corp_robocasa(
     config: dict = ROBOCASA_CORP_CONFIG,
     device: str | torch.device = "cpu",
     token_style: nn.Module | None = None,
+    task_aux: TaskAuxConfig | None = None,
 ) -> tuple[CorpRoboCasa, dict]:
     """从官方 corp_libero.pt 加载共享权重，接口层随机初始化，并返回可审计报告。"""
     checkpoint = Path(checkpoint).expanduser().resolve()
@@ -358,7 +595,7 @@ def load_corp_robocasa(
         raise ValueError("source checkpoint has an unsupported camera-view contract")
     libero_sd = source.state_dict()
 
-    model = CorpRoboCasa(config, token_style=token_style)
+    model = CorpRoboCasa(config, token_style=token_style, task_aux=task_aux)
     if token_style is not None:
         assert model._style_handle is not None, "token_style hook not registered"
     model_sd = model.state_dict()
@@ -381,7 +618,7 @@ def load_corp_robocasa(
 
     for key, tensor in model_sd.items():
         if key not in libero_sd:
-            if not key.startswith("token_style."):
+            if not key.startswith(("token_style.", "task_aux_head.")):
                 raise ValueError(f"missing shared source weight: {key}")
             random_init.append(key)
             continue
@@ -472,7 +709,18 @@ def load_adapted_checkpoint(
             raise ValueError(
                 "token-style checkpoint lacks its donor contract; legacy loading is unsupported"
             )
-    model = CorpRoboCasa(payload["config"], token_style=token_style)
+    if "task_aux" not in payload:
+        raise ValueError(
+            "checkpoint lacks task auxiliary configuration; legacy loading is unsupported"
+        )
+    task_aux_cfg = (
+        None
+        if payload["task_aux"] is None
+        else TaskAuxConfig.from_dict(payload["task_aux"])
+    )
+    model = CorpRoboCasa(
+        payload["config"], token_style=token_style, task_aux=task_aux_cfg
+    )
     model.load_state_dict(payload["model"], strict=True)
     model.to(device)
     if "training_runtime" in payload:
@@ -486,6 +734,7 @@ def load_adapted_checkpoint(
         "budget": payload["budget"],
         "intervention": payload["token_style"],
         "pixel_augmentation": payload["pixel_augmentation"],
+        "task_aux": payload["task_aux"],
         "optimization": payload["optimization"],
         "initialization_sha256": payload["initialization_sha256"],
         "data_metadata_sha256": order["metadata_sha256"],

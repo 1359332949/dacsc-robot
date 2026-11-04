@@ -224,6 +224,7 @@ episode 标识为 `(dataset/task, episode_index)`；不同任务的相同数字�
 | 布局/时限 | 官方 `LayoutType.TRAIN`、`unpack_layout_ids`、`get_task_horizon` | layout 11–60；时限按任务 registry，删除固定600步和旧 override |
 | 图像 | Pillow bilinear + [Torchvision functional](https://docs.pytorch.org/vision/main/transforms.html) | 三条路径使用同一图像契约；保留 LIBERO 官方观测旋转，不给 RoboCasa添加该旋转 |
 | EMA | [PyTorch AveragedModel / get_ema_multi_avg_fn](https://docs.pytorch.org/docs/stable/optim.html#weight-averaging-swa-and-ema-for-training) | 不重写 EMA 算术；适配参数名/共享权重和非持久 donor buffer |
+| task 辅助损失 | CoRP论文Eq.7；PyTorch `LayerNorm`、`Linear/GELU`、`cross_entropy`；官方`DiTBlock.encode_prefix` | 只训练视觉前缀；任务头不进入推理；task label不进入策略输入 |
 | 互斥 | [filelock](https://py-filelock.readthedocs.io/en/latest/how-to.html) | 输出所有权和日志创建位于同一锁内 |
 
 共享权重从**已训练的 LIBERO CoRP policy checkpoint**迁移，不只是 DINOv2 视觉预训练。
@@ -231,8 +232,12 @@ episode 标识为 `(dataset/task, episode_index)`；不同任务的相同数字�
 其他 missing/unexpected/shape mismatch 报错。报告中的单位是 state-dict tensor，需区分共享参数别名。
 
 必须使用名称 **CoRP adapted to RoboCasa / our training adaptation**：已锁定的官方发布版本只提供推理，
-我们的训练循环并非官方训练代码；当前未实现论文 task-classification auxiliary loss（lambda=.01）。
-保留这个差异并公开记录，不凭猜测重建一个 head 后称为忠实复现。
+我们的训练循环并非官方训练代码。task-classification auxiliary loss 已按论文Eq.7补齐：
+对指定DiT前缀深度逐token做LayerNorm，在`VK`个视觉token上取均值，经跨深度共享的小MLP输出任务logits，
+再用PyTorch `cross_entropy`；默认`lambda=.01`、`J={1}`，训练目标为`L_flow + lambda * L_task`。
+官方仓库没有发布该训练头，因此这是公式复现而非官方trainer代码；论文未公布MLP隐藏宽度，
+当前固定为256并写入checkpoint/result/SR训练身份。task head只在训练期使用，推理不读取task label或logits。
+RoboCasa task class按排序后的61个atomic task名称映射，映射随checkpoint保存；不能把style/layout当作task标签。
 RoboCasa state 使用 train-only z-score，action identity 沿用官方 DP reader；它不同于 LIBERO 的动作 min/max。
 
 `upstream.lock.json` 固定三个源仓库 revision、关键执行文件 SHA256 和官方 checkpoint checksum。
@@ -315,7 +320,8 @@ std有下限保护，mean/std detach。这个实现是patch-token序列上的逐
 - mean/std detach；独立 donor RNG 由 run seed 初始化并完整恢复，不消耗 flow RNG。
 - action-aware 为先前训练梯度构造的 patch 位置 EMA/min-max 权重，跨样本/视角统计；不是对象追踪或因果重要性。
 
-动作分数来自先前训练迭代的`mean_{B,V,D}(|z * dL_flow/dz|)`及EMA，重要位置降低`alpha_k`，
+动作分数来自先前训练迭代的`mean_{B,V,D}(|z * dL_flow/dz|)`及EMA，重要位置降低`alpha_k`；
+启用task aux时显式只对`L_flow`做该梯度，不复用总损失梯度，避免任务分类目标污染“动作保护”名实。
 指定top位置可不混合。它是当前训练目标下的梯度启发式，不是独立clean反事实测量；
 跨task/相机平均的位置重要性不保证对应同一物体，不能写成已验证的“动作因果保护”。
 
@@ -329,6 +335,8 @@ SR命令中的style范围必须逐段升序、唯一且落在原生pretrain ID 1
 ## 统一预算与保存
 
 当前统一 runner 使用 batch30、lr5e-5、pilot EMA .99、grad clip1、BF16、单帧/视角、Euler10。
+默认同时启用CoRP Eq.7 task aux（lambda=.01、depth1、shared head hidden256）；
+用`--task-aux-lambda 0`明确关闭，并把“无辅助损失”保留为单独ablation，不能与新默认混表。
 原训练适配中的 AdamW betas=(.9,.95)、weight_decay=1e-4、eps=1e-8和前10%预算的线性warmup
 保持数值不变，完整写入结果的 `optimization`。这些细节是项目配方，不是官方CoRP公布的训练配置。
 `STEPS` 必须显式声明；默认只跑 none。正式预算、EMA、任务集、训练 seeds 必须在比较前冻结，
@@ -338,7 +346,8 @@ CPU/CUDA RNG、optimizer、scheduler、EMA、donor、importance、像素增广RN
 checkpoint原子替换，保存独立于评测周期。精确续训目前要求 workers=0、同数据路径/metadata/预算/架构。
 不能把一个2k预算改写成10k后称为同预算的完整 resume；新的预算需另立实验。
 已完成预算的 checkpoint 不再走训练 resume；显式使用独立 evaluator，避免将保存点之前的 metrics 当作最终评测。
-模型格式为 `corp_robocasa_v3`、训练状态版本3，保存 raw/EMA/实际完成步数、初始化权重 digest、图像/上游契约和预算。
+模型格式为 `corp_robocasa_v4`、训练状态版本3，保存 raw/EMA/实际完成步数、初始化权重 digest、图像/上游契约、
+task-aux配置/类别映射和预算。SR协议为`corp_robocasa_sr_v6`，训练身份包含task-aux配置。
 旧格式不迁移。test 默认不执行。
 
 ## 评测与判定
@@ -349,7 +358,7 @@ SR source 为训练 styles 下新生成的冻结场景，不是数据中的 `%10
 scene manifest 保存模型 XML、仿真状态、metadata 和 RNG；之后调用官方重放，再核对 state/style/layout。
 
 聚合必须检查任务清单、episode数、manifest digest、checkpoint SHA256、条件、推理预算、source/val范围和完整性。
-schema `corp_robocasa_sr_v5` 保存实际训练seed、预算、优化配方、像素/特征增广、初始化及训练数据digest，不接受旧JSON冒充完整配对记录。
+schema `corp_robocasa_sr_v6` 保存实际训练seed、预算、优化配方、像素/特征增广、task-aux配置、初始化及训练数据digest，不接受旧JSON冒充完整配对记录。
 写入前锁文件，日志禁止截断；中断/失败不能产生“全完成”的汇总。
 旧进程不遵守新锁，以后部署前须确认旧 writer 退出，再使用新目录；本轮未远程部署。
 

@@ -59,6 +59,10 @@ val styles 31-40:                  26810 frames
 | task-classification aux loss (λ=0.01) | **不复现** | 官方发布仓库没有训练代码/该损失；若将来加，必须标为“我们的补充” |
 | 命名 | **CoRP adapted to RoboCasa / our reproduction** | 官方训练代码未发布 |
 
+2026-11-04更新：上表“不复现”是P2当时的状态。此后已按论文Eq.7补齐为
+“CoRP paper Eq.7 reproduction”；官方仓库仍无trainer，因此不是官方训练代码复现。
+task head只在训练期使用，隐藏宽度256是论文未公布细节下的显式实现选择。
+
 ## 4. 接口（以 modality.json 为准）
 
 ```text

@@ -113,6 +113,7 @@ def training_origin_fixture(seed=42):
         "data_length": 100,
         "intervention": None,
         "pixel_augmentation": None,
+        "task_aux": None,
     }
 
 
@@ -297,6 +298,40 @@ def tiny_corp(style=None, config=corp.ROBOCASA_CORP_CONFIG):
         return corp.CorpRoboCasa(config, token_style=style)
 
 
+def tiny_task_aux_corp(task_aux=None, token_style=None):
+    config = copy.deepcopy(corp.ROBOCASA_CORP_CONFIG)
+    config.update(
+        action_dim=2,
+        action_horizon=2,
+        hidden_dim=2,
+    )
+    config["representation_extractor"] = copy.deepcopy(
+        corp.ROBOCASA_CORP_CONFIG["representation_extractor"]
+    )
+    config["representation_extractor"]["cross_attention_resampler"].update(
+        tokens_per_view=2,
+        num_heads=1,
+        film_rank=1,
+    )
+    config["action_generator"].update(
+        num_layers=1,
+        num_heads=1,
+        mlp_ratio=1.0,
+        max_horizon=4,
+        adaln_rank=1,
+        num_sample_steps=2,
+    )
+    if task_aux is None:
+        task_aux = corp.TaskAuxConfig(
+            num_classes=3,
+            loss_weight=0.01,
+            depths=(1,),
+            head_hidden_dim=3,
+        )
+    with patch.object(corp, "RepresentationExtractor", side_effect=tiny_extractor):
+        return corp.CorpRoboCasa(config, token_style=token_style, task_aux=task_aux)
+
+
 def official_fixture(path):
     from corp.checkpoint import config_digest
 
@@ -416,6 +451,7 @@ class ViewOrderTests(unittest.TestCase):
                     "upstream": verify_upstream(),
                     "config": loaded.config,
                     "token_style": None,
+                    "task_aux": None,
                     "model": {},
                     "normalizer": {},
                 }
@@ -440,6 +476,249 @@ class ViewOrderTests(unittest.TestCase):
         actual = other.token_style(tokens, labels)
         torch.testing.assert_close(actual, expected, rtol=0, atol=0)
         self.assertTrue(torch.equal(donors, other.token_style.last_donor))
+
+
+class TaskAuxiliaryLossTests(unittest.TestCase):
+    def task_batch(self):
+        batch = 2
+        return {
+            "images": {
+                view: torch.randn(batch, 2, 2, requires_grad=True)
+                for view in corp.ROBOCASA_CORP_CONFIG["view_names"]
+            },
+            "state": torch.randn(batch, 9),
+            "instruction": ["open drawer", "close drawer"],
+            "action": torch.randn(batch, 2, 2),
+            "action_mask": torch.ones(batch, 2, dtype=torch.bool),
+            "task_labels": torch.tensor([0, 2], dtype=torch.long),
+        }
+
+    def test_eq7_normalizes_each_token_before_mean_and_accepts_only_visual_prefix(
+        self,
+    ):
+        head = corp.CoRPTaskAuxiliaryHead(
+            hidden_dim=2,
+            num_classes=3,
+            head_hidden_dim=3,
+        )
+        prefix = torch.randn(2, 12, 2)
+        expected = torch.nn.functional.layer_norm(
+            prefix,
+            normalized_shape=(2,),
+        ).mean(dim=1)
+        torch.testing.assert_close(head.pool(prefix), expected)
+
+        model = tiny_task_aux_corp(
+            corp.TaskAuxConfig(
+                num_classes=3,
+                loss_weight=0.01,
+                depths=(0,),
+                head_hidden_dim=3,
+            )
+        )
+        seen = {}
+
+        class Spy(nn.Module):
+            def __init__(self):
+                super().__init__()
+                self.projection = nn.Linear(2, 3)
+
+            def forward(self, visual_prefix):
+                seen["shape"] = visual_prefix.shape
+                seen["value"] = visual_prefix.detach().clone()
+                return self.projection(visual_prefix.mean(dim=1))
+
+        model.task_aux_head = Spy()
+        b = self.task_batch()
+        representation = model.extract(b["images"], b["state"], b["instruction"])
+        result = model.training_loss(
+            b["images"],
+            b["state"],
+            b["instruction"],
+            b["action"],
+            b["action_mask"],
+            task_labels=b["task_labels"],
+        )
+        self.assertEqual(seen["shape"], (2, 6, 2))
+        torch.testing.assert_close(seen["value"], representation.tokens[:, :6].detach())
+        torch.testing.assert_close(
+            result.total,
+            result.flow + 0.01 * result.task,
+            rtol=0,
+            atol=0,
+        )
+
+    def test_task_gradient_reaches_visual_prefix_and_sampling_ignores_task_head(self):
+        model = tiny_task_aux_corp()
+        b = self.task_batch()
+        representation = model.extract(b["images"], b["state"], b["instruction"])
+        _, hidden = model._prepare_prefix_and_task_hidden(representation)
+        task_loss = model.task_auxiliary_loss(hidden, b["task_labels"])
+        task_loss.backward()
+        self.assertTrue(
+            any(
+                image.grad is not None and torch.isfinite(image.grad).all()
+                for image in b["images"].values()
+            )
+        )
+
+        class RaisingHead(nn.Module):
+            def forward(self, visual_prefix):
+                raise AssertionError("inference must not evaluate the task head")
+
+        model.task_aux_head = RaisingHead()
+        model.eval()
+        actions = model.sample_action(
+            b["images"],
+            b["state"],
+            b["instruction"],
+            num_steps=2,
+        )
+        self.assertEqual(actions.shape, (2, 2, 2))
+        self.assertTrue(torch.isfinite(actions).all())
+
+    def test_instrumented_prefix_matches_released_prepare_prefix_exactly(self):
+        model = tiny_task_aux_corp()
+        b = self.task_batch()
+        representation = model.extract(b["images"], b["state"], b["instruction"])
+        official = model.action_generator.prepare_prefix(representation)
+        instrumented, hidden = model._prepare_prefix_and_task_hidden(representation)
+        self.assertEqual(len(official), len(instrumented))
+        self.assertIn(1, hidden)
+        for expected, actual in zip(official, instrumented, strict=True):
+            torch.testing.assert_close(actual.key, expected.key, rtol=0, atol=0)
+            torch.testing.assert_close(actual.value, expected.value, rtol=0, atol=0)
+            for actual_adaln, expected_adaln in zip(
+                actual.adaln, expected.adaln, strict=True
+            ):
+                torch.testing.assert_close(actual_adaln, expected_adaln, rtol=0, atol=0)
+
+    def test_task_labels_and_class_map_fail_closed(self):
+        model = tiny_task_aux_corp()
+        b = self.task_batch()
+        for labels in (
+            torch.tensor([0.0, 1.0]),
+            torch.tensor([[0], [1]]),
+            torch.tensor([0, 3]),
+            torch.tensor([-1, 1]),
+        ):
+            with self.subTest(labels=labels), self.assertRaises(ValueError):
+                model.training_loss(
+                    b["images"],
+                    b["state"],
+                    b["instruction"],
+                    b["action"],
+                    b["action_mask"],
+                    task_labels=labels,
+                )
+
+        from scripts.train_corp_robocasa import move_batch, task_class_map
+
+        tasks = [
+            Path("/root/TaskB/date/lerobot"),
+            Path("/root/TaskA/date/lerobot"),
+        ]
+        mapping = task_class_map(tasks)
+        self.assertEqual(mapping, {"TaskA": 0, "TaskB": 1})
+        moved = move_batch(
+            {
+                "images": {view: b["images"][view][:, None] for view in b["images"]},
+                "image_space": "imagenet_normalized",
+                "state": b["state"],
+                "instruction": b["instruction"],
+                "action": b["action"],
+                "action_mask": b["action_mask"],
+                "style_id": torch.tensor([11, 12]),
+                "task": ["TaskB", "TaskA"],
+            },
+            LinearNormalizer(torch.zeros(9), torch.ones(9)),
+            torch.device("cpu"),
+            task_to_id=mapping,
+        )
+        self.assertEqual(moved["task_id"].tolist(), [1, 0])
+        with self.assertRaises(ValueError):
+            move_batch(
+                {
+                    "images": {
+                        view: b["images"][view][:, None] for view in b["images"]
+                    },
+                    "image_space": "imagenet_normalized",
+                    "state": b["state"],
+                    "instruction": b["instruction"],
+                    "action": b["action"],
+                    "action_mask": b["action_mask"],
+                    "style_id": torch.tensor([11, 12]),
+                    "task": ["Unknown", "TaskA"],
+                },
+                LinearNormalizer(torch.zeros(9), torch.ones(9)),
+                torch.device("cpu"),
+                task_to_id=mapping,
+            )
+
+    def test_adapted_checkpoint_records_task_aux_and_rejects_missing_config(self):
+        model = tiny_task_aux_corp()
+        task_aux = {
+            **model.task_aux_config.to_dict(),
+            "task_to_id": {"A": 0, "B": 1, "C": 2},
+            "implementation": "paper Eq.7 reproduction",
+        }
+        origin = training_origin_fixture()
+        with tempfile.TemporaryDirectory() as d:
+            path = Path(d) / "adapted.pt"
+            payload = {
+                "format": corp.CHECKPOINT_FORMAT,
+                "objective": corp.OBJECTIVE,
+                "images": image_contract(),
+                "upstream": verify_upstream(),
+                "config": model.config,
+                "model": model.state_dict(),
+                "token_style": None,
+                "task_aux": task_aux,
+                "pixel_augmentation": None,
+                "normalizer": {
+                    "state_mean": torch.zeros(9),
+                    "state_std": torch.ones(9),
+                },
+                "run_args": {"seed": 42},
+                "budget": origin["budget"],
+                "optimization": origin["optimization"],
+                "initialization_sha256": origin["initialization_sha256"],
+                "training_state": {
+                    "data_order": {
+                        "metadata_sha256": origin["data_metadata_sha256"],
+                        "dataset_length": 100,
+                    }
+                },
+            }
+            torch.save(payload, path)
+            with patch.object(
+                corp, "RepresentationExtractor", side_effect=tiny_extractor
+            ):
+                loaded, _ = corp.load_adapted_checkpoint(path)
+            self.assertEqual(loaded.task_aux_config.depths, (1,))
+            self.assertEqual(loaded.evaluation_origin["task_aux"], task_aux)
+
+            payload.pop("task_aux")
+            torch.save(payload, path)
+            with self.assertRaisesRegex(ValueError, "lacks task auxiliary"):
+                corp.load_adapted_checkpoint(path)
+
+    def test_action_importance_uses_flow_gradient_not_task_aux_gradient(self):
+        style = TokenStyleModulator(
+            "cross_style_stats_action_aware",
+            alpha=1.0,
+            dim=2,
+            donor_seed=42,
+        )
+        model = tiny_task_aux_corp(token_style=style)
+        z = torch.ones(2, 3, 4, 2, requires_grad=True)
+        flow_grad = torch.linspace(0.0, 1.0, 4)[None, None, :, None].expand_as(z)
+        z.grad = torch.full_like(z, 1000.0)
+        model._last_style_tokens = z
+        model.update_action_importance(gradient=flow_grad)
+        expected = (z.detach() * flow_grad).abs().mean(dim=(0, 1, 3))
+        expected = (expected - expected.min()) / (expected.max() - expected.min())
+        torch.testing.assert_close(style.action_importance, expected)
 
 
 class FakeEnv:

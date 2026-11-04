@@ -39,7 +39,10 @@ from dacsc.corp_robocasa import (  # noqa: E402
     CORP_STYLE_MODES,
     OBJECTIVE,
     ROBOCASA_CORP_CONFIG,
+    TASK_AUX_HEAD_HIDDEN_DIM,
+    TASK_AUX_PROVENANCE,
     CorpRoboCasa,
+    TaskAuxConfig,
     load_corp_robocasa,
     _CORP_REPO,
 )
@@ -80,6 +83,14 @@ def all_task_paths(max_tasks: int = 0, data_root: Path = DATA_ROOT) -> list[str]
     return paths
 
 
+def task_class_map(tasks) -> dict[str, int]:
+    """Stable task-name -> class-id mapping shared by train/source/val datasets."""
+    names = [Path(path).parent.parent.name for path in tasks]
+    if len(names) != len(set(names)):
+        raise ValueError("task class map contains duplicate task names")
+    return {name: index for index, name in enumerate(sorted(names))}
+
+
 def set_seed(seed: int) -> None:
     random.seed(seed)
     np.random.seed(seed)
@@ -112,7 +123,14 @@ def build_dataset(
     )
 
 
-def move_batch(batch, norm, device, *, pixel_augmentation=None):
+def move_batch(
+    batch,
+    norm,
+    device,
+    *,
+    pixel_augmentation=None,
+    task_to_id: dict[str, int] | None = None,
+):
     images = {k: v.to(device, non_blocking=True) for k, v in batch["images"].items()}
     if batch["image_space"] == "rgb01":
         if pixel_augmentation is None:
@@ -128,7 +146,7 @@ def move_batch(batch, norm, device, *, pixel_augmentation=None):
         raise ValueError(
             "pixel training augmentation requires raw RGB, not normalized/evaluation images"
         )
-    return {
+    moved = {
         "images": images,
         "state": norm.normalize_state(batch["state"].to(device)),
         "instruction": batch["instruction"],
@@ -136,6 +154,13 @@ def move_batch(batch, norm, device, *, pixel_augmentation=None):
         "action_mask": batch["action_mask"].to(device),
         "style_id": batch["style_id"].to(device),
     }
+    if task_to_id is not None:
+        try:
+            task_ids = [task_to_id[name] for name in batch["task"]]
+        except KeyError as exc:
+            raise ValueError(f"task has no class id: {exc.args[0]}") from exc
+        moved["task_id"] = torch.tensor(task_ids, dtype=torch.long, device=device)
+    return moved
 
 
 def balanced_indices(dataset, per_task: int, seed: int = 0) -> list[int]:
@@ -288,6 +313,18 @@ def main() -> int:
     ap.add_argument("--per-task-eval", type=int, default=16)
     ap.add_argument("--lr", type=float, default=5e-5)
     ap.add_argument("--ema-decay", type=float, default=0.99, help="0 disables EMA")
+    ap.add_argument(
+        "--task-aux-lambda",
+        type=float,
+        default=0.01,
+        help="CoRP Eq.7 task-classification loss weight; 0 disables the auxiliary head",
+    )
+    ap.add_argument(
+        "--task-aux-depth",
+        type=int,
+        default=1,
+        help="DiT prefix depth used by the shared task head; paper default J={1}",
+    )
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--max-tasks", type=int, default=0)
     ap.add_argument("--eval-every", type=int, default=50)
@@ -346,6 +383,10 @@ def main() -> int:
         or args.max_tasks < 0
         or not math.isfinite(args.lr)
         or args.lr <= 0
+        or not math.isfinite(args.task_aux_lambda)
+        or args.task_aux_lambda < 0
+        or args.task_aux_depth < 0
+        or args.task_aux_depth > ROBOCASA_CORP_CONFIG["action_generator"]["num_layers"]
         or not 0 <= args.ema_decay < 1
     ):
         ap.error("invalid workers, task limit, LR or EMA decay")
@@ -361,7 +402,28 @@ def run(args, out: Path) -> int:
     assert device.type == "cuda", "P2 baseline 必须用 GPU"
 
     tasks = all_task_paths(args.max_tasks, args.data_root)
+    task_to_id = task_class_map(tasks)
+    task_aux_cfg = (
+        None
+        if args.task_aux_lambda == 0
+        else TaskAuxConfig(
+            num_classes=len(task_to_id),
+            loss_weight=args.task_aux_lambda,
+            depths=(args.task_aux_depth,),
+            head_hidden_dim=TASK_AUX_HEAD_HIDDEN_DIM,
+        )
+    )
+    task_aux_payload = (
+        None
+        if task_aux_cfg is None
+        else {
+            **task_aux_cfg.to_dict(),
+            "task_to_id": task_to_id,
+            "implementation": TASK_AUX_PROVENANCE,
+        }
+    )
     print(f"tasks={len(tasks)}", flush=True)
+    print(f"task_aux={task_aux_payload}", flush=True)
     t0 = time.time()
     train_ds = build_dataset(
         tasks,
@@ -400,6 +462,10 @@ def run(args, out: Path) -> int:
         if resume_payload.get("metric_schema") != MSE_SCHEMA:
             raise ValueError(
                 "resume metric schema differs; legacy metric histories are unsupported"
+            )
+        if resume_payload.get("task_aux") != task_aux_payload:
+            raise ValueError(
+                "resume task auxiliary objective/class mapping differs from checkpoint"
             )
         saved_args = resume_payload["run_args"]
         # Reporting/checkpoint cadence and destination may change; training may not.
@@ -457,12 +523,15 @@ def run(args, out: Path) -> int:
             config=ROBOCASA_CORP_CONFIG,
             device=device,
             token_style=token_style,
+            task_aux=task_aux_cfg,
         )
     else:
         initialization_sha256 = resume_payload["initialization_sha256"]
-        model = CorpRoboCasa(resume_payload["config"], token_style=token_style).to(
-            device
-        )
+        model = CorpRoboCasa(
+            resume_payload["config"],
+            token_style=token_style,
+            task_aux=task_aux_cfg,
+        ).to(device)
         merge = resume_payload["merge"]
     if token_style is not None:
         assert model._style_handle is not None, "token_style hook not registered"
@@ -514,6 +583,7 @@ def run(args, out: Path) -> int:
                     "state_std": norm.state_std.cpu(),
                 },
                 "token_style": token_style_cfg,
+                "task_aux": task_aux_payload,
                 "pixel_augmentation": pixel_config,
                 "merge": merge,
                 "training_runtime": runtime,
@@ -598,28 +668,49 @@ def run(args, out: Path) -> int:
             batches_in_epoch = 0
             batch = next(it)
         batches_in_epoch += 1
-        b = move_batch(batch, norm, device, pixel_augmentation=pixel_augmentation)
+        b = move_batch(
+            batch,
+            norm,
+            device,
+            pixel_augmentation=pixel_augmentation,
+            task_to_id=task_to_id,
+        )
         with torch.autocast("cuda", dtype=torch.bfloat16):
-            loss = model.flow_matching_loss(
+            losses = model.training_loss(
                 b["images"],
                 b["state"],
                 b["instruction"],
                 b["action"],
                 b["action_mask"],
+                task_labels=b["task_id"] if task_aux_cfg is not None else None,
                 domain_ids=b["style_id"],
             )
+        loss = losses.total
         opt.zero_grad(set_to_none=True)
-        loss.backward()
         if getattr(model, "token_style", None) is not None:
-            model.update_action_importance()
+            if model._last_style_tokens is None:
+                raise RuntimeError(
+                    "token-style action importance has no captured tokens"
+                )
+            flow_gradient = torch.autograd.grad(
+                losses.flow,
+                model._last_style_tokens,
+                retain_graph=True,
+            )[0]
+            model.update_action_importance(gradient=flow_gradient)
+        loss.backward()
         torch.nn.utils.clip_grad_norm_(params, 1.0, error_if_nonfinite=True)
         opt.step()
         if ema is not None:
             ema.update(model)
         sched.step()
         if step % 5 == 0 or step == args.steps - 1:
+            task_loss = (
+                " n/a" if losses.task is None else f" task {float(losses.task):.4f}"
+            )
             print(
                 f"step {step:4d} loss {float(loss):.4f} "
+                f"flow {float(losses.flow):.4f}{task_loss} "
                 f"lr {sched.get_last_lr()[0]:.2e} elapsed {time.time()-t_start:.1f}s",
                 flush=True,
             )
@@ -740,7 +831,11 @@ def run(args, out: Path) -> int:
                     - src_eval["macro_task_action_mse"],
                     "detail_file": metrics_path.name,
                     "detail_sha256": file_sha256(metrics_path),
-                    "train_flow_loss": float(loss),
+                    "train_total_loss": float(loss),
+                    "train_flow_loss": float(losses.flow),
+                    "train_task_aux_loss": (
+                        None if losses.task is None else float(losses.task)
+                    ),
                 }
             )
             model.train()
@@ -748,6 +843,7 @@ def run(args, out: Path) -> int:
     result = {
         "metric_schema": MSE_SCHEMA,
         "pixel_augmentation": pixel_config,
+        "task_aux": task_aux_payload,
         "args": {
             key: str(value) if isinstance(value, Path) else value
             for key, value in vars(args).items()

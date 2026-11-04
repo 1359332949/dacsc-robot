@@ -301,6 +301,7 @@ class SeedStatisticsTests(unittest.TestCase):
                 "config": corp.ROBOCASA_CORP_CONFIG,
                 "model": tiny_corp().state_dict(),
                 "token_style": None,
+                "task_aux": None,
                 "pixel_augmentation": None,
                 "normalizer": {
                     "state_mean": torch.zeros(9),
