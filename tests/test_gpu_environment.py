@@ -122,6 +122,10 @@ class GPUEnvironmentContractTests(unittest.TestCase):
         self.assertEqual(robocasa["evdev"], "2.0.0")
         self.assertNotIn("mink", robocasa)
 
+    def test_corp_lock_includes_register_analysis_requirements(self):
+        corp = lock_pins("corp.lock.txt")
+        self.assertEqual(corp["matplotlib"], "3.11.2")
+
     def test_every_locked_requirement_has_integrity_hashes(self):
         for name in ("corp.lock.txt", "robocasa.lock.txt"):
             lines = (ROOT / "environment" / name).read_text().splitlines()

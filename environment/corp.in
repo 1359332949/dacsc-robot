@@ -3,3 +3,4 @@ torch==2.11.0
 torchvision==0.26.0
 numpy==1.26.4
 transformers==4.48.1
+matplotlib==3.11.2
