@@ -22,6 +22,7 @@ def probe(python: str, profile: str) -> dict:
             "import diffusion_policy\n"
             "import diffusion_policy.dataset.lerobot_dataset\n"
             "import robocasa\n"
+            "import robocasa.utils.lerobot_utils\n"
             "import robosuite\n"
             "import mujoco\n"
         )

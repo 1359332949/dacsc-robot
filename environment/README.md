@@ -86,6 +86,16 @@ metadata lists the optional `mink` extra as mandatory and pins NumPy below 2.
 For MuJoCo replay, provide the pinned robosuite master checkout explicitly; do
 not weaken RoboCasa's NumPy assertion.
 
+`lerobot==0.3.3` is installed from its official wheel with `--no-deps` because
+its metadata over-constrains Torch to `<2.8` while the verified runtime uses
+Torch 2.11. RoboCasa playback imports only its dataset helpers; their actual
+runtime dependencies (`datasets`, `jsonlines`) are pinned in the main RoboCasa
+lock and covered by smoke tests. No Torch downgrade or source patch is applied.
+
+`tianshou==0.4.10` is not installed: its `protobuf<3.20` requirement conflicts
+with the pinned TensorBoard stack. It is used only by RoboCasa's optional speed
+benchmark script, not by dataset reading, policy inference or MuJoCo playback.
+
 ## Verification
 
 ```bash

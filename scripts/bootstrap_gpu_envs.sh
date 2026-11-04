@@ -75,6 +75,17 @@ install() {
 
 install "$CORP_PYTHON" corp.lock.txt
 install "$ROBOCASA_PYTHON" robocasa.lock.txt
+lerobot_source=()
+if [[ -n "$WHEELHOUSE" ]]; then
+  lerobot_source=(--no-index --find-links "$WHEELHOUSE")
+else
+  lerobot_source=(--index-url "$PYPI")
+fi
+"$ROBOCASA_PYTHON" -m pip install \
+  --disable-pip-version-check \
+  --no-deps \
+  "${lerobot_source[@]}" \
+  -r "$ROOT/environment/lerobot.lock.txt"
 
 if [[ -n "$ROBOSUITE_SOURCE" ]]; then
   "$ROBOCASA_PYTHON" -m pip install \

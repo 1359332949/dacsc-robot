@@ -392,7 +392,7 @@ def main() -> int:
         parser.error("--workers must be at least 1")
     indexes = [args.pypi, args.pytorch]
     with DirectoryLock(args.out):
-        for lock_name in ("corp.lock.txt", "robocasa.lock.txt"):
+        for lock_name in ("corp.lock.txt", "robocasa.lock.txt", "lerobot.lock.txt"):
             for name, version, hashes in parse_lock(
                 args.root / "environment" / lock_name
             ):
@@ -421,7 +421,12 @@ def main() -> int:
             range_threshold=args.range_threshold,
             workers=args.workers,
         )
-        for name in ("corp.lock.txt", "robocasa.lock.txt", "upstream.lock.json"):
+        for name in (
+            "corp.lock.txt",
+            "robocasa.lock.txt",
+            "lerobot.lock.txt",
+            "upstream.lock.json",
+        ):
             source = args.root / "environment" / name
             (args.out / name).write_bytes(source.read_bytes())
         artifacts = sorted(

@@ -122,6 +122,17 @@ class GPUEnvironmentContractTests(unittest.TestCase):
         self.assertEqual(robocasa["evdev"], "2.0.0")
         self.assertNotIn("mink", robocasa)
 
+    def test_robocasa_lock_includes_robocasa_declared_runtime_requirements(self):
+        robocasa = lock_pins("robocasa.lock.txt")
+        self.assertIn("pygame", robocasa)
+        self.assertIn("hidapi", robocasa)
+        self.assertIn("datasets", robocasa)
+        self.assertIn("jsonlines", robocasa)
+        self.assertNotIn("lerobot", robocasa)
+        self.assertNotIn("tianshou", robocasa)
+        lerobot = lock_pins("lerobot.lock.txt")
+        self.assertEqual(lerobot, {"lerobot": "0.3.3"})
+
     def test_corp_lock_includes_register_analysis_requirements(self):
         corp = lock_pins("corp.lock.txt")
         self.assertEqual(corp["matplotlib"], "3.11.2")

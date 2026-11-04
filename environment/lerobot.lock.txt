@@ -1,0 +1,3 @@
+lerobot==0.3.3 \
+    --hash=sha256:5a8c526f4f50a5a4260b75f0382af26d01ef169c9a1ae8ca453ad5c6e1cf5aef \
+    --hash=sha256:ae8354b516f5c8cfaa059d5ac926b4d03e96ca73350b971f8c7d75b905ba953d

@@ -1,0 +1,3 @@
+# Official lerobot dataset reader. Installed with --no-deps because 0.3.3
+# over-constrains torch/torchvision relative to the shared RoboCasa runtime.
+lerobot==0.3.3

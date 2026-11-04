@@ -36,6 +36,7 @@ import diffusion_policy.dataset.lerobot_dataset
 import mujoco
 import numpy
 import robocasa
+import robocasa.utils.lerobot_utils
 import robomimic
 import robosuite
 import torch

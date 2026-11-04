@@ -19,4 +19,15 @@ for name in corp robocasa; do
     --no-header \
     --output-file "$ROOT/environment/$name.lock.txt"
 done
-echo "Wrote environment/corp.lock.txt and environment/robocasa.lock.txt"
+
+"$UV" pip compile "$ROOT/environment/lerobot.in" \
+  --python-version "$PYTHON" \
+  --python-platform "$PLATFORM" \
+  --index "$PYPI" \
+  --generate-hashes \
+  --no-annotate \
+  --no-header \
+  --no-deps \
+  --output-file "$ROOT/environment/lerobot.lock.txt"
+
+echo "Wrote environment/corp.lock.txt, environment/robocasa.lock.txt and environment/lerobot.lock.txt"
