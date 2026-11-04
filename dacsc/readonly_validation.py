@@ -395,8 +395,9 @@ def replay_plan_stage(args, out):
     playback = (
         ROOT / "repos/robocasa/robocasa/scripts/dataset_scripts/playback_dataset.py"
     )
+    sim_python = Path(args.sim_python).expanduser().absolute()
     common = [
-        str(args.sim_python.resolve()),
+        str(sim_python),
         str(playback),
         "--dataset",
         str(dataset),

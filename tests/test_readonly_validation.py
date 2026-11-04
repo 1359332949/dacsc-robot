@@ -381,9 +381,11 @@ class ReadOnlyValidationTests(unittest.TestCase):
             np.savez(ep / "states.npz", states=np.zeros((3, 5)))
             with gzip.open(ep / "model.xml.gz", "wb") as stream:
                 stream.write(b"<mujoco/>")
+            sim_python = root / "venv-python"
+            sim_python.symlink_to(sys.executable)
             args = SimpleNamespace(
                 dataset=path,
-                sim_python=Path(sys.executable),
+                sim_python=sim_python,
                 replay_output=root / "replay",
             )
             with patch.object(
@@ -394,6 +396,10 @@ class ReadOnlyValidationTests(unittest.TestCase):
             self.assertIn("--use-actions", plan["commands"]["action"])
             self.assertNotIn("--use-actions", plan["commands"]["state"])
             self.assertNotIn("--first", plan["commands"]["state"])
+            self.assertEqual(
+                plan["commands"]["state"][0],
+                str(sim_python.absolute()),
+            )
             meta = json.loads((ep / "ep_meta.json").read_text())
             (ep / "ep_meta.json").write_text(json.dumps({**meta, "style_id": 41}))
             with self.assertRaisesRegex(ValueError, "not source"):
