@@ -235,3 +235,85 @@ DiT prefix -> Task head 61-way (train only, dashed)
 
 渲染由 PlotNeuralNet 官方 `pycore.tikzeng`、`Box`、`Connection` 宏完成；
 项目脚本只定义CoRP架构块、维度和连接。编译使用 Tectonic 0.17.0。
+
+## 9. 2.5D图怎么读：由浅入深
+
+### 9.1 一句话
+
+CoRP-RoboCasa 接收三路相机画面、语言指令和机器人状态，先把它们压缩成
+一组固定长度的 token，再用 DiT 的 flow matching 生成一段 10 步、
+每步 12 维的动作。
+
+### 9.2 三个层次
+
+先把它看成三段，而不是一堆层：
+
+```text
+观测输入
+  -> 表征：画面/语言/状态变成 token
+  -> 决策：token 条件化动作生成
+  -> 输出：未来 10 步动作
+```
+
+对应到图中：
+
+```text
+视觉链：3 views -> DINOv2 -> Resampler -> visual prefix
+辅助输入：T5 language + robot state
+融合：visual + language + state = fusion prefix
+动作：fusion prefix -> 1-layer DiT -> velocity -> action chunk
+训练辅助：DiT prefix -> task aux（不参与推理动作）
+```
+
+### 9.3 模块、输入、输出和作用
+
+下表中的 `B` 是 batch size，`H` 是动作时域，`D` 是隐藏维度。
+
+| 模块 | 输入 | 输出 | 作用 |
+|---|---|---|---|
+| 3 路相机 | 每路 `[B,3,224,224]` | 拼接后 `[3B,3,224,224]` | 同时提供左右环境视角和腕部视角 |
+| DINOv2 ViT-S/14 | `[3B,3,224,224]` | `[3B,256,384]` | 将每张图切成 256 个 patch token；它编码局部视觉特征，不直接输出动作 |
+| Resampler | 每视角 256 个 patch、48 个 learned query、语言 FiLM 条件 | 每视角 `[B,48,768]`，三视角拼接为 `[B,144,768]` | 把大量 patch 压缩成固定数量的视觉 token，并把视觉宽度统一到 768 |
+| T5 language encoder | 指令文本，最大 32 token | token `[B,32,768]`，池化表示 `[B,768]` | 提供任务语义；池化表示还用于 Resampler FiLM 和 DiT 的 adaLN 条件 |
+| State encoder | 9 维机器人状态 `[B,9]` | `[B,1,768]` | 注入末端执行器相对位置、相对旋转和夹爪状态 |
+| Fusion prefix | 视觉 144 + 语言 32 + 状态 1 | `[B,177,768]` | 这是感知与动作生成之间的统一接口，177 不是随意数字 |
+| 1-layer DiT | noisy action `[B,10,12]`、时间 `tau`、177-token prefix | velocity `[B,10,12]` | 学习从噪声到动作段的向量场；推理时用 Euler 积分生成动作 |
+| Velocity head | DiT 的 768 维动作 token | `[B,10,12]` | 将每个动作 token 投回 12 维动作空间 |
+| Task aux head | 选定的 DiT prefix hidden states | 61 类任务 logits | 只在训练时提供辅助分类约束；虚线表示它不进入推理动作路径 |
+
+### 9.4 高维度理解
+
+这张图真正表达的是三个分离：
+
+1. **感知与决策分离**：DINOv2 和 Resampler 负责“看见并在固定预算内表达”，
+   DiT 负责“基于这些表达生成动作”。视觉特征变多，不代表动作路径会直接变长。
+2. **共享接口与任务专用头分离**：`177 x 768` 是共享 prefix；动作头输出连续动作，
+   task aux 头输出离散任务类别。后者是训练辅助，不是部署时必须存在的分支。
+3. **表示学习与动作生成分离**：task aux 让视觉 prefix 更容易保留任务相关信息，
+   但最终控制信号仍由 DiT velocity 和 12 维动作接口产生。
+
+另外，`10 x 12` 不是“10 个动作类别”：
+
+```text
+10 = action horizon，未来动作段长度
+12 = 单个动作的维度
+```
+
+RoboCasa 的 12 维动作接口包含 base motion、control mode、末端位置、
+末端旋转和夹爪控制。动作段通过 flow matching 生成，推理时从噪声开始，
+做固定步数的 Euler 更新，而不是一次前向直接回归一个动作。
+
+### 9.5 看图顺序
+
+建议按下面的顺序读：
+
+```text
+1. 从左到右看视觉链：图像 -> patch -> 压缩后的视觉 token
+2. 看 T5 和 State 如何汇入 Fusion
+3. 看 Fusion 的 177 个 token 如何条件化 DiT
+4. 看 DiT 输出 velocity，并经过动作积分得到 10 x 12 动作
+5. 最后看虚线 task aux：只用于训练，不用于推理
+```
+
+这张图是架构阅读图，不声称是完整计算图。真实模块连接、参数和运行时 shape
+以 Torchview 输出为准。

@@ -46,10 +46,14 @@ def main() -> int:
     )
 
     args.out.mkdir(parents=True, exist_ok=True)
+    tikz_begin = to_begin().replace(
+        r"\begin{document}",
+        "\\begin{document}\n\\pagecolor{white}\n\\color{black}",
+    )
     arch = [
         to_head(str(upstream)),
         to_cor(),
-        to_begin(),
+        tikz_begin,
         to_Conv(
             "rgb",
             s_filer=224,
