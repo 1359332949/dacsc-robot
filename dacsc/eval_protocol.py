@@ -8,7 +8,7 @@ from pathlib import Path
 from dacsc.corp_images import image_contract
 from dacsc.upstream import verify_upstream
 
-PROTOCOL_VERSION = "corp_robocasa_sr_v6"
+PROTOCOL_VERSION = "corp_robocasa_sr_v7"
 PROTOCOL_KEYS = {
     "version",
     "checkpoint_sha256",
@@ -98,6 +98,7 @@ def validate_training_origin(origin: dict) -> None:
         "intervention",
         "pixel_augmentation",
         "task_aux",
+        "initialization_policy",
     }
     if (
         set(origin) != expected
@@ -163,3 +164,8 @@ def validate_training_origin(origin: dict) -> None:
             or not task_aux["implementation"]
         ):
             raise ValueError("invalid task auxiliary training origin")
+    if (
+        not isinstance(origin["initialization_policy"], str)
+        or not origin["initialization_policy"]
+    ):
+        raise ValueError("missing initialization policy in training origin")

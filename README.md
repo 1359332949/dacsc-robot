@@ -76,9 +76,14 @@ RoboCasa 数据根目录使用 `--data-root` 或 `DACSC_DATA_ROOT`，其下应�
 `v1.0/pretrain/atomic/<Task>/<date>/lerobot`。CoRP 源码通过 `CORP_REPO` 或 `repos/CoRP` 定位。
 所有入口 `--help` 可在不启动训练的情况下查看参数。
 
-当前 checkpoint 为 `corp_robocasa_v4`，SR schema 为 `corp_robocasa_sr_v6`，action指标仍为 `corp_action_mse_v1`。
+当前 checkpoint 为 `corp_robocasa_v5`，SR schema 为 `corp_robocasa_sr_v7`，action指标仍为 `corp_action_mse_v1`。
 旧 loss、图像变换、donor 或评测协议的文件不转换、不兼容、不混入新对比。
 test 默认封存，只有最终评估显式启用。真实 RoboCasa/CUDA 的复核仍待服务器环境验证。
+
+官方 7D 动作头的前 7 维与 RoboCasa 的 eef position/rotation/gripper 严格对应，
+训练初始化会复用这部分权重，新增 base motion/control mode 5 维从零学习。
+`initialization_policy` 写入 checkpoint、result 和 SR training origin；v4/v6 旧结果
+不能与这一初始化协议混表。
 
 CoRP-RoboCasa 默认启用论文 Eq.7 的 task-classification auxiliary loss：
 `--task-aux-lambda 0.01 --task-aux-depth 1`。任务头只读取 `V×K` 个视觉前缀 token，

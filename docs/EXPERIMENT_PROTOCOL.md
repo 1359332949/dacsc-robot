@@ -218,7 +218,7 @@ episode 标识为 `(dataset/task, episode_index)`；不同任务的相同数字�
 
 | 环节 | 来源 / 接口 | 边界 |
 | --- | --- | --- |
-| 模型/加载 | [官方 CoRP](https://github.com/corp-policy/CoRP/tree/52445740aa9517ae396cc8fb14bae8fe5922f118) `RepresentationExtractor`、`DiTActionGenerator`、`load_policy` | 保留 DINOv2/T5/K48/1-layer DiT；仅适配3 views、9D state、12D action、H10 |
+| 模型/加载 | [官方 CoRP](https://github.com/corp-policy/CoRP/tree/52445740aa9517ae396cc8fb14bae8fe5922f118) `RepresentationExtractor`、`DiTActionGenerator`、`load_policy` | 保留 DINOv2/T5/K48/1-layer DiT；仅适配3 views、9D state、12D action、H10；动作头前7维复用官方权重 |
 | 数据 | [官方 RoboCasa DP reader](https://github.com/robocasa-benchmark/diffusion_policy/blob/41212698b6f481ed92a55f0d5f1778ec56bea417/diffusion_policy/dataset/lerobot_dataset.py) | 不重写视频读取、动作键拼接和时间索引；在外层过滤原生标签/补 mask |
 | 重放 | [官方 reset_to](https://github.com/robocasa/robocasa/blob/dc73a8ce18e4b8947e8df2ae2958245ca823f3b4/robocasa/scripts/dataset_scripts/playback_dataset.py) | 不调用 label_subtasks 中的修改副本，不修补 XML、不偷偷 retry |
 | 布局/时限 | 官方 `LayoutType.TRAIN`、`unpack_layout_ids`、`get_task_horizon` | layout 11–60；时限按任务 registry，删除固定600步和旧 override |
@@ -228,7 +228,10 @@ episode 标识为 `(dataset/task, episode_index)`；不同任务的相同数字�
 | 互斥 | [filelock](https://py-filelock.readthedocs.io/en/latest/how-to.html) | 输出所有权和日志创建位于同一锁内 |
 
 共享权重从**已训练的 LIBERO CoRP policy checkpoint**迁移，不只是 DINOv2 视觉预训练。
-先用官方 loader 完整加载源模型；仅声明的 state/action 接口和新 camera query/embedding 允许初始化。
+先用官方 loader 完整加载源模型；RoboCasa 动作前7维与 LIBERO 严格对应，必须复制
+`action_projection.weight[:, :7]`、`velocity_projection.weight[:7]` 和
+`velocity_projection.bias[:7]`，新增5维确定性零初始化。state projection 因
+axis-angle→quaternion 语义不一致保持随机；新 camera query/embedding按声明规则初始化。
 其他 missing/unexpected/shape mismatch 报错。报告中的单位是 state-dict tensor，需区分共享参数别名。
 
 必须使用名称 **CoRP adapted to RoboCasa / our training adaptation**：已锁定的官方发布版本只提供推理，
@@ -346,8 +349,9 @@ CPU/CUDA RNG、optimizer、scheduler、EMA、donor、importance、像素增广RN
 checkpoint原子替换，保存独立于评测周期。精确续训目前要求 workers=0、同数据路径/metadata/预算/架构。
 不能把一个2k预算改写成10k后称为同预算的完整 resume；新的预算需另立实验。
 已完成预算的 checkpoint 不再走训练 resume；显式使用独立 evaluator，避免将保存点之前的 metrics 当作最终评测。
-模型格式为 `corp_robocasa_v4`、训练状态版本3，保存 raw/EMA/实际完成步数、初始化权重 digest、图像/上游契约、
-task-aux配置/类别映射和预算。SR协议为`corp_robocasa_sr_v6`，训练身份包含task-aux配置。
+模型格式为 `corp_robocasa_v5`、训练状态版本3，保存 raw/EMA/实际完成步数、初始化权重 digest、
+`initialization_policy`、图像/上游契约、task-aux配置/类别映射和预算。
+SR协议为`corp_robocasa_sr_v7`，训练身份包含初始化策略和task-aux配置。
 旧格式不迁移。test 默认不执行。
 
 ## 评测与判定
@@ -358,7 +362,8 @@ SR source 为训练 styles 下新生成的冻结场景，不是数据中的 `%10
 scene manifest 保存模型 XML、仿真状态、metadata 和 RNG；之后调用官方重放，再核对 state/style/layout。
 
 聚合必须检查任务清单、episode数、manifest digest、checkpoint SHA256、条件、推理预算、source/val范围和完整性。
-schema `corp_robocasa_sr_v6` 保存实际训练seed、预算、优化配方、像素/特征增广、task-aux配置、初始化及训练数据digest，不接受旧JSON冒充完整配对记录。
+schema `corp_robocasa_sr_v7` 保存实际训练seed、预算、优化配方、像素/特征增广、task-aux配置、
+初始化策略及训练数据digest，不接受旧JSON冒充完整配对记录。
 写入前锁文件，日志禁止截断；中断/失败不能产生“全完成”的汇总。
 旧进程不遵守新锁，以后部署前须确认旧 writer 退出，再使用新目录；本轮未远程部署。
 

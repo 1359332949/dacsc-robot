@@ -15,8 +15,10 @@ flow matching）原样保留，只改接口：
       -> 从 corp_libero.pt 加载（形状一致的共享层）。
     * 官方 2 个 view 的 learned query / view embedding -> 按 view 映射拷到前 2 个 view；
       第 3 个 view 随机初始化。
-    * state projection (8->9) / action_projection (7->12) / velocity_projection (7->12)
-      -> 随机初始化（接口适配层，语义不一一对应），必须在论文里明确标注。
+    * state projection (8->9) -> 随机初始化（axis-angle 3D 与 quaternion 4D
+      的旋转语义不一一对应）。
+    * action_projection / velocity_projection (7->12) -> 前 7 维严格复用官方
+      LIBERO 动作头（位置3 + 旋转3 + gripper1）；新增 5 维零初始化。
 
 命名必须写成 "CoRP adapted to RoboCasa / our reproduction"，不能写成官方 CoRP 在 RoboCasa 上。
 """
@@ -35,9 +37,10 @@ from torch.nn import functional as F
 from dacsc.corp_images import image_contract
 
 _REPO_ROOT = Path(__file__).resolve().parents[1]
-CHECKPOINT_FORMAT = "corp_robocasa_v4"
+CHECKPOINT_FORMAT = "corp_robocasa_v5"
 OBJECTIVE = "corp_masked_flow_repeat_last_v2"
 TASK_AUX_HEAD_HIDDEN_DIM = 256
+INITIALIZATION_POLICY = "libero_shared_plus_aligned_7d_action_head_v1"
 TASK_AUX_PROVENANCE = (
     "CoRP arXiv:2610.08183 Eq.7 reproduction; "
     "github.com/corp-policy/CoRP@52445740aa9517ae396cc8fb14bae8fe5922f118 "
@@ -605,6 +608,8 @@ def load_corp_robocasa(
     partial: list[str] = []
     interface_keys = {
         "representation_extractor.state_encoder.projection.weight",
+    }
+    partial_action_keys = {
         "action_generator.action_projection.weight",
         "action_generator.velocity_projection.weight",
         "action_generator.velocity_projection.bias",
@@ -631,15 +636,25 @@ def load_corp_robocasa(
             model_sd[key] = src.clone()
             copied.append(key)
         else:
-            if key not in interface_keys:
+            if key in partial_action_keys:
+                partial.append(key)
+            elif key in interface_keys:
+                random_init.append(key)
+            else:
                 raise ValueError(f"unexpected shared weight shape mismatch: {key}")
-            random_init.append(key)
 
     # 部分迁移：view query / view embedding（[3,...] vs [2,...]）。
     _merge_view_params(model_sd, libero_sd, config, partial)
+    # RoboCasa action 0:7 与 LIBERO 完全对齐；额外 5 维从零学习。
+    present_action_keys = partial_action_keys & set(model_sd)
+    if present_action_keys:
+        if present_action_keys != partial_action_keys:
+            raise ValueError("incomplete action interface for aligned initialization")
+        _merge_action_interface_params(model_sd, libero_sd, config, partial)
 
     model.load_state_dict(model_sd)
     report = {
+        "initialization_policy": INITIALIZATION_POLICY,
         "total": len(model_sd),
         "copied": len(copied) + len(partial),
         "random_init": len(random_init),
@@ -648,6 +663,62 @@ def load_corp_robocasa(
         "random_init_keys": random_init,
     }
     return model.to(device).eval(), report
+
+
+def _merge_action_interface_params(
+    model_sd: dict[str, torch.Tensor],
+    libero_sd: dict[str, torch.Tensor],
+    config: dict,
+    partial: list[str],
+) -> None:
+    """Reuse the semantically aligned first seven LIBERO action dimensions."""
+    if int(config["action_dim"]) != 12:
+        raise ValueError("aligned action initialization requires RoboCasa 12D actions")
+    prefix = "action_generator"
+    action_key = f"{prefix}.action_projection.weight"
+    velocity_key = f"{prefix}.velocity_projection.weight"
+    bias_key = f"{prefix}.velocity_projection.bias"
+    for key in (action_key, velocity_key, bias_key):
+        if key not in libero_sd or key not in model_sd:
+            raise ValueError(f"missing required aligned action weight: {key}")
+
+    src_action = libero_sd[action_key]
+    dst_action = model_sd[action_key]
+    if (
+        src_action.ndim != 2
+        or dst_action.ndim != 2
+        or src_action.shape[0] != dst_action.shape[0]
+        or src_action.shape[1] > dst_action.shape[1]
+    ):
+        raise ValueError(f"invalid aligned action weight shape: {action_key}")
+    aligned_action = torch.zeros_like(dst_action)
+    aligned_action[:, : src_action.shape[1]] = src_action
+    model_sd[action_key] = aligned_action
+
+    src_velocity = libero_sd[velocity_key]
+    dst_velocity = model_sd[velocity_key]
+    if (
+        src_velocity.ndim != 2
+        or dst_velocity.ndim != 2
+        or src_velocity.shape[1] != dst_velocity.shape[1]
+        or src_velocity.shape[0] > dst_velocity.shape[0]
+    ):
+        raise ValueError(f"invalid aligned velocity weight shape: {velocity_key}")
+    aligned_velocity = torch.zeros_like(dst_velocity)
+    aligned_velocity[: src_velocity.shape[0], :] = src_velocity
+    model_sd[velocity_key] = aligned_velocity
+
+    src_bias = libero_sd[bias_key]
+    dst_bias = model_sd[bias_key]
+    if (
+        src_bias.ndim != 1
+        or dst_bias.ndim != 1
+        or src_bias.shape[0] > dst_bias.shape[0]
+    ):
+        raise ValueError(f"invalid aligned velocity bias shape: {bias_key}")
+    aligned_bias = torch.zeros_like(dst_bias)
+    aligned_bias[: src_bias.shape[0]] = src_bias
+    model_sd[bias_key] = aligned_bias
 
 
 def _merge_view_params(
@@ -735,6 +806,7 @@ def load_adapted_checkpoint(
         "intervention": payload["token_style"],
         "pixel_augmentation": payload["pixel_augmentation"],
         "task_aux": payload["task_aux"],
+        "initialization_policy": payload["initialization_policy"],
         "optimization": payload["optimization"],
         "initialization_sha256": payload["initialization_sha256"],
         "data_metadata_sha256": order["metadata_sha256"],

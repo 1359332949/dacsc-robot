@@ -302,6 +302,7 @@ class SeedStatisticsTests(unittest.TestCase):
                 "model": tiny_corp().state_dict(),
                 "token_style": None,
                 "task_aux": None,
+                "initialization_policy": origin["initialization_policy"],
                 "pixel_augmentation": None,
                 "normalizer": {
                     "state_mean": torch.zeros(9),

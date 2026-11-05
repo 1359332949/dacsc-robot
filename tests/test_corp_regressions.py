@@ -114,6 +114,7 @@ def training_origin_fixture(seed=42):
         "intervention": None,
         "pixel_augmentation": None,
         "task_aux": None,
+        "initialization_policy": "fixture_initialization_v1",
     }
 
 
@@ -479,6 +480,72 @@ class ViewOrderTests(unittest.TestCase):
 
 
 class TaskAuxiliaryLossTests(unittest.TestCase):
+    def test_aligned_action_initialization_copies_seven_and_zeros_new_five(self):
+        source = {
+            "action_generator.action_projection.weight": torch.arange(
+                35, dtype=torch.float32
+            ).reshape(5, 7),
+            "action_generator.velocity_projection.weight": torch.arange(
+                35, dtype=torch.float32
+            ).reshape(7, 5),
+            "action_generator.velocity_projection.bias": torch.arange(
+                7, dtype=torch.float32
+            ),
+        }
+        destination = {
+            "action_generator.action_projection.weight": torch.full(
+                (5, 12), float("nan")
+            ),
+            "action_generator.velocity_projection.weight": torch.full(
+                (12, 5), float("nan")
+            ),
+            "action_generator.velocity_projection.bias": torch.full(
+                (12,), float("nan")
+            ),
+        }
+        corp._merge_action_interface_params(
+            destination,
+            source,
+            {"action_dim": 12},
+            [],
+        )
+        torch.testing.assert_close(
+            destination["action_generator.action_projection.weight"][:, :7],
+            source["action_generator.action_projection.weight"],
+            rtol=0,
+            atol=0,
+        )
+        torch.testing.assert_close(
+            destination["action_generator.action_projection.weight"][:, 7:],
+            torch.zeros(5, 5),
+            rtol=0,
+            atol=0,
+        )
+        torch.testing.assert_close(
+            destination["action_generator.velocity_projection.weight"][:7],
+            source["action_generator.velocity_projection.weight"],
+            rtol=0,
+            atol=0,
+        )
+        torch.testing.assert_close(
+            destination["action_generator.velocity_projection.weight"][7:],
+            torch.zeros(5, 5),
+            rtol=0,
+            atol=0,
+        )
+        torch.testing.assert_close(
+            destination["action_generator.velocity_projection.bias"][:7],
+            source["action_generator.velocity_projection.bias"],
+            rtol=0,
+            atol=0,
+        )
+        torch.testing.assert_close(
+            destination["action_generator.velocity_projection.bias"][7:],
+            torch.zeros(5),
+            rtol=0,
+            atol=0,
+        )
+
     def task_batch(self):
         batch = 2
         return {
@@ -674,6 +741,7 @@ class TaskAuxiliaryLossTests(unittest.TestCase):
                 "model": model.state_dict(),
                 "token_style": None,
                 "task_aux": task_aux,
+                "initialization_policy": corp.INITIALIZATION_POLICY,
                 "pixel_augmentation": None,
                 "normalizer": {
                     "state_mean": torch.zeros(9),
@@ -697,6 +765,10 @@ class TaskAuxiliaryLossTests(unittest.TestCase):
                 loaded, _ = corp.load_adapted_checkpoint(path)
             self.assertEqual(loaded.task_aux_config.depths, (1,))
             self.assertEqual(loaded.evaluation_origin["task_aux"], task_aux)
+            self.assertEqual(
+                loaded.evaluation_origin["initialization_policy"],
+                corp.INITIALIZATION_POLICY,
+            )
 
             payload.pop("task_aux")
             torch.save(payload, path)

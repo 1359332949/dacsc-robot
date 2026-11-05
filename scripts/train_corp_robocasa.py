@@ -565,6 +565,7 @@ def run(args, out: Path) -> int:
                 "images": image_contract(),
                 "upstream": upstream,
                 "initialization_sha256": initialization_sha256,
+                "initialization_policy": merge["initialization_policy"],
                 "optimization": optimization_recipe,
                 "config": ROBOCASA_CORP_CONFIG,
                 "model": ema.shadow if ema is not None else model.state_dict(),
@@ -852,6 +853,7 @@ def run(args, out: Path) -> int:
         "images": image_contract(),
         "upstream": upstream,
         "initialization_sha256": initialization_sha256,
+        "initialization_policy": merge["initialization_policy"],
         "optimization": optimization_recipe,
         "support": {
             "train": train_ds.support(),
@@ -860,7 +862,7 @@ def run(args, out: Path) -> int:
             "source_eval": source_ds.support(source_loader.dataset.indices),
             "val_eval": val_ds.support(val_loader.dataset.indices),
         },
-        "merge": {k: merge[k] for k in ("copied", "random_init")},
+        "merge": {k: merge[k] for k in ("copied", "random_init", "partial_keys")},
         "budget": {
             "batch_size": args.batch_size,
             "steps": args.steps,
