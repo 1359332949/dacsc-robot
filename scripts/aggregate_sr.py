@@ -65,6 +65,8 @@ def agg(dir_path: Path, expected_tasks: list[str], episodes: int) -> dict:
             summary["shift"] != protocol["shift"]
             or summary["blur_sigma"] != protocol["blur_sigma"]
             or summary["seed"] != protocol["base_seed"]
+            or summary["layout_id"] != protocol["layout_id"]
+            or len(summary["style_order"]) != episodes
         ):
             raise ValueError(f"{task}: summary condition differs from the protocol")
         if type(summary["max_steps"]) is not int or summary["max_steps"] <= 0:
@@ -81,7 +83,12 @@ def agg(dir_path: Path, expected_tasks: list[str], episodes: int) -> dict:
                 or record["environment_seed"]
                 != protocol["base_seed"] + record["episode"]
                 or record["policy_seed"] != protocol["base_seed"] + record["episode"]
-                or record["actual_layout"] not in protocol["layouts"]
+                or record["actual_layout"] != protocol["layout_id"]
+                or record["requested_layout"] != protocol["layout_id"]
+                or record["requested_style"]
+                != summary["style_order"][record["episode"]]
+                or record["actual_style"]
+                != summary["style_order"][record["episode"]]
                 or record["style_ids"] != summary["styles"]
                 or record["actual_style"] not in summary["styles"]
                 or not 0 <= record["steps"] <= summary["max_steps"]

@@ -8,13 +8,14 @@ from pathlib import Path
 from dacsc.corp_images import image_contract
 from dacsc.upstream import verify_upstream
 
-PROTOCOL_VERSION = "corp_robocasa_sr_v8"
+PROTOCOL_VERSION = "corp_robocasa_sr_v9"
 PROTOCOL_KEYS = {
     "version",
     "checkpoint_sha256",
     "shift",
     "blur_sigma",
     "layouts",
+    "layout_id",
     "base_seed",
     "action_steps",
     "action_horizon",
@@ -72,12 +73,15 @@ def validate_protocol(protocol: dict) -> None:
         not math.isfinite(protocol["blur_sigma"])
         or protocol["blur_sigma"] < 0
         or not protocol["layouts"]
+        or type(protocol["layout_id"]) is not int
         or type(protocol["base_seed"]) is not int
         or protocol["precision"] not in {"fp32", "bf16"}
     ):
         raise ValueError("invalid blur/layout protocol")
     if protocol["layouts"] != sorted(set(protocol["layouts"])):
         raise ValueError("layouts must be sorted and unique")
+    if protocol["layout_id"] not in protocol["layouts"]:
+        raise ValueError("fixed evaluation layout is outside the allowed layout group")
     if any(
         type(protocol[key]) is not int or protocol[key] <= 0
         for key in ("action_steps", "action_horizon", "euler_steps", "image_size")

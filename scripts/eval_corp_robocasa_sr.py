@@ -92,6 +92,7 @@ def main() -> int:
     )
     ap.add_argument("--device", default="cuda:0")
     ap.add_argument("--seed", type=int, default=42)
+    ap.add_argument("--layout-id", type=int, default=11)
     ap.add_argument("--manifest-dir", type=Path, required=True)
     ap.add_argument("--manifest-mode", choices=["create", "replay"], default="replay")
     ap.add_argument("--out", required=True)
@@ -115,6 +116,8 @@ def run(args) -> int:
     max_steps = int(get_task_horizon(args.task))
     if max_steps <= 0:
         raise ValueError("official task horizon must be positive")
+    if args.layout_id not in layouts:
+        raise ValueError("layout-id must be in the official pretrain layout group")
     checkpoint_digest = file_sha256(Path(args.model))
 
     device = torch.device(args.device)
@@ -124,6 +127,7 @@ def run(args) -> int:
     if args.action_steps > model.action_horizon:
         raise ValueError("action-steps exceeds the checkpoint action horizon")
     styles = args.styles
+    style_order = [styles[ep % len(styles)] for ep in range(args.episodes)]
 
     protocol = {
         "version": PROTOCOL_VERSION,
@@ -131,6 +135,7 @@ def run(args) -> int:
         "shift": args.shift,
         "blur_sigma": args.blur_sigma,
         "layouts": layouts,
+        "layout_id": args.layout_id,
         "base_seed": args.seed,
         "action_steps": args.action_steps,
         "action_horizon": model.action_horizon,
@@ -167,6 +172,8 @@ def run(args) -> int:
                 layouts=layouts,
                 mode=args.manifest_mode,
                 reset_to=reset_to,
+                requested_style=style_order[ep],
+                requested_layout=args.layout_id,
             )
             result = rollout_episode(
                 env,
@@ -188,6 +195,8 @@ def run(args) -> int:
                     "style_ids": styles,
                     "actual_style": manifest["actual_style"],
                     "actual_layout": manifest["actual_layout"],
+                    "requested_style": manifest["requested_style"],
+                    "requested_layout": manifest["requested_layout"],
                     "environment_seed": manifest["environment_seed"],
                     "policy_seed": manifest["policy_seed"],
                     "manifest_sha256": digest,
@@ -215,6 +224,8 @@ def run(args) -> int:
         "manifest_dir": str(args.manifest_dir.resolve()),
         "max_steps": max_steps,
         "episodes": len(records),
+        "layout_id": args.layout_id,
+        "style_order": style_order,
         "successes": sum(r["success"] for r in records),
         "success_rate": sr,
         "elapsed_seconds": time.monotonic() - started,

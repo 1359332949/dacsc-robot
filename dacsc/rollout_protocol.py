@@ -11,6 +11,8 @@ from pathlib import Path
 import numpy as np
 import torch
 
+MANIFEST_FORMAT = "robocasa_eval_episode_v2"
+
 
 def seed_episode(seed: int) -> None:
     random.seed(seed)
@@ -39,6 +41,8 @@ def prepare_episode(
     seed: int,
     mode: str,
     reset_to,
+    requested_style: int | None = None,
+    requested_layout: int | None = None,
 ):
     """Always restore the recorded model before its state, including on creation.
 
@@ -53,10 +57,33 @@ def prepare_episode(
         "episode": episode,
         "environment_seed": seed,
         "policy_seed": seed,
+        "requested_style": requested_style,
+        "requested_layout": requested_layout,
     }
     if mode == "create":
         if path.exists():
             raise FileExistsError(path)
+        if (requested_style is None) != (requested_layout is None):
+            raise ValueError(
+                "requested_style and requested_layout must be provided together"
+            )
+        if requested_style is not None:
+            if requested_style not in styles:
+                raise ValueError("requested style is outside the requested split")
+            if requested_layout not in layouts:
+                raise ValueError("requested layout is outside the pretrain layout group")
+            # RoboCasa's official Kitchen.reset consumes these fields before
+            # sampling a scene. Setting them keeps the official scene/model
+            # construction path while making the style schedule explicit.
+            core._ep_meta = {
+                "layout_id": requested_layout,
+                "style_id": requested_style,
+            }
+        else:
+            # GymWrapper performs an initial reset in its constructor. That
+            # leaves _ep_meta populated, and RoboCasa reuses it on later resets.
+            # Clear it so each created manifest samples a fresh scene.
+            core._ep_meta = {}
         seed_episode(seed)
         env.reset(seed=seed)
         meta = core.get_ep_meta()
@@ -65,8 +92,12 @@ def prepare_episode(
             raise ValueError("sampled style is outside the requested split")
         if int(meta["layout_id"]) not in layouts:
             raise ValueError("sampled layout is outside the pretrain layout group")
+        if requested_style is not None and actual_style != requested_style:
+            raise ValueError("environment did not honor requested style")
+        if requested_layout is not None and int(meta["layout_id"]) != requested_layout:
+            raise ValueError("environment did not honor requested layout")
         manifest = {
-            "format": "robocasa_eval_episode_v1",
+            "format": MANIFEST_FORMAT,
             **contract,
             "actual_style": actual_style,
             "actual_layout": int(meta["layout_id"]),
@@ -86,8 +117,14 @@ def prepare_episode(
         manifest = json.loads(encoded)
     else:
         raise ValueError(f"unknown manifest mode: {mode}")
-    if manifest["format"] != "robocasa_eval_episode_v1":
+    if manifest["format"] != MANIFEST_FORMAT:
         raise ValueError("unsupported episode manifest")
+    missing = set(contract) - set(manifest)
+    if missing:
+        raise ValueError(
+            "episode manifest is missing protocol fields; recreate it: "
+            + ", ".join(sorted(missing))
+        )
     if any(manifest[key] != value for key, value in contract.items()):
         raise ValueError(f"episode manifest does not match requested protocol: {path}")
     seed_episode(seed)

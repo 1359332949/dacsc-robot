@@ -89,6 +89,58 @@ class OfficialRegistryTests(unittest.TestCase):
                     FakeEnv(), path, mode="replay", **{**kwargs, "layouts": [11]}
                 )
 
+    def test_create_clears_stale_episode_meta_and_honors_requested_scene(self):
+        class SceneEnv(FakeEnv):
+            def __init__(self):
+                super().__init__()
+                self._ep_meta = {"layout_id": 15, "style_id": 20}
+                self.reset_calls = 0
+
+            def reset(self, seed):
+                self.reset_calls += 1
+                if self._ep_meta:
+                    self.meta = dict(self._ep_meta)
+                else:
+                    self.meta = {"layout_id": 11, "style_id": 11}
+                return super().reset(seed)
+
+            def get_ep_meta(self):
+                return self.meta
+
+        with tempfile.TemporaryDirectory() as d:
+            path = Path(d) / "ep.json.gz"
+            kwargs = dict(
+                task="A",
+                styles=list(range(11, 31)),
+                layouts=list(range(11, 61)),
+                episode=0,
+                seed=42,
+                mode="create",
+                reset_to=fake_reset_to,
+            )
+            stale = SceneEnv()
+            prepare_episode(stale, path, **kwargs)
+            with gzip.open(path, "rt") as stream:
+                manifest = json.load(stream)
+            self.assertEqual(manifest["actual_style"], 11)
+            self.assertEqual(manifest["actual_layout"], 11)
+
+            path.unlink()
+            forced = SceneEnv()
+            prepare_episode(
+                forced,
+                path,
+                **kwargs,
+                requested_style=17,
+                requested_layout=23,
+            )
+            with gzip.open(path, "rt") as stream:
+                manifest = json.load(stream)
+            self.assertEqual(manifest["actual_style"], 17)
+            self.assertEqual(manifest["actual_layout"], 23)
+            self.assertEqual(manifest["requested_style"], 17)
+            self.assertEqual(manifest["requested_layout"], 23)
+
 
 class ExperimentIdentityTests(unittest.TestCase):
     def test_mixed_checkpoint_shift_seed_or_inference_budget_is_rejected(self):
@@ -143,6 +195,22 @@ class ExperimentIdentityTests(unittest.TestCase):
             (directory / "A.json").write_text(json.dumps(payload))
             with self.assertRaises(KeyError):
                 agg(directory, ["A"], 1)
+
+    def test_style_schedule_and_fixed_layout_mismatch_fail(self):
+        mutations = (
+            lambda p: p["summary"].__setitem__("style_order", [12]),
+            lambda p: p["records"][0].__setitem__("actual_style", 12),
+            lambda p: p["records"][0].__setitem__("requested_layout", 12),
+            lambda p: p["summary"].__setitem__("layout_id", 12),
+        )
+        for mutate in mutations:
+            with self.subTest(), tempfile.TemporaryDirectory() as d:
+                root = Path(d)
+                payload = sr_payload("A", (True,), "source")
+                mutate(payload)
+                (root / "A.json").write_text(json.dumps(payload))
+                with self.assertRaises(ValueError):
+                    agg(root, ["A"], 1)
 
 
 class OfficialCheckpointTests(unittest.TestCase):
