@@ -234,7 +234,11 @@ DiT prefix -> Task head 61-way (train only, dashed)
 ```
 
 渲染由 PlotNeuralNet 官方 `pycore.tikzeng`、`Box`、`Connection` 宏完成；
-项目脚本只定义CoRP架构块、维度和连接。编译使用 Tectonic 0.17.0。
+项目脚本只定义CoRP架构块、维度和连接。左侧“How to read”说明面板使用标准
+TikZ `node` 绘制；PlotNeuralNet 官方 README 把通用 legend 列为 TODO，因此
+这里没有另造图形引擎，只补一个与架构图同源的单页注释层。编译使用 Tectonic 0.17.0。
+
+输出图使用显式白底黑字，兼容深色主题查看器；PNG 输出尺寸为 `2320 x 1405`。
 
 ## 9. 2.5D图怎么读：由浅入深
 

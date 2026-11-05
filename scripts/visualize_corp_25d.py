@@ -54,6 +54,27 @@ def main() -> int:
         to_head(str(upstream)),
         to_cor(),
         tikz_begin,
+        r"""
+\node[
+  draw=gray!65,
+  fill=gray!5,
+  rounded corners,
+  align=left,
+  anchor=north west,
+  text width=11.5cm,
+  inner sep=6pt
+] at (-16,8,0) {
+  {\bfseries How to read: pixels $\rightarrow$ token interface $\rightarrow$ action}\\[1mm]
+  {\small
+  \textbf{1. Observe:} 3 views \texttt{[B,3,224,224]} + instruction \texttt{[B,32]} + state \texttt{[B,9]}\\
+  \textbf{2. Encode + compress:} DINOv2 \texttt{[B,256,384]}/view $\rightarrow$ Resampler \texttt{[B,48,768]}/view\\
+  \textbf{3. Fuse:} 144 visual + 32 language + 1 state $=177$; prefix \texttt{[B,177,768]}\\
+  \textbf{4. Generate:} noised action \texttt{[B,10,12]} + $\tau$ $\rightarrow$ DiT velocity \texttt{[B,10,12]}; 10 Euler steps\\
+  \textbf{5. Augment (train only):} visual prefix $\rightarrow$ 61-way task head; dashed path is not used at inference\\
+  \textbf{Key interface:} the 177-token prefix separates perception/compression from action generation\\
+  \textbf{Conditioning:} pooled T5 features drive Resampler FiLM and DiT adaLN; state token adds proprioception}
+};
+""",
         to_Conv(
             "rgb",
             s_filer=224,
@@ -175,7 +196,7 @@ def main() -> int:
 \draw [connection] (state-north) -- node {\midarrow} (concat-south);
 \draw [connection, densely dashed] (dit-north) -- node {\midarrow} (task-south);
 \node[font=\small, anchor=west] at (-2.5,-11,0)
-  {Dashed: training-only auxiliary branch};
+  {Solid: inference path \quad Dashed: training-only auxiliary branch};
 """,
         to_end(),
     ]
