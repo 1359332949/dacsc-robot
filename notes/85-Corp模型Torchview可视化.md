@@ -166,43 +166,42 @@ task_aux_head.mlp.*
 - 自动图不能替代模型数值一致性测试。
 - 本次只做本地可视化，未启动训练或连接服务器。
 
-## 8. Three.js 交互式3D
+## 8. 交互式3D方案已弃用
 
-当前可用的开源自动3D工具中，`modelviz-ai` 可以直接从 PyTorch `nn.Module`
-生成 Three.js 交互式 HTML。其PyTorch parser基于forward hook，只记录leaf module
-和tensor shape；对 `Representation` / `PrefixCache` dataclass仍需tensor-only wrapper。
+验证过 `modelviz-ai` 的 Three.js 交互式3D页面，但192个leaf module在三维空间中
+可读性差，不适合当前目的。该临时页面、脚本和截图不保留。
 
-本次生成：
-
-```text
-audit/corp_model_visualization_3d/corp_3d.html
-audit/corp_model_visualization_3d/corp_3d_screenshot.png
-```
-
-页面实际渲染验证通过，支持：
+下一步改为2.5D层叠图：优先复用 [PlotNeuralNet](https://github.com/HarisIqbal88/PlotNeuralNet)
+的官方TikZ宏与示例，用层块表达：
 
 ```text
-拖拽旋转
-滚轮缩放
-Shift+拖拽平移
-图层 hover/tooltip
+三视角图像 → DINOv2 → Resampler
+语言编码 → 视觉语言拼接 → State
+→ DiT prefix/action → 12D velocity
 ```
 
-抓到192个leaf module，覆盖DINO block、T5 block、resampler、state encoder
-和DiT动作生成器。由于层数很多，需要缩放和平移查看完整路径。
+2.5D图只服务于架构阅读和论文排版，不声称是真实计算图；真实模块、连接与shape仍以
+Torchview图为准。
 
-该HTML通过unpkg加载Three.js 0.160；首次打开需要网络。若后续要离线分享，
-应把Three.js和addons文件下载到本地并修改import map。
-
-其他核对过的工具：
+已使用 PlotNeuralNet upstream commit
+`613be1f5d769718d315dabae823b3d376b26689c` 生成：
 
 ```text
-3dNN_Visualiser (MIT): PyTorch exporter + React/Three.js + FastAPI/Docker；
-  支持.nn3d交互浏览，但部署成本更高。
-
-TensorSpace.js: 成熟3D WebGL前端，但主要面向Keras/TensorFlow.js，
-  不能直接读取当前PyTorch模块树。
-
-PlotNeuralNet (25k stars): TikZ 3D层叠图，适合论文最终排版；
-  不是自动PyTorch计算图。
+scripts/visualize_corp_25d.py
+audit/corp_model_visualization_25d/corp_25d.tex
+audit/corp_model_visualization_25d/corp_25d.pdf
+audit/corp_model_visualization_25d/corp_25d.png
 ```
+
+图中包含：
+
+```text
+3 views -> DINOv2 -> Resampler -> Visual prefix
+T5-tiny ----------------------┐
+State token ------------------┼-> Fusion prefix 177 x 768
+                              └-> 1-layer DiT -> Velocity 10 x 12
+DiT prefix -> Task head 61-way (train only, dashed)
+```
+
+渲染由 PlotNeuralNet 官方 `pycore.tikzeng`、`Box`、`Connection` 宏完成；
+项目脚本只定义CoRP架构块、维度和连接。编译使用 Tectonic 0.17.0。
