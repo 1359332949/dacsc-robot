@@ -54,136 +54,115 @@ def main() -> int:
         to_head(str(upstream)),
         to_cor(),
         tikz_begin,
-        r"""
-\node[
-  draw=gray!65,
-  fill=gray!5,
-  rounded corners,
-  align=left,
-  anchor=north west,
-  text width=11.5cm,
-  inner sep=6pt
-] at (-16,8,0) {
-  {\bfseries How to read: pixels $\rightarrow$ token interface $\rightarrow$ action}\\[1mm]
-  {\small
-  \textbf{1. Observe:} 3 views \texttt{[B,3,224,224]} + instruction \texttt{[B,32]} + state \texttt{[B,9]}\\
-  \textbf{2. Encode + compress:} DINOv2 \texttt{[B,256,384]}/view $\rightarrow$ Resampler \texttt{[B,48,768]}/view\\
-  \textbf{3. Fuse:} 144 visual + 32 language + 1 state $=177$; prefix \texttt{[B,177,768]}\\
-  \textbf{4. Generate:} noised action \texttt{[B,10,12]} + $\tau$ $\rightarrow$ DiT velocity \texttt{[B,10,12]}; 10 Euler steps\\
-  \textbf{5. Augment (train only):} visual prefix $\rightarrow$ 61-way task head; dashed path is not used at inference\\
-  \textbf{Key interface:} the 177-token prefix separates perception/compression from action generation\\
-  \textbf{Conditioning:} pooled T5 features drive Resampler FiLM and DiT adaLN; state token adds proprioception}
-};
-""",
         to_Conv(
             "rgb",
-            s_filer=224,
-            n_filer=3,
+            s_filer="",
+            n_filer="",
             offset="(0,0,0)",
             to="(0,0,0)",
             width=3.5,
             height=18,
             depth=18,
-            caption=r"3 views\\224 x 224",
+            caption=r"{3 views\\$[B,3,224,224]$}",
         ),
         to_Conv(
             "dino",
-            s_filer=256,
-            n_filer=384,
-            offset="(1.6,0,0)",
+            s_filer="",
+            n_filer="",
+            offset="(2.4,0,0)",
             to="(rgb-east)",
             width=4.0,
             height=16,
             depth=16,
-            caption=r"DINOv2\\ViT-S/14",
+            caption=r"{DINOv2 ViT-S/14\\$[B,256,384]$ / view}",
         ),
         to_Conv(
             "resampler",
-            s_filer=48,
-            n_filer=768,
-            offset="(1.6,0,0)",
+            s_filer="",
+            n_filer="",
+            offset="(2.4,0,0)",
             to="(dino-east)",
             width=4.0,
             height=14,
             depth=14,
-            caption=r"Resampler\\48 / view",
+            caption=r"{Resampler\\$[B,48,768]$ / view}",
         ),
         to_Conv(
             "visual",
-            s_filer=144,
-            n_filer=768,
-            offset="(1.6,0,0)",
+            s_filer="",
+            n_filer="",
+            offset="(2.4,0,0)",
             to="(resampler-east)",
             width=4.0,
             height=14,
             depth=14,
-            caption=r"Visual prefix\\144 x 768",
+            caption=r"{Visual prefix\\$[B,144,768]$}",
         ),
         to_Conv(
             "concat",
-            s_filer=177,
-            n_filer=768,
-            offset="(1.8,0,0)",
+            s_filer="",
+            n_filer="",
+            offset="(2.8,0,0)",
             to="(visual-east)",
             width=4.5,
             height=16,
             depth=16,
-            caption=r"Fusion prefix\\177 x 768",
+            caption=r"{Fusion prefix\\$[B,177,768]$\\144 + 32 + 1}",
         ),
         to_Conv(
             "text",
-            s_filer=32,
-            n_filer=768,
-            offset="(0,5,0)",
+            s_filer="",
+            n_filer="",
+            offset="(1.8,5,0)",
             to="(concat-north)",
             width=4.0,
             height=6,
             depth=6,
-            caption=r"T5\\32 x 768",
+            caption=r"{T5\\language\\$[B,32,768]$}",
         ),
         to_Conv(
             "state",
-            s_filer=1,
-            n_filer=768,
-            offset="(0,-5,0)",
+            s_filer="",
+            n_filer="",
+            offset="(1.8,-5,0)",
             to="(concat-south)",
             width=4.0,
             height=5,
             depth=5,
-            caption=r"State\\1 x 768",
+            caption=r"{State token\\$[B,1,768]$}",
         ),
         to_Conv(
             "dit",
-            s_filer=10,
-            n_filer=768,
-            offset="(1.8,0,0)",
+            s_filer="",
+            n_filer="",
+            offset="(2.8,0,0)",
             to="(concat-east)",
             width=4.5,
             height=11,
             depth=11,
-            caption=r"1-layer DiT\\10 x 768",
+            caption=r"{1-layer DiT\\noisy $[B,10,12]$ + $\tau$}",
         ),
         to_Conv(
             "velocity",
-            s_filer=10,
-            n_filer=12,
-            offset="(1.6,0,0)",
+            s_filer="",
+            n_filer="",
+            offset="(2.4,0,0)",
             to="(dit-east)",
             width=4.0,
             height=8,
             depth=8,
-            caption=r"Velocity\\10 x 12",
+            caption=r"{Velocity head\\$[B,10,12]$}",
         ),
         to_Conv(
             "task",
-            s_filer=1,
-            n_filer=61,
+            s_filer="",
+            n_filer="",
             offset="(0,4.5,0)",
             to="(dit-north)",
             width=4.0,
             height=4,
             depth=4,
-            caption=r"Task aux\\61-way",
+            caption=r"{Task aux\\$[B,61]$\\training only}",
         ),
         to_connection("rgb", "dino"),
         to_connection("dino", "resampler"),
@@ -192,11 +171,27 @@ def main() -> int:
         to_connection("concat", "dit"),
         to_connection("dit", "velocity"),
         r"""
-\draw [connection] (text-south) -- node {\midarrow} (concat-north);
-\draw [connection] (state-north) -- node {\midarrow} (concat-south);
+\path (rgb-east) -- node[above=3pt, font=\scriptsize] {encode} (dino-west);
+\path (dino-east) -- node[above=3pt, font=\scriptsize] {compress} (resampler-west);
+\path (resampler-east) -- node[above=3pt, font=\scriptsize] {3 x 48} (visual-west);
+\path (visual-east) -- node[above=3pt, font=\scriptsize] {concat} (concat-west);
+\path (concat-east) -- node[above=3pt, font=\scriptsize] {condition} (dit-west);
+\path (dit-east) -- node[above=3pt, font=\scriptsize] {12-D velocity} (velocity-west);
+\draw [connection] (text-southeast) -- node {\midarrow} (concat-northeast);
+\draw [connection] (state-northeast) -- node {\midarrow} (concat-southeast);
 \draw [connection, densely dashed] (dit-north) -- node {\midarrow} (task-south);
-\node[font=\small, anchor=west] at (-2.5,-11,0)
-  {Solid: inference path \quad Dashed: training-only auxiliary branch};
+\node[
+  align=left,
+  anchor=north west,
+  text width=18cm,
+  font=\small
+] at (-2,-11,0) {
+  \textbf{Perception:} 3 views $\rightarrow$ patch tokens $\rightarrow$ fixed visual tokens;\\
+  \textbf{Shared interface:} 144 visual + 32 language + 1 state $=177$ tokens;\\
+  \textbf{Action:} 177-token prefix + noisy action and $\tau$ $\rightarrow$ velocity,
+  10 Euler steps $\rightarrow$ \texttt{[B,10,12]}.\\
+  \textbf{Solid:} inference path \quad \textbf{Dashed:} training-only task auxiliary.
+};
 """,
         to_end(),
     ]
