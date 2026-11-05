@@ -35,10 +35,10 @@ P1 的适配器代码已写好，官方 CoRP 架构**原样保留**，只改接�
 - **view query / view_embedding 部分迁移**：`agentview_left <- agentview`、`eye_in_hand <- eye_in_hand`；`agentview_right` 随机初始化。
 - **接口层随机初始化**：state projection (8→9)、action_projection (7→12)、velocity_projection (7→12)。这些语义不一一对应，不能拷贝，论文里必须明确标注。
 
-2026-11-05更新：上述“action/velocity 整块随机”已被修正。RoboCasa 前 7 维动作与
-LIBERO 严格对应（位置3 + 旋转3 + gripper1），现在复用官方前 7 维动作头，新增5维零初始化；
-仅 state projection 因 axis-angle→quaternion 语义不一致继续随机。详见
-[note84](84-动作接口预训练权重部分复用.md)。
+2026-11-05更新：曾尝试复用官方前7维动作头、新增5维零初始化，但同一步数 loss 明显
+劣于全随机12D action interface，已停止。最终结论是不复用动作头切片；state/action/velocity
+接口和第三视角继续随机初始化，只复用DINOv2/T5/resampler/FiLM/DiT共享层。
+详见[note84](84-动作接口预训练权重部分复用.md)。
 
 ## 3.1 真实 RoboCasa 接口（来自 meta/modality.json，61/61 task 一致）
 

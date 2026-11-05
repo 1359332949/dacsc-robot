@@ -445,7 +445,6 @@ class ReleasedAdapterTests(unittest.TestCase):
     )
     def test_real_release_adapter_hook_masked_loss_and_ema_state(self):
         import dacsc.corp_robocasa as corp_module
-        from corp.checkpoint import load_policy
         from dacsc.corp_robocasa import load_corp_robocasa
         from dacsc.token_style import TokenStyleModulator
 
@@ -455,33 +454,20 @@ class ReleasedAdapterTests(unittest.TestCase):
         torch.set_num_threads(4)
         try:
             model, report = load_corp_robocasa(checkpoint)
-            self.assertEqual(report["random_init"], 1)
+            self.assertEqual(report["random_init"], 4)
             self.assertEqual(
-                report["random_init_keys"],
-                ["representation_extractor.state_encoder.projection.weight"],
+                set(report["random_init_keys"]),
+                {
+                    "representation_extractor.state_encoder.projection.weight",
+                    "action_generator.action_projection.weight",
+                    "action_generator.velocity_projection.weight",
+                    "action_generator.velocity_projection.bias",
+                },
             )
             self.assertEqual(
                 report["initialization_policy"],
                 corp_module.INITIALIZATION_POLICY,
             )
-            source_state = load_policy(checkpoint, device="cpu").state_dict()
-            for key in (
-                "action_generator.action_projection.weight",
-                "action_generator.velocity_projection.weight",
-                "action_generator.velocity_projection.bias",
-            ):
-                self.assertIn(key, report["partial_keys"])
-                source = source_state[key]
-                actual = model.state_dict()[key]
-                if key.endswith("action_projection.weight"):
-                    torch.testing.assert_close(actual[:, :7], source, rtol=0, atol=0)
-                    self.assertTrue(torch.count_nonzero(actual[:, 7:]) == 0)
-                elif key.endswith("velocity_projection.weight"):
-                    torch.testing.assert_close(actual[:7], source, rtol=0, atol=0)
-                    self.assertTrue(torch.count_nonzero(actual[7:]) == 0)
-                else:
-                    torch.testing.assert_close(actual[:7], source, rtol=0, atol=0)
-                    self.assertTrue(torch.count_nonzero(actual[7:]) == 0)
             ema = ModelEMA(model, 0.99)
             self.assertEqual(set(ema.shadow), set(model.state_dict()))
             ema.update(model)

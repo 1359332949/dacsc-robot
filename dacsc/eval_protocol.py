@@ -8,7 +8,7 @@ from pathlib import Path
 from dacsc.corp_images import image_contract
 from dacsc.upstream import verify_upstream
 
-PROTOCOL_VERSION = "corp_robocasa_sr_v7"
+PROTOCOL_VERSION = "corp_robocasa_sr_v8"
 PROTOCOL_KEYS = {
     "version",
     "checkpoint_sha256",
