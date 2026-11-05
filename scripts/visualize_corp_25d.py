@@ -46,12 +46,18 @@ def main() -> int:
     )
 
     args.out.mkdir(parents=True, exist_ok=True)
+    tikz_head = to_head(str(upstream)).replace(
+        r"\usepackage{import}",
+        "\\usepackage{import}\n"
+        "\\usepackage{xeCJK}\n"
+        "\\setCJKmainfont{Songti SC}",
+    )
     tikz_begin = to_begin().replace(
         r"\begin{document}",
         "\\begin{document}\n\\pagecolor{white}\n\\color{black}",
     )
     arch = [
-        to_head(str(upstream)),
+        tikz_head,
         to_cor(),
         tikz_begin,
         to_Conv(
@@ -63,7 +69,7 @@ def main() -> int:
             width=3.5,
             height=18,
             depth=18,
-            caption=r"{3 views\\$[B,3,224,224]$}",
+            caption=r"{\small 三路相机\\$[B,3,224,224]$\\环境 + 腕部}",
         ),
         to_Conv(
             "dino",
@@ -74,7 +80,7 @@ def main() -> int:
             width=4.0,
             height=16,
             depth=16,
-            caption=r"{DINOv2 ViT-S/14\\$[B,256,384]$ / view}",
+            caption=r"{\small DINOv2\\ViT-S/14\\$[B,256,384]$\\局部视觉编码}",
         ),
         to_Conv(
             "resampler",
@@ -85,7 +91,7 @@ def main() -> int:
             width=4.0,
             height=14,
             depth=14,
-            caption=r"{Resampler\\$[B,48,768]$ / view}",
+            caption=r"{\small Resampler\\$[B,48,768]$\\固定预算}",
         ),
         to_Conv(
             "visual",
@@ -96,7 +102,7 @@ def main() -> int:
             width=4.0,
             height=14,
             depth=14,
-            caption=r"{Visual prefix\\$[B,144,768]$}",
+            caption=r"{\small 视觉前缀\\$[B,144,768]$\\3 $\times$ 48}",
         ),
         to_Conv(
             "concat",
@@ -107,7 +113,7 @@ def main() -> int:
             width=4.5,
             height=16,
             depth=16,
-            caption=r"{Fusion prefix\\$[B,177,768]$\\144 + 32 + 1}",
+            caption=r"{\small 融合前缀\\$[B,177,768]$\\144 + 32 + 1}",
         ),
         to_Conv(
             "text",
@@ -118,7 +124,7 @@ def main() -> int:
             width=4.0,
             height=6,
             depth=6,
-            caption=r"{T5\\language\\$[B,32,768]$}",
+            caption=r"{\small T5 语言\\$[B,32,768]$\\任务语义}",
         ),
         to_Conv(
             "state",
@@ -129,7 +135,7 @@ def main() -> int:
             width=4.0,
             height=5,
             depth=5,
-            caption=r"{State token\\$[B,1,768]$}",
+            caption=r"{\small 状态 token\\$[B,1,768]$\\本体感知}",
         ),
         to_Conv(
             "dit",
@@ -140,7 +146,7 @@ def main() -> int:
             width=4.5,
             height=11,
             depth=11,
-            caption=r"{1-layer DiT\\noisy $[B,10,12]$ + $\tau$}",
+            caption=r"{\small 1 层 DiT\\噪声 $[B,10,12]$ + $\tau$\\条件速度场}",
         ),
         to_Conv(
             "velocity",
@@ -151,7 +157,7 @@ def main() -> int:
             width=4.0,
             height=8,
             depth=8,
-            caption=r"{Velocity head\\$[B,10,12]$}",
+            caption=r"{\small 速度头\\$[B,10,12]$\\未来 10 步}",
         ),
         to_Conv(
             "task",
@@ -162,7 +168,7 @@ def main() -> int:
             width=4.0,
             height=4,
             depth=4,
-            caption=r"{Task aux\\$[B,61]$\\training only}",
+            caption=r"{\small 任务辅助\\$[B,61]$\\仅训练}",
         ),
         to_connection("rgb", "dino"),
         to_connection("dino", "resampler"),
@@ -171,26 +177,32 @@ def main() -> int:
         to_connection("concat", "dit"),
         to_connection("dit", "velocity"),
         r"""
-\path (rgb-east) -- node[above=3pt, font=\scriptsize] {encode} (dino-west);
-\path (dino-east) -- node[above=3pt, font=\scriptsize] {compress} (resampler-west);
-\path (resampler-east) -- node[above=3pt, font=\scriptsize] {3 x 48} (visual-west);
-\path (visual-east) -- node[above=3pt, font=\scriptsize] {concat} (concat-west);
-\path (concat-east) -- node[above=3pt, font=\scriptsize] {condition} (dit-west);
-\path (dit-east) -- node[above=3pt, font=\scriptsize] {12-D velocity} (velocity-west);
+\path (rgb-east) -- node[above=3pt, font=\scriptsize] {编码} (dino-west);
+\path (dino-east) -- node[above=3pt, font=\scriptsize] {压缩} (resampler-west);
+\path (resampler-east) -- node[above=3pt, font=\scriptsize] {3 $\times$ 48} (visual-west);
+\path (visual-east) -- node[above=3pt, font=\scriptsize] {拼接} (concat-west);
+\path (concat-east) -- node[above=3pt, font=\scriptsize] {条件化} (dit-west);
+\path (dit-east) -- node[above=3pt, font=\scriptsize] {12 维速度} (velocity-west);
 \draw [connection] (text-southeast) -- node {\midarrow} (concat-northeast);
 \draw [connection] (state-northeast) -- node {\midarrow} (concat-southeast);
 \draw [connection, densely dashed] (dit-north) -- node {\midarrow} (task-south);
 \node[
   align=left,
   anchor=north west,
-  text width=18cm,
-  font=\small
+  text width=19cm,
+  font=\normalsize
 ] at (-2,-11,0) {
-  \textbf{Perception:} 3 views $\rightarrow$ patch tokens $\rightarrow$ fixed visual tokens;\\
-  \textbf{Shared interface:} 144 visual + 32 language + 1 state $=177$ tokens;\\
-  \textbf{Action:} 177-token prefix + noisy action and $\tau$ $\rightarrow$ velocity,
-  10 Euler steps $\rightarrow$ \texttt{[B,10,12]}.\\
-  \textbf{Solid:} inference path \quad \textbf{Dashed:} training-only task auxiliary.
+  {\large\bfseries CoRP-RoboCasa：从多视角观察到动作生成}\\[1mm]
+  \textbf{(1) 感知与压缩：} 三路相机经 DINOv2 得到每视角 256 个 patch，
+  再由 Resampler 压缩为每视角 48 个视觉 token；三视角合计 144 个。\\
+  \textbf{(2) 统一接口：} 144 个视觉 token + 32 个语言 token + 1 个状态 token
+  $=177$ 个 token，每个 token 宽 768 维。\\
+  \textbf{(3) 动作生成：} 噪声动作 \texttt{[B,10,12]} 与时间 $\tau$ 输入 DiT，
+  输出 12 维速度场；推理时做 10 步 Euler 积分，得到未来 10 步动作。\\
+  \textbf{(4) 训练辅助：} 任务辅助头从视觉前缀预测 61 类任务，只在训练时使用；
+  虚线不进入推理动作路径。\\
+  \textbf{高维理解：} 视觉编码负责“看见”，融合前缀是共享表示接口，
+  DiT 负责“生成动作”。实线是推理路径，虚线是训练辅助路径。
 };
 """,
         to_end(),

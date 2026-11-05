@@ -237,9 +237,11 @@ DiT prefix -> Task head 61-way (train only, dashed)
 项目脚本只定义CoRP架构块、维度和连接。模块名称、输入输出 shape、作用说明
 直接放在每个 layer 的 `caption` 和箭头上；底部只保留一条高维流程摘要。
 PlotNeuralNet 官方 README 把通用 legend 列为 TODO，因此这里用标准 TikZ
-文字节点补充连接语义，没有另造图形引擎。编译使用 Tectonic 0.17.0。
+文字节点补充连接语义，没有另造图形引擎。图中中文由开源 `xeCJK` 排版，
+使用 macOS 自带的 Songti SC 字体；编译使用 Tectonic 0.17.0。
 
-输出图使用显式白底黑字，兼容深色主题查看器；当前横版 PNG 尺寸为 `1696 x 1467`。
+输出图使用显式白底黑字，兼容深色主题查看器；当前中文横版 PNG 尺寸为
+`1696 x 1608`。
 
 ## 9. 2.5D图怎么读：由浅入深
 
