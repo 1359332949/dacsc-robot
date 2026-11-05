@@ -11,6 +11,7 @@ torchview 0.2.7
 torchinfo 1.8.0
 graphviz Python 0.21
 Graphviz dot 16.1.0
+modelviz-ai 0.1.0 (Three.js 交互式3D)
 Homebrew /opt/homebrew
 ```
 
@@ -23,6 +24,7 @@ Homebrew 使用 USTC 镜像安装。生成图使用原始官方 `corp_libero.pt`
 
 ```text
 scripts/visualize_corp.py
+scripts/visualize_corp_3d.py
 ```
 
 命令：
@@ -31,6 +33,9 @@ scripts/visualize_corp.py
 python scripts/visualize_corp.py \
   --depth 2 \
   --out audit/corp_model_visualization_v4
+
+python scripts/visualize_corp_3d.py \
+  --out audit/corp_model_visualization_3d
 ```
 
 Torchview 对 `Representation` dataclass 和 `PrefixCache` dataclass 的追踪不稳定。
@@ -160,3 +165,44 @@ task_aux_head.mlp.*
 - 图很大，论文中的“官方 CoRP vs RoboCasa 适配”仍应使用 draw.io/Mermaid 重画。
 - 自动图不能替代模型数值一致性测试。
 - 本次只做本地可视化，未启动训练或连接服务器。
+
+## 8. Three.js 交互式3D
+
+当前可用的开源自动3D工具中，`modelviz-ai` 可以直接从 PyTorch `nn.Module`
+生成 Three.js 交互式 HTML。其PyTorch parser基于forward hook，只记录leaf module
+和tensor shape；对 `Representation` / `PrefixCache` dataclass仍需tensor-only wrapper。
+
+本次生成：
+
+```text
+audit/corp_model_visualization_3d/corp_3d.html
+audit/corp_model_visualization_3d/corp_3d_screenshot.png
+```
+
+页面实际渲染验证通过，支持：
+
+```text
+拖拽旋转
+滚轮缩放
+Shift+拖拽平移
+图层 hover/tooltip
+```
+
+抓到192个leaf module，覆盖DINO block、T5 block、resampler、state encoder
+和DiT动作生成器。由于层数很多，需要缩放和平移查看完整路径。
+
+该HTML通过unpkg加载Three.js 0.160；首次打开需要网络。若后续要离线分享，
+应把Three.js和addons文件下载到本地并修改import map。
+
+其他核对过的工具：
+
+```text
+3dNN_Visualiser (MIT): PyTorch exporter + React/Three.js + FastAPI/Docker；
+  支持.nn3d交互浏览，但部署成本更高。
+
+TensorSpace.js: 成熟3D WebGL前端，但主要面向Keras/TensorFlow.js，
+  不能直接读取当前PyTorch模块树。
+
+PlotNeuralNet (25k stars): TikZ 3D层叠图，适合论文最终排版；
+  不是自动PyTorch计算图。
+```
