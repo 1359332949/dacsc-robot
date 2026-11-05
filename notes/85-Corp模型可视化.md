@@ -1,4 +1,4 @@
-# 85 - CoRP模型Torchview可视化
+# 85 - CoRP模型可视化
 
 日期：2026-11-05
 
@@ -11,12 +11,19 @@ torchview 0.2.7
 torchinfo 1.8.0
 graphviz Python 0.21
 Graphviz dot 16.1.0
-modelviz-ai 0.1.0 (Three.js 交互式3D)
 Homebrew /opt/homebrew
 ```
 
+2.5D 架构图复用 PlotNeuralNet 官方 PyTikZ 入口：
+
+```text
+https://github.com/HarisIqbal88/PlotNeuralNet
+commit 613be1f5d769718d315dabae823b3d376b26689c
+Tectonic 0.17.0
+```
+
 Homebrew 使用 USTC 镜像安装。生成图使用原始官方 `corp_libero.pt`，
-并通过 `load_corp_robocasa` 加载当前 v5 初始化策略。
+并通过 `load_corp_robocasa` 加载当前 `corp_robocasa_v6` 随机12维动作接口。
 
 ## 2. 绘图入口
 
@@ -24,7 +31,7 @@ Homebrew 使用 USTC 镜像安装。生成图使用原始官方 `corp_libero.pt`
 
 ```text
 scripts/visualize_corp.py
-scripts/visualize_corp_3d.py
+scripts/visualize_corp_25d.py
 ```
 
 命令：
@@ -34,13 +41,18 @@ python scripts/visualize_corp.py \
   --depth 2 \
   --out audit/corp_model_visualization_v4
 
-python scripts/visualize_corp_3d.py \
-  --out audit/corp_model_visualization_3d
+PATH="/opt/homebrew/bin:$PATH" .venv/bin/python \
+  scripts/visualize_corp_25d.py \
+  --compile \
+  --out audit/corp_model_visualization_25d
 ```
 
 Torchview 对 `Representation` dataclass 和 `PrefixCache` dataclass 的追踪不稳定。
 脚本使用 tensor-only visualization wrapper，直接调用官方子模块并返回 tensor。
 wrapper 只用于绘图，不改变模型代码、权重或前向语义。
+
+2.5D 图只定义 CoRP 的架构块、维度和连接，渲染由 PlotNeuralNet 官方
+`pycore.tikzeng`、`Box`、`Connection` 宏完成，没有自建图形引擎。
 
 ## 3. 输出
 
@@ -56,6 +68,12 @@ audit/corp_model_visualization_overview/
 audit/corp_model_visualization_v4/
 ```
 
+2.5D 架构图：
+
+```text
+audit/corp_model_visualization_25d/
+```
+
 每套包含：
 
 ```text
@@ -67,7 +85,15 @@ torchinfo.txt
 Graphviz .gv
 ```
 
-这些生成物体积约 15 MB，通过 `.gitignore` 保留在本地，不提交 Git。
+2.5D 目录包含：
+
+```text
+corp_25d.tex
+corp_25d.pdf
+corp_25d.png
+```
+
+生成物通过 `.gitignore` 保留在本地，不提交 Git。
 
 ## 4. 核对到的关键 shape
 
@@ -143,21 +169,25 @@ total:                 48,949,321
 
 ```text
 initialization_policy:
-  libero_shared_plus_aligned_7d_action_head_v1
+  libero_shared_random_12d_action_interface_v1
 
-copied: 257
-random: 7
+copied: 254
+random: 10
 ```
 
 随机项：
 
 ```text
 state_encoder.projection.weight
+action_generator.action_projection.weight
+action_generator.velocity_projection.weight
+action_generator.velocity_projection.bias
 task_aux_head.norm.*
 task_aux_head.mlp.*
 ```
 
-动作头前 7 维复用官方 LIBERO 权重，新增 5 维为零。
+RoboCasa action identity 与 LIBERO action min-max 的数值语义不一致，
+因此 12 维动作接口整体随机初始化，不做前 7 维硬拷贝。
 
 ## 7. 使用边界
 
@@ -166,13 +196,13 @@ task_aux_head.mlp.*
 - 自动图不能替代模型数值一致性测试。
 - 本次只做本地可视化，未启动训练或连接服务器。
 
-## 8. 交互式3D方案已弃用
+## 8. 2.5D方案
 
-验证过 `modelviz-ai` 的 Three.js 交互式3D页面，但192个leaf module在三维空间中
-可读性差，不适合当前目的。该临时页面、脚本和截图不保留。
+交互式3D页面在192个leaf module下可读性差，不适合当前目的。
+该临时页面、脚本、依赖和截图均不保留。
 
-下一步改为2.5D层叠图：优先复用 [PlotNeuralNet](https://github.com/HarisIqbal88/PlotNeuralNet)
-的官方TikZ宏与示例，用层块表达：
+当前采用 [PlotNeuralNet](https://github.com/HarisIqbal88/PlotNeuralNet)
+官方 TikZ 宏与示例生成2.5D层叠图：
 
 ```text
 三视角图像 → DINOv2 → Resampler
@@ -183,7 +213,7 @@ task_aux_head.mlp.*
 2.5D图只服务于架构阅读和论文排版，不声称是真实计算图；真实模块、连接与shape仍以
 Torchview图为准。
 
-已使用 PlotNeuralNet upstream commit
+使用 PlotNeuralNet upstream commit
 `613be1f5d769718d315dabae823b3d376b26689c` 生成：
 
 ```text
