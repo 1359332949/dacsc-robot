@@ -41,6 +41,7 @@ def prepare_episode(
     seed: int,
     mode: str,
     reset_to,
+    scene_split: str,
     requested_style: int | None = None,
     requested_layout: int | None = None,
 ):
@@ -50,8 +51,11 @@ def prepare_episode(
     without MuJoCo/assets. Creation is explicit and refuses existing manifests.
     """
     core = env.env
+    if scene_split not in ("pretrain", "target"):
+        raise ValueError("scene_split must be pretrain or target")
     contract = {
         "task": task,
+        "scene_split": scene_split,
         "allowed_styles": styles,
         "allowed_layouts": layouts,
         "episode": episode,
@@ -71,7 +75,7 @@ def prepare_episode(
             if requested_style not in styles:
                 raise ValueError("requested style is outside the requested split")
             if requested_layout not in layouts:
-                raise ValueError("requested layout is outside the pretrain layout group")
+                raise ValueError("requested layout is outside the allowed layout set")
             # RoboCasa's official Kitchen.reset consumes these fields before
             # sampling a scene. Setting them keeps the official scene/model
             # construction path while making the style schedule explicit.
@@ -91,7 +95,7 @@ def prepare_episode(
         if actual_style not in styles:
             raise ValueError("sampled style is outside the requested split")
         if int(meta["layout_id"]) not in layouts:
-            raise ValueError("sampled layout is outside the pretrain layout group")
+            raise ValueError("sampled layout is outside the allowed layout set")
         if requested_style is not None and actual_style != requested_style:
             raise ValueError("environment did not honor requested style")
         if requested_layout is not None and int(meta["layout_id"]) != requested_layout:

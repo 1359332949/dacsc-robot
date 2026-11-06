@@ -151,7 +151,9 @@ class PixelAugmentationTests(unittest.TestCase):
                     episode_residues=set(range(9)),
                 )
                 clean = CorpRoboCasaDataset([ds], **args)
-                raw = CorpRoboCasaDataset([ds], **args, normalize_images=False)
+                raw = CorpRoboCasaDataset(
+                    [ds], **args, normalize_images=False, allow_raw_rgb=True
+                )
                 source = CorpRoboCasaDataset(
                     [ds], style_min=11, style_max=30, horizon=4, episode_residues={9}
                 )
@@ -159,7 +161,6 @@ class PixelAugmentationTests(unittest.TestCase):
                 for opts in (
                     dict(style_min=31, style_max=40),
                     dict(style_min=41, style_max=50),
-                    dict(style_min=11, style_max=30, episode_residues={9}),
                     {**args, "shift": "color_jitter"},
                 ):
                     with self.assertRaises(ValueError):

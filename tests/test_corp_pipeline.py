@@ -81,7 +81,7 @@ class DatasetTests(unittest.TestCase):
         from scripts.eval_corp_robocasa_sr import parse_styles
 
         self.assertEqual(parse_styles("11-13, 20"), [11, 12, 13, 20])
-        for value in ("20-11,30", "11-13,12", "1-10", "61", "", "11,,12"):
+        for value in ("20-11,30", "11-13,12", "0", "61", "", "11,,12"):
             with self.subTest(value=value), self.assertRaises(ValueError):
                 parse_styles(value)
 
@@ -307,6 +307,31 @@ class UpstreamInfrastructureTests(unittest.TestCase):
             self.assertNotEqual(dirty.returncode, 0)
             self.assertFalse((Path(d) / "dirty/dacsc_code.tgz").exists())
 
+    def test_v10_pilot_protocol_is_frozen_and_target_is_official_pairs(self):
+        protocol = json.loads(
+            (ROOT / "configs/v10_atomic_target_pilot.json").read_text()
+        )
+        self.assertEqual(
+            protocol["train_tasks"],
+            [
+                "OpenCabinet",
+                "OpenDrawer",
+                "TurnOffStove",
+                "TurnOnElectricKettle",
+                "TurnOnSinkFaucet",
+            ],
+        )
+        self.assertEqual(protocol["pretrain"]["train_styles"], [11, 50])
+        self.assertEqual(protocol["pretrain"]["val_styles"], [51, 60])
+        self.assertEqual(protocol["target"]["scene_split"], "target")
+        self.assertEqual(
+            protocol["target"]["pairs"],
+            [[index, index] for index in range(1, 11)],
+        )
+        self.assertEqual(protocol["pilot_budget"]["steps"], 30000)
+        self.assertEqual(protocol["pilot_budget"]["batch_size"], 96)
+        self.assertEqual(protocol["pilot_budget"]["ema_decay"], 0.999)
+
     def test_completed_budget_does_not_resume_or_publish_pre_eval_metrics(self):
         from scripts import train_corp_robocasa as train
         from dacsc.corp_images import image_contract
@@ -327,6 +352,7 @@ class UpstreamInfrastructureTests(unittest.TestCase):
             args = SimpleNamespace(
                 seed=42,
                 max_tasks=0,
+                tasks=None,
                 data_root=Path(d),
                 horizon=10,
                 resume=path,
@@ -334,13 +360,24 @@ class UpstreamInfrastructureTests(unittest.TestCase):
                 train_augmentation="none",
                 task_aux_lambda=0.0,
                 task_aux_depth=1,
+                train_style_min=11,
+                train_style_max=50,
+                val_style_min=51,
+                val_style_max=60,
+                test_style_min=41,
+                test_style_max=50,
+                source_holdout_residue=9,
             )
             with patch.object(train, "set_seed"), patch.object(
                 torch.cuda, "is_available", return_value=True
             ), patch.object(
-                train, "all_task_paths", return_value=["metadata-only fixture"]
+                train,
+                "all_task_paths",
+                return_value=[Path("/root/TaskA/date/lerobot")],
             ), patch.object(
                 train, "build_dataset", return_value=[0]
+            ), patch.object(
+                train, "data_contract", return_value={}
             ), self.assertRaisesRegex(
                 ValueError, "budget is already complete"
             ):

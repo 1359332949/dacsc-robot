@@ -38,6 +38,14 @@ def main() -> int:
     ap.add_argument("--euler-steps", type=int, default=10)
     ap.add_argument("--horizon", type=int, default=10)
     ap.add_argument("--max-tasks", type=int, default=0)
+    ap.add_argument("--tasks", nargs="+", default=None)
+    ap.add_argument("--train-style-min", type=int, default=11)
+    ap.add_argument("--train-style-max", type=int, default=50)
+    ap.add_argument("--val-style-min", type=int, default=51)
+    ap.add_argument("--val-style-max", type=int, default=60)
+    ap.add_argument("--test-style-min", type=int, default=41)
+    ap.add_argument("--test-style-max", type=int, default=50)
+    ap.add_argument("--source-holdout-residue", type=int, default=9)
     ap.add_argument("--run-test", action="store_true", help="Final evaluation only")
     ap.add_argument(
         "--shifts", nargs="+", choices=SHIFTS, default=["none", "color_jitter"]
@@ -60,7 +68,11 @@ def run(args) -> int:
     norm = LinearNormalizer(mean, std)
     print(f"loaded {args.model}, device={device}", flush=True)
 
-    tasks = all_task_paths(args.max_tasks, args.data_root)
+    if args.tasks and args.max_tasks:
+        raise ValueError("--tasks and --max-tasks are mutually exclusive")
+    if not 0 <= args.source_holdout_residue < 10:
+        raise ValueError("source holdout residue must be in 0..9")
+    tasks = all_task_paths(args.max_tasks, args.data_root, args.tasks)
     print(f"tasks={len(tasks)}", flush=True)
     result = {
         "schema": MSE_SCHEMA,
@@ -78,11 +90,14 @@ def run(args) -> int:
         "splits": {},
     }
 
-    splits = [("source", (11, 30)), ("val", (31, 40))]
+    splits = [
+        ("source", (args.train_style_min, args.train_style_max)),
+        ("val", (args.val_style_min, args.val_style_max)),
+    ]
     if args.run_test:
-        splits.append(("test", (41, 50)))
+        splits.append(("test", (args.test_style_min, args.test_style_max)))
     for name, (lo, hi) in splits:
-        residues = {9} if name == "source" else None
+        residues = {args.source_holdout_residue} if name == "source" else None
         ds = build_dataset(
             tasks, (lo, hi), args.horizon, 224, True, episode_residues=residues
         )

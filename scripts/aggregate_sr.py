@@ -10,7 +10,12 @@ import sys
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from dacsc.eval_protocol import require_digest, validate_protocol
+from dacsc.eval_protocol import (
+    DEFAULT_STYLE_RANGES,
+    TARGET_PAIRS,
+    require_digest,
+    validate_protocol,
+)
 from dacsc.run_output import entry_file
 
 
@@ -26,7 +31,12 @@ def native_support(records: list[dict], key: str) -> dict:
     }
 
 
-def agg(dir_path: Path, expected_tasks: list[str], episodes: int) -> dict:
+def agg(
+    dir_path: Path,
+    expected_tasks: list[str],
+    episodes: int,
+    style_ranges: dict[str, list[int]] | None = None,
+) -> dict:
     if (
         episodes <= 0
         or not expected_tasks
@@ -42,6 +52,12 @@ def agg(dir_path: Path, expected_tasks: list[str], episodes: int) -> dict:
     tasks = {}
     all_records = []
     identity = None
+    style_ranges = DEFAULT_STYLE_RANGES if style_ranges is None else style_ranges
+    expected_styles = style_ranges.get(dir_path.name)
+    if expected_styles is None and len(style_ranges) == 1:
+        expected_styles = next(iter(style_ranges.values()))
+    if expected_styles is None:
+        raise ValueError(f"{dir_path.name}: no expected style range declared")
     for task in expected_tasks:
         payload = json.loads(files[task].read_text())
         protocol = payload["protocol"]
@@ -65,8 +81,12 @@ def agg(dir_path: Path, expected_tasks: list[str], episodes: int) -> dict:
             summary["shift"] != protocol["shift"]
             or summary["blur_sigma"] != protocol["blur_sigma"]
             or summary["seed"] != protocol["base_seed"]
+            or summary["scene_split"] != protocol["scene_split"]
             or summary["layout_id"] != protocol["layout_id"]
+            or summary["layouts"] != protocol["layouts"]
+            or summary["target_pairs"] != protocol["target_pairs"]
             or len(summary["style_order"]) != episodes
+            or len(summary["layout_order"]) != episodes
         ):
             raise ValueError(f"{task}: summary condition differs from the protocol")
         if type(summary["max_steps"]) is not int or summary["max_steps"] <= 0:
@@ -75,6 +95,28 @@ def agg(dir_path: Path, expected_tasks: list[str], episodes: int) -> dict:
             summary["styles"]
         ):
             raise ValueError(f"{task}: invalid native style allowlist")
+        if summary["styles"] != expected_styles:
+            raise ValueError(f"{task}: style allowlist violates the frozen split")
+        if protocol["scene_split"] == "pretrain":
+            expected_layout_order = [protocol["layout_id"]] * episodes
+            expected_style_order = [
+                expected_styles[index % len(expected_styles)]
+                for index in range(episodes)
+            ]
+        else:
+            expected_layout_order = [
+                TARGET_PAIRS[index % len(TARGET_PAIRS)][0]
+                for index in range(episodes)
+            ]
+            expected_style_order = [
+                TARGET_PAIRS[index % len(TARGET_PAIRS)][1]
+                for index in range(episodes)
+            ]
+        if (
+            summary["layout_order"] != expected_layout_order
+            or summary["style_order"] != expected_style_order
+        ):
+            raise ValueError(f"{task}: scene schedule violates the frozen protocol")
         for record in records:
             require_digest(record["manifest_sha256"])
             if (
@@ -83,8 +125,10 @@ def agg(dir_path: Path, expected_tasks: list[str], episodes: int) -> dict:
                 or record["environment_seed"]
                 != protocol["base_seed"] + record["episode"]
                 or record["policy_seed"] != protocol["base_seed"] + record["episode"]
-                or record["actual_layout"] != protocol["layout_id"]
-                or record["requested_layout"] != protocol["layout_id"]
+                or record["actual_layout"]
+                != summary["layout_order"][record["episode"]]
+                or record["requested_layout"]
+                != summary["layout_order"][record["episode"]]
                 or record["requested_style"]
                 != summary["style_order"][record["episode"]]
                 or record["actual_style"]
@@ -130,25 +174,41 @@ def agg(dir_path: Path, expected_tasks: list[str], episodes: int) -> dict:
     }
 
 
-def aggregate(root: Path, splits: list[str], tasks: list[str], episodes: int) -> dict:
+def parse_style_ranges(values: list[str]) -> dict[str, list[int]]:
+    ranges = {}
+    for value in values:
+        if "=" not in value:
+            raise ValueError("style ranges must use split=lo-hi")
+        split, bounds = value.split("=", 1)
+        parts = bounds.split("-")
+        if len(parts) != 2:
+            raise ValueError("style ranges must use split=lo-hi")
+        lo, hi = map(int, parts)
+        if not 1 <= lo <= hi <= 60:
+            raise ValueError("style ranges must be within 1..60")
+        ranges[split] = list(range(lo, hi + 1))
+    return ranges
+
+
+def aggregate(
+    root: Path,
+    splits: list[str],
+    tasks: list[str],
+    episodes: int,
+    style_ranges: dict[str, list[int]] | None = None,
+) -> dict:
     if not splits or len(set(splits)) != len(splits):
         raise ValueError("splits must be nonempty and unique")
-    out = {split: agg(root / split, tasks, episodes) for split in splits}
-    identity = out[splits[0]]["protocol"]
-    style_ranges = {
-        "source": list(range(11, 31)),
-        "val": list(range(31, 41)),
-        "test": list(range(41, 51)),
+    style_ranges = DEFAULT_STYLE_RANGES if style_ranges is None else style_ranges
+    out = {
+        split: agg(root / split, tasks, episodes, style_ranges) for split in splits
     }
+    identity = out[splits[0]]["protocol"]
     for split in splits:
         if split not in style_ranges or out[split]["protocol"] != identity:
             raise ValueError(f"{split}: invalid split or mixed experiment identity")
         for task in tasks:
             current = out[split]["tasks"][task]
-            if current["styles"] != style_ranges[split]:
-                raise ValueError(
-                    f"{task}/{split}: style allowlist violates the frozen split"
-                )
             if current["max_steps"] != out[splits[0]]["tasks"][task]["max_steps"]:
                 raise ValueError(f"{task}: task horizon differs across splits")
     for target in ("val", "test"):
@@ -167,13 +227,26 @@ def main() -> int:
     parser.add_argument(
         "--splits",
         nargs="+",
-        choices=["source", "val", "test"],
+        choices=["source", "val", "test", "target"],
         default=["source", "val"],
     )
+    parser.add_argument(
+        "--style-ranges",
+        nargs="+",
+        default=None,
+        help="split=lo-hi ranges; defaults to frozen v10 source/val/test/target",
+    )
     args = parser.parse_args()
+    style_ranges = (
+        DEFAULT_STYLE_RANGES
+        if args.style_ranges is None
+        else parse_style_ranges(args.style_ranges)
+    )
     path = args.root / "summary.json"
     with entry_file(path):
-        out = aggregate(args.root, args.splits, args.tasks, args.episodes)
+        out = aggregate(
+            args.root, args.splits, args.tasks, args.episodes, style_ranges
+        )
         temporary = path.with_suffix(".json.tmp")
         temporary.write_text(json.dumps(out, indent=2))
         temporary.replace(path)

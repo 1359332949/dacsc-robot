@@ -8,14 +8,23 @@ from pathlib import Path
 from dacsc.corp_images import image_contract
 from dacsc.upstream import verify_upstream
 
-PROTOCOL_VERSION = "corp_robocasa_sr_v9"
+PROTOCOL_VERSION = "corp_robocasa_sr_v10"
+TARGET_PAIRS = tuple((index, index) for index in range(1, 11))
+DEFAULT_STYLE_RANGES = {
+    "source": list(range(11, 51)),
+    "val": list(range(51, 61)),
+    "test": list(range(41, 51)),
+    "target": list(range(1, 11)),
+}
 PROTOCOL_KEYS = {
     "version",
     "checkpoint_sha256",
+    "scene_split",
     "shift",
     "blur_sigma",
     "layouts",
     "layout_id",
+    "target_pairs",
     "base_seed",
     "action_steps",
     "action_horizon",
@@ -73,15 +82,31 @@ def validate_protocol(protocol: dict) -> None:
         not math.isfinite(protocol["blur_sigma"])
         or protocol["blur_sigma"] < 0
         or not protocol["layouts"]
-        or type(protocol["layout_id"]) is not int
         or type(protocol["base_seed"]) is not int
         or protocol["precision"] not in {"fp32", "bf16"}
     ):
         raise ValueError("invalid blur/layout protocol")
     if protocol["layouts"] != sorted(set(protocol["layouts"])):
         raise ValueError("layouts must be sorted and unique")
-    if protocol["layout_id"] not in protocol["layouts"]:
-        raise ValueError("fixed evaluation layout is outside the allowed layout group")
+    scene_split = protocol["scene_split"]
+    if scene_split == "pretrain":
+        if (
+            type(protocol["layout_id"]) is not int
+            or any(layout < 11 or layout > 60 for layout in protocol["layouts"])
+            or protocol["layout_id"] not in protocol["layouts"]
+            or protocol["target_pairs"] is not None
+        ):
+            raise ValueError("invalid pretrain scene/layout protocol")
+    elif scene_split == "target":
+        expected_pairs = [list(pair) for pair in TARGET_PAIRS]
+        if (
+            protocol["layout_id"] is not None
+            or protocol["layouts"] != list(range(1, 11))
+            or protocol["target_pairs"] != expected_pairs
+        ):
+            raise ValueError("invalid official target scene protocol")
+    else:
+        raise ValueError("unknown scene split")
     if any(
         type(protocol[key]) is not int or protocol[key] <= 0
         for key in ("action_steps", "action_horizon", "euler_steps", "image_size")
@@ -103,6 +128,7 @@ def validate_training_origin(origin: dict) -> None:
         "pixel_augmentation",
         "task_aux",
         "initialization_policy",
+        "data_contract",
     }
     if (
         set(origin) != expected
@@ -173,3 +199,73 @@ def validate_training_origin(origin: dict) -> None:
         or not origin["initialization_policy"]
     ):
         raise ValueError("missing initialization policy in training origin")
+    contract = origin["data_contract"]
+    expected_contract = {
+        "tasks",
+        "train_styles",
+        "val_styles",
+        "test_styles",
+        "source_holdout_residue",
+        "train",
+        "source",
+        "val",
+        "project_git_commit",
+        "project_git_dirty",
+    }
+    if not isinstance(contract, dict) or set(contract) != expected_contract:
+        raise ValueError("missing/invalid training data contract")
+    tasks = contract["tasks"]
+    if (
+        not isinstance(tasks, list)
+        or not tasks
+        or any(not isinstance(task, str) or not task for task in tasks)
+        or tasks != sorted(set(tasks))
+    ):
+        raise ValueError("training task list must be sorted and unique")
+    for key in ("train_styles", "val_styles", "test_styles"):
+        value = contract[key]
+        if (
+            not isinstance(value, list)
+            or len(value) != 2
+            or any(type(item) is not int or item < 1 or item > 60 for item in value)
+            or value[0] > value[1]
+        ):
+            raise ValueError(f"invalid {key} range")
+    if set(range(contract["train_styles"][0], contract["train_styles"][1] + 1)) & set(
+        range(contract["val_styles"][0], contract["val_styles"][1] + 1)
+    ):
+        raise ValueError("training and validation style ranges must be disjoint")
+    if (
+        type(contract["source_holdout_residue"]) is not int
+        or not 0 <= contract["source_holdout_residue"] < 10
+    ):
+        raise ValueError("invalid source holdout residue")
+    for split in ("train", "source", "val"):
+        support = contract[split]
+        if not isinstance(support, dict) or set(support) != {
+            "frames",
+            "episodes",
+            "metadata_sha256",
+            "selection_sha256",
+        }:
+            raise ValueError(f"invalid {split} data support")
+        if (
+            type(support["frames"]) is not int
+            or support["frames"] <= 0
+            or type(support["episodes"]) is not int
+            or support["episodes"] <= 0
+        ):
+            raise ValueError(f"invalid {split} frame/episode support")
+        require_digest(support["metadata_sha256"])
+        require_digest(support["selection_sha256"])
+    commit = contract["project_git_commit"]
+    if commit is not None and (
+        not isinstance(commit, str)
+        or len(commit) != 40
+        or any(char not in "0123456789abcdef" for char in commit)
+    ):
+        raise ValueError("invalid project git commit")
+    if contract["project_git_dirty"] not in (True, False, None):
+        raise ValueError("invalid project git dirty state")
+    if (commit is None) != (contract["project_git_dirty"] is None):
+        raise ValueError("project git commit and dirty state must be recorded together")

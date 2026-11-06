@@ -34,7 +34,7 @@ from test_corp_regressions import (
 )
 
 
-def error_row(task="A", episode=0, frame=0, error=1.0, positions=1, style=31):
+def error_row(task="A", episode=0, frame=0, error=1.0, positions=1, style=51):
     return {
         "task": task,
         "episode": episode,
@@ -141,7 +141,10 @@ class MSEDefinitionsTests(unittest.TestCase):
                 checkpoint_changed=mutate
             ), tempfile.TemporaryDirectory() as d:
                 root = Path(d)
-                metadata(root / "v1.0/pretrain/atomic/Task/date/lerobot")
+                metadata(
+                    root / "v1.0/pretrain/atomic/Task/date/lerobot",
+                    episodes=((0, 11, 3), (9, 12, 2), (1, 51, 3)),
+                )
                 checkpoint = root / "model.pt"
                 checkpoint.write_bytes(b"original fixture weights")
                 out = root / "evaluation.json"
@@ -234,7 +237,7 @@ class MSEDefinitionsTests(unittest.TestCase):
             if fault == "duplicate":
                 rows[1]["frame"] = 0
             elif fault == "style_change":
-                rows[1]["style_id"] = 32
+                rows[1]["style_id"] = 52
             elif fault == "nan":
                 rows[1]["squared_error_sum"][0] = float("nan")
             else:
@@ -254,7 +257,7 @@ class MSEDefinitionsTests(unittest.TestCase):
             "action_mask": torch.tensor([[True, False]]),
             "image_space": "imagenet_normalized",
             "instruction": ["fixture"],
-            "style_id": torch.tensor([31]),
+            "style_id": torch.tensor([51]),
             "task": ["A"],
             "episode": [0],
             "frame": [0],
@@ -312,10 +315,12 @@ class SeedStatisticsTests(unittest.TestCase):
                 "budget": origin["budget"],
                 "optimization": origin["optimization"],
                 "initialization_sha256": origin["initialization_sha256"],
+                "training_origin": origin,
                 "training_state": {
                     "data_order": {
                         "metadata_sha256": origin["data_metadata_sha256"],
                         "dataset_length": 100,
+                        "data_contract": origin["data_contract"],
                     }
                 },
             }

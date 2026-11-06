@@ -104,6 +104,12 @@ def official_registry_modules():
 
 
 def training_origin_fixture(seed=42):
+    support = {
+        "frames": 100,
+        "episodes": 10,
+        "metadata_sha256": "d" * 64,
+        "selection_sha256": "e" * 64,
+    }
     return {
         "seed": seed,
         "budget": {"steps": 2000, "batch_size": 30, "lr": 5e-5},
@@ -115,18 +121,44 @@ def training_origin_fixture(seed=42):
         "pixel_augmentation": None,
         "task_aux": None,
         "initialization_policy": "fixture_initialization_v1",
+        "data_contract": {
+            "tasks": ["A"],
+            "train_styles": [11, 50],
+            "val_styles": [51, 60],
+            "test_styles": [41, 50],
+            "source_holdout_residue": 9,
+            "train": dict(support),
+            "source": dict(support),
+            "val": dict(support),
+            "project_git_commit": "a" * 40,
+            "project_git_dirty": False,
+        },
     }
 
 
 def sr_payload(task, successes, split):
-    styles = list(range(31, 41)) if split == "val" else list(range(11, 31))
+    styles = {
+        "source": list(range(11, 51)),
+        "val": list(range(51, 61)),
+        "target": list(range(1, 11)),
+    }[split]
+    style_order = [styles[i % len(styles)] for i in range(len(successes))]
+    layout_order = (
+        [index % 10 + 1 for index in range(len(successes))]
+        if split == "target"
+        else [11] * len(successes)
+    )
     protocol = {
         "version": PROTOCOL_VERSION,
         "checkpoint_sha256": "a" * 64,
+        "scene_split": "target" if split == "target" else "pretrain",
         "shift": "none",
         "blur_sigma": 0.0,
-        "layouts": list(range(11, 61)),
-        "layout_id": 11,
+        "layouts": list(range(1, 11)) if split == "target" else list(range(11, 61)),
+        "layout_id": None if split == "target" else 11,
+        "target_pairs": (
+            [[index, index] for index in range(1, 11)] if split == "target" else None
+        ),
         "base_seed": 42,
         "action_steps": 8,
         "action_horizon": 10,
@@ -146,8 +178,16 @@ def sr_payload(task, successes, split):
             "successes": sum(successes),
             "success_rate": sum(successes) / len(successes),
             "styles": styles,
-            "layout_id": 11,
-            "style_order": [styles[0]] * len(successes),
+            "scene_split": "target" if split == "target" else "pretrain",
+            "layouts": list(range(1, 11)) if split == "target" else list(range(11, 61)),
+            "layout_id": None if split == "target" else 11,
+            "target_pairs": (
+                [[index, index] for index in range(1, 11)]
+                if split == "target"
+                else None
+            ),
+            "layout_order": layout_order,
+            "style_order": style_order,
             "shift": "none",
             "blur_sigma": 0.0,
             "seed": 42,
@@ -161,10 +201,10 @@ def sr_payload(task, successes, split):
                 "blur_sigma": 0.0,
                 "environment_seed": 42 + i,
                 "policy_seed": 42 + i,
-                "actual_style": styles[0],
-                "actual_layout": 11,
-                "requested_style": styles[0],
-                "requested_layout": 11,
+                "actual_style": style_order[i],
+                "actual_layout": layout_order[i],
+                "requested_style": style_order[i],
+                "requested_layout": layout_order[i],
                 "style_ids": styles,
                 "manifest_sha256": f"{i:064x}",
                 "steps": 8,
@@ -177,7 +217,8 @@ def sr_payload(task, successes, split):
 class AggregationTests(unittest.TestCase):
     def write_task(self, directory, task="A", successes=(True, False)):
         directory.mkdir(parents=True, exist_ok=True)
-        payload = sr_payload(task, successes, directory.name)
+        split = directory.name if directory.name in ("source", "val", "target") else "source"
+        payload = sr_payload(task, successes, split)
         (directory / f"{task}.json").write_text(json.dumps(payload))
         return payload
 
@@ -188,28 +229,29 @@ class AggregationTests(unittest.TestCase):
             self.write_task(root / "val", successes=(False, False))
             result = aggregate(root, ["source", "val"], ["A"], 2)
             self.assertEqual(result["source"]["success_rate"], 0.5)
-            self.assertEqual(result["source"]["per_style"][11]["episodes"], 2)
-            self.assertEqual(len(result["source"]["per_style"]), 1)
+            self.assertEqual(result["source"]["per_style"][11]["episodes"], 1)
+            self.assertEqual(len(result["source"]["per_style"]), 2)
             self.assertEqual(result["gap_source_minus_val"], 0.5)
             self.assertNotIn("test", result)
 
     def test_missing_extra_truncated_and_corrupt_results_fail(self):
         with tempfile.TemporaryDirectory() as d:
             directory = Path(d)
+            source_ranges = {"source": list(range(11, 51))}
             with self.assertRaises(ValueError):
-                agg(directory, ["A"], 2)
+                agg(directory, ["A"], 2, source_ranges)
             payload = self.write_task(directory)
             with self.assertRaises(ValueError):
-                agg(directory, ["A", "B"], 2)
+                agg(directory, ["A", "B"], 2, source_ranges)
             with self.assertRaises(ValueError):
-                agg(directory, ["A"], 3)
+                agg(directory, ["A"], 3, source_ranges)
             payload["summary"]["successes"] = 0
             (directory / "A.json").write_text(json.dumps(payload))
             with self.assertRaises(ValueError):
-                agg(directory, ["A"], 2)
+                agg(directory, ["A"], 2, source_ranges)
             (directory / "A.json").write_text('{"summary":')
             with self.assertRaises(json.JSONDecodeError):
-                agg(directory, ["A"], 2)
+                agg(directory, ["A"], 2, source_ranges)
 
     def test_cli_failure_does_not_publish_summary(self):
         with tempfile.TemporaryDirectory() as d:
@@ -460,6 +502,7 @@ class ViewOrderTests(unittest.TestCase):
                     "task_aux": None,
                     "model": {},
                     "normalizer": {},
+                    "training_origin": training_origin_fixture(),
                 }
                 torch.save(bad, path)
                 with self.assertRaises(RuntimeError):
@@ -485,6 +528,25 @@ class ViewOrderTests(unittest.TestCase):
 
 
 class TaskAuxiliaryLossTests(unittest.TestCase):
+    def test_v10_task_selection_is_explicit_and_deterministic(self):
+        from scripts.train_corp_robocasa import all_task_paths
+
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            for name in ("TaskB", "TaskA", "TaskC"):
+                (root / "v1.0/pretrain/atomic" / name / "date/lerobot").mkdir(
+                    parents=True
+                )
+            selected = all_task_paths(0, root, ["TaskB", "TaskA"])
+            self.assertEqual(
+                [Path(path).parent.parent.name for path in selected],
+                ["TaskA", "TaskB"],
+            )
+            with self.assertRaisesRegex(ValueError, "unknown tasks"):
+                all_task_paths(0, root, ["MissingTask"])
+            with self.assertRaisesRegex(ValueError, "mutually exclusive"):
+                all_task_paths(1, root, ["TaskA"])
+
     def task_batch(self):
         batch = 2
         return {
@@ -669,6 +731,8 @@ class TaskAuxiliaryLossTests(unittest.TestCase):
             "implementation": "paper Eq.7 reproduction",
         }
         origin = training_origin_fixture()
+        origin["task_aux"] = task_aux
+        origin["initialization_policy"] = corp.INITIALIZATION_POLICY
         with tempfile.TemporaryDirectory() as d:
             path = Path(d) / "adapted.pt"
             payload = {
@@ -690,10 +754,12 @@ class TaskAuxiliaryLossTests(unittest.TestCase):
                 "budget": origin["budget"],
                 "optimization": origin["optimization"],
                 "initialization_sha256": origin["initialization_sha256"],
+                "training_origin": origin,
                 "training_state": {
                     "data_order": {
                         "metadata_sha256": origin["data_metadata_sha256"],
                         "dataset_length": 100,
+                        "data_contract": origin["data_contract"],
                     }
                 },
             }
@@ -805,6 +871,7 @@ class RolloutTests(unittest.TestCase):
             path = Path(d) / "ep.json.gz"
             kwargs = dict(
                 task="A",
+                scene_split="pretrain",
                 styles=[11, 12],
                 layouts=list(range(11, 61)),
                 episode=0,
@@ -911,6 +978,8 @@ class RolloutTests(unittest.TestCase):
                     str(checkpoint),
                     "--task",
                     "CloseFridge",
+                    "--scene-split",
+                    "pretrain",
                     "--styles",
                     "11-12",
                     "--episodes",
@@ -939,6 +1008,83 @@ class RolloutTests(unittest.TestCase):
                 outputs[1]["records"][0]["manifest_sha256"],
             )
             np.testing.assert_array_equal(envs[0].last_action, envs[1].last_action)
+
+    def test_target_sr_entrypoint_uses_official_split_and_pair_schedule(self):
+        class Policy:
+            action_horizon = 10
+            config = corp.ROBOCASA_CORP_CONFIG
+            evaluation_origin = training_origin_fixture()
+
+            def eval(self):
+                return self
+
+            def sample_action(self, *args):
+                return torch.randn(1, 10, 12)
+
+        def factory(**kwargs):
+            self.assertEqual(kwargs["split"], "target")
+            self.assertNotIn("style_ids", kwargs)
+            self.assertNotIn("layout_ids", kwargs)
+            env = FakeEnv()
+            env.meta = {"style_id": 1, "layout_id": 1, "lang": "open drawer"}
+            env.close = lambda: None
+            return env
+
+        modules = {
+            "robocasa.wrappers.gym_wrapper": SimpleNamespace(RoboCasaGymEnv=factory),
+            "robocasa.utils.env_utils": SimpleNamespace(convert_action=lambda a: a),
+            "robocasa.scripts.dataset_scripts.playback_dataset": SimpleNamespace(
+                reset_to=fake_reset_to
+            ),
+        }
+        modules.update(official_registry_modules())
+        with tempfile.TemporaryDirectory() as d, patch.dict(
+            sys.modules, modules
+        ), patch.object(
+            sr,
+            "load_adapted_checkpoint",
+            return_value=(Policy(), (torch.zeros(9), torch.ones(9))),
+        ), patch.object(
+            sr, "policy_inputs", return_value=({}, torch.zeros(1, 9), ["open drawer"])
+        ), patch.object(
+            sr, "official_target_atomic_seen", return_value={"OpenDrawer"}
+        ):
+            root = Path(d)
+            checkpoint = root / "model.pt"
+            checkpoint.write_bytes(b"fixed target weights")
+            output = root / "target.json"
+            argv = [
+                "sr",
+                "--model",
+                str(checkpoint),
+                "--task",
+                "OpenDrawer",
+                "--scene-split",
+                "target",
+                "--styles",
+                "1-10",
+                "--episodes",
+                "1",
+                "--device",
+                "cpu",
+                "--out",
+                str(output),
+                "--manifest-dir",
+                str(root / "target_manifest"),
+                "--manifest-mode",
+                "create",
+            ]
+            with patch.object(sys, "argv", argv), redirect_stdout(io.StringIO()):
+                self.assertEqual(sr.main(), 0)
+            payload = json.loads(output.read_text())
+            self.assertEqual(payload["protocol"]["scene_split"], "target")
+            self.assertEqual(
+                payload["protocol"]["target_pairs"],
+                [[index, index] for index in range(1, 11)],
+            )
+            self.assertEqual(payload["summary"]["layouts"], list(range(1, 11)))
+            self.assertEqual(payload["summary"]["layout_order"], [1])
+            self.assertEqual(payload["summary"]["style_order"], [1])
 
 
 class TinyModel(nn.Linear):

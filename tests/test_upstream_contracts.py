@@ -63,6 +63,7 @@ class OfficialRegistryTests(unittest.TestCase):
                     env,
                     path,
                     task="A",
+                    scene_split="pretrain",
                     styles=[11],
                     layouts=list(range(11, 61)),
                     episode=0,
@@ -77,6 +78,7 @@ class OfficialRegistryTests(unittest.TestCase):
             path = Path(d) / "ep.json.gz"
             kwargs = dict(
                 task="A",
+                scene_split="pretrain",
                 styles=[11],
                 layouts=list(range(11, 61)),
                 episode=0,
@@ -88,6 +90,30 @@ class OfficialRegistryTests(unittest.TestCase):
                 prepare_episode(
                     FakeEnv(), path, mode="replay", **{**kwargs, "layouts": [11]}
                 )
+
+    def test_target_manifest_records_scene_split_and_target_pair(self):
+        with tempfile.TemporaryDirectory() as d:
+            path = Path(d) / "target.json.gz"
+            env = FakeEnv()
+            env.meta = {"style_id": 1, "layout_id": 1, "lang": "open"}
+            prepare_episode(
+                env,
+                path,
+                task="OpenDrawer",
+                scene_split="target",
+                styles=list(range(1, 11)),
+                layouts=list(range(1, 11)),
+                episode=0,
+                seed=42,
+                mode="create",
+                reset_to=fake_reset_to,
+                requested_style=1,
+                requested_layout=1,
+            )
+            with gzip.open(path, "rt") as stream:
+                manifest = json.load(stream)
+            self.assertEqual(manifest["scene_split"], "target")
+            self.assertEqual((manifest["actual_layout"], manifest["actual_style"]), (1, 1))
 
     def test_create_clears_stale_episode_meta_and_honors_requested_scene(self):
         class SceneEnv(FakeEnv):
@@ -111,6 +137,7 @@ class OfficialRegistryTests(unittest.TestCase):
             path = Path(d) / "ep.json.gz"
             kwargs = dict(
                 task="A",
+                scene_split="pretrain",
                 styles=list(range(11, 31)),
                 layouts=list(range(11, 61)),
                 episode=0,
@@ -155,13 +182,14 @@ class ExperimentIdentityTests(unittest.TestCase):
         for key, value in mutations.items():
             with self.subTest(key=key), tempfile.TemporaryDirectory() as d:
                 directory = Path(d)
+                source_ranges = {"source": list(range(11, 51))}
                 a = sr_payload("A", (True,), "source")
                 b = sr_payload("B", (True,), "source")
                 b["protocol"][key] = value
                 (directory / "A.json").write_text(json.dumps(a))
                 (directory / "B.json").write_text(json.dumps(b))
                 with self.assertRaises(ValueError):
-                    agg(directory, ["A", "B"], 1)
+                    agg(directory, ["A", "B"], 1, source_ranges)
 
     def test_cross_split_identity_and_native_styles_are_validated(self):
         for change in ("checkpoint", "styles", "horizon"):
@@ -186,15 +214,16 @@ class ExperimentIdentityTests(unittest.TestCase):
     def test_old_schema_and_record_condition_mismatch_fail(self):
         with tempfile.TemporaryDirectory() as d:
             directory = Path(d)
+            source_ranges = {"source": list(range(11, 51))}
             payload = sr_payload("A", (True,), "source")
             payload["records"][0]["shift"] = "color_jitter"
             (directory / "A.json").write_text(json.dumps(payload))
             with self.assertRaises(ValueError):
-                agg(directory, ["A"], 1)
+                agg(directory, ["A"], 1, source_ranges)
             del payload["protocol"]
             (directory / "A.json").write_text(json.dumps(payload))
             with self.assertRaises(KeyError):
-                agg(directory, ["A"], 1)
+                agg(directory, ["A"], 1, source_ranges)
 
     def test_style_schedule_and_fixed_layout_mismatch_fail(self):
         mutations = (
@@ -210,7 +239,28 @@ class ExperimentIdentityTests(unittest.TestCase):
                 mutate(payload)
                 (root / "A.json").write_text(json.dumps(payload))
                 with self.assertRaises(ValueError):
-                    agg(root, ["A"], 1)
+                    agg(root, ["A"], 1, {"source": list(range(11, 51))})
+
+    def test_target_schedule_is_validated_against_official_pairs(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            payload = sr_payload("A", (True, False), "target")
+            (root / "A.json").write_text(json.dumps(payload))
+            result = agg(root, ["A"], 2, {"target": list(range(1, 11))})
+            self.assertEqual(result["macro_task_success_rate"], 0.5)
+            payload["summary"]["layout_order"] = [1, 1]
+            (root / "A.json").write_text(json.dumps(payload))
+            with self.assertRaises(ValueError):
+                agg(root, ["A"], 2, {"target": list(range(1, 11))})
+
+    def test_training_origin_data_contract_rejects_split_overlap(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            payload = sr_payload("A", (True,), "source")
+            payload["protocol"]["training"]["data_contract"]["val_styles"] = [50, 60]
+            (root / "A.json").write_text(json.dumps(payload))
+            with self.assertRaises(ValueError):
+                agg(root, ["A"], 1, {"source": list(range(11, 51))})
 
 
 class OfficialCheckpointTests(unittest.TestCase):

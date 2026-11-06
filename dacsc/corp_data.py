@@ -6,7 +6,7 @@
     action: [horizon, 12]
     lang:   原始文本（extras/episode_*/ep_meta.json 的 `lang`）
 
-严格 split：按原生 style_id 过滤（train 11-30 / val 31-40 / test 41-50）。
+严格 split：按调用方冻结的原生 style_id 范围过滤。
 不使用 coarse3 / layout10 等合成标签。
 """
 
@@ -130,15 +130,11 @@ class CorpRoboCasaDataset(Dataset):
         episode_mod: int = 10,
         shift: str = "none",
         normalize_images: bool = True,
+        allow_raw_rgb: bool = False,
     ) -> None:
         if type(normalize_images) is not bool:
             raise ValueError("normalize_images must be boolean")
-        if not normalize_images and (
-            (style_min, style_max) != (11, 30)
-            or episode_mod != 10
-            or episode_residues != set(range(9))
-            or shift != "none"
-        ):
+        if not normalize_images and not allow_raw_rgb:
             raise ValueError(
                 "raw RGB is reserved for source-training pixel augmentation, never evaluation"
             )

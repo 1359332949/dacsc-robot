@@ -1,0 +1,55 @@
+{
+  "protocol": "corp_robocasa_v10_atomic_target_pilot",
+  "purpose": "Fast direction screening for CoRP-RoboCasa appearance robustness; not an official leaderboard reproduction.",
+  "train_tasks": [
+    "OpenCabinet",
+    "OpenDrawer",
+    "TurnOffStove",
+    "TurnOnElectricKettle",
+    "TurnOnSinkFaucet"
+  ],
+  "pretrain": {
+    "train_styles": [11, 50],
+    "val_styles": [51, 60],
+    "source_holdout_residue": 9
+  },
+  "target": {
+    "scene_split": "target",
+    "styles": [1, 10],
+    "pairs": [
+      [1, 1],
+      [2, 2],
+      [3, 3],
+      [4, 4],
+      [5, 5],
+      [6, 6],
+      [7, 7],
+      [8, 8],
+      [9, 9],
+      [10, 10]
+    ]
+  },
+  "pilot_budget": {
+    "steps": 30000,
+    "batch_size": 96,
+    "lr": 0.00005,
+    "ema_decay": 0.999,
+    "grad_clip": 1.0,
+    "precision": "bf16",
+    "task_aux_lambda": 0.01,
+    "task_aux_depth": 1,
+    "seed": 42,
+    "save_every": 5000
+  },
+  "evaluation": {
+    "target_episodes_screen": 10,
+    "target_episodes_method": 20,
+    "conditions": [
+      "clean",
+      "color_jitter",
+      "blur_L1",
+      "blur_L2",
+      "blur_L3"
+    ]
+  }
+}

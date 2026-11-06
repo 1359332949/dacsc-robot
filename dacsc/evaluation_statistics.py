@@ -15,13 +15,13 @@ import numpy as np
 from scipy import stats
 
 from dacsc.action_metrics import MSE_SCHEMA, action_mse_summary
-from dacsc.eval_protocol import require_digest, validate_training_origin
+from dacsc.eval_protocol import (
+    DEFAULT_STYLE_RANGES,
+    require_digest,
+    validate_training_origin,
+)
 
-STYLE_SPLITS = {
-    "source": list(range(11, 31)),
-    "val": list(range(31, 41)),
-    "test": list(range(41, 51)),
-}
+STYLE_SPLITS = DEFAULT_STYLE_RANGES
 
 
 def seed_summary(values: dict[int, float], confidence: float = 0.95) -> dict:
@@ -87,7 +87,7 @@ def _sr_case(directory: Path, tasks: list[str], episodes: int, split: str):
     # Reuse the production validator/official success counts, not a second SR formula.
     from scripts.aggregate_sr import agg
 
-    case = agg(directory, tasks, episodes)
+    case = agg(directory, tasks, episodes, {split: STYLE_SPLITS[split]})
     if any(t["styles"] != STYLE_SPLITS[split] for t in case["tasks"].values()):
         raise ValueError(
             "SR cases must use the same declared split; source/val are not paired scenes"

@@ -1,6 +1,7 @@
 """CoRP-RoboCasa 无门控 baseline（P2）。
 
-严格 split：train styles 11-30 / val 31-40 / test 41-50。
+split 由显式 task 列表与 train/val style range 冻结；v10 pilot 使用
+train styles 11-50 / internal val 51-60 / official target split。
 模型：官方 CoRP 架构 + corp_libero.pt 共享权重，接口层随机初始化。
 训练：rectified-flow velocity loss；动作 identity 归一化（对齐 DP 基线）。
 """
@@ -11,6 +12,7 @@ import argparse
 import json
 import math
 import random
+import subprocess
 import sys
 import time
 from pathlib import Path
@@ -67,7 +69,13 @@ DATA_ROOT = default_root()
 CKPT = _CORP_REPO / "checkpoints/corp_libero.pt"
 
 
-def all_task_paths(max_tasks: int = 0, data_root: Path = DATA_ROOT) -> list[str]:
+def all_task_paths(
+    max_tasks: int = 0,
+    data_root: Path = DATA_ROOT,
+    task_names: list[str] | None = None,
+) -> list[str]:
+    if max_tasks and task_names:
+        raise ValueError("--max-tasks and --tasks are mutually exclusive")
     paths = []
     for task_dir in sorted((data_root / "v1.0/pretrain/atomic").iterdir()):
         if not task_dir.is_dir():
@@ -76,11 +84,64 @@ def all_task_paths(max_tasks: int = 0, data_root: Path = DATA_ROOT) -> list[str]
         if len(cand) != 1:
             raise ValueError(f"expected one dataset release per task: {task_dir}")
         paths.append(str(cand[0]))
-        if max_tasks and len(paths) >= max_tasks:
-            break
     if not paths:
         raise ValueError("no task datasets found")
+    if task_names:
+        if len(task_names) != len(set(task_names)):
+            raise ValueError("--tasks contains duplicates")
+        by_name = {Path(path).parent.parent.name: path for path in paths}
+        missing = sorted(set(task_names) - set(by_name))
+        if missing:
+            raise ValueError(f"unknown tasks: {missing}")
+        paths = [by_name[name] for name in sorted(task_names)]
+    if max_tasks:
+        paths = paths[:max_tasks]
     return paths
+
+
+def project_code_contract() -> dict:
+    def git(*args: str):
+        return subprocess.run(
+            ["git", *args],
+            cwd=_REPO_ROOT,
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+
+    revision = git("rev-parse", "HEAD")
+    if revision.returncode != 0:
+        return {"git_commit": None, "git_dirty": None}
+    dirty = git("diff", "--quiet").returncode != 0 or git(
+        "diff", "--cached", "--quiet"
+    ).returncode != 0
+    return {"git_commit": revision.stdout.strip(), "git_dirty": dirty}
+
+
+def data_contract(train_ds, source_ds, val_ds, tasks, args) -> dict:
+    def compact(dataset):
+        support = dataset.support()
+        return {
+            "frames": support["frames"],
+            "episodes": support["episodes"],
+            "metadata_sha256": support["metadata_sha256"],
+            "selection_sha256": support["selection_sha256"],
+        }
+
+    task_names = sorted(Path(path).parent.parent.name for path in tasks)
+    code = project_code_contract()
+    return {
+        "tasks": task_names,
+        "train_styles": [args.train_style_min, args.train_style_max],
+        "val_styles": [args.val_style_min, args.val_style_max],
+        "test_styles": [args.test_style_min, args.test_style_max],
+        "source_holdout_residue": args.source_holdout_residue,
+        "train": compact(train_ds),
+        "source": compact(source_ds),
+        "val": compact(val_ds),
+        "project_git_commit": code["git_commit"],
+        "project_git_dirty": code["git_dirty"],
+    }
 
 
 def task_class_map(tasks) -> dict[str, int]:
@@ -120,6 +181,7 @@ def build_dataset(
         use_cache=use_cache,
         episode_residues=episode_residues,
         normalize_images=normalize_images,
+        allow_raw_rgb=not normalize_images,
     )
 
 
@@ -327,6 +389,19 @@ def main() -> int:
     )
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--max-tasks", type=int, default=0)
+    ap.add_argument(
+        "--tasks",
+        nargs="+",
+        default=None,
+        help="Explicit RoboCasa atomic task names; default is all tasks",
+    )
+    ap.add_argument("--train-style-min", type=int, default=11)
+    ap.add_argument("--train-style-max", type=int, default=50)
+    ap.add_argument("--val-style-min", type=int, default=51)
+    ap.add_argument("--val-style-max", type=int, default=60)
+    ap.add_argument("--test-style-min", type=int, default=41)
+    ap.add_argument("--test-style-max", type=int, default=50)
+    ap.add_argument("--source-holdout-residue", type=int, default=9)
     ap.add_argument("--eval-every", type=int, default=50)
     ap.add_argument(
         "--save-every", type=int, default=0, help="0 = save only at the end"
@@ -378,6 +453,19 @@ def main() -> int:
         ap.error("batch sizes, per-task support and Euler steps must be positive")
     if args.resume and args.num_workers != 0:
         ap.error("exact data-order resume currently requires --num-workers 0")
+    if args.tasks and args.max_tasks:
+        ap.error("--tasks and --max-tasks are mutually exclusive")
+    if (
+        not 0 <= args.source_holdout_residue < 10
+        or not 11 <= args.train_style_min <= args.train_style_max <= 60
+        or not 11 <= args.val_style_min <= args.val_style_max <= 60
+        or not 11 <= args.test_style_min <= args.test_style_max <= 60
+    ):
+        ap.error("invalid source residue or style range")
+    train_styles = set(range(args.train_style_min, args.train_style_max + 1))
+    val_styles = set(range(args.val_style_min, args.val_style_max + 1))
+    if train_styles & val_styles:
+        ap.error("train and val style ranges must be disjoint")
     if (
         args.num_workers < 0
         or args.max_tasks < 0
@@ -401,7 +489,7 @@ def run(args, out: Path) -> int:
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     assert device.type == "cuda", "P2 baseline 必须用 GPU"
 
-    tasks = all_task_paths(args.max_tasks, args.data_root)
+    tasks = all_task_paths(args.max_tasks, args.data_root, args.tasks)
     task_to_id = task_class_map(tasks)
     task_aux_cfg = (
         None
@@ -427,22 +515,35 @@ def run(args, out: Path) -> int:
     t0 = time.time()
     train_ds = build_dataset(
         tasks,
-        (11, 30),
+        (args.train_style_min, args.train_style_max),
         args.horizon,
         224,
         True,
-        episode_residues=set(range(9)),
+        episode_residues=set(range(10)) - {args.source_holdout_residue},
         normalize_images=args.train_augmentation == "none",
     )  # 90% source train
     source_ds = build_dataset(
-        tasks, (11, 30), args.horizon, 224, True, episode_residues={9}
+        tasks,
+        (args.train_style_min, args.train_style_max),
+        args.horizon,
+        224,
+        True,
+        episode_residues={args.source_holdout_residue},
     )  # 10% source holdout
-    val_ds = build_dataset(tasks, (31, 40), args.horizon, 224, True)
+    val_ds = build_dataset(
+        tasks,
+        (args.val_style_min, args.val_style_max),
+        args.horizon,
+        224,
+        True,
+    )
     print(
         f"datasets built in {time.time()-t0:.1f}s: train={len(train_ds)} "
         f"source_val={len(source_ds)} val={len(val_ds)}",
         flush=True,
     )
+    selection_contract = data_contract(train_ds, source_ds, val_ds, tasks, args)
+    print(f"data_contract={selection_contract}", flush=True)
 
     resume_payload = None
     if args.resume:
@@ -553,6 +654,27 @@ def run(args, out: Path) -> int:
         "warmup_steps": warmup_steps,
         "provenance": "explicit project adaptation; not an official CoRP training recipe",
     }
+    training_origin = {
+        "seed": args.seed,
+        "budget": {
+            "batch_size": args.batch_size,
+            "steps": args.steps,
+            "lr": args.lr,
+            "ema_decay": args.ema_decay,
+            "grad_clip": 1.0,
+            "precision": "bf16",
+            "n_obs_steps": 1,
+        },
+        "optimization": optimization_recipe,
+        "intervention": token_style_cfg,
+        "pixel_augmentation": pixel_config,
+        "task_aux": task_aux_payload,
+        "initialization_policy": merge["initialization_policy"],
+        "initialization_sha256": initialization_sha256,
+        "data_metadata_sha256": train_ds.support()["metadata_sha256"],
+        "data_length": len(train_ds),
+        "data_contract": selection_contract,
+    }
     ema = ModelEMA(model, args.ema_decay) if args.ema_decay > 0 else None
 
     def save_checkpoint(path, completed_step):
@@ -587,6 +709,7 @@ def run(args, out: Path) -> int:
                 "task_aux": task_aux_payload,
                 "pixel_augmentation": pixel_config,
                 "merge": merge,
+                "training_origin": training_origin,
                 "training_runtime": runtime,
                 "run_args": {
                     key: str(value) if isinstance(value, Path) else value
@@ -605,6 +728,7 @@ def run(args, out: Path) -> int:
                         "dataset_paths": tasks,
                         "dataset_length": len(train_ds),
                         "metadata_sha256": train_ds.support()["metadata_sha256"],
+                        "data_contract": selection_contract,
                     },
                     augmentation=pixel_augmentation,
                 ),
@@ -642,6 +766,8 @@ def run(args, out: Path) -> int:
             raise ValueError("resume dataset paths/length differ from the checkpoint")
         if saved_order["metadata_sha256"] != train_ds.support()["metadata_sha256"]:
             raise ValueError("resume episode metadata differs from the checkpoint")
+        if saved_order.get("data_contract") != selection_contract:
+            raise ValueError("resume data selection contract differs from the checkpoint")
         loader_generator.set_state(saved_order["epoch_rng"])
     epoch_rng = loader_generator.get_state()
     it = iter(train_loader)
@@ -855,6 +981,8 @@ def run(args, out: Path) -> int:
         "initialization_sha256": initialization_sha256,
         "initialization_policy": merge["initialization_policy"],
         "optimization": optimization_recipe,
+        "training_origin": training_origin,
+        "data_contract": selection_contract,
         "support": {
             "train": train_ds.support(),
             "source": source_ds.support(),
@@ -877,7 +1005,13 @@ def run(args, out: Path) -> int:
         "metrics": metrics,
     }
     if args.run_test:
-        test_ds = build_dataset(tasks, (41, 50), args.horizon, 224, True)
+        test_ds = build_dataset(
+            tasks,
+            (args.test_style_min, args.test_style_max),
+            args.horizon,
+            224,
+            True,
+        )
         test_loader = balanced_loader(
             test_ds, args.eval_batch_size, args.per_task_eval, 123
         )

@@ -19,7 +19,11 @@ from dacsc.corp_robocasa import load_adapted_checkpoint  # noqa: E402
 from dacsc.corp_data import LinearNormalizer  # noqa: E402
 from dacsc.corp_images import prepare_image, image_contract
 from dacsc.rollout_protocol import prepare_episode, rollout_episode  # noqa: E402
-from dacsc.eval_protocol import PROTOCOL_VERSION, file_sha256  # noqa: E402
+from dacsc.eval_protocol import (  # noqa: E402
+    PROTOCOL_VERSION,
+    TARGET_PAIRS,
+    file_sha256,
+)
 from dacsc.run_output import entry_file  # noqa: E402
 from dacsc.upstream import verify_upstream
 
@@ -41,14 +45,20 @@ def parse_styles(value: str) -> list[int]:
             lo, hi = map(int, bounds)
         else:
             raise ValueError("styles must be integers or ascending ranges")
-        if not 11 <= lo <= hi <= 60:
+        if not 1 <= lo <= hi <= 60:
             raise ValueError(
-                "styles must be ascending native pretrain IDs within 11..60"
+                "styles must be ascending native style IDs within 1..60"
             )
         styles.extend(range(lo, hi + 1))
     if len(styles) != len(set(styles)):
         raise ValueError("styles must be unique")
     return styles
+
+
+def official_target_atomic_seen() -> set[str]:
+    from robocasa.utils.dataset_registry import TARGET_TASKS
+
+    return set(TARGET_TASKS["atomic_seen"])
 
 
 def policy_inputs(obs, lang, norm, device, blur_sigma=0.0, shift="none"):
@@ -81,7 +91,8 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--model", required=True)
     ap.add_argument("--task", default="CloseFridge")
-    ap.add_argument("--styles", type=parse_styles, default="11")
+    ap.add_argument("--scene-split", choices=["pretrain", "target"], required=True)
+    ap.add_argument("--styles", type=parse_styles, required=True)
     ap.add_argument("--episodes", type=int, default=2)
     ap.add_argument("--action-steps", type=int, default=8)
     ap.add_argument("--blur-sigma", type=float, default=0.0)
@@ -92,7 +103,7 @@ def main() -> int:
     )
     ap.add_argument("--device", default="cuda:0")
     ap.add_argument("--seed", type=int, default=42)
-    ap.add_argument("--layout-id", type=int, default=11)
+    ap.add_argument("--layout-id", type=int)
     ap.add_argument("--manifest-dir", type=Path, required=True)
     ap.add_argument("--manifest-mode", choices=["create", "replay"], default="replay")
     ap.add_argument("--out", required=True)
@@ -112,12 +123,9 @@ def run(args) -> int:
     from robocasa.utils.dataset_registry_utils import get_task_horizon
 
     # Match official DP evaluation: per-task horizon, source/pretrain layouts.
-    layouts = unpack_layout_ids(LayoutType.TRAIN)
     max_steps = int(get_task_horizon(args.task))
     if max_steps <= 0:
         raise ValueError("official task horizon must be positive")
-    if args.layout_id not in layouts:
-        raise ValueError("layout-id must be in the official pretrain layout group")
     checkpoint_digest = file_sha256(Path(args.model))
 
     device = torch.device(args.device)
@@ -127,15 +135,46 @@ def run(args) -> int:
     if args.action_steps > model.action_horizon:
         raise ValueError("action-steps exceeds the checkpoint action horizon")
     styles = args.styles
-    style_order = [styles[ep % len(styles)] for ep in range(args.episodes)]
+    if args.scene_split == "pretrain":
+        from robocasa.models.scenes.scene_registry import LayoutType, unpack_layout_ids
+
+        layouts = unpack_layout_ids(LayoutType.TRAIN)
+        layout_id = 11 if args.layout_id is None else args.layout_id
+        if layout_id not in layouts:
+            raise ValueError("layout-id must be in the official pretrain layout group")
+        if any(style < 11 or style > 60 for style in styles):
+            raise ValueError("pretrain styles must be within native IDs 11..60")
+        style_order = [styles[ep % len(styles)] for ep in range(args.episodes)]
+        layout_order = [layout_id] * args.episodes
+        target_pairs = None
+    else:
+        if args.layout_id is not None:
+            raise ValueError("layout-id is fixed by official target scenes")
+        if args.task not in official_target_atomic_seen():
+            raise ValueError(
+                "target evaluation currently supports only official Atomic-Seen tasks"
+            )
+        if styles != list(range(1, 11)):
+            raise ValueError("official target evaluation requires styles 1-10")
+        layouts = list(range(1, 11))
+        layout_id = None
+        target_pairs = [list(pair) for pair in TARGET_PAIRS]
+        style_order = [pair[1] for pair in TARGET_PAIRS][: args.episodes]
+        layout_order = [pair[0] for pair in TARGET_PAIRS][: args.episodes]
+        while len(style_order) < args.episodes:
+            offset = len(style_order) % len(TARGET_PAIRS)
+            style_order.append(TARGET_PAIRS[offset][1])
+            layout_order.append(TARGET_PAIRS[offset][0])
 
     protocol = {
         "version": PROTOCOL_VERSION,
         "checkpoint_sha256": checkpoint_digest,
+        "scene_split": args.scene_split,
         "shift": args.shift,
         "blur_sigma": args.blur_sigma,
         "layouts": layouts,
-        "layout_id": args.layout_id,
+        "layout_id": layout_id,
+        "target_pairs": target_pairs,
         "base_seed": args.seed,
         "action_steps": args.action_steps,
         "action_horizon": model.action_horizon,
@@ -148,16 +187,25 @@ def run(args) -> int:
         "training": model.evaluation_origin,
     }
 
-    env = RoboCasaGymEnv(
-        env_name=args.task,
-        split=None,
-        obj_instance_split="pretrain",
-        style_ids=styles,
-        layout_ids=LayoutType.TRAIN,
-        camera_widths=256,
-        camera_heights=256,
-        seed=args.seed,
-    )
+    if args.scene_split == "pretrain":
+        env = RoboCasaGymEnv(
+            env_name=args.task,
+            split=None,
+            obj_instance_split="pretrain",
+            style_ids=styles,
+            layout_ids=LayoutType.TRAIN,
+            camera_widths=256,
+            camera_heights=256,
+            seed=args.seed,
+        )
+    else:
+        env = RoboCasaGymEnv(
+            env_name=args.task,
+            split="target",
+            camera_widths=256,
+            camera_heights=256,
+            seed=args.seed,
+        )
     records = []
     started = time.monotonic()
     try:
@@ -172,8 +220,9 @@ def run(args) -> int:
                 layouts=layouts,
                 mode=args.manifest_mode,
                 reset_to=reset_to,
+                scene_split=args.scene_split,
                 requested_style=style_order[ep],
-                requested_layout=args.layout_id,
+                requested_layout=layout_order[ep],
             )
             result = rollout_episode(
                 env,
@@ -216,7 +265,9 @@ def run(args) -> int:
     sr = sum(r["success"] for r in records) / len(records)
     out = {
         "task": args.task,
+        "scene_split": args.scene_split,
         "styles": styles,
+        "layouts": layouts,
         "blur_sigma": args.blur_sigma,
         "shift": args.shift,
         "model": str(Path(args.model).resolve()),
@@ -224,7 +275,9 @@ def run(args) -> int:
         "manifest_dir": str(args.manifest_dir.resolve()),
         "max_steps": max_steps,
         "episodes": len(records),
-        "layout_id": args.layout_id,
+        "layout_id": layout_id,
+        "target_pairs": target_pairs,
+        "layout_order": layout_order,
         "style_order": style_order,
         "successes": sum(r["success"] for r in records),
         "success_rate": sr,

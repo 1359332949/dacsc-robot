@@ -36,7 +36,7 @@ from torch.nn import functional as F
 from dacsc.corp_images import image_contract
 
 _REPO_ROOT = Path(__file__).resolve().parents[1]
-CHECKPOINT_FORMAT = "corp_robocasa_v6"
+CHECKPOINT_FORMAT = "corp_robocasa_v7"
 OBJECTIVE = "corp_masked_flow_repeat_last_v2"
 TASK_AUX_HEAD_HIDDEN_DIM = 256
 INITIALIZATION_POLICY = "libero_shared_random_12d_action_interface_v1"
@@ -731,19 +731,28 @@ def load_adapted_checkpoint(
             payload["training_runtime"], restore_donor_rng=False
         )
     norm = payload["normalizer"]
+    if "training_origin" not in payload:
+        raise ValueError("checkpoint lacks a frozen training origin")
+    origin = payload["training_origin"]
+    for key, payload_key in (
+        ("budget", "budget"),
+        ("optimization", "optimization"),
+        ("intervention", "token_style"),
+        ("pixel_augmentation", "pixel_augmentation"),
+        ("task_aux", "task_aux"),
+        ("initialization_policy", "initialization_policy"),
+        ("initialization_sha256", "initialization_sha256"),
+    ):
+        if origin.get(key) != payload.get(payload_key):
+            raise ValueError(f"checkpoint training origin mismatches {payload_key}")
     order = payload["training_state"]["data_order"]
-    model.evaluation_origin = {
-        "seed": payload["run_args"]["seed"],
-        "budget": payload["budget"],
-        "intervention": payload["token_style"],
-        "pixel_augmentation": payload["pixel_augmentation"],
-        "task_aux": payload["task_aux"],
-        "initialization_policy": payload["initialization_policy"],
-        "optimization": payload["optimization"],
-        "initialization_sha256": payload["initialization_sha256"],
-        "data_metadata_sha256": order["metadata_sha256"],
-        "data_length": order["dataset_length"],
-    }
+    if (
+        order.get("dataset_length") != origin.get("data_length")
+        or order.get("metadata_sha256") != origin.get("data_metadata_sha256")
+        or order.get("data_contract") != origin.get("data_contract")
+    ):
+        raise ValueError("checkpoint training origin mismatches its data order")
+    model.evaluation_origin = origin
     from dacsc.eval_protocol import validate_training_origin
 
     validate_training_origin(model.evaluation_origin)
