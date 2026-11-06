@@ -8,7 +8,7 @@ from pathlib import Path
 from dacsc.corp_images import image_contract
 from dacsc.upstream import verify_upstream
 
-PROTOCOL_VERSION = "corp_robocasa_sr_v10"
+PROTOCOL_VERSION = "corp_robocasa_sr_v11"
 TARGET_PAIRS = tuple((index, index) for index in range(1, 11))
 DEFAULT_STYLE_RANGES = {
     "source": list(range(11, 51)),
@@ -141,7 +141,6 @@ def validate_training_origin(origin: dict) -> None:
         "initialization_sha256",
         "data_metadata_sha256",
         "data_length",
-        "intervention",
         "pixel_augmentation",
         "task_aux",
         "initialization_policy",
@@ -169,25 +168,12 @@ def validate_training_origin(origin: dict) -> None:
         or not origin["optimization"]
     ):
         raise ValueError("training budget and optimization recipe are required")
-    intervention = origin["intervention"]
-    if intervention is not None and (
-        not isinstance(intervention, dict)
-        or intervention.get("donor_seed") != origin["seed"]
-    ):
-        raise ValueError(
-            "intervention donor seed must match its recorded training seed"
-        )
     pixel = origin["pixel_augmentation"]
     if pixel is not None:
         from dacsc.pixel_augmentation import pixel_augmentation_contract
 
-        if (
-            pixel != pixel_augmentation_contract("color_jitter", origin["seed"])
-            or intervention is not None
-        ):
-            raise ValueError(
-                "invalid training pixel recipe or unsupported combined interventions"
-            )
+        if pixel != pixel_augmentation_contract("color_jitter", origin["seed"]):
+            raise ValueError("invalid training pixel recipe")
     task_aux = origin["task_aux"]
     if task_aux is not None:
         expected_task_aux = {

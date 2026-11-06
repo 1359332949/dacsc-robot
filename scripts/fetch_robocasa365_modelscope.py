@@ -37,7 +37,7 @@ python3 scripts/fetch_robocasa365_modelscope.py --preset atomic-all --audit
 """
 from __future__ import annotations
 
-import argparse, json, os, re, shutil, subprocess, sys, tarfile, time
+import argparse, json, os, subprocess, sys, tarfile, time
 from pathlib import Path
 
 REPO = "nv-community/robocasa365-datasets"

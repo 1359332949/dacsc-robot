@@ -36,7 +36,7 @@ from torch.nn import functional as F
 from dacsc.corp_images import image_contract
 
 _REPO_ROOT = Path(__file__).resolve().parents[1]
-CHECKPOINT_FORMAT = "corp_robocasa_v7"
+CHECKPOINT_FORMAT = "corp_robocasa_v8"
 OBJECTIVE = "corp_masked_flow_repeat_last_v2"
 TASK_AUX_HEAD_HIDDEN_DIM = 256
 INITIALIZATION_POLICY = "libero_shared_random_12d_action_interface_v1"
@@ -44,12 +44,6 @@ TASK_AUX_PROVENANCE = (
     "CoRP arXiv:2610.08183 Eq.7 reproduction; "
     "github.com/corp-policy/CoRP@52445740aa9517ae396cc8fb14bae8fe5922f118 "
     "releases inference only; PyTorch LayerNorm/Linear/GELU/cross_entropy"
-)
-CORP_STYLE_MODES = (
-    "none",
-    "random_stats",
-    "cross_style_stats",
-    "cross_style_stats_action_aware",
 )
 
 
@@ -235,7 +229,6 @@ class CorpRoboCasa(nn.Module):
     def __init__(
         self,
         config: dict = ROBOCASA_CORP_CONFIG,
-        token_style: nn.Module | None = None,
         task_aux: TaskAuxConfig | None = None,
     ) -> None:
         super().__init__()
@@ -265,139 +258,17 @@ class CorpRoboCasa(nn.Module):
             depth > len(self.action_generator.blocks) for depth in task_aux.depths
         ):
             raise ValueError("task auxiliary depth exceeds the DiT prefix depth")
-        # token-level style statistics modulation（patch tokens, pre-resampler）。
-        # 用 forward hook 插入，避免复制官方 RepresentationExtractor.forward。
-        self._current_domain_ids: torch.Tensor | None = None
-        self._last_style_tokens: torch.Tensor | None = None
-        self._token_importance: torch.Tensor | None = None
-        self._style_handle = None
-        self.token_style = None
-        self.set_token_style(token_style)
-
-    def set_token_style(self, token_style: nn.Module | None) -> None:
-        """注册/替换 token_style hook；晚赋值必须走这里，不能直接改属性。"""
-        if self._style_handle is not None:
-            self._style_handle.remove()
-            self._style_handle = None
-        self.token_style = token_style
-        if token_style is not None:
-            self._style_handle = (
-                self.representation_extractor.visual_encoder.register_forward_hook(
-                    self._token_style_hook
-                )
-            )
-
-    def _token_style_hook(self, module, inputs, output):
-        """visual_encoder 输出 (B*V,T,D) -> (B,V,T,D) -> 调制 -> 还原。"""
-        if self.token_style is None:
-            return output
-        if output.shape[0] % len(self.view_names):
-            raise ValueError("visual batch must be divisible by the view count")
-        b = output.shape[0] // len(self.view_names)
-        # Official extractor concatenates whole view batches: [V, B, T, D].
-        z = output.reshape(len(self.view_names), b, *output.shape[1:]).transpose(0, 1)
-        if self.training and torch.is_grad_enabled() and z.requires_grad:
-            z = z * 1.0
-            z.retain_grad()
-            self._last_style_tokens = z
-        z = self.token_style(
-            z, domain_ids=self._current_domain_ids, training=self.training
-        )
-        return z.transpose(0, 1).reshape(output.shape)
 
     def extract(
         self,
         images: dict[str, torch.Tensor],
         state: torch.Tensor,
         instruction,
-        domain_ids: torch.Tensor | None = None,
     ) -> Representation:
         """返回 Representation。images: {view: [B,3,224,224]}，state: [B,state_dim]。"""
-        if self.token_style is not None and self._style_handle is None:
-            raise RuntimeError(
-                "token_style is set but no forward hook is registered; "
-                "use set_token_style() instead of assigning token_style directly"
-            )
-        self._current_domain_ids = domain_ids
-        try:
-            return self.representation_extractor(
-                images=images, state=state, instruction=instruction
-            )
-        finally:
-            self._current_domain_ids = None
-
-    def update_action_importance(
-        self,
-        momentum: float = 0.9,
-        return_summary: bool = False,
-        gradient: torch.Tensor | None = None,
-    ) -> dict | None:
-        """Update action importance from the flow gradient, not the task aux gradient."""
-        z = self._last_style_tokens
-        self._last_style_tokens = None
-        grad = z.grad if z is not None and gradient is None else gradient
-        if self.token_style is None or z is None or grad is None:
-            return None
-        if grad.shape != z.shape:
-            raise ValueError(
-                "action importance gradient shape differs from style tokens"
-            )
-        score = (z.detach().float() * grad.detach().float()).abs().mean(dim=(0, 1, 3))
-        score = score / score.sum().clamp_min(1e-8)
-        if self._token_importance is None:
-            self._token_importance = score
-        else:
-            self._token_importance = (
-                momentum * self._token_importance + (1.0 - momentum) * score
-            )
-        # The modulator expects protection strengths, not a probability mass.
-        lo, hi = self._token_importance.amin(), self._token_importance.amax()
-        protection = ((self._token_importance - lo) / (hi - lo).clamp_min(1e-12)).clamp(
-            0, 1
+        return self.representation_extractor(
+            images=images, state=state, instruction=instruction
         )
-        self.token_style.set_action_importance(protection)
-        return self.token_style.summary() if return_summary else None
-
-    def training_runtime_state(self) -> dict:
-        ts = self.token_style
-        return {
-            "token_importance": self._token_importance,
-            "action_importance": None if ts is None else ts.action_importance,
-            "donor_rng": (
-                None
-                if ts is None or ts._donor_gen is None
-                else ts._donor_gen.get_state()
-            ),
-            "donor_device": (
-                None
-                if ts is None or ts._donor_gen is None
-                else str(ts._donor_gen.device)
-            ),
-            "donor_contract": None if ts is None else ts.donor_contract(),
-        }
-
-    def load_training_runtime_state(
-        self, state: dict, *, restore_donor_rng: bool = True
-    ) -> None:
-        device = next(self.parameters()).device
-        value = state["token_importance"]
-        self._token_importance = None if value is None else value.to(device)
-        self._last_style_tokens = None
-        if self.token_style is not None:
-            if state["donor_contract"] != self.token_style.donor_contract():
-                raise ValueError(
-                    "checkpoint donor rule differs from the current implementation"
-                )
-            value = state["action_importance"]
-            self.token_style.set_action_importance(
-                None if value is None else value.to(device)
-            )
-            if restore_donor_rng and state["donor_rng"] is not None:
-                if state["donor_device"] != str(device):
-                    raise ValueError(
-                        "donor RNG device differs; exact resume requires the same device"
-                    )
-                self.token_style._generator(device).set_state(state["donor_rng"].cpu())
 
     def flow_matching_loss(
         self,
@@ -406,7 +277,6 @@ class CorpRoboCasa(nn.Module):
         instruction,
         action: torch.Tensor,
         action_mask: torch.Tensor,
-        domain_ids: torch.Tensor | None = None,
     ) -> torch.Tensor:
         """Rectified-flow velocity loss（与官方 sample() 的积分方向严格一致）。
 
@@ -423,8 +293,7 @@ class CorpRoboCasa(nn.Module):
             .sample((b,))
             .to(device=device, dtype=action.dtype)
         )
-        # 先生成 flow noise / tau，再 extract；token_style 的 RNG 消耗不会改变 flow noise。
-        representation = self.extract(images, state, instruction, domain_ids=domain_ids)
+        representation = self.extract(images, state, instruction)
         prefix = self.action_generator.prepare_prefix(representation)
         return self._flow_loss_from_prefix(
             representation, prefix, action, action_mask, eps, tau
@@ -439,7 +308,6 @@ class CorpRoboCasa(nn.Module):
         action_mask: torch.Tensor,
         *,
         task_labels: torch.Tensor | None,
-        domain_ids: torch.Tensor | None = None,
     ) -> CorpTrainingLoss:
         """Return flow loss plus the paper's task-classification auxiliary loss."""
         if self.task_aux_config is None:
@@ -456,7 +324,7 @@ class CorpRoboCasa(nn.Module):
             .sample((action.shape[0],))
             .to(device=action.device, dtype=action.dtype)
         )
-        representation = self.extract(images, state, instruction, domain_ids=domain_ids)
+        representation = self.extract(images, state, instruction)
         prefix, hidden_states = self._prepare_prefix_and_task_hidden(representation)
         flow = self._flow_loss_from_prefix(
             representation, prefix, action, action_mask, eps, tau
@@ -565,10 +433,9 @@ class CorpRoboCasa(nn.Module):
         state: torch.Tensor,
         instruction,
         num_steps: int | None = None,
-        domain_ids: torch.Tensor | None = None,
     ) -> torch.Tensor:
         """返回归一化动作 [B, action_horizon, action_dim]（由调用方反归一化）。"""
-        representation = self.extract(images, state, instruction, domain_ids=domain_ids)
+        representation = self.extract(images, state, instruction)
         return self.action_generator.sample(representation, num_steps=num_steps)
 
 
@@ -577,7 +444,6 @@ def load_corp_robocasa(
     *,
     config: dict = ROBOCASA_CORP_CONFIG,
     device: str | torch.device = "cpu",
-    token_style: nn.Module | None = None,
     task_aux: TaskAuxConfig | None = None,
 ) -> tuple[CorpRoboCasa, dict]:
     """从官方 corp_libero.pt 加载共享权重，接口层随机初始化，并返回可审计报告。"""
@@ -597,9 +463,7 @@ def load_corp_robocasa(
         raise ValueError("source checkpoint has an unsupported camera-view contract")
     libero_sd = source.state_dict()
 
-    model = CorpRoboCasa(config, token_style=token_style, task_aux=task_aux)
-    if token_style is not None:
-        assert model._style_handle is not None, "token_style hook not registered"
+    model = CorpRoboCasa(config, task_aux=task_aux)
     model_sd = model.state_dict()
 
     copied: list[str] = []
@@ -620,7 +484,7 @@ def load_corp_robocasa(
 
     for key, tensor in model_sd.items():
         if key not in libero_sd:
-            if not key.startswith(("token_style.", "task_aux_head.")):
+            if not key.startswith("task_aux_head."):
                 raise ValueError(f"missing shared source weight: {key}")
             random_init.append(key)
             continue
@@ -700,18 +564,6 @@ def load_adapted_checkpoint(
         raise ValueError(
             "checkpoint training/image contract differs; legacy loading is unsupported"
         )
-    token_style = None
-    ts_cfg = payload.get("token_style")
-    if ts_cfg:
-        if ts_cfg.get("mode") not in CORP_STYLE_MODES[1:]:
-            raise ValueError("token-style mode is outside the current CoRP protocol")
-        from dacsc.token_style import TokenStyleModulator
-
-        token_style = TokenStyleModulator(**ts_cfg)
-        if "training_runtime" not in payload:
-            raise ValueError(
-                "token-style checkpoint lacks its donor contract; legacy loading is unsupported"
-            )
     if "task_aux" not in payload:
         raise ValueError(
             "checkpoint lacks task auxiliary configuration; legacy loading is unsupported"
@@ -721,15 +573,9 @@ def load_adapted_checkpoint(
         if payload["task_aux"] is None
         else TaskAuxConfig.from_dict(payload["task_aux"])
     )
-    model = CorpRoboCasa(
-        payload["config"], token_style=token_style, task_aux=task_aux_cfg
-    )
+    model = CorpRoboCasa(payload["config"], task_aux=task_aux_cfg)
     model.load_state_dict(payload["model"], strict=True)
     model.to(device)
-    if "training_runtime" in payload:
-        model.load_training_runtime_state(
-            payload["training_runtime"], restore_donor_rng=False
-        )
     norm = payload["normalizer"]
     if "training_origin" not in payload:
         raise ValueError("checkpoint lacks a frozen training origin")
@@ -737,7 +583,6 @@ def load_adapted_checkpoint(
     for key, payload_key in (
         ("budget", "budget"),
         ("optimization", "optimization"),
-        ("intervention", "token_style"),
         ("pixel_augmentation", "pixel_augmentation"),
         ("task_aux", "task_aux"),
         ("initialization_policy", "initialization_policy"),

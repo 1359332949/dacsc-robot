@@ -68,17 +68,14 @@ def seed_summary(values: dict[int, float], confidence: float = 0.95) -> dict:
     return out
 
 
-def _training_identity(origin: dict, *, include_intervention: bool) -> dict:
+def _training_identity(origin: dict, *, include_method: bool = True) -> dict:
     validate_training_origin(origin)
     identity = copy.deepcopy(origin)
     identity.pop("seed")
-    if include_intervention:
-        if identity["intervention"] is not None:
-            identity["intervention"].pop("donor_seed")
+    if include_method:
         if identity["pixel_augmentation"] is not None:
             identity["pixel_augmentation"].pop("seed")
     else:
-        identity.pop("intervention")
         identity.pop("pixel_augmentation")
     return identity
 
@@ -239,8 +236,8 @@ def compare_evaluations(manifest: dict, *, confidence: float = 0.95) -> dict:
             )
         reference_rows = ka
         if _training_identity(
-            ma["training"], include_intervention=False
-        ) != _training_identity(mb["training"], include_intervention=False):
+            ma["training"], include_method=False
+        ) != _training_identity(mb["training"], include_method=False):
             raise ValueError("training budget, recipe, data or initialization differs")
         if comparison == "methods":
             if any(ma[k] != mb[k] for k in condition_keys):
@@ -270,9 +267,7 @@ def compare_evaluations(manifest: dict, *, confidence: float = 0.95) -> dict:
                         for k, v in meta.items()
                         if k not in ("checkpoint_sha256", "training")
                     },
-                    "training": _training_identity(
-                        meta["training"], include_intervention=True
-                    ),
+                    "training": _training_identity(meta["training"]),
                 }
             )
         if reference_identity is not None and identity != reference_identity:

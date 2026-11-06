@@ -91,18 +91,13 @@ source holdout/internal validation, never target outcomes.
 
 The current main research route is FFN-channel/token-channel analysis.
 Its interventions must use their own specified unit-selection protocol and
-matched random controls; it is not gated by `cross_style_stats` or action-aware
-results from the statistical token-mixing side branch.
+matched random controls. A candidate must report clean/non-inferiority and the
+shifted result against: no intervention, standard pixel augmentation, and a
+random intervention matched on layer, view, token class, count, and edit
+magnitude.
 
-Statistical token mixing is a separate side branch. The following gates apply
-only if that branch is explicitly revived:
-
-1. `random_stats` is a mandatory matched control.
-2. The random control must match donor diversity; otherwise cross-style and
-   random results differ in more than the style-selection factor.
-3. `cross_style_stats` must exceed the matched random control on the shifted
-   condition without an unacceptable clean/non-inferiority loss.
-4. Action-aware is not resumed until cross-style passes the matched-random gate.
+The retired statistical token-mixing implementation is not part of V10 and is
+not an admissible fallback or comparison path.
 
 ## Entry points
 

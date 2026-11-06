@@ -394,9 +394,8 @@ token-conditioned 通道选择
 无法同时匹配的因素必须单列。消融后模型也可能启用替代路径，因此要用动作和闭环
 结果验证，而不能只看“某个激活被删掉了”。
 
-当前 statistical token mixing 只是旁支，不是主方法。`random_stats` 与
-`cross_style_stats` 的 donor 多样性目前也不完全匹配；如果恢复这条线，必须先补
-matched donor control。
+旧 statistical token mixing 已因负结果和 donor 不匹配退役，代码不再保留，
+也不作为 V10 的备选路径。
 
 在最小因果实验成立前，不扩大训练预算，也不把“更大的模型/更长训练”当作修复
 机制问题的手段。
@@ -759,7 +758,7 @@ FFN 机制：目前是研究目标，不是已证实根因
 1. 用 V10 frozen manifests 训练 30k baseline；
 2. 先看 clean source/internal-val 的闭环 SR；
 3. 如果 baseline 接近 0，先修训练预算、任务难度、动作接口和 horizon；
-4. 不启动 random/cross/action-aware 的完整比较。
+4. 不启动任何未通过独立机制 gate 的方法比较。
 
 ### 阶段 B：条件区分度
 
@@ -788,7 +787,6 @@ standard pixel augmentation
 random channel intervention
 shared channel selection
 token-conditioned channel selection
-action-aware protection
 ```
 
 ### 阶段 E：扩规模
@@ -816,7 +814,7 @@ target 仍然只在方法、预算和 checkpoint 全部冻结后才碰。
 | target 同时换 style/layout/object | 无法归因外观 | 只用 target 做最终外部测试 |
 | 只有 MSE 改善 | 不能证明任务能力 | 主结论必须用 SR |
 | 没有 random control | 无法归因于选择机制 | 同预算随机对照 |
-| action-aware 只是梯度启发式 | 不能称为因果通道 | 用干预和闭环结果验证 |
+| 梯度/attention 重要性只是启发式 | 不能称为因果通道 | 用指定干预和闭环结果验证 |
 | clean 替换有效但压制无效 | 不能证明 mask/门控有部署收益 | 转为信息恢复或继续定位 |
 | 闭环不同轨迹被当作同状态 | 注入的是状态/轨迹信息 | matched state 或单步反事实 |
 | 单任务、单 seed、20 episodes | 结果不稳定 | 分阶段扩 task/seed/episode |

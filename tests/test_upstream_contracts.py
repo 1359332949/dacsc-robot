@@ -1,11 +1,9 @@
-"""Upstream contract, donor and output ownership regressions; no training entry is run."""
+"""Upstream contract and output ownership regressions; no training entry is run."""
 
 from __future__ import annotations
 
-import copy
 import gzip
 import json
-import os
 from pathlib import Path
 import subprocess
 import sys
@@ -25,7 +23,6 @@ sys.path.insert(0, str(ROOT / "scripts"))
 import dacsc.corp_robocasa as corp
 from dacsc.rollout_protocol import prepare_episode
 from dacsc.run_output import entry_output
-from dacsc.token_style import TokenStyleModulator
 from scripts.aggregate_sr import agg, aggregate
 from test_corp_regressions import (
     FakeEnv,
@@ -322,29 +319,23 @@ class ExperimentIdentityTests(unittest.TestCase):
 
 
 class OfficialCheckpointTests(unittest.TestCase):
-    def test_coherent_checkpoint_metadata_cannot_enable_retired_normalization_modes(
-        self,
-    ):
+    def test_retired_v7_checkpoint_format_is_rejected(self):
         from dacsc.corp_images import image_contract
         from dacsc.upstream import verify_upstream
 
         with tempfile.TemporaryDirectory() as d:
-            path = Path(d) / "unsupported_mode.pt"
-            for mode in ("normalize", "normalize_action_aware", "none", "unknown"):
-                torch.save(
-                    {
-                        "format": corp.CHECKPOINT_FORMAT,
-                        "objective": corp.OBJECTIVE,
-                        "images": image_contract(),
-                        "upstream": verify_upstream(),
-                        "token_style": {"mode": mode},
-                    },
-                    path,
-                )
-                with self.subTest(mode=mode), self.assertRaisesRegex(
-                    ValueError, "outside the current CoRP protocol"
-                ):
-                    corp.load_adapted_checkpoint(path)
+            path = Path(d) / "retired_v7.pt"
+            torch.save(
+                {
+                    "format": "corp_robocasa_v7",
+                    "objective": corp.OBJECTIVE,
+                    "images": image_contract(),
+                    "upstream": verify_upstream(),
+                },
+                path,
+            )
+            with self.assertRaisesRegex(ValueError, "contract differs"):
+                corp.load_adapted_checkpoint(path)
 
     def test_release_loader_rejects_missing_extra_shape_and_digest_errors(self):
         for change in ("missing", "unexpected", "shape", "digest"):
@@ -438,125 +429,6 @@ class OutputOwnershipTests(unittest.TestCase):
                 result = self.wrapper(target, script, file=True)
             self.assertNotEqual(result.returncode, 0)
             self.assertFalse((root / "A.log").exists())
-
-    def test_matrix_runner_stops_on_first_failed_interpreter(self):
-        with tempfile.TemporaryDirectory() as d:
-            root = Path(d)
-            interpreter = root / "failure_stub"
-            interpreter.write_text("#!/bin/sh\nexit 23\n")
-            interpreter.chmod(0o755)
-            for name in ("run_corp_experiment.sh",):
-                with self.subTest(name=name):
-                    env = {
-                        **os.environ,
-                        "PY": str(interpreter),
-                        "OUT": str(root / name),
-                        "STEPS": "51",
-                        "SEEDS": "42 43",
-                        "MODES": "none",
-                    }
-                    result = subprocess.run(
-                        ["bash", str(ROOT / "scripts" / name)],
-                        env=env,
-                        capture_output=True,
-                        text=True,
-                        timeout=10,
-                    )
-                    self.assertEqual(result.returncode, 23)
-                    self.assertNotIn("ALL_DONE", result.stdout)
-                    self.assertNotIn("seed=43", result.stdout)
-
-
-class DonorRulesTests(unittest.TestCase):
-    def test_wrong_action_importance_cannot_silently_disable_protection(self):
-        module = TokenStyleModulator("cross_style_stats_action_aware")
-        module.set_action_importance(torch.ones(3))
-        with self.assertRaisesRegex(ValueError, "patch-token count"):
-            module(torch.randn(2, 3, 4, 8), torch.tensor([11, 12]))
-        with self.assertRaises(ValueError):
-            module.set_action_importance(torch.ones(2, 2))
-
-    def test_topk_action_protection_changes_actual_modulation(self):
-        tokens = torch.randn(2, 3, 4, 8)
-        module = TokenStyleModulator(
-            "cross_style_stats_action_aware",
-            alpha=1.0,
-            action_weight=0.0,
-            protect_ratio=0.25,
-        )
-        module.set_action_importance(torch.tensor([0.0, 0.2, 1.0, 0.4]))
-        changed = module(tokens, torch.tensor([11, 12]))
-        torch.testing.assert_close(changed[:, :, 2], tokens[:, :, 2], rtol=0, atol=0)
-        self.assertGreater(float((changed[:, :, 0] - tokens[:, :, 0]).abs().mean()), 0)
-
-    def test_changed_or_missing_donor_contract_cannot_be_loaded(self):
-        from test_corp_regressions import tiny_corp
-
-        model = tiny_corp(TokenStyleModulator("cross_style_stats"))
-        saved = copy.deepcopy(model.training_runtime_state())
-        saved["donor_contract"]["task_conditioned"] = True
-        with self.assertRaisesRegex(ValueError, "donor rule"):
-            model.load_training_runtime_state(saved)
-        with tempfile.TemporaryDirectory() as d:
-            path = Path(d) / "legacy_style.pt"
-            from dacsc.corp_images import image_contract
-            from dacsc.upstream import verify_upstream
-
-            torch.save(
-                {
-                    "format": corp.CHECKPOINT_FORMAT,
-                    "objective": corp.OBJECTIVE,
-                    "images": image_contract(),
-                    "upstream": verify_upstream(),
-                    "token_style": {"mode": "cross_style_stats"},
-                },
-                path,
-            )
-            with self.assertRaisesRegex(ValueError, "donor contract"):
-                corp.load_adapted_checkpoint(path)
-
-    def test_random_donor_matches_upstream_sample_permutation_and_preserves_view(self):
-        batch, views = 5, 3
-        tokens = torch.randn(batch, views, 8, 4)
-        module = TokenStyleModulator("random_stats", alpha=1.0, donor_seed=42)
-        out = module(tokens)
-        expected = torch.randperm(batch, generator=torch.Generator().manual_seed(42))
-        row = expected[:, None] * views + torch.arange(views)
-        self.assertTrue(torch.equal(module.last_donor, row.flatten()))
-        torch.testing.assert_close(
-            out.mean(2), tokens[expected].mean(2), atol=1e-5, rtol=1e-5
-        )
-
-    def test_cross_style_is_exact_even_under_29_to_1_imbalance(self):
-        tokens = torch.randn(30, 3, 8, 4)
-        labels = torch.tensor([11] * 29 + [12])
-        module = TokenStyleModulator("cross_style_stats", donor_seed=42)
-        rng = torch.get_rng_state()
-        module(tokens, labels)
-        donors = module.last_donor.reshape(30, 3)
-        self.assertTrue(torch.all(donors % 3 == torch.arange(3)))
-        self.assertTrue(torch.all(labels[donors[:, 0] // 3] != labels))
-        self.assertTrue(torch.equal(torch.get_rng_state(), rng))
-
-    def test_missing_malformed_or_single_style_labels_raise_without_fallback(self):
-        module = TokenStyleModulator("cross_style_stats")
-        tokens = torch.randn(4, 3, 8, 4)
-        for labels in (
-            None,
-            torch.ones(4, dtype=torch.long),
-            torch.tensor([11, 12]),
-            torch.ones(4),
-        ):
-            with self.subTest(labels=labels), self.assertRaises(ValueError):
-                module(tokens, labels)
-
-    def test_donor_statistics_are_detached_as_in_upstream(self):
-        tokens = torch.randn(2, 3, 8, 4, requires_grad=True)
-        module = TokenStyleModulator("cross_style_stats", alpha=1.0)
-        module(tokens, torch.tensor([11, 12]))[0].sum().backward()
-        self.assertGreater(float(tokens.grad[0].abs().sum()), 0)
-        self.assertEqual(float(tokens.grad[1].abs().sum()), 0)
-
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

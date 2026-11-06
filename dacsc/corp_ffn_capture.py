@@ -82,8 +82,6 @@ class CoRPFFNCapture:
     """
 
     def __init__(self, policy, reference, *, view_names: tuple[str, ...] | None = None):
-        if getattr(policy, "token_style", None) is not None:
-            raise ValueError("capture the no-intervention CoRP, not a styled policy")
         self.policy = policy
         self.reference = reference
         self.backbone = policy.representation_extractor.visual_encoder.backbone
@@ -174,8 +172,6 @@ class CoRPFFNCapture:
             raise RuntimeError(
                 "FFN collection requires eval and no_grad/inference_mode"
             )
-        if getattr(self.policy, "token_style", None) is not None:
-            raise ValueError("styled policy is outside read-only baseline capture")
         image = inputs[0]
         if image.ndim != 4 or image.shape[1:] != (3, 224, 224):
             raise ValueError("capture requires the CoRP224 RGB image contract")

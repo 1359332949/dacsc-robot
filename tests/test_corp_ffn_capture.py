@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import copy
 from contextlib import redirect_stdout, redirect_stderr
 import hashlib
 import io
@@ -249,10 +248,6 @@ class CaptureTests(unittest.TestCase):
                 model.extract(images, torch.zeros(2, 9), ["a", "b"])
         self.assertTrue(model.training)
         self.assertEqual(hook_count(model), initial)
-        model.eval()
-        model.token_style = nn.Identity()
-        with self.assertRaisesRegex(ValueError, "styled policy"):
-            CoRPFFNCapture(model, self.ref)
 
     def test_exception_and_reentry_remove_observers_without_hiding_failure(self):
         model = fixture_policy()

@@ -1,7 +1,7 @@
 # 当前实验协议：CoRP-RoboCasa / appearance shift
 
-2026-11-02更新（始于2026-10-30）。本文件是唯一当前执行协议，替代旧 notes/71、72；与其他历史 note
-（包括 notes/75 的旧“权威索引”）冲突时，以本文件的证据范围和执行顺序为准。
+2026-11-06更新。本文件是当前总体执行协议；V10 的机器可读冻结配置和入口以
+[V10_PROTOCOL.md](V10_PROTOCOL.md)为准。历史实验文档和退役实现已从工作树删除。
 
 ## 研究问题和证据边界
 
@@ -19,8 +19,8 @@ blur/noise 是辅助动机，不据此改称已经验证的普遍 corruption/DG 
 基线固定为 CoRP-RoboCasa。先建立有效 clean 闭环能力，再在同一模型、任务、初始状态和
 策略噪声下测 appearance shift，最后评估标准像素增广与通道/token-channel干预的各自增量。
 **架构基线已实现；当前协议下稳定完成任务的闭环实验基线尚未建立，候选方法没有已确认的收益。**
-**方向澄清：用户暂不选择AdaIN式统计混合作为主方法，主研究候选回到通道/token-channel选择。
-具体粒度、插入点和训练/推理口径尚未定案，不据此移植旧gate或启动训练。**
+**方向澄清：AdaIN式统计混合及其旧实现已退役，主研究路线是视觉 FFN/token-channel
+机制分析与选择性干预；具体粒度、插入点和训练/推理口径尚未定案。**
 当前只实现/本地验证只读FFN采集，服务器验证暂缓；后续真实环境验证顺序仍为视频读取→CUDA/BF16→MuJoCo重放。
 
 ### 外观变化的范围
@@ -53,7 +53,7 @@ resampler是Q2的重要观察边界：需要检验哪些视觉变化被压缩/�
 | --- | --- | --- |
 | style 是否可解码？ | 纯视觉、episode-level 的原生标签 probe 有信号 | 策略依赖了有害 shortcut；域敏感维度应该被删除 |
 | 外观变化是否伤害策略？ | 旧官方 CoRP/LIBERO-Plus 在部分强扰动下退化 | 当前 CoRP-RoboCasa 闭环必然退化；所有自然外观变化都困难 |
-| 候选方法是否缓解退化？ | 当前只有实现与局部工程验证 | token statistics 或 action-aware 有效/无效 |
+| 候选方法是否缓解退化？ | 当前尚无选定并实现的 FFN 干预 | 通道响应或梯度大小等于方法有效 |
 
 后续“机制发现＋最小方法”须逐级取证，不在本轮执行：
 
@@ -83,7 +83,7 @@ test域标签不得用于排名、候选筛选或方法选择，test继续封存
 - CloseFridge 的 0/10 只能描述该 checkpoint 在该协议下失败，不能自动归因为训练不足。
 - 旧官方 CoRP/LIBERO-Plus 的 14 个任务 paired 结果是动机证据，不能替代 RoboCasa 模型的验证。
 - CoRP 论文 RoboTwin Randomized 训练包含随机化示范，不能用两组 success 差证明零样本外观泛化。
-- legacy DP 的 u/v 分析、DDPM gate 和 custom flow 结果不是 CoRP token 方法结果；梯度分数不等于因果证明。
+- 梯度分数、attention 或激活差异不能替代指定干预和闭环结果。
 
 ## 基线、对照与候选方法
 
@@ -103,18 +103,15 @@ test域标签不得用于排名、候选筛选或方法选择，test继续封存
 它们也不允许省略公平对照或把短预算结果称为官方训练复现。
 
 下面是研究候选/实现盘点，**不是本轮获准启动的训练矩阵**。
-先测单项贡献；标准像素增广仍是必要对照，已有统计混合模块降为旁支，暂不扩展donor或风格归一化。
+先测单项贡献；标准像素增广仍是必要对照，当前不实现 gate、统计混合或风格归一化。
 
 | 组 | 开关 | 作用与要回答的问题 |
 | --- | --- | --- |
-| 无干预 CoRP | `train-augmentation=none`、`token-style-mode=none` | 基础学习与 clean 闭环能力 |
-| 标准像素增广 | `train-augmentation=color_jitter`、`token-style-mode=none` | 通用输入增广能解决多少外观退化？ |
+| 无干预 CoRP | `train-augmentation=none` | 基础学习与 clean 闭环能力 |
+| 标准像素增广 | `train-augmentation=color_jitter` | 通用输入增广能解决多少外观退化？ |
 | 随机通道干预 | 计划对照，尚无当前CoRP入口 | 在相同粒度/位置/预算下区分普通正则与选择机制 |
 | 通道/token-channel选择 | 研究候选，尚未接入当前CoRP | 区分embedding坐标、FFN神经元和按token条件化的通道选择；先做上游审计 |
 | 动作感知通道保护 | 研究候选，未实现当前CoRP版本 | 外观响应与实际动作影响是否相关，怎样指导选择，是否优于随机和无保护？ |
-| 随机统计混合（旁支） | 已有`token-style-mode=random_stats` | 现有实现留作历史/备选，不是用户当前选择的主方法 |
-| 跨 style 统计混合（旁支） | 已有`token-style-mode=cross_style_stats` | 同上，暂不继续扩展或训练 |
-| 统计混合的动作梯度保护（旁支） | 已有`token-style-mode=cross_style_stats_action_aware` | 仅保护混合强度，不能冒称已实现action-aware channel gate |
 
 像素增广直接使用 Torchvision；特征模块是受 TFS-ViT 启发的项目适配，不能冒用完整上游方法名。
 复杂候选需要与标准像素增广及相同干预粒度的随机/无保护对照比较，不能只优于无增广就宣称域选择或动作保护有效。
@@ -149,27 +146,26 @@ FFN steering的VLM常数覆写、Action Atlas的完整残差/MLP/SAE干预与当
 
 ## 已有证据、作废结果与未验证问题
 
-以下记录只在其原始模型、数据、代码和评测协议内有效；历史图像处理、loss、EMA、donor 或
+以下记录只在其原始模型、数据、代码和评测协议内有效；历史图像处理、loss、EMA 或
 结果 schema 与当前不一致时，不混入新比较，也不通过转换旧文件补齐当前溯源。
 
-| 证据 | 可以保留的判断 | 边界/来源 |
+| 证据 | 可以保留的判断 | 边界 |
 | --- | --- | --- |
-| 原生 style 的纯 DINOv2 probe | agentview 中存在可解码信息；最佳50类 episode balanced accuracy约.52 | [note52](../notes/52-pure-dino-style-full-audit.md)；固定layout后support不足，不能证明干净的域分离；不再引用coarse3/layout10 |
-| legacy 通道分析、DDPM gate、custom flow 对照 | 特定旧模型、预算和干预下没有按预期获益，部分变差 | [note43](../notes/43-top-u遮挡因果结果.md)、[note47](../notes/47-DDPM-200步3seed结果.md)、notes59/60；不是CoRP结论，不证明所有通道方法不可能 |
-| 旧官方 CoRP/LIBERO-Plus 强扰动 | 在已记录条件下出现明显退化，是动机证据 | [note67](../notes/67-Corp强模糊退化.md)、[note77](../notes/77-配对appearance-shift评测.md)；LIBERO-Plus原生条件不等于标准LIBERO clean；14任务配对color stress仅为小样本，不能替代RoboCasa验证 |
-| hook未注册时的token-style run | 不能用于判断token-style效果，作废 | notes66/70已删；修复前实际没有执行干预，修代码不能追溯使旧结果有效 |
-| 修复后的短token-style smoke | 支持代码路径会执行干预 | [note76](../notes/76-token_style-51步smoke.md)；旧短预算/少量任务不构成正向或普遍负向方法结论 |
-| 旧CoRP-RoboCasa MSE与GT replay | 当时版本的数值/管线记录 | [note64](../notes/64-CorpRoboCasa-per-dim-per-task与success-rate阻塞.md)、[note68](../notes/68-RoboCasa-SR管线验证.md)；不替代当前协议下真实数据与闭环复核 |
-| 此前像素增广工程验证 | `7efc94a`快照86项回归通过；官方CoRP CPU demo通过 | [像素增广验证记录](../audit/pixel_augmentation_local_validation.json)；只覆盖记录声明的本地范围，不是CUDA、真实视频或MuJoCo通过证明 |
-| 此前只读FFN采集验证 | 当时本地96项回归通过；真实发布权重适配器在受控输入下挂hook前后表示/动作逐元素一致 | [采集验证记录](../audit/corp_ffn_capture_local_validation.json)；输入不是新解码视频，不证明outlier/style/动作机制或方法收益 |
-| 只读验收入口与交付包准备 | `d51a043`版本108项本地回归通过，入口/包与出处可追溯 | [准备记录](../audit/readonly_validation_local_preparation.json)；fixture不是硬件/真实视频证明，视觉验收入口不执行完整策略/动作检查 |
+| 原生 style 的纯 DINOv2 probe | agentview 中存在可解码信息 | 可解码性不证明策略依赖了有害 shortcut |
+| 旧官方 CoRP/LIBERO-Plus 强扰动 | 特定强 color/blur 条件下出现退化 | 小样本、不同模型/环境，不能替代 RoboCasa 验证 |
+| V9 CloseDrawer pilot | baseline 有非零成功；强 jitter 下下降 | 单任务、单 seed、20 episodes，只能筛查 |
+| 旧 statistical token mixing | 未超过 matched random control | 代码已退役，不进入当前方法矩阵 |
+| 像素增广工程验证 | Torchvision 路径、RNG 隔离和恢复有本地回归 | 不是 CUDA、真实视频或 MuJoCo 通过证明 |
+| 只读 FFN 采集验证 | hook 生命周期和非侵入性有本地回归 | 不证明机制或方法收益 |
+
+历史证据的完整汇总见
+[RESEARCH_PLAN_AND_DATASETS.md](RESEARCH_PLAN_AND_DATASETS.md)。
 
 旧的过强表述统一修正：
 
 - “style可分，所以域门控应有效”改为“可解码性不证明有害依赖，也不决定干预对象”。
 - “CoRP对外观没有退化”改为“部分历史条件下没有观察到退化，其他强扰动出现退化；当前RoboCasa闭环待测”。
-- “u≠v判定channel gate失败”改为“legacy观察削弱了该具体实现的动机，梯度与遮挡分析不能证明普遍因果分离”。
-- “改成token就适合ViT、能够保留动作信息”改为“当前统计混合是待验证假设，统计量也可能含任务/布局信息”。
+- “u≠v判定channel gate失败”改为“旧实现只削弱该具体方案的动机，梯度与遮挡不能证明普遍因果分离”。
 - “CloseFridge 0/10必然因为模型弱”改为“只证明该checkpoint在当时协议下失败；预算、管线、控制与分布因素仍需排查”。
 - “满200/2k步、gap超过5个百分点或CI跨零就自动决定去留”改为“结合学习能力、support、配对结果和不确定性判断，不以单阈值代替证据”。
 
@@ -178,7 +174,7 @@ FFN steering的VLM常数覆写、Action Atlas的完整残差/MLP/SAE干预与当
 1. **真实执行链**：当前版本真实视频解码、CUDA/BF16及MuJoCo状态/动作重放是否按官方接口正确工作？
 2. **有效基线**：当前协议下无干预CoRP是否能在冻结source/val场景稳定完成任务？旧0/10不能替代诊断。
 3. **同模型退化**：同一个RoboCasa策略在保留任务线索的外观条件下是否出现可重复闭环退化？
-4. **机制与粒度**：Q1响应变化是否在Q2指定干预下影响动作，resampler传递了什么，Q3共享通道是否过粗？统计混合/donor问题仅属旁支，不作为当前FFN主线的已定评分规则。
+4. **机制与粒度**：Q1响应变化是否在Q2指定干预下影响动作，resampler传递了什么，Q3共享通道是否过粗？
 5. **方法增量**：选定粒度的通道干预是否优于匹配随机干预，动作保护是否优于无保护，复杂方法是否优于标准像素增广且不损伤clean能力？
 
 前三项没有完成前，不把已存在的候选模块等同于已成立的方法；当前只推进本地只读FFN采集和回归，不启动训练。
@@ -189,7 +185,7 @@ FFN steering的VLM常数覆写、Action Atlas的完整残差/MLP/SAE干预与当
 
 | split | 条件 | 用途 |
 | --- | --- | --- |
-| train | style 11–50，episode index `%10 != 9` | 参数学习、normalizer 拟合、训练 donor |
+| train | style 11–50，episode index `%10 != 9` | 参数学习和 normalizer 拟合 |
 | source holdout | style 11–50，episode index `%10 == 9` | 源域离线诊断 |
 | internal val | style 51–60 | 预算、checkpoint、方法选择 |
 | official target | `split="target"`，官方 target scenes/objects | 最终外部迁移，不作为调参依据 |
@@ -222,7 +218,7 @@ v10 pilot 只使用 5 个官方 target Atomic-Seen 任务，并把 pretrain 内�
 | 重放 | [官方 reset_to](https://github.com/robocasa/robocasa/blob/dc73a8ce18e4b8947e8df2ae2958245ca823f3b4/robocasa/scripts/dataset_scripts/playback_dataset.py) | 不调用 label_subtasks 中的修改副本，不修补 XML、不偷偷 retry |
 | 布局/时限 | 官方 `LayoutType.TRAIN`、`unpack_layout_ids`、`get_task_horizon` | layout 11–60；时限按任务 registry，删除固定600步和旧 override |
 | 图像 | Pillow bilinear + [Torchvision functional](https://docs.pytorch.org/vision/main/transforms.html) | 三条路径使用同一图像契约；保留 LIBERO 官方观测旋转，不给 RoboCasa添加该旋转 |
-| EMA | [PyTorch AveragedModel / get_ema_multi_avg_fn](https://docs.pytorch.org/docs/stable/optim.html#weight-averaging-swa-and-ema-for-training) | 不重写 EMA 算术；适配参数名/共享权重和非持久 donor buffer |
+| EMA | [PyTorch AveragedModel / get_ema_multi_avg_fn](https://docs.pytorch.org/docs/stable/optim.html#weight-averaging-swa-and-ema-for-training) | 不重写 EMA 算术；适配参数名和共享权重 |
 | task 辅助损失 | CoRP论文Eq.7；PyTorch `LayerNorm`、`Linear/GELU`、`cross_entropy`；官方`DiTBlock.encode_prefix` | 只训练视觉前缀；任务头不进入推理；task label不进入策略输入 |
 | 互斥 | [filelock](https://py-filelock.readthedocs.io/en/latest/how-to.html) | 输出所有权和日志创建位于同一锁内 |
 
@@ -291,60 +287,17 @@ normalizer 只读取训练 state/action，不调用随机图像增广。
 通过 PyTorch `torch.random.fork_rng(devices=[])` 和私有 CPU generator 隔离全局 flow RNG，
 run seed 初始化、完整保存/恢复其状态。CUDA 像素运算和 BF16 管线仍需真实环境验证。
 
-首轮只比较单项干预：像素增广启用时要求 `--token-style-mode none`，组合直接报错，不自动回退。
-runner 可选 `TRAIN_AUGMENTATION=color_jitter MODES=none`，输出
-`$OUT/$TRAIN_AUGMENTATION/$MODE/seed_$SEED`；默认 `TRAIN_AUGMENTATION=none`。
+像素增广默认关闭；V10 pilot 可用 `TRAIN_AUGMENTATION=color_jitter` 单独启用。
+输出目录由 `--out-dir` 独占，禁止覆盖已有 run。
 训练结果、checkpoint 及评测的 `training_origin.pixel_augmentation` 保存算子、强度、顺序抽样规则、
 位置、Torch/Torchvision 版本和 seed；无增广也必须显式记录 null。评测只读取该溯源，不重建或执行训练增广。
 方法配对允许像素/特征干预不同；同一策略的条件配对要求该字段完全相同。
 不得把不同库版本或缺少该字段的旧结果混入当前比较。
 
-## 旁支实现：统计混合的donor与动作保护契约
-
-本节只描述已有旁支代码，不将其指定为当前主方法。训练期 statistics mixing：eval 返回原视觉特征，不需要 style、task 或动作标签计算 donor。
-CoRP插入点是DINOv2输出的归一化patch tokens之后、resampler之前，通过hook委托官方forward，
-不复制官方提取器。输入为`[B,V,T,D]`，其中`T=256`、`D=384`；不是在48个resampler query上执行当前混合。
-对每个样本/视角沿`T`轴计算逐特征维mean/std，再使用对应donor统计量构造：
-
-```text
-z_style = (z - mean_T(z)) / std_T(z) * std_T(z_donor) + mean_T(z_donor)
-z_out   = (1 - alpha_k) * z + alpha_k * z_style
-```
-
-std有下限保护，mean/std detach。这个实现是patch-token序列上的逐特征维统计混合，
-不是token删除、逐token域分类或已经证明的内容/风格解耦；从channel改名为token不构成有效性证据。
-
-- `random_stats`：`torch.randperm(B)`，允许 self-pair/同 style；沿用 TFS-ViT 样本置换思想。
-- `cross_style_stats`：每个 recipient 在 batch 不同原生 style 的样本中均匀抽一个。
-  直接用 `torch.multinomial`；recipient 之间可复用 donor。缺标签或只一个 style 立即报错，无 fallback。
-- `cross_style_stats_action_aware`：donor 规则不变，动作重要性仅调整调制强度。
-- 一对样本共用 donor，左对左、腕对腕、右对右，不跨相机；官方 view-major 输出先转换再逆转换。
-- **不限制同 task/layout**，不能称为“同任务、只变外观”的受控训练干预。
-- mean/std detach；独立 donor RNG 由 run seed 初始化并完整恢复，不消耗 flow RNG。
-- action-aware 为先前训练梯度构造的 patch 位置 EMA/min-max 权重，跨样本/视角统计；不是对象追踪或因果重要性。
-
-当前 donor 规则还有已知匹配缺口：`random_stats` 使用无放回
-`randperm`，`cross_style_stats` 使用允许重复的
-`multinomial`，因此同一 batch 的 unique-donor 数量也会不同。
-在补齐 donor 重数/多样性匹配对照前，不能把 cross-vs-random
-差异全部归因于“跨 style 选择”；统计混合只保留为旁支，不作为
-v10 主方法结论。
-
-动作分数来自先前训练迭代的`mean_{B,V,D}(|z * dL_flow/dz|)`及EMA，重要位置降低`alpha_k`；
-启用task aux时显式只对`L_flow`做该梯度，不复用总损失梯度，避免任务分类目标污染“动作保护”名实。
-指定top位置可不混合。它是当前训练目标下的梯度启发式，不是独立clean反事实测量；
-跨task/相机平均的位置重要性不保证对应同一物体，不能写成已验证的“动作因果保护”。
-
-来源：[TFS-ViT FeatureStylization](https://github.com/Mehrdad-Noori/TFS-ViT_Token-level_Feature_Stylization/blob/main/domainbed/pretrained_models/DeiT_models/models.py)。
-当前固定 alpha、单个 pre-resampler 插入点、多视角及异 style 规则都属于适配，
-不是完整 TFS-ViT 的 Beta mixing、多层/token 策略。仅凭该模块不能把完整 TFS-ViT 填入比较表。
-`sample_pair_v2` donor 契约不匹配的 checkpoint 拒绝加载。
-CoRP checkpoint只接受上述三种训练期mixing模式，拒绝已退役的normalize分支或未声明的模式。
-SR命令中的style范围必须逐段升序、唯一且落在原生pretrain ID 11–60内，不能静默跳过反向范围。
-
 ## 统一预算与保存
 
-当前统一 runner 使用 batch30、lr5e-5、pilot EMA .99、grad clip1、BF16、单帧/视角、Euler10。
+当前 V10 pilot 使用 batch96、30k steps、lr5e-5、EMA .999、grad clip1、BF16、
+单帧/视角、Euler10。
 默认同时启用CoRP Eq.7 task aux（lambda=.01、depth1、shared head hidden256）；
 用`--task-aux-lambda 0`明确关闭，并把“无辅助损失”保留为单独ablation，不能与新默认混表。
 原训练适配中的 AdamW betas=(.9,.95)、weight_decay=1e-4、eps=1e-8和前10%预算的线性warmup
@@ -352,14 +305,14 @@ SR命令中的style范围必须逐段升序、唯一且落在原生pretrain ID 1
 `STEPS` 必须显式声明；默认只跑 none。正式预算、EMA、任务集、训练 seeds 必须在比较前冻结，
 不能根据 test 结果反复调整。51/200步只用于工程检查，2k/10k也不自动构成学会任务的证据。
 
-CPU/CUDA RNG、optimizer、scheduler、EMA、donor、importance、像素增广RNG、DataLoader位置完整保存；
+CPU/CUDA RNG、optimizer、scheduler、EMA、像素增广RNG和DataLoader位置完整保存；
 checkpoint原子替换，保存独立于评测周期。精确续训目前要求 workers=0、同数据路径/metadata/预算/架构。
 不能把一个2k预算改写成10k后称为同预算的完整 resume；新的预算需另立实验。
 已完成预算的 checkpoint 不再走训练 resume；显式使用独立 evaluator，避免将保存点之前的 metrics 当作最终评测。
-模型格式为 `corp_robocasa_v7`、训练状态版本3，保存 raw/EMA/计划总步数、
+模型格式为 `corp_robocasa_v8`、训练状态版本4，保存 raw/EMA/计划总步数、
 实际完成步数、初始化权重 digest、
 `initialization_policy`、图像/上游契约、task-aux配置/类别映射和预算。
-SR协议为`corp_robocasa_sr_v10`，训练身份包含初始化策略、task-aux配置、任务列表、
+SR协议为`corp_robocasa_sr_v11`，训练身份包含初始化策略、task-aux配置、任务列表、
 冻结 style 范围、train/source/val selection hash 和项目 commit。
 旧格式不迁移。test 默认不执行。
 
@@ -375,7 +328,7 @@ scene manifest 保存模型 XML、仿真状态、metadata 和 RNG；之后调用
 看似运行 20 个 episode，实际可能始终只有同一个 style。
 
 聚合必须检查任务清单、episode数、manifest digest、checkpoint SHA256、条件、推理预算、source/val范围和完整性。
-schema `corp_robocasa_sr_v10` 保存实际训练seed、计划总步数/实际完成步数、优化配方、
+schema `corp_robocasa_sr_v11` 保存实际训练seed、计划总步数/实际完成步数、优化配方、
 像素/特征增广、task-aux配置、
 初始化策略及训练数据digest，不接受旧JSON冒充完整配对记录。
 写入前锁文件，日志禁止截断；中断/失败不能产生“全完成”的汇总。

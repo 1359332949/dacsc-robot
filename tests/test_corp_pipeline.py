@@ -336,9 +336,14 @@ class UpstreamInfrastructureTests(unittest.TestCase):
             self.assertFalse((Path(d) / "dirty/dacsc_code.tgz").exists())
 
     def test_v10_pilot_protocol_is_frozen_and_target_is_official_pairs(self):
+        from dacsc.corp_robocasa import CHECKPOINT_FORMAT
+        from dacsc.eval_protocol import PROTOCOL_VERSION
+
         protocol = json.loads(
             (ROOT / "configs/v10_atomic_target_pilot.json").read_text()
         )
+        self.assertEqual(CHECKPOINT_FORMAT, "corp_robocasa_v8")
+        self.assertEqual(PROTOCOL_VERSION, "corp_robocasa_sr_v11")
         self.assertEqual(
             protocol["train_tasks"],
             [
@@ -448,13 +453,13 @@ class UpstreamInfrastructureTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 LinearNormalizer(mean, std)
 
-    def test_ema_uses_pytorch_and_dynamic_donor_buffer_is_not_averaged(self):
+    def test_ema_uses_pytorch_and_nonpersistent_buffer_is_not_averaged(self):
         model = nn.Linear(1, 1, bias=False)
         model.weight.data.zero_()
-        model.register_buffer("donor", torch.zeros(0), persistent=False)
+        model.register_buffer("runtime_buffer", torch.zeros(0), persistent=False)
         ema = ModelEMA(model, 0.9)
         model.weight.data.fill_(10)
-        model.donor = torch.ones(256)
+        model.runtime_buffer = torch.ones(256)
         ema.update(model)
         torch.testing.assert_close(ema.shadow["weight"], torch.ones(1, 1))
         self.assertEqual(ema.averaged.__class__.__module__, "torch.optim.swa_utils")
@@ -475,34 +480,6 @@ class UpstreamInfrastructureTests(unittest.TestCase):
             ):
                 upstream.verify_upstream()
 
-    def test_runner_forwards_one_budget_and_stops_after_failure(self):
-        with tempfile.TemporaryDirectory() as d:
-            root = Path(d)
-            stub = root / "python"
-            captured = root / "args.json"
-            stub.write_text('#!/bin/sh\nprintf "%s\\n" "$@" > "$CAPTURE"\nexit 23\n')
-            stub.chmod(0o755)
-            env = {
-                **os.environ,
-                "PY": str(stub),
-                "CAPTURE": str(captured),
-                "OUT": str(root / "out"),
-                "STEPS": "2000",
-                "MODES": "none random_stats",
-            }
-            result = subprocess.run(
-                ["bash", str(ROOT / "scripts/run_corp_experiment.sh")],
-                env=env,
-                capture_output=True,
-                text=True,
-            )
-            self.assertEqual(result.returncode, 23)
-            args = captured.read_text().splitlines()
-            self.assertEqual(args[args.index("--batch-size") + 1], "30")
-            self.assertEqual(args[args.index("--steps") + 1], "2000")
-            self.assertNotIn("ALL_DONE", result.stdout)
-
-
 class ReleasedAdapterTests(unittest.TestCase):
     @unittest.skipUnless(
         (ROOT / "repos/CoRP/checkpoints/corp_libero.pt").is_file(),
@@ -511,7 +488,6 @@ class ReleasedAdapterTests(unittest.TestCase):
     def test_real_release_adapter_hook_masked_loss_and_ema_state(self):
         import dacsc.corp_robocasa as corp_module
         from dacsc.corp_robocasa import load_corp_robocasa
-        from dacsc.token_style import TokenStyleModulator
 
         checkpoint = ROOT / "repos/CoRP/checkpoints/corp_libero.pt"
         upstream.verify_release_checkpoint(checkpoint)
@@ -541,27 +517,14 @@ class ReleasedAdapterTests(unittest.TestCase):
             images = {view: torch.randn(2, 3, 224, 224) for view in model.view_names}
             state = torch.zeros(2, 9)
             instructions = ["open drawer", "close drawer"]
-            labels = torch.tensor([11, 12])
             model.train()
             with torch.no_grad():
-                torch.manual_seed(7)
-                base = model.extract(images, state, instructions, labels).tokens
-                style = TokenStyleModulator(
-                    "cross_style_stats", alpha=0.5, donor_seed=42
-                )
-                model.set_token_style(style)
-                torch.manual_seed(7)
-                changed = model.extract(images, state, instructions, labels).tokens
-                self.assertIsNotNone(model._style_handle)
-                self.assertGreater(float(style.last_stats_t["mod_abs_mean"]), 0)
-                self.assertFalse(torch.allclose(base, changed))
                 loss = model.flow_matching_loss(
                     images,
                     state,
                     instructions,
                     torch.zeros(2, 10, 12),
                     torch.ones(2, 10, dtype=torch.bool),
-                    labels,
                 )
                 self.assertTrue(torch.isfinite(loss))
                 model.eval()

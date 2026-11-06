@@ -32,7 +32,6 @@ import dacsc.corp_robocasa as corp
 from corp.representation.extractor import RepresentationExtractor
 from dacsc.corp_data import LinearNormalizer
 from dacsc.rollout_protocol import prepare_episode, rollout_episode, seed_episode
-from dacsc.token_style import TokenStyleModulator
 from dacsc.training_state import (
     atomic_torch_save,
     evaluation_state,
@@ -113,12 +112,11 @@ def training_origin_fixture(seed=42, completed_steps=2000):
     return {
         "seed": seed,
         "completed_steps": completed_steps,
-        "budget": {"steps": 2000, "batch_size": 30, "lr": 5e-5},
+        "budget": {"steps": 2000, "batch_size": 96, "lr": 5e-5},
         "optimization": {"optimizer": "torch.optim.AdamW"},
         "initialization_sha256": "c" * 64,
         "data_metadata_sha256": "d" * 64,
         "data_length": 100,
-        "intervention": None,
         "pixel_augmentation": None,
         "task_aux": None,
         "initialization_policy": "fixture_initialization_v1",
@@ -339,14 +337,14 @@ def tiny_extractor(config):
     return module
 
 
-def tiny_corp(style=None, config=corp.ROBOCASA_CORP_CONFIG):
+def tiny_corp(config=corp.ROBOCASA_CORP_CONFIG):
     with patch.object(
         corp, "RepresentationExtractor", side_effect=tiny_extractor
     ), patch.object(corp, "DiTActionGenerator", side_effect=lambda _: nn.Linear(2, 2)):
-        return corp.CorpRoboCasa(config, token_style=style)
+        return corp.CorpRoboCasa(config)
 
 
-def tiny_task_aux_corp(task_aux=None, token_style=None):
+def tiny_task_aux_corp(task_aux=None):
     config = copy.deepcopy(corp.ROBOCASA_CORP_CONFIG)
     config.update(
         action_dim=2,
@@ -377,7 +375,7 @@ def tiny_task_aux_corp(task_aux=None, token_style=None):
             head_hidden_dim=3,
         )
     with patch.object(corp, "RepresentationExtractor", side_effect=tiny_extractor):
-        return corp.CorpRoboCasa(config, token_style=token_style, task_aux=task_aux)
+        return corp.CorpRoboCasa(config, task_aux=task_aux)
 
 
 def official_fixture(path):
@@ -409,14 +407,8 @@ def official_fixture(path):
 
 
 class ViewOrderTests(unittest.TestCase):
-    def test_official_view_major_order_and_label_alignment(self):
-        class Stamp(nn.Module):
-            def forward(self, tokens, domain_ids, training):
-                self.seen = tokens.detach().clone()
-                return tokens + domain_ids[:, None, None, None] * 1000
-
-        style = Stamp()
-        model = tiny_corp(style)
+    def test_official_view_major_order_preserves_sample_and_view_identity(self):
+        model = tiny_corp()
         batch, views = 2, model.view_names
         images = {
             v: torch.tensor([100 * vi + b for b in range(batch)], dtype=torch.float32)
@@ -426,49 +418,14 @@ class ViewOrderTests(unittest.TestCase):
             .requires_grad_()
             for vi, v in enumerate(views)
         }
-        labels = torch.tensor([1, 2])
-        rep = model.extract(images, torch.zeros(batch, 9), ["a", "b"], labels)
-        for b in range(batch):
-            for vi in range(len(views)):
-                self.assertEqual(style.seen[b, vi, 0, 0], 100 * vi + b)
-                self.assertEqual(
-                    rep.tokens[b, vi * 4, 0], 100 * vi + b + labels[b] * 1000
-                )
+        rep = model.extract(images, torch.zeros(batch, 9), ["a", "b"])
+        expected = torch.cat([images[view] for view in views], dim=1)
+        torch.testing.assert_close(rep.tokens[:, : expected.shape[1]], expected)
         rep.tokens.sum().backward()
         for value in images.values():
             self.assertTrue(torch.equal(value.grad, torch.ones_like(value)))
 
-    def test_noop_style_preserves_official_output_and_no_grad_train_is_safe(self):
-        images = {
-            v: torch.randn(2, 4, 2) for v in corp.ROBOCASA_CORP_CONFIG["view_names"]
-        }
-        model = tiny_corp(TokenStyleModulator(mode="none"))
-        with torch.no_grad():
-            actual = model.extract(images, torch.zeros(2, 9), ["a", "b"])
-        model.set_token_style(None)
-        expected = model.extract(images, torch.zeros(2, 9), ["a", "b"])
-        torch.testing.assert_close(actual.tokens, expected.tokens, rtol=0, atol=0)
-
-    def test_importance_changes_modulation_not_just_nonzero(self):
-        style = TokenStyleModulator(
-            mode="cross_style_stats_action_aware", alpha=1, dim=2
-        )
-        model = tiny_corp(style)
-        z = torch.ones(2, 3, 256, 2, requires_grad=True)
-        weights = torch.linspace(0, 1, 256)
-        (z * weights[None, None, :, None]).sum().backward()
-        model._last_style_tokens = z
-        model.update_action_importance()
-        imp = style.action_importance
-        self.assertAlmostEqual(float(imp[-1]), 1.0)
-        self.assertAlmostEqual(float(imp[0]), 0.0)
-        self.assertGreater(float(imp.mean()), 0.4)  # Old 1/256 mass fails this.
-        tokens = torch.randn_like(z) + torch.tensor([0.0, 4.0])[:, None, None, None]
-        out = style(tokens, torch.tensor([0, 1]))
-        torch.testing.assert_close(out[:, :, -1], tokens[:, :, -1])
-        self.assertGreater(float((out[:, :, 0] - tokens[:, :, 0]).abs().mean()), 0.1)
-
-    def test_load_path_registers_hook_and_checkpoint_load_is_strict(self):
+    def test_load_path_and_checkpoint_load_are_strict(self):
         with tempfile.TemporaryDirectory() as d:
             path = Path(d) / "official.pt"
             official_fixture(path)
@@ -480,25 +437,16 @@ class ViewOrderTests(unittest.TestCase):
                 "corp.checkpoint.CoRP",
                 side_effect=lambda config, norm: corp.CorpRoboCasa(config),
             ):
-                loaded, _ = corp.load_corp_robocasa(
-                    path, token_style=TokenStyleModulator(mode="cross_style_stats")
-                )
-                self.assertIsNotNone(loaded._style_handle)
+                loaded, _ = corp.load_corp_robocasa(path)
                 images = {v: torch.randn(2, 4, 2) for v in loaded.view_names}
                 loaded.train()
-                loaded.extract(
-                    images, torch.zeros(2, 9), ["a", "b"], torch.tensor([11, 12])
-                )
-                self.assertGreater(
-                    float(loaded.token_style.last_stats_t["mod_abs_mean"]), 0
-                )
+                loaded.extract(images, torch.zeros(2, 9), ["a", "b"])
                 bad = {
                     "format": corp.CHECKPOINT_FORMAT,
                     "objective": corp.OBJECTIVE,
                     "images": image_contract(),
                     "upstream": verify_upstream(),
                     "config": loaded.config,
-                    "token_style": None,
                     "task_aux": None,
                     "model": {},
                     "normalizer": {},
@@ -507,24 +455,6 @@ class ViewOrderTests(unittest.TestCase):
                 torch.save(bad, path)
                 with self.assertRaises(RuntimeError):
                     corp.load_adapted_checkpoint(path)
-
-    def test_donor_rng_and_protection_resume_exactly(self):
-        style = TokenStyleModulator(mode="cross_style_stats_action_aware", dim=2)
-        model = tiny_corp(style)
-        tokens = torch.randn(2, 3, 4, 2)
-        labels = torch.tensor([11, 12])
-        style.set_action_importance(torch.linspace(0, 1, 4))
-        style(tokens, labels)
-        saved = copy.deepcopy(model.training_runtime_state())
-        expected = style(tokens, labels)
-        donors = style.last_donor.clone()
-        other = tiny_corp(
-            TokenStyleModulator(mode="cross_style_stats_action_aware", dim=2)
-        )
-        other.load_training_runtime_state(saved)
-        actual = other.token_style(tokens, labels)
-        torch.testing.assert_close(actual, expected, rtol=0, atol=0)
-        self.assertTrue(torch.equal(donors, other.token_style.last_donor))
 
 
 class TaskAuxiliaryLossTests(unittest.TestCase):
@@ -742,7 +672,6 @@ class TaskAuxiliaryLossTests(unittest.TestCase):
                 "upstream": verify_upstream(),
                 "config": model.config,
                 "model": model.state_dict(),
-                "token_style": None,
                 "task_aux": task_aux,
                 "initialization_policy": corp.INITIALIZATION_POLICY,
                 "pixel_augmentation": None,
@@ -789,24 +718,6 @@ class TaskAuxiliaryLossTests(unittest.TestCase):
             torch.save(payload, path)
             with self.assertRaisesRegex(ValueError, "lacks task auxiliary"):
                 corp.load_adapted_checkpoint(path)
-
-    def test_action_importance_uses_flow_gradient_not_task_aux_gradient(self):
-        style = TokenStyleModulator(
-            "cross_style_stats_action_aware",
-            alpha=1.0,
-            dim=2,
-            donor_seed=42,
-        )
-        model = tiny_task_aux_corp(token_style=style)
-        z = torch.ones(2, 3, 4, 2, requires_grad=True)
-        flow_grad = torch.linspace(0.0, 1.0, 4)[None, None, :, None].expand_as(z)
-        z.grad = torch.full_like(z, 1000.0)
-        model._last_style_tokens = z
-        model.update_action_importance(gradient=flow_grad)
-        expected = (z.detach() * flow_grad).abs().mean(dim=(0, 1, 3))
-        expected = (expected - expected.min()) / (expected.max() - expected.min())
-        torch.testing.assert_close(style.action_importance, expected)
-
 
 class FakeEnv:
     def __init__(self):
@@ -1100,13 +1011,6 @@ class RolloutTests(unittest.TestCase):
 class TinyModel(nn.Linear):
     def __init__(self):
         super().__init__(2, 1)
-        self.runtime = torch.tensor([0.0])
-
-    def training_runtime_state(self):
-        return {"value": self.runtime.clone()}
-
-    def load_training_runtime_state(self, state):
-        self.runtime = state["value"].clone()
 
 
 class TrainingStateTests(unittest.TestCase):
@@ -1184,13 +1088,11 @@ class TrainingStateTests(unittest.TestCase):
             o.step()
             sc.step()
             e.update(m)
-            m.runtime += 1
 
         update(model, opt, sched, ema)
         payload = {
             "raw_model": model.state_dict(),
             "training_state": training_state(
-                model,
                 opt,
                 sched,
                 ema,
@@ -1211,6 +1113,8 @@ class TrainingStateTests(unittest.TestCase):
             sched2 = torch.optim.lr_scheduler.LambdaLR(opt2, lambda n: 1 / (n + 1))
             ema2 = ModelEMA(resumed, 0.9)
             saved = torch.load(path, weights_only=False)
+            self.assertEqual(saved["training_state"]["version"], 4)
+            self.assertNotIn("runtime", saved["training_state"])
             g2 = torch.Generator()
             g2.set_state(saved["training_state"]["data_order"]["epoch_rng"])
             it2 = iter(
@@ -1230,8 +1134,5 @@ class TrainingStateTests(unittest.TestCase):
                 torch.testing.assert_close(
                     ema2.shadow[key], expected_ema[key], rtol=0, atol=0
                 )
-            torch.testing.assert_close(resumed.runtime, model.runtime)
-
-
 if __name__ == "__main__":
     unittest.main(verbosity=2)

@@ -120,7 +120,7 @@ NeuronPath、DaViT保留为相邻工具/结构参考，不再把“具身模型�
 | 每个DINO block输入/输出 | `[3B,257,384]`；首位置是CLS，其余256个是patch | 残差流的384维embedding坐标，不是MLP中间神经元 |
 | `backbone.blocks[l].mlp.act`输出 | GELU后`[3B,257,1536]`，下游是`fc2(1536→384)` | 与Registers的普通MLP neuron hook对应的对象 |
 | FFN分支之后 | `fc2` → `ls2` → 与残差相加 | 衰减FFN神经元只改变该分支，不等于直接删除整个残差特征 |
-| visual encoder输出 | 最终LayerNorm后丢弃CLS，`[3B,256,384]` | 现有token-style旁支hook在这里；不能观测原始残差流的高范数分布 |
+| visual encoder输出 | 最终LayerNorm后丢弃CLS，`[3B,256,384]` | 未来干预必须显式声明此接口；不能把最终输出当作原始残差流 |
 | extractor相机排列 | 先整批左视角，再整批腕部，再整批右视角，即view-major | 任何多视角适配须显式转换，不能把相邻行当作同一样本的三个相机 |
 | resampler输入/输出 | `384→768`投影，语言FiLM作用于queries；48 tokens/view | 后面还有attention与LayerNorm，不能宣称post-norm干预再也不会被归一化影响 |
 
@@ -283,7 +283,7 @@ patch×FFN mask有256×1536个元素。这是掩码元素数量，不等于一�
 - `load_registers_reference(root)`校验`analysis_upstream.lock.json`的四个原文件，按隔离的Python命名空间加载原函数。
   不复制/重写logger和排名，不把作者`shared`包放进全局搜索路径，不自动下载或回退到其他源码。
 - `CoRPFFNCapture`仅注册原block和`mlp.act`观察hook；返回None，既不修改激活也不替换返回值。
-  要求policy及子模块eval、调用处`no_grad`/`inference_mode`，拒绝带token-style旁支的policy。
+  要求policy及子模块eval、调用处`no_grad`/`inference_mode`。
 - 先detach并独立复制到CPU FP32，再调用原`log_internal`；保留原始dtype记录，不与模型输出共享存储。
   不替换SDPA来获得attention日志，不增加register或模型参数。
 - 每次完整backbone forward只保留最新一帧：FFN为每层`[B,V,257,1536]`，原block输出为`[B,V,257,384]`。
@@ -315,7 +315,7 @@ patch_ffn = frame.ffn[0][:, :, 1:, :]
 完整12层采集前后表示、pooled language、动作、Torch RNG、state_dict及hook数量均核对；数值比较`rtol=0, atol=0`。
 这验证观察器不改变前向，不证明随机初始化的新RoboCasa接口层具有任务能力。
 输入不是本轮新解码的RoboCasa视频，不能据此宣称真实视频、CUDA/BF16、MuJoCo或任何动作机制/收益成立。
-最新记录见[只读采集验证](../audit/corp_ffn_capture_local_validation.json)；此前静态审计JSON中的文档hash属于实现前快照。
+最新记录见[当前完整验证](../audit/current_validation.json)；静态审计JSON中的文档hash属于实现前快照。
 
 ## 下一步真实样本只读验证方案（尚未执行）
 
@@ -344,7 +344,7 @@ patch_ffn = frame.ffn[0][:, :, 1:, :]
 1. 核对官方源hash、实际reader/import路径、解码后端、视频/元数据身份。使用官方`LerobotDataset.__getitem__`，不改解码器，不用contact sheet或合成图冒充真实帧。
 2. 每个观测只解码一次三个相机的原始RGB，缓存该批原始像素及hash。先用两观测batch验证三视角顺序，随后保持相同样本和batch划分；尾批可以为1，不补伪样本凑batch。
 3. 调用现有`prepare_image`，走Pillow resize224、固定条件、ImageNet normalize；相机保持左/腕/右的官方view-major拼接。
-   模型前向不做crop/翻转，不给RoboCasa加LIBERO旋转，不使用训练`ColorJitter`或token-style模块。
+   模型前向不做crop/翻转，不给RoboCasa加LIBERO旋转，也不使用训练`ColorJitter`。
    现有入口另行实例化训练`ColorJitter`，只作与Torchvision的算子/RNG一致性验收；其输出不进入模型前向，与固定评测条件分开。
 4. 同一份预处理tensor分别做无hook与只读hook前向。固定checkpoint、模式、batch、精度和Torch RNG起点，
    在CPU FP32、`eval()`与`inference_mode()`下比较视觉输出；完整策略项满足前述normalizer条件时再比较representation/动作。

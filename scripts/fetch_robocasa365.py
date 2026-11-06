@@ -36,11 +36,9 @@ python3 scripts/fetch_robocasa365.py --assets-only --root /data/robocasa365
 from __future__ import annotations
 
 import argparse
-import ast
 import json
 import os
 import re
-import shutil
 import subprocess
 import sys
 import tarfile

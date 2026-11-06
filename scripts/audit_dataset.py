@@ -34,7 +34,6 @@ import argparse
 import csv
 import json
 import math
-import os
 import re
 import statistics
 import sys
@@ -64,11 +63,6 @@ def infer_task_name(extras_dir: Path, dataset_root: Path, override: str | None) 
     """
     if override:
         return override
-    parts = extras_dir.parts
-    try:
-        root_idx = len(dataset_root.parts)
-    except Exception:
-        root_idx = 0
     # 从 extras 的父目录(lerobot 根)开始向上找
     cur = extras_dir.parent
     for _ in range(6):

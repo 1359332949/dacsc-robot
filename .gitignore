@@ -20,6 +20,5 @@ wandb/
 *.log
 audit/corp_model_visualization*/
 
-# Vendored third-party repositories (483MB)
-# Only our modified config files are force-added to git.
+# Vendored official repositories are local-only.
 repos/

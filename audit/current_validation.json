@@ -1,0 +1,40 @@
+{
+  "schema": "dacsc_current_validation_v1",
+  "generated_at": "2026-11-06T17:29:00+08:00",
+  "scope": "local CPU validation after retiring historical DP and token-style branches",
+  "base_git_commit": "d555842d2105a1690a155cd083bb299b452fb664",
+  "working_tree_modified": true,
+  "python": "3.11.15",
+  "source_tree_sha256": "f5ffc9fdfc17cd110656fadec4bf2272a695469ca5df41dd12602b3d542e1f15",
+  "source_file_count": 69,
+  "checks": {
+    "unittest": {
+      "command": "PYTHONPATH=tests .venv/bin/python -m unittest discover -s tests -v",
+      "tests_run": 125,
+      "result": "PASS"
+    },
+    "ruff_undefined_name_and_unused_import": {
+      "command": "ruff check dacsc scripts tests --select F401,F821,F841",
+      "result": "PASS"
+    },
+    "python_compileall": {
+      "command": ".venv/bin/python -m compileall -q dacsc scripts tests",
+      "result": "PASS"
+    },
+    "shell_syntax": {
+      "command": "bash -n scripts/*.sh",
+      "result": "PASS"
+    },
+    "diff_check": {
+      "command": "git diff --check",
+      "result": "PASS"
+    }
+  },
+  "not_validated": [
+    "target GPU driver and native BF16 execution",
+    "real RoboCasa video decode on the server",
+    "MuJoCo state and action replay",
+    "closed-loop success rate",
+    "FFN intervention efficacy"
+  ]
+}

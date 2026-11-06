@@ -3,12 +3,8 @@
 from __future__ import annotations
 
 import copy
-from contextlib import redirect_stderr
-import io
 import json
-import os
 from pathlib import Path
-import subprocess
 import sys
 import tempfile
 from types import SimpleNamespace
@@ -263,7 +259,6 @@ class PixelAugmentationTests(unittest.TestCase):
             m(x).square().sum().backward()
             o.step()
             s.step()
-            m.runtime += 1
             return augmented, noise
 
         update(model, opt, sched, aug, first)
@@ -273,7 +268,6 @@ class PixelAugmentationTests(unittest.TestCase):
                 {
                     "raw_model": model.state_dict(),
                     "training_state": training_state(
-                        model,
                         opt,
                         sched,
                         None,
@@ -338,73 +332,6 @@ class PixelAugmentationTests(unittest.TestCase):
                     self.assertEqual(train.main(), 0)
                     self.assertEqual(run.call_args.args[0].train_augmentation, mode)
                     self.assertEqual(run.call_args.args[0].eval_shift, shift)
-            argv = [
-                "train",
-                "--steps",
-                "1",
-                "--out-dir",
-                str(Path(d) / "invalid"),
-                "--train-augmentation",
-                "color_jitter",
-                "--token-style-mode",
-                "cross_style_stats",
-            ]
-            with patch.object(sys, "argv", argv), patch.object(
-                train, "run"
-            ) as run, redirect_stderr(io.StringIO()):
-                with self.assertRaises(SystemExit) as error:
-                    train.main()
-            self.assertEqual(error.exception.code, 2)
-            run.assert_not_called()
-            self.assertFalse((Path(d) / "invalid").exists())
-
-    def test_runner_forwards_pixel_baseline_and_rejects_combined_modes(self):
-        # Interpreter stub captures argv only; no training entry is executed.
-        with tempfile.TemporaryDirectory() as d:
-            root = Path(d)
-            log = root / "argv.jsonl"
-            stub = root / "capture"
-            stub.write_text(
-                f"#!{sys.executable}\n"
-                "import json, os, sys\n"
-                "with open(os.environ['ARGUMENT_LOG'], 'a') as f:\n"
-                "    f.write(json.dumps(sys.argv[1:]) + '\\n')\n"
-            )
-            stub.chmod(0o755)
-            env = {
-                **os.environ,
-                "PY": str(stub),
-                "ARGUMENT_LOG": str(log),
-                "OUT": str(root / "runs"),
-                "STEPS": "2000",
-                "SEEDS": "42 43",
-                "MODES": "none",
-                "TRAIN_AUGMENTATION": "color_jitter",
-                "SHIFT": "none",
-            }
-            command = ["bash", str(ROOT / "scripts/run_corp_experiment.sh")]
-            result = subprocess.run(
-                command, env=env, capture_output=True, text=True, timeout=10
-            )
-            self.assertEqual(result.returncode, 0, result.stderr)
-            calls = [json.loads(line) for line in log.read_text().splitlines()]
-            self.assertEqual(len(calls), 2)
-            for argv, seed in zip(calls, (42, 43), strict=True):
-                self.assertEqual(
-                    argv[argv.index("--train-augmentation") + 1], "color_jitter"
-                )
-                self.assertEqual(argv[argv.index("--eval-shift") + 1], "none")
-                self.assertEqual(
-                    argv[argv.index("--out-dir") + 1],
-                    str(root / f"runs/color_jitter/none/seed_{seed}"),
-                )
-            env["MODES"] = "cross_style_stats"
-            failed = subprocess.run(
-                command, env=env, capture_output=True, text=True, timeout=10
-            )
-            self.assertEqual(failed.returncode, 2)
-            self.assertNotIn("ALL_DONE", failed.stdout)
-            self.assertEqual(len(log.read_text().splitlines()), 2)
 
     def test_pixel_baseline_can_be_compared_as_a_method_but_not_as_an_eval_condition(
         self,

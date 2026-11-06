@@ -38,7 +38,6 @@ from dacsc.corp_images import (
 )
 from dacsc.corp_robocasa import (  # noqa: E402
     CHECKPOINT_FORMAT,
-    CORP_STYLE_MODES,
     OBJECTIVE,
     ROBOCASA_CORP_CONFIG,
     TASK_AUX_HEAD_HIDDEN_DIM,
@@ -58,7 +57,7 @@ from dacsc.training_state import (  # noqa: E402
 from dacsc.run_output import entry_output  # noqa: E402
 from dacsc.upstream import verify_upstream, verify_release_checkpoint
 from scripts.check_data_layout import default_root
-from dacsc.action_metrics import ACTION_GROUPS, MSE_SCHEMA, action_mse_summary
+from dacsc.action_metrics import MSE_SCHEMA, action_mse_summary
 from dacsc.pixel_augmentation import (
     TRAIN_AUGMENTATIONS,
     TrainingPixelAugmentation,
@@ -307,7 +306,6 @@ def _evaluate(model, loader, norm, device, max_batches, euler_steps, shift):
                 b["state"],
                 b["instruction"],
                 num_steps=euler_steps,
-                domain_ids=b["style_id"],
             )
         pred = norm.unnormalize_action(pred.float())
         target = b["action"].float()
@@ -419,26 +417,11 @@ def main() -> int:
         help="Train-only Torchvision photometric baseline; separate from --eval-shift",
     )
     ap.add_argument(
-        "--token-style-mode",
-        default="none",
-        choices=CORP_STYLE_MODES,
-    )
-    ap.add_argument("--token-style-alpha", type=float, default=0.5)
-    ap.add_argument("--token-style-action-weight", type=float, default=1.0)
-    ap.add_argument("--token-style-protect-ratio", type=float, default=0.0)
-    ap.add_argument(
-        "--token-style-stats", default="meanstd", choices=["meanstd", "mean", "std"]
-    )
-    ap.add_argument(
         "--eval-shift",
         default="color_jitter",
         choices=["none", "grayscale", "color_jitter", "low_contrast", "hue_shift"],
     )
     args = ap.parse_args()
-    if args.train_augmentation != "none" and args.token_style_mode != "none":
-        ap.error(
-            "the pixel baseline uses token-style-mode=none; combined methods require a separate protocol"
-        )
     if args.steps <= 0 or args.eval_every <= 0 or args.save_every < 0:
         ap.error("steps/eval-every must be positive and save-every nonnegative")
     if args.horizon != ROBOCASA_CORP_CONFIG["action_horizon"]:
@@ -596,41 +579,21 @@ def run(args, out: Path) -> int:
     ):
         raise ValueError("resume training pixel augmentation differs from checkpoint")
 
-    token_style_cfg = None
-    token_style = None
-    if args.token_style_mode != "none":
-        from dacsc.token_style import TokenStyleModulator
-
-        token_style_cfg = {
-            "mode": args.token_style_mode,
-            "alpha": args.token_style_alpha,
-            "action_weight": args.token_style_action_weight,
-            "protect_ratio": args.token_style_protect_ratio,
-            "stats": args.token_style_stats,
-            "dim": 384,
-            "donor_seed": args.seed,
-        }
-        token_style = TokenStyleModulator(**token_style_cfg).to(device)
-        print(f"token_style enabled: {token_style_cfg}", flush=True)
     if resume_payload is None:
         initialization_sha256 = verify_release_checkpoint(args.checkpoint)
         model, merge = load_corp_robocasa(
             args.checkpoint,
             config=ROBOCASA_CORP_CONFIG,
             device=device,
-            token_style=token_style,
             task_aux=task_aux_cfg,
         )
     else:
         initialization_sha256 = resume_payload["initialization_sha256"]
         model = CorpRoboCasa(
             resume_payload["config"],
-            token_style=token_style,
             task_aux=task_aux_cfg,
         ).to(device)
         merge = resume_payload["merge"]
-    if token_style is not None:
-        assert model._style_handle is not None, "token_style hook not registered"
     model.train()
     print(
         f"model loaded: copied={merge['copied']} random={merge['random_init']}",
@@ -661,7 +624,6 @@ def run(args, out: Path) -> int:
             "n_obs_steps": 1,
         },
         "optimization": optimization_recipe,
-        "intervention": token_style_cfg,
         "pixel_augmentation": pixel_config,
         "task_aux": task_aux_payload,
         "initialization_policy": merge["initialization_policy"],
@@ -673,7 +635,6 @@ def run(args, out: Path) -> int:
     ema = ModelEMA(model, args.ema_decay) if args.ema_decay > 0 else None
 
     def save_checkpoint(path, completed_step):
-        runtime = model.training_runtime_state()
         training_origin = {
             **training_origin_base,
             "completed_steps": completed_step,
@@ -704,19 +665,16 @@ def run(args, out: Path) -> int:
                     "state_mean": norm.state_mean.cpu(),
                     "state_std": norm.state_std.cpu(),
                 },
-                "token_style": token_style_cfg,
                 "task_aux": task_aux_payload,
                 "pixel_augmentation": pixel_config,
                 "merge": merge,
                 "training_origin": training_origin,
-                "training_runtime": runtime,
                 "run_args": {
                     key: str(value) if isinstance(value, Path) else value
                     for key, value in vars(args).items()
                 },
                 "metrics": metrics,
                 "training_state": training_state(
-                    model,
                     opt,
                     sched,
                     ema,
@@ -809,21 +767,9 @@ def run(args, out: Path) -> int:
                 b["action"],
                 b["action_mask"],
                 task_labels=b["task_id"] if task_aux_cfg is not None else None,
-                domain_ids=b["style_id"],
             )
         loss = losses.total
         opt.zero_grad(set_to_none=True)
-        if getattr(model, "token_style", None) is not None:
-            if model._last_style_tokens is None:
-                raise RuntimeError(
-                    "token-style action importance has no captured tokens"
-                )
-            flow_gradient = torch.autograd.grad(
-                losses.flow,
-                model._last_style_tokens,
-                retain_graph=True,
-            )[0]
-            model.update_action_importance(gradient=flow_gradient)
         loss.backward()
         torch.nn.utils.clip_grad_norm_(params, 1.0, error_if_nonfinite=True)
         opt.step()

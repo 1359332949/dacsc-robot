@@ -7,7 +7,6 @@ import json
 import os
 from pathlib import Path
 import subprocess
-import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 RUNTIME_KEYS = ("python", "platform", "torch", "torchvision", "cuda_runtime", "cudnn")

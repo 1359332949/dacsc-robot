@@ -52,7 +52,6 @@ def sr_case(
     *,
     checkpoint=None,
     shift="none",
-    intervention=None,
 ):
     directory.mkdir(parents=True)
     digest = (
@@ -63,7 +62,6 @@ def sr_case(
         payload["protocol"]["checkpoint_sha256"] = digest
         payload["protocol"]["shift"] = shift
         payload["protocol"]["training"] = training_origin_fixture(seed)
-        payload["protocol"]["training"]["intervention"] = intervention
         payload["summary"]["shift"] = shift
         for r in payload["records"]:
             r["shift"] = shift
@@ -71,14 +69,11 @@ def sr_case(
     return directory
 
 
-def mse_case(
-    path, seed=42, errors=(4.0, 0.0), *, checkpoint="a" * 64, intervention=None
-):
+def mse_case(path, seed=42, errors=(4.0, 0.0), *, checkpoint="a" * 64):
     rows = [error_row(task=t, error=e) for t, e in zip(("A", "B"), errors, strict=True)]
     metric = action_mse_summary(rows)
     metric["prediction_horizon"] = 10
     origin = training_origin_fixture(seed)
-    origin["intervention"] = intervention
     payload = {
         "schema": MSE_SCHEMA,
         "checkpoint_sha256": checkpoint,
@@ -303,7 +298,6 @@ class SeedStatisticsTests(unittest.TestCase):
                 "upstream": verify_upstream(),
                 "config": corp.ROBOCASA_CORP_CONFIG,
                 "model": tiny_corp().state_dict(),
-                "token_style": None,
                 "task_aux": None,
                 "initialization_policy": origin["initialization_policy"],
                 "pixel_augmentation": None,
@@ -347,8 +341,8 @@ class SeedStatisticsTests(unittest.TestCase):
         first = training_origin_fixture(completed_steps=1000)
         second = training_origin_fixture(completed_steps=2000)
         self.assertNotEqual(
-            _training_identity(first, include_intervention=True),
-            _training_identity(second, include_intervention=True),
+            _training_identity(first),
+            _training_identity(second),
         )
 
     def test_standard_numpy_sample_sd_and_scipy_student_t_use_training_seed_df(self):

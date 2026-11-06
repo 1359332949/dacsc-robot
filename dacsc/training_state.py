@@ -15,7 +15,7 @@ from torch.optim.swa_utils import AveragedModel, get_ema_multi_avg_fn
 class ModelEMA:
     """Parameter EMA delegates all averaging to PyTorch's public SWA/EMA API.
 
-    ParameterList avoids copying forward hooks and nonpersistent donor state.
+    ParameterList avoids copying forward hooks and nonpersistent buffer state.
     Persistent buffers are copied, as in AveragedModel(use_buffers=False).
     """
 
@@ -128,17 +128,16 @@ def evaluation_state(model, ema=None, seed: int = 0):
 
 
 def training_state(
-    model, optimizer, scheduler, ema, *, step: int, data_order: dict, augmentation=None
+    optimizer, scheduler, ema, *, step: int, data_order: dict, augmentation=None
 ) -> dict:
     return {
-        "version": 3,
+        "version": 4,
         "step": step,
         "optimizer": optimizer.state_dict(),
         "scheduler": scheduler.state_dict(),
         "ema": None if ema is None else ema.state_dict(),
         "rng": capture_rng(),
         "data_order": data_order,
-        "runtime": model.training_runtime_state(),
         "augmentation": None if augmentation is None else augmentation.state_dict(),
     }
 
@@ -151,7 +150,7 @@ def restore_training_state(
             "checkpoint contains inference weights only; exact resume is unavailable"
         )
     state = payload["training_state"]
-    if state["version"] != 3:
+    if state["version"] != 4:
         raise ValueError("unsupported training checkpoint version")
     if (state["ema"] is None) != (ema is None):
         raise ValueError("EMA setting differs from the resume checkpoint")
@@ -160,7 +159,6 @@ def restore_training_state(
     scheduler.load_state_dict(state["scheduler"])
     if ema is not None:
         ema.load_state_dict(state["ema"])
-    model.load_training_runtime_state(state["runtime"])
     if (state["augmentation"] is None) != (augmentation is None):
         raise ValueError("training augmentation setting differs from checkpoint")
     if augmentation is not None:
