@@ -4,6 +4,8 @@
 先验证能完成任务的无干预基线，再检验视觉表示增广。方法效果尚未成立。
 
 **唯一当前执行协议：[EXPERIMENT_PROTOCOL.md](docs/EXPERIMENT_PROTOCOL.md)。**
+研究问题、数据选型、官方泛化成绩和当前 pilot 证据的总览见
+[RESEARCH_PLAN_AND_DATASETS.md](docs/RESEARCH_PLAN_AND_DATASETS.md)。
 `notes/` 是历史记录；`docs/legacy/`、legacy DP/channel-gate 脚本不能作为 CoRP 主实验入口。
 
 ## 先复用上游
