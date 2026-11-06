@@ -290,6 +290,8 @@ class UpstreamInfrastructureTests(unittest.TestCase):
             self.assertEqual(result.returncode, 0, result.stderr)
             archive = out / "dacsc_code.tgz"
             with tarfile.open(archive) as bundle:
+                names = bundle.getnames()
+                self.assertEqual(len(names), len(set(names)))
                 self.assertTrue(
                     {
                         "README.md",
@@ -297,7 +299,7 @@ class UpstreamInfrastructureTests(unittest.TestCase):
                         "tests/fixture.py",
                         "CODE_IDENTITY.json",
                     }
-                    <= set(bundle.getnames())
+                    <= set(names)
                 )
                 self.assertEqual(
                     bundle.extractfile("README.md").read(), b"committed fixture"

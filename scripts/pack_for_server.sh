@@ -28,7 +28,7 @@ stage = pathlib.Path(sys.argv[1])
 archive = pathlib.Path(sys.argv[2])
 with tarfile.open(archive, "w:gz") as bundle:
     for path in sorted(stage.rglob("*")):
-        bundle.add(path, arcname=path.relative_to(stage))
+        bundle.add(path, arcname=path.relative_to(stage), recursive=False)
 PY
 echo "commit=$COMMIT"
 echo "archive=$ARCHIVE"
