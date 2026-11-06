@@ -84,19 +84,25 @@ source holdout/internal validation, never target outcomes.
 2. Matched color-jitter/blur/camera/base shifts must show a measurable paired
    outcome degradation in internal validation; marginal success rates alone are
    insufficient.
-3. `random_stats` is a mandatory control.
-4. `cross_style_stats` must exceed the random control on the shifted condition
-   without an unacceptable clean/non-inferiority loss.
-5. Action-aware is not resumed until cross-style passes.
-6. Target is run only after methods, checkpoints, and hyperparameters are
+3. Target is run only after methods, checkpoints, and hyperparameters are
    frozen. Target outcomes are external results, not a selection signal.
-7. If target validation is zero or fails, report it as an external-transfer
+4. If target validation is zero or fails, report it as an external-transfer
    failure; do not tune on target and rerun it as if it were validation.
 
 The current main research route is FFN-channel/token-channel analysis.
-Statistical token mixing is a side branch. If that branch is revived,
-`cross_style_stats` must be compared with a donor-diversity-matched random
-control before any cross-vs-random performance claim.
+Its interventions must use their own specified unit-selection protocol and
+matched random controls; it is not gated by `cross_style_stats` or action-aware
+results from the statistical token-mixing side branch.
+
+Statistical token mixing is a separate side branch. The following gates apply
+only if that branch is explicitly revived:
+
+1. `random_stats` is a mandatory matched control.
+2. The random control must match donor diversity; otherwise cross-style and
+   random results differ in more than the style-selection factor.
+3. `cross_style_stats` must exceed the matched random control on the shifted
+   condition without an unacceptable clean/non-inferiority loss.
+4. Action-aware is not resumed until cross-style passes the matched-random gate.
 
 ## Entry points
 

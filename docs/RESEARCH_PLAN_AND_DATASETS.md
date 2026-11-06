@@ -472,12 +472,15 @@ pilot 不能代表官方 RoboCasa365 训练规模。
 主实验必须在 pretrain 内部构造：
 
 ```text
-same task / same layout / same initial state
-only style changed
+same task / same layout / same simulator state / same object poses
+only verified visual attributes changed
+physical geometry and state remain unchanged
 ```
 
-或者使用已有 matched-pair 协议。source holdout 与 internal val 是组级比较，不是
-逐 episode 配对；clean 与 color_jitter 才是同场景配对。
+如果使用自然 style，必须先核验柜门、把手、设备类型和物体几何没有改变，否则只能
+表述为“自然 style 及其关联变化”，不能称作纯外观干预。或者使用已有 matched-pair
+协议。source holdout 与 internal val 是组级比较，不是逐 episode 配对；
+clean 与 color_jitter 才是同场景配对。
 
 ### 5.4 RoboCasa-Shift
 
