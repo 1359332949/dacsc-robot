@@ -64,6 +64,7 @@ from dacsc.pixel_augmentation import (
     TrainingPixelAugmentation,
     pixel_augmentation_contract,
 )
+from dacsc.code_identity import verify_package_identity
 
 DATA_ROOT = default_root()
 CKPT = _CORP_REPO / "checkpoints/corp_libero.pt"
@@ -111,7 +112,7 @@ def project_code_contract() -> dict:
 
     revision = git("rev-parse", "HEAD")
     if revision.returncode != 0:
-        return {"git_commit": None, "git_dirty": None}
+        return verify_package_identity(_REPO_ROOT)
     dirty = git("diff", "--quiet").returncode != 0 or git(
         "diff", "--cached", "--quiet"
     ).returncode != 0
@@ -648,7 +649,7 @@ def run(args, out: Path) -> int:
         "warmup_steps": warmup_steps,
         "provenance": "explicit project adaptation; not an official CoRP training recipe",
     }
-    training_origin = {
+    training_origin_base = {
         "seed": args.seed,
         "budget": {
             "batch_size": args.batch_size,
@@ -673,6 +674,10 @@ def run(args, out: Path) -> int:
 
     def save_checkpoint(path, completed_step):
         runtime = model.training_runtime_state()
+        training_origin = {
+            **training_origin_base,
+            "completed_steps": completed_step,
+        }
         atomic_torch_save(
             {
                 "format": CHECKPOINT_FORMAT,
@@ -975,7 +980,10 @@ def run(args, out: Path) -> int:
         "initialization_sha256": initialization_sha256,
         "initialization_policy": merge["initialization_policy"],
         "optimization": optimization_recipe,
-        "training_origin": training_origin,
+        "training_origin": {
+            **training_origin_base,
+            "completed_steps": step,
+        },
         "data_contract": selection_contract,
         "support": {
             "train": train_ds.support(),

@@ -317,6 +317,7 @@ class SeedStatisticsTests(unittest.TestCase):
                 "initialization_sha256": origin["initialization_sha256"],
                 "training_origin": origin,
                 "training_state": {
+                    "step": origin["completed_steps"],
                     "data_order": {
                         "metadata_sha256": origin["data_metadata_sha256"],
                         "dataset_length": 100,
@@ -339,6 +340,16 @@ class SeedStatisticsTests(unittest.TestCase):
                 ):
                     model, _ = corp.load_adapted_checkpoint(path)
                 self.assertEqual(model.evaluation_origin, origin)
+
+    def test_completed_steps_are_part_of_training_identity(self):
+        from dacsc.evaluation_statistics import _training_identity
+
+        first = training_origin_fixture(completed_steps=1000)
+        second = training_origin_fixture(completed_steps=2000)
+        self.assertNotEqual(
+            _training_identity(first, include_intervention=True),
+            _training_identity(second, include_intervention=True),
+        )
 
     def test_standard_numpy_sample_sd_and_scipy_student_t_use_training_seed_df(self):
         with patch("scipy.stats.t.interval", wraps=stats.t.interval) as interval:

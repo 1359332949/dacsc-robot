@@ -51,6 +51,24 @@ def require_digest(value: str) -> None:
         raise ValueError("expected a SHA256 digest") from exc
 
 
+def expected_evaluation_styles(origin: dict, split: str) -> list[int]:
+    """Return the only style range allowed by a checkpoint training origin."""
+    validate_training_origin(origin)
+    contract = origin["data_contract"]
+    if split == "source":
+        return list(range(contract["train_styles"][0], contract["train_styles"][1] + 1))
+    if split == "val":
+        return list(range(contract["val_styles"][0], contract["val_styles"][1] + 1))
+    if split == "target":
+        target_styles = list(range(1, 11))
+        train = set(range(contract["train_styles"][0], contract["train_styles"][1] + 1))
+        val = set(range(contract["val_styles"][0], contract["val_styles"][1] + 1))
+        if set(target_styles) & (train | val):
+            raise ValueError("target styles overlap checkpoint train/val styles")
+        return target_styles
+    raise ValueError(f"unknown evaluation split: {split}")
+
+
 def validate_protocol(protocol: dict) -> None:
     if set(protocol) != PROTOCOL_KEYS or protocol["version"] != PROTOCOL_VERSION:
         raise ValueError(
@@ -128,12 +146,18 @@ def validate_training_origin(origin: dict) -> None:
         "task_aux",
         "initialization_policy",
         "data_contract",
+        "completed_steps",
     }
     if (
         set(origin) != expected
         or type(origin["seed"]) is not int
         or type(origin["data_length"]) is not int
         or origin["data_length"] <= 0
+        or type(origin["completed_steps"]) is not int
+        or origin["completed_steps"] <= 0
+        or not isinstance(origin["budget"], dict)
+        or type(origin["budget"].get("steps")) is not int
+        or origin["completed_steps"] > origin["budget"]["steps"]
     ):
         raise ValueError("missing/invalid training origin for seed-level comparison")
     require_digest(origin["initialization_sha256"])
@@ -257,13 +281,11 @@ def validate_training_origin(origin: dict) -> None:
         require_digest(support["metadata_sha256"])
         require_digest(support["selection_sha256"])
     commit = contract["project_git_commit"]
-    if commit is not None and (
+    if (
         not isinstance(commit, str)
         or len(commit) != 40
         or any(char not in "0123456789abcdef" for char in commit)
     ):
         raise ValueError("invalid project git commit")
-    if contract["project_git_dirty"] not in (True, False, None):
+    if type(contract["project_git_dirty"]) is not bool:
         raise ValueError("invalid project git dirty state")
-    if (commit is None) != (contract["project_git_dirty"] is None):
-        raise ValueError("project git commit and dirty state must be recorded together")

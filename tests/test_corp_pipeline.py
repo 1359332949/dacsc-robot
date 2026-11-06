@@ -257,8 +257,13 @@ class UpstreamInfrastructureTests(unittest.TestCase):
             root = Path(d) / "repository"
             (root / "scripts").mkdir(parents=True)
             (root / "tests").mkdir()
+            (root / "dacsc").mkdir()
             script = root / "scripts/pack_for_server.sh"
             script.write_text((ROOT / "scripts/pack_for_server.sh").read_text())
+            (root / "dacsc/__init__.py").write_text("")
+            (root / "dacsc/code_identity.py").write_text(
+                (ROOT / "dacsc/code_identity.py").read_text()
+            )
             (root / "README.md").write_text("committed fixture")
             (root / "upstream.lock.json").write_text("{}")
             (root / "tests/fixture.py").write_text("# fixture only")
@@ -286,12 +291,35 @@ class UpstreamInfrastructureTests(unittest.TestCase):
             archive = out / "dacsc_code.tgz"
             with tarfile.open(archive) as bundle:
                 self.assertTrue(
-                    {"README.md", "upstream.lock.json", "tests/fixture.py"}
+                    {
+                        "README.md",
+                        "upstream.lock.json",
+                        "tests/fixture.py",
+                        "CODE_IDENTITY.json",
+                    }
                     <= set(bundle.getnames())
                 )
                 self.assertEqual(
                     bundle.extractfile("README.md").read(), b"committed fixture"
                 )
+                identity = json.loads(
+                    bundle.extractfile("CODE_IDENTITY.json").read().decode()
+                )
+                self.assertEqual(len(identity["git_commit"]), 40)
+                self.assertEqual(identity["git_commit"], identity["git_commit"].lower())
+                self.assertEqual(identity["git_dirty"], False)
+                self.assertIn("README.md", identity["files"])
+            from dacsc.code_identity import verify_package_identity
+
+            extracted = Path(d) / "extracted"
+            extracted.mkdir()
+            with tarfile.open(archive) as bundle:
+                bundle.extractall(extracted)
+            identity = verify_package_identity(extracted)
+            self.assertEqual(identity["git_commit"], identity["git_commit"].lower())
+            (extracted / "README.md").write_text("tampered")
+            with self.assertRaisesRegex(ValueError, "hash mismatch"):
+                verify_package_identity(extracted)
             original = archive.read_bytes()
             again = subprocess.run(
                 ["bash", str(script), str(out)], capture_output=True, text=True

@@ -10,6 +10,7 @@ from pathlib import Path
 import subprocess
 import sys
 import tempfile
+from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
 
@@ -32,6 +33,7 @@ from test_corp_regressions import (
     official_fixture,
     official_registry_modules,
     sr_payload,
+    training_origin_fixture,
     tiny_extractor,
 )
 
@@ -261,6 +263,62 @@ class ExperimentIdentityTests(unittest.TestCase):
             (root / "A.json").write_text(json.dumps(payload))
             with self.assertRaises(ValueError):
                 agg(root, ["A"], 1, {"source": list(range(11, 51))})
+
+    def test_evaluation_range_must_match_checkpoint_contract(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            payload = sr_payload("A", (True,), "val")
+            payload["protocol"]["training"]["data_contract"]["train_styles"] = [11, 55]
+            payload["protocol"]["training"]["data_contract"]["val_styles"] = [56, 60]
+            (root / "A.json").write_text(json.dumps(payload))
+            with self.assertRaisesRegex(ValueError, "checkpoint contract"):
+                agg(root, ["A"], 1, {"val": list(range(51, 61))})
+
+    def test_offline_eval_rejects_style_range_outside_checkpoint_contract(self):
+        from scripts import eval_corp_robocasa as entry
+
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            checkpoint = root / "model.pt"
+            checkpoint.write_bytes(b"fixture")
+            origin = training_origin_fixture()
+            policy = SimpleNamespace(
+                evaluation_origin=origin,
+                action_horizon=10,
+            )
+            args = SimpleNamespace(
+                model=str(checkpoint),
+                data_root=root,
+                max_tasks=0,
+                tasks=None,
+                per_task=1,
+                batch_size=1,
+                euler_steps=1,
+                horizon=10,
+                train_style_min=11,
+                train_style_max=55,
+                val_style_min=51,
+                val_style_max=60,
+                source_holdout_residue=9,
+                shifts=["none"],
+                out=str(root / "out.json"),
+            )
+            with patch.object(
+                entry,
+                "load_adapted_checkpoint",
+                return_value=(policy, (torch.zeros(9), torch.ones(9))),
+            ), self.assertRaisesRegex(ValueError, "source style range"):
+                entry.run(args)
+
+            args.train_style_max = 50
+            args.val_style_min = 51
+            origin["data_contract"]["val_styles"] = [56, 60]
+            with patch.object(
+                entry,
+                "load_adapted_checkpoint",
+                return_value=(policy, (torch.zeros(9), torch.ones(9))),
+            ), self.assertRaisesRegex(ValueError, "val style range"):
+                entry.run(args)
 
 
 class OfficialCheckpointTests(unittest.TestCase):

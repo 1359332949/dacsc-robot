@@ -48,10 +48,16 @@ docs/V10_PROTOCOL.md
 - target evaluator 只接受官方 Atomic-Seen tasks
 - aggregate 校验 target pair schedule、layout/style order、style range 和 split identity
 - raw RGB 训练增广入口显式标记，不再以 style11–30 硬编码作为唯一允许范围
+- 离线评测和 SR 聚合会从 checkpoint 的 training origin 读取允许的
+  train/val style range；命令行覆盖必须与 checkpoint 一致
+- checkpoint 的 comparison identity 加入 `completed_steps`，5k 与 30k
+  子检查点不会被误认为同一预算
+- `pack_for_server.sh` 在 Git archive 中写入 `CODE_IDENTITY.json`；
+  无 `.git` 的训练目录必须通过文件 SHA256 校验后才能记录项目身份
 
 ## 4. 本地校验
 
-完整回归共 136 tests：
+完整回归共 139 tests：
 
 ```text
 PYTHONPATH=tests .venv/bin/python -m unittest \

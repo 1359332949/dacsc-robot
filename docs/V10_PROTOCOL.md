@@ -62,16 +62,41 @@ seed: 42
 
 This budget is a project pilot, not an official CoRP or RoboCasa budget.
 
+Every checkpoint records both the planned budget in `budget.steps` and the
+actual checkpoint step in `training_origin.completed_steps`; the latter is part
+of the SR comparison identity.
+
+## Portable code identity
+
+`scripts/pack_for_server.sh` adds `CODE_IDENTITY.json` to the exported archive.
+It records the source commit and SHA256 for every archived source file. When a
+training run starts without `.git`, the training entry verifies that manifest
+before recording `project_git_commit`; a missing or tampered manifest is a hard
+error.
+
 ## Gates
 
-1. The baseline must have nonzero clean target success before method comparison.
+Model selection, budget selection, and method admission use only pretrain
+source holdout/internal validation, never target outcomes.
+
+1. The baseline must have nonzero clean internal-val success before method
+   comparison.
 2. Matched color-jitter/blur/camera/base shifts must show a measurable paired
-   outcome degradation; marginal success rates alone are insufficient.
+   outcome degradation in internal validation; marginal success rates alone are
+   insufficient.
 3. `random_stats` is a mandatory control.
 4. `cross_style_stats` must exceed the random control on the shifted condition
    without an unacceptable clean/non-inferiority loss.
 5. Action-aware is not resumed until cross-style passes.
-6. Test/target results must never be used for method selection or tuning.
+6. Target is run only after methods, checkpoints, and hyperparameters are
+   frozen. Target outcomes are external results, not a selection signal.
+7. If target validation is zero or fails, report it as an external-transfer
+   failure; do not tune on target and rerun it as if it were validation.
+
+The current main research route is FFN-channel/token-channel analysis.
+Statistical token mixing is a side branch. If that branch is revived,
+`cross_style_stats` must be compared with a donor-diversity-matched random
+control before any cross-vs-random performance claim.
 
 ## Entry points
 

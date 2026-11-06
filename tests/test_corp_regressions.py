@@ -103,7 +103,7 @@ def official_registry_modules():
     }
 
 
-def training_origin_fixture(seed=42):
+def training_origin_fixture(seed=42, completed_steps=2000):
     support = {
         "frames": 100,
         "episodes": 10,
@@ -112,6 +112,7 @@ def training_origin_fixture(seed=42):
     }
     return {
         "seed": seed,
+        "completed_steps": completed_steps,
         "budget": {"steps": 2000, "batch_size": 30, "lr": 5e-5},
         "optimization": {"optimizer": "torch.optim.AdamW"},
         "initialization_sha256": "c" * 64,
@@ -755,6 +756,7 @@ class TaskAuxiliaryLossTests(unittest.TestCase):
                 "initialization_sha256": origin["initialization_sha256"],
                 "training_origin": origin,
                 "training_state": {
+                    "step": origin["completed_steps"],
                     "data_order": {
                         "metadata_sha256": origin["data_metadata_sha256"],
                         "dataset_length": 100,
@@ -773,6 +775,15 @@ class TaskAuxiliaryLossTests(unittest.TestCase):
                 loaded.evaluation_origin["initialization_policy"],
                 corp.INITIALIZATION_POLICY,
             )
+
+            completed = origin["completed_steps"]
+            origin["completed_steps"] = completed + 1
+            torch.save(payload, path)
+            with patch.object(
+                corp, "RepresentationExtractor", side_effect=tiny_extractor
+            ), self.assertRaisesRegex(ValueError, "training origin"):
+                corp.load_adapted_checkpoint(path)
+            origin["completed_steps"] = completed
 
             payload.pop("task_aux")
             torch.save(payload, path)

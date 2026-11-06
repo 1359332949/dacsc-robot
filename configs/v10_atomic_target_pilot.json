@@ -42,8 +42,8 @@
     "save_every": 5000
   },
   "evaluation": {
-    "target_episodes_screen": 10,
-    "target_episodes_method": 20,
+    "internal_method_episodes": 20,
+    "target_episodes_external": 20,
     "conditions": [
       "clean",
       "color_jitter",

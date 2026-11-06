@@ -746,8 +746,10 @@ def load_adapted_checkpoint(
         if origin.get(key) != payload.get(payload_key):
             raise ValueError(f"checkpoint training origin mismatches {payload_key}")
     order = payload["training_state"]["data_order"]
+    completed_steps = payload["training_state"].get("step")
     if (
-        order.get("dataset_length") != origin.get("data_length")
+        completed_steps != origin.get("completed_steps")
+        or order.get("dataset_length") != origin.get("data_length")
         or order.get("metadata_sha256") != origin.get("data_metadata_sha256")
         or order.get("data_contract") != origin.get("data_contract")
     ):

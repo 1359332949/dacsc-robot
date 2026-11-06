@@ -13,6 +13,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from dacsc.eval_protocol import (
     DEFAULT_STYLE_RANGES,
     TARGET_PAIRS,
+    expected_evaluation_styles,
     require_digest,
     validate_protocol,
 )
@@ -58,10 +59,27 @@ def agg(
         expected_styles = next(iter(style_ranges.values()))
     if expected_styles is None:
         raise ValueError(f"{dir_path.name}: no expected style range declared")
+    declared_split = (
+        dir_path.name
+        if dir_path.name in ("source", "val", "target")
+        else (next(iter(style_ranges)) if len(style_ranges) == 1 else None)
+    )
+    if declared_split is None:
+        raise ValueError(f"{dir_path.name}: no declared evaluation split")
     for task in expected_tasks:
         payload = json.loads(files[task].read_text())
         protocol = payload["protocol"]
         validate_protocol(protocol)
+        checkpoint_styles = expected_evaluation_styles(
+            protocol["training"], declared_split
+        )
+        if expected_styles != checkpoint_styles:
+            raise ValueError(
+                f"{task}: evaluation style range differs from checkpoint contract"
+            )
+        expected_scene_split = "target" if declared_split == "target" else "pretrain"
+        if protocol["scene_split"] != expected_scene_split:
+            raise ValueError(f"{task}: scene split differs from evaluation split")
         if identity is None:
             identity = protocol
         elif protocol != identity:

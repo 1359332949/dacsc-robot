@@ -16,7 +16,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 from dacsc.corp_data import LinearNormalizer  # noqa: E402
 from dacsc.corp_robocasa import load_adapted_checkpoint, OBJECTIVE  # noqa: E402
 from dacsc.corp_images import SHIFTS, image_contract
-from dacsc.eval_protocol import file_sha256
+from dacsc.eval_protocol import expected_evaluation_styles, file_sha256
 from dacsc.upstream import verify_upstream
 from dacsc.run_output import entry_file
 from train_corp_robocasa import (  # noqa: E402
@@ -64,6 +64,18 @@ def run(args) -> int:
         raise ValueError("evaluation horizon differs from the checkpoint")
     norm = LinearNormalizer(mean, std)
     print(f"loaded {args.model}, device={device}", flush=True)
+
+    source_styles = expected_evaluation_styles(model.evaluation_origin, "source")
+    val_styles = expected_evaluation_styles(model.evaluation_origin, "val")
+    if list(range(args.train_style_min, args.train_style_max + 1)) != source_styles:
+        raise ValueError("offline source style range differs from checkpoint training range")
+    if list(range(args.val_style_min, args.val_style_max + 1)) != val_styles:
+        raise ValueError("offline val style range differs from checkpoint val range")
+    if (
+        args.source_holdout_residue
+        != model.evaluation_origin["data_contract"]["source_holdout_residue"]
+    ):
+        raise ValueError("offline source residue differs from checkpoint contract")
 
     if args.tasks and args.max_tasks:
         raise ValueError("--tasks and --max-tasks are mutually exclusive")
