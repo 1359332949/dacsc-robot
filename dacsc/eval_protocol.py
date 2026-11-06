@@ -13,7 +13,6 @@ TARGET_PAIRS = tuple((index, index) for index in range(1, 11))
 DEFAULT_STYLE_RANGES = {
     "source": list(range(11, 51)),
     "val": list(range(51, 61)),
-    "test": list(range(41, 51)),
     "target": list(range(1, 11)),
 }
 PROTOCOL_KEYS = {
@@ -204,7 +203,6 @@ def validate_training_origin(origin: dict) -> None:
         "tasks",
         "train_styles",
         "val_styles",
-        "test_styles",
         "source_holdout_residue",
         "train",
         "source",
@@ -222,7 +220,7 @@ def validate_training_origin(origin: dict) -> None:
         or tasks != sorted(set(tasks))
     ):
         raise ValueError("training task list must be sorted and unique")
-    for key in ("train_styles", "val_styles", "test_styles"):
+    for key in ("train_styles", "val_styles"):
         value = contract[key]
         if (
             not isinstance(value, list)

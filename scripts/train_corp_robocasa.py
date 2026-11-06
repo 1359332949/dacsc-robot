@@ -134,7 +134,6 @@ def data_contract(train_ds, source_ds, val_ds, tasks, args) -> dict:
         "tasks": task_names,
         "train_styles": [args.train_style_min, args.train_style_max],
         "val_styles": [args.val_style_min, args.val_style_max],
-        "test_styles": [args.test_style_min, args.test_style_max],
         "source_holdout_residue": args.source_holdout_residue,
         "train": compact(train_ds),
         "source": compact(source_ds),
@@ -399,8 +398,6 @@ def main() -> int:
     ap.add_argument("--train-style-max", type=int, default=50)
     ap.add_argument("--val-style-min", type=int, default=51)
     ap.add_argument("--val-style-max", type=int, default=60)
-    ap.add_argument("--test-style-min", type=int, default=41)
-    ap.add_argument("--test-style-max", type=int, default=50)
     ap.add_argument("--source-holdout-residue", type=int, default=9)
     ap.add_argument("--eval-every", type=int, default=50)
     ap.add_argument(
@@ -414,7 +411,6 @@ def main() -> int:
         "--resume",
         help="Full training checkpoint; --steps remains the original total budget",
     )
-    ap.add_argument("--run-test", action="store_true")
     ap.add_argument(
         "--train-augmentation",
         choices=TRAIN_AUGMENTATIONS,
@@ -459,7 +455,6 @@ def main() -> int:
         not 0 <= args.source_holdout_residue < 10
         or not 11 <= args.train_style_min <= args.train_style_max <= 60
         or not 11 <= args.val_style_min <= args.val_style_max <= 60
-        or not 11 <= args.test_style_min <= args.test_style_max <= 60
     ):
         ap.error("invalid source residue or style range")
     train_styles = set(range(args.train_style_min, args.train_style_max + 1))
@@ -575,7 +570,6 @@ def run(args, out: Path) -> int:
             "out_dir",
             "eval_every",
             "save_every",
-            "run_test",
             "eval_batch_size",
             "per_task_eval",
         }
@@ -1004,33 +998,6 @@ def run(args, out: Path) -> int:
         "n_val": len(val_ds),
         "metrics": metrics,
     }
-    if args.run_test:
-        test_ds = build_dataset(
-            tasks,
-            (args.test_style_min, args.test_style_max),
-            args.horizon,
-            224,
-            True,
-        )
-        test_loader = balanced_loader(
-            test_ds, args.eval_batch_size, args.per_task_eval, 123
-        )
-        test_eval, dt = evaluate(
-            model,
-            test_loader,
-            norm,
-            device,
-            len(test_loader),
-            args.euler_steps,
-            ema=ema,
-        )
-        result["n_test"] = len(test_ds)
-        result["test"] = test_eval
-        print(
-            f"TEST micro_action_mse={test_eval['micro_action_mse']:.4f} macro_task_action_mse={test_eval['macro_task_action_mse']:.4f} ({dt:.1f}s)",
-            flush=True,
-        )
-
     save_checkpoint(out / "model.pt", step)
     (out / "result.json").write_text(json.dumps(result, indent=2, ensure_ascii=False))
     print("DONE ->", out / "result.json", "| model.pt", flush=True)

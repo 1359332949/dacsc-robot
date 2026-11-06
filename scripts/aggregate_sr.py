@@ -211,7 +211,7 @@ def aggregate(
             current = out[split]["tasks"][task]
             if current["max_steps"] != out[splits[0]]["tasks"][task]["max_steps"]:
                 raise ValueError(f"{task}: task horizon differs across splits")
-    for target in ("val", "test"):
+    for target in ("val",):
         if "source" in out and target in out:
             out[f"gap_source_minus_{target}"] = (
                 out["source"]["success_rate"] - out[target]["success_rate"]
@@ -227,7 +227,7 @@ def main() -> int:
     parser.add_argument(
         "--splits",
         nargs="+",
-        choices=["source", "val", "test", "target"],
+        choices=["source", "val", "target"],
         default=["source", "val"],
     )
     parser.add_argument(

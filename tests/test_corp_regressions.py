@@ -125,7 +125,6 @@ def training_origin_fixture(seed=42):
             "tasks": ["A"],
             "train_styles": [11, 50],
             "val_styles": [51, 60],
-            "test_styles": [41, 50],
             "source_holdout_residue": 9,
             "train": dict(support),
             "source": dict(support),

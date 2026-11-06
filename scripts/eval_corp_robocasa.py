@@ -43,10 +43,7 @@ def main() -> int:
     ap.add_argument("--train-style-max", type=int, default=50)
     ap.add_argument("--val-style-min", type=int, default=51)
     ap.add_argument("--val-style-max", type=int, default=60)
-    ap.add_argument("--test-style-min", type=int, default=41)
-    ap.add_argument("--test-style-max", type=int, default=50)
     ap.add_argument("--source-holdout-residue", type=int, default=9)
-    ap.add_argument("--run-test", action="store_true", help="Final evaluation only")
     ap.add_argument(
         "--shifts", nargs="+", choices=SHIFTS, default=["none", "color_jitter"]
     )
@@ -94,8 +91,6 @@ def run(args) -> int:
         ("source", (args.train_style_min, args.train_style_max)),
         ("val", (args.val_style_min, args.val_style_max)),
     ]
-    if args.run_test:
-        splits.append(("test", (args.test_style_min, args.test_style_max)))
     for name, (lo, hi) in splits:
         residues = {args.source_holdout_residue} if name == "source" else None
         ds = build_dataset(
