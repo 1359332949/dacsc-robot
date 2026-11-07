@@ -229,11 +229,9 @@ def move_batch(
 
 
 def balanced_indices(dataset, per_task: int, seed: int = 0) -> list[int]:
-    """每个 task 取 per_task 帧，并在该 task 内部的各 style 间尽量均分。
-
-    按 (task, style) 分层，避免 per-task gap 被 style 采样偏差污染；
-    当 style 数多于 per_task 时，每个 style 至少 1 帧（总数可能略超 per_task）。
-    """
+    """Select exactly per_task frames per task, stratified by style when possible."""
+    if type(per_task) is not int or per_task <= 0:
+        raise ValueError("per_task must be a positive integer")
     by_task: dict[str, dict[int, list[int]]] = {}
     for i, entry in enumerate(dataset.flat):
         by_task.setdefault(entry[4], {}).setdefault(entry[2], []).append(i)
@@ -241,11 +239,27 @@ def balanced_indices(dataset, per_task: int, seed: int = 0) -> list[int]:
     out: list[int] = []
     for task in sorted(by_task):
         styles = sorted(by_task[task])
-        per_style = max(1, per_task // len(styles))
+        if len(styles) > per_task:
+            styles = sorted(rng.sample(styles, per_task))
+            quota = {style: 1 for style in styles}
+        else:
+            per_style, remainder = divmod(per_task, len(styles))
+            quota = {style: per_style for style in styles}
+            for style in rng.sample(styles, remainder):
+                quota[style] += 1
+
+        selected: list[int] = []
+        spill: list[int] = []
         for style in styles:
             idx = by_task[task][style][:]
             rng.shuffle(idx)
-            out.extend(idx[:per_style])
+            take = min(quota[style], len(idx))
+            selected.extend(idx[:take])
+            spill.extend(idx[take:])
+        if len(selected) < per_task:
+            rng.shuffle(spill)
+            selected.extend(spill[: per_task - len(selected)])
+        out.extend(selected)
     return out
 
 

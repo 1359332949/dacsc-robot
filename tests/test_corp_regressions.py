@@ -39,7 +39,7 @@ from dacsc.training_state import (
     training_state,
 )
 from scripts.aggregate_sr import agg, aggregate
-from scripts.train_corp_robocasa import ModelEMA, evaluate
+from scripts.train_corp_robocasa import ModelEMA, balanced_indices, evaluate
 import scripts.eval_corp_robocasa_sr as sr
 from dacsc.eval_protocol import PROTOCOL_VERSION
 from dacsc.corp_images import image_contract
@@ -458,6 +458,22 @@ class ViewOrderTests(unittest.TestCase):
 
 
 class TaskAuxiliaryLossTests(unittest.TestCase):
+    def test_balanced_indices_returns_exact_per_task_support(self):
+        dataset = SimpleNamespace()
+        dataset.flat = [
+            (0, i, style, "", task, i, i, 1)
+            for task in ("A", "B")
+            for style in (11, 12, 13)
+            for i in range(8)
+        ]
+        selected = balanced_indices(dataset, 16, seed=123)
+        counts = {}
+        for index in selected:
+            task = dataset.flat[index][4]
+            counts[task] = counts.get(task, 0) + 1
+        self.assertEqual(counts, {"A": 16, "B": 16})
+        self.assertEqual(len(set(selected)), len(selected))
+
     def test_v10_task_selection_is_explicit_and_deterministic(self):
         from scripts.train_corp_robocasa import all_task_paths
 
