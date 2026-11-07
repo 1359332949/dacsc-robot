@@ -6,6 +6,18 @@ The GPU environment is split because the reviewed upstream constraints conflict:
 - RoboCasa requires `numpy==2.2.5`.
 - Both use the Python 3.12 / Linux x86-64 / PyTorch 2.11.0 CUDA 12.8 stack.
 
+The two environments have distinct jobs:
+
+- `corp`: official CoRP checkout, LIBERO inference, and the strict
+  NumPy 1.26.4 release-model smoke.
+- `robocasa`: RoboCasa365/DP data reading, MuJoCo playback, **and CoRP-RoboCasa
+  training**. It has NumPy 2.2.5 and also installs the official CoRP package
+  with `--no-deps`, so one Python process can read a batch and train the model.
+
+Do not launch the RoboCasa trainer with the `corp` interpreter. The RoboCasa
+package intentionally rejects NumPy 1.26.4, and the `corp` environment does not
+contain the DP video/data stack.
+
 The validation receipt accepts different virtualenv paths only when Python,
 platform, Torch, Torchvision, CUDA runtime and cuDNN versions match.
 

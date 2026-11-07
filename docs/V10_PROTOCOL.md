@@ -105,9 +105,14 @@ Training:
 
 ```bash
 OUT=/path/to/run \
-PY=/path/to/python \
+PY=/path/to/robocasa/bin/python \
 bash scripts/run_v10_pilot.sh
 ```
+
+`PY` must be the RoboCasa environment because it reads RoboCasa365/DP videos
+and train batches. The bootstrap installs the official CoRP package into that
+same environment with `--no-deps`; do not use the separate NumPy 1.26.4 CoRP
+LIBERO inference environment for training.
 
 Target SR, with the baseline creating the frozen target manifests first:
 

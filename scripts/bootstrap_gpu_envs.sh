@@ -120,7 +120,10 @@ done
   --disable-pip-version-check \
   --no-build-isolation \
   --no-deps \
-  -e "$ROOT/repos/robomimic" -e "$ROOT/repos/diffusion_policy" -e "$ROOT/repos/robocasa"
+  -e "$ROOT/repos/CoRP" \
+  -e "$ROOT/repos/robomimic" \
+  -e "$ROOT/repos/diffusion_policy" \
+  -e "$ROOT/repos/robocasa"
 
 if [[ "$SKIP_VERIFY" -eq 1 ]]; then
   echo "Skipped GPU runtime verification (--skip-verify)"
