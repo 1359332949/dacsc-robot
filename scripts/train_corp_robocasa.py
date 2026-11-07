@@ -170,6 +170,7 @@ def build_dataset(
     *,
     normalize_images=True,
     cache_videos=False,
+    cache_video_tasks=None,
 ):
     lo, hi = split
     return CorpRoboCasaDataset(
@@ -183,6 +184,7 @@ def build_dataset(
         normalize_images=normalize_images,
         allow_raw_rgb=not normalize_images,
         cache_videos=cache_videos,
+        cache_video_tasks=cache_video_tasks,
     )
 
 
@@ -409,6 +411,12 @@ def main() -> int:
     ap.add_argument("--num-workers", type=int, default=4)
     ap.add_argument("--out-dir", type=str, required=True)
     ap.add_argument(
+        "--cache-video-tasks",
+        nargs="+",
+        default=None,
+        help="Only cache these task videos when --cache-videos is enabled",
+    )
+    ap.add_argument(
         "--resume",
         help="Full training checkpoint; --steps remains the original total budget",
     )
@@ -503,6 +511,11 @@ def run(args, out: Path) -> int:
         episode_residues=set(range(10)) - {args.source_holdout_residue},
         normalize_images=args.train_augmentation == "none",
         cache_videos=True,
+        cache_video_tasks=(
+            None
+            if getattr(args, "cache_video_tasks", None) is None
+            else set(args.cache_video_tasks)
+        ),
     )  # 90% source train
     source_ds = build_dataset(
         tasks,

@@ -132,11 +132,17 @@ class CorpRoboCasaDataset(Dataset):
         normalize_images: bool = True,
         allow_raw_rgb: bool = False,
         cache_videos: bool = False,
+        cache_video_tasks: set[str] | None = None,
     ) -> None:
         if type(normalize_images) is not bool:
             raise ValueError("normalize_images must be boolean")
         if type(cache_videos) is not bool:
             raise ValueError("cache_videos must be boolean")
+        if cache_video_tasks is not None and (
+            not isinstance(cache_video_tasks, set)
+            or any(not isinstance(task, str) or not task for task in cache_video_tasks)
+        ):
+            raise ValueError("cache_video_tasks must be a set of non-empty task names")
         if not normalize_images and not allow_raw_rgb:
             raise ValueError(
                 "raw RGB is reserved for source-training pixel augmentation, never evaluation"
@@ -158,6 +164,7 @@ class CorpRoboCasaDataset(Dataset):
         # dataset, reader index, native style, instruction, task, episode, frame, episode length
         self.flat: list[tuple[int, int, int, str, str, int, int, int]] = []
         self.style_ids = set(range(style_min, style_max + 1))
+        self.cache_video_tasks = cache_video_tasks
         self.metadata = []
 
         for ds_idx, path in enumerate(dataset_paths):
@@ -172,7 +179,9 @@ class CorpRoboCasaDataset(Dataset):
                 use_cache=use_cache,
                 seed=42,
             )
-            if cache_videos:
+            if cache_videos and (
+                self.cache_video_tasks is None or task_name in self.cache_video_tasks
+            ):
                 # The DP adapter accepts use_cache but currently does not pass
                 # it to LeRobotSingleDataset. Reuse RoboCasa's official cache.
                 cached = CachedLeRobotSingleDataset(

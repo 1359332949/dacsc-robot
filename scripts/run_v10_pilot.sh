@@ -11,6 +11,13 @@ TRAIN_STYLE_MIN="${TRAIN_STYLE_MIN:-11}"
 TRAIN_STYLE_MAX="${TRAIN_STYLE_MAX:-50}"
 VAL_STYLE_MIN="${VAL_STYLE_MIN:-51}"
 VAL_STYLE_MAX="${VAL_STYLE_MAX:-60}"
+# Keep the official raw-frame cache below the GPUSHARE container memory cap.
+CACHE_VIDEO_TASKS="${CACHE_VIDEO_TASKS:-OpenDrawer TurnOffStove TurnOnElectricKettle TurnOnSinkFaucet}"
+if [[ -n "${CACHE_VIDEO_TASKS:-}" ]]; then
+  CACHE_VIDEO_ARGS=(--cache-video-tasks $CACHE_VIDEO_TASKS)
+else
+  CACHE_VIDEO_ARGS=()
+fi
 cd "$ROOT"
 
 exec "$PY" -m dacsc.run_output --out "$OUT" -- \
@@ -24,6 +31,7 @@ exec "$PY" -m dacsc.run_output --out "$OUT" -- \
   --task-aux-depth "${TASK_AUX_DEPTH:-1}" \
   --seed "${SEED:-42}" \
   --train-augmentation "${TRAIN_AUGMENTATION:-none}" \
+  "${CACHE_VIDEO_ARGS[@]}" \
   --data-root "${DATA_ROOT:-/hy-tmp/datasets/robocasa365}" \
   --train-style-min "$TRAIN_STYLE_MIN" \
   --train-style-max "$TRAIN_STYLE_MAX" \
