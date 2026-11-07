@@ -121,7 +121,7 @@ MODEL=/path/to/model.pt \
 OUT=/path/to/target_sr \
 MANIFEST_ROOT=/path/to/target_manifests \
 MANIFEST_MODE=create \
-EPISODES=10 \
+EPISODES=20 \
 bash scripts/run_v10_target_sr.sh
 ```
 

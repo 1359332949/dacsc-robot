@@ -93,7 +93,12 @@ def main() -> int:
     ap.add_argument("--task", default="CloseFridge")
     ap.add_argument("--scene-split", choices=["pretrain", "target"], required=True)
     ap.add_argument("--styles", type=parse_styles, required=True)
-    ap.add_argument("--episodes", type=int, default=2)
+    ap.add_argument(
+        "--episodes",
+        type=int,
+        default=20,
+        help="closed-loop rollout episodes per task",
+    )
     ap.add_argument("--action-steps", type=int, default=8)
     ap.add_argument("--blur-sigma", type=float, default=0.0)
     ap.add_argument(

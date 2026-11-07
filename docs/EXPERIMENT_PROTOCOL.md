@@ -495,7 +495,7 @@ SR比较manifest示例（路径相对manifest目录；数据必须已按SR v5生
 ```json
 {
   "kind": "sr", "comparison": "methods", "split": "val",
-  "tasks": ["CloseFridge", "OpenDrawer"], "episodes_per_task": 10,
+  "tasks": ["CloseFridge", "OpenDrawer"], "episodes_per_task": 20,
   "runs": [
     {"training_seed": 42, "left": "baseline/seed42/val", "right": "candidate/seed42/val"},
     {"training_seed": 43, "left": "baseline/seed43/val", "right": "candidate/seed43/val"},

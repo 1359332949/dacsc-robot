@@ -388,7 +388,12 @@ def main() -> int:
     ap.add_argument(
         "--checkpoint", type=Path, default=CKPT, help="Official LIBERO initialization"
     )
-    ap.add_argument("--per-task-eval", type=int, default=16)
+    ap.add_argument(
+        "--per-task-eval",
+        type=int,
+        default=16,
+        help="offline MSE frame support per task; not closed-loop episodes",
+    )
     ap.add_argument("--lr", type=float, default=5e-5)
     ap.add_argument("--ema-decay", type=float, default=0.99, help="0 disables EMA")
     ap.add_argument(

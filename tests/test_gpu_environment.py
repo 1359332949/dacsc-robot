@@ -87,6 +87,30 @@ def lock_pins(name: str) -> dict[str, str]:
 
 
 class GPUEnvironmentContractTests(unittest.TestCase):
+    def test_closed_loop_episode_defaults_match_v10_protocol(self):
+        config = json.loads(
+            (ROOT / "configs/v10_atomic_target_pilot.json").read_text()
+        )
+        self.assertEqual(config["evaluation"]["internal_method_episodes"], 20)
+        self.assertEqual(config["evaluation"]["target_episodes_external"], 20)
+        for name in (
+            "run_corp_sr_split.sh",
+            "run_corp_sr_tasks.sh",
+            "run_v10_target_sr.sh",
+        ):
+            self.assertIn(
+                'EPISODES="${EPISODES:-20}"',
+                (ROOT / "scripts" / name).read_text(),
+            )
+        self.assertIn(
+            "closed-loop rollout episodes per task",
+            (ROOT / "scripts/eval_corp_robocasa_sr.py").read_text(),
+        )
+        self.assertIn(
+            "not closed-loop episodes",
+            (ROOT / "scripts/train_corp_robocasa.py").read_text(),
+        )
+
     def test_locks_isolate_upstream_numpy_requirements(self):
         corp = lock_pins("corp.lock.txt")
         robocasa = lock_pins("robocasa.lock.txt")

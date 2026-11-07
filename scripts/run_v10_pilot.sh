@@ -38,6 +38,7 @@ exec "$PY" -m dacsc.run_output --out "$OUT" -- \
   --val-style-min "$VAL_STYLE_MIN" \
   --val-style-max "$VAL_STYLE_MAX" \
   --source-holdout-residue "${SOURCE_HOLDOUT_RESIDUE:-9}" \
+  # Offline MSE frame support; closed-loop episodes are controlled by EPISODES.
   --per-task-eval "${PER_TASK_EVAL:-16}" \
   --eval-every "${EVAL_EVERY:-$STEPS}" \
   --save-every "${SAVE_EVERY:-5000}" \

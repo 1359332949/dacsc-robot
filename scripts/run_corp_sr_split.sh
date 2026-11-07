@@ -3,8 +3,8 @@
 set -euo pipefail
 OUT="${OUT:?set OUT=/path/to/out_root}"
 export MODEL="${MODEL:?set MODEL=/path/to/model.pt}"
-export EPISODES="${EPISODES:-10}"
-export TASKS="${TASKS:-CloseFridge OpenFridge CloseDrawer OpenDrawer CloseCabinet OpenCabinet TurnOnStove TurnOffStove PickPlaceCounterToCabinet PickPlaceCabinetToCounter}"
+export EPISODES="${EPISODES:-20}"
+export TASKS="${TASKS:-OpenDrawer OpenCabinet TurnOffStove TurnOnSinkFaucet TurnOnElectricKettle}"
 export SHIFT="${SHIFT:-none}"
 export MANIFEST_ROOT="${MANIFEST_ROOT:?set MANIFEST_ROOT=/path/to/frozen/eval_manifest}"
 SOURCE_STYLES="${SOURCE_STYLES:-11-50}"

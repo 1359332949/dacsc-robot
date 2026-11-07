@@ -6,7 +6,7 @@ PY="${PY:-python3}"
 MODEL="${MODEL:?set MODEL=/path/to/model.pt}"
 OUT="${OUT:?set OUT=/path/to/sr/output}"
 MANIFEST_ROOT="${MANIFEST_ROOT:?set MANIFEST_ROOT=/path/to/frozen/target/manifests}"
-EPISODES="${EPISODES:-10}"
+EPISODES="${EPISODES:-20}"
 TASKS="${TASKS:-OpenDrawer OpenCabinet TurnOffStove TurnOnSinkFaucet TurnOnElectricKettle}"
 
 cd "$ROOT"
