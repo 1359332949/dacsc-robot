@@ -12,6 +12,7 @@ TASKS="${TASKS:-OpenDrawer OpenCabinet TurnOffStove TurnOnSinkFaucet TurnOnElect
 cd "$ROOT"
 TASKS="$TASKS" \
 EPISODES="$EPISODES" \
+BLUR_SIGMA="${BLUR_SIGMA:-0}" \
 OUT="$OUT" \
 SPLITS=target \
 SHIFT="${SHIFT:-none}" \

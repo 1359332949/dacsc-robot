@@ -6,6 +6,7 @@ export MODEL="${MODEL:?set MODEL=/path/to/model.pt}"
 export EPISODES="${EPISODES:-20}"
 export TASKS="${TASKS:-OpenDrawer OpenCabinet TurnOffStove TurnOnSinkFaucet TurnOnElectricKettle}"
 export SHIFT="${SHIFT:-none}"
+export BLUR_SIGMA="${BLUR_SIGMA:-0}"
 export MANIFEST_ROOT="${MANIFEST_ROOT:?set MANIFEST_ROOT=/path/to/frozen/eval_manifest}"
 SOURCE_STYLES="${SOURCE_STYLES:-11-50}"
 VAL_STYLES="${VAL_STYLES:-51-60}"
@@ -21,6 +22,7 @@ for split in "${EVAL_SPLITS[@]}"; do
     *) echo "Unknown split: $split" >&2; exit 1 ;;
   esac
   STYLES="$styles" SCENE_SPLIT="$scene_split" OUT="$OUT/$split" \
+    BLUR_SIGMA="$BLUR_SIGMA" \
     MANIFEST_DIR="$MANIFEST_ROOT/$split" \
     bash "$(dirname "$0")/run_corp_sr_tasks.sh"
 done

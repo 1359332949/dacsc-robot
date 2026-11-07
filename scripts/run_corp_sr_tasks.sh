@@ -9,6 +9,7 @@ STYLES="${STYLES:-11-50}"
 EPISODES="${EPISODES:-20}"
 PY="${PY:-python3}"
 SHIFT="${SHIFT:-none}"
+BLUR_SIGMA="${BLUR_SIGMA:-0}"
 SCENE_SPLIT="${SCENE_SPLIT:-pretrain}"
 MANIFEST_DIR="${MANIFEST_DIR:?set MANIFEST_DIR=/path/to/frozen/split_manifest}"
 MANIFEST_MODE="${MANIFEST_MODE:-replay}"
@@ -23,6 +24,7 @@ for T in $TASKS; do
     --out "$OUT/$T.json" --log "$T.log" -- "$ROOT/scripts/eval_corp_robocasa_sr.py" \
     --model "$MODEL" --task "$T" --scene-split "$SCENE_SPLIT" \
     --styles "$STYLES" --episodes "$EPISODES" \
+    --blur-sigma "$BLUR_SIGMA" \
     --manifest-dir "$MANIFEST_DIR/$T" --manifest-mode "$MANIFEST_MODE" \
     --shift "$SHIFT" --out "$OUT/$T.json"
 done
