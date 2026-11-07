@@ -250,6 +250,23 @@ class OfficialImageTests(unittest.TestCase):
 
 
 class UpstreamInfrastructureTests(unittest.TestCase):
+    def test_repository_fetch_manifest_is_commit_pinned(self):
+        from scripts import fetch_repos
+
+        expected = {
+            "CoRP": "52445740aa9517ae396cc8fb14bae8fe5922f118",
+            "robocasa": "dc73a8ce18e4b8947e8df2ae2958245ca823f3b4",
+            "diffusion_policy": "41212698b6f481ed92a55f0d5f1778ec56bea417",
+            "robomimic": "7dc18461c4fc497095f1044f4c40cd44fff62e6a",
+        }
+        self.assertEqual({name: revision for name, _, revision, _ in fetch_repos.MANIFEST}, expected)
+        for name, slug, revision, _ in fetch_repos.MANIFEST:
+            with self.subTest(name=name):
+                self.assertEqual(
+                    fetch_repos.tarball_url(slug, revision),
+                    f"https://codeload.github.com/{slug}/tar.gz/{revision}",
+                )
+
     def test_packaging_exports_committed_manifest_and_tests_and_rejects_dirty_sources(
         self,
     ):

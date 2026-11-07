@@ -14,18 +14,28 @@ import time
 ROOT = Path(__file__).resolve().parent.parent
 DEST = ROOT / "repos"
 
-# name, slug, branch, size_mb
+# name, slug, revision, size_mb
 MANIFEST = [
-    ("CoRP", "corp-policy/CoRP", "main", 220.0),
-    ("robocasa", "robocasa/robocasa", "main", 50.0),
-    ("diffusion_policy", "robocasa-benchmark/diffusion_policy", "main", 20.0),
-    ("robomimic", "robocasa-benchmark/robomimic", "robocasa-dp", 55.0),
+    ("CoRP", "corp-policy/CoRP", "52445740aa9517ae396cc8fb14bae8fe5922f118", 220.0),
+    ("robocasa", "robocasa/robocasa", "dc73a8ce18e4b8947e8df2ae2958245ca823f3b4", 50.0),
+    (
+        "diffusion_policy",
+        "robocasa-benchmark/diffusion_policy",
+        "41212698b6f481ed92a55f0d5f1778ec56bea417",
+        20.0,
+    ),
+    (
+        "robomimic",
+        "robocasa-benchmark/robomimic",
+        "7dc18461c4fc497095f1044f4c40cd44fff62e6a",
+        55.0,
+    ),
 ]
 BY_NAME = {m[0]: m for m in MANIFEST}
 
 
-def tarball_url(slug, branch):
-    return f"https://codeload.github.com/{slug}/tar.gz/refs/heads/{branch}"
+def tarball_url(slug, revision):
+    return f"https://codeload.github.com/{slug}/tar.gz/{revision}"
 
 
 CACHE = None  # 在 main/调用处初始化为 DEST/.cache
@@ -64,7 +74,7 @@ def _extract(tgz: Path, dest: Path):
                 tf2.extractall(dest, filter="fully_trusted")
 
 
-def download(name, slug, branch, retries=3, timeout=3600):
+def download(name, slug, revision, retries=3, timeout=3600):
     """下载 + 解压。tarball 缓存在 repos/.cache/<name>.tgz，重跑不会重复下载。"""
     global CACHE
     if CACHE is None:
@@ -80,11 +90,11 @@ def download(name, slug, branch, retries=3, timeout=3600):
     if not (tgz.exists() and tgz.stat().st_size > 0 and _verify_gzip(tgz)):
         ok = False
         for attempt in range(1, retries + 1):
-            print(f"[get ] {name} <- {slug}@{branch} (第 {attempt} 次)")
+            print(f"[get ] {name} <- {slug}@{revision[:12]} (第 {attempt} 次)")
             t0 = time.time()
             r = subprocess.run(["curl", "-sL", "--max-time", str(timeout), "-o", str(tgz),
                                 "-w", "%{http_code} %{size_download}",
-                                tarball_url(slug, branch)], capture_output=True, text=True)
+                                tarball_url(slug, revision)], capture_output=True, text=True)
             code, _, size = (r.stdout or "").partition(" ")
             print(f"       HTTP={code} size={size} 用时 {time.time()-t0:.0f}s")
             if tgz.exists() and tgz.stat().st_size > 0 and _verify_gzip(tgz):
@@ -118,9 +128,9 @@ def main():
     args = ap.parse_args()
 
     if args.list:
-        print(f"{'name':<24}{'slug':<48}{'branch':<14}{'MB':>8}")
-        for n, s, b, mb in MANIFEST:
-            print(f"{n:<24}{s:<48}{b:<14}{mb:>8.1f}")
+        print(f"{'name':<24}{'slug':<48}{'revision':<14}{'MB':>8}")
+        for n, s, rev, mb in MANIFEST:
+            print(f"{n:<24}{s:<48}{rev[:12]:<14}{mb:>8.1f}")
         return
 
     DEST.mkdir(parents=True, exist_ok=True)
@@ -131,8 +141,8 @@ def main():
     sel = [m for m in MANIFEST if not requested or m[0] in requested]
     print(f"计划拉取 {len(sel)} 个仓库，总计约 {sum(m[3] for m in sel):.1f} MB\n")
     ok = fail = 0
-    for n, s, b, _ in sel:
-        if download(n, s, b):
+    for n, s, revision, _ in sel:
+        if download(n, s, revision):
             ok += 1
         else:
             fail += 1
