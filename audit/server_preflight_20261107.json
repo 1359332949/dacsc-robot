@@ -1,0 +1,61 @@
+{
+  "schema": "dacsc_server_preflight_v1",
+  "generated_at": "2026-11-07T22:55:00+08:00",
+  "code_commit": "c023d757d5695c4e999b07bc839d42ca86cbb757",
+  "status": "implementation_preflight_passed_data_source_pending",
+  "server_runtime": {
+    "gpu": "NVIDIA GeForce RTX 4090",
+    "driver": "550.163.01",
+    "python": "3.12.16",
+    "torch": "2.11.0+cu128",
+    "cuda_runtime": "12.8",
+    "native_bf16": true
+  },
+  "checks": {
+    "environment": "passed",
+    "real_video_decode": "passed",
+    "official_corp_cuda_fp32_bf16": "passed",
+    "real_pixel_cpu_fp32": "passed",
+    "real_pixel_cuda_fp32": "passed",
+    "real_pixel_cuda_bf16": "passed",
+    "mujoco_state_replay": "passed",
+    "mujoco_gt_action_replay": "completed_with_warnings",
+    "paired_manifest_reset_replay": "passed",
+    "v10_launcher_two_step_smoke": "PASS"
+  },
+  "details": {
+    "video_observations": 27,
+    "video_view_frames": 81,
+    "mujoco_divergence_warnings": {
+      "count": 168,
+      "first_step": 49,
+      "max": 0.8044800972304161,
+      "last": 0.30968521481743133
+    },
+    "training_smoke": 2,
+    "training_env": "/hy-tmp/envs/robocasa/bin/python",
+    "corp_inference_env": "/hy-tmp/envs/corp/bin/python"
+  },
+  "data": {
+    "current_path": "/hy-tmp/datasets/robocasa365",
+    "provenance": "temporary local-source transfer",
+    "oss_verified": false,
+    "oss_cli_authenticated": false,
+    "task_count": 5,
+    "episodes": 533
+  },
+  "not_run": [
+    "V10 30k baseline on OSS-verified data",
+    "closed-loop success-rate evaluation",
+    "method effect"
+  ],
+  "artifact_roots": {
+    "environment": "/hy-tmp/validation/env_acceptance_c023d75.json",
+    "video": "/hy-tmp/validation/readonly_a9fd5b7_20261107_video_temp/report.json",
+    "official_cuda": "/hy-tmp/validation/readonly_a9fd5b7_20261107_official_cuda_temp/report.json",
+    "cpu_fp32": "/hy-tmp/validation/readonly_a9fd5b7_20261107_cpu_fp32_temp/report.json",
+    "cuda_fp32": "/hy-tmp/validation/readonly_a9fd5b7_20261107_cuda_fp32_temp/report.json",
+    "cuda_bf16": "/hy-tmp/validation/readonly_a9fd5b7_20261107_cuda_bf16_temp/report.json",
+    "replay_plan": "/hy-tmp/validation/readonly_a9fd5b7_20261107_replay_plan_temp/report.json"
+  }
+}
