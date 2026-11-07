@@ -24,6 +24,7 @@ import traceback
 import torch
 from torchvision.transforms import ColorJitter, functional as TVF
 
+from dacsc.code_identity import verify_package_identity
 from dacsc.corp_data import (
     CorpRoboCasaDataset,
     VIEW_TO_KEY,
@@ -130,25 +131,31 @@ def compatible_runtime(left, right):
     )
 
 
-def code_identity():
+def code_identity(root=None):
     """A server receipt must identify one clean committed tree, never local edits."""
+
+    root = Path(ROOT if root is None else root).resolve()
 
     def git(*args):
         return subprocess.check_output(
-            ["git", "-C", str(ROOT), *args], text=True
+            ["git", "-C", str(root), *args], text=True
         ).strip()
 
-    if git("status", "--porcelain", "--untracked-files=normal"):
-        raise RuntimeError("commit local changes before real-input validation")
-    analysis = json.loads((ROOT / "analysis_upstream.lock.json").read_text())
-    repo = Path(os.environ.get("CORP_REPO", ROOT / "repos/CoRP")).resolve()
+    if (root / ".git").exists():
+        if git("status", "--porcelain", "--untracked-files=normal"):
+            raise RuntimeError("commit local changes before real-input validation")
+        commit = git("rev-parse", "HEAD")
+    else:
+        commit = verify_package_identity(root)["git_commit"]
+    analysis = json.loads((root / "analysis_upstream.lock.json").read_text())
+    repo = Path(os.environ.get("CORP_REPO", root / "repos/CoRP")).resolve()
     for rel, expected in analysis["CoRPVisual"]["files"].items():
         if file_sha256(repo / rel) != expected:
             raise RuntimeError(f"CoRP visual execution source changed: {rel}")
     return {
-        "commit": git("rev-parse", "HEAD"),
+        "commit": commit,
         "upstream": verify_upstream(),
-        "analysis_lock_sha256": file_sha256(ROOT / "analysis_upstream.lock.json"),
+        "analysis_lock_sha256": file_sha256(root / "analysis_upstream.lock.json"),
     }
 
 

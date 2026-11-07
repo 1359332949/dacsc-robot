@@ -81,6 +81,33 @@ def receipt(path, stage="video", identity=None):
 
 
 class ReadOnlyValidationTests(unittest.TestCase):
+    def test_code_identity_accepts_verified_package_without_git(self):
+        from dacsc.code_identity import write_package_identity
+
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            visual = root / "repos/CoRP/visual.py"
+            visual.parent.mkdir(parents=True)
+            visual.write_text("official visual source")
+            lock = {
+                "CoRPVisual": {
+                    "files": {"visual.py": rv.file_sha256(visual)},
+                }
+            }
+            (root / "analysis_upstream.lock.json").write_text(json.dumps(lock))
+            commit = "a" * 40
+            write_package_identity(root, commit)
+            with (
+                patch.dict("os.environ", {"CORP_REPO": str(visual.parent)}),
+                patch.object(rv, "verify_upstream", return_value={"ok": True}),
+            ):
+                identity = rv.code_identity(root)
+            self.assertEqual(identity["commit"], commit)
+            self.assertEqual(
+                identity["analysis_lock_sha256"],
+                rv.file_sha256(root / "analysis_upstream.lock.json"),
+            )
+
     def setUp(self):
         self.threads = torch.get_num_threads()
         torch.set_num_threads(2)
