@@ -131,9 +131,12 @@ class CorpRoboCasaDataset(Dataset):
         shift: str = "none",
         normalize_images: bool = True,
         allow_raw_rgb: bool = False,
+        cache_videos: bool = False,
     ) -> None:
         if type(normalize_images) is not bool:
             raise ValueError("normalize_images must be boolean")
+        if type(cache_videos) is not bool:
+            raise ValueError("cache_videos must be boolean")
         if not normalize_images and not allow_raw_rgb:
             raise ValueError(
                 "raw RGB is reserved for source-training pixel augmentation, never evaluation"
@@ -142,6 +145,10 @@ class CorpRoboCasaDataset(Dataset):
 
         verify_upstream(["robocasa", "diffusion_policy"])
         from diffusion_policy.dataset.lerobot_dataset import LerobotDataset
+        if cache_videos:
+            from robocasa.utils.groot_utils.groot_dataset import (
+                CachedLeRobotSingleDataset,
+            )
 
         self.horizon = horizon
         self.image_size = image_size
@@ -165,6 +172,18 @@ class CorpRoboCasaDataset(Dataset):
                 use_cache=use_cache,
                 seed=42,
             )
+            if cache_videos:
+                # The DP adapter accepts use_cache but currently does not pass
+                # it to LeRobotSingleDataset. Reuse RoboCasa's official cache.
+                cached = CachedLeRobotSingleDataset(
+                    img_resize=None,
+                    dataset_path=str(path),
+                    modality_configs=ds.modality_configs,
+                    embodiment_tag="oxe_droid",
+                    video_backend="pyav",
+                    video_backend_kwargs=ds.video_backend_kwargs,
+                )
+                ds.get_video = cached.get_video
             ep_meta = read_episode_meta(path)
             self.metadata.append({"task": task_name, "episodes": ep_meta})
             n_kept = 0

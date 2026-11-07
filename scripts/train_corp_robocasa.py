@@ -169,6 +169,7 @@ def build_dataset(
     episode_residues=None,
     *,
     normalize_images=True,
+    cache_videos=False,
 ):
     lo, hi = split
     return CorpRoboCasaDataset(
@@ -181,6 +182,7 @@ def build_dataset(
         episode_residues=episode_residues,
         normalize_images=normalize_images,
         allow_raw_rgb=not normalize_images,
+        cache_videos=cache_videos,
     )
 
 
@@ -500,13 +502,14 @@ def run(args, out: Path) -> int:
         True,
         episode_residues=set(range(10)) - {args.source_holdout_residue},
         normalize_images=args.train_augmentation == "none",
+        cache_videos=True,
     )  # 90% source train
     source_ds = build_dataset(
         tasks,
         (args.train_style_min, args.train_style_max),
         args.horizon,
         224,
-        True,
+        False,
         episode_residues={args.source_holdout_residue},
     )  # 10% source holdout
     val_ds = build_dataset(
@@ -514,7 +517,7 @@ def run(args, out: Path) -> int:
         (args.val_style_min, args.val_style_max),
         args.horizon,
         224,
-        True,
+        False,
     )
     print(
         f"datasets built in {time.time()-t0:.1f}s: train={len(train_ds)} "
