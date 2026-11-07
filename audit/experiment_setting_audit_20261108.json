@@ -1,0 +1,78 @@
+{
+  "schema": "dacsc_experiment_setting_audit_v1",
+  "generated_at": "2026-11-08T00:10:00+08:00",
+  "code_commit": "9be09b766ee0ba2c4db34d1e3b9b0165a72b0949",
+  "protocol": "V10 atomic pilot",
+  "dataset": {
+    "root": "/hy-tmp/datasets/robocasa365_oss",
+    "archive_sha256": "3395cb1d0df5c24dab2e34e34e8975c25b55fdfddec7627c908a8bd90f9d0673",
+    "archive_episodes": 6935,
+    "archive_tasks": 61
+  },
+  "five_task_split": {
+    "train": {
+      "styles": [11, 50],
+      "episode_residues": [0, 8],
+      "episodes": 394,
+      "frames": 93662
+    },
+    "source_holdout": {
+      "styles": [11, 50],
+      "episode_residues": [9],
+      "episodes": 39,
+      "frames": 9458
+    },
+    "internal_val": {
+      "styles": [51, 60],
+      "episode_residues": [0, 9],
+      "episodes": 100,
+      "frames": 23856
+    },
+    "target": {
+      "styles": [1, 10],
+      "used_for_training_or_selection": false
+    }
+  },
+  "split_checks": {
+    "train_source_episode_overlap": 0,
+    "train_val_episode_overlap": 0,
+    "source_val_episode_overlap": 0,
+    "train_val_style_overlap": 0,
+    "source_val_style_overlap": 0,
+    "train_source_style_overlap": "expected: same seen styles, disjoint episode residues"
+  },
+  "closed_loop_episode_defaults": {
+    "config_internal_method_episodes": 20,
+    "config_target_episodes_external": 20,
+    "run_corp_sr_split_default": 20,
+    "run_corp_sr_tasks_default": 20,
+    "run_v10_target_sr_default": 20,
+    "status": "aligned"
+  },
+  "offline_mse_support": {
+    "per_task_frames": 16,
+    "source_selected_frames": 80,
+    "val_selected_frames": 80,
+    "selected_frames_per_task": 16,
+    "status": "aligned"
+  },
+  "training_runtime": {
+    "run": "/hy-tmp/runs/v10_baseline_30k_oss_cache4_f2",
+    "workers": 8,
+    "cache_video_tasks": [
+      "OpenDrawer",
+      "TurnOffStove",
+      "TurnOnElectricKettle",
+      "TurnOnSinkFaucet"
+    ],
+    "cache_policy": "raw 256px official frames; OpenCabinet remains streamed",
+    "container_memory_limit_bytes": 115238572032,
+    "observed_cgroup_usage_bytes": 92508725248,
+    "status": "running"
+  },
+  "not_yet_established": [
+    "closed-loop source/val/target success rate",
+    "20-episode closed-loop statistical comparison",
+    "blur_L1/L2/L3 sigma values and final condition matrix"
+  ]
+}
