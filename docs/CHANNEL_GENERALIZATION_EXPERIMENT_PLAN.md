@@ -377,8 +377,9 @@ ep73 attention+FFN:         success@176, drawer=0.961385
 ```
 
 attention-only 在 ep73 已足以成功，但 ep64 的逐 chunk action MSE 和 gripper error
-随后累积，说明它不是跨 episode 稳定充分条件。attention+complete FFN 在两个
-episode 上都恢复到接近 full-block 的逐 chunk 误差并闭环成功。当前证据支持：
+随后累积。attention+complete FFN 在这两个 episode 上都恢复到接近 full-block 的
+逐 chunk 误差并闭环成功。但 ep64/73 数量不足，不能据此建立跨 episode 稳定性。
+在这两例内部，初步证据支持：
 
 ```text
 layer11 attention 是主要写入路径；
@@ -387,9 +388,59 @@ attention 与 complete FFN 的联合路径是已测闭环中的稳定充分条�
 ```
 
 这仍是读取同状态 clean reference 的特权机制诊断，不是可部署 gate，也不能据此
-训练新模型。下一步应只分解 attention 内部路径（heads、qkv/value/projection、
-attention output 和 post-attention residual），并优先解释 ep64 attention-only 的
-首个闭环分叉，而不是继续扫描 FFN channels。
+训练新模型。
+
+#### 固定 held-out 稳定性复验（2026-11-08）
+
+为避免根据 ep64/73 的方法结果继续挑选样本，先冻结训练 split 中按索引排列的候选池：
+
+```text
+0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100
+```
+
+按顺序只做 clean/jitter 资格检查，取前 4 个 `clean success≤300、jitter fail@750`
+的 episode。实际检查 6 个 episode 后得到：
+
+| episode | style/layout | clean | color_jitter |
+| --- | --- | --- | --- |
+| 0 | 17/16 | fail@750 | 未运行 |
+| 10 | 15/49 | success@228 | fail@750 |
+| 20 | 30/53 | fail@750 | 未运行 |
+| 30 | 24/51 | success@209 | fail@750 |
+| 40 | 47/29 | success@167 | fail@750 |
+| 50 | 13/51 | success@183 | fail@750 |
+
+冻结集合为 `10, 30, 40, 50`，之后只运行两种分支条件：
+
+| episode | attention only | attention + complete FFN |
+| --- | --- | --- |
+| 10 | fail@300 | fail@300 |
+| 30 | success@225 | success@210 |
+| 40 | fail@300 | success@156 |
+| 50 | fail@300 | fail@300 |
+
+新增集合上 attention-only 为 `1/4`，attention+FFN 为 `2/4`。与 ep64/73 合并后为
+`2/6` 和 `4/6`。配对转移：
+
+```text
+attention fail → attention+FFN success: ep40, ep64
+both fail:                                ep10, ep50
+both success:                             ep30, ep73
+attention success → attention+FFN fail:   0
+```
+
+因此 ep64/73 上的“attention 主因 + FFN 补偿”仍然是有价值的方向，但**稳定性尚未
+成立**，不能进入 attention-head 扫描或 gate。更关键的是，ep10/ep50 的逐 chunk
+MSE 已很低，却分别在第 2/5 个 chunk 就出现 eef ≥1 cm 分叉，最终扩大到 32–38 cm，
+且抽屉未打开。当前竞争解释包括：
+
+1. 极小 action 差异在接触/抓取临界点被放大；
+2. 同状态 clean activation 仍不足以消除后续 observation/state 分布漂移；
+3. layer11 分支不是完整因果路径。
+
+下一步不应增加任务或扫描通道，而应先对 ep10/ep50 做 clean 与干预轨迹的逐 chunk、
+逐动作组对照，定位第一个 gripper/contact 分叉；在排除这种闭环累积解释前，不继续
+分解 attention heads。
 
 ### E3：候选单元选择
 

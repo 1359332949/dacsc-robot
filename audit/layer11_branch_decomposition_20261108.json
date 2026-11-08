@@ -282,6 +282,8 @@
     "The layer11 full-block positive control remains valid: replacing the complete output is sufficient and all-12-block replacement cannot add independent evidence because layer11 is the final visual block."
   ],
   "interpretation": {
+    "validation_scope": "ep64 and ep73 only; stability was not established before the fixed-holdout follow-up",
+    "stability_follow_up": "audit/layer11_branch_stability_20261108.json",
     "primary_bottleneck": "layer11 attention write path",
     "required_joint_path_for_tested_closed_loop": "layer11 attention plus complete FFN",
     "ffn_only": "insufficient",
@@ -290,7 +292,7 @@
     "method_effect_established": false
   },
   "next_validation": [
-    "Decompose layer11 attention into attention heads or qkv/value/projection writes.",
+    "Validate attention-only and attention plus complete FFN on a fixed held-out episode set.",
     "Measure the post-attention residual and the first divergence in ep64 attention-only closed loop.",
     "Test only the best one or two attention-path conditions in closed loop before considering any deployable residual or block correction."
   ]

@@ -1,0 +1,390 @@
+{
+  "schema": "dacsc_layer11_branch_stability_audit_v1",
+  "generated_at": "2026-11-08T22:12:00+08:00",
+  "source_code_commit": "2ae6c19c5f74595f086d4209fdd5d14910e5b274",
+  "scope": {
+    "task": "OpenDrawer",
+    "scene_split": "pretrain",
+    "initial_state": "official training episode extras/episode_*/states.npz frame0",
+    "action_steps": 8,
+    "qualification_max_steps": 750,
+    "intervention_max_steps": 300,
+    "checkpoint": "/hy-tmp/runs/v10_baseline_30k_oss_cache4_f2/model.pt",
+    "checkpoint_sha256": "50d04668de4f5871f32631323796a24eec1641106a24a27c042f01dfb10d74d5",
+    "clean_reference_is_privileged": true,
+    "deployable_method": false
+  },
+  "source_receipts": {
+    "script": "/hy-tmp/dacsc-robot/scripts/validate_layer11_branch_stability.py",
+    "script_sha256": "9a81ad28b80f74ff8a21a9a1253bf9a4542198cba4bab8d74532c1c35c160c4b",
+    "result": "/hy-tmp/validation/layer11_branch_stability.json",
+    "result_sha256": "65e1a1180999b00af43b8b1e119df9ac1f192dba7b812ba7d14c73b31ae2bde6",
+    "log": "/hy-tmp/validation/layer11_branch_stability.log",
+    "log_sha256": "5617640df5829e6bd5baf51483d126d7fe4453c5aca71889c820550588e423a7"
+  },
+  "candidate_policy": {
+    "ordered_pool": [
+      0,
+      10,
+      20,
+      30,
+      40,
+      50,
+      60,
+      70,
+      80,
+      90,
+      100
+    ],
+    "rule": "fixed ascending training-split OpenDrawer episodes ending in zero",
+    "selection_uses_branch_results": false,
+    "required_eligible_episodes": 4,
+    "eligibility": {
+      "clean": "success at 300 steps or fewer",
+      "color_jitter": "failure at 750 steps"
+    },
+    "scope": "mechanism-validation holdout, not official source holdout"
+  },
+  "qualification": {
+    "episodes_checked": 6,
+    "eligible_episodes": [
+      10,
+      30,
+      40,
+      50
+    ],
+    "records": [
+      {
+        "episode": 0,
+        "style": 17,
+        "layout": 16,
+        "clean": {
+          "success": false,
+          "steps": 750,
+          "drawer": -0.000305
+        },
+        "color_jitter": "not_run_after_clean_ineligibility",
+        "eligible": false
+      },
+      {
+        "episode": 10,
+        "style": 15,
+        "layout": 49,
+        "target_drawer": "stack_15_front_group_1_2",
+        "clean": {
+          "success": true,
+          "steps": 228,
+          "drawer": 0.978839
+        },
+        "color_jitter": {
+          "success": false,
+          "steps": 750,
+          "drawer": 0.0
+        },
+        "eligible": true
+      },
+      {
+        "episode": 20,
+        "style": 30,
+        "layout": 53,
+        "clean": {
+          "success": false,
+          "steps": 750,
+          "drawer": 0.000214
+        },
+        "color_jitter": "not_run_after_clean_ineligibility",
+        "eligible": false
+      },
+      {
+        "episode": 30,
+        "style": 24,
+        "layout": 51,
+        "target_drawer": "stack_03_main_group_1_2",
+        "clean": {
+          "success": true,
+          "steps": 209,
+          "drawer": 0.978957
+        },
+        "color_jitter": {
+          "success": false,
+          "steps": 750,
+          "drawer": 0.0
+        },
+        "eligible": true
+      },
+      {
+        "episode": 40,
+        "style": 47,
+        "layout": 29,
+        "target_drawer": "stack_5_left_group_3",
+        "clean": {
+          "success": true,
+          "steps": 167,
+          "drawer": 0.984633
+        },
+        "color_jitter": {
+          "success": false,
+          "steps": 750,
+          "drawer": 0.0
+        },
+        "eligible": true
+      },
+      {
+        "episode": 50,
+        "style": 13,
+        "layout": 51,
+        "target_drawer": "stack_11_island_group_1_2",
+        "clean": {
+          "success": true,
+          "steps": 183,
+          "drawer": 0.972646
+        },
+        "color_jitter": {
+          "success": false,
+          "steps": 750,
+          "drawer": 0.000113
+        },
+        "eligible": true
+      }
+    ]
+  },
+  "interventions": [
+    {
+      "episode": 10,
+      "condition": "attention",
+      "success": false,
+      "steps": 300,
+      "final_drawer": 0.0,
+      "chunks": 38,
+      "chunk_mse_clean_mean": 0.0009396825435511633,
+      "chunk_mse_clean_max": 0.00483085960149765,
+      "chunk_cos_clean_mean": 0.9974611417243355,
+      "chunk_cos_clean_min": 0.9861083626747131,
+      "chunk_gripper_mse_mean": 0.0016810145247125406,
+      "chunk_gripper_mse_max": 0.04001417011022568,
+      "eef_divergence_ge_1cm_chunk": 2,
+      "eef_divergence_ge_5cm_chunk": 6,
+      "drawer_divergence_ge_0_01_chunk": 24,
+      "final_eef": [
+        0.35183000564575195,
+        -0.6341599822044373,
+        0.15072999894618988
+      ]
+    },
+    {
+      "episode": 10,
+      "condition": "attention_ffn",
+      "success": false,
+      "steps": 300,
+      "final_drawer": 0.0,
+      "chunks": 38,
+      "chunk_mse_clean_mean": 0.0010070934897169612,
+      "chunk_mse_clean_max": 0.025453992069721222,
+      "chunk_cos_clean_mean": 0.9972027538418808,
+      "chunk_cos_clean_min": 0.9292075686454773,
+      "chunk_gripper_mse_mean": 0.00799392483836617,
+      "chunk_gripper_mse_max": 0.30373784947395325,
+      "eef_divergence_ge_1cm_chunk": 2,
+      "eef_divergence_ge_5cm_chunk": 21,
+      "drawer_divergence_ge_0_01_chunk": 24,
+      "final_eef": [
+        0.3333199918270111,
+        -0.645330011844635,
+        0.1329900026321411
+      ]
+    },
+    {
+      "episode": 30,
+      "condition": "attention",
+      "success": true,
+      "steps": 225,
+      "final_drawer": 0.977462,
+      "chunks": 27,
+      "chunk_mse_clean_mean": 0.003450677264273565,
+      "chunk_mse_clean_max": 0.0329287052154541,
+      "chunk_cos_clean_mean": 0.991669181409059,
+      "chunk_cos_clean_min": 0.9208638072013855,
+      "chunk_gripper_mse_mean": 0.030275785924950168,
+      "chunk_gripper_mse_max": 0.38180506229400635,
+      "eef_divergence_ge_1cm_chunk": 1,
+      "eef_divergence_ge_5cm_chunk": 22,
+      "drawer_divergence_ge_0_01_chunk": 21,
+      "final_eef": [
+        0.003949999809265137,
+        0.5800899863243103,
+        0.09013999998569489
+      ]
+    },
+    {
+      "episode": 30,
+      "condition": "attention_ffn",
+      "success": true,
+      "steps": 210,
+      "final_drawer": 0.978,
+      "chunks": 27,
+      "chunk_mse_clean_mean": 0.0012180919738454305,
+      "chunk_mse_clean_max": 0.025983271211385727,
+      "chunk_cos_clean_mean": 0.9972049853730673,
+      "chunk_cos_clean_min": 0.9403536915779114,
+      "chunk_gripper_mse_mean": 0.011863454272031754,
+      "chunk_gripper_mse_max": 0.3083242197036743,
+      "eef_divergence_ge_1cm_chunk": 1,
+      "eef_divergence_ge_5cm_chunk": null,
+      "drawer_divergence_ge_0_01_chunk": 21,
+      "final_eef": [
+        -0.002099999925121665,
+        0.5804499983787537,
+        0.09217000030493736
+      ]
+    },
+    {
+      "episode": 40,
+      "condition": "attention",
+      "success": false,
+      "steps": 300,
+      "final_drawer": 0.000153,
+      "chunks": 38,
+      "chunk_mse_clean_mean": 0.01510799695653527,
+      "chunk_mse_clean_max": 0.13675597310066223,
+      "chunk_cos_clean_mean": 0.9635238949850199,
+      "chunk_cos_clean_min": 0.6579861640930176,
+      "chunk_gripper_mse_mean": 0.14841151225526026,
+      "chunk_gripper_mse_max": 1.578585147857666,
+      "eef_divergence_ge_1cm_chunk": 1,
+      "eef_divergence_ge_5cm_chunk": 11,
+      "drawer_divergence_ge_0_01_chunk": 17,
+      "final_eef": [
+        -0.6620200276374817,
+        -0.5917800068855286,
+        0.24049000442028046
+      ]
+    },
+    {
+      "episode": 40,
+      "condition": "attention_ffn",
+      "success": true,
+      "steps": 156,
+      "final_drawer": 0.954163,
+      "chunks": 20,
+      "chunk_mse_clean_mean": 0.0001790854725286502,
+      "chunk_mse_clean_max": 0.0003937941169589758,
+      "chunk_cos_clean_mean": 0.9995947328612569,
+      "chunk_cos_clean_min": 0.999147891998291,
+      "chunk_gripper_mse_mean": 3.000550426686717e-06,
+      "chunk_gripper_mse_max": 3.89702341514407e-05,
+      "eef_divergence_ge_1cm_chunk": 2,
+      "eef_divergence_ge_5cm_chunk": 17,
+      "drawer_divergence_ge_0_01_chunk": 16,
+      "final_eef": [
+        -0.03189000114798546,
+        -0.49667999148368835,
+        0.05917999893426895
+      ]
+    },
+    {
+      "episode": 50,
+      "condition": "attention",
+      "success": false,
+      "steps": 300,
+      "final_drawer": -0.000127,
+      "chunks": 38,
+      "chunk_mse_clean_mean": 0.0010351656281655825,
+      "chunk_mse_clean_max": 0.01622503437101841,
+      "chunk_cos_clean_mean": 0.9969815329501504,
+      "chunk_cos_clean_min": 0.9513514637947083,
+      "chunk_gripper_mse_mean": 0.008317772118088018,
+      "chunk_gripper_mse_max": 0.19050072133541107,
+      "eef_divergence_ge_1cm_chunk": 5,
+      "eef_divergence_ge_5cm_chunk": 9,
+      "drawer_divergence_ge_0_01_chunk": 18,
+      "final_eef": [
+        0.2437800019979477,
+        0.7470499873161317,
+        -0.005419999826699495
+      ]
+    },
+    {
+      "episode": 50,
+      "condition": "attention_ffn",
+      "success": false,
+      "steps": 300,
+      "final_drawer": 0.000176,
+      "chunks": 38,
+      "chunk_mse_clean_mean": 0.0007508304686205903,
+      "chunk_mse_clean_max": 0.010366631671786308,
+      "chunk_cos_clean_mean": 0.9981323606089542,
+      "chunk_cos_clean_min": 0.9717553853988647,
+      "chunk_gripper_mse_mean": 0.0030900484400231527,
+      "chunk_gripper_mse_max": 0.11552727222442627,
+      "eef_divergence_ge_1cm_chunk": 3,
+      "eef_divergence_ge_5cm_chunk": 9,
+      "drawer_divergence_ge_0_01_chunk": 18,
+      "final_eef": [
+        -0.451449990272522,
+        0.6228899955749512,
+        0.1699099987745285
+      ]
+    }
+  ],
+  "paired_transitions": {
+    "attention_fail_to_attention_ffn_success": [
+      40
+    ],
+    "both_fail": [
+      10,
+      50
+    ],
+    "both_success": [
+      30
+    ],
+    "attention_success_to_attention_ffn_fail": []
+  },
+  "combined_with_prior_validation": {
+    "episodes": [
+      10,
+      30,
+      40,
+      50,
+      64,
+      73
+    ],
+    "attention_successes": 2,
+    "attention_total": 6,
+    "attention_ffn_successes": 4,
+    "attention_ffn_total": 6,
+    "attention_fail_to_attention_ffn_success": [
+      40,
+      64
+    ],
+    "both_fail": [
+      10,
+      50
+    ],
+    "both_success": [
+      30,
+      73
+    ]
+  },
+  "findings": [
+    "The earlier ep64/ep73 result did not establish stability across fixed held-out episodes.",
+    "Attention remains a strong candidate write path, but attention-only closed-loop success is only 1/4 on the new fixed set and 2/6 including ep64/ep73.",
+    "Attention plus complete FFN improves the paired transition in ep40 and reaches 2/4 on the new set, but still fails 2/4; the broader result remains unstable.",
+    "Near-zero action MSE is not sufficient for closed-loop success: ep10 and ep50 diverge by at least 1 cm at chunks 2-5 and later reach 32-38 cm final EEF separation.",
+    "FFN compensation is non-uniform: it changes ep40 from failure to success, but does not recover ep10 or ep50.",
+    "No reverse transition was observed: attention-only success did not become attention+FFN failure in the tested episodes.",
+    "All interventions use same-state clean activations and are privileged diagnostics, not deployable interventions."
+  ],
+  "interpretation": {
+    "attention_write_path": "dominant candidate, not yet a stable sufficient mechanism",
+    "attention_plus_ffn": "partial compensation, not repeatably sufficient",
+    "residual_or_upstream_accumulation": "must remain a competing explanation",
+    "stable_method_established": false,
+    "gate_or_training_authorized": false
+  },
+  "next_validation": [
+    "Do not start attention-head or channel scanning before explaining the near-zero action-error failures.",
+    "For ep10 and ep50, compare clean and intervention trajectories chunk by chunk to identify the first critical gripper/contact transition and per-action-group errors.",
+    "Distinguish small per-chunk action noise that accumulates from a missing upstream state/appearance factor.",
+    "Only if residual or state-transition divergence is excluded should the next GPU experiment decompose layer11 attention internals."
+  ]
+}

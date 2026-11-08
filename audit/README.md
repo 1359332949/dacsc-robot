@@ -16,6 +16,7 @@ CoRP-RoboCasa and FFN-analysis pipeline.
 | `full_layer11_replacement_20261108.json` | Privileged all-channel layer11 FFN replacement closed-loop control |
 | `full_block_replacement_20261108.json` | Privileged complete layer11 block replacement positive control |
 | `layer11_branch_decomposition_20261108.json` | Privileged layer11 attention/FFN decomposition action-chunk table and attention-path closed-loop validation |
+| `layer11_branch_stability_20261108.json` | Fixed-pool clean/jitter qualification and held-out attention-path closed-loop stability check |
 | `pretrain/` | RoboCasa dataset coverage and split audit |
 
 These receipts are point-in-time evidence under the stated local or target-server
