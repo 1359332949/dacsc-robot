@@ -74,9 +74,14 @@ def agg(
             protocol["training"], declared_split
         )
         if expected_styles != checkpoint_styles:
-            raise ValueError(
-                f"{task}: evaluation style range differs from checkpoint contract"
-            )
+            if declared_split != "source":
+                raise ValueError(
+                    f"{task}: evaluation style range differs from checkpoint contract"
+                )
+            if not set(expected_styles).issubset(set(checkpoint_styles)):
+                raise ValueError(
+                    f"{task}: source pilot panel is outside checkpoint train styles"
+                )
         expected_scene_split = "target" if declared_split == "target" else "pretrain"
         if protocol["scene_split"] != expected_scene_split:
             raise ValueError(f"{task}: scene split differs from evaluation split")
@@ -167,6 +172,7 @@ def agg(
             "success_rate": successes / episodes,
             "max_steps": summary["max_steps"],
             "styles": summary["styles"],
+            "evaluation_style_range": expected_styles,
             "per_style": native_support(records, "actual_style"),
             "per_layout": native_support(records, "actual_layout"),
             "manifest_sha256": [
@@ -188,6 +194,7 @@ def agg(
         "per_style": native_support(all_records, "actual_style"),
         "per_layout": native_support(all_records, "actual_layout"),
         "protocol": identity,
+        "evaluation_style_range": expected_styles,
         "records": all_records,
     }
 

@@ -93,6 +93,7 @@ class GPUEnvironmentContractTests(unittest.TestCase):
         )
         self.assertEqual(config["evaluation"]["internal_method_episodes"], 20)
         self.assertEqual(config["evaluation"]["target_episodes_external"], 20)
+        self.assertEqual(config["pretrain"]["source_pilot_styles"], [11, 30])
         for name in (
             "run_corp_sr_split.sh",
             "run_corp_sr_tasks.sh",

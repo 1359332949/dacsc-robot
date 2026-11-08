@@ -25,8 +25,15 @@ All five are in the official RoboCasa target Atomic-Seen task list.
 ```text
 train styles: 11-50
 source holdout: residue 9 among styles 11-50
+source pilot panel: styles 11-30 (20 episodes/task)
 internal val: styles 51-60
 ```
+
+The source holdout rows above define the offline training diagnostic. The
+closed-loop source pilot uses a fixed 20-style panel (`11-30`) so that 20
+episodes/task cover each source style once; it is a subset of the checkpoint's
+training-style range and must not be reported as full `11-50` coverage. If full
+coverage is required, source must use 40 episodes/task.
 
 Target demonstrations are never used for training.
 

@@ -251,6 +251,26 @@ class AggregationTests(unittest.TestCase):
             with self.assertRaises(json.JSONDecodeError):
                 agg(directory, ["A"], 2, source_ranges)
 
+    def test_source_pilot_subset_is_allowed_and_recorded(self):
+        with tempfile.TemporaryDirectory() as d:
+            directory = Path(d)
+            payload = self.write_task(directory)
+            pilot_styles = list(range(11, 31))
+            payload["summary"]["styles"] = pilot_styles
+            for record in payload["records"]:
+                record["style_ids"] = pilot_styles
+            (directory / "A.json").write_text(json.dumps(payload))
+            result = agg(directory, ["A"], 2, {"source": pilot_styles})
+            self.assertEqual(result["evaluation_style_range"], pilot_styles)
+            self.assertEqual(result["tasks"]["A"]["evaluation_style_range"], pilot_styles)
+
+            payload["summary"]["style_order"][0] = 31
+            payload["records"][0]["actual_style"] = 31
+            payload["records"][0]["requested_style"] = 31
+            (directory / "A.json").write_text(json.dumps(payload))
+            with self.assertRaises(ValueError):
+                agg(directory, ["A"], 2, {"source": pilot_styles})
+
     def test_cli_failure_does_not_publish_summary(self):
         with tempfile.TemporaryDirectory() as d:
             result = subprocess.run(
@@ -286,6 +306,7 @@ class AggregationTests(unittest.TestCase):
                 "OUT": str(root / "results"),
                 "TASKS": "A B",
                 "EPISODES": "1",
+                "SOURCE_STYLES": "11-50",
                 "MANIFEST_ROOT": str(root / "manifest"),
                 "PY": sys.executable,
                 "PYTHONPATH": str(ROOT),

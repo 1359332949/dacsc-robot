@@ -10,6 +10,7 @@
   ],
   "pretrain": {
     "train_styles": [11, 50],
+    "source_pilot_styles": [11, 30],
     "val_styles": [51, 60],
     "source_holdout_residue": 9
   },

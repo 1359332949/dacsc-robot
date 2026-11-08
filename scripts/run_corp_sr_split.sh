@@ -8,7 +8,7 @@ export TASKS="${TASKS:-OpenDrawer OpenCabinet TurnOffStove TurnOnSinkFaucet Turn
 export SHIFT="${SHIFT:-none}"
 export BLUR_SIGMA="${BLUR_SIGMA:-0}"
 export MANIFEST_ROOT="${MANIFEST_ROOT:?set MANIFEST_ROOT=/path/to/frozen/eval_manifest}"
-SOURCE_STYLES="${SOURCE_STYLES:-11-50}"
+SOURCE_STYLES="${SOURCE_STYLES:-11-30}"
 VAL_STYLES="${VAL_STYLES:-51-60}"
 TARGET_STYLES="${TARGET_STYLES:-1-10}"
 # Pilot/model selection uses source/val; test requires an explicit final evaluation.
