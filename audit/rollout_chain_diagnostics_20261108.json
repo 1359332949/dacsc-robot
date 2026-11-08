@@ -119,5 +119,35 @@
     "contact_sheet": "/hy-tmp/validation/trace_train_init_policy_open_drawer.png",
     "result": "The policy approaches, closes the gripper, and opens the drawer."
   },
-  "conclusion": "The model, action ordering, state input, camera orientation and success check can succeed on supported training initial states; 4 of 5 layout31 training initial states succeeded. The remaining discrepancy is primarily the initial-state distribution produced by the evaluation environment reset, with some additional policy sensitivity to individual starting states."
+  "initial_geometry_comparison": {
+    "eef_rel_position_similar_at_start": true,
+    "arm_joint_qpos_similar_at_start": true,
+    "mobile_base_qpos_training": [
+      [0.5, -13.14045, -5.22702, 0.0],
+      [0.5, -12.34297, -5.17553, 0.0],
+      [0.5, 13.29548, 6.76115, 0.0],
+      [0.5, -14.36384, -5.23153, 0.0],
+      [0.5, 13.25034, 6.76554, 0.0],
+      [0.5, -15.12121, -5.26916, 0.0]
+    ],
+    "mobile_base_qpos_reset": [
+      [0.5, -5.19033, -13.13049, 0.0],
+      [0.5, 6.75575, 15.38059, 0.0],
+      [0.5, 6.73801, 15.41005, 0.0],
+      [0.5, -5.25016, -14.37407, 0.0],
+      [0.5, -5.2131, -13.12671, 0.0],
+      [0.5, -5.18716, -15.90199, 0.0],
+      [0.5, -5.26694, -13.10535, 0.0],
+      [0.5, 6.79539, 13.27634, 0.0],
+      [0.5, 6.74607, 16.63293, 0.0],
+      [0.5, 6.79763, 15.37881, 0.0]
+    ],
+    "interpretation": "Training and reset base samples occupy different side/yaw clusters consistent with an approximately 90-degree camera/base geometry change, while eef relative state and arm joints remain similar.",
+    "first_chunk_divergence": {
+      "success_eef_delta_first_75_steps": [-0.0834, -0.4911, -0.4433],
+      "failure_eef_delta_first_75_steps": [0.0075, 0.3277, -0.6689],
+      "direction_difference_starts_by_step": 8
+    }
+  },
+  "conclusion": "The model, action ordering, state input, camera orientation and success check can succeed on supported training initial states; 4 of 5 layout31 training initial states succeeded. Reset failures diverge before grasp: the policy never closes the gripper and moves in the opposite lateral direction. The strongest observed covariate is a distinct mobile-base side/yaw geometry that changes the camera view but is not explicitly represented in the policy state."
 }
