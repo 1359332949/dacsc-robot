@@ -110,13 +110,16 @@ test域标签不得用于排名、候选筛选或方法选择，test继续封存
 | --- | --- | --- |
 | 无干预 CoRP | `train-augmentation=none` | 基础学习与 clean 闭环能力 |
 | 标准像素增广 | `train-augmentation=color_jitter` | 通用输入增广能解决多少外观退化？ |
-| 随机通道干预 | 计划对照，尚无当前CoRP入口 | 在相同粒度/位置/预算下区分普通正则与选择机制 |
-| 通道/token-channel选择 | 研究候选，尚未接入当前CoRP | 区分embedding坐标、FFN神经元和按token条件化的通道选择；先做上游审计 |
+| 随机通道干预 | `--channel-method random`；已实现，结果未验证 | 与 DomainDrop-ViT 共用 domain head、GRL、loss、层概率和 drop budget |
+| 通道/token-channel选择 | `--channel-method domaindrop_vit`；已实现训练期适配，结果未验证 | 当前对象是384维 ViT block-output channel；DgCD 需先验证 style-balanced environment batch |
 | 动作感知通道保护 | 研究候选，未实现当前CoRP版本 | 外观响应与实际动作影响是否相关，怎样指导选择，是否优于随机和无保护？ |
 
 像素增广直接使用 Torchvision；特征模块是受 TFS-ViT 启发的项目适配，不能冒用完整上游方法名。
 复杂候选需要与标准像素增广及相同干预粒度的随机/无保护对照比较，不能只优于无增广就宣称域选择或动作保护有效。
-channel hard gate、DomainDrop/PLACE/DgCD 的旧迁移实验保留为限定范围的历史分析，不是当前 CoRP 主方法证据。
+channel hard gate、DomainDrop/PLACE/DgCD 的旧**推理期**迁移实验仍只作为历史分析。
+新的训练期 DomainDrop-ViT 适配是单独实现，公式来源、固定 revision、matched random 和
+非官方组件见[DomainDrop-ViT method](DOMAINDROP_VIT_METHOD.md)；在真实 pilot 完成前同样
+不能当作方法有效证据。
 
 通道方向的文献依据与边界：旧方案的“域敏感性+动作重要性+软门控”是待验证组合，不等于已知算法的忠实复现。
 区分`Z[B,V,T,C]`上的token轴`T`、embedding-channel轴`C`与FFN中间神经元，不能把它们混称为一种通道。
@@ -134,7 +137,8 @@ DBCT/SCS与CLEAR仅有部分文献证据，未核验完整方法与可用官方�
 当前技术建议是先审计1536维FFN神经元，以384维embedding通道为低成本对照；token-channel是位置相关作用方式，
 不是与两种神经元对象互斥的第三种骨干。此为适配判断，不是效果结论。
 `CoRPFFNCapture`现已用于本地CPU只读验证，直接调用固定Registers源文件的logger；
-原detector通过单视角校准适配调用，不改排名计算。本轮不加门控、不连接服务器、不启动训练。
+原detector通过单视角校准适配调用，不改排名计算。只读采集本身不增加门控，也不改训练入口；
+训练期 DomainDrop-ViT 是独立的 source-training 实验，不与只读采集结果混写。
 CLS/patch/三视角排列、hook生命周期及真实权重下输出一致性的范围见[采集说明](CHANNEL_INTERVENTION_UPSTREAM_MAPPING.md#只读采集实现与本地验证)。
 三篇主读的[五行卡片与具身代码映射](CHANNEL_INTERVENTION_UPSTREAM_MAPPING.md#三篇主读论文五行卡片)现覆盖Registers、FFN steering和Action Atlas。
 FFN steering的VLM常数覆写、Action Atlas的完整残差/MLP/SAE干预与当前DINO视觉GELU日志不是同一操作；
@@ -178,7 +182,8 @@ FFN steering的VLM常数覆写、Action Atlas的完整残差/MLP/SAE干预与当
 4. **机制与粒度**：Q1响应变化是否在Q2指定干预下影响动作，resampler传递了什么，Q3共享通道是否过粗？
 5. **方法增量**：选定粒度的通道干预是否优于匹配随机干预，动作保护是否优于无保护，复杂方法是否优于标准像素增广且不损伤clean能力？
 
-前三项没有完成前，不把已存在的候选模块等同于已成立的方法；当前只推进本地只读FFN采集和回归，不启动训练。
+前三项没有完成前，不把已存在的候选模块等同于已成立的方法。当前从 baseline checkpoint
+启动的是受控 5k 方法筛查，不是最终方法结论；clean/shift 配对指标和闭环结果仍是门禁。
 
 ## 数据和选择协议
 

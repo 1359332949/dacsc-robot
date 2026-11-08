@@ -128,7 +128,14 @@ def evaluation_state(model, ema=None, seed: int = 0):
 
 
 def training_state(
-    optimizer, scheduler, ema, *, step: int, data_order: dict, augmentation=None
+    optimizer,
+    scheduler,
+    ema,
+    *,
+    step: int,
+    data_order: dict,
+    augmentation=None,
+    channel_dropout=None,
 ) -> dict:
     return {
         "version": 4,
@@ -139,11 +146,19 @@ def training_state(
         "rng": capture_rng(),
         "data_order": data_order,
         "augmentation": None if augmentation is None else augmentation.state_dict(),
+        "channel_dropout": channel_dropout,
     }
 
 
 def restore_training_state(
-    payload: dict, model, optimizer, scheduler, ema, *, augmentation=None
+    payload: dict,
+    model,
+    optimizer,
+    scheduler,
+    ema,
+    *,
+    augmentation=None,
+    channel_dropout=None,
 ) -> int:
     if "training_state" not in payload:
         raise ValueError(
@@ -163,6 +178,11 @@ def restore_training_state(
         raise ValueError("training augmentation setting differs from checkpoint")
     if augmentation is not None:
         augmentation.load_state_dict(state["augmentation"])
+    saved_channel = state.get("channel_dropout")
+    if (saved_channel is None) != (channel_dropout is None):
+        raise ValueError("channel-dropout setting differs from the resume checkpoint")
+    if channel_dropout is not None:
+        channel_dropout.load_state_dict(saved_channel)
     restore_rng(state["rng"])
     return state["step"]
 

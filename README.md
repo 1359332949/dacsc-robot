@@ -31,11 +31,13 @@
 `readonly_validation video` 会用真实视频逐像素比较两者，不一致直接失败，不把
 “更快”当成“输入等价”。
 
-通道方向先做只读机制审计，见[上游映射表](docs/CHANNEL_INTERVENTION_UPSTREAM_MAPPING.md)。
+通道机制审计见[上游映射表](docs/CHANNEL_INTERVENTION_UPSTREAM_MAPPING.md)。
 `dacsc/corp_ffn_capture.py`只观察CoRP原block与GELU输出，不接入训练/推理主入口、不替换attention或增加门控。
+训练期通道正则化是独立的 DomainDrop-ViT 适配，边界、固定 revision 和实验门禁见
+[DOMAINDROP_VIT_METHOD.md](docs/DOMAINDROP_VIT_METHOD.md)。
 其可选分析依赖单独固定于`analysis_upstream.lock.json`；原Registers logger和detector由已核验的外部源文件直接加载。
 
-## 本地验证，不启动训练
+## 本地验证
 
 GPU环境使用独立的CoRP/RoboCasa依赖锁和离线wheelhouse，避免每次现场解析冲突：
 见[GPU环境复现说明](environment/README.md)。
@@ -71,6 +73,7 @@ PYTHONPATH=repos/CoRP .venv/bin/python repos/CoRP/scripts/smoke_test.py --device
 | 只准备官方MuJoCo重放命令 | 同上`replay-plan`；不执行仿真 |
 | CoRP-RoboCasa 训练适配 | `scripts/train_corp_robocasa.py`；必须显式传 `--steps` |
 | V10 frozen baseline | `scripts/run_v10_pilot.sh`；默认 5 tasks、30k、batch96、BF16 |
+| DomainDrop-ViT 5k 方法筛查 | `scripts/run_v10_channel_pilot.sh`；`control/random/domaindrop_vit` 共用初始化与预算 |
 | held-out 离线 MSE | `scripts/eval_corp_robocasa.py` |
 | RoboCasa 单任务 SR | `scripts/eval_corp_robocasa_sr.py` |
 | 多任务 source/val SR 与严格聚合 | `scripts/run_corp_sr_split.sh` |
@@ -116,6 +119,29 @@ CoRP-RoboCasa 默认启用论文 Eq.7 的 task-classification auxiliary loss：
 `--eval-shift color_jitter` 仍是固定强度、固定顺序的评测 stress，两者不能混称。
 像素增广默认关闭；V10 pilot 通过 `TRAIN_AUGMENTATION=color_jitter` 选择该对照。
 输出目录仍由 `--out-dir` 独占，不能覆盖已有 run。
+
+## 训练期通道正则化
+
+当前实现是 **DomainDrop-inspired ViT channel dropout for CoRP**，不是官方 DomainDrop
+ViT 复现。官方仓库 revision `a2d9607d4f1fb9ba35a9fa48fbceff82fd67d15f` 只有
+ResNet/CNN 实现；本适配保留 domain discriminator、GRL、真实 domain channel score、
+WRS、单层激活和 scale recovery，并把 `[3B,T,384]` 映射成共享三视角/token 的
+`[B,384,3,T]`。分类 KL consistency 明确适配为相同 flow `eps/tau` 下的 velocity MSE。
+
+`--channel-method random` 与 `--channel-method domaindrop_vit` 共用 discriminator、GRL、
+domain loss、consistency、层概率和 drop budget，唯一区别是随机 channel score 与域敏感
+channel score。这个 matched random 对照是判断“选择机制”是否有效的必要条件。
+
+```bash
+OUT=/hy-tmp/runs/v10_channel_control \
+INIT_MODEL=/hy-tmp/runs/v10_baseline_30k_oss_cache4_f2/model.pt \
+CHANNEL_METHOD=none \
+bash scripts/run_v10_channel_pilot.sh
+```
+
+先跑同一个 baseline checkpoint 的 `none/random/domaindrop_vit` 5k pilot；只有 DomainDrop
+在 clean 不崩的条件下优于 matched random，才考虑扩大训练或闭环评测。目标 style/layout
+1–10 仍封存。
 
 ## 本地交付
 

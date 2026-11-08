@@ -1,0 +1,69 @@
+{
+  "schema": "domaindrop_vit_upstream_audit_v1",
+  "created_at_utc": "2026-11-09T01:25:00Z",
+  "status": "implemented_local_contract_tests_passed_training_not_yet_validated",
+  "method_name": "DomainDrop-inspired ViT channel dropout for CoRP",
+  "official_vit_available": false,
+  "domaindrop": {
+    "repository": "https://github.com/lingeringlight/DomainDrop",
+    "revision": "a2d9607d4f1fb9ba35a9fa48fbceff82fd67d15f",
+    "paper": "https://arxiv.org/abs/2308.10285",
+    "license_file_present": false,
+    "source_files": [
+      {
+        "path": "models/FilterDropout.py",
+        "sha256": "127536ad9ee2165c6d14beb6d116ffec9f94f36a3ff8aa718a24bc2715e1795a"
+      },
+      {
+        "path": "models/LayerDiscriminator.py",
+        "sha256": "c17091fef7f964282a68a9c018d8d2909f532f85d477b13e1ee31e3dc6c60821"
+      },
+      {
+        "path": "models/resnet_domain.py",
+        "sha256": "851c476657d301f3bdfe569ba6acabb556866e63efb25726514839235e7d86c8"
+      },
+      {
+        "path": "loss/KL_Loss.py",
+        "sha256": "fbbeb3a4ebb0c0102f357e270c6addb08698b48fa568c6f71fb98e32fb427d3b"
+      },
+      {
+        "path": "train_domain.py",
+        "sha256": "2f76aad69808ab4b4658ef5e672ed4efeb286ae35d37ebd5a1c240a266a9b78f"
+      }
+    ]
+  },
+  "preserved_official_semantics": [
+    "linear source-domain discriminator over globally pooled features",
+    "gradient reversal with lambda 0.25",
+    "channel score from the true domain classifier row",
+    "channel score min-max normalization before weighted random selection",
+    "weighted random selection key r^(1/score)",
+    "one active block per training step with probability 0.8",
+    "drop fraction 0.33",
+    "binary mask recovery by numel divided by kept count"
+  ],
+  "corp_adaptations": [
+    "CNN feature map [B,C,H,W] is mapped to ViT block output [B,C,views,tokens]",
+    "the mask is shared across all three camera views and all CLS/patch tokens",
+    "block output channels are 384-dimensional embedding channels, not 1536-dimensional FFN neurons",
+    "dual classification KL is adapted to paired flow-velocity MSE using identical flow eps and tau",
+    "four evenly spaced ViT blocks 2,5,8,11 are used as a depth mapping of the four ResNet stages"
+  ],
+  "matched_random_control": {
+    "same_discriminator": true,
+    "same_gradient_reversal": true,
+    "same_domain_loss": true,
+    "same_consistency_loss": true,
+    "same_active_layer_probability": true,
+    "same_drop_fraction": true,
+    "only_difference": "random channel scores instead of true-domain classifier scores"
+  },
+  "dgcd_reference": {
+    "repository": "https://github.com/gyeomo/DgCD",
+    "revision": "56f65c33f1f61a4539d65784f2ecc2c8c299eb61",
+    "paper_doi": "10.1145/3627673.3679539",
+    "license": "MIT",
+    "implementation_status": "not implemented",
+    "blocker": "official code assumes fixed environment-wise sample groups; current mixed-style batches require a validated style-balanced construction before a faithful adaptation"
+  }
+}

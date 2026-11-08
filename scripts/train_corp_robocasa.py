@@ -45,6 +45,7 @@ from dacsc.corp_robocasa import (  # noqa: E402
     CorpRoboCasa,
     TaskAuxConfig,
     load_corp_robocasa,
+    load_adapted_checkpoint,
     _CORP_REPO,
 )
 from dacsc.training_state import (  # noqa: E402
@@ -58,10 +59,16 @@ from dacsc.run_output import entry_output  # noqa: E402
 from dacsc.upstream import verify_upstream, verify_release_checkpoint
 from scripts.check_data_layout import default_root
 from dacsc.action_metrics import MSE_SCHEMA, action_mse_summary
+from dacsc.eval_protocol import file_sha256
 from dacsc.pixel_augmentation import (
     TRAIN_AUGMENTATIONS,
     TrainingPixelAugmentation,
     pixel_augmentation_contract,
+)
+from dacsc.domaindrop_vit import (
+    CHANNEL_METHODS,
+    ChannelDropoutConfig,
+    ChannelDropoutController,
 )
 from dacsc.code_identity import verify_package_identity
 
@@ -149,6 +156,92 @@ def task_class_map(tasks) -> dict[str, int]:
     if len(names) != len(set(names)):
         raise ValueError("task class map contains duplicate task names")
     return {name: index for index, name in enumerate(sorted(names))}
+
+
+def style_class_map(dataset) -> dict[int, int]:
+    """Map observed native style IDs to contiguous source-domain class IDs."""
+    styles = sorted({entry[2] for entry in dataset.flat})
+    if not styles:
+        raise ValueError("training dataset has no style IDs")
+    return {style: index for index, style in enumerate(styles)}
+
+
+def duplicate_training_batch(batch: dict) -> dict:
+    """Duplicate a batch so two channel masks share one logical update."""
+    out = {
+        "images": {
+            view: torch.cat([image, image], dim=0)
+            for view, image in batch["images"].items()
+        },
+        "state": torch.cat([batch["state"], batch["state"]], dim=0),
+        "instruction": list(batch["instruction"]) * 2,
+        "action": torch.cat([batch["action"], batch["action"]], dim=0),
+        "action_mask": torch.cat(
+            [batch["action_mask"], batch["action_mask"]], dim=0
+        ),
+        "style_id": torch.cat([batch["style_id"], batch["style_id"]], dim=0),
+    }
+    if "task_id" in batch:
+        out["task_id"] = torch.cat([batch["task_id"], batch["task_id"]], dim=0)
+    return out
+
+
+def paired_flow_sample(action: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
+    """Create identical flow noise/tau for the two duplicated halves."""
+    if action.ndim < 1 or action.shape[0] % 2:
+        raise ValueError("paired action batch must contain two equal halves")
+    half_batch = action.shape[0] // 2
+    eps_half = torch.randn_like(action[:half_batch])
+    tau_half = (
+        torch.distributions.Beta(1.0, 1.5)
+        .sample((half_batch,))
+        .to(device=action.device, dtype=action.dtype)
+    )
+    return torch.cat([eps_half, eps_half], dim=0), torch.cat([tau_half, tau_half], dim=0)
+
+
+def channel_training_loss(
+    model,
+    controller: ChannelDropoutController,
+    batch: dict,
+    *,
+    task_labels: torch.Tensor | None,
+    consistency_weight: float,
+    domain_loss_weight: float,
+):
+    """Run the duplicated forward used by train-time channel dropout."""
+    doubled = duplicate_training_batch(batch)
+    controller.begin_step(doubled["style_id"])
+    eps, tau = paired_flow_sample(doubled["action"])
+    losses, velocity = model.training_loss_with_flow(
+        doubled["images"],
+        doubled["state"],
+        doubled["instruction"],
+        doubled["action"],
+        doubled["action_mask"],
+        task_labels=doubled.get("task_id") if task_labels is not None else None,
+        eps=eps,
+        tau=tau,
+    )
+    half = batch["action"].shape[0]
+    velocity_a = velocity[:half]
+    velocity_b = velocity[half:]
+    consistency = F.mse_loss(velocity_a, velocity_b)
+    domain_loss = None
+    if not controller.domain_logits:
+        raise RuntimeError("channel controller forward did not return domain logits")
+    labels = controller.domain_labels
+    if labels is None:
+        raise RuntimeError("channel controller did not retain domain labels")
+    domain_losses = [
+        F.cross_entropy(logits, labels) for _, logits in controller.domain_logits
+    ]
+    domain_loss = torch.stack(domain_losses).mean()
+    total = losses.total + consistency_weight * consistency
+    if domain_loss is not None:
+        total = total + domain_loss_weight * domain_loss
+    diagnostics = controller.diagnostics()
+    return total, losses, consistency, domain_loss, diagnostics
 
 
 def set_seed(seed: int) -> None:
@@ -454,6 +547,11 @@ def main() -> int:
         help="Full training checkpoint; --steps remains the original total budget",
     )
     ap.add_argument(
+        "--init-model",
+        type=Path,
+        help="Adapted CoRP checkpoint used to initialize a new training run",
+    )
+    ap.add_argument(
         "--train-augmentation",
         choices=TRAIN_AUGMENTATIONS,
         default="none",
@@ -464,6 +562,29 @@ def main() -> int:
         default="color_jitter",
         choices=["none", "grayscale", "color_jitter", "low_contrast", "hue_shift"],
     )
+    ap.add_argument(
+        "--channel-method",
+        choices=CHANNEL_METHODS,
+        default="none",
+        help="Train-only channel regularization; eval is always a no-op",
+    )
+    ap.add_argument(
+        "--channel-layers",
+        nargs="+",
+        type=int,
+        default=[2, 5, 8, 11],
+        help="Zero-based DINO block indices for channel dropout",
+    )
+    ap.add_argument("--channel-drop-rate", type=float, default=0.33)
+    ap.add_argument("--channel-layer-probability", type=float, default=0.8)
+    ap.add_argument(
+        "--channel-consistency-weight",
+        type=float,
+        default=1.5,
+        help="DomainDrop dual-consistency adaptation on paired flow velocities",
+    )
+    ap.add_argument("--domain-loss-weight", type=float, default=1.0)
+    ap.add_argument("--domain-grl-lambda", type=float, default=0.25)
     args = ap.parse_args()
     if args.steps <= 0 or args.eval_every <= 0 or args.save_every < 0:
         ap.error("steps/eval-every must be positive and save-every nonnegative")
@@ -476,6 +597,8 @@ def main() -> int:
         ap.error("batch sizes, per-task support and Euler steps must be positive")
     if args.resume and args.num_workers != 0:
         ap.error("exact data-order resume currently requires --num-workers 0")
+    if args.resume and args.init_model:
+        ap.error("--resume and --init-model are mutually exclusive")
     if args.tasks and args.max_tasks:
         ap.error("--tasks and --max-tasks are mutually exclusive")
     if (
@@ -500,12 +623,31 @@ def main() -> int:
         or not 0 <= args.ema_decay < 1
     ):
         ap.error("invalid workers, task limit, LR or EMA decay")
+    try:
+        ChannelDropoutConfig(
+            method=args.channel_method,
+            layers=tuple(args.channel_layers),
+            drop_rate=args.channel_drop_rate,
+            layer_probability=args.channel_layer_probability,
+            domain_loss_weight=args.domain_loss_weight,
+            consistency_weight=args.channel_consistency_weight,
+            grl_lambda=args.domain_grl_lambda,
+        )
+    except ValueError as exc:
+        ap.error(str(exc))
 
     with entry_output(Path(args.out_dir), resume=bool(args.resume)) as out:
         return run(args, out)
 
 
 def run(args, out: Path) -> int:
+    channel_method = getattr(args, "channel_method", "none")
+    channel_layers = tuple(getattr(args, "channel_layers", [2, 5, 8, 11]))
+    channel_drop_rate = getattr(args, "channel_drop_rate", 0.33)
+    channel_layer_probability = getattr(args, "channel_layer_probability", 0.8)
+    channel_consistency_weight = getattr(args, "channel_consistency_weight", 1.5)
+    domain_loss_weight = getattr(args, "domain_loss_weight", 1.0)
+    domain_grl_lambda = getattr(args, "domain_grl_lambda", 0.25)
     upstream = verify_upstream()
     set_seed(args.seed)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -581,8 +723,29 @@ def run(args, out: Path) -> int:
     )
     selection_contract = data_contract(train_ds, source_ds, val_ds, tasks, args)
     print(f"data_contract={selection_contract}", flush=True)
+    channel_config = ChannelDropoutConfig(
+        method=channel_method,
+        layers=channel_layers,
+        drop_rate=channel_drop_rate,
+        layer_probability=channel_layer_probability,
+        domain_loss_weight=domain_loss_weight,
+        consistency_weight=channel_consistency_weight,
+        grl_lambda=domain_grl_lambda,
+    )
+    style_to_id = {} if channel_method == "none" else style_class_map(train_ds)
+    channel_payload = (
+        None
+        if channel_config.method == "none"
+        else {
+            **channel_config.contract(),
+            "style_to_id": {
+                str(style): domain_id for style, domain_id in style_to_id.items()
+            },
+        }
+    )
 
     resume_payload = None
+    init_payload = None
     if args.resume:
         resume_payload = torch.load(args.resume, map_location="cpu", weights_only=False)
         if (
@@ -605,10 +768,15 @@ def run(args, out: Path) -> int:
             raise ValueError(
                 "resume task auxiliary objective/class mapping differs from checkpoint"
             )
+        if resume_payload.get("channel_dropout") != channel_payload:
+            raise ValueError(
+                "resume channel-dropout method/configuration differs from checkpoint"
+            )
         saved_args = resume_payload["run_args"]
         # Reporting/checkpoint cadence and destination may change; training may not.
         mutable = {
             "resume",
+            "steps",
             "out_dir",
             "eval_every",
             "save_every",
@@ -616,15 +784,46 @@ def run(args, out: Path) -> int:
             "per_task_eval",
             "cache_video_tasks",
             "no_cache_video",
+            "init_model",
+        }
+        new_channel_keys = {
+            "channel_method",
+            "channel_layers",
+            "channel_drop_rate",
+            "channel_layer_probability",
+            "channel_consistency_weight",
+            "domain_loss_weight",
+            "domain_grl_lambda",
         }
         for key, value in vars(args).items():
             if isinstance(value, Path):
                 value = str(value)
+            if key not in saved_args:
+                if (
+                    key == "init_model"
+                    and value is None
+                ) or (key in new_channel_keys and channel_method == "none"):
+                    continue
+                raise ValueError(f"resume checkpoint lacks argument: {key}")
             if key not in mutable and saved_args[key] != value:
                 raise ValueError(f"resume argument mismatch: {key}")
         norm = LinearNormalizer(**resume_payload["normalizer"])
         if resume_payload["config"] != ROBOCASA_CORP_CONFIG:
             raise ValueError("resume architecture differs from the configured model")
+    elif args.init_model:
+        init_payload = torch.load(args.init_model, map_location="cpu", weights_only=False)
+        if (
+            init_payload["format"] != CHECKPOINT_FORMAT
+            or init_payload["objective"] != OBJECTIVE
+            or init_payload["images"] != image_contract()
+            or init_payload["upstream"] != upstream
+        ):
+            raise ValueError("initialization checkpoint training/image contract differs")
+        if init_payload.get("task_aux") != task_aux_payload:
+            raise ValueError(
+                "initialization checkpoint task auxiliary configuration differs"
+            )
+        norm = LinearNormalizer(**init_payload["normalizer"])
     else:
         norm = LinearNormalizer.fit(train_ds, max_steps=512)
         print("normalizer fitted on train styles", flush=True)
@@ -639,7 +838,7 @@ def run(args, out: Path) -> int:
     ):
         raise ValueError("resume training pixel augmentation differs from checkpoint")
 
-    if resume_payload is None:
+    if resume_payload is None and init_payload is None:
         initialization_sha256 = verify_release_checkpoint(args.checkpoint)
         model, merge = load_corp_robocasa(
             args.checkpoint,
@@ -647,6 +846,23 @@ def run(args, out: Path) -> int:
             device=device,
             task_aux=task_aux_cfg,
         )
+        parent_training_origin = None
+    elif init_payload is not None:
+        initialization_sha256 = file_sha256(args.init_model)
+        model, (mean, std) = load_adapted_checkpoint(
+            args.init_model,
+            device=device,
+        )
+        if model.task_aux_config != task_aux_cfg:
+            raise ValueError(
+                "initialization checkpoint task auxiliary configuration differs"
+            )
+        norm = LinearNormalizer(mean, std).to(device)
+        merge = init_payload.get(
+            "merge",
+            {"copied": 0, "random_init": 0, "partial_keys": []},
+        )
+        parent_training_origin = init_payload.get("training_origin")
     else:
         initialization_sha256 = resume_payload["initialization_sha256"]
         model = CorpRoboCasa(
@@ -654,13 +870,21 @@ def run(args, out: Path) -> int:
             task_aux=task_aux_cfg,
         ).to(device)
         merge = resume_payload["merge"]
+        parent_training_origin = resume_payload.get("parent_training_origin")
     model.train()
     print(
         f"model loaded: copied={merge['copied']} random={merge['random_init']}",
         flush=True,
     )
 
+    controller = (
+        None
+        if channel_config.method == "none"
+        else ChannelDropoutController(model, channel_config, style_to_id).train()
+    )
     params = [p for p in model.parameters() if p.requires_grad]
+    if controller is not None:
+        params.extend(controller.parameters())
     opt = torch.optim.AdamW(params, lr=args.lr, weight_decay=1e-4, betas=(0.9, 0.95))
     warmup_steps = max(1, args.steps // 10)
     optimization_recipe = {
@@ -686,6 +910,8 @@ def run(args, out: Path) -> int:
         "optimization": optimization_recipe,
         "pixel_augmentation": pixel_config,
         "task_aux": task_aux_payload,
+        "channel_dropout": channel_payload,
+        "parent_training_origin": parent_training_origin,
         "initialization_policy": merge["initialization_policy"],
         "initialization_sha256": initialization_sha256,
         "data_metadata_sha256": train_ds.support()["metadata_sha256"],
@@ -727,6 +953,8 @@ def run(args, out: Path) -> int:
                 },
                 "task_aux": task_aux_payload,
                 "pixel_augmentation": pixel_config,
+                "channel_dropout": channel_payload,
+                "parent_training_origin": parent_training_origin,
                 "merge": merge,
                 "training_origin": training_origin,
                 "run_args": {
@@ -748,6 +976,9 @@ def run(args, out: Path) -> int:
                         "data_contract": selection_contract,
                     },
                     augmentation=pixel_augmentation,
+                    channel_dropout=(
+                        None if controller is None else controller.state_dict()
+                    ),
                 ),
             },
             path,
@@ -797,7 +1028,13 @@ def run(args, out: Path) -> int:
         for _ in range(batches_in_epoch):
             next(it)
         step = restore_training_state(
-            resume_payload, model, opt, sched, ema, augmentation=pixel_augmentation
+            resume_payload,
+            model,
+            opt,
+            sched,
+            ema,
+            augmentation=pixel_augmentation,
+            channel_dropout=controller,
         )
         if step > args.steps:
             raise ValueError("resume checkpoint exceeds the total step budget")
@@ -820,15 +1057,34 @@ def run(args, out: Path) -> int:
             task_to_id=task_to_id,
         )
         with torch.autocast("cuda", dtype=torch.bfloat16):
-            losses = model.training_loss(
-                b["images"],
-                b["state"],
-                b["instruction"],
-                b["action"],
-                b["action_mask"],
-                task_labels=b["task_id"] if task_aux_cfg is not None else None,
-            )
-        loss = losses.total
+            if controller is None:
+                losses = model.training_loss(
+                    b["images"],
+                    b["state"],
+                    b["instruction"],
+                    b["action"],
+                    b["action_mask"],
+                    task_labels=b["task_id"] if task_aux_cfg is not None else None,
+                )
+                loss = losses.total
+                consistency_loss = None
+                domain_loss = None
+                channel_diagnostics = None
+            else:
+                (
+                    loss,
+                    losses,
+                    consistency_loss,
+                    domain_loss,
+                    channel_diagnostics,
+                ) = channel_training_loss(
+                    model,
+                    controller,
+                    b,
+                    task_labels=b["task_id"] if task_aux_cfg is not None else None,
+                    consistency_weight=channel_consistency_weight,
+                    domain_loss_weight=domain_loss_weight,
+                )
         opt.zero_grad(set_to_none=True)
         loss.backward()
         torch.nn.utils.clip_grad_norm_(params, 1.0, error_if_nonfinite=True)
@@ -840,9 +1096,25 @@ def run(args, out: Path) -> int:
             task_loss = (
                 " n/a" if losses.task is None else f" task {float(losses.task):.4f}"
             )
+            channel_detail = ""
+            if consistency_loss is not None:
+                channel_detail += f" consistency {float(consistency_loss):.4f}"
+            if domain_loss is not None:
+                channel_detail += f" domain {float(domain_loss):.4f}"
+            if channel_diagnostics is not None:
+                active_layer = channel_diagnostics["active_layer"]
+                mask_events = channel_diagnostics["mask_events"]
+                if mask_events:
+                    dropped = mask_events[0]["mean_actual_drop_fraction"]
+                    channel_detail += (
+                        f" channel_layer {active_layer} drop {dropped:.3f}"
+                    )
+                balanced = channel_diagnostics["domain_balanced_accuracy"]
+                if balanced is not None:
+                    channel_detail += f" domain_bal_acc {balanced:.3f}"
             print(
                 f"step {step:4d} loss {float(loss):.4f} "
-                f"flow {float(losses.flow):.4f}{task_loss} "
+                f"flow {float(losses.flow):.4f}{task_loss}{channel_detail} "
                 f"lr {sched.get_last_lr()[0]:.2e} elapsed {time.time()-t_start:.1f}s",
                 flush=True,
             )
@@ -929,8 +1201,6 @@ def run(args, out: Path) -> int:
             tmp = metrics_path.with_suffix(".json.tmp")
             tmp.write_text(json.dumps(detail, allow_nan=False))
             tmp.replace(metrics_path)
-            from dacsc.eval_protocol import file_sha256
-
             metrics.append(
                 {
                     "step": step,
@@ -968,6 +1238,19 @@ def run(args, out: Path) -> int:
                     "train_task_aux_loss": (
                         None if losses.task is None else float(losses.task)
                     ),
+                    "channel_method": channel_config.method,
+                    "channel_active_layer": (
+                        None if controller is None else controller.active_layer
+                    ),
+                    "train_channel_consistency_loss": (
+                        None
+                        if consistency_loss is None
+                        else float(consistency_loss)
+                    ),
+                    "train_channel_domain_loss": (
+                        None if domain_loss is None else float(domain_loss)
+                    ),
+                    "channel_diagnostics": channel_diagnostics,
                 }
             )
             model.train()
@@ -976,6 +1259,8 @@ def run(args, out: Path) -> int:
         "metric_schema": MSE_SCHEMA,
         "pixel_augmentation": pixel_config,
         "task_aux": task_aux_payload,
+        "channel_dropout": channel_payload,
+        "parent_training_origin": parent_training_origin,
         "args": {
             key: str(value) if isinstance(value, Path) else value
             for key, value in vars(args).items()

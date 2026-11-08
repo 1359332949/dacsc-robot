@@ -310,6 +310,34 @@ class CorpRoboCasa(nn.Module):
         task_labels: torch.Tensor | None,
     ) -> CorpTrainingLoss:
         """Return flow loss plus the paper's task-classification auxiliary loss."""
+        losses, _ = self.training_loss_with_flow(
+            images,
+            state,
+            instruction,
+            action,
+            action_mask,
+            task_labels=task_labels,
+        )
+        return losses
+
+    def training_loss_with_flow(
+        self,
+        images: dict[str, torch.Tensor],
+        state: torch.Tensor,
+        instruction,
+        action: torch.Tensor,
+        action_mask: torch.Tensor,
+        *,
+        task_labels: torch.Tensor | None,
+        eps: torch.Tensor | None = None,
+        tau: torch.Tensor | None = None,
+    ) -> tuple[CorpTrainingLoss, torch.Tensor]:
+        """Return the loss and predicted flow velocity.
+
+        ``eps`` and ``tau`` are optional so paired channel-dropout forwards can
+        reuse exactly the same flow sample. The default path samples them
+        exactly as the original training loss.
+        """
         if self.task_aux_config is None:
             if task_labels is not None:
                 raise ValueError(
@@ -318,19 +346,34 @@ class CorpRoboCasa(nn.Module):
         else:
             self._validate_task_labels(task_labels, action.shape[0])
 
-        eps = torch.randn_like(action)
-        tau = (
-            torch.distributions.Beta(1.0, 1.5)
-            .sample((action.shape[0],))
-            .to(device=action.device, dtype=action.dtype)
-        )
+        if eps is None:
+            eps = torch.randn_like(action)
+        elif eps.shape != action.shape or not torch.isfinite(eps).all():
+            raise ValueError("fixed flow eps must match action shape and be finite")
+        if tau is None:
+            tau = (
+                torch.distributions.Beta(1.0, 1.5)
+                .sample((action.shape[0],))
+                .to(device=action.device, dtype=action.dtype)
+            )
+        elif (
+            tau.shape != (action.shape[0],)
+            or not torch.isfinite(tau).all()
+            or not ((tau >= 0) & (tau <= 1)).all()
+        ):
+            raise ValueError("fixed flow tau must be a finite [batch] tensor in [0,1]")
         representation = self.extract(images, state, instruction)
         prefix, hidden_states = self._prepare_prefix_and_task_hidden(representation)
-        flow = self._flow_loss_from_prefix(
-            representation, prefix, action, action_mask, eps, tau
+        x_tau = eps.to(dtype=representation.action_dtype) * (
+            1.0 - tau[:, None, None]
+        ) + action.to(dtype=representation.action_dtype) * tau[:, None, None]
+        target = action.to(dtype=representation.action_dtype) - eps.to(
+            dtype=representation.action_dtype
         )
+        velocity = self.action_generator(x_tau, tau, prefix)
+        flow = masked_action_mse(velocity, target, action_mask)
         if self.task_aux_config is None:
-            return CorpTrainingLoss(total=flow, flow=flow, task=None)
+            return CorpTrainingLoss(total=flow, flow=flow, task=None), velocity
 
         task = self.task_auxiliary_loss(hidden_states, task_labels)
         if not torch.isfinite(task):
@@ -342,7 +385,7 @@ class CorpRoboCasa(nn.Module):
             raise FloatingPointError(
                 "nonfinite total loss; refusing to update model parameters"
             )
-        return CorpTrainingLoss(total=total, flow=flow, task=task)
+        return CorpTrainingLoss(total=total, flow=flow, task=task), velocity
 
     def task_auxiliary_loss(
         self, hidden_states: dict[int, torch.Tensor], task_labels: torch.Tensor
