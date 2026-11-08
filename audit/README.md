@@ -10,6 +10,7 @@ CoRP-RoboCasa and FFN-analysis pipeline.
 | `current_validation.json` | Latest local tests, static checks and validation boundaries; source-tree hash distinguishes it from later edits |
 | `server_preflight_20261107.json` | Target-server environment, real-video, CUDA/BF16, MuJoCo and manifest-reset preflight |
 | `video_backend_equivalence_20261108.json` | Real-video exact-pixel comparison of official `opencv` timestamp reads and official `pyav` cache reads |
+| `rollout_chain_diagnostics_20261108.json` | State/camera/action/success-chain and training-initial-state policy rollout diagnostics |
 | `pretrain/` | RoboCasa dataset coverage and split audit |
 
 These receipts are point-in-time local evidence. They do not establish CUDA,

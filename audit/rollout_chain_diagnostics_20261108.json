@@ -1,0 +1,56 @@
+{
+  "schema": "dacsc_rollout_chain_diagnostics_v1",
+  "generated_at": "2026-11-08T15:18:30+08:00",
+  "task": "OpenDrawer",
+  "dataset": "/hy-tmp/datasets/robocasa365_oss/v1.0/pretrain/atomic/OpenDrawer/20250819/lerobot",
+  "episode": 26,
+  "style": 12,
+  "layout": 31,
+  "checkpoint": "/hy-tmp/runs/v10_baseline_30k_oss_cache4_f2/model.pt",
+  "state_alignment": {
+    "dataset_frame": 85,
+    "max_abs_difference": 0.0,
+    "result": "PASS"
+  },
+  "observation_alignment": {
+    "method": "restore the official dataset state and compare simulator cameras with the stored LeRobot frame",
+    "normal_orientation_correlation": {
+      "robot0_agentview_left": 0.99852,
+      "robot0_eye_in_hand": 0.99754,
+      "robot0_agentview_right": 0.9986
+    },
+    "vertical_flip_correlation": {
+      "robot0_agentview_left": 0.13342,
+      "robot0_eye_in_hand": 0.45831,
+      "robot0_agentview_right": 0.3836
+    },
+    "result": "PASS"
+  },
+  "official_action_replay": {
+    "action_source": "robocasa.utils.lerobot_utils.get_episode_actions",
+    "action_conversion": "robocasa.utils.env_utils.convert_action",
+    "dataset_action_steps": 171,
+    "executed_steps": 155,
+    "success": true,
+    "result": "PASS"
+  },
+  "policy_from_official_training_initial_state": {
+    "initial_state": "extras/episode_000026/states.npz frame 0",
+    "max_steps": 750,
+    "action_steps": 8,
+    "executed_steps": 176,
+    "success": true,
+    "terminated": false,
+    "truncated": false,
+    "result_path": "/hy-tmp/validation/policy_open_drawer_ep26.json",
+    "result": "PASS"
+  },
+  "seen_smoke_with_environment_reset": {
+    "run": "/hy-tmp/eval/v10_gate_open_drawer_seen_l31_s12",
+    "episodes": 5,
+    "successes": 0,
+    "all_steps": 750,
+    "result": "FAIL"
+  },
+  "conclusion": "The model, action ordering, state input, camera orientation and success check can succeed on a supported training initial state. The remaining discrepancy is the initial-state distribution produced by the evaluation environment reset, not evidence that the policy cannot perform the task."
+}

@@ -5,9 +5,9 @@
   "working_tree_modified_at_test": false,
   "python": "3.11.15",
   "platform": "macOS arm64",
-  "source_tree_sha256": "01d4b1a5e7641586b1018f4c04ec3297d6ec8da59719668654f8f9ee49b09e6a",
-  "source_tree_sha256_scope": "all tracked plus non-ignored untracked project files, excluding audit/current_validation.json; path, byte length and content are hashed",
-  "source_file_count": 89,
+  "source_tree_sha256": "0492c462f106926b9924745754a83f33e0fbee65abc06d67d595a905a76e525f",
+  "source_tree_sha256_scope": "all tracked plus non-ignored untracked project files excluding audit/; path, byte length and content are hashed",
+  "source_file_count": 77,
   "checks": {
     "unittest": {
       "command": "PYTHONPATH=tests .venv/bin/python -m unittest discover -s tests -v",
@@ -85,6 +85,16 @@
       "all_steps": 750,
       "result_json_checks": "PASS",
       "aggregation_checks": "PASS"
+    },
+    "rollout_chain_diagnostics": {
+      "receipt": "audit/rollout_chain_diagnostics_20261108.json",
+      "state_alignment": "PASS",
+      "camera_alignment": "PASS",
+      "official_action_replay_success": true,
+      "official_action_replay_steps": 155,
+      "policy_training_initial_state_success": true,
+      "policy_training_initial_state_steps": 176,
+      "environment_reset_seen_smoke": "0/5"
     }
   },
   "receipt_note": "The validated code is the recorded commit. This receipt is committed afterward; the source-tree hash intentionally excludes this file so later receipt-only commits do not invalidate the tested code identity.",
