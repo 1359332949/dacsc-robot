@@ -188,7 +188,7 @@ FFN steering的VLM常数覆写、Action Atlas的完整残差/MLP/SAE干预与当
 | --- | --- | --- |
 | train | style 11–50，episode index `%10 != 9` | 参数学习和 normalizer 拟合 |
 | source holdout | style 11–50，episode index `%10 == 9` | 源域离线诊断 |
-| source closed-loop pilot | style 11–30，20 episodes/task | 当前方案筛查；只覆盖 checkpoint 可见 style 的子集 |
+| source closed-loop pilot | style 11–30、任务支持的 layout，20 episodes/task | 当前方案筛查；style 区间本身不等于任务级支持，layout 必须显式且出现在该任务 train split |
 | internal val | style 51–60 | 预算、checkpoint、方法选择 |
 | official target | `split="target"`，官方 target scenes/objects | 最终外部迁移，不作为调参依据 |
 

@@ -51,7 +51,7 @@
   },
   "evaluation": {
     "episodes_per_task": 20,
-    "layout_id": 11,
+    "layout_id": null,
     "action_steps": 8,
     "conditions": [
       "clean",

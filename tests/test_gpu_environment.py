@@ -93,7 +93,7 @@ class GPUEnvironmentContractTests(unittest.TestCase):
             (ROOT / "configs/v10_atomic_target_pilot.json").read_text()
         )
         self.assertEqual(config["evaluation"]["episodes_per_task"], 20)
-        self.assertEqual(config["evaluation"]["layout_id"], 11)
+        self.assertIsNone(config["evaluation"]["layout_id"])
         self.assertEqual(config["evaluation"]["action_steps"], 8)
         self.assertEqual(config["pretrain"]["source_pilot_styles"], [11, 30])
         for name in (

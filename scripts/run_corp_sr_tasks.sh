@@ -25,6 +25,10 @@ fi
 mkdir -p "$OUT"
 LAYOUT_ARGS=()
 if [[ "$SCENE_SPLIT" == "pretrain" ]]; then
+  if [[ -z "$LAYOUT_ID" ]]; then
+    echo "pretrain evaluation requires explicit LAYOUT_ID" >&2
+    exit 2
+  fi
   LAYOUT_ARGS=(--layout-id "$LAYOUT_ID")
 fi
 for T in $TASKS; do

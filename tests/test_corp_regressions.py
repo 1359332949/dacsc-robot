@@ -307,7 +307,12 @@ class AggregationTests(unittest.TestCase):
     def test_split_runner_defaults_to_source_val_and_auto_aggregates(self):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)
-            for name in ("run_corp_sr_split.sh", "aggregate_sr.py"):
+            dataset_root = root / "dataset"
+            for name in (
+                "run_corp_sr_split.sh",
+                "check_eval_support.py",
+                "aggregate_sr.py",
+            ):
                 (root / name).write_text((ROOT / "scripts" / name).read_text())
             # Replace only the expensive env runner; execute the actual split shell/aggregator.
             (root / "run_corp_sr_tasks.sh").write_text(
@@ -316,6 +321,41 @@ class AggregationTests(unittest.TestCase):
             for split in ("source", "val"):
                 for task in ("A", "B"):
                     self.write_task(root / "results" / split, task, (True,))
+            episodes = [index for index in range(44) if index % 10 != 9][:40]
+            for task in ("A", "B"):
+                dataset = (
+                    dataset_root
+                    / "v1.0/pretrain/atomic"
+                    / task
+                    / "date/lerobot"
+                )
+                (dataset / "meta").mkdir(parents=True)
+                (dataset / "extras").mkdir()
+                rows = []
+                for style, episode in zip(range(11, 51), episodes, strict=True):
+                    rows.append(
+                        json.dumps(
+                            {
+                                "episode_index": episode,
+                                "length": 4,
+                                "tasks": [f"{task} open"],
+                            }
+                        )
+                    )
+                    extra = dataset / "extras" / f"episode_{episode:06d}"
+                    extra.mkdir()
+                    (extra / "ep_meta.json").write_text(
+                        json.dumps(
+                            {
+                                "style_id": style,
+                                "layout_id": 31,
+                                "lang": f"{task} open",
+                            }
+                        )
+                    )
+                (dataset / "meta/episodes.jsonl").write_text(
+                    "\n".join(rows) + "\n"
+                )
             env = {
                 **os.environ,
                 "MODEL": "unused.pt",
@@ -323,8 +363,11 @@ class AggregationTests(unittest.TestCase):
                 "TASKS": "A B",
                 "EPISODES": "1",
                 "SOURCE_STYLES": "11-50",
+                "DATA_ROOT": str(dataset_root),
+                "LAYOUT_ID": "31",
                 "MANIFEST_ROOT": str(root / "manifest"),
                 "PY": sys.executable,
+                "CONFIG_PY": sys.executable,
                 "PYTHONPATH": str(ROOT),
             }
             env.pop("SPLITS", None)
@@ -978,6 +1021,8 @@ class RolloutTests(unittest.TestCase):
                     "pretrain",
                     "--styles",
                     "11-12",
+                    "--layout-id",
+                    "11",
                     "--episodes",
                     "1",
                     "--device",

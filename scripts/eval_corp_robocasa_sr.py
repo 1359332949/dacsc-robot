@@ -118,6 +118,8 @@ def main() -> int:
     if args.episodes <= 0 or args.action_steps <= 0:
         ap.error("episodes and action-steps must be positive")
     if args.scene_split == "pretrain" and args.layout_id is None:
+        if v10_eval["layout_id"] is None:
+            ap.error("pretrain evaluation requires an explicit --layout-id")
         args.layout_id = v10_eval["layout_id"]
     with entry_file(Path(args.out)):
         return run(args)

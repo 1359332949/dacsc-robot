@@ -204,7 +204,7 @@ TurnOnSinkFaucet
 | --- | --- | --- |
 | train | pretrain styles 11–50，episode residue `0–8` | 参数学习、normalizer |
 | source holdout | pretrain styles 11–50，residue `9` | 训练期离线诊断 |
-| source closed-loop pilot | pretrain styles 11–30，20 episodes/task | 当前方案筛查的固定子面板，不等于完整 11–50 |
+| source closed-loop pilot | pretrain styles 11–30、任务支持的 layout，20 episodes/task | 当前方案筛查；必须检查 task-level style/layout 支持，不等于完整 11–50 |
 | internal val | pretrain styles 51–60 | 预算、checkpoint、方法选择 |
 | official target | 官方 `split="target"`，scene pairs `(1,1)...(10,10)` | 最终外部测试，封存 |
 

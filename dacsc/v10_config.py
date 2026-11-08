@@ -67,7 +67,6 @@ def load_v10_config(path: Path = CONFIG_PATH) -> dict:
         "seed",
         "per_task_eval",
         "episodes_per_task",
-        "layout_id",
         "action_steps",
     )
     for key in positive:
@@ -79,6 +78,9 @@ def load_v10_config(path: Path = CONFIG_PATH) -> dict:
             raise ValueError(f"{key} must be numeric")
     if not 0 <= budget["ema_decay"] < 1:
         raise ValueError("ema_decay must be in [0, 1)")
+    layout_id = evaluation.get("layout_id")
+    if layout_id is not None and (type(layout_id) is not int or not 1 <= layout_id <= 60):
+        raise ValueError("evaluation.layout_id must be null or an integer within 1..60")
     cache_tasks = budget.get("cache_video_tasks")
     if (
         not isinstance(cache_tasks, list)
@@ -151,7 +153,7 @@ def shell_defaults(config: dict | None = None) -> dict[str, str]:
         "V10_VAL_STYLES": _range_text(styles["val"]),
         "V10_TARGET_STYLES": _range_text(styles["target"]),
         "V10_EPISODES": str(evaluation["episodes_per_task"]),
-        "V10_LAYOUT_ID": str(evaluation["layout_id"]),
+        "V10_LAYOUT_ID": "" if evaluation["layout_id"] is None else str(evaluation["layout_id"]),
         "V10_ACTION_STEPS": str(evaluation["action_steps"]),
     }
 

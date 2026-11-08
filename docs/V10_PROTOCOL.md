@@ -42,10 +42,17 @@ Closed-loop defaults are frozen in the same JSON:
 
 ```text
 episodes/task: 20 for source, internal val and target
-pretrain layout: 11
+pretrain layout: explicit task-supported layout; no global default
 action horizon: 10
 executed action steps: 8
 ```
+
+A style interval alone is not evidence that a task has samples in that panel.
+Before every source evaluation, `scripts/check_eval_support.py` verifies that
+the requested layout appears in that task's train split and that every
+requested style has at least one train-split episode. It also records pairwise
+layout/style support so sparse combinations are visible. A source panel without
+task-level support fails before MuJoCo starts.
 
 Target demonstrations are never used for training.
 

@@ -385,7 +385,7 @@ class UpstreamInfrastructureTests(unittest.TestCase):
         self.assertEqual(protocol["pilot_budget"]["ema_decay"], 0.999)
         self.assertEqual(protocol["pilot_budget"]["per_task_eval"], 16)
         self.assertEqual(protocol["evaluation"]["episodes_per_task"], 20)
-        self.assertEqual(protocol["evaluation"]["layout_id"], 11)
+        self.assertIsNone(protocol["evaluation"]["layout_id"])
         self.assertEqual(protocol["evaluation"]["action_steps"], 8)
 
     def test_completed_budget_does_not_resume_or_publish_pre_eval_metrics(self):

@@ -18,6 +18,7 @@ VAL_STYLES="${VAL_STYLES:-$V10_VAL_STYLES}"
 TARGET_STYLES="${TARGET_STYLES:-$V10_TARGET_STYLES}"
 export ACTION_STEPS="${ACTION_STEPS:-$V10_ACTION_STEPS}"
 export LAYOUT_ID="${LAYOUT_ID:-$V10_LAYOUT_ID}"
+DATA_ROOT="${DATA_ROOT:-${DACSC_DATA_ROOT:-/hy-tmp/datasets/robocasa365}}"
 # Pilot/model selection uses source/val; test requires an explicit final evaluation.
 read -r -a EVAL_SPLITS <<< "${SPLITS:-source val}"
 read -r -a EVAL_TASKS <<< "$TASKS"
@@ -28,6 +29,22 @@ for split in "${EVAL_SPLITS[@]}"; do
     target) styles="$TARGET_STYLES"; scene_split=target ;;
     *) echo "Unknown split: $split" >&2; exit 1 ;;
   esac
+  if [[ "$scene_split" == "pretrain" && -z "$LAYOUT_ID" ]]; then
+    echo "source/val evaluation requires explicit LAYOUT_ID" >&2
+    exit 2
+  fi
+  if [[ "$split" == "source" ]]; then
+    mkdir -p "$OUT"
+    "$CONFIG_PY" "$(dirname "$0")/check_eval_support.py" \
+      --data-root "$DATA_ROOT" \
+      --tasks "${EVAL_TASKS[@]}" \
+      --styles "$styles" \
+      --layout-id "$LAYOUT_ID" \
+      --train-style-min "$V10_TRAIN_STYLE_MIN" \
+      --train-style-max "$V10_TRAIN_STYLE_MAX" \
+      --source-holdout-residue "$V10_SOURCE_HOLDOUT_RESIDUE" |
+      tee "$OUT/source_panel_support.json"
+  fi
   STYLES="$styles" SCENE_SPLIT="$scene_split" OUT="$OUT/$split" \
     BLUR_SIGMA="$BLUR_SIGMA" \
     MANIFEST_DIR="$MANIFEST_ROOT/$split" \
