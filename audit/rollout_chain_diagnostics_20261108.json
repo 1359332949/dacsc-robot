@@ -122,32 +122,42 @@
   "initial_geometry_comparison": {
     "eef_rel_position_similar_at_start": true,
     "arm_joint_qpos_similar_at_start": true,
-    "mobile_base_qpos_training": [
-      [0.5, -13.14045, -5.22702, 0.0],
-      [0.5, -12.34297, -5.17553, 0.0],
-      [0.5, 13.29548, 6.76115, 0.0],
-      [0.5, -14.36384, -5.23153, 0.0],
-      [0.5, 13.25034, 6.76554, 0.0],
-      [0.5, -15.12121, -5.26916, 0.0]
-    ],
-    "mobile_base_qpos_reset": [
-      [0.5, -5.19033, -13.13049, 0.0],
-      [0.5, 6.75575, 15.38059, 0.0],
-      [0.5, 6.73801, 15.41005, 0.0],
-      [0.5, -5.25016, -14.37407, 0.0],
-      [0.5, -5.2131, -13.12671, 0.0],
-      [0.5, -5.18716, -15.90199, 0.0],
-      [0.5, -5.26694, -13.10535, 0.0],
-      [0.5, 6.79539, 13.27634, 0.0],
-      [0.5, 6.74607, 16.63293, 0.0],
-      [0.5, 6.79763, 15.37881, 0.0]
-    ],
-    "interpretation": "Training and reset base samples occupy different side/yaw clusters consistent with an approximately 90-degree camera/base geometry change, while eef relative state and arm joints remain similar.",
+    "qpos_interpretation_warning": "mobile-base qpos components are internal joint coordinates, not the world base pose; they cannot be interpreted as a direct 90-degree pose change.",
+    "ep_meta_comparison": {
+      "train_ep24": {
+        "style": 20,
+        "target_drawer": "stack_2_right_group_1_2",
+        "init_robot_base_pos": [4.776951356864521, -3.142032108534502, 0.0],
+        "success": true,
+        "steps": 151
+      },
+      "train_ep26": {
+        "style": 12,
+        "target_drawer": "stack_1_right_group_1_2",
+        "init_robot_base_pos": [4.828194688691593, -2.344527463585846, 0.0],
+        "success": true,
+        "steps": 164
+      },
+      "reset_episode0": {
+        "style": 12,
+        "target_drawer": "stack_2_right_group_1_2",
+        "init_robot_base_pos": [4.813632805843331, -3.1320539233592206, 0.0],
+        "success": false,
+        "steps": 750
+      }
+    },
+    "reset_style_target_support": {
+      "samples_checked": 10,
+      "style_target_pairs_seen_in_train": 0,
+      "target_drawer_unseen_in_train": 4,
+      "result": "Every sampled reset paired style 12 with a target drawer combination absent from the train split."
+    },
+    "interpretation": "Reset0 and train episode24 have nearly identical world base placement and the same target drawer, but differ in style; the model succeeds on the seen style-target combination and fails on the unseen style12 plus stack_2_right combination. The main covariate is task-target/style composition, not base pose alone.",
     "first_chunk_divergence": {
       "success_eef_delta_first_75_steps": [-0.0834, -0.4911, -0.4433],
       "failure_eef_delta_first_75_steps": [0.0075, 0.3277, -0.6689],
       "direction_difference_starts_by_step": 8
     }
   },
-  "conclusion": "The model, action ordering, state input, camera orientation and success check can succeed on supported training initial states; 4 of 5 layout31 training initial states succeeded. Reset failures diverge before grasp: the policy never closes the gripper and moves in the opposite lateral direction. The strongest observed covariate is a distinct mobile-base side/yaw geometry that changes the camera view but is not explicitly represented in the policy state."
+  "conclusion": "The model, action ordering, state input, camera orientation and success check can succeed on supported training initial states; 4 of 5 layout31 training initial states succeeded. Reset failures diverge before grasp: the policy never closes the gripper and moves in the opposite lateral direction. All 10 sampled resets use style-target-drawer combinations absent from training, and the strongest controlled comparison is train ep24 (style20, stack_2_right) succeeding versus reset0 (style12, stack_2_right) failing at nearly identical world base placement. The primary failure mode is compositional generalization over appearance and task-target identity."
 }

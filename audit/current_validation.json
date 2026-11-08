@@ -102,7 +102,9 @@
       "training_trace_success_steps": 164,
       "training_trace_first_gripper_close_step": 120,
       "first_eef_direction_divergence_step": 8,
-      "mobile_base_geometry_shift": "training and reset occupy distinct side/yaw clusters"
+      "reset_style_target_combinations_seen_in_train": 0,
+      "reset_style_target_combinations_checked": 10,
+      "controlled_comparison": "ep24 style20+stack_2_right succeeds; reset0 style12+stack_2_right fails with nearly identical world base placement"
     }
   },
   "receipt_note": "The validated code is the recorded commit. This receipt is committed afterward; the source-tree hash intentionally excludes this file so later receipt-only commits do not invalidate the tested code identity.",
