@@ -6,7 +6,10 @@ This is a custom CoRP-RoboCasa adaptation pilot, not an official CoRP
 RoboTwin/RoboCasa reproduction and not an official RoboCasa leaderboard run.
 
 The frozen machine-readable protocol is
-`configs/v10_atomic_target_pilot.json`.
+`configs/v10_atomic_target_pilot.json`. The thin launchers read its defaults
+through `python -m dacsc.v10_config --shell`; explicit environment overrides
+remain visible in the resulting command and are recorded by the checkpoint or
+SR result.
 
 ## Training tasks
 
@@ -34,6 +37,15 @@ closed-loop source pilot uses a fixed 20-style panel (`11-30`) so that 20
 episodes/task cover each source style once; it is a subset of the checkpoint's
 training-style range and must not be reported as full `11-50` coverage. If full
 coverage is required, source must use 40 episodes/task.
+
+Closed-loop defaults are frozen in the same JSON:
+
+```text
+episodes/task: 20 for source, internal val and target
+pretrain layout: 11
+action horizon: 10
+executed action steps: 8
+```
 
 Target demonstrations are never used for training.
 
@@ -68,6 +80,16 @@ seed: 42
 ```
 
 This budget is a project pilot, not an official CoRP or RoboCasa budget.
+
+Video caching is an execution option, not a new data path. `CACHE_VIDEO=1`
+passes an explicit task allowlist to RoboCasa's official
+`CachedLeRobotSingleDataset`; `CACHE_VIDEO=0` omits the cache and uses the
+official DP streaming reader. Cache task names are checked against the selected
+datasets, so a typo is a hard error. The frozen pilot caches the four tasks that
+fit the server cgroup budget and keeps `OpenCabinet` on the streaming reader.
+The read-only video validation compares the official `opencv` timestamp path
+with the official `pyav` full-frame cache on real video; any pixel difference
+fails the audit.
 
 Every checkpoint records both the planned budget in `budget.steps` and the
 actual checkpoint step in `training_origin.completed_steps`; the latter is part

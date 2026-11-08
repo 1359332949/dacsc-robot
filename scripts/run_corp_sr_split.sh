@@ -1,16 +1,23 @@
 #!/usr/bin/env bash
 # source/val/test success-rate for one model, one shift.
 set -euo pipefail
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+CONFIG_PY="${CONFIG_PY:-python3}"
+cd "$ROOT"
+eval "$("$CONFIG_PY" -m dacsc.v10_config --shell)"
+
 OUT="${OUT:?set OUT=/path/to/out_root}"
 export MODEL="${MODEL:?set MODEL=/path/to/model.pt}"
-export EPISODES="${EPISODES:-20}"
-export TASKS="${TASKS:-OpenDrawer OpenCabinet TurnOffStove TurnOnSinkFaucet TurnOnElectricKettle}"
+export EPISODES="${EPISODES:-$V10_EPISODES}"
+export TASKS="${TASKS:-$V10_TASKS}"
 export SHIFT="${SHIFT:-none}"
 export BLUR_SIGMA="${BLUR_SIGMA:-0}"
 export MANIFEST_ROOT="${MANIFEST_ROOT:?set MANIFEST_ROOT=/path/to/frozen/eval_manifest}"
-SOURCE_STYLES="${SOURCE_STYLES:-11-30}"
-VAL_STYLES="${VAL_STYLES:-51-60}"
-TARGET_STYLES="${TARGET_STYLES:-1-10}"
+SOURCE_STYLES="${SOURCE_STYLES:-$V10_SOURCE_STYLES}"
+VAL_STYLES="${VAL_STYLES:-$V10_VAL_STYLES}"
+TARGET_STYLES="${TARGET_STYLES:-$V10_TARGET_STYLES}"
+export ACTION_STEPS="${ACTION_STEPS:-$V10_ACTION_STEPS}"
+export LAYOUT_ID="${LAYOUT_ID:-$V10_LAYOUT_ID}"
 # Pilot/model selection uses source/val; test requires an explicit final evaluation.
 read -r -a EVAL_SPLITS <<< "${SPLITS:-source val}"
 read -r -a EVAL_TASKS <<< "$TASKS"

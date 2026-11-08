@@ -5,6 +5,7 @@ from __future__ import annotations
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import hashlib
 import json
+import os
 import re
 import subprocess
 import sys
@@ -91,16 +92,18 @@ class GPUEnvironmentContractTests(unittest.TestCase):
         config = json.loads(
             (ROOT / "configs/v10_atomic_target_pilot.json").read_text()
         )
-        self.assertEqual(config["evaluation"]["internal_method_episodes"], 20)
-        self.assertEqual(config["evaluation"]["target_episodes_external"], 20)
+        self.assertEqual(config["evaluation"]["episodes_per_task"], 20)
+        self.assertEqual(config["evaluation"]["layout_id"], 11)
+        self.assertEqual(config["evaluation"]["action_steps"], 8)
         self.assertEqual(config["pretrain"]["source_pilot_styles"], [11, 30])
         for name in (
+            "run_v10_pilot.sh",
             "run_corp_sr_split.sh",
             "run_corp_sr_tasks.sh",
             "run_v10_target_sr.sh",
         ):
             self.assertIn(
-                'EPISODES="${EPISODES:-20}"',
+                "dacsc.v10_config --shell",
                 (ROOT / "scripts" / name).read_text(),
             )
         self.assertIn(
@@ -111,6 +114,55 @@ class GPUEnvironmentContractTests(unittest.TestCase):
             "not closed-loop episodes",
             (ROOT / "scripts/train_corp_robocasa.py").read_text(),
         )
+
+    def test_v10_config_controls_shell_defaults_and_cache_switch(self):
+        from dacsc.v10_config import (
+            checkpoint_style_ranges,
+            closed_loop_style_ranges,
+            shell_defaults,
+        )
+
+        self.assertEqual(
+            closed_loop_style_ranges()["source"], list(range(11, 31))
+        )
+        self.assertEqual(
+            checkpoint_style_ranges()["source"], list(range(11, 51))
+        )
+        defaults = shell_defaults()
+        self.assertEqual(defaults["V10_SOURCE_STYLES"], "11-30")
+        self.assertEqual(defaults["V10_EPISODES"], "20")
+        self.assertEqual(defaults["V10_ACTION_STEPS"], "8")
+
+        with tempfile.TemporaryDirectory() as temp:
+            env = {
+                **os.environ,
+                "PY": "/bin/echo",
+                "CONFIG_PY": sys.executable,
+                "OUT": str(Path(temp) / "run"),
+                "CACHE_VIDEO": "0",
+            }
+            disabled = subprocess.run(
+                ["bash", str(ROOT / "scripts/run_v10_pilot.sh")],
+                env=env,
+                capture_output=True,
+                text=True,
+            )
+            self.assertEqual(disabled.returncode, 0, disabled.stderr)
+            self.assertNotIn("--cache-video-tasks", disabled.stdout)
+            self.assertIn("--no-cache-video", disabled.stdout)
+            self.assertIn("--steps 30000", disabled.stdout)
+            self.assertIn("--per-task-eval 16", disabled.stdout)
+
+            env["CACHE_VIDEO"] = "1"
+            enabled = subprocess.run(
+                ["bash", str(ROOT / "scripts/run_v10_pilot.sh")],
+                env=env,
+                capture_output=True,
+                text=True,
+            )
+            self.assertEqual(enabled.returncode, 0, enabled.stderr)
+            self.assertIn("--cache-video-tasks", enabled.stdout)
+            self.assertIn("OpenDrawer", enabled.stdout)
 
     def test_locks_isolate_upstream_numpy_requirements(self):
         corp = lock_pins("corp.lock.txt")

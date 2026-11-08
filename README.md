@@ -3,7 +3,9 @@
 研究紧凑机器人策略在未见外观条件下的闭环泛化。当前使用 **CoRP adapted to RoboCasa**，
 先验证能完成任务的无干预基线，再检验视觉表示增广。方法效果尚未成立。
 
-**唯一当前执行协议：[EXPERIMENT_PROTOCOL.md](docs/EXPERIMENT_PROTOCOL.md)。**
+**当前 V10 执行顺序与冻结配置：[V10_PROTOCOL.md](docs/V10_PROTOCOL.md)。**
+研究边界和总体比较原则见 [EXPERIMENT_PROTOCOL.md](docs/EXPERIMENT_PROTOCOL.md)；
+机器可读事实源是 [v10_atomic_target_pilot.json](configs/v10_atomic_target_pilot.json)。
 研究问题、数据选型、官方泛化成绩和当前 pilot 证据的总览见
 [RESEARCH_PLAN_AND_DATASETS.md](docs/RESEARCH_PLAN_AND_DATASETS.md)。
 仓库只保留当前 CoRP-RoboCasa 执行链；历史实验文档和退役实现不再保留在工作树中。
@@ -14,7 +16,7 @@
 | --- | --- |
 | CoRP 模型与严格加载 | 官方 `corp` 模块、`corp.checkpoint.load_policy` |
 | 官方模型 smoke / 标准 LIBERO rollout | `repos/CoRP/scripts/smoke_test.py` / `evaluate_libero.py` |
-| RoboCasa 视频与动作读取 | 官方 DP `LerobotDataset`，已移除旧 CLIP cache 私有补丁 |
+| RoboCasa 视频与动作读取 | 官方 DP `LerobotDataset`；可选缓存复用官方 RoboCasa `CachedLeRobotSingleDataset` |
 | RoboCasa 重放与 task horizon | 官方 `playback_dataset.reset_to` / `get_task_horizon` |
 | 图像处理 | Torchvision functional / Pillow bilinear resize |
 | 像素训练增广 | Torchvision `ColorJitter(.4, .4, .4, hue=0)`，与固定评测扰动独立 |
@@ -23,6 +25,11 @@
 
 `upstream.lock.json` 固定源码 revision 和被调用入口文件的 SHA256；运行前检查，
 不自动打补丁，不静默降级。仅覆盖清单中的文件，不代替整个仿真环境的版本验证。
+
+默认训练缓存只覆盖配置中列出的任务；`CACHE_VIDEO=0` 改用官方 DP 流式读取。
+缓存使用官方 `pyav` 全帧路径，在线读取使用官方 `opencv` 时间戳路径；
+`readonly_validation video` 会用真实视频逐像素比较两者，不一致直接失败，不把
+“更快”当成“输入等价”。
 
 通道方向先做只读机制审计，见[上游映射表](docs/CHANNEL_INTERVENTION_UPSTREAM_MAPPING.md)。
 `dacsc/corp_ffn_capture.py`只观察CoRP原block与GELU输出，不接入训练/推理主入口、不替换attention或增加门控。

@@ -40,11 +40,19 @@
     "task_aux_lambda": 0.01,
     "task_aux_depth": 1,
     "seed": 42,
-    "save_every": 5000
+    "save_every": 5000,
+    "per_task_eval": 16,
+    "cache_video_tasks": [
+      "OpenDrawer",
+      "TurnOffStove",
+      "TurnOnElectricKettle",
+      "TurnOnSinkFaucet"
+    ]
   },
   "evaluation": {
-    "internal_method_episodes": 20,
-    "target_episodes_external": 20,
+    "episodes_per_task": 20,
+    "layout_id": 11,
+    "action_steps": 8,
     "conditions": [
       "clean",
       "color_jitter",

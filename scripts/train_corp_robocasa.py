@@ -259,6 +259,11 @@ def balanced_indices(dataset, per_task: int, seed: int = 0) -> list[int]:
         if len(selected) < per_task:
             rng.shuffle(spill)
             selected.extend(spill[: per_task - len(selected)])
+        if len(selected) != per_task:
+            raise ValueError(
+                f"{task}: requested {per_task} evaluation frames per task but "
+                f"only {len(selected)} are available"
+            )
         out.extend(selected)
     return out
 
@@ -429,11 +434,20 @@ def main() -> int:
     ap.add_argument("--horizon", type=int, default=10)
     ap.add_argument("--num-workers", type=int, default=4)
     ap.add_argument("--out-dir", type=str, required=True)
-    ap.add_argument(
+    cache_group = ap.add_mutually_exclusive_group()
+    cache_group.add_argument(
         "--cache-video-tasks",
         nargs="+",
         default=None,
-        help="Only cache these task videos when --cache-videos is enabled",
+        help=(
+            "enable the official in-memory video cache and restrict it to these "
+            "task names; omit this flag for the official streaming reader"
+        ),
+    )
+    cache_group.add_argument(
+        "--no-cache-video",
+        action="store_true",
+        help="explicitly use the official DP streaming video reader",
     )
     ap.add_argument(
         "--resume",
@@ -520,6 +534,19 @@ def run(args, out: Path) -> int:
     )
     print(f"tasks={len(tasks)}", flush=True)
     print(f"task_aux={task_aux_payload}", flush=True)
+    requested_cache_tasks = getattr(args, "cache_video_tasks", None)
+    cache_video_tasks = (
+        None if requested_cache_tasks is None else set(requested_cache_tasks)
+    )
+    print(
+        "video_cache="
+        + (
+            "disabled"
+            if cache_video_tasks is None
+            else ",".join(sorted(cache_video_tasks))
+        ),
+        flush=True,
+    )
     t0 = time.time()
     train_ds = build_dataset(
         tasks,
@@ -529,12 +556,8 @@ def run(args, out: Path) -> int:
         True,
         episode_residues=set(range(10)) - {args.source_holdout_residue},
         normalize_images=args.train_augmentation == "none",
-        cache_videos=True,
-        cache_video_tasks=(
-            None
-            if getattr(args, "cache_video_tasks", None) is None
-            else set(args.cache_video_tasks)
-        ),
+        cache_videos=cache_video_tasks is not None,
+        cache_video_tasks=cache_video_tasks,
     )  # 90% source train
     source_ds = build_dataset(
         tasks,
@@ -591,6 +614,8 @@ def run(args, out: Path) -> int:
             "save_every",
             "eval_batch_size",
             "per_task_eval",
+            "cache_video_tasks",
+            "no_cache_video",
         }
         for key, value in vars(args).items():
             if isinstance(value, Path):

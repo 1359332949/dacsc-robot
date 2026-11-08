@@ -19,6 +19,7 @@ from dacsc.corp_images import SHIFTS, image_contract
 from dacsc.eval_protocol import expected_evaluation_styles, file_sha256
 from dacsc.upstream import verify_upstream
 from dacsc.run_output import entry_file
+from dacsc.v10_config import load_v10_config
 from train_corp_robocasa import (  # noqa: E402
     all_task_paths,
     balanced_loader,
@@ -30,10 +31,11 @@ from dacsc.action_metrics import MSE_SCHEMA
 
 
 def main() -> int:
+    v10_budget = load_v10_config()["pilot_budget"]
     ap = argparse.ArgumentParser()
     ap.add_argument("--model", required=True)
     ap.add_argument("--data-root", type=Path, default=default_root())
-    ap.add_argument("--per-task", type=int, default=32)
+    ap.add_argument("--per-task", type=int, default=v10_budget["per_task_eval"])
     ap.add_argument("--batch-size", type=int, default=16)
     ap.add_argument("--euler-steps", type=int, default=10)
     ap.add_argument("--horizon", type=int, default=10)

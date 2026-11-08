@@ -1,7 +1,8 @@
 # 当前实验协议：CoRP-RoboCasa / appearance shift
 
-2026-11-06更新。本文件是当前总体执行协议；V10 的机器可读冻结配置和入口以
-[V10_PROTOCOL.md](V10_PROTOCOL.md)为准。历史实验文档和退役实现已从工作树删除。
+2026-11-08更新。本文件给出总体研究边界与比较原则；当前 V10 的执行顺序、
+机器可读冻结配置和入口以[V10_PROTOCOL.md](V10_PROTOCOL.md)为准。历史实验文档
+和退役实现已从工作树删除。
 
 ## 研究问题和证据边界
 
@@ -187,6 +188,7 @@ FFN steering的VLM常数覆写、Action Atlas的完整残差/MLP/SAE干预与当
 | --- | --- | --- |
 | train | style 11–50，episode index `%10 != 9` | 参数学习和 normalizer 拟合 |
 | source holdout | style 11–50，episode index `%10 == 9` | 源域离线诊断 |
+| source closed-loop pilot | style 11–30，20 episodes/task | 当前方案筛查；只覆盖 checkpoint 可见 style 的子集 |
 | internal val | style 51–60 | 预算、checkpoint、方法选择 |
 | official target | `split="target"`，官方 target scenes/objects | 最终外部迁移，不作为调参依据 |
 
@@ -214,7 +216,7 @@ v10 pilot 只使用 5 个官方 target Atomic-Seen 任务，并把 pretrain 内�
 | 环节 | 来源 / 接口 | 边界 |
 | --- | --- | --- |
 | 模型/加载 | [官方 CoRP](https://github.com/corp-policy/CoRP/tree/52445740aa9517ae396cc8fb14bae8fe5922f118) `RepresentationExtractor`、`DiTActionGenerator`、`load_policy` | 保留 DINOv2/T5/K48/1-layer DiT；仅适配3 views、9D state、12D action、H10；12D动作接口重新训练 |
-| 数据 | [官方 RoboCasa DP reader](https://github.com/robocasa-benchmark/diffusion_policy/blob/41212698b6f481ed92a55f0d5f1778ec56bea417/diffusion_policy/dataset/lerobot_dataset.py) | 不重写视频读取、动作键拼接和时间索引；在外层过滤原生标签/补 mask |
+| 数据 | [官方 RoboCasa DP reader](https://github.com/robocasa-benchmark/diffusion_policy/blob/41212698b6f481ed92a55f0d5f1778ec56bea417/diffusion_policy/dataset/lerobot_dataset.py) | 不重写视频读取、动作键拼接和时间索引；在外层过滤原生标签/补 mask。可选缓存复用官方`CachedLeRobotSingleDataset`，真实视频需通过官方`opencv`读取与`pyav`缓存的逐像素等价审计 |
 | 重放 | [官方 reset_to](https://github.com/robocasa/robocasa/blob/dc73a8ce18e4b8947e8df2ae2958245ca823f3b4/robocasa/scripts/dataset_scripts/playback_dataset.py) | 不调用 label_subtasks 中的修改副本，不修补 XML、不偷偷 retry |
 | 布局/时限 | 官方 `LayoutType.TRAIN`、`unpack_layout_ids`、`get_task_horizon` | layout 11–60；时限按任务 registry，删除固定600步和旧 override |
 | 图像 | Pillow bilinear + [Torchvision functional](https://docs.pytorch.org/vision/main/transforms.html) | 三条路径使用同一图像契约；保留 LIBERO 官方观测旋转，不给 RoboCasa添加该旋转 |

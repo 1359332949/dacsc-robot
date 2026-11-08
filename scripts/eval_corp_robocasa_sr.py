@@ -26,6 +26,7 @@ from dacsc.eval_protocol import (  # noqa: E402
 )
 from dacsc.run_output import entry_file  # noqa: E402
 from dacsc.upstream import verify_upstream
+from dacsc.v10_config import load_v10_config  # noqa: E402
 
 VIEWS = ["robot0_agentview_left", "robot0_eye_in_hand", "robot0_agentview_right"]
 OBS_KEY = {
@@ -88,6 +89,7 @@ def policy_inputs(obs, lang, norm, device, blur_sigma=0.0, shift="none"):
 
 
 def main() -> int:
+    v10_eval = load_v10_config()["evaluation"]
     ap = argparse.ArgumentParser()
     ap.add_argument("--model", required=True)
     ap.add_argument("--task", default="CloseFridge")
@@ -96,10 +98,10 @@ def main() -> int:
     ap.add_argument(
         "--episodes",
         type=int,
-        default=20,
+        default=v10_eval["episodes_per_task"],
         help="closed-loop rollout episodes per task",
     )
-    ap.add_argument("--action-steps", type=int, default=8)
+    ap.add_argument("--action-steps", type=int, default=v10_eval["action_steps"])
     ap.add_argument("--blur-sigma", type=float, default=0.0)
     ap.add_argument(
         "--shift",
@@ -115,6 +117,8 @@ def main() -> int:
     args = ap.parse_args()
     if args.episodes <= 0 or args.action_steps <= 0:
         ap.error("episodes and action-steps must be positive")
+    if args.scene_split == "pretrain" and args.layout_id is None:
+        args.layout_id = v10_eval["layout_id"]
     with entry_file(Path(args.out)):
         return run(args)
 

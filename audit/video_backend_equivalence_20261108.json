@@ -1,0 +1,104 @@
+{
+  "schema": "dacsc_video_backend_equivalence_v1",
+  "generated_at": "2026-11-08T12:52:00+08:00",
+  "dataset": "robocasa365_atomic",
+  "task": "OpenDrawer",
+  "episode": 21,
+  "fps": 20.0,
+  "environment": {
+    "python": "3.12.16 (main, Oct 26 2026, 14:08:45) [Clang 23.1.3 ]",
+    "torch": "2.11.0+cu128",
+    "torchvision": "0.26.0+cu128",
+    "opencv": "4.11.0",
+    "platform": "Linux-5.15.0-124-generic-x86_64-with-glibc2.35"
+  },
+  "backend_streaming": "opencv-by-timestamp",
+  "backend_cached": "pyav-all-frames",
+  "videos": [
+    {
+      "view": "robot0_agentview_left",
+      "video": "videos/chunk-000/observation.images.robot0_agentview_left/episode_000021.mp4",
+      "video_sha256": "ae90f7c61c093469ad1ce1a267dcbce32132dee2f8560e8ff516dd534af1e8d8",
+      "frames": [
+        0,
+        54,
+        109,
+        164,
+        218
+      ],
+      "opencv_shape": [
+        5,
+        256,
+        256,
+        3
+      ],
+      "pyav_shape": [
+        5,
+        256,
+        256,
+        3
+      ],
+      "exact_equal": true,
+      "max_abs_diff": 0,
+      "mismatch_values": 0,
+      "compared_values": 983040
+    },
+    {
+      "view": "robot0_eye_in_hand",
+      "video": "videos/chunk-000/observation.images.robot0_eye_in_hand/episode_000021.mp4",
+      "video_sha256": "1c3800262217ac4ad5fd8e67fd0f67cd52bfa3c59dd2696eaa9d53c2999168c2",
+      "frames": [
+        0,
+        54,
+        109,
+        164,
+        218
+      ],
+      "opencv_shape": [
+        5,
+        256,
+        256,
+        3
+      ],
+      "pyav_shape": [
+        5,
+        256,
+        256,
+        3
+      ],
+      "exact_equal": true,
+      "max_abs_diff": 0,
+      "mismatch_values": 0,
+      "compared_values": 983040
+    },
+    {
+      "view": "robot0_agentview_right",
+      "video": "videos/chunk-000/observation.images.robot0_agentview_right/episode_000021.mp4",
+      "video_sha256": "412164282c21a3a4e0c0c6436ebd022d6e4117517466894ebdb4bf0fe34970ae",
+      "frames": [
+        0,
+        54,
+        109,
+        164,
+        218
+      ],
+      "opencv_shape": [
+        5,
+        256,
+        256,
+        3
+      ],
+      "pyav_shape": [
+        5,
+        256,
+        256,
+        3
+      ],
+      "exact_equal": true,
+      "max_abs_diff": 0,
+      "mismatch_values": 0,
+      "compared_values": 983040
+    }
+  ],
+  "result": "PASS"
+}

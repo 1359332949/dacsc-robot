@@ -4,7 +4,14 @@
 此前静态审计未执行模型；后续只读采集的本地CPU实现/验证单列于末节，不能混同为上游完整方法或闭环验证。
 只读采集没有运行作者notebook、安装依赖、下载新权重、连接GPU服务器或进行反向/参数更新。
 完整回归中的既有合成fixture断点测试包含微型参数更新，不是新训练或真实数据训练；本轮没有启动训练任务。
-当前实验约束仍以[EXPERIMENT_PROTOCOL.md](EXPERIMENT_PROTOCOL.md)为准；AdaIN式统计混合是旁支。
+当前 V10 执行顺序以[V10_PROTOCOL.md](V10_PROTOCOL.md)为准，总体研究边界见
+[EXPERIMENT_PROTOCOL.md](EXPERIMENT_PROTOCOL.md)；AdaIN式统计混合是旁支。
+
+2026-11-08基础设施复核没有改动CoRP模型、FFN观察器或下列方法的映射结论：
+CoRP/robocasa/diffusion_policy的锁定revision与文件hash继续通过，官方CoRP CPU smoke
+仍为48,689,159参数且`smoke_ok`；RoboCasa官方`opencv`时间戳读取与`pyav`全帧缓存
+已在同一真实episode的三视角、五个帧上逐像素相等。记录见
+[视频后端等价审计](../audit/video_backend_equivalence_20261108.json)。
 
 ## 结论与比较维度
 

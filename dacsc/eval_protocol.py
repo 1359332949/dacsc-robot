@@ -10,11 +10,6 @@ from dacsc.upstream import verify_upstream
 
 PROTOCOL_VERSION = "corp_robocasa_sr_v11"
 TARGET_PAIRS = tuple((index, index) for index in range(1, 11))
-DEFAULT_STYLE_RANGES = {
-    "source": list(range(11, 51)),
-    "val": list(range(51, 61)),
-    "target": list(range(1, 11)),
-}
 PROTOCOL_KEYS = {
     "version",
     "checkpoint_sha256",

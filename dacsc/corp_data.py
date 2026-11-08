@@ -114,6 +114,26 @@ def read_episode_meta(dataset_path: str | Path) -> dict[int, dict]:
     return out
 
 
+def validate_cache_video_tasks(
+    cache_video_tasks: set[str] | None, dataset_paths: list[str | Path]
+) -> set[str] | None:
+    """Reject misspelled cache allowlists before any expensive video decoding."""
+    if cache_video_tasks is None:
+        return None
+    if not isinstance(cache_video_tasks, set) or any(
+        not isinstance(task, str) or not task for task in cache_video_tasks
+    ):
+        raise ValueError("cache_video_tasks must be a set of non-empty task names")
+    available = {Path(path).parent.parent.name for path in dataset_paths}
+    unknown = cache_video_tasks - available
+    if unknown:
+        raise ValueError(
+            "cache_video_tasks contains tasks outside the selected dataset: "
+            + ", ".join(sorted(unknown))
+        )
+    return set(cache_video_tasks)
+
+
 class CorpRoboCasaDataset(Dataset):
     """多任务 atomic 数据集 + 原生 style 过滤。"""
 
@@ -138,11 +158,9 @@ class CorpRoboCasaDataset(Dataset):
             raise ValueError("normalize_images must be boolean")
         if type(cache_videos) is not bool:
             raise ValueError("cache_videos must be boolean")
-        if cache_video_tasks is not None and (
-            not isinstance(cache_video_tasks, set)
-            or any(not isinstance(task, str) or not task for task in cache_video_tasks)
-        ):
-            raise ValueError("cache_video_tasks must be a set of non-empty task names")
+        if cache_video_tasks is not None and not cache_videos:
+            raise ValueError("cache_video_tasks requires cache_videos=True")
+        cache_video_tasks = validate_cache_video_tasks(cache_video_tasks, dataset_paths)
         if not normalize_images and not allow_raw_rgb:
             raise ValueError(
                 "raw RGB is reserved for source-training pixel augmentation, never evaluation"

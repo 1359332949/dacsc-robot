@@ -11,13 +11,13 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from dacsc.eval_protocol import (
-    DEFAULT_STYLE_RANGES,
     TARGET_PAIRS,
     expected_evaluation_styles,
     require_digest,
     validate_protocol,
 )
 from dacsc.run_output import entry_file
+from dacsc.v10_config import closed_loop_style_ranges
 
 
 def native_support(records: list[dict], key: str) -> dict:
@@ -53,7 +53,7 @@ def agg(
     tasks = {}
     all_records = []
     identity = None
-    style_ranges = DEFAULT_STYLE_RANGES if style_ranges is None else style_ranges
+    style_ranges = closed_loop_style_ranges() if style_ranges is None else style_ranges
     expected_styles = style_ranges.get(dir_path.name)
     if expected_styles is None and len(style_ranges) == 1:
         expected_styles = next(iter(style_ranges.values()))
@@ -224,7 +224,7 @@ def aggregate(
 ) -> dict:
     if not splits or len(set(splits)) != len(splits):
         raise ValueError("splits must be nonempty and unique")
-    style_ranges = DEFAULT_STYLE_RANGES if style_ranges is None else style_ranges
+    style_ranges = closed_loop_style_ranges() if style_ranges is None else style_ranges
     out = {
         split: agg(root / split, tasks, episodes, style_ranges) for split in splits
     }
@@ -259,11 +259,11 @@ def main() -> int:
         "--style-ranges",
         nargs="+",
         default=None,
-        help="split=lo-hi ranges; defaults to frozen v10 source/val/test/target",
+        help="split=lo-hi ranges; defaults to configs/v10_atomic_target_pilot.json",
     )
     args = parser.parse_args()
     style_ranges = (
-        DEFAULT_STYLE_RANGES
+        closed_loop_style_ranges()
         if args.style_ranges is None
         else parse_style_ranges(args.style_ranges)
     )

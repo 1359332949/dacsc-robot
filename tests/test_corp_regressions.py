@@ -221,11 +221,15 @@ class AggregationTests(unittest.TestCase):
         return payload
 
     def test_nested_json_is_not_silently_zero(self):
+        from dacsc.v10_config import checkpoint_style_ranges
+
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)
             self.write_task(root / "source")
             self.write_task(root / "val", successes=(False, False))
-            result = aggregate(root, ["source", "val"], ["A"], 2)
+            result = aggregate(
+                root, ["source", "val"], ["A"], 2, checkpoint_style_ranges()
+            )
             self.assertEqual(result["source"]["success_rate"], 0.5)
             self.assertEqual(result["source"]["per_style"][11]["episodes"], 1)
             self.assertEqual(len(result["source"]["per_style"]), 2)
@@ -253,7 +257,7 @@ class AggregationTests(unittest.TestCase):
 
     def test_source_pilot_subset_is_allowed_and_recorded(self):
         with tempfile.TemporaryDirectory() as d:
-            directory = Path(d)
+            directory = Path(d) / "source"
             payload = self.write_task(directory)
             pilot_styles = list(range(11, 31))
             payload["summary"]["styles"] = pilot_styles
@@ -270,6 +274,18 @@ class AggregationTests(unittest.TestCase):
             (directory / "A.json").write_text(json.dumps(payload))
             with self.assertRaises(ValueError):
                 agg(directory, ["A"], 2, {"source": pilot_styles})
+
+    def test_aggregate_defaults_to_the_machine_readable_source_pilot(self):
+        with tempfile.TemporaryDirectory() as d:
+            directory = Path(d) / "source"
+            payload = self.write_task(directory)
+            pilot_styles = list(range(11, 31))
+            payload["summary"]["styles"] = pilot_styles
+            for record in payload["records"]:
+                record["style_ids"] = pilot_styles
+            (directory / "A.json").write_text(json.dumps(payload))
+            result = aggregate(Path(d), ["source"], ["A"], 2)
+            self.assertEqual(result["source"]["evaluation_style_range"], pilot_styles)
 
     def test_cli_failure_does_not_publish_summary(self):
         with tempfile.TemporaryDirectory() as d:
@@ -494,6 +510,28 @@ class TaskAuxiliaryLossTests(unittest.TestCase):
             counts[task] = counts.get(task, 0) + 1
         self.assertEqual(counts, {"A": 16, "B": 16})
         self.assertEqual(len(set(selected)), len(selected))
+
+    def test_balanced_indices_rejects_insufficient_task_support(self):
+        dataset = SimpleNamespace()
+        dataset.flat = [
+            (0, i, 11, "", "A", i, i, 1)
+            for i in range(3)
+        ]
+        with self.assertRaisesRegex(ValueError, "only 3 are available"):
+            balanced_indices(dataset, 16, seed=123)
+
+    def test_cache_task_allowlist_rejects_unknown_tasks(self):
+        from dacsc.corp_data import validate_cache_video_tasks
+
+        paths = [
+            Path("/data/v1.0/pretrain/atomic/OpenDrawer/date/lerobot"),
+            Path("/data/v1.0/pretrain/atomic/OpenCabinet/date/lerobot"),
+        ]
+        self.assertEqual(
+            validate_cache_video_tasks({"OpenDrawer"}, paths), {"OpenDrawer"}
+        )
+        with self.assertRaisesRegex(ValueError, "outside the selected dataset"):
+            validate_cache_video_tasks({"OpenDroar"}, paths)
 
     def test_v10_task_selection_is_explicit_and_deterministic(self):
         from scripts.train_corp_robocasa import all_task_paths

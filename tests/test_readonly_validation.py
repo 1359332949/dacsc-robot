@@ -53,8 +53,8 @@ class CountingReader(Reader):
 def dataset(root, task="Task", episodes=((0, 11, 3), (9, 12, 2), (1, 31, 3))):
     path = root / f"v1.0/pretrain/atomic/{task}/date/lerobot"
     metadata(path, episodes)
-    for name in ("info", "modality"):
-        (path / f"meta/{name}.json").write_text("{}")
+    (path / "meta/info.json").write_text('{"fps": 20}')
+    (path / "meta/modality.json").write_text("{}")
     return path
 
 
@@ -161,6 +161,10 @@ class ReadOnlyValidationTests(unittest.TestCase):
         CountingReader.calls = []
         with patch.dict(sys.modules, modules), patch.object(
             rv, "source_module", return_value={"fixture": True}
+        ), patch.object(
+            rv,
+            "audit_video_backends",
+            return_value={"exact_equal": True, "fixture": True},
         ):
             return rv.video_stage(SimpleNamespace(data_root=root), out)
 
@@ -181,7 +185,19 @@ class ReadOnlyValidationTests(unittest.TestCase):
             self.assertEqual(rows[0]["identity"]["layout_id"], 11)
             self.assertEqual(list(rows[0]["raw_images"]), list(rv.VIEWS))
             self.assertEqual(details["training_augmentation"], "not_instantiated")
+            self.assertTrue(details["video_backend_equivalence"]["exact_equal"])
             self.assertEqual(len(list(out.glob("raw_*.png"))), 3)
+
+    def test_video_backend_audit_requires_exact_pixels(self):
+        cached = np.arange(2 * 3 * 4 * 3, dtype=np.uint8).reshape(2, 3, 4, 3)
+        streamed = cached[[0]].copy()
+        result = rv.compare_backend_frames(streamed, cached, [0])
+        self.assertTrue(result["exact_equal"])
+        self.assertEqual(result["max_abs_diff"], 0)
+
+        streamed[0, 0, 0, 0] += 1
+        with self.assertRaisesRegex(AssertionError, "differ"):
+            rv.compare_backend_frames(streamed, cached, [0])
 
     def test_bad_preprocessing_and_mask_are_rejected_not_written_as_pass(self):
         with tempfile.TemporaryDirectory() as temp:

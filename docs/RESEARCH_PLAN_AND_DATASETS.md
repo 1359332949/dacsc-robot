@@ -4,8 +4,8 @@
 
 状态：研究方案与数据选型记录，不是论文结果，也不表示方法已经有效。
 
-当前唯一执行协议仍以 [EXPERIMENT_PROTOCOL.md](EXPERIMENT_PROTOCOL.md) 和
-[V10_PROTOCOL.md](V10_PROTOCOL.md) 为准。本文用于把研究问题、模型选择、
+当前 V10 执行顺序和冻结配置以 [V10_PROTOCOL.md](V10_PROTOCOL.md) 为准；
+[EXPERIMENT_PROTOCOL.md](EXPERIMENT_PROTOCOL.md) 说明总体研究边界。本文用于把研究问题、模型选择、
 数据划分、开源数据集泛化能力和历史证据放在同一张图上，避免把不同 benchmark、
 不同训练预算和不同泛化类型混成一个结论。
 
@@ -204,6 +204,7 @@ TurnOnSinkFaucet
 | --- | --- | --- |
 | train | pretrain styles 11–50，episode residue `0–8` | 参数学习、normalizer |
 | source holdout | pretrain styles 11–50，residue `9` | 训练期离线诊断 |
+| source closed-loop pilot | pretrain styles 11–30，20 episodes/task | 当前方案筛查的固定子面板，不等于完整 11–50 |
 | internal val | pretrain styles 51–60 | 预算、checkpoint、方法选择 |
 | official target | 官方 `split="target"`，scene pairs `(1,1)...(10,10)` | 最终外部测试，封存 |
 

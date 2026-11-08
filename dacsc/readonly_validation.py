@@ -13,6 +13,7 @@ import hashlib
 from importlib import import_module
 import inspect
 import json
+import math
 import os
 from pathlib import Path
 import platform
@@ -21,6 +22,7 @@ import subprocess
 import sys
 import traceback
 
+import numpy as np
 import torch
 from torchvision.transforms import ColorJitter, functional as TVF
 
@@ -287,6 +289,7 @@ def video_stage(args, out):
     readers = list(ds.datasets)
     recordings = [RecordingReader(r) for r in readers]
     ds.datasets = recordings
+    reader_indices = {Path(path): index for index, path in enumerate(paths)}
     positions = {
         (str(Path(paths[r[0]]).relative_to(root)), r[5], r[6]): i
         for i, r in enumerate(ds.flat)
@@ -342,6 +345,18 @@ def video_stage(args, out):
     (out / "sample_manifest.jsonl").write_text(
         "".join(json.dumps(r, ensure_ascii=False) + "\n" for r in manifests)
     )
+    first = rows[0]
+    first_reader = readers[
+        reader_indices[Path(root / first["dataset_relpath"])]
+    ]
+    audit_key = SHAPE_META["obs"]["robot0_agentview_left_image"]["lerobot_keys"][0]
+    audit_video = first_reader.get_video_path(
+        first["episode"], audit_key.removeprefix("video.")
+    )
+    info = json.loads(
+        (root / first["dataset_relpath"] / "meta/info.json").read_text()
+    )
+    backend_equivalence = audit_video_backends(audit_video, float(info["fps"]))
     # Video imports may initialize libraries; this stage never loads a policy.
     return {
         "reader_imports": modules,
@@ -355,9 +370,73 @@ def video_stage(args, out):
         ),
         "training_augmentation": "not_instantiated",
         "conditions": ["none"],
+        "video_backend_equivalence": backend_equivalence,
         "model_forward": "not_run",
         "dataset_root": str(root),
     }
+
+
+def compare_backend_frames(
+    streamed: np.ndarray, cached: np.ndarray, indices: list[int]
+) -> dict:
+    """Compare official timestamp reads against official cached full-frame reads."""
+    if cached.ndim != 4 or streamed.ndim != 4:
+        raise AssertionError("backend frames must be four-dimensional")
+    if not indices or any(type(index) is not int for index in indices):
+        raise AssertionError("backend audit indices must be non-empty integers")
+    if min(indices) < 0 or max(indices) >= len(cached):
+        raise AssertionError("backend audit index outside cached video")
+    selected = cached[indices]
+    if (
+        streamed.dtype != selected.dtype
+        or streamed.shape != selected.shape
+        or not np.isfinite(streamed).all()
+        or not np.isfinite(selected).all()
+    ):
+        raise AssertionError("opencv/pyav backend dtype, shape or finiteness differs")
+    difference = np.abs(streamed.astype(np.int16) - selected.astype(np.int16))
+    result = {
+        "backend_streaming": "opencv-by-timestamp",
+        "backend_cached": "pyav-all-frames",
+        "frames": list(indices),
+        "shape": list(streamed.shape),
+        "dtype": str(streamed.dtype),
+        "exact_equal": bool(np.array_equal(streamed, selected)),
+        "max_abs_diff": int(difference.max()),
+        "mean_abs_diff": float(difference.mean()),
+        "mismatch_values": int(np.count_nonzero(difference)),
+        "compared_values": int(difference.size),
+    }
+    if not result["exact_equal"]:
+        raise AssertionError(
+            "official opencv streaming and pyav cache differ; cache is not an "
+            "equivalent training input"
+        )
+    return result
+
+
+def audit_video_backends(video_path: Path, fps: float) -> dict:
+    """Use RoboCasa's own two decode helpers; never introduce a project decoder."""
+    if not math.isfinite(fps) or fps <= 0:
+        raise ValueError("video fps must be positive and finite")
+    from robocasa.utils.groot_utils.groot_video_utils import (
+        get_all_frames,
+        get_frames_by_timestamps,
+    )
+
+    cached = get_all_frames(str(video_path), video_backend="pyav")
+    if cached.ndim != 4 or len(cached) == 0:
+        raise AssertionError("official pyav cache returned no videos")
+    indices = sorted({0, len(cached) // 4, len(cached) // 2, 3 * len(cached) // 4, len(cached) - 1})
+    streamed = get_frames_by_timestamps(
+        str(video_path),
+        np.asarray(indices, dtype=np.float64) / fps,
+        video_backend="opencv",
+    )
+    result = compare_backend_frames(streamed, cached, indices)
+    result["video"] = str(video_path)
+    result["fps"] = fps
+    return result
 
 
 def replay_plan_stage(args, out):

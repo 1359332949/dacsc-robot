@@ -15,13 +15,11 @@ import numpy as np
 from scipy import stats
 
 from dacsc.action_metrics import MSE_SCHEMA, action_mse_summary
-from dacsc.eval_protocol import (
-    DEFAULT_STYLE_RANGES,
-    require_digest,
-    validate_training_origin,
-)
+from dacsc.eval_protocol import require_digest, validate_training_origin
+from dacsc.v10_config import checkpoint_style_ranges, closed_loop_style_ranges
 
-STYLE_SPLITS = DEFAULT_STYLE_RANGES
+CHECKPOINT_STYLE_SPLITS = checkpoint_style_ranges()
+SR_STYLE_SPLITS = closed_loop_style_ranges()
 
 
 def seed_summary(values: dict[int, float], confidence: float = 0.95) -> dict:
@@ -84,8 +82,8 @@ def _sr_case(directory: Path, tasks: list[str], episodes: int, split: str):
     # Reuse the production validator/official success counts, not a second SR formula.
     from scripts.aggregate_sr import agg
 
-    case = agg(directory, tasks, episodes, {split: STYLE_SPLITS[split]})
-    if any(t["styles"] != STYLE_SPLITS[split] for t in case["tasks"].values()):
+    case = agg(directory, tasks, episodes, {split: SR_STYLE_SPLITS[split]})
+    if any(t["styles"] != SR_STYLE_SPLITS[split] for t in case["tasks"].values()):
         raise ValueError(
             "SR cases must use the same declared split; source/val are not paired scenes"
         )
@@ -122,7 +120,7 @@ def _mse_case(path: Path, split: str, condition: str):
             raise ValueError("MSE summary does not match its frame records")
     rows = {}
     for r in derived["records"]:
-        if r["style_id"] not in STYLE_SPLITS[split] or (
+        if r["style_id"] not in CHECKPOINT_STYLE_SPLITS[split] or (
             split == "source" and r["episode"] % 10 != 9
         ):
             raise ValueError("MSE frame violates the declared held-out split")
@@ -169,11 +167,12 @@ def compare_evaluations(manifest: dict, *, confidence: float = 0.95) -> dict:
     kind = manifest.get("kind")
     comparison = manifest.get("comparison")
     split = manifest.get("split")
-    if (
-        kind not in ("sr", "mse")
-        or comparison not in ("methods", "conditions")
-        or split not in STYLE_SPLITS
-    ):
+    if kind not in ("sr", "mse") or comparison not in ("methods", "conditions"):
+        raise ValueError(
+            "declare kind=sr/mse, comparison=methods/conditions and one common split"
+        )
+    style_splits = SR_STYLE_SPLITS if kind == "sr" else CHECKPOINT_STYLE_SPLITS
+    if split not in style_splits:
         raise ValueError(
             "declare kind=sr/mse, comparison=methods/conditions and one common split"
         )
