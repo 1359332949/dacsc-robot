@@ -14,6 +14,7 @@ CoRP-RoboCasa and FFN-analysis pipeline.
 | `ffn_clean_jitter_pairs_20261108.json` | Read-only 12-layer clean/color_jitter FFN statistics for four paired OpenDrawer initial states |
 | `ffn_action_intervention_20261108.json` | Held-out action-chunk and closed-loop diagnostics for layer0/layer11 FFN interventions |
 | `full_layer11_replacement_20261108.json` | Privileged all-channel layer11 FFN replacement closed-loop control |
+| `full_block_replacement_20261108.json` | Privileged complete layer11 block replacement positive control |
 | `pretrain/` | RoboCasa dataset coverage and split audit |
 
 These receipts are point-in-time local evidence. They do not establish CUDA,

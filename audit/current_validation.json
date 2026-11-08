@@ -165,6 +165,17 @@
       "ep73_action_cos_mean": 0.9722,
       "ep73_final_drawer": 8.8372e-15,
       "result": "LAYER11_FFN_BRANCH_INSUFFICIENT"
+    },
+    "full_block_replacement": {
+      "receipt": "audit/full_block_replacement_20261108.json",
+      "ep64_layer11_block_success": true,
+      "ep64_steps": 177,
+      "ep73_layer11_block_success": true,
+      "ep73_steps": 172,
+      "replace_mse_to_clean": 0.0,
+      "replace_cos_to_clean": 1.0,
+      "layer11_and_all_blocks_identical": true,
+      "result": "FULL_BLOCK_POSITIVE_CONTROL_PASS"
     }
   },
   "receipt_note": "The validated code is the recorded commit. This receipt is committed afterward; the source-tree hash intentionally excludes this file so later receipt-only commits do not invalidate the tested code identity.",

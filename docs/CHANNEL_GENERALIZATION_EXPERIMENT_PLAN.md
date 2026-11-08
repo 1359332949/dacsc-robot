@@ -334,6 +334,20 @@ ep73: fail@300, 抽屉≈0, chunk cosine-to-clean mean=0.972
 唯一瓶颈，需进一步验证整 block 输出、多层替换、resampler 或 DiT 路径，而不是继续做
 单层 gate。
 
+随后完成 layer11 **完整 block output** replacement：CLS/patch 全部替换，包含 attention、
+post-attention residual、FFN、LayerScale。结果：
+
+```text
+ep64 layer11 block replace: success@177, drawer=0.962
+ep73 layer11 block replace: success@172, drawer=0.980
+12-block replacement: 与 layer11-only 轨迹完全相同
+逐 chunk action MSE-to-clean=0, cosine≈1
+```
+
+这证明瓶颈位于 layer11 完整 block 内部，而不是 FFN 分支容量不足；全视觉路径和
+resampler/DiT 在输入完整 clean block output 时均可恢复。下一步应分解 attention
+branch、post-attention residual 和 complete FFN branch，寻找最小必要替换集合。
+
 ### E3：候选单元选择
 
 候选选择必须在 source 校准集完成，不能在同一批 episode 上选择并证明。
