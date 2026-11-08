@@ -139,6 +139,20 @@
         "mean_validation_consistency": 1.0
       },
       "result": "PASS_Q1_DESCRIPTIVE_ONLY"
+    },
+    "ffn_action_intervention": {
+      "receipt": "audit/ffn_action_intervention_20261108.json",
+      "ep64_initial_chunk_mse_clean_jitter": 0.106234,
+      "ep64_layer11_selected_replace_mse_to_clean": 0.020675,
+      "ep64_layer11_selected_replace_cos_clean": 0.9448,
+      "ep73_layer11_selected_replace_mse_to_clean": 0.117213,
+      "closed_loop_clean_success": true,
+      "closed_loop_clean_steps": 179,
+      "closed_loop_jitter_success": false,
+      "closed_loop_selected_replace_success": false,
+      "closed_loop_selected_zero_success": false,
+      "closed_loop_random_zero_success": false,
+      "result": "Q2_SINGLE_LAYER_INTERVENTION_INSUFFICIENT"
     }
   },
   "receipt_note": "The validated code is the recorded commit. This receipt is committed afterward; the source-tree hash intentionally excludes this file so later receipt-only commits do not invalidate the tested code identity.",

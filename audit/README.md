@@ -12,6 +12,7 @@ CoRP-RoboCasa and FFN-analysis pipeline.
 | `video_backend_equivalence_20261108.json` | Real-video exact-pixel comparison of official `opencv` timestamp reads and official `pyav` cache reads |
 | `rollout_chain_diagnostics_20261108.json` | State/camera/action/success-chain and training-initial-state policy rollout diagnostics |
 | `ffn_clean_jitter_pairs_20261108.json` | Read-only 12-layer clean/color_jitter FFN statistics for four paired OpenDrawer initial states |
+| `ffn_action_intervention_20261108.json` | Held-out action-chunk and closed-loop diagnostics for layer0/layer11 FFN interventions |
 | `pretrain/` | RoboCasa dataset coverage and split audit |
 
 These receipts are point-in-time local evidence. They do not establish CUDA,

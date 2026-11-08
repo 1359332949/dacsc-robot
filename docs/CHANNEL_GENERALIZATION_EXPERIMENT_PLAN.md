@@ -287,6 +287,39 @@ clean vs color_jitter
 按当前文档估算，单个观测时刻一对 clean/shift 的完整激活约 142 MB；1000 对约 142 GB，
 必须流式统计，不能无计划落盘。
 
+#### E2 最新结果（2026-11-08）
+
+四个训练支持初始 state 的 clean/color_jitter 配对已完成：
+
+```text
+clean        4/4 success
+color_jitter 4/4 fail@750
+```
+
+只读 FFN 采集使用 ep24/28 选候选、ep64/73 独立验证。Patch 相对激活差异最大在
+layer11/left、layer10/right 和 layer10/left；CLS 也在 layer11 最大。候选验证中，
+layer0 最稳定（mean |validation z|=3.35、sign match=1、consistency=1），layer11
+虽有最大差异，但一致性低于 layer0。这些结果属于 Q1 描述性证据，不是动作因果。
+
+### E2b：最小 Q2 动作干预
+
+已在 ep64/73 的固定候选上做初始 action chunk 干预，并在 ep64 做 300 步小闭环：
+
+```text
+clean                         success@179
+color_jitter                  fail@300
+layer11 clean replacement     fail@300
+layer11 selected zero         fail@300
+matched random zero           fail@300
+```
+
+layer11 clean replacement 能把初始 jitter action chunk 明显拉回 clean（ep64
+MSE 0.106→0.021、cos 0.690→0.945；ep73 方向一致但幅度较小），但闭环中误差
+重新累积，未恢复 success。selected zero 没有超过 matched random。
+
+因此当前“单 block、20 channels、固定零衰减”不足以成为可部署 gate。E4 暂不启动；
+下一步若要继续，应先把错误发生时刻、层间补偿和多层/更大 token-channel 支持集分开验证。
+
 ### E3：候选单元选择
 
 候选选择必须在 source 校准集完成，不能在同一批 episode 上选择并证明。
