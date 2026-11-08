@@ -153,6 +153,18 @@
       "closed_loop_selected_zero_success": false,
       "closed_loop_random_zero_success": false,
       "result": "Q2_SINGLE_LAYER_INTERVENTION_INSUFFICIENT"
+    },
+    "full_layer11_replacement": {
+      "receipt": "audit/full_layer11_replacement_20261108.json",
+      "ep64_chunks": 38,
+      "ep64_success": false,
+      "ep64_action_cos_mean": 0.9803,
+      "ep64_final_drawer": 4.9679e-07,
+      "ep73_chunks": 38,
+      "ep73_success": false,
+      "ep73_action_cos_mean": 0.9722,
+      "ep73_final_drawer": 8.8372e-15,
+      "result": "LAYER11_FFN_BRANCH_INSUFFICIENT"
     }
   },
   "receipt_note": "The validated code is the recorded commit. This receipt is committed afterward; the source-tree hash intentionally excludes this file so later receipt-only commits do not invalidate the tested code identity.",

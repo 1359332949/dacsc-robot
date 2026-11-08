@@ -320,6 +320,20 @@ MSE 0.106→0.021、cos 0.690→0.945；ep73 方向一致但幅度较小），�
 因此当前“单 block、20 channels、固定零衰减”不足以成为可部署 gate。E4 暂不启动；
 下一步若要继续，应先把错误发生时刻、层间补偿和多层/更大 token-channel 支持集分开验证。
 
+进一步做了 layer11 **全部 1536 个 patch FFN 通道**的 clean activation replacement
+正对照（CLS 与 residual 保持原输入，clean reference 为特权诊断）。ep64/73 均运行
+300 步：
+
+```text
+ep64: fail@300, 抽屉≈0, chunk cosine-to-clean mean=0.980
+ep73: fail@300, 抽屉≈0, chunk cosine-to-clean mean=0.972
+```
+
+动作 chunk 已非常接近 clean oracle，但只替换 FFN 分支、保留 jitter residual，没有
+恢复完整 clean block output；闭环仍然逐步漂移。当前结论是：layer11 FFN 分支容量不是
+唯一瓶颈，需进一步验证整 block 输出、多层替换、resampler 或 DiT 路径，而不是继续做
+单层 gate。
+
 ### E3：候选单元选择
 
 候选选择必须在 source 校准集完成，不能在同一批 episode 上选择并证明。
