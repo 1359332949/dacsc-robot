@@ -282,6 +282,10 @@ class ChannelDropoutController:
                 for layer in config.layers
             }
         )
+        self.discriminators.to(
+            device=next(policy.parameters()).device,
+            dtype=next(policy.parameters()).dtype,
+        )
         for layer in config.layers:
             self._handles.append(
                 backbone.blocks[layer].register_forward_hook(
