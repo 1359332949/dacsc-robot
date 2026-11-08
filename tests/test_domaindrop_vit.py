@@ -1,4 +1,5 @@
 import unittest
+from collections import Counter
 from types import SimpleNamespace
 
 import torch
@@ -10,7 +11,11 @@ from dacsc.domaindrop_vit import (
     LayerDomainDrop,
     _random_channel_mask,
 )
-from scripts.train_corp_robocasa import channel_training_loss, paired_flow_sample
+from scripts.train_corp_robocasa import (
+    StyleBalancedBatchSampler,
+    channel_training_loss,
+    paired_flow_sample,
+)
 
 
 class FakeBlock(nn.Module):
@@ -75,6 +80,24 @@ class FakeFlowPolicy(FakePolicy):
 
 
 class DomainDropVITTest(unittest.TestCase):
+    def test_style_balanced_batch_has_equal_domain_support_and_epochs(self):
+        style_ids = [style for style in (11, 12, 13, 14) for _ in range(9)]
+        sampler = StyleBalancedBatchSampler(
+            style_ids,
+            batch_size=8,
+            samples_per_style=4,
+            seed=42,
+        )
+        first_epoch = list(sampler)
+        self.assertEqual(len(first_epoch), len(style_ids) // 8)
+        for batch in first_epoch:
+            self.assertEqual(len(batch), 8)
+            counts = Counter(style_ids[index] for index in batch)
+            self.assertEqual(sorted(counts.values()), [4, 4])
+        self.assertEqual(first_epoch, list(sampler))
+        sampler.set_epoch(1)
+        self.assertNotEqual(first_epoch, list(sampler))
+
     def test_random_mask_is_exact_budget_and_recoverable(self):
         mask = _random_channel_mask(
             4,

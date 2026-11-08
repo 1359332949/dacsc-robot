@@ -9,6 +9,7 @@ CONFIG_PY="${CONFIG_PY:-python3}"
 OUT="${OUT:?set OUT=/path/to/run/output}"
 INIT_MODEL="${INIT_MODEL:?set INIT_MODEL=/path/to/baseline/model.pt}"
 CHANNEL_METHOD="${CHANNEL_METHOD:?set CHANNEL_METHOD=none|random|domaindrop_vit}"
+STYLE_BALANCED_BATCH="${STYLE_BALANCED_BATCH:-1}"
 
 cd "$ROOT"
 eval "$("$CONFIG_PY" -m dacsc.v10_config --shell)"
@@ -37,6 +38,7 @@ CHANNEL_LAYER_PROBABILITY="${CHANNEL_LAYER_PROBABILITY:-0.8}"
 CHANNEL_CONSISTENCY_WEIGHT="${CHANNEL_CONSISTENCY_WEIGHT:-1.5}"
 DOMAIN_LOSS_WEIGHT="${DOMAIN_LOSS_WEIGHT:-1.0}"
 DOMAIN_GRL_LAMBDA="${DOMAIN_GRL_LAMBDA:-0.25}"
+STYLE_SAMPLES_PER_BATCH="${STYLE_SAMPLES_PER_BATCH:-4}"
 
 CACHE_VIDEO="${CACHE_VIDEO:-1}"
 if [[ "$CACHE_VIDEO" == "1" ]]; then
@@ -55,6 +57,14 @@ else
 fi
 
 read -r -a CHANNEL_LAYER_ARGS <<< "$CHANNEL_LAYERS"
+if [[ "$STYLE_BALANCED_BATCH" == "1" ]]; then
+  STYLE_BALANCED_ARGS=(--style-balanced-batch)
+elif [[ "$STYLE_BALANCED_BATCH" != "0" ]]; then
+  echo "STYLE_BALANCED_BATCH must be 0 or 1" >&2
+  exit 2
+else
+  STYLE_BALANCED_ARGS=()
+fi
 
 exec "$PY" -m dacsc.run_output --out "$OUT" -- \
   "$ROOT/scripts/train_corp_robocasa.py" \
@@ -81,6 +91,8 @@ exec "$PY" -m dacsc.run_output --out "$OUT" -- \
   --num-workers "$NUM_WORKERS" \
   --init-model "$INIT_MODEL" \
   --channel-method "$CHANNEL_METHOD" \
+  "${STYLE_BALANCED_ARGS[@]}" \
+  --style-samples-per-batch "$STYLE_SAMPLES_PER_BATCH" \
   --channel-layers "${CHANNEL_LAYER_ARGS[@]}" \
   --channel-drop-rate "$CHANNEL_DROP_RATE" \
   --channel-layer-probability "$CHANNEL_LAYER_PROBABILITY" \

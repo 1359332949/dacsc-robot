@@ -47,7 +47,8 @@
     "the mask is shared across all three camera views and all CLS/patch tokens",
     "block output channels are 384-dimensional embedding channels, not 1536-dimensional FFN neurons",
     "dual classification KL is adapted to paired flow-velocity MSE using identical flow eps and tau",
-    "four evenly spaced ViT blocks 2,5,8,11 are used as a depth mapping of the four ResNet stages"
+    "four evenly spaced ViT blocks 2,5,8,11 are used as a depth mapping of the four ResNet stages",
+    "all pilot conditions use deterministic style-balanced batches with 12 styles and 4 samples per style per batch"
   ],
   "matched_random_control": {
     "same_discriminator": true,

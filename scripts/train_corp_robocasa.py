@@ -166,6 +166,75 @@ def style_class_map(dataset) -> dict[int, int]:
     return {style: index for index, style in enumerate(styles)}
 
 
+class StyleBalancedBatchSampler:
+    """Build deterministic batches with equal sample support per native style."""
+
+    def __init__(
+        self,
+        style_ids: list[int],
+        *,
+        batch_size: int,
+        samples_per_style: int,
+        seed: int,
+    ) -> None:
+        if not style_ids or len(style_ids) < batch_size:
+            raise ValueError("style-balanced sampling needs a nonempty full batch")
+        if batch_size <= 0 or samples_per_style <= 0:
+            raise ValueError("batch size and samples per style must be positive")
+        if batch_size % samples_per_style:
+            raise ValueError("batch size must be divisible by samples per style")
+        self.indices_by_style: dict[int, list[int]] = {}
+        for index, style in enumerate(style_ids):
+            self.indices_by_style.setdefault(style, []).append(index)
+        self.styles = sorted(self.indices_by_style)
+        self.samples_per_style = samples_per_style
+        self.styles_per_batch = batch_size // samples_per_style
+        if len(self.styles) < self.styles_per_batch:
+            raise ValueError("fewer training styles than styles per batch")
+        self.batch_size = batch_size
+        self.seed = int(seed)
+        self.num_batches = len(style_ids) // batch_size
+        self.epoch = 0
+
+    def set_epoch(self, epoch: int) -> None:
+        if type(epoch) is not int or epoch < 0:
+            raise ValueError("sampler epoch must be a nonnegative integer")
+        self.epoch = epoch
+
+    def __len__(self) -> int:
+        return self.num_batches
+
+    def __iter__(self):
+        for batch_index in range(self.num_batches):
+            batch_seed = (
+                self.seed
+                + (self.epoch + 1) * 1_000_003
+                + (batch_index + 1) * 9_176
+            ) % (2**63 - 1)
+            generator = torch.Generator().manual_seed(batch_seed)
+            style_order = torch.randperm(
+                len(self.styles), generator=generator
+            )[: self.styles_per_batch]
+            batch: list[int] = []
+            for style_index in style_order.tolist():
+                style = self.styles[style_index]
+                candidates = self.indices_by_style[style]
+                if len(candidates) >= self.samples_per_style:
+                    picks = torch.randperm(len(candidates), generator=generator)[
+                        : self.samples_per_style
+                    ].tolist()
+                    batch.extend(candidates[pick] for pick in picks)
+                else:
+                    picks = torch.randint(
+                        len(candidates),
+                        (self.samples_per_style,),
+                        generator=generator,
+                    ).tolist()
+                    batch.extend(candidates[pick] for pick in picks)
+            positions = torch.randperm(self.batch_size, generator=generator).tolist()
+            yield [batch[position] for position in positions]
+
+
 def duplicate_training_batch(batch: dict) -> dict:
     """Duplicate a batch so two channel masks share one logical update."""
     out = {
@@ -250,6 +319,10 @@ def set_seed(seed: int) -> None:
     torch.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)
     torch.backends.cudnn.deterministic = True
+
+
+def scalar_float(value) -> float:
+    return float(value.detach()) if torch.is_tensor(value) else float(value)
     torch.backends.cudnn.benchmark = False
 
 
@@ -569,6 +642,17 @@ def main() -> int:
         help="Train-only channel regularization; eval is always a no-op",
     )
     ap.add_argument(
+        "--style-balanced-batch",
+        action="store_true",
+        help="Sample equal support per native style for domain-classifier training",
+    )
+    ap.add_argument(
+        "--style-samples-per-batch",
+        type=int,
+        default=4,
+        help="Samples per native style in each balanced training batch",
+    )
+    ap.add_argument(
         "--channel-layers",
         nargs="+",
         type=int,
@@ -599,6 +683,13 @@ def main() -> int:
         ap.error("exact data-order resume currently requires --num-workers 0")
     if args.resume and args.init_model:
         ap.error("--resume and --init-model are mutually exclusive")
+    if args.style_samples_per_batch <= 0:
+        ap.error("--style-samples-per-batch must be positive")
+    if args.style_balanced_batch and args.batch_size % args.style_samples_per_batch:
+        ap.error(
+            "--batch-size must be divisible by --style-samples-per-batch "
+            "when style-balanced batching is enabled"
+        )
     if args.tasks and args.max_tasks:
         ap.error("--tasks and --max-tasks are mutually exclusive")
     if (
@@ -642,6 +733,8 @@ def main() -> int:
 
 def run(args, out: Path) -> int:
     channel_method = getattr(args, "channel_method", "none")
+    style_balanced_batch = getattr(args, "style_balanced_batch", False)
+    style_samples_per_batch = getattr(args, "style_samples_per_batch", 4)
     channel_layers = tuple(getattr(args, "channel_layers", [2, 5, 8, 11]))
     channel_drop_rate = getattr(args, "channel_drop_rate", 0.33)
     channel_layer_probability = getattr(args, "channel_layer_probability", 0.8)
@@ -732,7 +825,11 @@ def run(args, out: Path) -> int:
         consistency_weight=channel_consistency_weight,
         grl_lambda=domain_grl_lambda,
     )
-    style_to_id = {} if channel_method == "none" else style_class_map(train_ds)
+    style_to_id = (
+        {}
+        if channel_method == "none" and not style_balanced_batch
+        else style_class_map(train_ds)
+    )
     channel_payload = (
         None
         if channel_config.method == "none"
@@ -743,6 +840,18 @@ def run(args, out: Path) -> int:
             },
         }
     )
+    batch_sampling_payload = (
+        {
+            "method": "style_balanced_v1",
+            "samples_per_style": style_samples_per_batch,
+            "batch_size": args.batch_size,
+            "seed": args.seed,
+        }
+        if style_balanced_batch
+        else {"method": "shuffle", "seed": args.seed}
+    )
+    print(f"channel_contract={channel_payload}", flush=True)
+    print(f"batch_sampling={batch_sampling_payload}", flush=True)
 
     resume_payload = None
     init_payload = None
@@ -911,6 +1020,7 @@ def run(args, out: Path) -> int:
         "pixel_augmentation": pixel_config,
         "task_aux": task_aux_payload,
         "channel_dropout": channel_payload,
+        "batch_sampling": batch_sampling_payload,
         "parent_training_origin": parent_training_origin,
         "initialization_policy": merge["initialization_policy"],
         "initialization_sha256": initialization_sha256,
@@ -954,6 +1064,7 @@ def run(args, out: Path) -> int:
                 "task_aux": task_aux_payload,
                 "pixel_augmentation": pixel_config,
                 "channel_dropout": channel_payload,
+                "batch_sampling": batch_sampling_payload,
                 "parent_training_origin": parent_training_origin,
                 "merge": merge,
                 "training_origin": training_origin,
@@ -969,6 +1080,8 @@ def run(args, out: Path) -> int:
                     step=completed_step,
                     data_order={
                         "epoch_rng": epoch_rng,
+                        "sampler_epoch": batch_sampler_epoch,
+                        "batch_sampling": batch_sampling_payload,
                         "batches_in_epoch": batches_in_epoch,
                         "dataset_paths": tasks,
                         "dataset_length": len(train_ds),
@@ -988,17 +1101,34 @@ def run(args, out: Path) -> int:
         opt, lambda s: min(1.0, (s + 1) / warmup_steps)
     )
 
-    loader_generator = torch.Generator().manual_seed(args.seed)
-    train_loader = DataLoader(
-        train_ds,
-        batch_size=args.batch_size,
-        shuffle=True,
-        num_workers=args.num_workers,
-        collate_fn=collate_corp,
-        pin_memory=True,
-        drop_last=True,
-        generator=loader_generator,
-    )
+    loader_generator = None
+    style_batch_sampler = None
+    if style_balanced_batch:
+        style_batch_sampler = StyleBalancedBatchSampler(
+            [entry[2] for entry in train_ds.flat],
+            batch_size=args.batch_size,
+            samples_per_style=style_samples_per_batch,
+            seed=args.seed,
+        )
+        train_loader = DataLoader(
+            train_ds,
+            batch_sampler=style_batch_sampler,
+            num_workers=args.num_workers,
+            collate_fn=collate_corp,
+            pin_memory=True,
+        )
+    else:
+        loader_generator = torch.Generator().manual_seed(args.seed)
+        train_loader = DataLoader(
+            train_ds,
+            batch_size=args.batch_size,
+            shuffle=True,
+            num_workers=args.num_workers,
+            collate_fn=collate_corp,
+            pin_memory=True,
+            drop_last=True,
+            generator=loader_generator,
+        )
     # 评测用 per-task 均衡采样，保证 61 个 task 都被覆盖。
     val_loader = balanced_loader(val_ds, args.eval_batch_size, args.per_task_eval, 123)
     source_loader = balanced_loader(
@@ -1016,15 +1146,27 @@ def run(args, out: Path) -> int:
             raise ValueError("resume episode metadata differs from the checkpoint")
         if saved_order.get("data_contract") != selection_contract:
             raise ValueError("resume data selection contract differs from the checkpoint")
-        loader_generator.set_state(saved_order["epoch_rng"])
-    epoch_rng = loader_generator.get_state()
-    it = iter(train_loader)
+        saved_batch_sampling = saved_order.get("batch_sampling")
+        if (
+            saved_batch_sampling is not None
+            and saved_batch_sampling != batch_sampling_payload
+        ):
+            raise ValueError("resume batch sampling differs from the checkpoint")
+    epoch_rng = None if loader_generator is None else loader_generator.get_state()
+    batch_sampler_epoch = 0
     batches_in_epoch = 0
+    if resume_payload is not None:
+        saved_order = resume_payload["training_state"]["data_order"]
+        batches_in_epoch = saved_order["batches_in_epoch"]
+        if style_batch_sampler is not None:
+            batch_sampler_epoch = saved_order.get("sampler_epoch", 0)
+            style_batch_sampler.set_epoch(batch_sampler_epoch)
+        else:
+            loader_generator.set_state(saved_order["epoch_rng"])
+            epoch_rng = loader_generator.get_state()
+    it = iter(train_loader)
     step = 0
     if resume_payload is not None:
-        batches_in_epoch = resume_payload["training_state"]["data_order"][
-            "batches_in_epoch"
-        ]
         for _ in range(batches_in_epoch):
             next(it)
         step = restore_training_state(
@@ -1044,7 +1186,11 @@ def run(args, out: Path) -> int:
         try:
             batch = next(it)
         except StopIteration:
-            epoch_rng = loader_generator.get_state()
+            if style_batch_sampler is not None:
+                batch_sampler_epoch += 1
+                style_batch_sampler.set_epoch(batch_sampler_epoch)
+            else:
+                epoch_rng = loader_generator.get_state()
             it = iter(train_loader)
             batches_in_epoch = 0
             batch = next(it)
@@ -1094,13 +1240,15 @@ def run(args, out: Path) -> int:
         sched.step()
         if step % 5 == 0 or step == args.steps - 1:
             task_loss = (
-                " n/a" if losses.task is None else f" task {float(losses.task):.4f}"
+                " n/a"
+                if losses.task is None
+                else f" task {scalar_float(losses.task):.4f}"
             )
             channel_detail = ""
             if consistency_loss is not None:
-                channel_detail += f" consistency {float(consistency_loss):.4f}"
+                channel_detail += f" consistency {scalar_float(consistency_loss):.4f}"
             if domain_loss is not None:
-                channel_detail += f" domain {float(domain_loss):.4f}"
+                channel_detail += f" domain {scalar_float(domain_loss):.4f}"
             if channel_diagnostics is not None:
                 active_layer = channel_diagnostics["active_layer"]
                 mask_events = channel_diagnostics["mask_events"]
@@ -1113,8 +1261,8 @@ def run(args, out: Path) -> int:
                 if balanced is not None:
                     channel_detail += f" domain_bal_acc {balanced:.3f}"
             print(
-                f"step {step:4d} loss {float(loss):.4f} "
-                f"flow {float(losses.flow):.4f}{task_loss}{channel_detail} "
+                f"step {step:4d} loss {scalar_float(loss):.4f} "
+                f"flow {scalar_float(losses.flow):.4f}{task_loss}{channel_detail} "
                 f"lr {sched.get_last_lr()[0]:.2e} elapsed {time.time()-t_start:.1f}s",
                 flush=True,
             )
@@ -1233,10 +1381,10 @@ def run(args, out: Path) -> int:
                     - src_eval["macro_task_action_mse"],
                     "detail_file": metrics_path.name,
                     "detail_sha256": file_sha256(metrics_path),
-                    "train_total_loss": float(loss),
-                    "train_flow_loss": float(losses.flow),
+                    "train_total_loss": scalar_float(loss),
+                    "train_flow_loss": scalar_float(losses.flow),
                     "train_task_aux_loss": (
-                        None if losses.task is None else float(losses.task)
+                        None if losses.task is None else scalar_float(losses.task)
                     ),
                     "channel_method": channel_config.method,
                     "channel_active_layer": (
@@ -1245,10 +1393,10 @@ def run(args, out: Path) -> int:
                     "train_channel_consistency_loss": (
                         None
                         if consistency_loss is None
-                        else float(consistency_loss)
+                        else scalar_float(consistency_loss)
                     ),
                     "train_channel_domain_loss": (
-                        None if domain_loss is None else float(domain_loss)
+                        None if domain_loss is None else scalar_float(domain_loss)
                     ),
                     "channel_diagnostics": channel_diagnostics,
                 }
@@ -1260,6 +1408,7 @@ def run(args, out: Path) -> int:
         "pixel_augmentation": pixel_config,
         "task_aux": task_aux_payload,
         "channel_dropout": channel_payload,
+        "batch_sampling": batch_sampling_payload,
         "parent_training_origin": parent_training_origin,
         "args": {
             key: str(value) if isinstance(value, Path) else value

@@ -131,6 +131,8 @@ WRS、单层激活和 scale recovery，并把 `[3B,T,384]` 映射成共享三视
 `--channel-method random` 与 `--channel-method domaindrop_vit` 共用 discriminator、GRL、
 domain loss、consistency、层概率和 drop budget，唯一区别是随机 channel score 与域敏感
 channel score。这个 matched random 对照是判断“选择机制”是否有效的必要条件。
+40 个训练 style 使用所有条件共用的 style-balanced batch：每个 batch 固定 12 个 style、
+每个 style 4 个样本，避免 domain 分类器每类只有一两个观测。
 
 ```bash
 OUT=/hy-tmp/runs/v10_channel_control \

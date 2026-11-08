@@ -188,10 +188,17 @@ source holdout residue: 9
 train augmentation: none
 steps: 5000
 batch size: 48 (logical batch; channel methods use two copies)
+samples per native style per batch: 4
+styles per batch: 12
 lr: 1e-5
 seed: 42
 eval shift: color_jitter
 ```
+
+`StyleBalancedBatchSampler` 固定每个 batch 内 12 个 style、每个 style 4 个样本。
+这是为了满足 domain discriminator 的多域监督前提：40 个 style 在一个普通随机 batch 中
+通常每个只有约 2 个样本，无法稳定比较 domain-wise 行为。三个条件必须共用同一个
+balanced sampler；它改变的是训练 batch 组成，不是通道方法本身。
 
 三个条件：
 
