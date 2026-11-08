@@ -143,9 +143,13 @@ CHANNEL_METHOD=none \
 bash scripts/run_v10_channel_pilot.sh
 ```
 
-先跑同一个 baseline checkpoint 的 `none/random/domaindrop_vit` 5k pilot；只有 DomainDrop
-在 clean 不崩的条件下优于 matched random，才考虑扩大训练或闭环评测。目标 style/layout
+原计划在同一 baseline 上跑 `none/random/domaindrop_vit` 5k pilot；只有 DomainDrop
+在 clean 不崩的条件下优于 matched random，才允许扩大训练或闭环评测。目标 style/layout
 1–10 仍封存。
+
+2026-11-09 的 500-step 筛查已经完成：matched random 解释了大部分 jitter-MSE 改善，
+DomainDrop 仅比 random 好约 1.1%，且 clean 略差。因此当前不扩到 5k，也不启动 gate
+或通道扫描；证据见[channel_pilot_500_20261109.json](audit/channel_pilot_500_20261109.json)。
 
 ## 本地交付
 

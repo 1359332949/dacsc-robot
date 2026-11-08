@@ -2,7 +2,7 @@
 
 更新时间：2026-11-09
 
-状态：**已实现训练期适配与本地契约测试，尚未用真实闭环证明方法有效。**
+状态：**已完成 500-step matched-random 筛查；方法特异性门禁失败，停止扩到 5k。**
 
 本文固定当前通道方法的来源、CoRP 张量映射、训练目标和实验门禁。它不是论文结果，
 也不能把 ResNet 上的 DomainDrop 数字直接迁移到 CoRP/RoboCasa。
@@ -236,3 +236,27 @@ bash scripts/run_v10_channel_pilot.sh
 
 如果 DomainDrop 与 random 无差异，应停止继续调通道 gate，转向训练数据覆盖、
 domain randomization、像素增广或更上游的表示学习，而不是继续堆通道技巧。
+
+## 8. 500-step 实际结果
+
+固定同一 baseline、同一 support、同一 seed、同一 balanced batch 和相同训练图：
+
+| condition | source clean | source jitter | val clean | val jitter |
+| --- | ---: | ---: | ---: | ---: |
+| 0-step baseline | 0.03175 | 0.08689 | 0.02962 | 0.06208 |
+| matched random 500 | 0.03239 | 0.07363 | 0.03003 | 0.05776 |
+| DomainDrop-ViT 500 | 0.03257 | 0.07282 | 0.03007 | 0.05712 |
+
+DomainDrop 相对 matched random：
+
+```text
+source jitter: 仅好约 1.10%
+val jitter:    仅好约 1.10%
+clean:         略差
+```
+
+random 已经解释了相对 baseline 约 87–94% 的 jitter-MSE 改善。因此当前证据不支持
+“域敏感 channel score 有稳定方法特异性收益”。不再扩到 5k，不做 gate 或通道扫描。
+
+完整的 support、hash、per-task 结果与决策见
+[channel_pilot_500_20261109.json](../audit/channel_pilot_500_20261109.json)。

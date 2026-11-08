@@ -20,6 +20,7 @@ CoRP-RoboCasa and FFN-analysis pipeline.
 | `layer11_branch_stability_20261108.json` | Fixed-pool clean/jitter qualification and held-out attention-path closed-loop stability check |
 | `layer11_composition_diagnostic_20261108.json` | Privileged attention+FFN, residual-only and full-block composition diagnostics on the low-action-error failures |
 | `layer11_residual_drift_20261108.json` | Read-only layer0–11 clean/color_jitter residual drift by view, token group and encoder stage |
+| `channel_pilot_500_20261109.json` | Matched zero-step/random/DomainDrop-ViT 500-step screening; specificity gate failed, no 5k expansion |
 | `pretrain/` | RoboCasa dataset coverage and split audit |
 
 These receipts are point-in-time evidence under the stated local or target-server

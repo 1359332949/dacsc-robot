@@ -1,0 +1,107 @@
+{
+  "schema": "corp_channel_pilot_500_v1",
+  "created_at_utc": "2026-11-09T04:45:00Z",
+  "status": "method_specificity_gate_failed_no_5k_expansion",
+  "code_commit": "44ed307438255a986d11b80387a91c8b09b71c92",
+  "base_checkpoint": {
+    "path": "/hy-tmp/runs/v10_baseline_30k_oss_cache4_f2/model.pt",
+    "sha256": "50d04668de4f5871f32631323796a24eec1641106a24a27c042f01dfb10d74d5"
+  },
+  "protocol": {
+    "tasks": [
+      "OpenCabinet",
+      "OpenDrawer",
+      "TurnOffStove",
+      "TurnOnElectricKettle",
+      "TurnOnSinkFaucet"
+    ],
+    "source": "styles 11-50, episode residue 9",
+    "val": "styles 51-60",
+    "per_task_eval": 16,
+    "source_samples": 80,
+    "source_episodes": 36,
+    "source_valid_action_scalars": 9468,
+    "val_samples": 80,
+    "val_episodes": 63,
+    "val_valid_action_scalars": 9276,
+    "steps": 500,
+    "batch_size": 48,
+    "style_balanced_batch": {
+      "samples_per_style": 4,
+      "styles_per_batch": 12
+    },
+    "backbone_lr": 1e-05,
+    "domain_head_lr": 0.001,
+    "channel_layers": [
+      2,
+      5,
+      8,
+      11
+    ],
+    "drop_rate": 0.33,
+    "layer_probability": 0.8,
+    "consistency_weight": 1.5,
+    "domain_loss_weight": 1.0,
+    "grl_lambda": 0.25
+  },
+  "conditions": {
+    "zero_step_baseline": {
+      "result": "/hy-tmp/validation/channel_baseline_eval_44ed307.json",
+      "result_sha256": "54166b5cfe162dfda6096e7a5b5194e3bc77e9b893131aa6c84d946cb0412421",
+      "source_clean_mse": 0.0317517910418405,
+      "source_color_jitter_mse": 0.0868887250267452,
+      "val_clean_mse": 0.02961665734158014,
+      "val_color_jitter_mse": 0.06208088976257022
+    },
+    "matched_random_500": {
+      "result": "/hy-tmp/runs/v10_channel_random_500_44ed307/result.json",
+      "result_sha256": "12857b56c0bdec9cbded216a384ef2aec8bf85efce24209ffa163d9194d55c55",
+      "model_sha256": "385f802f7be6cc49dd1a54021dbcf8e4305d1be619cd833260c91d38391b43a9",
+      "source_clean_mse": 0.03239423162555782,
+      "source_color_jitter_mse": 0.07363326090630627,
+      "val_clean_mse": 0.030034625699812117,
+      "val_color_jitter_mse": 0.057756914257417795,
+      "domain_loss": 4.517333984375,
+      "domain_balanced_accuracy": 0.07291666666666666
+    },
+    "domaindrop_vit_500": {
+      "result": "/hy-tmp/runs/v10_channel_domaindrop_500_44ed307/result.json",
+      "result_sha256": "dd709b13fe89448f9e76377ad6e179391dc0028ff3b0c0531c3aa81adc39ec7b",
+      "model_sha256": "dfbc48f3b24bf5d83c4b8c10c49fe21b620781601e79f2441823a64502f615f6",
+      "source_clean_mse": 0.032574487657994616,
+      "source_color_jitter_mse": 0.07282023748439094,
+      "val_clean_mse": 0.030069118702533714,
+      "val_color_jitter_mse": 0.05712447482784465,
+      "domain_loss": 4.6534013748168945,
+      "domain_balanced_accuracy": 0.0625
+    }
+  },
+  "paired_comparison": {
+    "source_color_jitter_random_improvement_vs_baseline_fraction": 0.15255978290238414,
+    "source_color_jitter_domaindrop_improvement_vs_baseline_fraction": 0.16191384484032703,
+    "source_color_jitter_domaindrop_extra_improvement_vs_random_fraction": 0.011038019849918705,
+    "source_random_share_of_total_improvement_fraction": 0.9422281525883874,
+    "val_color_jitter_random_improvement_vs_baseline_fraction": 0.06964928787436898,
+    "val_color_jitter_domaindrop_improvement_vs_baseline_fraction": 0.07983801381844713,
+    "val_color_jitter_domaindrop_extra_improvement_vs_random_fraction": 0.010951489380600694,
+    "val_random_share_of_total_improvement_fraction": 0.8723825223502246,
+    "clean_cost_domaindrop_vs_random": {
+      "source_mse_delta": 0.00018025603243679592,
+      "val_mse_delta": 0.00003449300272159677
+    }
+  },
+  "conclusion": "Matched random channel dropout explains most of the color_jitter-MSE improvement. DomainDrop-ViT is only about 1.1% better than matched random on source/val jitter and is slightly worse on clean. There is no evidence that domain-sensitive channel scoring adds a robust method-specific benefit.",
+  "decision": {
+    "expand_to_5k": false,
+    "start_gate_or_channel_scan": false,
+    "reason": "The mandatory matched-random specificity gate did not separate DomainDrop from random.",
+    "next_channel_method": "Do not tune DomainDrop further. If continuing the channel-level line, evaluate a faithful PLACE-style progressive random channel dropout or a properly environment-balanced DgCD baseline against the same matched controls."
+  },
+  "limitations": [
+    "Single training seed.",
+    "Offline action MSE only; no closed-loop success result for these 500-step checkpoints.",
+    "The 500-step budget is a screening budget, not a final method budget.",
+    "ColorJitter is a controlled stress condition, not natural style-target generalization.",
+    "Source val is not a distribution-matched official benchmark panel."
+  ]
+}
