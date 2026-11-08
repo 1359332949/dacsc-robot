@@ -1,11 +1,12 @@
 {
   "schema": "dacsc_current_validation_v2",
-  "generated_at": "2026-11-08T17:34:31+08:00",
-  "validated_code_commit": "c8f167d4be1fd7764ae80717171135f12bdbdbeb",
-  "working_tree_modified_at_test": false,
+  "generated_at": "2026-11-08T20:57:21+08:00",
+  "validated_code_commit": "955b7c5d6d987b7345c876a371f04ce0881174a0",
+  "working_tree_modified_at_test": true,
+  "working_tree_modified_scope_at_test": "documentation and audit files only; executable source unchanged from validated_code_commit",
   "python": "3.11.15",
   "platform": "macOS arm64",
-  "source_tree_sha256": "34f17b40b1ea7d49022b5022cf394c68ec1728b2336074a9f4544c787f0bf552",
+  "source_tree_sha256": "1c57e3c3a4f19428b0e0ed289a67ffdb03fe651e08ff3c427d11bf153707b45c",
   "source_tree_sha256_scope": "all tracked plus non-ignored untracked project files excluding audit/; path, byte length and content are hashed",
   "source_file_count": 78,
   "checks": {
@@ -176,6 +177,51 @@
       "replace_cos_to_clean": 1.0,
       "layer11_and_all_blocks_identical": true,
       "result": "FULL_BLOCK_POSITIVE_CONTROL_PASS"
+    },
+    "layer11_branch_decomposition": {
+      "receipt": "audit/layer11_branch_decomposition_20261108.json",
+      "sanity_checks": {
+        "noop_action_mse_to_jitter": 0.0,
+        "clean_y_action_mse_to_clean": 0.0,
+        "clean_x_recomputed_y_mse_to_captured_clean_y": 0.0
+      },
+      "action_chunk_mse_to_clean": {
+        "ep64": {
+          "jitter": 0.10623382031917572,
+          "attention": 0.0007815563585609198,
+          "complete_ffn": 0.014939743094146252,
+          "attention_plus_complete_ffn": 0.0007967774872668087
+        },
+        "ep73": {
+          "jitter": 0.18502499163150787,
+          "attention": 0.0017005245899781585,
+          "complete_ffn": 0.03729568049311638,
+          "attention_plus_complete_ffn": 0.00036733702290803194
+        }
+      },
+      "closed_loop": {
+        "ep64_attention": {
+          "success": false,
+          "steps": 300,
+          "drawer": 0.000184214276546104
+        },
+        "ep73_attention": {
+          "success": true,
+          "steps": 175,
+          "drawer": 0.9745882232122008
+        },
+        "ep64_attention_plus_complete_ffn": {
+          "success": true,
+          "steps": 173,
+          "drawer": 0.9601737698929427
+        },
+        "ep73_attention_plus_complete_ffn": {
+          "success": true,
+          "steps": 176,
+          "drawer": 0.961384543773206
+        }
+      },
+      "result": "ATTENTION_DOMINANT; ATTENTION_ONLY_UNSTABLE; ATTENTION_PLUS_COMPLETE_FFN_SUCCESS; PRIVILEGED_DIAGNOSTIC_ONLY"
     }
   },
   "receipt_note": "The validated code is the recorded commit. This receipt is committed afterward; the source-tree hash intentionally excludes this file so later receipt-only commits do not invalidate the tested code identity.",
@@ -183,6 +229,8 @@
     "target GPU driver and native BF16 execution for the new launcher changes",
     "MuJoCo state and action replay for the new launcher changes",
     "closed-loop success rate for the new launcher changes",
-    "FFN intervention efficacy"
+    "FFN intervention efficacy",
+    "deployable appearance-robust intervention",
+    "layer11 attention-path decomposition beyond two diagnostic episodes"
   ]
 }

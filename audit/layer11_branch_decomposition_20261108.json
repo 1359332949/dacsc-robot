@@ -1,0 +1,297 @@
+{
+  "schema": "dacsc_layer11_branch_decomposition_audit_v1",
+  "generated_at": "2026-11-08T20:56:26+08:00",
+  "scope": {
+    "task": "OpenDrawer",
+    "layout": 31,
+    "episodes": [
+      64,
+      73
+    ],
+    "action_steps": 8,
+    "closed_loop_max_steps": 300,
+    "checkpoint": "/hy-tmp/runs/v10_baseline_30k_oss_cache4_f2/model.pt",
+    "checkpoint_sha256": "50d04668de4f5871f32631323796a24eec1641106a24a27c042f01dfb10d74d5",
+    "block": "layer11",
+    "tokens": "CLS and patch",
+    "clean_reference": "same-state clean activation",
+    "clean_reference_is_privileged": true,
+    "deployable_method": false
+  },
+  "source_receipts": {
+    "action_chunk": {
+      "server_script": "/hy-tmp/validation/layer11_block_decompose.py",
+      "server_script_sha256": "1fb5ecd36e7862c9a7b091bd9801aae289dbe3f96d20c4afd9a782439ae67fec",
+      "server_result": "/hy-tmp/validation/layer11_block_decompose.json",
+      "server_result_sha256": "2ce0ef431a886845f64af0b94cc07481e54bb6daeea936954730830ca472fb8a",
+      "server_schema": "dacsc_layer11_block_decompose_v1"
+    },
+    "closed_loop": {
+      "server_script": "/hy-tmp/validation/layer11_branch_closed_loop.py",
+      "server_script_sha256": "34833d2ff9f7ec45c45175b261c24e7e6082285d0882cef8ab9fc8d48922c31d",
+      "server_result": "/hy-tmp/validation/layer11_branch_closed_loop.json",
+      "server_result_sha256": "6dc2787032b8bd509e7b6f8dee1ba188f04b7917e7b5d069e1e3452918aa3b70",
+      "server_schema": "dacsc_layer11_branch_closed_loop_v1"
+    }
+  },
+  "branch_definition": {
+    "input": "x",
+    "attention_branch": "a = ls1(attn(norm1(x)))",
+    "post_attention_residual": "u = x + a",
+    "complete_ffn_branch": "f = ls2(mlp(norm2(u)))",
+    "block_output": "y = u + f",
+    "important_correction": "The earlier all-channel mlp.act replacement is not the same intervention as replacing the complete FFN branch f."
+  },
+  "sanity": [
+    {
+      "episode": 64,
+      "noop_action_mse_to_jitter": 0.0,
+      "clean_y_action_mse_to_clean": 0.0,
+      "clean_x_recomputed_y_mse_to_captured_clean_y": 0.0
+    },
+    {
+      "episode": 73,
+      "noop_action_mse_to_jitter": 0.0,
+      "clean_y_action_mse_to_clean": 0.0,
+      "clean_x_recomputed_y_mse_to_captured_clean_y": 0.0
+    }
+  ],
+  "action_chunk_results": [
+    {
+      "episode": 64,
+      "style": 47,
+      "layout": 31,
+      "target_drawer": "stack_1_island_group_1_3",
+      "clean_jitter_mse": 0.10623382031917572,
+      "clean_jitter_cos": 0.6900582313537598,
+      "conditions": {
+        "noop": {
+          "mse_clean": 0.10623382031917572,
+          "cos_clean": 0.6900582313537598,
+          "groups_mse_clean": {
+            "position": 0.09945973008871078,
+            "rotation": 0.005220127757638693,
+            "gripper": 0.9606949090957642,
+            "base": 1.3861191291653086e-05,
+            "control": 1.6013091226341203e-05
+          }
+        },
+        "attention": {
+          "mse_clean": 0.0007815563585609198,
+          "cos_clean": 0.9980898499488831,
+          "groups_mse_clean": {
+            "position": 0.003015264170244336,
+            "rotation": 0.00010726378241088241,
+            "gripper": 3.818236564256949e-06,
+            "base": 1.3491094250639435e-06,
+            "control": 1.8769991356748505e-06
+          }
+        },
+        "complete_ffn": {
+          "mse_clean": 0.014939743094146252,
+          "cos_clean": 0.9604353904724121,
+          "groups_mse_clean": {
+            "position": 0.05850909277796745,
+            "rotation": 0.0012320766691118479,
+            "gripper": 4.499592978390865e-05,
+            "base": 1.7568454495631158e-06,
+            "control": 1.3984863471705467e-06
+          }
+        },
+        "attention_plus_complete_ffn": {
+          "mse_clean": 0.0007967774872668087,
+          "cos_clean": 0.9980576038360596,
+          "groups_mse_clean": {
+            "position": 0.0030547601636499166,
+            "rotation": 0.00012844448792748153,
+            "gripper": 6.6938023337570485e-06,
+            "base": 9.459178045290173e-07,
+            "control": 1.2373957360978238e-06
+          }
+        },
+        "clean_y": {
+          "mse_clean": 0.0,
+          "cos_clean": 1.0
+        },
+        "clean_x": {
+          "mse_clean": 0.0,
+          "cos_clean": 1.0
+        }
+      }
+    },
+    {
+      "episode": 73,
+      "style": 48,
+      "layout": 31,
+      "target_drawer": "stack_4_right_group_1_2",
+      "clean_jitter_mse": 0.18502499163150787,
+      "clean_jitter_cos": 0.48092973232269287,
+      "conditions": {
+        "noop": {
+          "mse_clean": 0.18502499163150787,
+          "cos_clean": 0.48092973232269287,
+          "groups_mse_clean": {
+            "position": 0.0799860954284668,
+            "rotation": 0.018380852416157722,
+            "gripper": 1.9251251220703125,
+            "base": 1.4569319318979979e-05,
+            "control": 1.5675856047892012e-05
+          }
+        },
+        "attention": {
+          "mse_clean": 0.0017005245899781585,
+          "cos_clean": 0.995792031288147,
+          "groups_mse_clean": {
+            "position": 0.006009108852595091,
+            "rotation": 0.0007864987710490823,
+            "gripper": 1.0608876436890569e-05,
+            "base": 1.9696224171639187e-06,
+            "control": 9.837764309850172e-07
+          }
+        },
+        "complete_ffn": {
+          "mse_clean": 0.03729568049311638,
+          "cos_clean": 0.898408830165863,
+          "groups_mse_clean": {
+            "position": 0.03719022125005722,
+            "rotation": 0.006076643709093332,
+            "gripper": 0.3177291750907898,
+            "base": 3.936143002647441e-06,
+            "control": 2.665536840140703e-06
+          }
+        },
+        "attention_plus_complete_ffn": {
+          "mse_clean": 0.00036733702290803194,
+          "cos_clean": 0.9990992546081543,
+          "groups_mse_clean": {
+            "position": 0.0013661732664331794,
+            "rotation": 0.00010164685227209702,
+            "gripper": 2.0794211650354555e-06,
+            "base": 5.702228236259543e-07,
+            "control": 2.233379063909524e-07
+          }
+        },
+        "clean_y": {
+          "mse_clean": 0.0,
+          "cos_clean": 1.0
+        },
+        "clean_x": {
+          "mse_clean": 0.0,
+          "cos_clean": 1.0
+        }
+      }
+    }
+  ],
+  "closed_loop_context": {
+    "clean": {
+      "ep64": {
+        "success": true,
+        "steps": 179
+      },
+      "ep73": {
+        "success": true,
+        "steps": 173
+      }
+    },
+    "color_jitter": {
+      "ep64": {
+        "success": false,
+        "steps": 750
+      },
+      "ep73": {
+        "success": false,
+        "steps": 750
+      }
+    },
+    "full_layer11_block": {
+      "ep64": {
+        "success": true,
+        "steps": 177,
+        "drawer": 0.9616775415896744
+      },
+      "ep73": {
+        "success": true,
+        "steps": 172,
+        "drawer": 0.9796201392635168
+      }
+    }
+  },
+  "closed_loop_results": [
+    {
+      "episode": 64,
+      "condition": "attention",
+      "success": false,
+      "steps": 300,
+      "final_drawer": 0.000184214276546104,
+      "chunks": 38,
+      "chunk_mse_clean_mean": 0.01750931698533302,
+      "chunk_mse_clean_max": 0.2070726752281189,
+      "chunk_cos_clean_mean": 0.9512164169236234,
+      "chunk_cos_clean_min": 0.39222902059555054,
+      "chunk_gripper_mse_mean": 0.1750630304529763,
+      "chunk_gripper_mse_max": 2.3980536460876465
+    },
+    {
+      "episode": 73,
+      "condition": "attention",
+      "success": true,
+      "steps": 175,
+      "final_drawer": 0.9745882232122008,
+      "chunks": 22,
+      "chunk_mse_clean_mean": 0.0004902118468056539,
+      "chunk_mse_clean_max": 0.001998452702537179,
+      "chunk_cos_clean_mean": 0.9989794032140211,
+      "chunk_cos_clean_min": 0.9961676001548767,
+      "chunk_gripper_mse_mean": 3.252138865276906e-05,
+      "chunk_gripper_mse_max": 0.0004159160889685154
+    },
+    {
+      "episode": 64,
+      "condition": "attention_plus_complete_ffn",
+      "success": true,
+      "steps": 173,
+      "final_drawer": 0.9601737698929427,
+      "chunks": 22,
+      "chunk_mse_clean_mean": 0.0002331468693393452,
+      "chunk_mse_clean_max": 0.000840843073092401,
+      "chunk_cos_clean_mean": 0.9994913095777685,
+      "chunk_cos_clean_min": 0.9983011484146118,
+      "chunk_gripper_mse_mean": 7.036002009544714e-06,
+      "chunk_gripper_mse_max": 0.00011657876893877983
+    },
+    {
+      "episode": 73,
+      "condition": "attention_plus_complete_ffn",
+      "success": true,
+      "steps": 176,
+      "final_drawer": 0.961384543773206,
+      "chunks": 22,
+      "chunk_mse_clean_mean": 0.00010243820443892301,
+      "chunk_mse_clean_max": 0.0003774493234232068,
+      "chunk_cos_clean_mean": 0.9997878751971505,
+      "chunk_cos_clean_min": 0.9991210699081421,
+      "chunk_gripper_mse_mean": 2.6834457137167337e-05,
+      "chunk_gripper_mse_max": 0.0005097000394016504
+    }
+  ],
+  "findings": [
+    "At action-chunk level, layer11 attention replacement is the strongest single write path and nearly recovers the full-block clean action.",
+    "Complete FFN replacement alone is substantially weaker; all-channel mlp.act replacement therefore cannot be treated as evidence against the complete FFN branch.",
+    "Attention-only is not stable across closed-loop episodes: it succeeds on ep73 but fails on ep64 and then accumulates action and gripper error.",
+    "Attention plus complete FFN restores closed-loop success on both ep64 and ep73 with near-full-block action MSE and cosine.",
+    "The layer11 full-block positive control remains valid: replacing the complete output is sufficient and all-12-block replacement cannot add independent evidence because layer11 is the final visual block."
+  ],
+  "interpretation": {
+    "primary_bottleneck": "layer11 attention write path",
+    "required_joint_path_for_tested_closed_loop": "layer11 attention plus complete FFN",
+    "ffn_only": "insufficient",
+    "attention_only": "near-sufficient at initial action level but not repeatable enough in closed loop",
+    "deployable_gate": false,
+    "method_effect_established": false
+  },
+  "next_validation": [
+    "Decompose layer11 attention into attention heads or qkv/value/projection writes.",
+    "Measure the post-attention residual and the first divergence in ep64 attention-only closed loop.",
+    "Test only the best one or two attention-path conditions in closed loop before considering any deployable residual or block correction."
+  ]
+}

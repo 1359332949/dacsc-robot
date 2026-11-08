@@ -15,7 +15,9 @@ CoRP-RoboCasa and FFN-analysis pipeline.
 | `ffn_action_intervention_20261108.json` | Held-out action-chunk and closed-loop diagnostics for layer0/layer11 FFN interventions |
 | `full_layer11_replacement_20261108.json` | Privileged all-channel layer11 FFN replacement closed-loop control |
 | `full_block_replacement_20261108.json` | Privileged complete layer11 block replacement positive control |
+| `layer11_branch_decomposition_20261108.json` | Privileged layer11 attention/FFN decomposition action-chunk table and attention-path closed-loop validation |
 | `pretrain/` | RoboCasa dataset coverage and split audit |
 
-These receipts are point-in-time local evidence. They do not establish CUDA,
-BF16, real-video, MuJoCo, closed-loop success, or method effectiveness.
+These receipts are point-in-time evidence under the stated local or target-server
+scope. Privileged clean-reference diagnostics do not establish a deployable
+method or method effectiveness.

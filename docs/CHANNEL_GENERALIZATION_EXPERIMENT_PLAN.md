@@ -348,6 +348,49 @@ ep73 layer11 block replace: success@172, drawer=0.980
 resampler/DiT 在输入完整 clean block output 时均可恢复。下一步应分解 attention
 branch、post-attention residual 和 complete FFN branch，寻找最小必要替换集合。
 
+随后完成 layer11 block 内分解。先通过三项 sanity check：
+
+```text
+no-op action MSE to jitter = 0
+clean-y action MSE to clean = 0
+clean-x 重算 y 与 captured clean y 的 MSE = 0
+```
+
+再在同一 ep64/73 初始 state 上比较完整 attention branch、complete FFN branch、
+attention+FFN 和 clean input。初始 action chunk 结果：
+
+| condition | ep64 MSE→clean | ep73 MSE→clean |
+| --- | ---: | ---: |
+| noop (jitter) | 0.106234 | 0.185025 |
+| attention | **0.000782** | **0.001701** |
+| complete FFN | 0.014940 | 0.037296 |
+| attention+FFN | 0.000797 | **0.000367** |
+| clean-y / clean-x | 0 | 0 |
+
+attention 是最强的单一写入路径；complete FFN 单独明显更弱。进一步做 300 步闭环：
+
+```text
+ep64 attention only:        fail@300, drawer=0.000184
+ep73 attention only:        success@175, drawer=0.974588
+ep64 attention+FFN:         success@173, drawer=0.960174
+ep73 attention+FFN:         success@176, drawer=0.961385
+```
+
+attention-only 在 ep73 已足以成功，但 ep64 的逐 chunk action MSE 和 gripper error
+随后累积，说明它不是跨 episode 稳定充分条件。attention+complete FFN 在两个
+episode 上都恢复到接近 full-block 的逐 chunk 误差并闭环成功。当前证据支持：
+
+```text
+layer11 attention 是主要写入路径；
+完整 FFN 单独不足；
+attention 与 complete FFN 的联合路径是已测闭环中的稳定充分条件。
+```
+
+这仍是读取同状态 clean reference 的特权机制诊断，不是可部署 gate，也不能据此
+训练新模型。下一步应只分解 attention 内部路径（heads、qkv/value/projection、
+attention output 和 post-attention residual），并优先解释 ep64 attention-only 的
+首个闭环分叉，而不是继续扫描 FFN channels。
+
 ### E3：候选单元选择
 
 候选选择必须在 source 校准集完成，不能在同一批 episode 上选择并证明。
