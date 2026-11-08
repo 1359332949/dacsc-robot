@@ -97,6 +97,8 @@
       "training_initial_policy_sweep_successes": 4,
       "training_initial_policy_sweep_episodes": 5,
       "environment_reset_seen_smoke": "0/5",
+      "source_holdout_policy_sweep_successes": 0,
+      "source_holdout_policy_sweep_episodes": 4,
       "reset_trace_failure_stage": "before_grasp",
       "reset_trace_gripper_close_steps": 0,
       "training_trace_success_steps": 164,
