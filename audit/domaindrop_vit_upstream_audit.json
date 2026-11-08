@@ -48,7 +48,8 @@
     "block output channels are 384-dimensional embedding channels, not 1536-dimensional FFN neurons",
     "dual classification KL is adapted to paired flow-velocity MSE using identical flow eps and tau",
     "four evenly spaced ViT blocks 2,5,8,11 are used as a depth mapping of the four ResNet stages",
-    "all pilot conditions use deterministic style-balanced batches with 12 styles and 4 samples per style per batch"
+    "all pilot conditions use deterministic style-balanced batches with 12 styles and 4 samples per style per batch",
+    "the pretrained backbone uses lr 1e-5 while the randomly initialized domain discriminators use a separate lr 1e-3 parameter group"
   ],
   "matched_random_control": {
     "same_discriminator": true,

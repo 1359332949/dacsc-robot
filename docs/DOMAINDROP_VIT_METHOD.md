@@ -191,6 +191,7 @@ batch size: 48 (logical batch; channel methods use two copies)
 samples per native style per batch: 4
 styles per batch: 12
 lr: 1e-5
+domain discriminator lr: 1e-3
 seed: 42
 eval shift: color_jitter
 ```
@@ -199,6 +200,11 @@ eval shift: color_jitter
 这是为了满足 domain discriminator 的多域监督前提：40 个 style 在一个普通随机 batch 中
 通常每个只有约 2 个样本，无法稳定比较 domain-wise 行为。三个条件必须共用同一个
 balanced sampler；它改变的是训练 batch 组成，不是通道方法本身。
+
+主模型从 30k checkpoint 微调，因此 backbone 使用 `1e-5`；domain discriminator 是随机
+初始化且只有一层，继续使用 `1e-5` 在 100-step 诊断中无法有效学习。pilot 给随机 head
+单独的 `1e-3` 参数组。这是 fine-tuning 适配，不是官方“所有参数同 LR”的复现；
+两组 LR 都写入 training origin 和 checkpoint。
 
 三个条件：
 

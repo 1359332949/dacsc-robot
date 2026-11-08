@@ -669,6 +669,12 @@ def main() -> int:
     )
     ap.add_argument("--domain-loss-weight", type=float, default=1.0)
     ap.add_argument("--domain-grl-lambda", type=float, default=0.25)
+    ap.add_argument(
+        "--domain-head-lr",
+        type=float,
+        default=1e-3,
+        help="Separate LR for randomly initialized domain discriminators",
+    )
     args = ap.parse_args()
     if args.steps <= 0 or args.eval_every <= 0 or args.save_every < 0:
         ap.error("steps/eval-every must be positive and save-every nonnegative")
@@ -707,6 +713,8 @@ def main() -> int:
         or args.max_tasks < 0
         or not math.isfinite(args.lr)
         or args.lr <= 0
+        or not math.isfinite(args.domain_head_lr)
+        or args.domain_head_lr <= 0
         or not math.isfinite(args.task_aux_lambda)
         or args.task_aux_lambda < 0
         or args.task_aux_depth < 0
@@ -741,6 +749,7 @@ def run(args, out: Path) -> int:
     channel_consistency_weight = getattr(args, "channel_consistency_weight", 1.5)
     domain_loss_weight = getattr(args, "domain_loss_weight", 1.0)
     domain_grl_lambda = getattr(args, "domain_grl_lambda", 0.25)
+    domain_head_lr = getattr(args, "domain_head_lr", 1e-3)
     upstream = verify_upstream()
     set_seed(args.seed)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -903,6 +912,7 @@ def run(args, out: Path) -> int:
             "channel_consistency_weight",
             "domain_loss_weight",
             "domain_grl_lambda",
+            "domain_head_lr",
         }
         for key, value in vars(args).items():
             if isinstance(value, Path):
@@ -991,16 +1001,32 @@ def run(args, out: Path) -> int:
         if channel_config.method == "none"
         else ChannelDropoutController(model, channel_config, style_to_id).train()
     )
-    params = [p for p in model.parameters() if p.requires_grad]
+    model_params = [p for p in model.parameters() if p.requires_grad]
+    params = list(model_params)
+    param_groups = [{"params": model_params, "lr": args.lr}]
     if controller is not None:
-        params.extend(controller.parameters())
-    opt = torch.optim.AdamW(params, lr=args.lr, weight_decay=1e-4, betas=(0.9, 0.95))
+        controller_params = list(controller.parameters())
+        params.extend(controller_params)
+        param_groups.append({"params": controller_params, "lr": domain_head_lr})
+    opt = torch.optim.AdamW(
+        param_groups,
+        lr=args.lr,
+        weight_decay=1e-4,
+        betas=(0.9, 0.95),
+    )
     warmup_steps = max(1, args.steps // 10)
     optimization_recipe = {
         "optimizer": "torch.optim.AdamW",
         "betas": opt.defaults["betas"],
         "eps": opt.defaults["eps"],
         "weight_decay": opt.defaults["weight_decay"],
+        "domain_head_lr": domain_head_lr if controller is not None else None,
+        "domain_head_lr_provenance": (
+            "pretrained backbone uses the run LR; the randomly initialized "
+            "domain discriminator uses a separate higher LR"
+            if controller is not None
+            else None
+        ),
         "scheduler": "torch.optim.lr_scheduler.LambdaLR: linear warmup then constant",
         "warmup_steps": warmup_steps,
         "provenance": "explicit project adaptation; not an official CoRP training recipe",
