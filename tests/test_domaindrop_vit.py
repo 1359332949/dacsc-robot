@@ -169,6 +169,7 @@ class DomainDropVITTest(unittest.TestCase):
         self.assertEqual(len(controller.domain_logits), 1)
         self.assertIsNotNone(diagnostics["domain_accuracy"])
         self.assertIsNotNone(diagnostics["domain_balanced_accuracy"])
+        self.assertEqual(diagnostics["domain_layers"][0]["layer"], 0)
         self.assertEqual(diagnostics["active_layer"], 0)
         self.assertEqual(len(diagnostics["mask_events"]), 1)
         self.assertAlmostEqual(

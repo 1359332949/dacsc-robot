@@ -370,6 +370,7 @@ class ChannelDropoutController:
             "mask_events": [],
             "domain_accuracy": None,
             "domain_balanced_accuracy": None,
+            "domain_layers": [],
             "domain_per_style_recall": {},
             "domain_top_confusions": [],
         }
@@ -397,28 +398,50 @@ class ChannelDropoutController:
         if not self._domain_logits or self._style_labels is None:
             return payload
 
-        logits = torch.stack(
-            [layer_logits.detach() for _, layer_logits in self._domain_logits],
-            dim=0,
-        ).mean(dim=0)
         labels = self._style_labels.detach()
-        predictions = logits.argmax(dim=1)
-        correct = predictions.eq(labels)
-        payload["domain_accuracy"] = float(correct.float().mean())
-
-        recalls = {}
-        for class_id in labels.unique(sorted=True).tolist():
-            class_mask = labels.eq(class_id)
-            recalls[str(class_id)] = float(correct[class_mask].float().mean())
-        payload["domain_per_style_recall"] = recalls
-        if recalls:
-            payload["domain_balanced_accuracy"] = sum(recalls.values()) / len(recalls)
-
         num_domains = self.num_domains
-        confusion = torch.bincount(
-            labels * num_domains + predictions,
-            minlength=num_domains * num_domains,
-        ).reshape(num_domains, num_domains)
+        layer_metrics = []
+        all_predictions = []
+        all_accuracies = []
+        all_balanced_accuracies = []
+        for layer, layer_logits in self._domain_logits:
+            predictions = layer_logits.detach().argmax(dim=1)
+            correct = predictions.eq(labels)
+            recalls = {}
+            for class_id in labels.unique(sorted=True).tolist():
+                class_mask = labels.eq(class_id)
+                recalls[str(class_id)] = float(correct[class_mask].float().mean())
+            balanced = sum(recalls.values()) / len(recalls)
+            accuracy = float(correct.float().mean())
+            layer_metrics.append(
+                {
+                    "layer": layer,
+                    "accuracy": accuracy,
+                    "balanced_accuracy": balanced,
+                    "per_style_recall": recalls,
+                }
+            )
+            all_predictions.append(predictions)
+            all_accuracies.append(accuracy)
+            all_balanced_accuracies.append(balanced)
+        payload["domain_layers"] = layer_metrics
+        payload["domain_accuracy"] = sum(all_accuracies) / len(all_accuracies)
+        payload["domain_balanced_accuracy"] = sum(all_balanced_accuracies) / len(
+            all_balanced_accuracies
+        )
+        payload["domain_per_style_recall"] = {
+            str(metrics["layer"]): metrics["per_style_recall"]
+            for metrics in layer_metrics
+        }
+
+        confusion = torch.zeros(
+            (num_domains, num_domains), dtype=torch.long, device=labels.device
+        )
+        for predictions in all_predictions:
+            confusion += torch.bincount(
+                labels * num_domains + predictions,
+                minlength=num_domains * num_domains,
+            ).reshape(num_domains, num_domains)
         off_diagonal = confusion.clone()
         off_diagonal.fill_diagonal_(0)
         values, indices = off_diagonal.flatten().topk(
