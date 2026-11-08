@@ -99,6 +99,8 @@
       "environment_reset_seen_smoke": "0/5",
       "source_holdout_policy_sweep_successes": 0,
       "source_holdout_policy_sweep_episodes": 4,
+      "base_only_reset_scene_train_base": "fail_within_300",
+      "base_only_train_scene_reset_base": "fail_within_300",
       "reset_trace_failure_stage": "before_grasp",
       "reset_trace_gripper_close_steps": 0,
       "training_trace_success_steps": 164,
