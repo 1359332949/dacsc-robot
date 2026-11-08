@@ -1,0 +1,156 @@
+{
+  "schema": "dacsc_layer11_residual_drift_audit_v1",
+  "generated_at": "2026-11-08T23:42:00+08:00",
+  "source_code_commit": "907e855a836edf25e7b3b649aa2e3681c4785110",
+  "scope": {
+    "task": "OpenDrawer",
+    "episodes": [
+      10,
+      50
+    ],
+    "frames": [
+      0,
+      16,
+      32
+    ],
+    "comparison": "clean vs deterministic color_jitter at the same restored simulator state",
+    "layers": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "views": [
+      "robot0_agentview_left",
+      "robot0_eye_in_hand",
+      "robot0_agentview_right"
+    ],
+    "tokens": [
+      "cls",
+      "patch"
+    ],
+    "tensors": [
+      "block input residual",
+      "block output"
+    ],
+    "read_only": true,
+    "action_rollout": false,
+    "checkpoint_sha256": "50d04668de4f5871f32631323796a24eec1641106a24a27c042f01dfb10d74d5"
+  },
+  "source_receipts": {
+    "script": "/hy-tmp/dacsc-robot/scripts/analyze_layer11_residual_drift.py",
+    "script_sha256": "3d38ba11edbf8e518f768a35c0bb108775d8eb529b37c4ddbe41d61f86005efc",
+    "result": "/hy-tmp/validation/layer11_residual_drift.json",
+    "result_sha256": "0e9c7ffa3a1f5ca8bfedce2caa830af281ce338fc0f99f0780c61514309fbb33",
+    "log": "/hy-tmp/validation/layer11_residual_drift.log",
+    "log_sha256": "663774521b921e3e95771ee033d7c8a2414ddf5cfd5ecfabf794b2c64b12014a",
+    "observations": 6,
+    "aggregate_records": 144
+  },
+  "input_patch_residual_drift": [
+    {
+      "layer": 0,
+      "view": "robot0_agentview_left",
+      "mean_relative_rms_diff": 1.3614,
+      "mean_cosine": 0.7635
+    },
+    {
+      "layer": 0,
+      "view": "robot0_eye_in_hand",
+      "mean_relative_rms_diff": 1.2812,
+      "mean_cosine": 0.8043
+    },
+    {
+      "layer": 0,
+      "view": "robot0_agentview_right",
+      "mean_relative_rms_diff": 1.434,
+      "mean_cosine": 0.7442
+    },
+    {
+      "layer": 11,
+      "view": "robot0_agentview_left",
+      "mean_relative_rms_diff": 0.8799,
+      "mean_cosine": 0.5989
+    },
+    {
+      "layer": 11,
+      "view": "robot0_eye_in_hand",
+      "mean_relative_rms_diff": 0.8787,
+      "mean_cosine": 0.5758
+    },
+    {
+      "layer": 11,
+      "view": "robot0_agentview_right",
+      "mean_relative_rms_diff": 0.8683,
+      "mean_cosine": 0.6115
+    }
+  ],
+  "layer11_output_patch_drift": [
+    {
+      "view": "robot0_agentview_left",
+      "mean_relative_rms_diff": 0.9555,
+      "mean_cosine": 0.4079
+    },
+    {
+      "view": "robot0_eye_in_hand",
+      "mean_relative_rms_diff": 0.9414,
+      "mean_cosine": 0.4345
+    },
+    {
+      "view": "robot0_agentview_right",
+      "mean_relative_rms_diff": 0.9015,
+      "mean_cosine": 0.4954
+    }
+  ],
+  "cls_vs_patch": {
+    "layer11_input_cls_cosine": {
+      "robot0_agentview_left": 0.6043,
+      "robot0_eye_in_hand": 0.5814,
+      "robot0_agentview_right": 0.6167
+    },
+    "layer11_input_patch_cosine": {
+      "robot0_agentview_left": 0.5989,
+      "robot0_eye_in_hand": 0.5758,
+      "robot0_agentview_right": 0.6115
+    },
+    "conclusion": "CLS and patch tokens show nearly the same divergence; the drift is not isolated to a token subset."
+  },
+  "findings": [
+    "The earliest observed residual representation is already strongly different: layer0 patch-input relative RMS is 1.28-1.43 and cosine is 0.74-0.80.",
+    "There is no later onset layer. The relative RMS difference decreases modestly with depth, while cosine continues to worsen.",
+    "By layer11 input, patch cosine is about 0.576-0.612; by layer11 output it is about 0.408-0.495.",
+    "CLS and patch tokens show nearly the same drift, so the result is not evidence for a CLS- or patch-specific correction.",
+    "No single camera is consistently most affected across episodes and frames; view ordering changes, so the failure is not attributable to one camera path.",
+    "The residual difference is distributed from the earliest image embedding through the full 12-block visual encoder.",
+    "This explains why a layer11 attention/FFN write correction or a layer11 residual-only correction is insufficient: both act after a distributed appearance-driven residual path has already formed.",
+    "The analysis is descriptive. It does not establish which individual channels or attention heads cause the drift."
+  ],
+  "interpretation": {
+    "drift_onset": "earliest_observed_layer_0",
+    "single_later_residual_layer": false,
+    "single_token_group": false,
+    "stable_camera_specific_path": false,
+    "layer11_single_site_correction_supported": false,
+    "attention_head_or_ffn_channel_scan_authorized": false,
+    "training_or_gate_authorized": false
+  },
+  "limitations": [
+    "Only ep10 and ep50 and fixed frames 0, 16, 32 were analyzed.",
+    "The result stores layer statistics and per-observation metrics, not full activation snapshots.",
+    "The analysis establishes distributed divergence, not the causally minimal subset of channels or heads."
+  ],
+  "next_validation": [
+    "Before designing any correction, run a small fixed dose-response of the same deterministic color_jitter stress on ep10/ep50 to test whether action error and layerwise residual drift vary monotonically with intensity.",
+    "If drift and action degradation are not monotonic, do not pursue a single layer11 gate or channel intervention.",
+    "If they are monotonic, the evidence points toward input-level or multi-layer appearance robustness, not a single attention-head/FFN-channel fix.",
+    "Do not start head scans, FFN channel scans, gate training, or retraining from this evidence."
+  ]
+}

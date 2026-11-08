@@ -484,6 +484,30 @@ MSE = 0, max_abs = 0
 `x_clean` 从哪一个更早 block 开始显著分离；在 residual 来源定位前，不开始
 attention-head、FFN-channel、gate 或训练实验。
 
+#### Layer0–11 Residual Drift（2026-11-08）
+
+对 ep10/ep50 的官方 state frame `0/16/32` 做 clean vs `color_jitter` 的只读
+layer0–11 分析，共 6 个同状态观测。每个观测记录 3 视角、CLS/patch、block
+输入 residual 和 block output 的 relative RMS difference 与 cosine。
+
+结果没有出现某个中后层的突然 onset：
+
+| 位置 | patch relative RMS | patch cosine |
+| --- | ---: | ---: |
+| layer0 input | 1.28–1.43 | 0.74–0.80 |
+| layer11 input | 0.87–0.88 | 0.58–0.61 |
+| layer11 output | 0.90–0.96 | 0.41–0.50 |
+
+CLS 与 patch 的变化幅度接近；不同 episode/frame 下最敏感视角也不固定。因此当前
+不是“某一层 image token 或某一相机路径单独出错”，而是从最早图像 embedding 开始就存在的
+分布式外观漂移，并在 12 个 block 中持续改变表示方向。
+
+这解释了为什么 layer11 attention/FFN 写入修正或 residual-only 修正都不够：两者都在
+分布式漂移已经形成之后才介入。当前不能据此授权 attention-head/FFN-channel 扫描、
+gate 或训练。下一轮只应做预注册的 photometric dose-response，检查 residual drift 与
+动作误差是否随扰动强度单调变化；若不单调，则停止单层 gate 路线，转向输入级/多层
+外观鲁棒性。
+
 ### E3：候选单元选择
 
 候选选择必须在 source 校准集完成，不能在同一批 episode 上选择并证明。

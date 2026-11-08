@@ -195,5 +195,9 @@
     "Identify the earliest layer where x_jitter and x_clean diverge materially and whether that divergence is view- or token-specific.",
     "Only after the residual source is localized should a multi-layer or residual-stream correction be designed.",
     "Do not start attention-head, FFN-channel, gate, or training experiments from the current evidence."
-  ]
+  ],
+  "residual_drift_follow_up": {
+    "receipt": "audit/layer11_residual_drift_20261108.json",
+    "result": "drift is already present at layer0 and grows in angular difference through layer11; no single later onset layer"
+  }
 }

@@ -1,14 +1,14 @@
 {
   "schema": "dacsc_current_validation_v2",
-  "generated_at": "2026-11-08T22:50:20+08:00",
-  "validated_code_commit": "e57952e4da60627396ccd34ecb56f16afc48a30d",
+  "generated_at": "2026-11-08T23:43:07+08:00",
+  "validated_code_commit": "907e855a836edf25e7b3b649aa2e3681c4785110",
   "working_tree_modified_at_test": true,
   "working_tree_modified_scope_at_test": "documentation and audit files only; executable source unchanged from validated_code_commit",
   "python": "3.11.15",
   "platform": "macOS arm64",
-  "source_tree_sha256": "8855adcad6677d7a13b06c6dd2f65125c0f2546b0629fdfe9d67b6451d439185",
+  "source_tree_sha256": "b7e652bf5e53f775cb976e93eb5cd4d2c75d4f2923f513c5d27c380f7b96c87a",
   "source_tree_sha256_scope": "all tracked plus non-ignored untracked project files excluding audit/; path, byte length and content are hashed",
-  "source_file_count": 81,
+  "source_file_count": 82,
   "checks": {
     "unittest": {
       "command": "PYTHONPATH=tests .venv/bin/python -m unittest discover -s tests -v",
@@ -319,6 +319,54 @@
       "residual_hook_sanity_max_abs": 0.0,
       "block_output_exact_clean_actions": true,
       "result": "FULL_LAYER11_COMPOSITION_SUFFICIENT; SINGLE_BRANCH_OR_RESIDUAL_CORRECTION_INSUFFICIENT; PRIVILEGED_ONLY"
+    },
+    "layer11_residual_drift": {
+      "receipt": "audit/layer11_residual_drift_20261108.json",
+      "episodes": [
+        10,
+        50
+      ],
+      "frames": [
+        0,
+        16,
+        32
+      ],
+      "observations": 6,
+      "aggregate_records": 144,
+      "layer0_input_patch": {
+        "relative_rms_range": [
+          1.2812,
+          1.434
+        ],
+        "cosine_range": [
+          0.7442,
+          0.8043
+        ]
+      },
+      "layer11_input_patch": {
+        "relative_rms_range": [
+          0.8683,
+          0.8799
+        ],
+        "cosine_range": [
+          0.5758,
+          0.6115
+        ]
+      },
+      "layer11_output_patch": {
+        "relative_rms_range": [
+          0.9015,
+          0.9555
+        ],
+        "cosine_range": [
+          0.4079,
+          0.4954
+        ]
+      },
+      "drift_onset": "earliest_observed_layer_0",
+      "cls_patch_consistent": true,
+      "stable_camera_specific_path": false,
+      "result": "DISTRIBUTED_APPEARANCE_DRIFT; NO_SINGLE_LATER_ONSET; SINGLE_LAYER11_CORRECTION_NOT_SUPPORTED"
     }
   },
   "receipt_note": "The validated code is the recorded commit. This receipt is committed afterward; the source-tree hash intentionally excludes this file so later receipt-only commits do not invalidate the tested code identity.",
@@ -329,7 +377,7 @@
     "FFN intervention efficacy",
     "deployable appearance-robust intervention",
     "stable layer11 attention-path mechanism across the fixed candidate pool",
-    "layer-wise residual drift localization between x_jitter and x_clean",
+    "photometric dose-response linking layerwise residual drift to action error",
     "stable deployable correction derived from the layer11 composition diagnostic"
   ]
 }
