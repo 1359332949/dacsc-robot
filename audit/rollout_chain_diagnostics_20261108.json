@@ -45,6 +45,44 @@
     "result_path": "/hy-tmp/validation/policy_open_drawer_ep26.json",
     "result": "PASS"
   },
+  "training_initial_policy_sweep": {
+    "layout": 31,
+    "results": [
+      {
+        "episode": 24,
+        "style": 20,
+        "success": true,
+        "steps": 151
+      },
+      {
+        "episode": 28,
+        "style": 36,
+        "success": true,
+        "steps": 191
+      },
+      {
+        "episode": 46,
+        "style": 48,
+        "success": false,
+        "steps": 750
+      },
+      {
+        "episode": 64,
+        "style": 47,
+        "success": true,
+        "steps": 173
+      },
+      {
+        "episode": 73,
+        "style": 48,
+        "success": true,
+        "steps": 170
+      }
+    ],
+    "successes": 4,
+    "episodes": 5,
+    "result_path": "/hy-tmp/validation/policy_layout31_train_inits.json"
+  },
   "seen_smoke_with_environment_reset": {
     "run": "/hy-tmp/eval/v10_gate_open_drawer_seen_l31_s12",
     "episodes": 5,
@@ -52,5 +90,5 @@
     "all_steps": 750,
     "result": "FAIL"
   },
-  "conclusion": "The model, action ordering, state input, camera orientation and success check can succeed on a supported training initial state. The remaining discrepancy is the initial-state distribution produced by the evaluation environment reset, not evidence that the policy cannot perform the task."
+  "conclusion": "The model, action ordering, state input, camera orientation and success check can succeed on supported training initial states; 4 of 5 layout31 training initial states succeeded. The remaining discrepancy is primarily the initial-state distribution produced by the evaluation environment reset, with some additional policy sensitivity to individual starting states."
 }

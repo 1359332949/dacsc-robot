@@ -94,6 +94,8 @@
       "official_action_replay_steps": 155,
       "policy_training_initial_state_success": true,
       "policy_training_initial_state_steps": 176,
+      "training_initial_policy_sweep_successes": 4,
+      "training_initial_policy_sweep_episodes": 5,
       "environment_reset_seen_smoke": "0/5"
     }
   },
