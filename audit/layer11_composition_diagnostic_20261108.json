@@ -1,0 +1,199 @@
+{
+  "schema": "dacsc_layer11_composition_diagnostic_audit_v1",
+  "generated_at": "2026-11-08T22:49:31+08:00",
+  "source_code_commit": "e57952e4da60627396ccd34ecb56f16afc48a30d",
+  "scope": {
+    "task": "OpenDrawer",
+    "episodes": [
+      10,
+      50
+    ],
+    "initial_state": "official training episode extras/episode_*/states.npz frame0",
+    "action_steps": 8,
+    "max_steps": 300,
+    "checkpoint": "/hy-tmp/runs/v10_baseline_30k_oss_cache4_f2/model.pt",
+    "checkpoint_sha256": "50d04668de4f5871f32631323796a24eec1641106a24a27c042f01dfb10d74d5",
+    "clean_reference_is_privileged": true,
+    "deployable_method": false
+  },
+  "source_receipts": {
+    "accumulation_script": {
+      "path": "/hy-tmp/dacsc-robot/scripts/diagnose_layer11_accumulation.py",
+      "sha256": "4193a811a0e1860bbbea6f15deef32c7633601c396310b33b213a318c5706a70"
+    },
+    "ep10_partial_result": {
+      "path": "/hy-tmp/validation/layer11_accumulation_diagnostic.json",
+      "sha256": "649d8aa9958ebb3050a40142d8607becf05394d1270d73086403f8ace3610894",
+      "log": "/hy-tmp/validation/layer11_accumulation_diagnostic.log",
+      "log_sha256": "05236e958c3ede9a5fe4bcc71c406c5c004e3893be0b4da29c9fe5f78bccd7f0"
+    },
+    "ep50_result": {
+      "path": "/hy-tmp/validation/layer11_accumulation_ep50.json",
+      "sha256": "0f66757024a6c39f79ddaf340d1c708a2d7b1182e20bf8aa5c536737cccae048",
+      "log": "/hy-tmp/validation/layer11_accumulation_ep50.log",
+      "log_sha256": "e59da1e673589232ff8ce7ea1197e37b57e9900a69d5c5552b39c3bb7b8dd741",
+      "actions": "/hy-tmp/validation/layer11_accumulation_ep50_actions.npz",
+      "actions_sha256": "8ae95944e82a89a6e9b0ddfaad7399ba9d7169851edfac475ec8e9701e4d8971"
+    },
+    "residual_script": {
+      "path": "/hy-tmp/dacsc-robot/scripts/diagnose_layer11_residual.py",
+      "sha256": "2a6a2b26578f8d7e29ec06951bf42aa53a510c8e70cdb8946a23a5f5cd659e9b"
+    },
+    "residual_result": {
+      "path": "/hy-tmp/validation/layer11_residual_diagnostic.json",
+      "sha256": "a097e87a99bf66c20471ac8a94c7d255f1bda3124e6c9f20e09dc0bbfdad1380",
+      "log": "/hy-tmp/validation/layer11_residual_diagnostic.log",
+      "log_sha256": "a5492ce4661916e0371002a3425ee97242ad3230834d411eaa19eb9d07696e49",
+      "actions": "/hy-tmp/validation/layer11_residual_actions.npz",
+      "actions_sha256": "9e51afe75de79558c17d435f364a8d3fe18018e070e10365618ed5792cff78a6"
+    }
+  },
+  "composition_definition": {
+    "x": "layer11 residual input",
+    "a": "ls1(attn(norm1(x)))",
+    "f": "ls2(mlp(norm2(x + a)))",
+    "y": "x + a + f",
+    "attention_ffn": "x_jitter + a_clean + f_clean",
+    "residual_clean": "x_clean + a_jitter + f_jitter",
+    "full_block": "x_clean + a_clean + f_clean"
+  },
+  "sanity": {
+    "residual_hook_noop_episode": 10,
+    "x_jitter_plus_jitter_branches_vs_captured_jitter_output_mse": 0.0,
+    "max_abs": 0.0,
+    "shape": [
+      3,
+      257,
+      384
+    ],
+    "block_output_vs_clean_actions_ep50_exact": true,
+    "block_output_vs_clean_actions_ep50_max_abs": 0.0
+  },
+  "results": [
+    {
+      "episode": 10,
+      "style": 15,
+      "layout": 49,
+      "target_drawer": "stack_15_front_group_1_2",
+      "clean": {
+        "success": true,
+        "steps": 228,
+        "drawer": 0.978839
+      },
+      "attention_ffn": {
+        "success": false,
+        "steps": 300,
+        "drawer": 0.0,
+        "mse_clean_mean": 0.001007266337853109,
+        "mse_clean_max": 0.025454355403780937,
+        "groups_mse_clean_mean": {
+          "position": 0.001287064809251828,
+          "rotation": 7.67680840477911e-05,
+          "gripper": 0.007994249850808263,
+          "base": 2.90211728332978e-07,
+          "control": 2.857772398372716e-07
+        },
+        "eef_divergence_ge_1cm_chunk": 2,
+        "eef_divergence_ge_5cm_chunk": 21,
+        "final_eef_distance": 0.3211
+      },
+      "residual_clean": {
+        "success": false,
+        "steps": 300,
+        "drawer": 0.0,
+        "mse_clean_mean": 0.007075859206646006,
+        "mse_clean_max": 0.0378017835319042,
+        "groups_mse_clean_mean": {
+          "position": 0.02258590554610189,
+          "rotation": 0.002518343543526594,
+          "gripper": 0.009597003921642585,
+          "base": 1.363718904725063e-06,
+          "control": 2.775624589676945e-06
+        }
+      },
+      "full_block": {
+        "success": true,
+        "steps": 228,
+        "drawer": 0.978839,
+        "mse_clean_mean": 0.0,
+        "mse_clean_max": 0.0
+      }
+    },
+    {
+      "episode": 50,
+      "style": 13,
+      "layout": 51,
+      "target_drawer": "stack_11_island_group_1_2",
+      "clean": {
+        "success": true,
+        "steps": 183,
+        "drawer": 0.972646
+      },
+      "attention_ffn": {
+        "success": false,
+        "steps": 300,
+        "drawer": 0.000176,
+        "mse_clean_mean": 0.0007508304686205903,
+        "mse_clean_max": 0.010366631671786308,
+        "groups_mse_clean_mean": {
+          "position": 0.00179917,
+          "rotation": 0.00017347,
+          "gripper": 0.00309005,
+          "base": 3.9e-07,
+          "control": 4.3e-07
+        },
+        "eef_divergence_ge_1cm_chunk": 3,
+        "eef_divergence_ge_5cm_chunk": 9,
+        "final_eef_distance": 0.3351427
+      },
+      "residual_clean": {
+        "success": false,
+        "steps": 300,
+        "drawer": 0.000113,
+        "mse_clean_mean": 0.0843222444301695,
+        "mse_clean_max": 0.3664965,
+        "groups_mse_clean_mean": {
+          "position": 0.08087618104917438,
+          "rotation": 0.003611010035934956,
+          "gripper": 0.7583726391932798,
+          "base": 4.078944192841798e-06,
+          "control": 8.409584842483079e-06
+        }
+      },
+      "full_block": {
+        "success": true,
+        "steps": 183,
+        "drawer": 0.972646,
+        "mse_clean_mean": 0.0,
+        "mse_clean_max": 0.0
+      }
+    }
+  ],
+  "findings": [
+    "Replacing attention and complete FFN writes while retaining the jitter residual gives near-clean action chunks but fails closed loop on both ep10 and ep50.",
+    "Replacing only the residual input while retaining jitter attention/FFN writes fails strongly on both episodes; the ep50 action error is much larger than the attention+FFN condition.",
+    "Replacing the complete clean layer11 block output makes ep10 and ep50 exactly match clean actions and success steps.",
+    "The residual-only no-op reconstruction test is exact, so the residual-condition result is not caused by an incorrectly wired hook.",
+    "The minimal sufficient condition observed so far is the complete layer11 clean composition; neither the branch-write correction nor the residual correction is individually sufficient.",
+    "The attention/FFN writes dominate the near-clean action-chunk approximation, while the residual difference controls whether that near-clean action remains closed-loop stable.",
+    "These are privileged clean-reference diagnostics and do not establish a deployable gate, correction, or method."
+  ],
+  "known_receipt_issue": {
+    "episode": 10,
+    "description": "The first diagnostic revision overwrote the per-chunk list with a chunk count during final summarization. The three rollout outcomes and aggregate group errors were already persisted; ep10 per-chunk trajectories and raw action arrays were not. The run logic was unchanged in the corrected revision, and ep50 was run with the corrected revision. No numeric result was fabricated or rerun to conceal this issue."
+  },
+  "interpretation": {
+    "single_branch_write_correction": "insufficient",
+    "single_residual_correction": "insufficient",
+    "full_block_composition": "sufficient in the tested episodes",
+    "stable_deployable_method": false,
+    "attention_head_scan_authorized": false,
+    "gate_or_training_authorized": false
+  },
+  "next_validation": [
+    "Perform a read-only layer-wise residual drift analysis from block0 through block11 on the same ep10/ep50 observations.",
+    "Identify the earliest layer where x_jitter and x_clean diverge materially and whether that divergence is view- or token-specific.",
+    "Only after the residual source is localized should a multi-layer or residual-stream correction be designed.",
+    "Do not start attention-head, FFN-channel, gate, or training experiments from the current evidence."
+  ]
+}

@@ -381,6 +381,10 @@
     "stable_method_established": false,
     "gate_or_training_authorized": false
   },
+  "composition_follow_up": {
+    "receipt": "audit/layer11_composition_diagnostic_20261108.json",
+    "result": "attention_ffn and residual-only are each insufficient on ep10/ep50; full clean layer11 block output is sufficient"
+  },
   "next_validation": [
     "Do not start attention-head or channel scanning before explaining the near-zero action-error failures.",
     "For ep10 and ep50, compare clean and intervention trajectories chunk by chunk to identify the first critical gripper/contact transition and per-action-group errors.",

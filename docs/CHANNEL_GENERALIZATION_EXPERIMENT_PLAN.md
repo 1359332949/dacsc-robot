@@ -442,6 +442,48 @@ MSE 已很低，却分别在第 2/5 个 chunk 就出现 eef ≥1 cm 分叉，最
 逐动作组对照，定位第一个 gripper/contact 分叉；在排除这种闭环累积解释前，不继续
 分解 attention heads。
 
+#### Layer11 组合必要性诊断（2026-11-08）
+
+对 ep10/ep50 固定初始 state 做了三路特权对照：
+
+```text
+A = x_jitter + a_clean + f_clean   # attention+complete FFN
+B = x_clean  + a_jitter + f_jitter # residual-only
+C = x_clean  + a_clean + f_clean   # full clean layer11 block output
+```
+
+| episode | A: attention+FFN | B: residual-only | C: full clean block |
+| --- | --- | --- | --- |
+| 10 | fail@300, drawer=0 | fail@300, drawer=0 | success@228, drawer=0.979 |
+| 50 | fail@300, drawer≈0.00018 | fail@300, drawer≈0.00011 | success@183, drawer=0.973 |
+
+动作误差：
+
+| episode | A MSE mean/max | B MSE mean/max | C MSE |
+| --- | ---: | ---: | ---: |
+| 10 | 0.001007 / 0.025454 | 0.007076 / 0.037802 | 0 |
+| 50 | 0.000751 / 0.010367 | 0.084322 / 0.366497 | 0 |
+
+residual-only 的 ep50 误差尤其大，position MSE=`0.0809`、gripper MSE=`0.7584`。
+full clean block 则在 ep10/ep50 都与 clean action 完全一致，并复现 clean success steps。
+
+residual hook 还通过 no-op sanity：
+
+```text
+x_jitter + a_jitter + f_jitter == captured jitter block output
+MSE = 0, max_abs = 0
+```
+
+因此当前证据不是“只修 attention/FFN 写入”或“只修 residual”中的任一单路径，而是：
+
+```text
+完整 clean layer11 composition 是已测唯一充分条件。
+```
+
+这不是可部署方法。下一步应做只读的逐层 residual drift 分析，定位 `x_jitter` 与
+`x_clean` 从哪一个更早 block 开始显著分离；在 residual 来源定位前，不开始
+attention-head、FFN-channel、gate 或训练实验。
+
 ### E3：候选单元选择
 
 候选选择必须在 source 校准集完成，不能在同一批 episode 上选择并证明。

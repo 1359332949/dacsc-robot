@@ -1,14 +1,14 @@
 {
   "schema": "dacsc_current_validation_v2",
-  "generated_at": "2026-11-08T22:12:29+08:00",
-  "validated_code_commit": "2ae6c19c5f74595f086d4209fdd5d14910e5b274",
+  "generated_at": "2026-11-08T22:50:20+08:00",
+  "validated_code_commit": "e57952e4da60627396ccd34ecb56f16afc48a30d",
   "working_tree_modified_at_test": true,
   "working_tree_modified_scope_at_test": "documentation and audit files only; executable source unchanged from validated_code_commit",
   "python": "3.11.15",
   "platform": "macOS arm64",
-  "source_tree_sha256": "d38ff272407dc01dfa074b6ef9bf0aed4142f6aad67ca951e4d0a4cc0ffe4adc",
+  "source_tree_sha256": "8855adcad6677d7a13b06c6dd2f65125c0f2546b0629fdfe9d67b6451d439185",
   "source_tree_sha256_scope": "all tracked plus non-ignored untracked project files excluding audit/; path, byte length and content are hashed",
-  "source_file_count": 79,
+  "source_file_count": 81,
   "checks": {
     "unittest": {
       "command": "PYTHONPATH=tests .venv/bin/python -m unittest discover -s tests -v",
@@ -277,6 +277,48 @@
         50
       ],
       "result": "BRANCH_INTERVENTION_STABILITY_NOT_ESTABLISHED; PRIVILEGED_DIAGNOSTIC_ONLY"
+    },
+    "layer11_composition_diagnostic": {
+      "receipt": "audit/layer11_composition_diagnostic_20261108.json",
+      "episodes": [
+        10,
+        50
+      ],
+      "conditions": {
+        "attention_ffn": "x_jitter + a_clean + f_clean",
+        "residual_clean": "x_clean + a_jitter + f_jitter",
+        "full_block": "x_clean + a_clean + f_clean"
+      },
+      "closed_loop": {
+        "ep10_attention_ffn": "fail@300",
+        "ep10_residual_clean": "fail@300",
+        "ep10_full_block": "success@228",
+        "ep50_attention_ffn": "fail@300",
+        "ep50_residual_clean": "fail@300",
+        "ep50_full_block": "success@183"
+      },
+      "mse_clean": {
+        "ep10_attention_ffn_mean_max": [
+          0.001007266337853109,
+          0.025454355403780937
+        ],
+        "ep10_residual_clean_mean_max": [
+          0.007075859206646006,
+          0.0378017835319042
+        ],
+        "ep50_attention_ffn_mean_max": [
+          0.0007508304686205903,
+          0.010366631671786308
+        ],
+        "ep50_residual_clean_mean_max": [
+          0.0843222444301695,
+          0.3664965
+        ]
+      },
+      "residual_hook_sanity_mse": 0.0,
+      "residual_hook_sanity_max_abs": 0.0,
+      "block_output_exact_clean_actions": true,
+      "result": "FULL_LAYER11_COMPOSITION_SUFFICIENT; SINGLE_BRANCH_OR_RESIDUAL_CORRECTION_INSUFFICIENT; PRIVILEGED_ONLY"
     }
   },
   "receipt_note": "The validated code is the recorded commit. This receipt is committed afterward; the source-tree hash intentionally excludes this file so later receipt-only commits do not invalidate the tested code identity.",
@@ -287,6 +329,7 @@
     "FFN intervention efficacy",
     "deployable appearance-robust intervention",
     "stable layer11 attention-path mechanism across the fixed candidate pool",
-    "per-action-group error logging for the fixed-pool stability extension"
+    "layer-wise residual drift localization between x_jitter and x_clean",
+    "stable deployable correction derived from the layer11 composition diagnostic"
   ]
 }
