@@ -197,6 +197,12 @@
       "target_drawer_unseen_in_train": 4,
       "result": "Every sampled reset paired style 12 with a target drawer combination absent from the train split."
     },
+    "target_fixture_support_checker_cases": {
+      "style12_stack1_right": "PASS",
+      "style12_stack2_right": "REJECTED",
+      "style20_stack2_right": "PASS",
+      "style35_stack07_right": "REJECTED"
+    },
     "reset0_vs_train_ep24_camera_check": {
       "world_base_position_delta_m": 0.038,
       "camera_position_delta_m": {
