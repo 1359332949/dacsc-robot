@@ -1,16 +1,17 @@
 {
-  "schema": "dacsc_current_validation_v1",
-  "generated_at": "2026-11-06T17:29:00+08:00",
-  "scope": "local CPU validation after retiring historical DP and token-style branches",
-  "base_git_commit": "d555842d2105a1690a155cd083bb299b452fb664",
-  "working_tree_modified": true,
+  "schema": "dacsc_current_validation_v2",
+  "generated_at": "2026-11-08T12:52:51+08:00",
+  "validated_code_commit": "92f5def8bdca72e82ce4838e8bc353c89c683d81",
+  "working_tree_modified_at_test": false,
   "python": "3.11.15",
-  "source_tree_sha256": "cc6881fb563759d71f9587a7ea55d5a4b8965d588b8a9e99d60aabd26ff94d43",
-  "source_file_count": 69,
+  "platform": "macOS arm64",
+  "source_tree_sha256": "fe7c10d1fdcb84fa33b50b76a0aaedf404a5f85975ce71bf4f72334fa56f51c7",
+  "source_tree_sha256_scope": "all tracked plus non-ignored untracked project files, excluding audit/current_validation.json; path, byte length and content are hashed",
+  "source_file_count": 86,
   "checks": {
     "unittest": {
       "command": "PYTHONPATH=tests .venv/bin/python -m unittest discover -s tests -v",
-      "tests_run": 126,
+      "tests_run": 135,
       "result": "PASS"
     },
     "ruff_undefined_name_and_unused_import": {
@@ -25,16 +26,43 @@
       "command": "bash -n scripts/*.sh",
       "result": "PASS"
     },
+    "upstream_lock": {
+      "command": ".venv/bin/python -m dacsc.upstream",
+      "lock_sha256": "34a18c5954a6c5d9c955c99d217e61c45bc63e3d06533ea2ba4647559fe99bcb",
+      "revisions": {
+        "CoRP": "52445740aa9517ae396cc8fb14bae8fe5922f118",
+        "robocasa": "dc73a8ce18e4b8947e8df2ae2958245ca823f3b4",
+        "diffusion_policy": "41212698b6f481ed92a55f0d5f1778ec56bea417"
+      },
+      "result": "PASS"
+    },
+    "official_corp_cpu_smoke": {
+      "command": "PYTHONPATH=repos/CoRP .venv/bin/python repos/CoRP/scripts/smoke_test.py --device cpu",
+      "parameters": 48689159,
+      "checkpoint_sha256": "f933ab03c1a4664f7a11690645cdd5fa81788a5b98db81913024f7a23326dfe6",
+      "result": "PASS"
+    },
     "diff_check": {
       "command": "git diff --check",
       "result": "PASS"
     }
   },
+  "server_evidence": {
+    "video_backend_equivalence": {
+      "receipt": "audit/video_backend_equivalence_20261108.json",
+      "backend_streaming": "opencv-by-timestamp",
+      "backend_cached": "pyav-all-frames",
+      "scope": "OpenDrawer episode 21, three camera views, five frames per view",
+      "exact_equal": true,
+      "max_abs_diff": 0,
+      "result": "PASS"
+    }
+  },
+  "receipt_note": "The validated code is the recorded commit. This receipt is committed afterward; the source-tree hash intentionally excludes this file so later receipt-only commits do not invalidate the tested code identity.",
   "not_validated": [
-    "target GPU driver and native BF16 execution",
-    "real RoboCasa video decode on the server",
-    "MuJoCo state and action replay",
-    "closed-loop success rate",
+    "target GPU driver and native BF16 execution for the new launcher changes",
+    "MuJoCo state and action replay for the new launcher changes",
+    "closed-loop success rate for the new launcher changes",
     "FFN intervention efficacy"
   ]
 }
