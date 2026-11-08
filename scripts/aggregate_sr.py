@@ -206,9 +206,12 @@ def parse_style_ranges(values: list[str]) -> dict[str, list[int]]:
             raise ValueError("style ranges must use split=lo-hi")
         split, bounds = value.split("=", 1)
         parts = bounds.split("-")
-        if len(parts) != 2:
+        if len(parts) == 1:
+            lo = hi = int(parts[0])
+        elif len(parts) == 2:
+            lo, hi = map(int, parts)
+        else:
             raise ValueError("style ranges must use split=lo-hi")
-        lo, hi = map(int, parts)
         if not 1 <= lo <= hi <= 60:
             raise ValueError("style ranges must be within 1..60")
         ranges[split] = list(range(lo, hi + 1))

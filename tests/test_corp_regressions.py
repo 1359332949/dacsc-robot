@@ -287,6 +287,11 @@ class AggregationTests(unittest.TestCase):
             result = aggregate(Path(d), ["source"], ["A"], 2)
             self.assertEqual(result["source"]["evaluation_style_range"], pilot_styles)
 
+    def test_style_range_cli_accepts_a_single_style(self):
+        from scripts.aggregate_sr import parse_style_ranges
+
+        self.assertEqual(parse_style_ranges(["source=12"]), {"source": [12]})
+
     def test_cli_failure_does_not_publish_summary(self):
         with tempfile.TemporaryDirectory() as d:
             result = subprocess.run(
