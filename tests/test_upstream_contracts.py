@@ -159,6 +159,7 @@ class OfficialRegistryTests(unittest.TestCase):
                 **kwargs,
                 requested_style=17,
                 requested_layout=23,
+                requested_fixture_refs={"drawer": "stack_1"},
             )
             with gzip.open(path, "rt") as stream:
                 manifest = json.load(stream)
@@ -166,6 +167,28 @@ class OfficialRegistryTests(unittest.TestCase):
             self.assertEqual(manifest["actual_layout"], 23)
             self.assertEqual(manifest["requested_style"], 17)
             self.assertEqual(manifest["requested_layout"], 23)
+            self.assertEqual(manifest["actual_fixture_refs"], {"drawer": "stack_1"})
+            self.assertEqual(
+                manifest["requested_fixture_refs"], {"drawer": "stack_1"}
+            )
+
+            path.unlink()
+
+            class WrongFixtureEnv(SceneEnv):
+                def reset(self, seed):
+                    result = super().reset(seed)
+                    self.meta["fixture_refs"] = {"drawer": "stack_2"}
+                    return result
+
+            with self.assertRaisesRegex(ValueError, "fixture refs"):
+                prepare_episode(
+                    WrongFixtureEnv(),
+                    path,
+                    **kwargs,
+                    requested_style=17,
+                    requested_layout=23,
+                    requested_fixture_refs={"drawer": "stack_1"},
+                )
 
 
 class ExperimentIdentityTests(unittest.TestCase):
@@ -223,6 +246,28 @@ class ExperimentIdentityTests(unittest.TestCase):
             (directory / "A.json").write_text(json.dumps(payload))
             with self.assertRaises(KeyError):
                 agg(directory, ["A"], 1, source_ranges)
+
+    def test_fixture_refs_are_part_of_v12_result_identity(self):
+        with tempfile.TemporaryDirectory() as d:
+            directory = Path(d)
+            payload = sr_payload("A", (True,), "source")
+            refs = {"drawer": "stack_1"}
+            payload["protocol"]["requested_fixture_refs"] = refs
+            payload["summary"]["fixture_refs"] = refs
+            payload["records"][0]["requested_fixture_refs"] = refs
+            payload["records"][0]["actual_fixture_refs"] = refs
+            (directory / "A.json").write_text(json.dumps(payload))
+            target = agg(directory, ["A"], 1, {"source": list(range(11, 51))})
+            self.assertEqual(
+                target["protocol"]["requested_fixture_refs"], refs
+            )
+
+            payload["records"][0]["actual_fixture_refs"] = {
+                "drawer": "stack_2"
+            }
+            (directory / "A.json").write_text(json.dumps(payload))
+            with self.assertRaisesRegex(ValueError, "fixture refs"):
+                agg(directory, ["A"], 1, {"source": list(range(11, 51))})
 
     def test_style_schedule_and_fixed_layout_mismatch_fail(self):
         mutations = (

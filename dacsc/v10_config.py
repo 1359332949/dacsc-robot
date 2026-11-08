@@ -81,6 +81,26 @@ def load_v10_config(path: Path = CONFIG_PATH) -> dict:
     layout_id = evaluation.get("layout_id")
     if layout_id is not None and (type(layout_id) is not int or not 1 <= layout_id <= 60):
         raise ValueError("evaluation.layout_id must be null or an integer within 1..60")
+    target_fixture_refs = evaluation.get("target_fixture_refs")
+    if target_fixture_refs is not None and (
+        not isinstance(target_fixture_refs, dict)
+        or any(
+            task not in tasks
+            or not isinstance(refs, dict)
+            or not refs
+            or any(
+                not isinstance(key, str)
+                or not key
+                or not isinstance(value, str)
+                or not value
+                for key, value in refs.items()
+            )
+            for task, refs in target_fixture_refs.items()
+        )
+    ):
+        raise ValueError(
+            "evaluation.target_fixture_refs must be null or map configured tasks"
+        )
     cache_tasks = budget.get("cache_video_tasks")
     if (
         not isinstance(cache_tasks, list)

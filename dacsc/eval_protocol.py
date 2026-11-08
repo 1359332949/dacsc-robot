@@ -8,9 +8,10 @@ from pathlib import Path
 from dacsc.corp_images import image_contract
 from dacsc.upstream import verify_upstream
 
-PROTOCOL_VERSION = "corp_robocasa_sr_v11"
+PROTOCOL_VERSION = "corp_robocasa_sr_v12"
+LEGACY_PROTOCOL_VERSIONS = {"corp_robocasa_sr_v11"}
 TARGET_PAIRS = tuple((index, index) for index in range(1, 11))
-PROTOCOL_KEYS = {
+PROTOCOL_KEYS_V11 = {
     "version",
     "checkpoint_sha256",
     "scene_split",
@@ -30,6 +31,7 @@ PROTOCOL_KEYS = {
     "upstream",
     "training",
 }
+PROTOCOL_KEYS = PROTOCOL_KEYS_V11 | {"requested_fixture_refs"}
 
 
 def file_sha256(path: Path) -> str:
@@ -65,7 +67,15 @@ def expected_evaluation_styles(origin: dict, split: str) -> list[int]:
 
 
 def validate_protocol(protocol: dict) -> None:
-    if set(protocol) != PROTOCOL_KEYS or protocol["version"] != PROTOCOL_VERSION:
+    version = protocol.get("version")
+    expected_keys = (
+        PROTOCOL_KEYS_V11
+        if version in LEGACY_PROTOCOL_VERSIONS
+        else PROTOCOL_KEYS
+        if version == PROTOCOL_VERSION
+        else None
+    )
+    if expected_keys is None or set(protocol) != expected_keys:
         raise ValueError(
             "SR result has an unsupported/incomplete protocol; rerun evaluation"
         )
@@ -126,6 +136,22 @@ def validate_protocol(protocol: dict) -> None:
         raise ValueError("invalid inference budget")
     if protocol["action_steps"] > protocol["action_horizon"]:
         raise ValueError("action chunk execution exceeds the prediction horizon")
+    if version == PROTOCOL_VERSION:
+        refs = protocol["requested_fixture_refs"]
+        if refs is not None and (
+            not isinstance(refs, dict)
+            or not refs
+            or any(
+                not isinstance(key, str)
+                or not key
+                or not isinstance(value, str)
+                or not value
+                for key, value in refs.items()
+            )
+        ):
+            raise ValueError("invalid requested fixture refs")
+        if scene_split == "target" and refs is not None:
+            raise ValueError("target protocol cannot request pretrain fixture refs")
 
 
 def validate_training_origin(origin: dict) -> None:

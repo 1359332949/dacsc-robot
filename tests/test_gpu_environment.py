@@ -94,6 +94,7 @@ class GPUEnvironmentContractTests(unittest.TestCase):
         )
         self.assertEqual(config["evaluation"]["episodes_per_task"], 20)
         self.assertIsNone(config["evaluation"]["layout_id"])
+        self.assertIsNone(config["evaluation"]["target_fixture_refs"])
         self.assertEqual(config["evaluation"]["action_steps"], 8)
         self.assertEqual(config["pretrain"]["source_pilot_styles"], [11, 30])
         for name in (

@@ -112,6 +112,10 @@ def agg(
             or len(summary["layout_order"]) != episodes
         ):
             raise ValueError(f"{task}: summary condition differs from the protocol")
+        if protocol["version"] == "corp_robocasa_sr_v12" and (
+            summary.get("fixture_refs") != protocol["requested_fixture_refs"]
+        ):
+            raise ValueError(f"{task}: fixture refs differ from the protocol")
         if type(summary["max_steps"]) is not int or summary["max_steps"] <= 0:
             raise ValueError(f"{task}: missing/invalid task horizon")
         if not summary["styles"] or len(set(summary["styles"])) != len(
@@ -161,6 +165,11 @@ def agg(
                 or not 0 <= record["steps"] <= summary["max_steps"]
             ):
                 raise ValueError(f"{task}: episode does not match its frozen protocol")
+            if protocol["version"] == "corp_robocasa_sr_v12" and (
+                record["requested_fixture_refs"] != protocol["requested_fixture_refs"]
+                or record["actual_fixture_refs"] != protocol["requested_fixture_refs"]
+            ):
+                raise ValueError(f"{task}: fixture refs do not match the protocol")
         successes = sum(r["success"] for r in records)
         if summary["successes"] != successes or not math.isclose(
             summary["success_rate"], successes / episodes

@@ -8,6 +8,8 @@
 [EXPERIMENT_PROTOCOL.md](EXPERIMENT_PROTOCOL.md) 说明总体研究边界。本文用于把研究问题、模型选择、
 数据划分、开源数据集泛化能力和历史证据放在同一张图上，避免把不同 benchmark、
 不同训练预算和不同泛化类型混成一个结论。
+当前通道机制、受控外观实验、base/camera 诊断和数据/硬件约束的统一执行设计见
+[CHANNEL_GENERALIZATION_EXPERIMENT_PLAN.md](CHANNEL_GENERALIZATION_EXPERIMENT_PLAN.md)。
 
 ---
 

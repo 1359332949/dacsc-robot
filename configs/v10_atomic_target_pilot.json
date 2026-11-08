@@ -52,6 +52,7 @@
   "evaluation": {
     "episodes_per_task": 20,
     "layout_id": null,
+    "target_fixture_refs": null,
     "action_steps": 8,
     "conditions": [
       "clean",

@@ -62,6 +62,23 @@ def official_target_atomic_seen() -> set[str]:
     return set(TARGET_TASKS["atomic_seen"])
 
 
+def parse_fixture_refs(value: str) -> dict[str, str]:
+    payload = json.loads(value)
+    if (
+        not isinstance(payload, dict)
+        or not payload
+        or any(
+            not isinstance(key, str)
+            or not key
+            or not isinstance(item, str)
+            or not item
+            for key, item in payload.items()
+        )
+    ):
+        raise ValueError("fixture refs must be a non-empty string mapping")
+    return payload
+
+
 def policy_inputs(obs, lang, norm, device, blur_sigma=0.0, shift="none"):
     images = {}
     for v in VIEWS:
@@ -113,6 +130,7 @@ def main() -> int:
     ap.add_argument("--layout-id", type=int)
     ap.add_argument("--manifest-dir", type=Path, required=True)
     ap.add_argument("--manifest-mode", choices=["create", "replay"], default="replay")
+    ap.add_argument("--fixture-refs-json", type=parse_fixture_refs)
     ap.add_argument("--out", required=True)
     args = ap.parse_args()
     if args.episodes <= 0 or args.action_steps <= 0:
@@ -121,6 +139,8 @@ def main() -> int:
         if v10_eval["layout_id"] is None:
             ap.error("pretrain evaluation requires an explicit --layout-id")
         args.layout_id = v10_eval["layout_id"]
+    if args.scene_split == "target" and args.fixture_refs_json is not None:
+        ap.error("fixture refs are only valid for pretrain source evaluation")
     with entry_file(Path(args.out)):
         return run(args)
 
@@ -186,6 +206,7 @@ def run(args) -> int:
         "layouts": layouts,
         "layout_id": layout_id,
         "target_pairs": target_pairs,
+        "requested_fixture_refs": args.fixture_refs_json,
         "base_seed": args.seed,
         "action_steps": args.action_steps,
         "action_horizon": model.action_horizon,
@@ -234,6 +255,7 @@ def run(args) -> int:
                 scene_split=args.scene_split,
                 requested_style=style_order[ep],
                 requested_layout=layout_order[ep],
+                requested_fixture_refs=args.fixture_refs_json,
             )
             result = rollout_episode(
                 env,
@@ -257,6 +279,8 @@ def run(args) -> int:
                     "actual_layout": manifest["actual_layout"],
                     "requested_style": manifest["requested_style"],
                     "requested_layout": manifest["requested_layout"],
+                    "actual_fixture_refs": manifest["actual_fixture_refs"],
+                    "requested_fixture_refs": manifest["requested_fixture_refs"],
                     "environment_seed": manifest["environment_seed"],
                     "policy_seed": manifest["policy_seed"],
                     "manifest_sha256": digest,
@@ -288,6 +312,7 @@ def run(args) -> int:
         "episodes": len(records),
         "layout_id": layout_id,
         "target_pairs": target_pairs,
+        "fixture_refs": args.fixture_refs_json,
         "layout_order": layout_order,
         "style_order": style_order,
         "successes": sum(r["success"] for r in records),

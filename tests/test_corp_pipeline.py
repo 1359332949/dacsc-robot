@@ -362,7 +362,7 @@ class UpstreamInfrastructureTests(unittest.TestCase):
             (ROOT / "configs/v10_atomic_target_pilot.json").read_text()
         )
         self.assertEqual(CHECKPOINT_FORMAT, "corp_robocasa_v8")
-        self.assertEqual(PROTOCOL_VERSION, "corp_robocasa_sr_v11")
+        self.assertEqual(PROTOCOL_VERSION, "corp_robocasa_sr_v12")
         self.assertEqual(
             protocol["train_tasks"],
             [

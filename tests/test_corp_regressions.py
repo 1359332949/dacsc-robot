@@ -157,6 +157,7 @@ def sr_payload(task, successes, split):
         "target_pairs": (
             [[index, index] for index in range(1, 11)] if split == "target" else None
         ),
+        "requested_fixture_refs": None,
         "base_seed": 42,
         "action_steps": 8,
         "action_horizon": 10,
@@ -184,6 +185,7 @@ def sr_payload(task, successes, split):
                 if split == "target"
                 else None
             ),
+            "fixture_refs": None,
             "layout_order": layout_order,
             "style_order": style_order,
             "shift": "none",
@@ -203,6 +205,8 @@ def sr_payload(task, successes, split):
                 "actual_layout": layout_order[i],
                 "requested_style": style_order[i],
                 "requested_layout": layout_order[i],
+                "actual_fixture_refs": None,
+                "requested_fixture_refs": None,
                 "style_ids": styles,
                 "manifest_sha256": f"{i:064x}",
                 "steps": 8,
@@ -355,6 +359,7 @@ class AggregationTests(unittest.TestCase):
                                 "style_id": style,
                                 "layout_id": 31,
                                 "lang": f"{task} open",
+                                "fixture_refs": {"drawer": "stack_1"},
                             }
                         )
                     )
@@ -370,6 +375,12 @@ class AggregationTests(unittest.TestCase):
                 "SOURCE_STYLES": "11-50",
                 "DATA_ROOT": str(dataset_root),
                 "LAYOUT_ID": "31",
+                "TARGET_FIXTURES_JSON": json.dumps(
+                    {
+                        "A": {"drawer": "stack_1"},
+                        "B": {"drawer": "stack_1"},
+                    }
+                ),
                 "MANIFEST_ROOT": str(root / "manifest"),
                 "PY": sys.executable,
                 "CONFIG_PY": sys.executable,

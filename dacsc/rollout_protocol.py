@@ -44,6 +44,7 @@ def prepare_episode(
     scene_split: str,
     requested_style: int | None = None,
     requested_layout: int | None = None,
+    requested_fixture_refs: dict[str, str] | None = None,
 ):
     """Always restore the recorded model before its state, including on creation.
 
@@ -63,6 +64,7 @@ def prepare_episode(
         "policy_seed": seed,
         "requested_style": requested_style,
         "requested_layout": requested_layout,
+        "requested_fixture_refs": requested_fixture_refs,
     }
     if mode == "create":
         if path.exists():
@@ -83,6 +85,20 @@ def prepare_episode(
                 "layout_id": requested_layout,
                 "style_id": requested_style,
             }
+            if requested_fixture_refs is not None:
+                if (
+                    not isinstance(requested_fixture_refs, dict)
+                    or not requested_fixture_refs
+                    or any(
+                        not isinstance(key, str)
+                        or not key
+                        or not isinstance(value, str)
+                        or not value
+                        for key, value in requested_fixture_refs.items()
+                    )
+                ):
+                    raise ValueError("requested_fixture_refs must be a string mapping")
+                core._ep_meta["fixture_refs"] = dict(requested_fixture_refs)
         else:
             # GymWrapper performs an initial reset in its constructor. That
             # leaves _ep_meta populated, and RoboCasa reuses it on later resets.
@@ -100,11 +116,15 @@ def prepare_episode(
             raise ValueError("environment did not honor requested style")
         if requested_layout is not None and int(meta["layout_id"]) != requested_layout:
             raise ValueError("environment did not honor requested layout")
+        actual_fixture_refs = meta.get("fixture_refs")
+        if requested_fixture_refs is not None and actual_fixture_refs != requested_fixture_refs:
+            raise ValueError("environment did not honor requested fixture refs")
         manifest = {
             "format": MANIFEST_FORMAT,
             **contract,
             "actual_style": actual_style,
             "actual_layout": int(meta["layout_id"]),
+            "actual_fixture_refs": actual_fixture_refs,
             "ep_meta": meta,
             "model_xml": core.sim.model.get_xml(),
             "sim_state": core.sim.get_state().flatten().tolist(),

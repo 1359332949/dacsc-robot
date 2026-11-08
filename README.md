@@ -82,7 +82,7 @@ RoboCasa 数据根目录使用 `--data-root` 或 `DACSC_DATA_ROOT`，其下应�
 `v1.0/pretrain/atomic/<Task>/<date>/lerobot`。CoRP 源码通过 `CORP_REPO` 或 `repos/CoRP` 定位。
 所有入口 `--help` 可在不启动训练的情况下查看参数。
 
-当前 checkpoint 为 `corp_robocasa_v8`，训练状态版本4，SR schema为`corp_robocasa_sr_v11`，
+当前 checkpoint 为 `corp_robocasa_v8`，训练状态版本4，SR schema为`corp_robocasa_sr_v12`，
 action指标仍为`corp_action_mse_v1`。旧 checkpoint/SR 文件不转换、不兼容。
 test 默认封存，只有最终评估显式启用。真实 RoboCasa/CUDA 的复核仍待服务器环境验证。
 

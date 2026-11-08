@@ -34,7 +34,12 @@ for split in "${EVAL_SPLITS[@]}"; do
     exit 2
   fi
   if [[ "$split" == "source" ]]; then
+    if [[ -z "${TARGET_FIXTURES_JSON:-}" ]]; then
+      echo "source evaluation requires TARGET_FIXTURES_JSON for every task" >&2
+      exit 2
+    fi
     mkdir -p "$OUT"
+    FIXTURE_ARGS=(--fixture-refs-json "$TARGET_FIXTURES_JSON")
     "$CONFIG_PY" "$(dirname "$0")/check_eval_support.py" \
       --data-root "$DATA_ROOT" \
       --tasks "${EVAL_TASKS[@]}" \
@@ -42,10 +47,11 @@ for split in "${EVAL_SPLITS[@]}"; do
       --layout-id "$LAYOUT_ID" \
       --train-style-min "$V10_TRAIN_STYLE_MIN" \
       --train-style-max "$V10_TRAIN_STYLE_MAX" \
-      --source-holdout-residue "$V10_SOURCE_HOLDOUT_RESIDUE" |
+      --source-holdout-residue "$V10_SOURCE_HOLDOUT_RESIDUE" \
+      "${FIXTURE_ARGS[@]}" |
       tee "$OUT/source_panel_support.json"
   fi
-  STYLES="$styles" SCENE_SPLIT="$scene_split" OUT="$OUT/$split" \
+  STYLES="$styles" SCENE_SPLIT="$scene_split" SPLIT_NAME="$split" OUT="$OUT/$split" \
     BLUR_SIGMA="$BLUR_SIGMA" \
     MANIFEST_DIR="$MANIFEST_ROOT/$split" \
     bash "$(dirname "$0")/run_corp_sr_tasks.sh"

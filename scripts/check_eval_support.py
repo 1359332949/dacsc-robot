@@ -48,10 +48,28 @@ def main(argv=None) -> int:
         default=config["pretrain"]["source_holdout_residue"],
     )
     ap.add_argument("--require-pairs", action="store_true")
+    ap.add_argument(
+        "--fixture-refs-json",
+        help=(
+            "JSON object mapping task names to required fixture_refs, e.g. "
+            '\'{"OpenDrawer":{"drawer":"stack_1_right_group_1_2"}}\''
+        ),
+    )
     args = ap.parse_args(argv)
     if len(args.tasks) != len(set(args.tasks)):
         raise ValueError("tasks must be unique")
     tasks = sorted(args.tasks)
+    fixture_refs = (
+        None
+        if args.fixture_refs_json is None
+        else json.loads(args.fixture_refs_json)
+    )
+    if fixture_refs is not None and (
+        not isinstance(fixture_refs, dict)
+        or set(fixture_refs) != set(tasks)
+        or any(not isinstance(refs, dict) for refs in fixture_refs.values())
+    ):
+        raise ValueError("fixture refs JSON must map every requested task to mappings")
     report = validate_source_panel(
         args.data_root.expanduser().resolve(),
         tasks=tasks,
@@ -60,6 +78,7 @@ def main(argv=None) -> int:
         train_style_range=(args.train_style_min, args.train_style_max),
         source_holdout_residue=args.source_holdout_residue,
         require_pairs=args.require_pairs,
+        requested_fixture_refs_by_task=fixture_refs,
     )
     print(json.dumps(report, indent=2))
     return 0 if report["passed"] else 1

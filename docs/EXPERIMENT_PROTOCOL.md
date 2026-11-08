@@ -314,7 +314,7 @@ checkpoint原子替换，保存独立于评测周期。精确续训目前要求 
 模型格式为 `corp_robocasa_v8`、训练状态版本4，保存 raw/EMA/计划总步数、
 实际完成步数、初始化权重 digest、
 `initialization_policy`、图像/上游契约、task-aux配置/类别映射和预算。
-SR协议为`corp_robocasa_sr_v11`，训练身份包含初始化策略、task-aux配置、任务列表、
+SR协议为`corp_robocasa_sr_v12`，训练身份包含初始化策略、task-aux配置、任务列表、
 冻结 style 范围、train/source/val selection hash 和项目 commit。
 旧格式不迁移。test 默认不执行。
 
@@ -326,11 +326,14 @@ SR source 为训练 styles 下新生成的冻结场景，不是数据中的 `%10
 scene manifest 保存模型 XML、仿真状态、metadata 和 RNG；之后调用官方重放，再核对 state/style/layout。
 每个 episode 的 style 由冻结 schedule 指定，`episode % len(styles)` 轮转，所有方法必须一致；
 一个 run 内固定同一 pretrain layout，避免把 layout 变化误读成 style 变化。
+source新协议还必须显式指定每个task的`fixture_refs` target mapping；style和layout支持
+不能替代`(style, layout, target fixture)`组合支持。manifest同时记录requested/actual fixture refs，
+aggregator会拒绝混合target的result。v11旧结果只保留为历史诊断，不和新v12结果混表。
 创建 manifest 前必须清掉 GymWrapper 构造期残留的 `_ep_meta`，否则 RoboCasa 会复用初次场景，
 看似运行 20 个 episode，实际可能始终只有同一个 style。
 
 聚合必须检查任务清单、episode数、manifest digest、checkpoint SHA256、条件、推理预算、source/val范围和完整性。
-schema `corp_robocasa_sr_v11` 保存实际训练seed、计划总步数/实际完成步数、优化配方、
+schema `corp_robocasa_sr_v12` 保存实际训练seed、计划总步数/实际完成步数、优化配方、
 像素/特征增广、task-aux配置、
 初始化策略及训练数据digest，不接受旧JSON冒充完整配对记录。
 写入前锁文件，日志禁止截断；中断/失败不能产生“全完成”的汇总。
