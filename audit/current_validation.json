@@ -96,7 +96,11 @@
       "policy_training_initial_state_steps": 176,
       "training_initial_policy_sweep_successes": 4,
       "training_initial_policy_sweep_episodes": 5,
-      "environment_reset_seen_smoke": "0/5"
+      "environment_reset_seen_smoke": "0/5",
+      "reset_trace_failure_stage": "before_grasp",
+      "reset_trace_gripper_close_steps": 0,
+      "training_trace_success_steps": 164,
+      "training_trace_first_gripper_close_step": 120
     }
   },
   "receipt_note": "The validated code is the recorded commit. This receipt is committed afterward; the source-tree hash intentionally excludes this file so later receipt-only commits do not invalidate the tested code identity.",

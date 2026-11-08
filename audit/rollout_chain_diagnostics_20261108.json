@@ -90,5 +90,34 @@
     "all_steps": 750,
     "result": "FAIL"
   },
+  "reset_policy_trace": {
+    "manifest": "episode_000000",
+    "success": false,
+    "steps": 750,
+    "initial_drawer": 0.0007927373468497399,
+    "final_drawer": 0.021521649116095422,
+    "first_gripper_close_step": null,
+    "eef_initial": [
+      0.24506999552249908,
+      0.009689999744296074,
+      0.596340000629425
+    ],
+    "eef_final": [
+      0.24354000389575958,
+      0.1931300014257431,
+      -0.16189999878406525
+    ],
+    "contact_sheet": "/hy-tmp/validation/trace_reset_policy_open_drawer.png",
+    "result": "The policy never enters a gripper-close/grasp phase and moves away from the handle."
+  },
+  "training_initial_policy_success_trace": {
+    "episode": 26,
+    "success": true,
+    "steps": 164,
+    "final_drawer": 0.9721557573673036,
+    "first_gripper_close_step": 120,
+    "contact_sheet": "/hy-tmp/validation/trace_train_init_policy_open_drawer.png",
+    "result": "The policy approaches, closes the gripper, and opens the drawer."
+  },
   "conclusion": "The model, action ordering, state input, camera orientation and success check can succeed on supported training initial states; 4 of 5 layout31 training initial states succeeded. The remaining discrepancy is primarily the initial-state distribution produced by the evaluation environment reset, with some additional policy sensitivity to individual starting states."
 }
