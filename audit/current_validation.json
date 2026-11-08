@@ -113,6 +113,32 @@
       "reset_style_target_combinations_seen_in_train": 0,
       "reset_style_target_combinations_checked": 10,
       "controlled_comparison": "ep24 style20+stack_2_right succeeds; reset0 style12+stack_2_right fails with 3.8 cm world-base and 3.8-5.2 cm camera-position difference"
+    },
+    "ffn_clean_jitter_pairs": {
+      "receipt": "audit/ffn_clean_jitter_pairs_20261108.json",
+      "discovery_episodes": [
+        24,
+        28
+      ],
+      "validation_episodes": [
+        64,
+        73
+      ],
+      "records": 4,
+      "layers": 12,
+      "snapshots_preserved_for_pairs": 2,
+      "patch_top_relative_activation_difference": {
+        "layer": 11,
+        "view": "robot0_agentview_left",
+        "mean": 1.35951
+      },
+      "strongest_stable_candidate_layer": {
+        "layer": 0,
+        "candidate_abs_validation_z_mean": 3.3468,
+        "sign_match_rate": 1.0,
+        "mean_validation_consistency": 1.0
+      },
+      "result": "PASS_Q1_DESCRIPTIVE_ONLY"
     }
   },
   "receipt_note": "The validated code is the recorded commit. This receipt is committed afterward; the source-tree hash intentionally excludes this file so later receipt-only commits do not invalidate the tested code identity.",

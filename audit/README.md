@@ -11,6 +11,7 @@ CoRP-RoboCasa and FFN-analysis pipeline.
 | `server_preflight_20261107.json` | Target-server environment, real-video, CUDA/BF16, MuJoCo and manifest-reset preflight |
 | `video_backend_equivalence_20261108.json` | Real-video exact-pixel comparison of official `opencv` timestamp reads and official `pyav` cache reads |
 | `rollout_chain_diagnostics_20261108.json` | State/camera/action/success-chain and training-initial-state policy rollout diagnostics |
+| `ffn_clean_jitter_pairs_20261108.json` | Read-only 12-layer clean/color_jitter FFN statistics for four paired OpenDrawer initial states |
 | `pretrain/` | RoboCasa dataset coverage and split audit |
 
 These receipts are point-in-time local evidence. They do not establish CUDA,
