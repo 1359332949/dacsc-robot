@@ -104,7 +104,7 @@
       "first_eef_direction_divergence_step": 8,
       "reset_style_target_combinations_seen_in_train": 0,
       "reset_style_target_combinations_checked": 10,
-      "controlled_comparison": "ep24 style20+stack_2_right succeeds; reset0 style12+stack_2_right fails with nearly identical world base placement"
+      "controlled_comparison": "ep24 style20+stack_2_right succeeds; reset0 style12+stack_2_right fails with 3.8 cm world-base and 3.8-5.2 cm camera-position difference"
     }
   },
   "receipt_note": "The validated code is the recorded commit. This receipt is committed afterward; the source-tree hash intentionally excludes this file so later receipt-only commits do not invalidate the tested code identity.",

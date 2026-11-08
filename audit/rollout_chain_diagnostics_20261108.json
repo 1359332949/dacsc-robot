@@ -152,12 +152,25 @@
       "target_drawer_unseen_in_train": 4,
       "result": "Every sampled reset paired style 12 with a target drawer combination absent from the train split."
     },
-    "interpretation": "Reset0 and train episode24 have nearly identical world base placement and the same target drawer, but differ in style; the model succeeds on the seen style-target combination and fails on the unseen style12 plus stack_2_right combination. The main covariate is task-target/style composition, not base pose alone.",
+    "reset0_vs_train_ep24_camera_check": {
+      "world_base_position_delta_m": 0.038,
+      "camera_position_delta_m": {
+        "robot0_agentview_left": 0.03801,
+        "robot0_agentview_right": 0.03801,
+        "robot0_eye_in_hand": 0.05163
+      },
+      "image_correlation": {
+        "robot0_agentview_left": 0.43836,
+        "robot0_agentview_right": 0.29508,
+        "robot0_eye_in_hand": -0.17526
+      }
+    },
+    "interpretation": "Reset0 and train episode24 have nearly identical world base and camera placement and the same target drawer, but differ in style; the model succeeds on the seen style-target combination and fails on the unseen style12 plus stack_2_right combination. Base-only intervention is confounded and does not explain the controlled failure.",
     "first_chunk_divergence": {
       "success_eef_delta_first_75_steps": [-0.0834, -0.4911, -0.4433],
       "failure_eef_delta_first_75_steps": [0.0075, 0.3277, -0.6689],
       "direction_difference_starts_by_step": 8
     }
   },
-  "conclusion": "The model, action ordering, state input, camera orientation and success check can succeed on supported training initial states; 4 of 5 layout31 training initial states succeeded. Reset failures diverge before grasp: the policy never closes the gripper and moves in the opposite lateral direction. All 10 sampled resets use style-target-drawer combinations absent from training, and the strongest controlled comparison is train ep24 (style20, stack_2_right) succeeding versus reset0 (style12, stack_2_right) failing at nearly identical world base placement. The primary failure mode is compositional generalization over appearance and task-target identity."
+  "conclusion": "The model, action ordering, state input, camera orientation and success check can succeed on supported training initial states; 4 of 5 layout31 training initial states succeeded. Reset failures diverge before grasp: the policy never closes the gripper and moves in the opposite lateral direction. All 10 sampled resets use style-target-drawer combinations absent from training. Train ep24 and reset0 have the same target drawer and nearly identical world base/camera placement, but style20 succeeds while style12 fails. The primary failure mode is compositional generalization over appearance and task-target identity, not a base-pose-only error."
 }
