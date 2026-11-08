@@ -152,6 +152,73 @@
     "result_path": "/hy-tmp/validation/base_only_causal_open_drawer.json",
     "interpretation": "Changing only the base converts the known training success into failure within the 300-step early-success window, so base/camera shift is causally sufficient to break this rollout. Restoring the training base in the reset scene still does not recover success, so scene/object/initial-state differences remain additional factors."
   },
+  "paired_clean_color_jitter_training_initial_states": {
+    "task": "OpenDrawer",
+    "layout": 31,
+    "episodes": [
+      {
+        "episode": 24,
+        "style": 20,
+        "target_drawer": "stack_2_right_group_1_2",
+        "clean": {
+          "success": true,
+          "steps": 161
+        },
+        "color_jitter": {
+          "success": false,
+          "steps": 750
+        }
+      },
+      {
+        "episode": 28,
+        "style": 36,
+        "target_drawer": "stack_1_island_group_1_3",
+        "clean": {
+          "success": true,
+          "steps": 187
+        },
+        "color_jitter": {
+          "success": false,
+          "steps": 750
+        }
+      },
+      {
+        "episode": 64,
+        "style": 47,
+        "target_drawer": "stack_1_island_group_1_3",
+        "clean": {
+          "success": true,
+          "steps": 179
+        },
+        "color_jitter": {
+          "success": false,
+          "steps": 750
+        }
+      },
+      {
+        "episode": 73,
+        "style": 48,
+        "target_drawer": "stack_4_right_group_1_2",
+        "clean": {
+          "success": true,
+          "steps": 173
+        },
+        "color_jitter": {
+          "success": false,
+          "steps": 750
+        }
+      }
+    ],
+    "same_scene_target_base_camera": true,
+    "paired_policy_seed": true,
+    "action_steps": 8,
+    "passed_clean": 4,
+    "passed_color_jitter": 0,
+    "clean_success_to_jitter_fail": 4,
+    "clean_fail_to_jitter_success": 0,
+    "result_path": "/hy-tmp/validation/paired_clean_jitter_train_inits.json",
+    "result": "A stable color_jitter degradation is observed under fully paired initial states."
+  },
   "reset_policy_trace": {
     "manifest": "episode_000000",
     "success": false,
@@ -240,5 +307,5 @@
       "direction_difference_starts_by_step": 8
     }
   },
-  "conclusion": "The model, action ordering, state input, camera orientation and success check can succeed on supported training initial states; 4 of 5 layout31 training initial states succeeded. Reset failures diverge before grasp: the policy never closes the gripper and moves in the opposite lateral direction. The failure is multi-factor: unseen style-target combinations are present in all initial diagnostics, a controlled seen-combination reset still has a 1.22 m base/camera shift, and changing only the base on the known training scene removes success within the 300-step early-success window. Restoring the training base in the reset scene still fails, so scene/object/initial-state differences also matter."
+  "conclusion": "The model, action ordering, state input, camera orientation and success check can succeed on supported training initial states; 4 of 5 layout31 training initial states succeeded. Official reset failures are multi-factor: unseen style-target combinations, base/camera shift, and scene/object differences all contribute. Under four fully paired training initial states with identical scene, target, base/camera, initial state and policy seed, clean succeeds 4/4 while color_jitter succeeds 0/4. This establishes an interpretable controlled appearance-degradation signal suitable for read-only FFN observation, but not yet for a deployable gate or intervention claim."
 }
