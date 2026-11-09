@@ -1,0 +1,64 @@
+{
+  "schema": "dgcd_vit_upstream_audit_v1",
+  "created_at_utc": "2026-11-09T10:10:00Z",
+  "status": "implemented_local_formula_and_sampler_tests_passed_gpu_not_started",
+  "method_name": "DgCD-inspired ViT discrepancy-guided channel dropout for CoRP",
+  "official_vit_available": false,
+  "dgcd": {
+    "repository": "https://github.com/gyeomo/DgCD",
+    "revision": "56f65c33f1f61a4539d65784f2ecc2c8c299eb61",
+    "paper_doi": "10.1145/3627673.3679539",
+    "license": "MIT",
+    "source_files": [
+      {
+        "path": "domainbed/networks/DgCD.py",
+        "sha256": "5b1d6e5b9a5fbc48529d6d395dc74576f72b1e479240c5dbcb93338ab48f0cbc"
+      },
+      {
+        "path": "domainbed/networks/resnet.py",
+        "sha256": "2902c4cb86f8470775adc0edd997f213055563667b00b7f810e5a7d64141d1fa"
+      },
+      {
+        "path": "domainbed/hparams_registry.py",
+        "sha256": "1dfd845ad77c89f5aecfba79b1bbc36934694e75d61a6f33c43a94ef5a8d03c6"
+      },
+      {
+        "path": "README.md",
+        "sha256": "2763868e7427589a9dcb43a8380d39aa0c024be8203003a6e9ac7903647e54c4"
+      }
+    ]
+  },
+  "preserved_official_semantics": [
+    "environment-wise and total-batch channel standardization",
+    "KLDivLoss between log-softmax aligned vectors",
+    "rho-scaled normalized gradient updates for temporary scaler parameters",
+    "score from squared aligned discrepancy followed by per-sample min-max scaling",
+    "weighted random channel selection",
+    "drop ratio 0.33",
+    "rho 0.05",
+    "mask numel/kept-count recovery",
+    "one random middle layer plus the final candidate layer"
+  ],
+  "corp_adaptations": [
+    "CNN feature map [B,C,H,W] is mapped to ViT block output [B,C,views,tokens]",
+    "the mask is shared across three views and all CLS/patch tokens",
+    "DgCD scoring is computed in FP32 while the main model remains BF16 autocast",
+    "local scaler backward updates temporary tensors and not the model optimizer",
+    "batches contain 3 contiguous single-style environment groups of 32 samples",
+    "within each style group, available tasks receive balanced sample quotas",
+    "candidate ViT layers are 2,5,8,11 with one random layer from 2,5,8 plus layer 11"
+  ],
+  "matched_random_control": {
+    "same_environment_groups": true,
+    "same_layer_schedule": true,
+    "same_drop_ratio": true,
+    "same_recovery": true,
+    "only_difference": "random channel scores replace DgCD discrepancy scores"
+  },
+  "scope_boundary": {
+    "uses_domaindrop_head": false,
+    "uses_grl": false,
+    "uses_domaindrop_consistency": false,
+    "target_styles_sealed": "1-10"
+  }
+}

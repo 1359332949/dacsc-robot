@@ -36,7 +36,9 @@
 训练期通道正则化是独立的 DomainDrop-ViT 适配，边界、固定 revision 和实验门禁见
 [DOMAINDROP_VIT_METHOD.md](docs/DOMAINDROP_VIT_METHOD.md)。PLACE progressive
 channel dropout 的官方公式、ViT 映射和 fixed-random 边界见
-[PLACE_VIT_METHOD.md](docs/PLACE_VIT_METHOD.md)。
+[PLACE_VIT_METHOD.md](docs/PLACE_VIT_METHOD.md)。DgCD 的 environment-wise
+discrepancy、32-sample groups 和 matched-random 边界见
+[DGCD_VIT_METHOD.md](docs/DGCD_VIT_METHOD.md)。
 其可选分析依赖单独固定于`analysis_upstream.lock.json`；原Registers logger和detector由已核验的外部源文件直接加载。
 
 ## 本地验证
@@ -77,6 +79,7 @@ PYTHONPATH=repos/CoRP .venv/bin/python repos/CoRP/scripts/smoke_test.py --device
 | V10 frozen baseline | `scripts/run_v10_pilot.sh`；默认 5 tasks、30k、batch96、BF16 |
 | DomainDrop/PLACE 通道筛查 | `scripts/run_v10_channel_pilot.sh`；各方法使用预注册预算和对应 matched control |
 | PLACE progressive 500-step 筛查 | 同一入口设置 `CHANNEL_METHOD=place`；`place_random` 为无 domain head 的 fixed-random 对照 |
+| DgCD environment discrepancy 筛查 | `CHANNEL_METHOD=dgcd_random/dgcd`；每 batch 3 个单一 style、32-sample environment groups |
 | held-out 离线 MSE | `scripts/eval_corp_robocasa.py` |
 | RoboCasa 单任务 SR | `scripts/eval_corp_robocasa_sr.py` |
 | 多任务 source/val SR 与严格聚合 | `scripts/run_corp_sr_split.sh` |
@@ -162,6 +165,9 @@ dropout 是否优于同层、同 budget 的 fixed random；再测 DgCD 的 envir
 PLACE 500-step 结果已完成：fixed-random 的 source/val jitter 都优于 PLACE，
 因此渐进调度门禁失败，不扩 5k；证据见
 [place_pilot_500_20261109.json](audit/place_pilot_500_20261109.json)。
+
+当前继续的是最后一个独立通道假设：DgCD discrepancy score 是否优于同 environment batch、
+同层调度和同 drop budget 的随机 score。只有 matched-random 门禁通过才允许扩 5k。
 
 ## 本地交付
 

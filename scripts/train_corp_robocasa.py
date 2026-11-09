@@ -75,11 +75,16 @@ from dacsc.place_vit import (
     PlaceDropoutConfig,
     PlaceDropoutController,
 )
+from dacsc.dgcd_vit import (
+    DGCD_METHODS,
+    DgCDConfig,
+    DgCDController,
+)
 from dacsc.code_identity import verify_package_identity
 
 DATA_ROOT = default_root()
 CKPT = _CORP_REPO / "checkpoints/corp_libero.pt"
-ALL_CHANNEL_METHODS = (*CHANNEL_METHODS, *PLACE_METHODS)
+ALL_CHANNEL_METHODS = (*CHANNEL_METHODS, *PLACE_METHODS, *DGCD_METHODS)
 
 
 def all_task_paths(
@@ -241,6 +246,90 @@ class StyleBalancedBatchSampler:
             yield [batch[position] for position in positions]
 
 
+class EnvironmentBalancedBatchSampler:
+    """Build contiguous single-style groups for DgCD environment statistics."""
+
+    def __init__(
+        self,
+        dataset,
+        *,
+        group_size: int,
+        groups_per_batch: int,
+        seed: int,
+    ) -> None:
+        if group_size <= 0 or groups_per_batch <= 0:
+            raise ValueError("DgCD group size and groups per batch must be positive")
+        self.group_size = group_size
+        self.groups_per_batch = groups_per_batch
+        self.batch_size = group_size * groups_per_batch
+        self.seed = int(seed)
+        self.indices_by_style_task: dict[int, dict[str, list[int]]] = {}
+        for index, entry in enumerate(dataset.flat):
+            style, task = int(entry[2]), str(entry[4])
+            self.indices_by_style_task.setdefault(style, {}).setdefault(
+                task, []
+            ).append(index)
+        self.styles = sorted(self.indices_by_style_task)
+        if len(self.styles) < groups_per_batch:
+            raise ValueError("fewer training styles than DgCD environments per batch")
+        self.num_batches = len(dataset.flat) // self.batch_size
+        if self.num_batches <= 0:
+            raise ValueError("dataset is smaller than one DgCD environment batch")
+        self.epoch = 0
+
+    def set_epoch(self, epoch: int) -> None:
+        if type(epoch) is not int or epoch < 0:
+            raise ValueError("sampler epoch must be a nonnegative integer")
+        self.epoch = epoch
+
+    def __len__(self) -> int:
+        return self.num_batches
+
+    def __iter__(self):
+        for batch_index in range(self.num_batches):
+            batch_seed = (
+                self.seed
+                + (self.epoch + 1) * 1_000_003
+                + (batch_index + 1) * 9_176
+            ) % (2**63 - 1)
+            generator = torch.Generator().manual_seed(batch_seed)
+            chosen_styles = [
+                self.styles[index]
+                for index in torch.randperm(len(self.styles), generator=generator)[
+                    : self.groups_per_batch
+                ].tolist()
+            ]
+            batch: list[int] = []
+            for style in chosen_styles:
+                task_indices = self.indices_by_style_task[style]
+                tasks = sorted(task_indices)
+                base, remainder = divmod(self.group_size, len(tasks))
+                quotas = {task: base for task in tasks}
+                for task in tasks[:remainder]:
+                    quotas[task] += 1
+                group: list[int] = []
+                for task in tasks:
+                    candidates = task_indices[task]
+                    quota = quotas[task]
+                    if len(candidates) >= quota:
+                        picks = torch.randperm(len(candidates), generator=generator)[
+                            :quota
+                        ].tolist()
+                        group.extend(candidates[pick] for pick in picks)
+                    else:
+                        picks = torch.randint(
+                            len(candidates),
+                            (quota,),
+                            generator=generator,
+                        ).tolist()
+                        group.extend(candidates[pick] for pick in picks)
+                positions = torch.randperm(self.group_size, generator=generator)
+                batch.extend(group[position] for position in positions.tolist())
+            if len(batch) != self.batch_size:
+                raise RuntimeError("DgCD sampler produced a malformed environment batch")
+            yield batch
+
+
 def duplicate_training_batch(batch: dict) -> dict:
     """Duplicate a batch so two channel masks share one logical update."""
     out = {
@@ -330,6 +419,27 @@ def place_training_loss(
 ):
     """Run one ordinary CoRP forward with one PLACE layer active."""
     controller.begin_step(step, total_steps)
+    losses = model.training_loss(
+        batch["images"],
+        batch["state"],
+        batch["instruction"],
+        batch["action"],
+        batch["action_mask"],
+        task_labels=batch.get("task_id") if task_labels is not None else None,
+    )
+    return losses.total, losses, controller.diagnostics()
+
+
+def dgcd_training_loss(
+    model,
+    controller: DgCDController,
+    batch: dict,
+    *,
+    step: int,
+    task_labels: torch.Tensor | None,
+):
+    """Run one ordinary CoRP forward with DgCD score-guided masks."""
+    controller.begin_step(step)
     losses = model.training_loss(
         batch["images"],
         batch["state"],
@@ -715,6 +825,9 @@ def main() -> int:
         default=30,
         help="Equivalent official stage-2 epochs mapped onto total training steps",
     )
+    ap.add_argument("--dgcd-rho", type=float, default=0.05)
+    ap.add_argument("--dgcd-group-size", type=int, default=32)
+    ap.add_argument("--dgcd-groups-per-batch", type=int, default=3)
     args = ap.parse_args()
     if args.steps <= 0 or args.eval_every <= 0 or args.save_every < 0:
         ap.error("steps/eval-every must be positive and save-every nonnegative")
@@ -763,7 +876,22 @@ def main() -> int:
     ):
         ap.error("invalid workers, task limit, LR or EMA decay")
     try:
-        if args.channel_method in PLACE_METHODS:
+        if args.channel_method in DGCD_METHODS:
+            dgcd_config = DgCDConfig(
+                method=args.channel_method,
+                layers=tuple(args.channel_layers),
+                drop_rate=args.channel_drop_rate,
+                rho=args.dgcd_rho,
+                group_size=args.dgcd_group_size,
+                groups_per_batch=args.dgcd_groups_per_batch,
+                seed=args.seed,
+            )
+            if args.batch_size != dgcd_config.batch_size:
+                ap.error(
+                    "DgCD requires --batch-size to equal "
+                    "--dgcd-group-size * --dgcd-groups-per-batch"
+                )
+        elif args.channel_method in PLACE_METHODS:
             PlaceDropoutConfig(
                 method=args.channel_method,
                 layers=tuple(args.channel_layers),
@@ -791,6 +919,7 @@ def main() -> int:
 
 def run(args, out: Path) -> int:
     channel_method = getattr(args, "channel_method", "none")
+    is_dgcd_method = channel_method in DGCD_METHODS
     style_balanced_batch = getattr(args, "style_balanced_batch", False)
     style_samples_per_batch = getattr(args, "style_samples_per_batch", 4)
     channel_layers = tuple(getattr(args, "channel_layers", [2, 5, 8, 11]))
@@ -802,6 +931,9 @@ def run(args, out: Path) -> int:
     domain_head_lr = getattr(args, "domain_head_lr", 1e-3)
     place_velocity = getattr(args, "place_velocity", 4.0)
     place_reference_epochs = getattr(args, "place_reference_epochs", 30)
+    dgcd_rho = getattr(args, "dgcd_rho", 0.05)
+    dgcd_group_size = getattr(args, "dgcd_group_size", 32)
+    dgcd_groups_per_batch = getattr(args, "dgcd_groups_per_batch", 3)
     upstream = verify_upstream()
     set_seed(args.seed)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -877,7 +1009,19 @@ def run(args, out: Path) -> int:
     )
     selection_contract = data_contract(train_ds, source_ds, val_ds, tasks, args)
     print(f"data_contract={selection_contract}", flush=True)
-    if channel_method in PLACE_METHODS:
+    if is_dgcd_method:
+        channel_config = DgCDConfig(
+            method=channel_method,
+            layers=channel_layers,
+            drop_rate=channel_drop_rate,
+            rho=dgcd_rho,
+            group_size=dgcd_group_size,
+            groups_per_batch=dgcd_groups_per_batch,
+            seed=args.seed,
+        )
+        if args.batch_size != channel_config.batch_size:
+            raise ValueError("DgCD batch size differs from configured environment groups")
+    elif channel_method in PLACE_METHODS:
         channel_config = PlaceDropoutConfig(
             method=channel_method,
             layers=channel_layers,
@@ -903,7 +1047,7 @@ def run(args, out: Path) -> int:
     )
     if channel_config.method == "none":
         channel_payload = None
-    elif channel_method in PLACE_METHODS:
+    elif channel_method in (*PLACE_METHODS, *DGCD_METHODS):
         channel_payload = channel_config.contract()
     else:
         channel_payload = {
@@ -912,16 +1056,24 @@ def run(args, out: Path) -> int:
                 str(style): domain_id for style, domain_id in style_to_id.items()
             },
         }
-    batch_sampling_payload = (
-        {
+    if is_dgcd_method:
+        batch_sampling_payload = {
+            "method": "environment_balanced_v1",
+            "group_size": dgcd_group_size,
+            "groups_per_batch": dgcd_groups_per_batch,
+            "tasks_balanced_within_group": True,
+            "batch_size": args.batch_size,
+            "seed": args.seed,
+        }
+    elif style_balanced_batch:
+        batch_sampling_payload = {
             "method": "style_balanced_v1",
             "samples_per_style": style_samples_per_batch,
             "batch_size": args.batch_size,
             "seed": args.seed,
         }
-        if style_balanced_batch
-        else {"method": "shuffle", "seed": args.seed}
-    )
+    else:
+        batch_sampling_payload = {"method": "shuffle", "seed": args.seed}
     print(f"channel_contract={channel_payload}", flush=True)
     print(f"batch_sampling={batch_sampling_payload}", flush=True)
 
@@ -978,6 +1130,9 @@ def run(args, out: Path) -> int:
             "domain_head_lr",
             "place_velocity",
             "place_reference_epochs",
+            "dgcd_rho",
+            "dgcd_group_size",
+            "dgcd_groups_per_batch",
             "style_balanced_batch",
             "style_samples_per_batch",
         }
@@ -1065,6 +1220,8 @@ def run(args, out: Path) -> int:
 
     if channel_config.method == "none":
         controller = None
+    elif channel_config.method in DGCD_METHODS:
+        controller = DgCDController(model, channel_config).train()
     elif channel_config.method in PLACE_METHODS:
         controller = PlaceDropoutController(model, channel_config).train()
     else:
@@ -1200,7 +1357,21 @@ def run(args, out: Path) -> int:
 
     loader_generator = None
     style_batch_sampler = None
-    if style_balanced_batch:
+    if is_dgcd_method:
+        style_batch_sampler = EnvironmentBalancedBatchSampler(
+            train_ds,
+            group_size=dgcd_group_size,
+            groups_per_batch=dgcd_groups_per_batch,
+            seed=args.seed,
+        )
+        train_loader = DataLoader(
+            train_ds,
+            batch_sampler=style_batch_sampler,
+            num_workers=args.num_workers,
+            collate_fn=collate_corp,
+            pin_memory=True,
+        )
+    elif style_balanced_batch:
         style_batch_sampler = StyleBalancedBatchSampler(
             [entry[2] for entry in train_ds.flat],
             batch_size=args.batch_size,
@@ -1313,6 +1484,16 @@ def run(args, out: Path) -> int:
                 consistency_loss = None
                 domain_loss = None
                 channel_diagnostics = None
+            elif is_dgcd_method:
+                loss, losses, channel_diagnostics = dgcd_training_loss(
+                    model,
+                    controller,
+                    b,
+                    step=step,
+                    task_labels=b["task_id"] if task_aux_cfg is not None else None,
+                )
+                consistency_loss = None
+                domain_loss = None
             elif channel_method in PLACE_METHODS:
                 loss, losses, channel_diagnostics = place_training_loss(
                     model,
@@ -1358,9 +1539,19 @@ def run(args, out: Path) -> int:
             if domain_loss is not None:
                 channel_detail += f" domain {scalar_float(domain_loss):.4f}"
             if channel_diagnostics is not None:
-                active_layer = channel_diagnostics["active_layer"]
                 mask_events = channel_diagnostics["mask_events"]
-                if mask_events:
+                if "active_layers" in channel_diagnostics:
+                    active_layers = channel_diagnostics["active_layers"]
+                    drops = [
+                        event["mean_actual_drop_fraction"] for event in mask_events
+                    ]
+                    if drops:
+                        channel_detail += (
+                            f" channel_layers {active_layers}"
+                            f" drop {sum(drops) / len(drops):.3f}"
+                        )
+                elif mask_events:
+                    active_layer = channel_diagnostics["active_layer"]
                     dropped = mask_events[0]["mean_actual_drop_fraction"]
                     channel_detail += (
                         f" channel_layer {active_layer} drop {dropped:.3f}"
@@ -1501,7 +1692,9 @@ def run(args, out: Path) -> int:
                     ),
                     "channel_method": channel_config.method,
                     "channel_active_layer": (
-                        None if controller is None else controller.active_layer
+                        None
+                        if controller is None
+                        else getattr(controller, "active_layer", None)
                     ),
                     "train_channel_consistency_loss": (
                         None
@@ -1510,6 +1703,11 @@ def run(args, out: Path) -> int:
                     ),
                     "train_channel_domain_loss": (
                         None if domain_loss is None else scalar_float(domain_loss)
+                    ),
+                    "channel_active_layers": (
+                        None
+                        if controller is None
+                        else list(getattr(controller, "active_layers", []))
                     ),
                     "channel_diagnostics": channel_diagnostics,
                 }
