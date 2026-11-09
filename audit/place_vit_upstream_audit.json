@@ -1,0 +1,57 @@
+{
+  "schema": "place_vit_upstream_audit_v1",
+  "created_at_utc": "2026-11-09T09:15:00Z",
+  "status": "implemented_local_contract_tests_passed_gpu_pilot_not_started",
+  "method_name": "PLACE-inspired ViT progressive channel dropout for CoRP",
+  "official_vit_available": false,
+  "place": {
+    "repository": "https://github.com/lingeringlight/PLACEdropout",
+    "revision": "d17f0a79dc2795f315a68ab745aa98b231000f2b",
+    "paper": "https://arxiv.org/abs/2112.03676",
+    "license_file_present": false,
+    "source_files": [
+      {
+        "path": "models/resnet_PLACE.py",
+        "sha256": "f11a46bc1073051ecfd4bd762a210ad805d795702d8220f86b3659b6acaef95c"
+      },
+      {
+        "path": "train_PLACE.py",
+        "sha256": "c46bfd30d97d94d96e5d809b43dd8bc8e8dab3b4152eece3dc7008f0beddbd72"
+      },
+      {
+        "path": "PLACE.sh",
+        "sha256": "cd718d183a704665bd9b734f9292016cccd1a6da1be149736dde32f8bbb60a3e"
+      },
+      {
+        "path": "optimizer/optimizer_helper.py",
+        "sha256": "8359440b9c260466541329a3c5f7e3e0cf52ea8608f84f710f9155a359be2d32"
+      },
+      {
+        "path": "README.md",
+        "sha256": "81df448290ed2985baaaa7316b99523e59260688d2070839bd54b723ca254cc3"
+      }
+    ]
+  },
+  "preserved_official_semantics": [
+    "one randomly selected candidate layer per training step",
+    "per-sample random channel subset",
+    "drop count floor(channels * p)",
+    "progressive ratio p_max * 2/pi * atan(t/velocity)",
+    "p_max 0.33",
+    "velocity 4",
+    "recovery x / (1-p)",
+    "dropout disabled at inference"
+  ],
+  "corp_adaptations": [
+    "CNN feature map [B,C,H,W] is mapped to ViT block output [B,C,views,tokens]",
+    "the mask is shared across three views and all CLS/patch tokens",
+    "four ViT blocks 2,5,8,11 replace ResNet stages",
+    "official integer stage-2 epoch is mapped to equivalent_epoch = reference_epochs * step / total_steps with reference_epochs 30",
+    "fixed-random control uses the same layers, budget and recovery with constant p=0.33"
+  ],
+  "scope_boundary": {
+    "matches_domaindrop_random": false,
+    "reason": "DomainDrop random includes domain discriminator, GRL, domain loss and consistency; PLACE fixed-random does not",
+    "target_styles_sealed": "1-10"
+  }
+}

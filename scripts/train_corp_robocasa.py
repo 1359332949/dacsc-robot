@@ -70,10 +70,16 @@ from dacsc.domaindrop_vit import (
     ChannelDropoutConfig,
     ChannelDropoutController,
 )
+from dacsc.place_vit import (
+    PLACE_METHODS,
+    PlaceDropoutConfig,
+    PlaceDropoutController,
+)
 from dacsc.code_identity import verify_package_identity
 
 DATA_ROOT = default_root()
 CKPT = _CORP_REPO / "checkpoints/corp_libero.pt"
+ALL_CHANNEL_METHODS = (*CHANNEL_METHODS, *PLACE_METHODS)
 
 
 def all_task_paths(
@@ -313,17 +319,39 @@ def channel_training_loss(
     return total, losses, consistency, domain_loss, diagnostics
 
 
+def place_training_loss(
+    model,
+    controller: PlaceDropoutController,
+    batch: dict,
+    *,
+    step: int,
+    total_steps: int,
+    task_labels: torch.Tensor | None,
+):
+    """Run one ordinary CoRP forward with one PLACE layer active."""
+    controller.begin_step(step, total_steps)
+    losses = model.training_loss(
+        batch["images"],
+        batch["state"],
+        batch["instruction"],
+        batch["action"],
+        batch["action_mask"],
+        task_labels=batch.get("task_id") if task_labels is not None else None,
+    )
+    return losses.total, losses, controller.diagnostics()
+
+
 def set_seed(seed: int) -> None:
     random.seed(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)
     torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
 
 
 def scalar_float(value) -> float:
     return float(value.detach()) if torch.is_tensor(value) else float(value)
-    torch.backends.cudnn.benchmark = False
 
 
 def build_dataset(
@@ -637,7 +665,7 @@ def main() -> int:
     )
     ap.add_argument(
         "--channel-method",
-        choices=CHANNEL_METHODS,
+        choices=ALL_CHANNEL_METHODS,
         default="none",
         help="Train-only channel regularization; eval is always a no-op",
     )
@@ -674,6 +702,18 @@ def main() -> int:
         type=float,
         default=1e-3,
         help="Separate LR for randomly initialized domain discriminators",
+    )
+    ap.add_argument(
+        "--place-velocity",
+        type=float,
+        default=4.0,
+        help="PLACE progressive arctangent velocity",
+    )
+    ap.add_argument(
+        "--place-reference-epochs",
+        type=int,
+        default=30,
+        help="Equivalent official stage-2 epochs mapped onto total training steps",
     )
     args = ap.parse_args()
     if args.steps <= 0 or args.eval_every <= 0 or args.save_every < 0:
@@ -723,15 +763,25 @@ def main() -> int:
     ):
         ap.error("invalid workers, task limit, LR or EMA decay")
     try:
-        ChannelDropoutConfig(
-            method=args.channel_method,
-            layers=tuple(args.channel_layers),
-            drop_rate=args.channel_drop_rate,
-            layer_probability=args.channel_layer_probability,
-            domain_loss_weight=args.domain_loss_weight,
-            consistency_weight=args.channel_consistency_weight,
-            grl_lambda=args.domain_grl_lambda,
-        )
+        if args.channel_method in PLACE_METHODS:
+            PlaceDropoutConfig(
+                method=args.channel_method,
+                layers=tuple(args.channel_layers),
+                drop_rate=args.channel_drop_rate,
+                velocity=args.place_velocity,
+                reference_epochs=args.place_reference_epochs,
+                seed=args.seed,
+            )
+        else:
+            ChannelDropoutConfig(
+                method=args.channel_method,
+                layers=tuple(args.channel_layers),
+                drop_rate=args.channel_drop_rate,
+                layer_probability=args.channel_layer_probability,
+                domain_loss_weight=args.domain_loss_weight,
+                consistency_weight=args.channel_consistency_weight,
+                grl_lambda=args.domain_grl_lambda,
+            )
     except ValueError as exc:
         ap.error(str(exc))
 
@@ -750,6 +800,8 @@ def run(args, out: Path) -> int:
     domain_loss_weight = getattr(args, "domain_loss_weight", 1.0)
     domain_grl_lambda = getattr(args, "domain_grl_lambda", 0.25)
     domain_head_lr = getattr(args, "domain_head_lr", 1e-3)
+    place_velocity = getattr(args, "place_velocity", 4.0)
+    place_reference_epochs = getattr(args, "place_reference_epochs", 30)
     upstream = verify_upstream()
     set_seed(args.seed)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -825,30 +877,41 @@ def run(args, out: Path) -> int:
     )
     selection_contract = data_contract(train_ds, source_ds, val_ds, tasks, args)
     print(f"data_contract={selection_contract}", flush=True)
-    channel_config = ChannelDropoutConfig(
-        method=channel_method,
-        layers=channel_layers,
-        drop_rate=channel_drop_rate,
-        layer_probability=channel_layer_probability,
-        domain_loss_weight=domain_loss_weight,
-        consistency_weight=channel_consistency_weight,
-        grl_lambda=domain_grl_lambda,
-    )
+    if channel_method in PLACE_METHODS:
+        channel_config = PlaceDropoutConfig(
+            method=channel_method,
+            layers=channel_layers,
+            drop_rate=channel_drop_rate,
+            velocity=place_velocity,
+            reference_epochs=place_reference_epochs,
+            seed=args.seed,
+        )
+    else:
+        channel_config = ChannelDropoutConfig(
+            method=channel_method,
+            layers=channel_layers,
+            drop_rate=channel_drop_rate,
+            layer_probability=channel_layer_probability,
+            domain_loss_weight=domain_loss_weight,
+            consistency_weight=channel_consistency_weight,
+            grl_lambda=domain_grl_lambda,
+        )
     style_to_id = (
         {}
         if channel_method == "none" and not style_balanced_batch
         else style_class_map(train_ds)
     )
-    channel_payload = (
-        None
-        if channel_config.method == "none"
-        else {
+    if channel_config.method == "none":
+        channel_payload = None
+    elif channel_method in PLACE_METHODS:
+        channel_payload = channel_config.contract()
+    else:
+        channel_payload = {
             **channel_config.contract(),
             "style_to_id": {
                 str(style): domain_id for style, domain_id in style_to_id.items()
             },
         }
-    )
     batch_sampling_payload = (
         {
             "method": "style_balanced_v1",
@@ -913,6 +976,10 @@ def run(args, out: Path) -> int:
             "domain_loss_weight",
             "domain_grl_lambda",
             "domain_head_lr",
+            "place_velocity",
+            "place_reference_epochs",
+            "style_balanced_batch",
+            "style_samples_per_batch",
         }
         for key, value in vars(args).items():
             if isinstance(value, Path):
@@ -996,15 +1063,19 @@ def run(args, out: Path) -> int:
         flush=True,
     )
 
-    controller = (
-        None
-        if channel_config.method == "none"
-        else ChannelDropoutController(model, channel_config, style_to_id).train()
-    )
+    if channel_config.method == "none":
+        controller = None
+    elif channel_config.method in PLACE_METHODS:
+        controller = PlaceDropoutController(model, channel_config).train()
+    else:
+        controller = ChannelDropoutController(
+            model, channel_config, style_to_id
+        ).train()
+    domain_controller = isinstance(controller, ChannelDropoutController)
     model_params = [p for p in model.parameters() if p.requires_grad]
     params = list(model_params)
     param_groups = [{"params": model_params, "lr": args.lr}]
-    if controller is not None:
+    if domain_controller:
         controller_params = list(controller.parameters())
         params.extend(controller_params)
         param_groups.append({"params": controller_params, "lr": domain_head_lr})
@@ -1020,11 +1091,11 @@ def run(args, out: Path) -> int:
         "betas": opt.defaults["betas"],
         "eps": opt.defaults["eps"],
         "weight_decay": opt.defaults["weight_decay"],
-        "domain_head_lr": domain_head_lr if controller is not None else None,
+        "domain_head_lr": domain_head_lr if domain_controller else None,
         "domain_head_lr_provenance": (
             "pretrained backbone uses the run LR; the randomly initialized "
             "domain discriminator uses a separate higher LR"
-            if controller is not None
+            if domain_controller
             else None
         ),
         "scheduler": "torch.optim.lr_scheduler.LambdaLR: linear warmup then constant",
@@ -1242,6 +1313,17 @@ def run(args, out: Path) -> int:
                 consistency_loss = None
                 domain_loss = None
                 channel_diagnostics = None
+            elif channel_method in PLACE_METHODS:
+                loss, losses, channel_diagnostics = place_training_loss(
+                    model,
+                    controller,
+                    b,
+                    step=step,
+                    total_steps=args.steps,
+                    task_labels=b["task_id"] if task_aux_cfg is not None else None,
+                )
+                consistency_loss = None
+                domain_loss = None
             else:
                 (
                     loss,
@@ -1283,9 +1365,14 @@ def run(args, out: Path) -> int:
                     channel_detail += (
                         f" channel_layer {active_layer} drop {dropped:.3f}"
                     )
-                balanced = channel_diagnostics["domain_balanced_accuracy"]
-                if balanced is not None:
-                    channel_detail += f" domain_bal_acc {balanced:.3f}"
+                if "drop_fraction" in channel_diagnostics:
+                    channel_detail += (
+                        f" place_p {channel_diagnostics['drop_fraction']:.4f}"
+                    )
+                else:
+                    balanced = channel_diagnostics["domain_balanced_accuracy"]
+                    if balanced is not None:
+                        channel_detail += f" domain_bal_acc {balanced:.3f}"
             print(
                 f"step {step:4d} loss {scalar_float(loss):.4f} "
                 f"flow {scalar_float(losses.flow):.4f}{task_loss}{channel_detail} "

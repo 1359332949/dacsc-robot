@@ -34,7 +34,9 @@
 通道机制审计见[上游映射表](docs/CHANNEL_INTERVENTION_UPSTREAM_MAPPING.md)。
 `dacsc/corp_ffn_capture.py`只观察CoRP原block与GELU输出，不接入训练/推理主入口、不替换attention或增加门控。
 训练期通道正则化是独立的 DomainDrop-ViT 适配，边界、固定 revision 和实验门禁见
-[DOMAINDROP_VIT_METHOD.md](docs/DOMAINDROP_VIT_METHOD.md)。
+[DOMAINDROP_VIT_METHOD.md](docs/DOMAINDROP_VIT_METHOD.md)。PLACE progressive
+channel dropout 的官方公式、ViT 映射和 fixed-random 边界见
+[PLACE_VIT_METHOD.md](docs/PLACE_VIT_METHOD.md)。
 其可选分析依赖单独固定于`analysis_upstream.lock.json`；原Registers logger和detector由已核验的外部源文件直接加载。
 
 ## 本地验证
@@ -73,7 +75,8 @@ PYTHONPATH=repos/CoRP .venv/bin/python repos/CoRP/scripts/smoke_test.py --device
 | 只准备官方MuJoCo重放命令 | 同上`replay-plan`；不执行仿真 |
 | CoRP-RoboCasa 训练适配 | `scripts/train_corp_robocasa.py`；必须显式传 `--steps` |
 | V10 frozen baseline | `scripts/run_v10_pilot.sh`；默认 5 tasks、30k、batch96、BF16 |
-| DomainDrop-ViT 5k 方法筛查 | `scripts/run_v10_channel_pilot.sh`；`control/random/domaindrop_vit` 共用初始化与预算 |
+| DomainDrop/PLACE 通道筛查 | `scripts/run_v10_channel_pilot.sh`；各方法使用预注册预算和对应 matched control |
+| PLACE progressive 500-step 筛查 | 同一入口设置 `CHANNEL_METHOD=place`；`place_random` 为无 domain head 的 fixed-random 对照 |
 | held-out 离线 MSE | `scripts/eval_corp_robocasa.py` |
 | RoboCasa 单任务 SR | `scripts/eval_corp_robocasa_sr.py` |
 | 多任务 source/val SR 与严格聚合 | `scripts/run_corp_sr_split.sh` |
@@ -150,6 +153,11 @@ bash scripts/run_v10_channel_pilot.sh
 2026-11-09 的 500-step 筛查已经完成：matched random 解释了大部分 jitter-MSE 改善，
 DomainDrop 仅比 random 好约 1.1%，且 clean 略差。因此当前不扩到 5k，也不启动 gate
 或通道扫描；证据见[channel_pilot_500_20261109.json](audit/channel_pilot_500_20261109.json)。
+
+DomainDrop 停止后，当前通道级主线转为两个独立问题：先测 PLACE 的 progressive random
+dropout 是否优于同层、同 budget 的 fixed random；再测 DgCD 的 environment discrepancy
+选择是否优于 matched random。两者都不能复用 DomainDrop 的 domain head/consistency
+来改变方法定义。
 
 ## 本地交付
 

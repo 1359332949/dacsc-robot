@@ -112,14 +112,16 @@ test域标签不得用于排名、候选筛选或方法选择，test继续封存
 | 标准像素增广 | `train-augmentation=color_jitter` | 通用输入增广能解决多少外观退化？ |
 | 随机通道干预 | `--channel-method random`；500-step 筛查与 DomainDrop 近似相同 | 与 DomainDrop-ViT 共用 domain head、GRL、loss、层概率和 drop budget |
 | 通道/token-channel选择 | `--channel-method domaindrop_vit`；500-step 未超过 matched random | 当前对象是384维 ViT block-output channel；不扩5k，DgCD 需先验证 style-balanced environment batch |
+| progressive随机通道干预 | `--channel-method place_random/place`；已实现，等待 GPU 筛查 | PLACE 只检验 arctan 渐进比例是否优于 fixed random，不引入 domain head/GRL |
 | 动作感知通道保护 | 研究候选，未实现当前CoRP版本 | 外观响应与实际动作影响是否相关，怎样指导选择，是否优于随机和无保护？ |
 
 像素增广直接使用 Torchvision；特征模块是受 TFS-ViT 启发的项目适配，不能冒用完整上游方法名。
 复杂候选需要与标准像素增广及相同干预粒度的随机/无保护对照比较，不能只优于无增广就宣称域选择或动作保护有效。
 channel hard gate、DomainDrop/PLACE/DgCD 的旧**推理期**迁移实验仍只作为历史分析。
-新的训练期 DomainDrop-ViT 适配是单独实现，公式来源、固定 revision、matched random 和
-非官方组件见[DomainDrop-ViT method](DOMAINDROP_VIT_METHOD.md)；在真实 pilot 完成前同样
-不能当作方法有效证据。
+新的训练期 DomainDrop-ViT/PLACE-ViT 适配是独立实现；公式来源、固定 revision、
+matched control 和非官方组件分别见
+[DomainDrop-ViT method](DOMAINDROP_VIT_METHOD.md) 与
+[PLACE-ViT method](PLACE_VIT_METHOD.md)。在真实 pilot 完成前不能当作方法有效证据。
 
 通道方向的文献依据与边界：旧方案的“域敏感性+动作重要性+软门控”是待验证组合，不等于已知算法的忠实复现。
 区分`Z[B,V,T,C]`上的token轴`T`、embedding-channel轴`C`与FFN中间神经元，不能把它们混称为一种通道。
