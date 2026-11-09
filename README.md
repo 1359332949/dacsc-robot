@@ -181,6 +181,11 @@ Probe 已通过：episode-heldout balanced accuracy 在 layer2/5/8/11 分别为
 但这仍不证明策略依赖这些方向。结果见
 [style_probe_20261109.json](audit/style_probe_20261109.json)。
 
+修正后 500-step 已补齐 plain balanced control。DomainDrop 相对 corrected matched random
+的 source/val jitter 优势仍只有约 `1.5%/0.9%`，属于短程 screen，不能作为最终方法结论；
+下一步只允许 2k paired screen。结果见
+[domaindrop_corrected_500_20261109.json](audit/domaindrop_corrected_500_20261109.json)。
+
 ## 本地交付
 
 提交并保持工作区干净后，`bash scripts/pack_for_server.sh /path/to/new/output` 使用标准

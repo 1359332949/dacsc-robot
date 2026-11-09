@@ -1,0 +1,91 @@
+{
+  "schema": "corp_domaindrop_corrected_500_v1",
+  "created_at_utc": "2026-11-09T11:20:00Z",
+  "status": "corrected_formula_short_screen_completed_provisional",
+  "code_commit": "784fe2e327997d7111ff9fc121679dbfad84bdab",
+  "formula_correction": {
+    "official_equivalence_test": "50 randomized feature/weight/label/seed cases",
+    "first_normalization": "min-max over channels at every view/token position",
+    "second_normalization": "min-max over pooled channel scores before WRS",
+    "mask_equivalence": "exact elementwise match"
+  },
+  "style_probe_gate": {
+    "chance_balanced_accuracy": 0.025,
+    "episode_holdout_layer2": 0.8551697731018066,
+    "episode_holdout_layer5": 0.7613425254821777,
+    "episode_holdout_layer8": 0.6293210387229919,
+    "episode_holdout_layer11": 0.29745373129844666,
+    "passed": true
+  },
+  "protocol": {
+    "steps": 500,
+    "batch_size": 48,
+    "style_balanced_samples_per_style": 4,
+    "backbone_lr": 1e-05,
+    "domain_head_lr": 0.001,
+    "source_samples": 80,
+    "val_samples": 80
+  },
+  "conditions": {
+    "zero_step_baseline": {
+      "source_clean_mse": 0.0317517910415405,
+      "source_color_jitter_mse": 0.0868887250267452,
+      "val_clean_mse": 0.02961665734158014,
+      "val_color_jitter_mse": 0.06208088976257022
+    },
+    "plain_balanced_500": {
+      "result": "/hy-tmp/runs/v10_control_balanced_500_784fe2e/result.json",
+      "source_clean_mse": 0.03173004557182114,
+      "source_color_jitter_mse": 0.088539230422584,
+      "val_clean_mse": 0.02866535002446025,
+      "val_color_jitter_mse": 0.06324590653015484
+    },
+    "corrected_random_500": {
+      "result": "/hy-tmp/runs/v10_random_balanced_corrected_500_784fe2e/result.json",
+      "source_clean_mse": 0.03238367492931893,
+      "source_color_jitter_mse": 0.07368944095020491,
+      "val_clean_mse": 0.03005526398012256,
+      "val_color_jitter_mse": 0.05776501255400358
+    },
+    "corrected_domaindrop_500": {
+      "result": "/hy-tmp/runs/v10_domaindrop_balanced_corrected_500_784fe2e/result.json",
+      "source_clean_mse": 0.032565117238687324,
+      "source_color_jitter_mse": 0.07257161125772467,
+      "val_clean_mse": 0.029988451809181402,
+      "val_color_jitter_mse": 0.057265209059622894,
+      "final_domain_loss": 4.507161140416626,
+      "per_layer_balanced_accuracy": {
+        "2": 0.125,
+        "5": 0.041666666666666664,
+        "8": 0.041666666666666664,
+        "11": 0.0
+      }
+    }
+  },
+  "comparisons": {
+    "plain_control_jitter_vs_zero": {
+      "source_fraction": 0.01900382220613333,
+      "val_fraction": 0.018766109378268447
+    },
+    "random_jitter_improvement_vs_zero": {
+      "source_fraction": 0.1519102055241048,
+      "val_fraction": 0.06952022152183734
+    },
+    "domaindrop_jitter_improvement_vs_zero": {
+      "source_fraction": 0.16477527739777038,
+      "val_fraction": 0.07757106448320907
+    },
+    "domaindrop_vs_random": {
+      "source_jitter_fraction": -0.015169469032009697,
+      "val_jitter_fraction": -0.008652356717025276,
+      "source_clean_fraction": 0.005602894352306045,
+      "val_clean_fraction": -0.0022229773455108274
+    }
+  },
+  "conclusion": "After correcting normalization and adding the plain balanced control, DomainDrop remains only about 1.5% better than matched random on source jitter and 0.9% better on val jitter. This is a small short-screen difference and is not enough for a method claim. The 500-step result remains provisional.",
+  "decision": {
+    "expand_to_5k": false,
+    "run_2k_screen_next": true,
+    "reason": "The user-requested formula, plain-control and style-probe gates now pass, but 500 steps are too short to finalize the method-specific comparison."
+  }
+}
