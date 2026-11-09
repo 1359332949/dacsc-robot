@@ -9,6 +9,7 @@ CoRP-RoboCasa and FFN-analysis pipeline.
 | `domaindrop_vit_upstream_audit.json` | DomainDrop/DgCD revisions, hashes, preserved formulas and CoRP adaptation boundaries |
 | `place_vit_upstream_audit.json` | PLACE revision, hashes, progressive formula and fixed-random control boundary |
 | `dgcd_vit_upstream_audit.json` | DgCD revision, formula, environment grouping and matched-random boundary |
+| `style_probe_20261109.json` | Frozen DINO linear style probe; frame- and episode-heldout identifiability gate |
 | `embodied_ffn_upstream_static_audit.json` | Embodied FFN intervention source mapping |
 | `current_validation.json` | Latest local tests, static checks and validation boundaries; source-tree hash distinguishes it from later edits |
 | `server_preflight_20261107.json` | Target-server environment, real-video, CUDA/BF16, MuJoCo and manifest-reset preflight |

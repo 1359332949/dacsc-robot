@@ -1,0 +1,84 @@
+{
+  "schema": "corp_style_probe_audit_v1",
+  "created_at_utc": "2026-11-09T10:55:00Z",
+  "status": "style_identifiability_gate_passed",
+  "code_commit": "784fe2e327997d7111ff9fc121679dbfad84bdab",
+  "model": "/hy-tmp/runs/v10_baseline_30k_oss_cache4_f2/model.pt",
+  "source_result": "/hy-tmp/validation/style_probe_784fe2e.json",
+  "source_result_sha256": "9a0d57142ee7bcd9f8d84cdd720054a2c86011d0d7ca8458a7885dfc95f41c1a",
+  "protocol": {
+    "features": "frozen DINOv2 block mean over views and tokens including CLS",
+    "layers": [
+      2,
+      5,
+      8,
+      11
+    ],
+    "train_styles": [
+      11,
+      50
+    ],
+    "tasks": [
+      "OpenCabinet",
+      "OpenDrawer",
+      "TurnOffStove",
+      "TurnOnElectricKettle",
+      "TurnOnSinkFaucet"
+    ],
+    "selected_frames": 866,
+    "selected_episodes": 433,
+    "styles": 40,
+    "chance_balanced_accuracy": 0.025,
+    "probe": "Linear(384,40), train-split z-score, AdamW, 300 steps, 3 seeds",
+    "holds": [
+      "frame_holdout",
+      "episode_holdout"
+    ]
+  },
+  "episode_holdout_balanced_accuracy": {
+    "layer2": {
+      "mean": 0.8551697731018066,
+      "std": 0.004465996753424406,
+      "min": 0.8509259223937988,
+      "max": 0.8613426089286804
+    },
+    "layer5": {
+      "mean": 0.7613425254821777,
+      "std": 0.009353321976959705,
+      "min": 0.7509258985519409,
+      "max": 0.7736111283302307
+    },
+    "layer8": {
+      "mean": 0.6293210387229919,
+      "std": 0.012308974750339985,
+      "min": 0.614814817905426,
+      "max": 0.6449074149131775
+    },
+    "layer11": {
+      "mean": 0.29745373129844666,
+      "std": 0.00998874592958945,
+      "min": 0.28611111640930176,
+      "max": 0.31041666865348816
+    }
+  },
+  "frame_holdout_balanced_accuracy": {
+    "layer2": 0.9099089503288269,
+    "layer5": 0.8535578846931458,
+    "layer8": 0.719390332698822,
+    "layer11": 0.3616305887699127
+  },
+  "gate": {
+    "near_random_upper": 0.05,
+    "usable_signal_lower": 0.125,
+    "best_episode_holdout_layer": 2,
+    "best_episode_holdout_balanced_accuracy": 0.8551697731018066,
+    "passes_near_random_gate": true,
+    "passes_usable_signal_gate": true
+  },
+  "conclusion": "Frozen DINO block features contain strongly identifiable native-style information under held-out episodes. The 40-style domain direction is learnable, so a failed DomainDrop classifier cannot be explained by an unidentifiable style target alone.",
+  "limitations": [
+    "Style IDs are learnable but this does not prove the policy depends on those directions.",
+    "The probe uses source training styles only and does not evaluate target styles 1-10.",
+    "The probe is an identifiability gate, not evidence for channel suppression effectiveness."
+  ]
+}

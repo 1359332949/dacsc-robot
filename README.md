@@ -176,6 +176,11 @@ PLACE 500-step 结果已完成：fixed-random 的 source/val jitter 都优于 PL
 如果 episode-heldout balanced accuracy 接近 1/40 随机水平，说明当前 40-style 监督本身
 不足以支持 domain-sensitive channel scoring，不能把训练结果解释成方法失败。
 
+Probe 已通过：episode-heldout balanced accuracy 在 layer2/5/8/11 分别为
+`0.855/0.761/0.629/0.297`，显著高于 `0.025` 随机水平。因此 40-style 方向是可辨识的；
+但这仍不证明策略依赖这些方向。结果见
+[style_probe_20261109.json](audit/style_probe_20261109.json)。
+
 ## 本地交付
 
 提交并保持工作区干净后，`bash scripts/pack_for_server.sh /path/to/new/output` 使用标准
