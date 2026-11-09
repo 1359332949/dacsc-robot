@@ -1560,7 +1560,7 @@ def run(args, out: Path) -> int:
                     channel_detail += (
                         f" place_p {channel_diagnostics['drop_fraction']:.4f}"
                     )
-                else:
+                elif "domain_balanced_accuracy" in channel_diagnostics:
                     balanced = channel_diagnostics["domain_balanced_accuracy"]
                     if balanced is not None:
                         channel_detail += f" domain_bal_acc {balanced:.3f}"
