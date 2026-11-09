@@ -23,14 +23,20 @@ from scripts.check_data_layout import default_root  # noqa: E402
 from train_corp_robocasa import all_task_paths, build_dataset  # noqa: E402
 
 
-def parse_ints(values: list[str]) -> list[int]:
+def parse_ints(values) -> list[int]:
+    if isinstance(values, (str, int)):
+        values = [values]
     result = []
     for value in values:
-        if "-" in value:
-            lo, hi = value.split("-", 1)
-            result.extend(range(int(lo), int(hi) + 1))
-        else:
-            result.append(int(value))
+        for token in str(value).split(","):
+            token = token.strip()
+            if not token:
+                continue
+            if "-" in token:
+                lo, hi = token.split("-", 1)
+                result.extend(range(int(lo), int(hi) + 1))
+            else:
+                result.append(int(token))
     if not result or len(result) != len(set(result)):
         raise ValueError("integer lists must be nonempty and unique")
     return result
@@ -300,13 +306,15 @@ def main() -> int:
     ap.add_argument("--max-tasks", type=int, default=0)
     ap.add_argument("--frames-per-episode", type=int, default=2)
     ap.add_argument("--batch-size", type=int, default=32)
-    ap.add_argument("--layers", type=parse_ints, default=list(range(12)))
+    ap.add_argument("--layers", nargs="+", default=["0-11"])
     ap.add_argument("--probe-steps", type=int, default=300)
-    ap.add_argument("--probe-seeds", type=parse_ints, default=[0, 1, 2])
+    ap.add_argument("--probe-seeds", nargs="+", default=["0", "1", "2"])
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--cache-videos", action="store_true")
     ap.add_argument("--out", required=True)
     args = ap.parse_args()
+    args.layers = parse_ints(args.layers)
+    args.probe_seeds = parse_ints(args.probe_seeds)
     if min(args.frames_per_episode, args.batch_size, args.probe_steps) <= 0:
         ap.error("frame, batch and probe-step counts must be positive")
     with entry_file(Path(args.out)):

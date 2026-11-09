@@ -14,6 +14,7 @@ from scripts.probe_style_linear import (
 class StyleProbeTest(unittest.TestCase):
     def test_parse_integer_ranges_and_holdout_buckets(self):
         self.assertEqual(parse_ints(["2", "5-7"]), [2, 5, 6, 7])
+        self.assertEqual(parse_ints("2,5-7"), [2, 5, 6, 7])
         self.assertEqual(stable_bucket("same"), stable_bucket("same"))
         self.assertIn(stable_bucket("same"), range(5))
 
