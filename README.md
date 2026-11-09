@@ -186,6 +186,12 @@ Probe 已通过：episode-heldout balanced accuracy 在 layer2/5/8/11 分别为
 下一步只允许 2k paired screen。结果见
 [domaindrop_corrected_500_20261109.json](audit/domaindrop_corrected_500_20261109.json)。
 
+2k paired screen 已完成：plain control 的 jitter 没有改善，random 和 DomainDrop 则都在
+2k 内崩坏到 clean MSE `0.073–0.077`，domain loss 升至 `4.7–8.1`。因此当前结论是
+**adapted domain-CE/GRL training graph 不稳定**，不是 DomainDrop channel selection 无效。
+不扩 5k；证据见
+[domaindrop_corrected_2k_20261109.json](audit/domaindrop_corrected_2k_20261109.json)。
+
 ## 本地交付
 
 提交并保持工作区干净后，`bash scripts/pack_for_server.sh /path/to/new/output` 使用标准

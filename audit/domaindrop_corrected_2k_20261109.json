@@ -1,0 +1,76 @@
+{
+  "schema": "corp_domaindrop_corrected_2k_v1",
+  "created_at_utc": "2026-11-09T11:55:00Z",
+  "status": "training_graph_unstable_no_method_conclusion",
+  "code_commit": "784fe2e327997d7111ff9fc121679dbfad84bdab",
+  "protocol": {
+    "steps": 2000,
+    "batch_size": 48,
+    "style_balanced_samples_per_style": 4,
+    "source_samples": 80,
+    "val_samples": 80,
+    "backbone_lr": 1e-05,
+    "domain_head_lr": 0.001,
+    "channel_layers": [
+      2,
+      5,
+      8,
+      11
+    ]
+  },
+  "conditions": {
+    "plain_balanced_2k": {
+      "result": "/hy-tmp/runs/v10_control_balanced_2k_784fe2e/result.json",
+      "result_sha256": "ba93df326c2b46bf275f02f1db724e10f6cf09ef2feb836b21b738f54ed7a773",
+      "source_clean_mse": 0.03168171220288483,
+      "source_color_jitter_mse": 0.09198749109396726,
+      "val_clean_mse": 0.027272462339062283,
+      "val_color_jitter_mse": 0.06384229775103543
+    },
+    "matched_random_2k": {
+      "result": "/hy-tmp/runs/v10_random_balanced_2k_784fe2e/result.json",
+      "result_sha256": "d6acb314072456300488172db472a8b043e32e04778aeb0cf5856fcfad68de36",
+      "source_clean_mse": 0.07660775540236255,
+      "source_color_jitter_mse": 0.07643270448983454,
+      "val_clean_mse": 0.07485770178063256,
+      "val_color_jitter_mse": 0.07534661749739938,
+      "domain_loss": 8.125569343566895,
+      "per_layer_balanced_accuracy": {
+        "2": 0.041666666666666664,
+        "5": 0.0,
+        "8": 0.0,
+        "11": 0.0
+      }
+    },
+    "domaindrop_2k": {
+      "result": "/hy-tmp/runs/v10_domaindrop_balanced_2k_784fe2e/result.json",
+      "result_sha256": "7d59479e1c840e20186598ba486f02ef0a093165effae68ca6ed78eba9bf94ca",
+      "source_clean_mse": 0.07256912869177051,
+      "source_color_jitter_mse": 0.07338297174123308,
+      "val_clean_mse": 0.07303443349822693,
+      "val_color_jitter_mse": 0.07336127662152542,
+      "domain_loss": 4.746220588684082,
+      "per_layer_balanced_accuracy": {
+        "2": 0.0,
+        "5": 0.041666666666666664,
+        "8": 0.14583333333333334,
+        "11": 0.0625
+      }
+    }
+  },
+  "comparison": {
+    "plain_control_source_jitter_fraction_vs_baseline": 0.05886281603386454,
+    "plain_control_val_jitter_fraction_vs_baseline": 0.02837473065958293,
+    "domaindrop_clean_source_fraction_vs_plain_control": 1.2906405142959254,
+    "domaindrop_clean_val_fraction_vs_plain_control": 1.6779448068924716,
+    "domaindrop_vs_random_clean_source_fraction": -0.05271372621605999,
+    "domaindrop_vs_random_clean_val_fraction": -0.024356346528092226
+  },
+  "conclusion": "Both channel-dropout training graphs collapse by 2k steps. Clean and shifted MSE rise to roughly 0.073-0.077, while domain loss rises to 4.7-8.1 and discriminator accuracy approaches random. This is an optimization/stability failure of the adapted DomainDrop training graph, not evidence that domain-sensitive channel selection is intrinsically ineffective.",
+  "decision": {
+    "expand_to_5k": false,
+    "closed_loop_evaluation": false,
+    "reason": "The adapted domain-CE/GRL graph cannot preserve the pretrained policy under this budget; method-specific comparison is confounded by collapse.",
+    "next_channel_method": "Proceed to the independently implemented DgCD environment-discrepancy pilot; do not tune this DomainDrop graph further in the current phase."
+  }
+}
