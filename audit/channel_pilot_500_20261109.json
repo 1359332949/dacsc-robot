@@ -1,7 +1,7 @@
 {
   "schema": "corp_channel_pilot_500_v1",
   "created_at_utc": "2026-11-09T04:45:00Z",
-  "status": "method_specificity_gate_failed_no_5k_expansion",
+  "status": "provisional_invalidated_by_official_formula_correction",
   "code_commit": "44ed307438255a986d11b80387a91c8b09b71c92",
   "base_checkpoint": {
     "path": "/hy-tmp/runs/v10_baseline_30k_oss_cache4_f2/model.pt",
@@ -90,14 +90,17 @@
       "val_mse_delta": 0.00003449300272159677
     }
   },
-  "conclusion": "Matched random channel dropout explains most of the color_jitter-MSE improvement. DomainDrop-ViT is only about 1.1% better than matched random on source/val jitter and is slightly worse on clean. There is no evidence that domain-sensitive channel scoring adds a robust method-specific benefit.",
+  "conclusion": "This 500-step run used an incorrect first score normalization that flattened C,V,T instead of normalizing over channels at every V,T position. It is retained only as a provisional short-screen result and cannot support a DomainDrop method conclusion.",
   "decision": {
     "expand_to_5k": false,
     "start_gate_or_channel_scan": false,
-    "reason": "The mandatory matched-random specificity gate did not separate DomainDrop from random.",
-    "next_channel_method": "Do not tune DomainDrop further. If continuing the channel-level line, evaluate a faithful PLACE-style progressive random channel dropout or a properly environment-balanced DgCD baseline against the same matched controls."
+    "reason": "The official channel-score normalization must be corrected before any DomainDrop comparison. The corrected run also requires a plain balanced control and style-probe gate.",
+    "next_channel_method": "Rerun control_balanced_500, random_balanced_500 and corrected domaindrop_balanced_500 after the 50-case official formula equivalence test, then run the frozen linear style-probe gate."
   },
   "limitations": [
+    "The first DomainDrop score normalization was not official-equivalent.",
+    "No plain balanced 500-step control was included in this run.",
+    "The domain classifier did not pass a frozen style-probe identifiability gate.",
     "Single training seed.",
     "Offline action MSE only; no closed-loop success result for these 500-step checkpoints.",
     "The 500-step budget is a screening budget, not a final method budget.",

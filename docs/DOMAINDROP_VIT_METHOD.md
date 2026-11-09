@@ -2,7 +2,8 @@
 
 更新时间：2026-11-09
 
-状态：**已完成 500-step matched-random 筛查；方法特异性门禁失败，停止扩到 5k。**
+状态：**官方逐位置 normalization 已修正；旧 500-step 结果标记为 provisional/invalidated，
+等待 plain balanced control、修正后 random/DomainDrop 和 style-probe 门禁。**
 
 本文固定当前通道方法的来源、CoRP 张量映射、训练目标和实验门禁。它不是论文结果，
 也不能把 ResNet 上的 DomainDrop 数字直接迁移到 CoRP/RoboCasa。
@@ -47,6 +48,24 @@ DomainDrop-inspired ViT channel dropout for CoRP
 ```text
 score = normalize(feature * W[true_domain])
 ```
+
+这里的第一次 normalize 必须在每个 `(H,W)` 位置沿 channel 维做 min-max：
+
+```text
+scores.max(dim=1, keepdim=True)
+scores.min(dim=1, keepdim=True)
+```
+
+不能把 `C×V×T` 全部 flatten 后做一次全局 min-max。CoRP 的映射是：
+
+```text
+按 C 在每个 (view, token) 位置归一化
+→ adaptive average pool views/tokens
+→ 再按 C 做一次 min-max
+→ WRS
+```
+
+修正后的实现已在 50 组随机 feature/weight/label/seed 上与官方 WRS mask 逐元素一致。
 
 对 CoRP，ViT block 输出为：
 
@@ -237,7 +256,9 @@ bash scripts/run_v10_channel_pilot.sh
 如果 DomainDrop 与 random 无差异，应停止继续调通道 gate，转向训练数据覆盖、
 domain randomization、像素增广或更上游的表示学习，而不是继续堆通道技巧。
 
-## 8. 500-step 实际结果
+## 8. 旧 500-step 结果（provisional，公式修正前）
+
+**该结果使用过错误的全局 flatten normalization，不能作为 DomainDrop 方法结论。**
 
 固定同一 baseline、同一 support、同一 seed、同一 balanced batch 和相同训练图：
 
@@ -255,8 +276,14 @@ val jitter:    仅好约 1.10%
 clean:         略差
 ```
 
-random 已经解释了相对 baseline 约 87–94% 的 jitter-MSE 改善。因此当前证据不支持
-“域敏感 channel score 有稳定方法特异性收益”。不再扩到 5k，不做 gate 或通道扫描。
+它可以保留为工程 short-screen 记录，但结论必须改写为：
+
+```text
+公式修正前的 500-step screen 没有显示明显特异性；
+需要 plain balanced control、修正后匹配对照和 style-probe 后才可判断。
+```
+
+当前仍不扩到 5k，不启动 gate 或通道扫描。
 
 完整的 support、hash、per-task 结果与决策见
 [channel_pilot_500_20261109.json](../audit/channel_pilot_500_20261109.json)。

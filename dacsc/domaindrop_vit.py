@@ -108,15 +108,14 @@ def grad_reverse(value: torch.Tensor, lambd: float) -> torch.Tensor:
 
 
 def _normalize_scores(scores: torch.Tensor) -> torch.Tensor:
-    flat = scores.flatten(1)
-    score_max = flat.max(dim=1, keepdim=True)[0]
-    score_min = flat.min(dim=1, keepdim=True)[0]
+    """Match official normalization over channels at every spatial position."""
+    score_max = scores.max(dim=1, keepdim=True)[0]
+    score_min = scores.min(dim=1, keepdim=True)[0]
     scale = score_max - score_min
-    normalized = (flat - score_min) / scale.clamp_min(1e-12)
-    normalized = normalized.view_as(scores)
+    normalized = (scores - score_min) / scale.clamp_min(1e-12)
     # The official implementation leaves a constant map undefined. A constant
     # score has no domain-sensitive direction, so its normalized score is zero.
-    positive = scale.view(-1, *([1] * (scores.ndim - 1))) > 0
+    positive = scale > 0
     return torch.where(positive, normalized, torch.zeros_like(scores))
 
 

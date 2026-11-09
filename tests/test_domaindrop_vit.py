@@ -4,6 +4,7 @@ from types import SimpleNamespace
 
 import torch
 from torch import nn
+from torch.nn import functional as F
 
 from dacsc.domaindrop_vit import (
     ChannelDropoutConfig,
@@ -125,6 +126,53 @@ class DomainDropVITTest(unittest.TestCase):
         logits.sum().backward()
         self.assertIsNotNone(feature.grad)
         self.assertTrue(torch.isfinite(feature.grad).all())
+
+    def test_mask_matches_official_formula_across_fifty_random_cases(self):
+        for trial in range(50):
+            torch.manual_seed(10_000 + trial)
+            batch, channels, views, tokens = 3, 12, 3, 7
+            num_domains = 5
+            feature = torch.randn(batch, channels, views, tokens)
+            weights = torch.randn(num_domains, channels)
+            labels = torch.randint(0, num_domains, (batch,))
+            seed = 50_000 + trial
+            drop_rate = 0.33
+
+            discriminator = LayerDomainDrop(
+                channels,
+                num_domains=num_domains,
+                grl_lambda=0.25,
+                wrs=True,
+                recover=True,
+            )
+            with torch.no_grad():
+                discriminator.model.weight.copy_(weights)
+                discriminator.model.bias.zero_()
+            with torch.random.fork_rng():
+                torch.manual_seed(seed)
+                _, actual = discriminator(feature, labels, drop_rate)
+
+            def official_norm(scores):
+                score_max = scores.max(dim=1, keepdim=True)[0]
+                score_min = scores.min(dim=1, keepdim=True)[0]
+                return (scores - score_min) / (
+                    score_max - score_min
+                ).clamp_min(1e-12)
+
+            scores = feature * weights[labels].view(batch, channels, 1, 1)
+            scores = official_norm(scores)
+            channel_scores = F.adaptive_avg_pool2d(scores, 1).flatten(1)
+            channel_scores = official_norm(channel_scores)
+            with torch.random.fork_rng():
+                torch.manual_seed(seed)
+                random_values = torch.rand(channel_scores.shape)
+            keys = random_values.pow(1.0 / channel_scores.clamp_min(1e-8))
+            drop_num = int(channels * drop_rate)
+            threshold = torch.sort(keys, dim=1, descending=True)[0][:, drop_num]
+            selected = keys > threshold[:, None]
+            expected = (~selected).to(dtype=channel_scores.dtype)
+            expected = expected * expected.numel() / expected.sum()
+            torch.testing.assert_close(actual, expected, rtol=0, atol=0)
 
     def test_controller_shares_one_mask_over_three_views(self):
         policy = FakePolicy(channels=8).train()

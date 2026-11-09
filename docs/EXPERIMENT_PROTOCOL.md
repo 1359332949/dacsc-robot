@@ -111,7 +111,7 @@ test域标签不得用于排名、候选筛选或方法选择，test继续封存
 | 无干预 CoRP | `train-augmentation=none` | 基础学习与 clean 闭环能力 |
 | 标准像素增广 | `train-augmentation=color_jitter` | 通用输入增广能解决多少外观退化？ |
 | 随机通道干预 | `--channel-method random`；500-step 筛查与 DomainDrop 近似相同 | 与 DomainDrop-ViT 共用 domain head、GRL、loss、层概率和 drop budget |
-| 通道/token-channel选择 | `--channel-method domaindrop_vit`；500-step 未超过 matched random | 当前对象是384维 ViT block-output channel；不扩5k，DgCD 需先验证 style-balanced environment batch |
+| 通道/token-channel选择 | `--channel-method domaindrop_vit`；formula correction 已完成，旧500-step仅provisional | 384维 ViT block-output channel；需 plain control、修正后匹配对照和 frozen style probe |
 | progressive随机通道干预 | `--channel-method place_random/place`；500-step 未超过 fixed random | PLACE 只检验 arctan 渐进比例是否优于 fixed random，不引入 domain head/GRL |
 | environment discrepancy选择 | `--channel-method dgcd_random/dgcd`；已实现，等待 GPU 筛查 | 3×32 单一 style environment groups；DgCD 只检验 discrepancy score 是否优于 matched random |
 | 动作感知通道保护 | 研究候选，未实现当前CoRP版本 | 外观响应与实际动作影响是否相关，怎样指导选择，是否优于随机和无保护？ |

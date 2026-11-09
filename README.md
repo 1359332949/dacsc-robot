@@ -80,6 +80,7 @@ PYTHONPATH=repos/CoRP .venv/bin/python repos/CoRP/scripts/smoke_test.py --device
 | DomainDrop/PLACE 通道筛查 | `scripts/run_v10_channel_pilot.sh`；各方法使用预注册预算和对应 matched control |
 | PLACE progressive 500-step 筛查 | 同一入口设置 `CHANNEL_METHOD=place`；`place_random` 为无 domain head 的 fixed-random 对照 |
 | DgCD environment discrepancy 筛查 | `CHANNEL_METHOD=dgcd_random/dgcd`；每 batch 3 个单一 style、32-sample environment groups |
+| Frozen DINO style probe | `scripts/probe_style_linear.py`；frame-heldout / episode-heldout linear balanced accuracy |
 | held-out 离线 MSE | `scripts/eval_corp_robocasa.py` |
 | RoboCasa 单任务 SR | `scripts/eval_corp_robocasa_sr.py` |
 | 多任务 source/val SR 与严格聚合 | `scripts/run_corp_sr_split.sh` |
@@ -153,9 +154,11 @@ bash scripts/run_v10_channel_pilot.sh
 在 clean 不崩的条件下优于 matched random，才允许扩大训练或闭环评测。目标 style/layout
 1–10 仍封存。
 
-2026-11-09 的 500-step 筛查已经完成：matched random 解释了大部分 jitter-MSE 改善，
-DomainDrop 仅比 random 好约 1.1%，且 clean 略差。因此当前不扩到 5k，也不启动 gate
-或通道扫描；证据见[channel_pilot_500_20261109.json](audit/channel_pilot_500_20261109.json)。
+2026-11-09 的旧 500-step 筛查已被标为 provisional：当时 channel score 的第一次
+normalization 错误地把 `C×V×T` flatten，而不是逐位置沿 C 归一化。修正后已通过
+50 组官方 WRS mask 等价测试；必须补齐 plain balanced control、修正后 random/DomainDrop
+和 frozen style probe 后才可判断。旧记录见
+[channel_pilot_500_20261109.json](audit/channel_pilot_500_20261109.json)。
 
 DomainDrop 停止后，当前通道级主线转为两个独立问题：先测 PLACE 的 progressive random
 dropout 是否优于同层、同 budget 的 fixed random；再测 DgCD 的 environment discrepancy
@@ -168,6 +171,10 @@ PLACE 500-step 结果已完成：fixed-random 的 source/val jitter 都优于 PL
 
 当前继续的是最后一个独立通道假设：DgCD discrepancy score 是否优于同 environment batch、
 同层调度和同 drop budget 的随机 score。只有 matched-random 门禁通过才允许扩 5k。
+
+在重跑任何 DomainDrop 训练前，先运行冻结 DINO block feature 的 linear style probe。
+如果 episode-heldout balanced accuracy 接近 1/40 随机水平，说明当前 40-style 监督本身
+不足以支持 domain-sensitive channel scoring，不能把训练结果解释成方法失败。
 
 ## 本地交付
 
