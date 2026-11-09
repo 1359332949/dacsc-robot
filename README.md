@@ -159,6 +159,10 @@ dropout 是否优于同层、同 budget 的 fixed random；再测 DgCD 的 envir
 选择是否优于 matched random。两者都不能复用 DomainDrop 的 domain head/consistency
 来改变方法定义。
 
+PLACE 500-step 结果已完成：fixed-random 的 source/val jitter 都优于 PLACE，
+因此渐进调度门禁失败，不扩 5k；证据见
+[place_pilot_500_20261109.json](audit/place_pilot_500_20261109.json)。
+
 ## 本地交付
 
 提交并保持工作区干净后，`bash scripts/pack_for_server.sh /path/to/new/output` 使用标准

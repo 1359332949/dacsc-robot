@@ -1,0 +1,97 @@
+{
+  "schema": "corp_place_pilot_500_v1",
+  "created_at_utc": "2026-11-09T09:53:00Z",
+  "status": "progressive_schedule_gate_failed_no_5k_expansion",
+  "code_commit": "090748f7d6f5e408afd817641b53b2dd32450163",
+  "base_checkpoint": {
+    "path": "/hy-tmp/runs/v10_baseline_30k_oss_cache4_f2/model.pt",
+    "sha256": "50d04668de4f5871f32631323796a24eec1641106a24a27c042f01dfb10d74d5"
+  },
+  "protocol": {
+    "tasks": [
+      "OpenCabinet",
+      "OpenDrawer",
+      "TurnOffStove",
+      "TurnOnElectricKettle",
+      "TurnOnSinkFaucet"
+    ],
+    "source": "styles 11-50, episode residue 9",
+    "val": "styles 51-60",
+    "source_samples": 80,
+    "val_samples": 80,
+    "per_task_eval": 16,
+    "steps": 500,
+    "batch_size": 48,
+    "style_balanced_batch": {
+      "samples_per_style": 4,
+      "styles_per_batch": 12
+    },
+    "backbone_lr": 1e-05,
+    "channel_layers": [
+      2,
+      5,
+      8,
+      11
+    ],
+    "pmax": 0.33,
+    "velocity": 4,
+    "reference_epochs": 30,
+    "domain_head_present": false,
+    "domain_loss_present": false,
+    "consistency_loss_present": false
+  },
+  "conditions": {
+    "zero_step_baseline": {
+      "result": "/hy-tmp/validation/channel_baseline_eval_44ed307.json",
+      "result_sha256": "54166b5cfe162dfda6096e7a5b5194e3bc77e9b893131aa6c84d946cb0412421",
+      "source_clean_mse": 0.0317517910415405,
+      "source_color_jitter_mse": 0.0868887250267452,
+      "val_clean_mse": 0.02961665734158014,
+      "val_color_jitter_mse": 0.06208088976257022
+    },
+    "place_random_500": {
+      "result": "/hy-tmp/runs/v10_place_random_500_090748f/result.json",
+      "result_sha256": "f56993084bf67602afe0a4e635c76823be391ce99dd4b0a2034d77c5bcc2161c",
+      "model_sha256": "7bf58f2c328d22c64ba6cac0e551aee5f3193fec15d61d418f2f4bcc86162ff8",
+      "source_clean_mse": 0.032426673805919404,
+      "source_color_jitter_mse": 0.07979988447247546,
+      "val_clean_mse": 0.030280897379295138,
+      "val_color_jitter_mse": 0.060662179942033885,
+      "drop_fraction": 0.33,
+      "actual_drop_fraction": 0.328125
+    },
+    "place_500": {
+      "result": "/hy-tmp/runs/v10_place_500_090748f/result.json",
+      "result_sha256": "6186f3396dba2b2f5b7e84c7f53a29cca5f569b66ce8cac9f6d98e0c8f467bb2",
+      "model_sha256": "f6df55c1c9665d473621492c3b1985d365b495eb08e491e6dcc9c30403fd0e99",
+      "source_clean_mse": 0.03212978701530347,
+      "source_color_jitter_mse": 0.08411151838450602,
+      "val_clean_mse": 0.030673513438764146,
+      "val_color_jitter_mse": 0.06169445307837286,
+      "final_equivalent_epoch": 29.94,
+      "final_drop_fraction": 0.3020978219581168,
+      "actual_drop_fraction": 0.3020833432674408
+    }
+  },
+  "paired_comparison": {
+    "source_color_jitter_random_improvement_vs_baseline_fraction": 0.08158527532873483,
+    "source_color_jitter_place_improvement_vs_baseline_fraction": 0.03196279656980041,
+    "source_color_jitter_place_vs_random_regression_fraction": 0.05403057837154795,
+    "val_color_jitter_random_improvement_vs_baseline_fraction": 0.02285260127492092,
+    "val_color_jitter_place_improvement_vs_baseline_fraction": 0.006224728506232727,
+    "val_color_jitter_place_vs_random_regression_fraction": 0.017016749766087698
+  },
+  "conclusion": "PLACE progressive dropout did not beat the matched fixed-random dropout. It regressed color_jitter MSE on both source and val. The progressive arctangent schedule therefore has no demonstrated method-specific value in this 500-step pilot.",
+  "decision": {
+    "expand_to_5k": false,
+    "closed_loop_evaluation": false,
+    "reason": "The mandatory place-vs-place_random gate failed.",
+    "next_method": "Do not tune PLACE further. The next independent channel-level hypothesis is DgCD with environment-balanced batches and a matched-random control."
+  },
+  "limitations": [
+    "Single training seed.",
+    "Offline action MSE only; no closed-loop success result for these 500-step checkpoints.",
+    "The 500-step budget is a screening budget, not a final method budget.",
+    "ColorJitter is a controlled stress condition, not natural style-target generalization."
+  ]
+}

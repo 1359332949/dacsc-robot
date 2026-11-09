@@ -112,7 +112,7 @@ test域标签不得用于排名、候选筛选或方法选择，test继续封存
 | 标准像素增广 | `train-augmentation=color_jitter` | 通用输入增广能解决多少外观退化？ |
 | 随机通道干预 | `--channel-method random`；500-step 筛查与 DomainDrop 近似相同 | 与 DomainDrop-ViT 共用 domain head、GRL、loss、层概率和 drop budget |
 | 通道/token-channel选择 | `--channel-method domaindrop_vit`；500-step 未超过 matched random | 当前对象是384维 ViT block-output channel；不扩5k，DgCD 需先验证 style-balanced environment batch |
-| progressive随机通道干预 | `--channel-method place_random/place`；已实现，等待 GPU 筛查 | PLACE 只检验 arctan 渐进比例是否优于 fixed random，不引入 domain head/GRL |
+| progressive随机通道干预 | `--channel-method place_random/place`；500-step 未超过 fixed random | PLACE 只检验 arctan 渐进比例是否优于 fixed random，不引入 domain head/GRL |
 | 动作感知通道保护 | 研究候选，未实现当前CoRP版本 | 外观响应与实际动作影响是否相关，怎样指导选择，是否优于随机和无保护？ |
 
 像素增广直接使用 Torchvision；特征模块是受 TFS-ViT 启发的项目适配，不能冒用完整上游方法名。

@@ -2,7 +2,7 @@
 
 更新时间：2026-11-09
 
-状态：**PLACE 适配与 fixed-random 对照已实现，等待 500-step GPU 筛查。**
+状态：**500-step 筛查完成；PLACE progressive 未超过 fixed-random，停止扩 5k。**
 
 ## 1. 固定上游
 
@@ -129,3 +129,23 @@ PLACE 主实验只使用原 CoRP flow loss，不混入 DomainDrop 的 consistenc
 
 如果 `place ≈ place_random`，结论只能是“渐进调度没有额外价值”，不能声称
 PLACE 的方法特异性成立。500-step 通过前不扩 5k，不进入闭环，不碰 target 1–10。
+
+## 8. 500-step 实际结果
+
+| condition | source clean | source jitter | val clean | val jitter |
+| --- | ---: | ---: | ---: | ---: |
+| 0-step baseline | 0.03175 | 0.08689 | 0.02962 | 0.06208 |
+| place_random 500 | 0.03243 | 0.07980 | 0.03028 | 0.06066 |
+| place 500 | 0.03213 | 0.08411 | 0.03067 | 0.06169 |
+
+PLACE 相对 fixed-random：
+
+```text
+source jitter: 差约 5.4%
+val jitter:    差约 1.7%
+source clean:  略好
+val clean:     略差
+```
+
+因此 arctangent 渐进调度没有表现出额外收益。当前不扩 5k、不跑闭环、不做超参搜索；
+完整 support、hash 和决策见[place_pilot_500_20261109.json](../audit/place_pilot_500_20261109.json)。
