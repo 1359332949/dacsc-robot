@@ -66,3 +66,19 @@ CPIA 的形式是**共享低秩乘性**变换 `w' = w + (w V) Uᵀ`，
 
 **建议**：下一步优先做"状态条件化加性校准"（用小网络或线性模型 `Δ(state)`），
 并在 A′ 的 mid-shift 数据上验证；同时保留 Oracle 作为上界。
+
+## 5. 首轮 mid-shift 结果（offset=+0.05m，shift_step=60，10 任务）
+
+| 模式 | 成功 |
+|---|---|
+| Frozen + Replan | 10/10 |
+| Direct Leftover | 10/10 |
+| Sham（零偏移） | 10/10 |
+| CPIA（运行中） | — |
+
+**结论**：0.05m 的相机平移太温和，三种策略全部成功 → **没有区分度**。
+需要把偏移加大到能造成实际退化的量级（参考 LIBERO-Plus camera 扰动的 pose 偏移），
+或使用旋转分量；否则 A′ 无法回答"时间锚定是否有用"。
+
+**下一步**：从 LIBERO-Plus 的 camera bddl 中读取真实相机位姿偏移量，
+在 mid-shift 中复现同等量级，并重跑 Frozen / Direct Leftover / Sham / CPIA。
