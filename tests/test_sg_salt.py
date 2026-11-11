@@ -172,6 +172,30 @@ def test_protection_gradient_reaches_beta(policy, batch):
     tta.close()
 
 
+def test_penalty_only_gradient_reaches_beta(policy, batch):
+    """Protection term ALONE must reach beta (independent of the SALT loss)."""
+    A = synthetic_a()
+    tta, rep = _fresh(policy, batch)
+    z0 = frozen_write(policy, tta.adapter, rep)
+    with torch.no_grad():
+        tta.adapter.beta.fill_(0.1)
+    z_phi = adapted_write(policy, rep)
+    penalty, _ = protection_loss(z_phi, z0, A)
+    tta.optimizer.zero_grad(set_to_none=True)
+    penalty.backward()
+    assert tta.adapter.beta.grad is not None and float(tta.adapter.beta.grad.norm()) > 0
+    tta.close()
+
+
+def test_lambda_positive_requires_a_basis(policy, batch):
+    tta, rep = _fresh(policy, batch)
+    target = torch.zeros(12, 7, device=DEV)
+    rng = torch.Generator(device=DEV).manual_seed(1)
+    with pytest.raises(ValueError):
+        sg_salt_loss(policy, tta, rep, target, 6, draws=1, rng=rng, a_basis=None, lam=5.0)
+    tta.close()
+
+
 def test_lambda_effect_trend_recorded(policy, batch):
     """Record, do not demand strict monotonicity (per work-order clarification)."""
     A = synthetic_a()

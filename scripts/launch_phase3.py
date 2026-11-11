@@ -51,7 +51,8 @@ def main() -> int:
         if args.mode == "sg_salt":
             cmd += ["--lambda-protect", str(args.lambda_protect), "--a-basis", args.a_basis]
         if args.mode != "frozen":
-            cmd += ["--calibration", args.calibration]
+            # protocol requires a fixed always-on trigger (feature gate is a separate study)
+            cmd += ["--gate-mode", "always", "--calibration", args.calibration]
         if args.extra:
             cmd += args.extra.split()
         log = open(out_root / f"{name}.log", "w")

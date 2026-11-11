@@ -116,10 +116,12 @@ def sg_salt_loss(
 
     lam == 0 -> explicit SALT branch: total == salt exactly, no extra sampling.
     """
-    if lam == 0.0 or a_basis is None:
+    if lam == 0.0:
         salt = flow_matching_leftover_loss(policy.action_generator, representation,
                                            target_norm, exec_len, draws=draws, mode=mode, rng=rng)
         return salt, salt.detach(), None
+    if a_basis is None:
+        raise ValueError("SG-SALT requires a valid A basis when lambda > 0")
     z0 = frozen_write(policy, adapter, representation, seed=protect_seed)
     salt = flow_matching_leftover_loss(policy.action_generator, representation,
                                        target_norm, exec_len, draws=draws, mode=mode, rng=rng)

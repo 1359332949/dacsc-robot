@@ -26,6 +26,7 @@ from corp.preprocessing import prepare_observation  # noqa: E402
 from dacsc.salt_tta import (  # noqa: E402
     FeatureChangeGate, SaltTTA, flow_matching_leftover_loss, probe_flow_loss,
 )
+from dacsc.sg_salt import sg_salt_loss  # noqa: E402
 from dacsc.upstream import verify_release_checkpoint  # noqa: E402
 
 CLEAN_ROOT = Path("/hy-tmp/dacsc-robot-784fe2e/repos/CoRP/third_party/LIBERO/libero/libero")
@@ -67,14 +68,15 @@ def beta_snapshot(tta) -> dict:
     }
 
 
-def run_episode(args, policy, env, task, task_id: int, seed, tta, gate, calibration_missing: bool):
+def run_episode(args, policy, env, task, task_id: int, seed, episode: int, tta, gate,
+                a_basis, calibration_missing: bool):
     np.random.seed(seed); torch.manual_seed(seed)
     if torch.cuda.is_available(): torch.cuda.manual_seed_all(seed)
     env.seed(seed); env.reset()
     from libero.libero import get_libero_path
     states_path = Path(get_libero_path("init_states")) / task.problem_folder / task.init_states_file
     states = torch.load(states_path, weights_only=False)
-    obs = env.set_init_state(states[0])
+    obs = env.set_init_state(states[episode % len(states)])
     for _ in range(SETTLING_STEPS):
         obs, _, done, _ = env.step(DUMMY_ACTION)
         if done: break
@@ -89,7 +91,9 @@ def run_episode(args, policy, env, task, task_id: int, seed, tta, gate, calibrat
     updates = 0
     gate_step = -1
     predict_index = 0
-    diag = {"task_id": int(task_id),
+    last_penalty = None
+    last_salt = None
+    diag = {"task_id": int(task_id), "init_state_index": int(episode),
             "seed": int(seed), "replans": [], "updates": [], "gate_mode": args.gate_mode,
             "mode": args.mode, "threshold": None if gate is None else gate.threshold}
     while not success and not done and steps < MAX_STEPS[args.suite]:
@@ -118,9 +122,16 @@ def run_episode(args, policy, env, task, task_id: int, seed, tta, gate, calibrat
                     mode = "self"
                 else:
                     target, mode = prev_norm, "leftover"
-                loss = flow_matching_leftover_loss(policy.action_generator, rep, target,
-                                                   args.exec_len, draws=args.draws, mode=mode,
-                                                   rng=draw_rng)
+                if args.mode == "sg_salt":
+                    loss, salt_loss, penalty = sg_salt_loss(
+                        policy, tta, rep, target, args.exec_len, draws=args.draws,
+                        mode=mode, rng=draw_rng, a_basis=a_basis,
+                        lam=args.lambda_protect)
+                else:
+                    loss = flow_matching_leftover_loss(policy.action_generator, rep, target,
+                                                       args.exec_len, draws=args.draws, mode=mode,
+                                                       rng=draw_rng)
+                    salt_loss, penalty = loss.detach(), None
                 tta.optimizer.zero_grad(set_to_none=True)
                 loss.backward()
                 grad = tta.adapter.beta.grad
@@ -133,10 +144,14 @@ def run_episode(args, policy, env, task, task_id: int, seed, tta, gate, calibrat
                 delta = float((tta.adapter.beta.detach() - before).norm())
                 updates += 1
                 replan["updates"] += 1
+                last_penalty = None if penalty is None else float(penalty.detach())
+                last_salt = float(salt_loss.detach())
                 if args.diag_out is not None:
                     diag["updates"].append({
                         "replan": predict_index, "step": replan["updates"] - 1,
-                        "loss": float(loss.detach()), "grad_l2": grad_l2, "grad_max": grad_max,
+                        "loss": float(loss.detach()), "salt_loss": float(salt_loss),
+                        "penalty": None if penalty is None else float(penalty),
+                        "grad_l2": grad_l2, "grad_max": grad_max,
                         "delta_beta_l2": delta, **beta_snapshot(tta),
                     })
             if args.diag_out is not None:
@@ -157,6 +172,7 @@ def run_episode(args, policy, env, task, task_id: int, seed, tta, gate, calibrat
     summary = {}
     if tta is not None:
         summary = beta_snapshot(tta)
+
     diag["result"] = {"success": bool(success), "steps": steps, "updates": updates,
                       "gate_step": gate_step}
     if args.diag_out is not None:
@@ -164,7 +180,9 @@ def run_episode(args, policy, env, task, task_id: int, seed, tta, gate, calibrat
         path = args.diag_out / f"task{task_id}_{seed}_{args.mode}_{args.gate_mode}.json"
         path.write_text(json.dumps(diag))
     return {"success": bool(success), "steps": steps, "updates": updates,
-            "gate_step": gate_step, "beta": summary}
+            "gate_step": gate_step, "beta": summary,
+            "penalty_last": last_penalty, "salt_loss_last": last_salt,
+            "init_state_index": int(episode)}
 
 
 def task_id_of(task) -> int:
@@ -230,7 +248,10 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--suite", default="libero_spatial")
     ap.add_argument("--tasks", default="")
-    ap.add_argument("--mode", choices=["frozen", "salt", "self"], default="frozen")
+    ap.add_argument("--mode", choices=["frozen", "salt", "self", "sg_salt"], default="frozen")
+    ap.add_argument("--episodes-per-task", type=int, default=1)
+    ap.add_argument("--lambda-protect", type=float, default=0.0)
+    ap.add_argument("--a-basis", type=Path, default=None)
     ap.add_argument("--gate-mode", choices=["feature", "always"], default="feature")
     ap.add_argument("--gate-tokens", type=int, default=96, choices=[48, 96])
     ap.add_argument("--exec-len", type=int, default=6)
@@ -263,29 +284,44 @@ def main() -> int:
         calibrate(args, policy)
         return 0
     gate = None
-    if args.gate_mode == "feature":
+    if args.mode == "frozen":
+        gate = None
+    elif args.gate_mode == "feature":
         if args.calibration is None or not args.calibration.exists():
             raise SystemExit("--calibration is required for gate-mode=feature")
         blob = json.loads(args.calibration.read_text())
         gate = FeatureChangeGate(num_tokens=args.gate_tokens)
         gate.load(blob["statistics"] | {"n_tokens": blob["gate_tokens"]})
     tta = SaltTTA(policy, eta=args.eta, adapt_steps=args.adapt_steps, draws=args.draws) \
-        if args.mode in ("salt", "self") else None
+        if args.mode in ("salt", "self", "sg_salt") else None
+    a_basis = None
+    a_basis_sha = None
+    if args.mode == "sg_salt":
+        if args.a_basis is None or not args.a_basis.exists():
+            raise SystemExit("--a-basis is required for mode=sg_salt")
+        import hashlib
+        a_basis_sha = hashlib.sha256(args.a_basis.read_bytes()).hexdigest()
+        a_basis = torch.tensor(json.loads(args.a_basis.read_text())["action_subspace"],
+                               dtype=torch.float32)
     suite = benchmark.get_benchmark_dict()[args.suite]()
     args.out.parent.mkdir(parents=True, exist_ok=True)
     with args.out.open("w") as output:
         for task_id in [int(x) for x in args.tasks.split(",")]:
             task = suite.get_task(task_id)
             bddl = Path(get_libero_path("bddl_files")) / task.problem_folder / task.bddl_file
-            env = build_env(args, bddl)
-            seed = args.seed + task_id * 1000
-            rec = run_episode(args, policy, env, task, task_id, seed, tta, gate, False)
-            env.close()
-            rec.update({"suite": args.suite, "task_id": task_id, "mode": args.mode,
-                        "gate_mode": args.gate_mode, "gate_tokens": args.gate_tokens,
-                        "exec_len": args.exec_len, "seed": seed})
-            output.write(json.dumps(rec) + "\n"); output.flush()
-            print(rec, flush=True)
+            for episode in range(args.episodes_per_task):
+                env = build_env(args, bddl)
+                seed = args.seed + task_id * 1000 + episode
+                rec = run_episode(args, policy, env, task, task_id, seed, episode,
+                                  tta, gate, a_basis, False)
+                env.close()
+                rec.update({"suite": args.suite, "task_id": task_id, "episode_id": episode,
+                            "mode": args.mode, "gate_mode": args.gate_mode,
+                            "gate_tokens": args.gate_tokens, "exec_len": args.exec_len,
+                            "seed": seed, "lambda_protect": args.lambda_protect,
+                            "a_basis_sha256": a_basis_sha})
+                output.write(json.dumps(rec) + "\n"); output.flush()
+                print(rec, flush=True)
     if tta is not None:
         tta.close()
     return 0
