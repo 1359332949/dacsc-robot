@@ -1,0 +1,158 @@
+{
+  "phase": 3,
+  "frozen_config": {
+    "checkpoint": "repos/CoRP/checkpoints/corp_libero.pt",
+    "a_basis": "/hy-tmp/validation/interface_stats_spatial_k32_big2.json",
+    "eta": 0.15,
+    "adapt_steps": 5,
+    "draws": 8,
+    "lr": 0.06,
+    "exec_len": 6,
+    "num_steps": 10,
+    "horizon": 12,
+    "lambda_protect": 5.0,
+    "lambda_calibration": "mean(||grad_salt||/||grad_pen||)=5.88 on 8 real clean batches (grid-snapped)",
+    "trigger": "always-on",
+    "pilot_seeds": [
+      202,
+      203,
+      204,
+      205
+    ],
+    "formal_seeds": [
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "episodes_per_task": 5,
+    "methods": [
+      "frozen",
+      "salt",
+      "sg_salt"
+    ]
+  },
+  "cells": {
+    "Camera|libero_spatial": {
+      "domain": "Camera",
+      "suite": "libero_spatial",
+      "tasks": [
+        705,
+        620,
+        671
+      ],
+      "pilot_rates": {
+        "705": "2/4",
+        "620": "1/4",
+        "671": "4/4"
+      },
+      "in_band": 2
+    },
+    "Camera|libero_object": {
+      "domain": "Camera",
+      "suite": "libero_object",
+      "tasks": [
+        701,
+        901,
+        653
+      ],
+      "pilot_rates": {
+        "701": "1/4",
+        "901": "3/4",
+        "653": "4/4"
+      },
+      "in_band": 2
+    },
+    "Background|libero_spatial": {
+      "domain": "Background",
+      "suite": "libero_spatial",
+      "tasks": [
+        11,
+        19,
+        18
+      ],
+      "pilot_rates": {
+        "11": "3/4",
+        "19": "3/4",
+        "18": "1/4"
+      },
+      "in_band": 4
+    },
+    "Background|libero_object": {
+      "domain": "Background",
+      "suite": "libero_object",
+      "tasks": [
+        3,
+        8,
+        18
+      ],
+      "pilot_rates": {
+        "3": "3/4",
+        "8": "1/4",
+        "18": "4/4"
+      },
+      "in_band": 2
+    },
+    "Noise|libero_spatial": {
+      "domain": "Noise",
+      "suite": "libero_spatial",
+      "tasks": [
+        1384,
+        1375,
+        1392
+      ],
+      "pilot_rates": {
+        "1384": "2/4",
+        "1375": "3/4",
+        "1392": "4/4"
+      },
+      "in_band": 2
+    },
+    "Noise|libero_object": {
+      "domain": "Noise",
+      "suite": "libero_object",
+      "tasks": [
+        1414,
+        1432,
+        1442
+      ],
+      "pilot_rates": {
+        "1414": "4/4",
+        "1432": "4/4",
+        "1442": "4/4"
+      },
+      "in_band": 0
+    },
+    "Light|libero_spatial": {
+      "domain": "Light",
+      "suite": "libero_spatial",
+      "tasks": [
+        2235,
+        2338,
+        2130
+      ],
+      "pilot_rates": {
+        "2235": "2/4",
+        "2338": "3/4",
+        "2130": "4/4"
+      },
+      "in_band": 2
+    },
+    "Light|libero_object": {
+      "domain": "Light",
+      "suite": "libero_object",
+      "tasks": [
+        2238,
+        2248,
+        2266
+      ],
+      "pilot_rates": {
+        "2238": "3/4",
+        "2248": "4/4",
+        "2266": "4/4"
+      },
+      "in_band": 1
+    }
+  }
+}
