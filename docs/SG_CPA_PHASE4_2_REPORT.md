@@ -135,6 +135,18 @@
 - 图：`docs/figures/sr_by_domain.png`、`docs/figures/delta_vs_salt.png`；
 - 表：`docs/data/phase4_2_summary.csv`。
 
+## 7.5 数据完整性检查
+
+| 组 | episodes | 重复 key | seed 公式 | init_state_index | gate |
+|---|---|---|---|---|---|
+| Frozen | 120 | 0 | ✅ 30+task*1000+ep | ✅ | feature（frozen 不使用，等价无适配） |
+| SALT | 120 | 0 | ✅ | ✅ | always |
+| SG-CPA | 120 | 0 | ✅ | ✅ | always |
+| SG-CPA w/o proj | 120 | 0 | ✅ | ✅ | always |
+| SG-CPA excl-id | 120 | 0 | ✅ | ✅ | always |
+
+每任务恰好 5 个 episode（episode 0–4 各 24 条/组）；SG 组 120/120 都写入了机制字段。
+
 ## 8. 建议的下一步（需你决定，不自动执行）
 
 1. **停止 SG-CPA（推荐）**：按预注册规则，当前形式没有收益；保留为负结果与方法学贡献；
