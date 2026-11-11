@@ -73,11 +73,24 @@ SALT 基线参数与 Phase 3 完全一致（η=0.15, K=5, lr=0.06, draws=8, exec
 | 消融：完整 vs w/o A-projection 差异 <2pp | 不能把收益归因于 A 零空间（诚实报告） |
 | Light/Clean 退化 >5pp | 记录并优先修复行为保真 |
 
+## 7.5 Smoke 结果（seed 404，task 705，1 episode，非正式）
+
+| 方法 | 结果 | 步数 | updates | 耗时 | 备注 |
+|---|---|---|---|---|---|
+| Frozen | 成功 | 122 | 0 | **18 s** | 基线 |
+| SALT | 成功 | 120 | 95 | **24 s** | β 全饱和（已知 SALT 现象） |
+| SG-CPA | 失败 | 220（max） | 36 | **40 s** | accepted 100%、backtrack 0%、R_retain 0.66、β_max 0.014、D_A_cum 7.6e-4 |
+
+- 链路与记录字段验证通过（R_retain / D_A_local / D_A_cum / backtracks / β_max / replan 耗时均写入）；
+- SG-CPA 单 episode 失败**不作结论**，但它跑满 220 步、β 更新量很小，正式实验需重点观察；
+- 修复了 smoke 中发现的 **episode 级 z_ref 混入观测变化**问题：改为"当前观测在 β=0 的写回"作为参考。
+
 ## 8. 成本估算
 
-- Phase 3 SALT：120 eps ≈ 1–1.5 h（8 并行）；SG-CPA 每步多 teacher/写回/VJP/回退，预计 **1.5–2× SALT**；
-- 主实验 360 eps 预计 **4–8 h**（分批并行）；消融 60 eps 另 1–1.5 h；
-- 全程记录每步耗时，若单 episode >10 min 则暂停检查。
+- Smoke 实测单 episode：Frozen 18 s / SALT 24 s / SG-CPA 40 s；
+- 主实验 360 eps（每方法 120 eps，8 并行按 cell 分批）估算：串行约 165 min，8 并行 + GPU 竞争约 **1.5–2.5 h**；
+- 消融 60 eps：约 **20–40 min**；
+- **总计约 2–3 h**（保守预算 3–4 h）；全程记录单步/单 episode 耗时，若单 episode >10 min 则暂停检查。
 
 ## 9. 停止条件
 

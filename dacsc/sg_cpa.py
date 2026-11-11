@@ -84,7 +84,7 @@ class SGCpa:
         self.max_backtracks = int(max_backtracks)
         self.optimizer = torch.optim.SGD([self.adapter.beta], lr=1.0)  # step applied manually
         self.diagnostics: list[dict] = []
-        self.z_ref = None      # write at beta=0, fixed per episode
+        self.z_ref = None      # kept for API compatibility; per-observation ref is used
 
     # ------------------------------------------------------------------ utils
     def reset(self, seed: int | None = None) -> None:
@@ -218,15 +218,16 @@ class SGCpa:
         seed = self.seed if seed is None else int(seed)
         info = self.build_target(prepared, seed=seed)
         z_before = self.write(prepared, seed).detach()
-        if self.z_ref is None:
+        # reference for the CURRENT observation at beta=0 (an episode-start z_ref
+        # would mix observation changes into the "A drift" measurement)
+        with torch.no_grad():
+            saved_ref = self.adapter.beta.detach().clone()
+            self.adapter.beta.zero_()
+        try:
+            z_ref_cur = self.write(prepared, seed).detach().double().cpu()
+        finally:
             with torch.no_grad():
-                saved = self.adapter.beta.detach().clone()
-                self.adapter.beta.zero_()
-            try:
-                self.z_ref = self.write(prepared, seed).detach().double().cpu()
-            finally:
-                with torch.no_grad():
-                    self.adapter.beta.copy_(saved)
+                self.adapter.beta.copy_(saved_ref)
         loss = self.loss(prepared, info, seed=seed)
         self.optimizer.zero_grad(set_to_none=True)
         loss.backward()
@@ -256,7 +257,7 @@ class SGCpa:
                 self.adapter.beta.copy_(before + d_beta)
             z1 = self.write(prepared, seed).detach().double().cpu()
             local_change = float((self.a_basis.T @ (z1 - z_before.double().cpu())).norm())
-            cum_change = float((self.a_basis.T @ (z1 - self.z_ref)).norm())
+            cum_change = float((self.a_basis.T @ (z1 - z_ref_cur)).norm())
             if max(local_change, cum_change) <= self.a_change_tol:
                 accepted = True
                 break

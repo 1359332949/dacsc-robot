@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import time
 import sys
 from pathlib import Path
 
@@ -27,6 +28,7 @@ from dacsc.salt_tta import (  # noqa: E402
     FeatureChangeGate, SaltTTA, flow_matching_leftover_loss, probe_flow_loss,
 )
 from dacsc.sg_salt import sg_salt_loss  # noqa: E402
+from dacsc.sg_cpa import SGCpa  # noqa: E402
 from dacsc.upstream import verify_release_checkpoint  # noqa: E402
 
 CLEAN_ROOT = Path("/hy-tmp/dacsc-robot-784fe2e/repos/CoRP/third_party/LIBERO/libero/libero")
@@ -60,10 +62,10 @@ def beta_snapshot(tta) -> dict:
         "beta_l2": float(b.norm()),
         "beta_abs_mean": float(b.abs().mean()),
         "beta_abs_max": float(b.abs().max()),
-        "frac_ge_095eta": float((b.abs() >= 0.95 * tta.eta).float().mean()),
-        "frac_ge_099eta": float((b.abs() >= 0.99 * tta.eta).float().mean()),
-        "neg_boundary_frac": float((b <= -0.99 * tta.eta).float().mean()),
-        "pos_boundary_frac": float((b >= 0.99 * tta.eta).float().mean()),
+        "frac_ge_095eta": float((b.abs() >= 0.95 * getattr(tta, "eta_param", tta.eta)).float().mean()),
+        "frac_ge_099eta": float((b.abs() >= 0.99 * getattr(tta, "eta_param", tta.eta)).float().mean()),
+        "neg_boundary_frac": float((b <= -0.99 * getattr(tta, "eta_param", tta.eta)).float().mean()),
+        "pos_boundary_frac": float((b >= 0.99 * getattr(tta, "eta_param", tta.eta)).float().mean()),
         "quantiles": [float(x) for x in q],
     }
 
@@ -81,7 +83,10 @@ def run_episode(args, policy, env, task, task_id: int, seed, episode: int, tta, 
         obs, _, done, _ = env.step(DUMMY_ACTION)
         if done: break
     if tta is not None:
-        tta.reset()
+        if args.mode == "sg_cpa":
+            tta.reset(seed=seed)
+        else:
+            tta.reset()
     if gate is not None:
         gate.reset()
     gen_device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -93,6 +98,8 @@ def run_episode(args, policy, env, task, task_id: int, seed, episode: int, tta, 
     predict_index = 0
     last_penalty = None
     last_salt = None
+    sg_records = []
+    replan_times = []
     diag = {"task_id": int(task_id), "init_state_index": int(episode),
             "seed": int(seed), "replans": [], "updates": [], "gate_mode": args.gate_mode,
             "mode": args.mode, "threshold": None if gate is None else gate.threshold}
@@ -110,7 +117,17 @@ def run_episode(args, policy, env, task, task_id: int, seed, episode: int, tta, 
             if gate_active and gate_step < 0: gate_step = predict_index
         replan = {"index": predict_index, "score": gate_score, "active": gate_active,
                   "updates": 0, "probe_before": None, "probe_after": None}
-        if tta is not None and gate_active and prev_norm is not None:
+        if tta is not None and gate_active and prev_norm is not None and args.mode == "sg_cpa":
+            t_step = time.time()
+            rec = tta.step(prepared, seed=seed)
+            replan_times.append(time.time() - t_step)
+            sg_records.append(rec)
+            updates += 1
+            replan["updates"] += 1
+            if args.diag_out is not None:
+                diag["updates"].append({"replan": predict_index, **rec,
+                                        **beta_snapshot(tta)})
+        elif tta is not None and gate_active and prev_norm is not None:
             if args.diag_out is not None:
                 replan["probe_before"] = probe_flow_loss(
                     policy.action_generator, rep, prev_norm, args.exec_len,
@@ -179,10 +196,22 @@ def run_episode(args, policy, env, task, task_id: int, seed, episode: int, tta, 
         args.diag_out.mkdir(parents=True, exist_ok=True)
         path = args.diag_out / f"task{task_id}_{seed}_{args.mode}_{args.gate_mode}.json"
         path.write_text(json.dumps(diag))
+    sg_summary = {}
+    if sg_records:
+        acc = [r for r in sg_records if not r.get("skipped")]
+        sg_summary = {
+            "retain_mean": float(np.mean([r["retained_fraction"] for r in acc])) if acc else None,
+            "backtrack_rate": float(np.mean([r["backtracks"] > 0 for r in acc])) if acc else None,
+            "accepted_rate": float(np.mean([r["accepted"] for r in acc])) if acc else None,
+            "cumulative_a_change_last": acc[-1]["cumulative_a_change"] if acc else None,
+            "local_a_change_last": acc[-1]["local_a_change"] if acc else None,
+            "beta_abs_max_last": acc[-1]["beta_abs_max"] if acc else None,
+            "replan_seconds_mean": float(np.mean(replan_times)) if replan_times else None,
+        }
     return {"success": bool(success), "steps": steps, "updates": updates,
             "gate_step": gate_step, "beta": summary,
             "penalty_last": last_penalty, "salt_loss_last": last_salt,
-            "init_state_index": int(episode)}
+            "init_state_index": int(episode), "sg": sg_summary}
 
 
 def task_id_of(task) -> int:
@@ -248,7 +277,11 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--suite", default="libero_spatial")
     ap.add_argument("--tasks", default="")
-    ap.add_argument("--mode", choices=["frozen", "salt", "self", "sg_salt"], default="frozen")
+    ap.add_argument("--mode", choices=["frozen", "salt", "self", "sg_salt", "sg_cpa"], default="frozen")
+    ap.add_argument("--sgcpa-alpha", type=float, default=0.1)
+    ap.add_argument("--sgcpa-sigma", type=float, default=0.05)
+    ap.add_argument("--sgcpa-eta", type=float, default=0.05)
+    ap.add_argument("--a-change-tol", type=float, default=5e-3)
     ap.add_argument("--episodes-per-task", type=int, default=1)
     ap.add_argument("--lambda-protect", type=float, default=0.0)
     ap.add_argument("--a-basis", type=Path, default=None)
@@ -292,11 +325,20 @@ def main() -> int:
         blob = json.loads(args.calibration.read_text())
         gate = FeatureChangeGate(num_tokens=args.gate_tokens)
         gate.load(blob["statistics"] | {"n_tokens": blob["gate_tokens"]})
-    tta = SaltTTA(policy, eta=args.eta, adapt_steps=args.adapt_steps, draws=args.draws) \
-        if args.mode in ("salt", "self", "sg_salt") else None
+    if args.mode == "sg_cpa":
+        if args.a_basis is None or not args.a_basis.exists():
+            raise SystemExit("--a-basis is required for mode=sg_cpa")
+        a_basis_t = torch.tensor(json.loads(args.a_basis.read_text())["action_subspace"],
+                                 dtype=torch.float64)
+        tta = SGCpa(policy, a_basis_t, alpha=args.sgcpa_alpha, sigma=args.sgcpa_sigma,
+                    eta=args.sgcpa_eta, a_change_tol=args.a_change_tol,
+                    seed=args.seed)
+    else:
+        tta = SaltTTA(policy, eta=args.eta, adapt_steps=args.adapt_steps, draws=args.draws) \
+            if args.mode in ("salt", "self", "sg_salt") else None
     a_basis = None
     a_basis_sha = None
-    if args.mode == "sg_salt":
+    if args.mode in ("sg_salt", "sg_cpa"):
         if args.a_basis is None or not args.a_basis.exists():
             raise SystemExit("--a-basis is required for mode=sg_salt")
         import hashlib
