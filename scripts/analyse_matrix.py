@@ -92,11 +92,15 @@ def analyse(base: dict[tuple[int, int], bool], meth: dict[tuple[int, int], bool]
     clo, chi = cluster_bootstrap(per_task, level=0.90)
     res = {
         "n": n, "base": (a + b) / n if n else 0.0, "method": (a + c) / n if n else 0.0,
+        "n_base_only": len(set(base) - set(meth)), "n_method_only": len(set(meth) - set(base)),
+        "n_tasks": len({k[0] for k in keys}),
         "delta": delta, "discordant": f"{b}/{c}", "mcnemar_p": p,
         "newcombe90": [lo, hi], "cluster90": [clo, chi],
     }
     if margin is not None:
-        res["tost_pass"] = (lo > -margin) and (hi < margin)
+        # two DIFFERENT operational equivalence judgements
+        res["tost_paired_pass"] = (lo > -margin) and (hi < margin)
+        res["tost_cluster_pass"] = (clo > -margin) and (chi < margin)
     return res
 
 
