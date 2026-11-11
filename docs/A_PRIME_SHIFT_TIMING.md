@@ -82,3 +82,27 @@ CPIA 的形式是**共享低秩乘性**变换 `w' = w + (w V) Uᵀ`，
 
 **下一步**：从 LIBERO-Plus 的 camera bddl 中读取真实相机位姿偏移量，
 在 mid-shift 中复现同等量级，并重跑 Frozen / Direct Leftover / Sham / CPIA。
+
+## 6. 真实偏移量级与 v2/v3 尝试（实现中，暂不下结论）
+
+从 plus/clean 两个 env 读取 `agentview` 相机位姿差（10 个 camera 任务）：
+`|Δpos| ≈ 0.23–0.39 m`，四元数点积 0.96–0.99（部分为同旋转的符号翻转）。
+
+已实现（`scripts/midshift_eval.py`）：
+- `--offset-from-task`：从 plus env 读取真实相机位姿，在 mid-shift 时应用；
+- `oracle` 模式：shadow clean env 与主 env 锁步同动作，逐 replan 取 `w_clean`，
+  注入 `−(w_shift − w_clean)`（逐状态加性 Oracle）；
+- 支持 `frozen / leftover / cpia / oracle` 四种模式 + `--sham` 控制。
+
+**当前状态（未完成，不能下结论）**：
+- v2（plus env + clean 相机位姿起步）：frozen/sham 0/3，oracle 3/3；
+- v3（clean canonical env + plus 相机位姿）：frozen 0/4、sham 0/4、oracle 4/4，
+  但 `image_changed` 在任务间不一致（0.016 vs 57.7）→ **相机位姿映射仍有 bug**；
+- **sham（零偏移）也失败** → 说明当前 mid-shift 协议本身（env/init state/language 组合）
+  会破坏 nominal 成功，**不是相机效应**。
+
+**下一步修复**：
+1. 逐任务校验 plus/clean `agentview` 位姿差，确认 `image_changed` 与位姿差一致；
+2. 换用"纯 clean benchmark 任务 + 合成的真实量级偏移（平移 0.3m + 旋转）"，
+   保证 nominal（shift 前）与 clean 基线一致，再做 G0–G3；
+3. 重新跑矩阵并统计（Newcombe + cluster bootstrap + paired/cluster TOST）。
