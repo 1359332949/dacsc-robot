@@ -3,6 +3,10 @@
 研究紧凑机器人策略在未见外观条件下的闭环泛化。当前使用 **CoRP adapted to RoboCasa**，
 先验证能完成任务的无干预基线，再检验视觉表示增广。方法效果尚未成立。
 
+**LIBERO-Plus 测试时自适应研究（2026-11）：完整逻辑、代码地图与实验结论见
+[RESEARCH_SUMMARY.md](docs/RESEARCH_SUMMARY.md)，逐日实验日志见
+[LIBERO_ROUTE_A.md](docs/LIBERO_ROUTE_A.md)。**
+
 **当前 V10 执行顺序与冻结配置：[V10_PROTOCOL.md](docs/V10_PROTOCOL.md)。**
 研究边界和总体比较原则见 [EXPERIMENT_PROTOCOL.md](docs/EXPERIMENT_PROTOCOL.md)；
 机器可读事实源是 [v10_atomic_target_pilot.json](configs/v10_atomic_target_pilot.json)。
