@@ -36,6 +36,11 @@ from dacsc.corp_images import (
     apply_image_shift,
     image_contract,
 )
+from dacsc.invariance import (
+    AppearanceConsistencyConfig,
+    appearance_consistency_loss,
+    ramp_factor,
+)
 from dacsc.corp_robocasa import (  # noqa: E402
     CHECKPOINT_FORMAT,
     OBJECTIVE,
@@ -807,6 +812,13 @@ def main() -> int:
     )
     ap.add_argument("--domain-loss-weight", type=float, default=1.0)
     ap.add_argument("--domain-grl-lambda", type=float, default=0.25)
+    ap.add_argument("--appearance-consistency-weight", type=float, default=0.0)
+    ap.add_argument("--appearance-brightness", type=float, default=0.4)
+    ap.add_argument("--appearance-contrast", type=float, default=0.4)
+    ap.add_argument("--appearance-saturation", type=float, default=0.4)
+    ap.add_argument("--appearance-ramp-steps", type=int, default=500)
+    ap.add_argument("--appearance-ramp", choices=["sigmoid", "constant"], default="sigmoid")
+    ap.add_argument("--appearance-duplicate-only", action="store_true")
     ap.add_argument(
         "--domain-head-lr",
         type=float,
@@ -941,6 +953,28 @@ def run(args, out: Path) -> int:
 
     tasks = all_task_paths(args.max_tasks, args.data_root, args.tasks)
     task_to_id = task_class_map(tasks)
+    appearance_cfg = (
+        None
+        if args.appearance_consistency_weight == 0
+        else AppearanceConsistencyConfig(
+            weight=args.appearance_consistency_weight,
+            brightness=args.appearance_brightness,
+            contrast=args.appearance_contrast,
+            saturation=args.appearance_saturation,
+            ramp=args.appearance_ramp,
+            ramp_steps=args.appearance_ramp_steps,
+            duplicate_only=args.appearance_duplicate_only,
+        )
+    )
+    if appearance_cfg is not None:
+        if channel_method != "none":
+            raise ValueError(
+                "appearance consistency cannot be combined with a channel method"
+            )
+        print(f"appearance_consistency={appearance_cfg.to_dict()}", flush=True)
+    appearance_generator = torch.Generator()
+    appearance_generator.manual_seed(args.seed)
+
     task_aux_cfg = (
         None
         if args.task_aux_lambda == 0
@@ -1471,7 +1505,7 @@ def run(args, out: Path) -> int:
             task_to_id=task_to_id,
         )
         with torch.autocast("cuda", dtype=torch.bfloat16):
-            if controller is None:
+            if controller is None and appearance_cfg is None:
                 losses = model.training_loss(
                     b["images"],
                     b["state"],
@@ -1482,6 +1516,18 @@ def run(args, out: Path) -> int:
                 )
                 loss = losses.total
                 consistency_loss = None
+                domain_loss = None
+                channel_diagnostics = None
+            elif controller is None:
+                loss, losses, appearance_diag = appearance_consistency_loss(
+                    model,
+                    b,
+                    appearance_cfg,
+                    step=step,
+                    generator=appearance_generator,
+                    task_labels=b["task_id"] if task_aux_cfg is not None else None,
+                )
+                consistency_loss = appearance_diag["appearance_consistency"]
                 domain_loss = None
                 channel_diagnostics = None
             elif is_dgcd_method:
@@ -1535,7 +1581,13 @@ def run(args, out: Path) -> int:
             )
             channel_detail = ""
             if consistency_loss is not None:
-                channel_detail += f" consistency {scalar_float(consistency_loss):.4f}"
+                if appearance_cfg is not None:
+                    channel_detail += (
+                        f" appear_cons {scalar_float(consistency_loss):.4f}"
+                        f" appear_ramp {ramp_factor(appearance_cfg, step):.2f}"
+                    )
+                else:
+                    channel_detail += f" consistency {scalar_float(consistency_loss):.4f}"
             if domain_loss is not None:
                 channel_detail += f" domain {scalar_float(domain_loss):.4f}"
             if channel_diagnostics is not None:
