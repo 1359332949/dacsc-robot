@@ -126,6 +126,10 @@ def main() -> int:
                             prepared = prepare_observation(
                                 batch, config=policy.config, normalizer=policy.normalizer, device=args.device
                             )
+                            with torch.autocast(device_type="cuda", dtype=torch.bfloat16):
+                                representation = policy.representation_extractor(
+                                    prepared["images"], prepared["state"], prepared["instruction"]
+                                )
                             if previous_chunk is not None and not (args.adapt_once and transform.adapted_once):
                                 # adapt only the small low-rank interface transform;
                                 # fork_rng keeps the execution stream identical to base
