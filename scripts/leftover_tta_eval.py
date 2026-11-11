@@ -45,7 +45,7 @@ def main() -> int:
     ap.add_argument("--adapt-steps", type=int, default=2)
     ap.add_argument("--lr", type=float, default=1e-3)
     ap.add_argument("--reg", type=float, default=1e-3)
-    ap.add_argument("--mode", choices=["base", "tta"], required=True)
+    ap.add_argument("--mode", choices=["base", "tta", "cand"], required=True)
     ap.add_argument("--action-basis", type=Path, default=None,
                     help="stats json/flags with action_subspace for null-space protection")
     ap.add_argument("--adapt-seed", type=int, default=1234)
@@ -54,6 +54,8 @@ def main() -> int:
                     help="if set, use candidate selection + disagreement gate before distillation")
     ap.add_argument("--candidates", type=int, default=4)
     ap.add_argument("--disagree-threshold", type=float, default=0.02)
+    ap.add_argument("--distill-full", action="store_true",
+                    help="distill the full candidate chunk instead of only the leftover overlap")
     ap.add_argument("--restore", type=float, default=0.0, help="pull U,V toward zero by this factor each step")
     ap.add_argument("--adapt-once", action="store_true")
     ap.add_argument("--uv-clip", type=float, default=0.0)
@@ -93,7 +95,13 @@ def main() -> int:
         transform.optimizer = torch.optim.Adam([transform.u, transform.v], lr=args.lr)
 
     suite = benchmark.get_benchmark_dict()[args.suite]()
-    task_ids = [int(item) for item in args.tasks.split(",")]
+    task_ids: list[int] = []
+    for part in args.tasks.split(","):
+        if "-" in part:
+            lo, hi = part.split("-")
+            task_ids.extend(range(int(lo), int(hi) + 1))
+        else:
+            task_ids.append(int(part))
     args.out.parent.mkdir(parents=True, exist_ok=True)
     with args.out.open("w") as output:
         for task_id in task_ids:
@@ -120,9 +128,39 @@ def main() -> int:
                         if success or done:
                             break
                     previous_chunk = None
+                    predict_index = 0
+                    if transform is not None:
+                        transform.reset_adaptation(lr=args.lr, seed=args.adapt_seed)
+                    ep_adapted = False
+                    ep_gate_skipped = False
+                    ep_disagreement = float("nan")
+                    ep_adapt_steps = 0
                     while not success and not done and steps < MAX_STEPS[args.suite]:
                         batch = policy_observation(observation, task.language, policy)
-                        if transform is not None:
+                        predict_index += 1
+                        if args.mode == "cand":
+                            prepared = prepare_observation(
+                                batch, config=policy.config, normalizer=policy.normalizer, device=args.device
+                            )
+                            with torch.autocast(device_type="cuda", dtype=torch.bfloat16):
+                                representation = policy.representation_extractor(
+                                    prepared["images"], prepared["state"], prepared["instruction"]
+                                )
+                            cands = []
+                            devices = [torch.cuda.current_device()] if torch.cuda.is_available() else []
+                            with torch.random.fork_rng(devices=devices):
+                                for k in range(args.candidates):
+                                    torch.manual_seed(args.adapt_seed + 1000 * predict_index + k)
+                                    with torch.no_grad(), torch.autocast(device_type="cuda", dtype=torch.bfloat16):
+                                        c = policy.normalizer.unnormalize_action(
+                                            sample_with_grad(
+                                                policy.action_generator, representation,
+                                                policy.config["action_generator"]["num_sample_steps"],
+                                            )[0].float()
+                                        )
+                                    cands.append(c)
+                            chunk = torch.stack(cands).mean(dim=0).cpu().numpy()
+                        elif transform is not None:
                             prepared = prepare_observation(
                                 batch, config=policy.config, normalizer=policy.normalizer, device=args.device
                             )
@@ -131,12 +169,10 @@ def main() -> int:
                                     prepared["images"], prepared["state"], prepared["instruction"]
                                 )
                             if previous_chunk is not None and not (args.adapt_once and transform.adapted_once):
-                                # adapt only the small low-rank interface transform;
-                                # fork_rng keeps the execution stream identical to base
                                 devices = [torch.cuda.current_device()] if torch.cuda.is_available() else []
                                 target_chunk = None
+                                skip_update = False
                                 if args.verifier is not None:
-                                    # 1) sample K candidates WITHOUT the transform, fixed seeds
                                     candidates = []
                                     with torch.random.fork_rng(devices=devices):
                                         for k in range(args.candidates):
@@ -154,69 +190,79 @@ def main() -> int:
                                     cands = torch.stack(candidates)
                                     mean_c = cands.mean(dim=0)
                                     disagreement = float(torch.sqrt(((cands - mean_c) ** 2).mean()).item())
-                                    if disagreement < args.disagree_threshold:
+                                    ep_disagreement = disagreement
+                                    skip_update = disagreement < args.disagree_threshold
+                                    if skip_update:
                                         transform.gated = True
+                                        ep_gate_skipped = True
                                     else:
                                         if args.verifier == "leftover":
                                             tgt = torch.tensor(previous_chunk[args.exec_len:], device=mean_c.device, dtype=mean_c.dtype)
                                             scores = [float(torch.nn.functional.mse_loss(c[: tgt.shape[0]], tgt)) for c in cands]
                                         elif args.verifier == "consensus":
                                             scores = [float(torch.sqrt(((c - mean_c) ** 2).mean())) for c in cands]
-                                        else:  # smooth
+                                        else:
                                             scores = [float((c[1:] - c[:-1]).abs().mean()) for c in cands]
                                         target_chunk = cands[int(min(range(len(scores)), key=lambda i: scores[i]))].detach()
-                                with torch.random.fork_rng(devices=devices):
-                                    for _ in range(args.adapt_steps):
-                                        torch.manual_seed(args.adapt_seed)
-                                        transform.active = True
-                                        transform.reset()
-                                        with torch.autocast(device_type="cuda", dtype=torch.bfloat16):
-                                            representation = policy.representation_extractor(
-                                                prepared["images"], prepared["state"], prepared["instruction"]
-                                            )
-                                        # fixed sampling noise for a fair pre/post comparison
-                                        with torch.random.fork_rng(devices=devices):
+                                if not skip_update:
+                                    with torch.random.fork_rng(devices=devices):
+                                        for _ in range(args.adapt_steps):
                                             torch.manual_seed(args.adapt_seed)
-                                            chunk = policy.normalizer.unnormalize_action(
-                                                sample_with_grad(
-                                                    policy.action_generator, representation,
-                                                    policy.config["action_generator"]["num_sample_steps"],
-                                                )[0].float()
+                                            transform.active = True
+                                            transform.reset()
+                                            with torch.autocast(device_type="cuda", dtype=torch.bfloat16):
+                                                representation = policy.representation_extractor(
+                                                    prepared["images"], prepared["state"], prepared["instruction"]
+                                                )
+                                            with torch.random.fork_rng(devices=devices):
+                                                torch.manual_seed(args.adapt_seed)
+                                                chunk = policy.normalizer.unnormalize_action(
+                                                    sample_with_grad(
+                                                        policy.action_generator, representation,
+                                                        policy.config["action_generator"]["num_sample_steps"],
+                                                    )[0].float()
+                                                )
+                                            target = torch.tensor(
+                                                previous_chunk[args.exec_len:], device=chunk.device, dtype=chunk.dtype
                                             )
-                                        target = torch.tensor(
-                                            previous_chunk[args.exec_len:], device=chunk.device, dtype=chunk.dtype
-                                        )
-                                        if target_chunk is not None:
-                                            loss = torch.nn.functional.mse_loss(chunk, target_chunk)
-                                        else:
-                                            loss = leftover_loss(chunk, target, args.exec_len)
-                                        pre = float(loss.detach())
-                                        loss = loss + args.reg * (transform.u @ transform.v.T).pow(2).sum()
-                                        transform.optimizer.zero_grad(set_to_none=True)
-                                        loss.backward()
-                                        transform.optimizer.step()
-                                        if args.restore > 0:
-                                            with torch.no_grad():
-                                                transform.u.mul_(1.0 - args.restore)
-                                                transform.v.mul_(1.0 - args.restore)
-                                        if args.uv_clip > 0:
-                                            with torch.no_grad():
-                                                prod = transform.u @ transform.v.T
-                                                n = float(prod.norm())
-                                                if n > args.uv_clip:
-                                                    transform.u.mul_(args.uv_clip / n)
-                                                    transform.v.mul_(args.uv_clip / n)
-                                        transform.adapted_once = True
-                                        with torch.no_grad(), torch.random.fork_rng(devices=devices):
-                                            torch.manual_seed(args.adapt_seed)
-                                            post_chunk = policy.normalizer.unnormalize_action(
-                                                sample_with_grad(
-                                                    policy.action_generator, representation,
-                                                    policy.config["action_generator"]["num_sample_steps"],
-                                                )[0].float()
-                                            )
-                                            post = float(leftover_loss(post_chunk, target, args.exec_len))
-                                        transform.loss_trace.append((pre, post, float((post_chunk - chunk).abs().mean())))
+                                            overlap = horizon - args.exec_len
+                                            if target_chunk is not None:
+                                                if args.distill_full:
+                                                    loss = torch.nn.functional.mse_loss(chunk, target_chunk)
+                                                else:
+                                                    loss = torch.nn.functional.mse_loss(chunk[:overlap], target_chunk[:overlap])
+                                            else:
+                                                loss = leftover_loss(chunk, target, args.exec_len)
+                                            pre = float(loss.detach())
+                                            loss = loss + args.reg * (transform.u @ transform.v.T).pow(2).sum()
+                                            transform.optimizer.zero_grad(set_to_none=True)
+                                            loss.backward()
+                                            transform.optimizer.step()
+                                            if args.restore > 0:
+                                                with torch.no_grad():
+                                                    transform.u.mul_(1.0 - args.restore)
+                                                    transform.v.mul_(1.0 - args.restore)
+                                            if args.uv_clip > 0:
+                                                with torch.no_grad():
+                                                    prod = transform.u @ transform.v.T
+                                                    n = float(prod.norm())
+                                                    if n > args.uv_clip:
+                                                        transform.u.mul_(args.uv_clip / n)
+                                                        transform.v.mul_(args.uv_clip / n)
+                                            transform.adapted_once = True
+                                            ep_adapted = True
+                                            ep_adapt_steps += 1
+                                            transform.reset()
+                                            with torch.no_grad(), torch.random.fork_rng(devices=devices):
+                                                torch.manual_seed(args.adapt_seed)
+                                                post_chunk = policy.normalizer.unnormalize_action(
+                                                    sample_with_grad(
+                                                        policy.action_generator, representation,
+                                                        policy.config["action_generator"]["num_sample_steps"],
+                                                    )[0].float()
+                                                )
+                                                post = float(leftover_loss(post_chunk, target, args.exec_len))
+                                            transform.loss_trace.append((pre, post, float((post_chunk - chunk).abs().mean())))
                             transform.active = True
                             transform.reset()
                             with torch.autocast(device_type="cuda", dtype=torch.bfloat16):
@@ -243,6 +289,11 @@ def main() -> int:
                         "policy_steps": steps,
                         "mode": args.mode,
                         "exec_len": args.exec_len,
+                        "episode_adapted": ep_adapted,
+                        "gate_skipped": ep_gate_skipped,
+                        "disagreement": ep_disagreement,
+                        "adapt_steps_done": ep_adapt_steps,
+                        "uv_norm": float((transform.u @ transform.v.T).norm()) if transform is not None else 0.0,
                     }
                     output.write(json.dumps(record) + "\n")
                     output.flush()

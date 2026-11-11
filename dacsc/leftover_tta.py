@@ -82,6 +82,20 @@ class LowRankInterfaceTransform:
     def reset(self):
         self.call = 0
 
+    def reset_adaptation(self, lr: float = 1e-3, seed: int = 1234):
+        """Episodic TTA: clear U, V, optimizer state and gate flags per episode."""
+        with torch.no_grad():
+            self.u.zero_()
+            gen = torch.Generator(device=self.u.device).manual_seed(int(seed))
+            self.v.normal_(0.0, 1e-3, generator=gen)
+        self.optimizer = torch.optim.Adam([self.u, self.v], lr=float(lr), weight_decay=0.0)
+        self.adapted_once = False
+        self.gated = False
+        self.loss_trace = []
+        self.update_a_frac = 0.0
+        self.active = False
+        self.call = 0
+
     def close(self):
         self.attention.attend = self.original  # type: ignore[assignment]
 
