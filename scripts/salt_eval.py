@@ -62,10 +62,10 @@ def beta_snapshot(tta) -> dict:
         "beta_l2": float(b.norm()),
         "beta_abs_mean": float(b.abs().mean()),
         "beta_abs_max": float(b.abs().max()),
-        "frac_ge_095eta": float((b.abs() >= 0.95 * getattr(tta, "eta_param", tta.eta)).float().mean()),
-        "frac_ge_099eta": float((b.abs() >= 0.99 * getattr(tta, "eta_param", tta.eta)).float().mean()),
-        "neg_boundary_frac": float((b <= -0.99 * getattr(tta, "eta_param", tta.eta)).float().mean()),
-        "pos_boundary_frac": float((b >= 0.99 * getattr(tta, "eta_param", tta.eta)).float().mean()),
+        "frac_ge_095eta": float((b.abs() >= 0.95 * tta.adapter.eta).float().mean()),
+        "frac_ge_099eta": float((b.abs() >= 0.99 * tta.adapter.eta).float().mean()),
+        "neg_boundary_frac": float((b <= -0.99 * tta.adapter.eta).float().mean()),
+        "pos_boundary_frac": float((b >= 0.99 * tta.adapter.eta).float().mean()),
         "quantiles": [float(x) for x in q],
     }
 
@@ -99,6 +99,7 @@ def run_episode(args, policy, env, task, task_id: int, seed, episode: int, tta, 
     last_penalty = None
     last_salt = None
     sg_records = []
+    sg_attempted = sg_accepted = sg_rejected = sg_skipped = 0
     replan_times = []
     diag = {"task_id": int(task_id), "init_state_index": int(episode),
             "seed": int(seed), "replans": [], "updates": [], "gate_mode": args.gate_mode,
@@ -122,6 +123,13 @@ def run_episode(args, policy, env, task, task_id: int, seed, episode: int, tta, 
             rec = tta.step(prepared, seed=seed)
             replan_times.append(time.time() - t_step)
             sg_records.append(rec)
+            sg_attempted += 1
+            if rec.get("skipped"):
+                sg_skipped += 1
+            elif rec.get("accepted"):
+                sg_accepted += 1
+            else:
+                sg_rejected += 1
             updates += 1
             replan["updates"] += 1
             if args.diag_out is not None:
@@ -203,8 +211,10 @@ def run_episode(args, policy, env, task, task_id: int, seed, episode: int, tta, 
             "retain_mean": float(np.mean([r["retained_fraction"] for r in acc])) if acc else None,
             "backtrack_rate": float(np.mean([r["backtracks"] > 0 for r in acc])) if acc else None,
             "accepted_rate": float(np.mean([r["accepted"] for r in acc])) if acc else None,
-            "cumulative_a_change_last": acc[-1]["cumulative_a_change"] if acc else None,
-            "local_a_change_last": acc[-1]["local_a_change"] if acc else None,
+            "d_a_current_obs_total_last": acc[-1]["cumulative_a_change"] if acc else None,
+            "d_a_local_last": acc[-1]["local_a_change"] if acc else None,
+            "attempted": sg_attempted, "accepted": sg_accepted,
+            "rejected": sg_rejected, "skipped": sg_skipped,
             "beta_abs_max_last": acc[-1]["beta_abs_max"] if acc else None,
             "replan_seconds_mean": float(np.mean(replan_times)) if replan_times else None,
         }
@@ -274,6 +284,9 @@ def calibrate(args, policy):
 
 
 def main() -> int:
+    from dacsc.upstream import verify_upstream
+    upstream = verify_upstream(["CoRP"])
+    print(f"[upstream] verified: {sorted(upstream)}", flush=True)
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--suite", default="libero_spatial")
     ap.add_argument("--tasks", default="")
@@ -282,6 +295,11 @@ def main() -> int:
     ap.add_argument("--sgcpa-sigma", type=float, default=0.05)
     ap.add_argument("--sgcpa-eta", type=float, default=0.05)
     ap.add_argument("--a-change-tol", type=float, default=5e-3)
+    ap.add_argument("--sgcpa-aggregation", choices=["medoid", "mean_anchored"], default="medoid")
+    ap.add_argument("--sgcpa-photo", type=float, default=1.05)
+    ap.add_argument("--sgcpa-blur-sigma", type=float, default=0.5)
+    ap.add_argument("--sgcpa-no-projection", action="store_true")
+    ap.add_argument("--sgcpa-medoid-exclude-identity", action="store_true")
     ap.add_argument("--episodes-per-task", type=int, default=1)
     ap.add_argument("--lambda-protect", type=float, default=0.0)
     ap.add_argument("--a-basis", type=Path, default=None)
@@ -332,7 +350,10 @@ def main() -> int:
                                  dtype=torch.float64)
         tta = SGCpa(policy, a_basis_t, alpha=args.sgcpa_alpha, sigma=args.sgcpa_sigma,
                     eta=args.sgcpa_eta, a_change_tol=args.a_change_tol,
-                    seed=args.seed)
+                    seed=args.seed, aggregation=args.sgcpa_aggregation,
+                    photo=args.sgcpa_photo, blur_sigma=args.sgcpa_blur_sigma,
+                    use_projection=not args.sgcpa_no_projection,
+                    medoid_include_identity=not args.sgcpa_medoid_exclude_identity)
     else:
         tta = SaltTTA(policy, eta=args.eta, adapt_steps=args.adapt_steps, draws=args.draws) \
             if args.mode in ("salt", "self", "sg_salt") else None
