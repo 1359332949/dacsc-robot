@@ -67,8 +67,10 @@ L_SG-SALT = L_SALT + lambda * || A^T (z_phi - z_0) ||_2^2
 | 对照 | Light（高基线） | spatial, object | 3+3 | 5 |
 | 边界分析（不进主表） | Robot / Layout / Language | — | — | 仅文档说明 |
 
-- 每格 3 个任务的选择标准：**episode 0 冻结成功率在 20%–80%**（保证有翻转空间）；
-- 任务清单与 seed 在实验前固定并写入配置；
+- 任务选择（避免选择偏差）：先用**独立的少量 pilot episodes**（独立 seeds，如 seed=101+）估计每个任务
+  的冻结成功率，选成功率在 20%–80% 的任务；**正式配对比较使用与 pilot 不重叠的新 seeds**（如 seed=7+）。
+  单个 episode 的 frozen 结果不能用来计算 20%–80% 成功率；
+- 任务清单、pilot seeds、正式 seeds 在实验前固定并写入配置；
 - 触发：**always-on**（静态扰动下 change-gate 不适用，声明为固定触发消融）；
 - 方法：Frozen / SALT / SG-SALT（λ 取 2.0 中局部验证选定的一个值，不做大规模超参搜索）。
 
