@@ -13,7 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--mode", choices=["frozen", "salt", "sg_salt"], default="frozen")
+    ap.add_argument("--mode", choices=["frozen", "salt", "sg_salt", "sg_cpa"], default="frozen")
     ap.add_argument("--suite-filter", default=None)
     ap.add_argument("--seed", type=int, default=202)
     ap.add_argument("--episodes", type=int, default=4)
@@ -23,6 +23,8 @@ def main() -> int:
     ap.add_argument("--a-basis", default="/hy-tmp/validation/interface_stats_spatial_k32_big2.json")
     ap.add_argument("--calibration", default="/hy-tmp/validation/p11_calib/gate.json")
     ap.add_argument("--extra", default="")
+    ap.add_argument("--no-projection", action="store_true")
+    ap.add_argument("--medoid-exclude-identity", action="store_true")
     args = ap.parse_args()
     cfg = json.loads((ROOT / args.tasks_file).read_text())
     out_root = Path(args.out_root)
@@ -50,6 +52,12 @@ def main() -> int:
                "--out", str(out)]
         if args.mode == "sg_salt":
             cmd += ["--lambda-protect", str(args.lambda_protect), "--a-basis", args.a_basis]
+        if args.mode == "sg_cpa":
+            cmd += ["--a-basis", args.a_basis]
+            if args.no_projection:
+                cmd += ["--sgcpa-no-projection"]
+            if args.medoid_exclude_identity:
+                cmd += ["--sgcpa-medoid-exclude-identity"]
         if args.mode != "frozen":
             # protocol requires a fixed always-on trigger (feature gate is a separate study)
             cmd += ["--gate-mode", "always", "--calibration", args.calibration]
