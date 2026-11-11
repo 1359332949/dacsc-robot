@@ -175,6 +175,25 @@ def flow_matching_leftover_loss(
     return total / max(int(draws), 1)
 
 
+def probe_flow_loss(generator, representation, target_norm: torch.Tensor, exec_len: int,
+                    *, eps_seed: int = 123, tau_value: float = 0.5,
+                    mode: str = "leftover") -> float:
+    """Fixed-noise / fixed-tau diagnostic loss (never used for updates)."""
+    h, a = int(generator.action_horizon), int(generator.action_dim)
+    device, dtype = representation.tokens.device, representation.action_dtype
+    target = target_norm.to(device=device, dtype=dtype)
+    y, mask = build_leftover_target(target, exec_len, h, a) if mode == "leftover" else (
+        target[:h].clone(), torch.ones((h, 1), device=device, dtype=dtype))
+    gen = torch.Generator(device=device.type).manual_seed(int(eps_seed))
+    eps = torch.randn(y.shape, device=device, dtype=dtype, generator=gen)
+    tau = torch.full((), tau_value, device=device, dtype=dtype)
+    x, v_target = flow_interpolate(y, eps, tau)
+    with torch.no_grad():
+        prefix = generator.prepare_prefix(representation)
+        v = generator(x.unsqueeze(0), tau.expand(1), prefix)[0]
+    return float(_masked_mse((v - v_target) ** 2, mask))
+
+
 # --------------------------------------------------------------------------- #
 # SALT Appendix B.4 gate
 # --------------------------------------------------------------------------- #
@@ -261,15 +280,18 @@ class FeatureChangeGate:
         self.threshold = float(blob["threshold"])
         self.num_tokens = int(blob.get("n_tokens", self.num_tokens))
 
-    def update(self, tokens: torch.Tensor) -> bool:
+    def step(self, tokens: torch.Tensor) -> tuple[float, bool]:
+        """Return (score, active) and apply the latch rule (no side effects on stats)."""
         change = self.token_change(tokens)
-        if self.active:
-            return True
         if self.median is None or self.threshold is None:
             raise RuntimeError("gate is not calibrated")
-        if float(self.score_raw(change)) > self.threshold:
+        score = float(self.score_raw(change))
+        if not self.active and score > self.threshold:
             self.active = True
-        return self.active
+        return score, self.active
+
+    def update(self, tokens: torch.Tensor) -> bool:
+        return self.step(tokens)[1]
 
     def reset(self) -> None:
         self.prev = None

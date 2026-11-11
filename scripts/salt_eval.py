@@ -23,7 +23,9 @@ from evaluate_libero import (  # noqa: E402
 )
 from corp import load_policy  # noqa: E402
 from corp.preprocessing import prepare_observation  # noqa: E402
-from dacsc.salt_tta import FeatureChangeGate, SaltTTA, flow_matching_leftover_loss  # noqa: E402
+from dacsc.salt_tta import (  # noqa: E402
+    FeatureChangeGate, SaltTTA, flow_matching_leftover_loss, probe_flow_loss,
+)
 from dacsc.upstream import verify_release_checkpoint  # noqa: E402
 
 CLEAN_ROOT = Path("/hy-tmp/dacsc-robot-784fe2e/repos/CoRP/third_party/LIBERO/libero/libero")
@@ -48,7 +50,24 @@ def sample_norm(policy, prepared, num_steps):
     return rep, chunk
 
 
-def run_episode(args, policy, env, task, seed, tta, gate, calibration_missing: bool):
+def beta_snapshot(tta) -> dict:
+    b = tta.adapter.beta.detach().double().cpu()
+    if b.numel() == 0:
+        return {}
+    q = torch.quantile(b, torch.tensor([0.0, 0.01, 0.05, 0.5, 0.95, 0.99, 1.0], dtype=torch.float64))
+    return {
+        "beta_l2": float(b.norm()),
+        "beta_abs_mean": float(b.abs().mean()),
+        "beta_abs_max": float(b.abs().max()),
+        "frac_ge_095eta": float((b.abs() >= 0.95 * tta.eta).float().mean()),
+        "frac_ge_099eta": float((b.abs() >= 0.99 * tta.eta).float().mean()),
+        "neg_boundary_frac": float((b <= -0.99 * tta.eta).float().mean()),
+        "pos_boundary_frac": float((b >= 0.99 * tta.eta).float().mean()),
+        "quantiles": [float(x) for x in q],
+    }
+
+
+def run_episode(args, policy, env, task, task_id: int, seed, tta, gate, calibration_missing: bool):
     np.random.seed(seed); torch.manual_seed(seed)
     if torch.cuda.is_available(): torch.cuda.manual_seed_all(seed)
     env.seed(seed); env.reset()
@@ -70,20 +89,28 @@ def run_episode(args, policy, env, task, seed, tta, gate, calibration_missing: b
     updates = 0
     gate_step = -1
     predict_index = 0
-    beta_trace = []
-    loss_trace = []
+    diag = {"task_id": int(task_id),
+            "seed": int(seed), "replans": [], "updates": [], "gate_mode": args.gate_mode,
+            "mode": args.mode, "threshold": None if gate is None else gate.threshold}
     while not success and not done and steps < MAX_STEPS[args.suite]:
         prepared = observed(args, policy, env, obs, task)
         with torch.no_grad():
             rep = policy.representation_extractor(**prepared)
+        gate_score = None
         gate_active = False
         if args.gate_mode == "always":
             gate_active = True
             if gate_step < 0: gate_step = predict_index
         elif gate is not None:
-            gate_active = gate.update(rep.tokens)
+            gate_score, gate_active = gate.step(rep.tokens)
             if gate_active and gate_step < 0: gate_step = predict_index
+        replan = {"index": predict_index, "score": gate_score, "active": gate_active,
+                  "updates": 0, "probe_before": None, "probe_after": None}
         if tta is not None and gate_active and prev_norm is not None:
+            if args.diag_out is not None:
+                replan["probe_before"] = probe_flow_loss(
+                    policy.action_generator, rep, prev_norm, args.exec_len,
+                    mode="leftover" if args.mode == "salt" else "self")
             for _ in range(args.adapt_steps):
                 if args.mode == "self":
                     with torch.no_grad():
@@ -96,12 +123,28 @@ def run_episode(args, policy, env, task, seed, tta, gate, calibration_missing: b
                                                    rng=draw_rng)
                 tta.optimizer.zero_grad(set_to_none=True)
                 loss.backward()
+                grad = tta.adapter.beta.grad
+                grad_l2 = float(grad.norm()) if grad is not None else 0.0
+                grad_max = float(grad.abs().max()) if grad is not None else 0.0
+                before = tta.adapter.beta.detach().clone()
                 tta.optimizer.step()
                 with torch.no_grad():
                     tta.adapter.beta.clamp_(-args.eta, args.eta)
+                delta = float((tta.adapter.beta.detach() - before).norm())
                 updates += 1
-                loss_trace.append(float(loss.detach()))
-            beta_trace.append(tta.adapter.diagnostics())
+                replan["updates"] += 1
+                if args.diag_out is not None:
+                    diag["updates"].append({
+                        "replan": predict_index, "step": replan["updates"] - 1,
+                        "loss": float(loss.detach()), "grad_l2": grad_l2, "grad_max": grad_max,
+                        "delta_beta_l2": delta, **beta_snapshot(tta),
+                    })
+            if args.diag_out is not None:
+                replan["probe_after"] = probe_flow_loss(
+                    policy.action_generator, rep, prev_norm, args.exec_len,
+                    mode="leftover" if args.mode == "salt" else "self")
+                replan["beta"] = beta_snapshot(tta)
+        diag["replans"].append(replan)
         _, chunk = sample_norm(policy, prepared, args.num_steps)
         prev_norm = chunk[0].detach()
         actions = policy.normalizer.unnormalize_action(chunk)[0].float().cpu().numpy()
@@ -112,21 +155,20 @@ def run_episode(args, policy, env, task, seed, tta, gate, calibration_missing: b
             success = is_success(env, info, reward, done)
             if success or done or steps >= MAX_STEPS[args.suite]: break
     summary = {}
-    if beta_trace:
-        summary = {
-            "beta_l2_max": max(b["beta_l2"] for b in beta_trace),
-            "beta_l2_final": beta_trace[-1]["beta_l2"],
-            "beta_abs_mean_final": beta_trace[-1]["beta_abs_mean"],
-            "beta_abs_max_final": beta_trace[-1]["beta_abs_max"],
-            "frac_ge_095eta_final": beta_trace[-1]["frac_ge_095eta"],
-            "frac_ge_099eta_final": beta_trace[-1]["frac_ge_099eta"],
-            "loss_first": loss_trace[0] if loss_trace else None,
-            "loss_last": loss_trace[-1] if loss_trace else None,
-        }
+    if tta is not None:
+        summary = beta_snapshot(tta)
+    diag["result"] = {"success": bool(success), "steps": steps, "updates": updates,
+                      "gate_step": gate_step}
+    if args.diag_out is not None:
+        args.diag_out.mkdir(parents=True, exist_ok=True)
+        path = args.diag_out / f"task{task_id}_{seed}_{args.mode}_{args.gate_mode}.json"
+        path.write_text(json.dumps(diag))
     return {"success": bool(success), "steps": steps, "updates": updates,
             "gate_step": gate_step, "beta": summary}
 
 
+def task_id_of(task) -> int:
+    return int(getattr(task, "task_id", 0))
 def calibrate(args, policy):
     from libero.libero import benchmark, get_libero_path
     suite = benchmark.get_benchmark_dict()[args.suite]()
@@ -197,6 +239,8 @@ def main() -> int:
     ap.add_argument("--adapt-steps", type=int, default=5)
     ap.add_argument("--draws", type=int, default=8)
     ap.add_argument("--calibration", type=Path, default=None)
+    ap.add_argument("--diag-out", type=Path, default=None,
+                    help="directory for per-episode diagnostics JSON")
     ap.add_argument("--calibrate", action="store_true")
     ap.add_argument("--calib-tasks", default="0,1,2,3,4")
     ap.add_argument("--calib-episodes", type=int, default=4)
@@ -235,7 +279,7 @@ def main() -> int:
             bddl = Path(get_libero_path("bddl_files")) / task.problem_folder / task.bddl_file
             env = build_env(args, bddl)
             seed = args.seed + task_id * 1000
-            rec = run_episode(args, policy, env, task, seed, tta, gate, False)
+            rec = run_episode(args, policy, env, task, task_id, seed, tta, gate, False)
             env.close()
             rec.update({"suite": args.suite, "task_id": task_id, "mode": args.mode,
                         "gate_mode": args.gate_mode, "gate_tokens": args.gate_tokens,
