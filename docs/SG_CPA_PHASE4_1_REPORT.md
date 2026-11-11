@@ -69,4 +69,16 @@
 已按公式实现并可单元验证。**建议批准 4.2 小规模筛选设计**（Frozen / SALT / SG-CPA 配对），但**不自动启动 rollout**；
 启动前需你确认实验规模、任务与停止条件。
 
+## 7. 审查后 P0 修复（2026-11-12）
+
+| 问题 | 修复 |
+|---|---|
+| β 无显式边界 | 更新前按 `|β|≤eta_param` 对整个 Δβ 做**全局缩放**（不逐维 clamp，保持方向） |
+| A 检查是局部而非累计 | episode 首次 step 保存 `z_ref`（β=0 写回）；每次同时记录 `local_a_change` 与 `cumulative_a_change`，接受条件取两者最大 |
+| 采样污染全局 RNG | `_sample()` / `write()` 全部包在 `torch.random.fork_rng` 内 |
+| Gram 矩阵条件数平方 | `nullspace()` 改为直接对 `J_A` 做 SVD（显式秩阈值 `1e-8`） |
+
+新增回归测试：`test_beta_bound_respected`、`test_rng_isolation`、`test_cumulative_reference`、
+`test_svd_nullspace_properties`；单文件 **14 passed**，全量 **46 passed**。
+
 _commit SHA：见本次提交。_

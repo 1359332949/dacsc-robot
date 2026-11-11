@@ -177,16 +177,71 @@ def test_reset_and_rng_pairing(policy, prepared, a_basis):
     obj = SGCpa(policy, a_basis, alpha=0.1, sigma=0.05, seed=1234)
     try:
         obj.step(prepared, seed=1234)
-        assert float(obj.adapter.beta.norm()) > 0
+        assert float(obj.adapter.beta.detach().norm()) > 0
         t1 = obj.build_target(prepared, seed=1234)["target"]
         obj.reset(seed=1234)
-        assert float(obj.adapter.beta.norm()) == 0.0
+        assert float(obj.adapter.beta.detach().norm()) == 0.0
         t2 = obj.build_target(prepared, seed=1234)["target"]
         assert torch.equal(t1, t2)
         t3 = obj.build_target(prepared, seed=999)["target"]
         assert not torch.equal(t1, t3)
     finally:
         obj.close()
+
+
+# 11 ------------------------------------------------ explicit beta bound (P0-1)
+def test_beta_bound_respected(policy, prepared, a_basis):
+    obj = SGCpa(policy, a_basis, alpha=0.1, sigma=0.05, eta=0.5, seed=1234,
+                eta_param=0.02, a_change_tol=1e6)
+    try:
+        for _ in range(3):
+            obj.step(prepared, seed=1234)
+        assert float(obj.adapter.beta.detach().abs().max()) <= 0.02 + 1e-6
+    finally:
+        obj.close()
+
+
+# 12 ------------------------------------------------------- RNG isolation (P0-3)
+def test_rng_isolation(policy, prepared, cpa):
+    before = torch.get_rng_state()
+    cpa.write(prepared, seed=1234)
+    assert torch.equal(before, torch.get_rng_state())
+    with torch.no_grad():
+        rep = policy.representation_extractor(**prepared)
+    cpa._sample(rep, seed=1234, grad=False)
+    assert torch.equal(before, torch.get_rng_state())
+
+
+# 13 ------------------------------------- cumulative A reference per episode (P0-2)
+def test_cumulative_reference(policy, prepared, a_basis):
+    obj = SGCpa(policy, a_basis, alpha=0.1, sigma=0.05, eta=0.2, seed=1234,
+                a_change_tol=1e6)
+    try:
+        assert obj.z_ref is None
+        obj.step(prepared, seed=1234)
+        assert obj.z_ref is not None
+        rec = obj.step(prepared, seed=1234)
+        assert rec["cumulative_a_change"] is not None
+        assert rec["local_a_change"] is not None
+        # reference must equal the beta=0 write
+        with torch.no_grad():
+            saved = obj.adapter.beta.detach().clone()
+            obj.adapter.beta.zero_()
+        z_ref_fresh = obj.write(prepared, seed=1234).detach().double().cpu()
+        with torch.no_grad():
+            obj.adapter.beta.copy_(saved)
+        assert float((obj.z_ref - z_ref_fresh).abs().max()) < 1e-6
+    finally:
+        obj.close()
+
+
+# 14 ------------------------------------------ SVD nullspace properties (P0-b)
+def test_svd_nullspace_properties(prepared, cpa):
+    j = cpa.jacobian_a(prepared, seed=1234)
+    p = cpa.nullspace(j)
+    assert float((j @ p).norm() / (p.norm() + 1e-12)) < 1e-10
+    assert float((p - p.T).abs().max()) < 1e-10
+    assert float((p @ p - p).abs().max()) < 1e-8
 
 
 # 10 --------------------------------------- frozen params and only-beta update

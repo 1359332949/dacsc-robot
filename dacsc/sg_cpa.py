@@ -84,6 +84,7 @@ class SGCpa:
         self.max_backtracks = int(max_backtracks)
         self.optimizer = torch.optim.SGD([self.adapter.beta], lr=1.0)  # step applied manually
         self.diagnostics: list[dict] = []
+        self.z_ref = None      # write at beta=0, fixed per episode
 
     # ------------------------------------------------------------------ utils
     def reset(self, seed: int | None = None) -> None:
@@ -92,17 +93,24 @@ class SGCpa:
         if seed is not None:
             self.seed = int(seed)
         self.diagnostics = []
+        self.z_ref = None
 
     def close(self) -> None:
         self.adapter.close()
 
+    @staticmethod
+    def _fork_rng():
+        devices = [torch.cuda.current_device()] if torch.cuda.is_available() else []
+        return torch.random.fork_rng(devices=devices)
+
     def _sample(self, rep, seed: int, grad: bool) -> torch.Tensor:
-        torch.manual_seed(int(seed))
-        if grad:
-            return sample_with_grad(self.policy.action_generator, rep,
-                                    self.policy.config["action_generator"]["num_sample_steps"])
-        with torch.no_grad():
-            return self.policy.action_generator.sample(rep)
+        with self._fork_rng():
+            torch.manual_seed(int(seed))
+            if grad:
+                return sample_with_grad(self.policy.action_generator, rep,
+                                        self.policy.config["action_generator"]["num_sample_steps"])
+            with torch.no_grad():
+                return self.policy.action_generator.sample(rep)
 
     def _rep(self, images, state, instruction):
         return self.policy.representation_extractor(images, state, instruction)
@@ -175,10 +183,11 @@ class SGCpa:
                            int(self.policy.config["action_generator"]["num_sample_steps"]),
                            int(self.policy.config["action_horizon"]))
         try:
-            torch.manual_seed(int(seed))
-            sample_with_grad(self.policy.action_generator, rep,
-                             self.policy.config["action_generator"]["num_sample_steps"])
-            z = hook.z
+            with self._fork_rng():
+                torch.manual_seed(int(seed))
+                sample_with_grad(self.policy.action_generator, rep,
+                                 self.policy.config["action_generator"]["num_sample_steps"])
+                z = hook.z
         finally:
             hook.close()
         return z
@@ -194,15 +203,30 @@ class SGCpa:
         return torch.stack(rows).double()
 
     @staticmethod
-    def nullspace(j_a: torch.Tensor) -> torch.Tensor:
+    def nullspace(j_a: torch.Tensor, rank_tol: float = 1e-8) -> torch.Tensor:
+        """P = I - V_r V_r^T from the SVD of J_A itself (not Gram: no squared cond.)."""
         d = j_a.shape[1]
-        return torch.eye(d, dtype=torch.float64) - j_a.T @ torch.linalg.pinv(j_a @ j_a.T) @ j_a
+        _, s, vh = torch.linalg.svd(j_a.double(), full_matrices=False)
+        if float(s.max()) == 0.0:
+            return torch.eye(d, dtype=torch.float64)
+        rank = int((s > rank_tol * s.max()).sum())
+        v = vh[:rank]
+        return torch.eye(d, dtype=torch.float64) - v.T @ v
 
     # --------------------------------------------------------------- update
     def step(self, prepared: dict, seed: int | None = None) -> dict:
         seed = self.seed if seed is None else int(seed)
         info = self.build_target(prepared, seed=seed)
-        z0 = self.write(prepared, seed).detach()
+        z_before = self.write(prepared, seed).detach()
+        if self.z_ref is None:
+            with torch.no_grad():
+                saved = self.adapter.beta.detach().clone()
+                self.adapter.beta.zero_()
+            try:
+                self.z_ref = self.write(prepared, seed).detach().double().cpu()
+            finally:
+                with torch.no_grad():
+                    self.adapter.beta.copy_(saved)
         loss = self.loss(prepared, info, seed=seed)
         self.optimizer.zero_grad(set_to_none=True)
         loss.backward()
@@ -215,14 +239,25 @@ class SGCpa:
         d_beta = -(self.eta * (p_null @ g)).float().to(self.adapter.beta.device)
         with torch.no_grad():
             before = self.adapter.beta.detach().clone()
+            # global step shrink so that |beta| <= eta_param (never per-dim clamp)
+            step_scale = 1.0
+            for i in range(d_beta.numel()):
+                target_i = float(before[i] + d_beta[i])
+                if abs(target_i) > self.adapter.eta and abs(float(d_beta[i])) > 1e-12:
+                    bound = self.adapter.eta if target_i > 0 else -self.adapter.eta
+                    step_scale = min(step_scale, max(0.0, (bound - float(before[i])) / float(d_beta[i])))
+            if step_scale < 1.0:
+                d_beta = d_beta * step_scale
         accepted = False
-        a_change = None
+        local_change = None
+        cum_change = None
         for attempt in range(self.max_backtracks + 1):
             with torch.no_grad():
                 self.adapter.beta.copy_(before + d_beta)
             z1 = self.write(prepared, seed).detach().double().cpu()
-            a_change = float((self.a_basis.T @ (z1 - z0.double().cpu())).norm())
-            if a_change <= self.a_change_tol:
+            local_change = float((self.a_basis.T @ (z1 - z_before.double().cpu())).norm())
+            cum_change = float((self.a_basis.T @ (z1 - self.z_ref)).norm())
+            if max(local_change, cum_change) <= self.a_change_tol:
                 accepted = True
                 break
             d_beta = d_beta * 0.5
@@ -231,8 +266,10 @@ class SGCpa:
                 self.adapter.beta.copy_(before)
         rec = {"skipped": False, "loss": float(loss.detach()),
                "g_norm": float(g.norm()), "d_beta_norm": float(d_beta.norm()),
-               "a_change": a_change, "accepted": accepted,
-               "backtracks": attempt, "beta_norm": float(self.adapter.beta.detach().norm()),
+               "local_a_change": local_change, "cumulative_a_change": cum_change,
+               "accepted": accepted, "backtracks": attempt,
+               "beta_norm": float(self.adapter.beta.detach().norm()),
+               "beta_abs_max": float(self.adapter.beta.detach().abs().max()),
                "retained_fraction": float((p_null @ g).norm() / (g.norm() + 1e-12))}
         self.diagnostics.append(rec)
         return rec
