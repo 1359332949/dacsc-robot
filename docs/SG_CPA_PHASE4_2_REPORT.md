@@ -56,6 +56,27 @@
 → 方向性提示"identity 主导"可能是信号弱的原因（Camera/Light 的 CI 下界触 0），但**统计上不显著**，不能作为新结论；
 且它不属于批准的主协议，只能作为下一步设计假设。
 
+### 分套件（spatial / object）
+
+| 域 | 套件 | Frozen | SALT | SG-CPA | w/o proj | excl-id |
+|---|---|---|---|---|---|---|
+| Camera | spatial | 66.7% | 66.7% | 66.7% | 66.7% | 73.3% |
+| Camera | object | 53.3% | 53.3% | 46.7% | 53.3% | 60.0% |
+| Background | spatial | 53.3% | 60.0% | 53.3% | 53.3% | 53.3% |
+| Background | object | 53.3% | 73.3% | 60.0% | 60.0% | 66.7% |
+| Noise | spatial | 86.7% | 80.0% | 86.7% | 93.3% | 73.3% |
+| Noise | object | 93.3% | 93.3% | 93.3% | 100% | 100% |
+| Light | spatial | 93.3% | 80.0% | 86.7% | 80.0% | 93.3% |
+| Light | object | 93.3% | 100% | 100% | 93.3% | 100% |
+
+### 任务级翻转（SG-CPA vs SALT）
+
+- 正向翻转集中在 **Light spatial task 2338（+3）、Camera object 653（+1）、Noise spatial 1384（+2）**；
+- 负向翻转集中在 **Background object task 8/18（−2/−2）、Camera object 701/901（各 −1）**；
+- excl-id 相对 SALT 的正向差异主要来自 **Light task 2338（+3）与 Camera 671/653（+2）**，负向来自 **Background 18（−3）**。
+
+→ 所有"差异"都由**少数任务**驱动；这与统计不显著一致，不能把 +6.7pp 的域级差异解释成普遍优势。
+
 ## 3. 机制诊断（真实 rollout）
 
 | 指标 | SG-CPA | w/o proj | excl-id |
