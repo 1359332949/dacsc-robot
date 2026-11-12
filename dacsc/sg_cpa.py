@@ -341,8 +341,9 @@ class SGCpa:
                 with torch.no_grad():
                     self.adapter.beta.copy_(before + d_beta)
                 z1 = self.write(prepared, seed).detach().double().cpu()
-                local_change = float((self.a_basis.T @ (z1 - z_before.double().cpu())).norm())
-                cum_change = float((self.a_basis.T @ (z1 - z_ref_cur)).norm())
+                a_cpu = self.a_basis.detach().double().cpu()
+                local_change = float((a_cpu.T @ (z1 - z_before.double().cpu())).norm())
+                cum_change = float((a_cpu.T @ (z1 - z_ref_cur)).norm())
                 if max(local_change, cum_change) <= self.a_change_tol:
                     accepted = True
                     break
