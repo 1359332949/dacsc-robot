@@ -23,6 +23,7 @@ def main() -> int:
     ap.add_argument("--a-basis", default="/hy-tmp/validation/interface_stats_spatial_k32_big2.json")
     ap.add_argument("--calibration", default="/hy-tmp/validation/p11_calib/gate.json")
     ap.add_argument("--extra", default="")
+    ap.add_argument("--diag-root", default=None)
     ap.add_argument("--no-projection", action="store_true")
     ap.add_argument("--medoid-exclude-identity", action="store_true")
     args = ap.parse_args()
@@ -61,6 +62,10 @@ def main() -> int:
         if args.mode != "frozen":
             # protocol requires a fixed always-on trigger (feature gate is a separate study)
             cmd += ["--gate-mode", "always", "--calibration", args.calibration]
+        if args.diag_root:
+            diag_dir = Path(args.diag_root) / name
+            diag_dir.mkdir(parents=True, exist_ok=True)
+            cmd += ["--diag-out", str(diag_dir)]
         if args.extra:
             cmd += args.extra.split()
         log = open(out_root / f"{name}.log", "w")

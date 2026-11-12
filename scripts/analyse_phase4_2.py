@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import argparse
 import json
 from collections import defaultdict
 from pathlib import Path
@@ -59,9 +60,17 @@ def bootstrap_task_diff(tasks, keys_by_task, a, b, n_boot=2000, seed=0):
 
 
 def main() -> None:
+    global ROOT, OUT
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--root", default=str(ROOT))
+    ap.add_argument("--out", default=str(OUT))
+    ap.add_argument("--methods", default="frozen,salt,sg_cpa")
+    args = ap.parse_args()
+    ROOT = Path(args.root); OUT = Path(args.out)
+    methods = [m for m in args.methods.split(",") if m]
     OUT.mkdir(parents=True, exist_ok=True)
     tmap = task_domain_map()
-    data = {m: load(m) for m in METHODS if (ROOT / m).exists()}
+    data = {m: load(m) for m in methods if (ROOT / m).exists()}
     idx = {m: {(r["suite"], r["task_id"], r.get("episode_id", 0)): r for r in rows}
            for m, rows in data.items()}
     common = set.intersection(*[set(v) for v in idx.values()]) if idx else set()

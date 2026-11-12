@@ -134,8 +134,10 @@ def run_episode(args, policy, env, task, task_id: int, seed, episode: int, tta, 
             updates += 1
             replan["updates"] += 1
             if args.diag_out is not None:
-                diag["updates"].append({"replan": predict_index, **rec,
-                                        **beta_snapshot(tta)})
+                diag["updates"].append({"replan": predict_index,
+                                        "action_seed": int(action_seed),
+                                        "view_seed": int(action_seed + 1),
+                                        **rec, **beta_snapshot(tta)})
         elif tta is not None and gate_active and prev_norm is not None:
             if args.diag_out is not None:
                 replan["probe_before"] = probe_flow_loss(

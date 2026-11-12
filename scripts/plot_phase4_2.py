@@ -6,8 +6,13 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 
-AN = Path("/hy-tmp/validation/p42_analysis/phase4_2_analysis.json")
-OUT = Path("/hy-tmp/validation/p42_figures")
+import argparse
+_ap = argparse.ArgumentParser()
+_ap.add_argument("--analysis", default="/hy-tmp/validation/p42_analysis/phase4_2_analysis.json")
+_ap.add_argument("--out", default="/hy-tmp/validation/p42_figures")
+_args = _ap.parse_args()
+AN = Path(_args.analysis)
+OUT = Path(_args.out)
 OUT.mkdir(parents=True, exist_ok=True)
 d = json.loads(AN.read_text())
 rows = [r for r in d["rows"]]
