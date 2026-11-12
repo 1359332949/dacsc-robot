@@ -75,11 +75,24 @@ baseline 为 leave-one-task-out 任务均值。
 | tau_full | 32 | -0.54 | -0.20 | -0.52 | 0.19 | -0.29 | 0.80 |
 | tau_sens−tau_proj | 32 | -0.59 | +0.08 | -0.63 | 0.06 | -0.36 | 0.72 |
 
-**结论：没有发现更新前信号对更新效用有正向、可泛化的预测力。**
+**结论（限定）：这两个自洽类信号没有表现出正向、可泛化的预测力；不能推断所有任务正确性信号都无效。**
 - 所有 LOO 相关系数为负或接近 0；
 - 所有 permutation p > 0.05（最小 0.06，方向为负）；
 - baseline 任务均值本身也是负 LOO ρ，说明当前 33 个 branch / 12 个任务簇的样本量下，
   跨任务预测极不稳定，signal 没有超过 baseline 的证据。
+
+## 5.1 必须保留的分析限制
+
+1. **33 个对齐 branch 是 complete-case 样本**：只包含至少一个候选有完整 τ 的 branch，不是全部 39 个 eligible branch；
+   四种候选都被 censor 的 6 个 branch 不在联合分析中。
+2. **对齐证据不是完整状态逐位相同**：验证的是确定性重放 + EEF-object / object-target 两个标量距离（最大差 0.0），
+   没有比较完整 body pose、proprioception、图像或 observation 张量。
+3. **LOO 模型未控制阶段/域**：单信号 `y~x`，没有 branch 8/12、suite/domain 协变量；
+   也没有对 `signal − baseline` 的增量做正式 bootstrap/置换检验；baseline 与 signal 的 ρ 只是描述性比较。
+4. **连续 τ 预测不含 success/censor 效用**：只回答“信号能否预测未提前成功/终止的完整窗口连续 proximity 效应”，
+   没有检验信号能否预测 success、termination 或更早成功。
+5. **只测试了两个自洽类信号**（多视图一致性、历史连续性）；未测试未来视觉预测或 Oracle 成功动作；
+   “这两个信号无正向泛化证据”**不等于**“所有任务正确性信号无效”。
 
 ## 6. 解释边界
 

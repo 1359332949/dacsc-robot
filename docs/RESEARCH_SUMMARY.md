@@ -9,7 +9,7 @@
 ## 1. 研究问题
 
 在官方 CoRP（LIBERO checkpoint）上，研究**测试时自适应（TTA）**：
-- 站点：DiT 动作生成器的 cross-attention **写回**（动作接口）；
+- 站点：DiT 第一层 **self-attention 的 K projection 参数化**（QKV 的 K 切片）及其 attention **writeback** 的动作敏感性（不是 cross-attention；条件 token 以 prefix 进入）；
 - 约束：不重训、不硬删通道、变换有界可逆；允许测试时少量训练；
 - 评测：LIBERO-Plus 官方 7 个扰动维度（Camera / Robot / Language / Light / Background / Noise / Layout）。
 
@@ -209,3 +209,28 @@ _文档生成：2026-11-11。所有数字来自 `research/server_runs/LIBERO_ROU
 > 验证器版 CPIA 把"安全性"修好了，但没有改变"有效性"的结论：在无标签、小样本、状态强依赖的动作接口上，
 > 自洽类信号不足以产生可复现的收益。若要继续，需要**真正带对错信息的信号**（前向动力学/成功验证器），
 > 或转向机制/负结果论文。
+
+
+---
+
+## 10. B2 反事实与 B1/B2 联合分析（2026-11-12，冻结）
+
+### 实验
+- 固定 CoRP checkpoint、FP32、每 6 步重规划；24 episodes（12 tasks × 2），branch 8/12；
+- 双环境重放 + 共同 action latent；compare β=0 control vs 候选 update；
+- 候选：raw_proj / raw_full / raw_sens（η=100，统一比例缩放）与 production `SGCpa.step()`；
+- 主终点：完整 24 步窗口的局部 `τ_prox`；共 156 条候选记录 + 9 条 stage skip（JSONL 165）。
+
+### 结果
+- 所有候选 τ 的 task-cluster 90% CI 跨 0；production 效应 ~0；raw 动作变化大 2 个量级但无稳定方向；
+- paired contrasts（proj−full、proj−sens、full−sens、raw−prod）**全部跨 0**；
+- success（候选级）：update-only 3、control-only 0、both 20、neither 130、not_observed 3；描述性，非成功率结论；
+- B1/B2 33 个可分析 branch 的 EEF-object / object-target 距离差为 0.0（确定性重放 + 两项几何检查，不是完整状态逐位）；
+- 多视图一致性与历史连续性在 leave-one-task-out 下**没有正向预测更新效用**（LOO ρ 为负或近 0，perm p>0.05）；
+  但只测试了这两个自洽类信号，不能推断所有任务正确性信号无效。
+
+### 研究定位（冻结）
+> **A 是更新风险几何，不是更新价值函数。**
+> 对 A 的保护/放开都需要独立的任务正确性证据；当前证据不支持继续调大 η、移除 A-projection、或启动 B3 gate。
+> 下一步若继续，必须引入独立于 SG-CPA 自身一致性损失的任务反馈（如可靠的 On/In 几何验证或未来状态预测），
+> 且属于新的研究决策，当前不授权。

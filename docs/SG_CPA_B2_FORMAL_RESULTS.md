@@ -13,7 +13,9 @@
 | JSONL 总记录 | 165（候选 156 + stage skip 9） |
 | stage skip（contact>0.10 或分支前已 success） | 9 |
 | 每候选完整窗口 | prod 33 / raw_full 32 / raw_proj 33 / raw_sens 32 |
-| 执行期 censor | 6–7 / candidate，全部为 `termination_or_success`；无 action-cap censor |
+| 执行期 censor | 26 条（6–7 / candidate），全部为 `termination_or_success`；无 action-cap censor |
+| censor 步数分布 | 23 条两侧步数相等；3 条不等（20/19 ×2、23/24 ×1），均为 both-success 但因步数不等归为 `not_observed` |
+| done/success 冲突 | 0 条 |
 | success 四类（156 条候选级 paired observations） | update-only **3**、control-only **0**、both 20、neither 130、not_observed 3 |
 
 ## 2. 主要结果（局部 proximity，24 步窗口）
@@ -62,6 +64,7 @@
 ## 5. 结论
 
 > 在固定 CoRP、FP32、6 步重规划、24 步局部窗口下，**没有观测到任何候选更新方向带来可重复的 proximity 改善**；
+> paired contrasts 全部跨 0，但 CI 跨 0 不是等效性证明；
 > production guard 的更新幅度很小且 τ 贴近 0。raw 方向（包括 A-nullspace、full、A-sensitive）虽然动作变化更大，
 > 但局部任务进展效应不可辨识、且任务间方向不一致。
 
