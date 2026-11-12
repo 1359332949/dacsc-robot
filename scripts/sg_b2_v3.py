@@ -306,7 +306,12 @@ def main():
                     print("formal", domain, suite, tid, ep, flush=True)
     finally:
         sg.close()
-    (args.out / "b2_v3.jsonl").write_text("\n".join(json.dumps(r) for r in rows))
+    def _jsonable(o):
+        if hasattr(o, "item"):
+            return o.item()
+        return str(o)
+
+    (args.out / "b2_v3.jsonl").write_text("\n".join(json.dumps(r, default=_jsonable) for r in rows))
     print("rows", len(rows))
 
 
