@@ -57,7 +57,8 @@ update 级（SG-CPA）：`loss, g_norm, Δβ, local/cumulative A change, backtra
 ### 2.1 样本与目标
 
 - 样本单位：replan `t`；
-- 目标：`Δp_{t,H} = p(s_{t+H}) − p(s_t)`，`H` 固定为 10 个环境步（≈1–2 个 replan），预先写死；
+- 目标：`Δp_{t,H} = p(s_{t+H}) − p(s_t)`；**预注册修订：H=12 环境步**（=2 个 replan × exec_len 6），
+  因为 block_pos 只在 replan 时记录；不再使用 H=10；
 - `p` 必须**先于实验定义**，且任务内可比（建议：操作类任务用"物体到目标位姿的距离/子目标完成标志"的归一化进度；
   不使用最终 success 作为唯一 p；不同套件允许不同 p 定义，但必须写入配置）。
 
@@ -68,12 +69,13 @@ update 级（SG-CPA）：`loss, g_norm, Δβ, local/cumulative A change, backtra
 | 多视图一致性 | `−mean_{i<j} d(A_i,A_j)`（K 视图动作） | 一致 ≠ 正确 |
 | 历史动作连续性 | 当前计划尾部与上一 leftover 的一致性（SALT 定义） | 连贯 ≠ 成功 |
 | 未来视觉预测 | `−‖r̂_{t+1} − r_{t+1}‖`，**只能在 t+1 观测后计算** | 标记为延迟/事后验证，不能当更新前信号 |
-| 已验证成功动作 | 与成功轨迹动作块的相似度 | **Oracle 上界**，单独标注，不算无标签信号 |
+| 已验证成功动作 | 与成功轨迹动作块的相似度 | **Oracle 上界**；LOO 下若训练折无该 task 的成功参考则标"不可估计"，不进入普通排名 |
 
 ### 2.3 评价（预注册）
 
 1. **任务留出**：leave-one-task-out；每折在留出任务上评估信号 → Δp 的 Spearman/秩相关；
-2. **基线增量**：必须报告相对 `task_id one-hot + episode time + 当前 p_t + 最近动作幅度` 的增量 R²/AUC；
+2. **基线增量**：LOO 主 baseline **不含 task_id one-hot**（留出任务无法估计其系数），
+   使用 suite/domain、episode time、当前 p_t、最近动作幅度；task_id baseline 仅用于同任务分析；
 3. **不确定性**：任务簇 bootstrap（1000 次）90% CI；任务内置换检验（打乱 Δp 标签，p<0.05）；
 4. **分域报告**：Camera / Background / Noise / Light 分别报告，不合并成单一数字；
 5. **提前停止**：若某信号在 ≤1 个域对基线的增量 CI 含 0，则标记"未通过 B1"，不进入 B2/B3；
