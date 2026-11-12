@@ -32,7 +32,7 @@
 | 执行窗口 | `steps_control=24`，`steps_update=24`，无 success/termination | ✅ |
 | τ 参考距离 | `d_ref=0.16697`（episode 初始），`d_branch≈0.16780`，`d_end_control=0.158081`，`d_end_update=0.158082` | ✅ 使用固定 d_ref 与各自环境 |
 | τ | `tau_prox = -2.38e-6` | 记录成功（非统计结论） |
-| 分析联调 | `analyse_b2_v3.py` 成功读取，输出 1 complete、0 censor、分类 unidentifiable | ✅ |
+| 分析联调 | `analyse_b2_v3.py` 成功读取；1 complete、0 censor；**success_outcomes.neither=1**（修正后）；分类 unidentifiable | ✅ |
 
 **说明**：生产候选的 β 量级很小（max 4e-6），动作变化 ~2e-7，因此 τ 落在不可辨识区间；
 本次 dry-run 的意义是确认"候选 β 真正进入动作生成、4×6 配对、终止/censor、d_ref 与 schema 联通"，

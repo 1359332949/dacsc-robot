@@ -74,6 +74,13 @@ def sample_chunk(policy, sg, prep, seed, beta):
             return policy.action_generator.sample(rep).detach()
 
 
+def uniform_scale(dbeta, bound=0.15):
+    """Direction-preserving beta bound: scale the whole vector, never clamp coordinates."""
+    inf = float(dbeta.double().abs().max()) if dbeta.numel() else 0.0
+    alpha = 1.0 if inf <= bound else bound / max(inf, 1e-12)
+    return (alpha * dbeta.double()), alpha, inf
+
+
 def dist(env, names, oi, ti):
     return float(np.linalg.norm(np.array(env.sim.data.body_xpos[oi]) - np.array(env.sim.data.body_xpos[ti])))
 
@@ -179,8 +186,18 @@ def main():
                         prod_beta = sg.adapter.beta.detach().clone()
                         with torch.no_grad(): sg.adapter.beta.zero_()
                         envT.close()
-                        candidates = {f"raw_{k}_100": v.float() for k, v in raw.items()}
-                        candidates["prod_step_005"] = prod_beta.float()
+                        candidates = {}
+                        raw_meta = {}
+                        for k, v in raw.items():
+                            applied, alpha, inf = uniform_scale(v)
+                            candidates[f"raw_{k}_100"] = applied.float()
+                            raw_meta[f"raw_{k}_100"] = {"alpha": alpha, "proposal_norm": float(v.double().norm()),
+                                                        "applied_norm": float(applied.norm()),
+                                                        "proposal_inf": inf,
+                                                        "predicted_a_change": float((j @ applied).norm())}
+                        prod_applied, _, _ = uniform_scale(prod_beta.double())
+                        candidates["prod_step_005"] = prod_applied.float()
+                        raw_meta["prod_step_005"] = None
                         if args.dry_run:
                             candidates = {args.candidate: candidates[args.candidate]}
                         for cname, dbeta in candidates.items():
@@ -199,8 +216,7 @@ def main():
                                     else: oB = obs
                             d_branch_A = dist(envA, names, oi, ti)
                             d_branch_B = dist(envB, names, oi, ti)
-                            eff = dbeta.double().clamp(-0.15, 0.15)
-                            clip_ratio = float((dbeta.double().abs() > 0.15).float().mean())
+
                             stepsA = stepsB = 0; succA = succB = False; doneA = doneB = False
                             ok = True; action_changes = []; censor = None
                             for k in range(H):
@@ -241,9 +257,12 @@ def main():
                                              "dp_control": dpA, "dp_update": dpB, "tau_prox": dpB - dpA,
                                              "steps_control": stepsA, "steps_update": stepsB,
                                              "action_changes": action_changes, "action_change": float(np.mean(action_changes)),
-                                             "raw_norm": float(dbeta.double().norm()), "effective_norm": float(eff.norm()),
-                                             "clip_ratio": clip_ratio,
+                                             "proposal_norm": (raw_meta[cname]["proposal_norm"] if raw_meta.get(cname) else rec.get("raw_d_beta_norm")),
+                                             "applied_norm": (raw_meta[cname]["applied_norm"] if raw_meta.get(cname) else rec.get("d_beta_norm")),
+                                             "alpha": (raw_meta[cname]["alpha"] if raw_meta.get(cname) else None),
+                                             "clip_ratio": float((dbeta.double().abs() > 0.15).float().mean()),
                                              "beta_max": float(dbeta.double().abs().max()),
+                                             "predicted_a_change": (raw_meta[cname]["predicted_a_change"] if raw_meta.get(cname) else float((j @ dbeta.double()).norm())),
                                              "step_scale": rec.get("step_scale") if cname.startswith("prod") else None,
                                              "accepted": rec.get("accepted") if cname.startswith("prod") else None,
                                              "backtracks": rec.get("backtracks") if cname.startswith("prod") else None,

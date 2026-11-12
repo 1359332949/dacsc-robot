@@ -22,9 +22,9 @@ policy=load_policy(CKPT, device=DEV)
 sg=SGCpa(policy, torch.tensor(json.loads(A_FILE.read_text())["action_subspace"],dtype=torch.float64), seed=1234)
 suites={s:benchmark.get_benchmark_dict()[s]() for s in ("libero_spatial","libero_object")}
 def fork(): return torch.random.fork_rng(devices=[torch.cuda.current_device()] if torch.cuda.is_available() else [])
-def mkenv(bddl,states,seed):
+def mkenv(bddl,states,seed,ep=0):
     e=OffScreenRenderEnv(bddl_file_name=str(bddl),camera_heights=256,camera_widths=256,render_gpu_device_id=0)
-    np.random.seed(seed); torch.manual_seed(seed); e.seed(seed); e.reset(); o=e.set_init_state(states[0])
+    np.random.seed(seed); torch.manual_seed(seed); e.seed(seed); e.reset(); o=e.set_init_state(states[ep % len(states)])
     for _ in range(SETTLING_STEPS): o,_,d,_=e.step(DUMMY_ACTION)
     return e,o
 def prep_of(obs,task):
@@ -49,7 +49,7 @@ for (domain,suite),tids in CELLS.items():
         for ep in range(2):
             seed=30+tid*1000+ep
             for branch in (8,12):
-                A,oA=mkenv(bddl,states,seed); B,oB=mkenv(bddl,states,seed)
+                A,oA=mkenv(bddl,states,seed,ep); B,oB=mkenv(bddl,states,seed,ep)
                 names=[str(x) for x in A.sim.model.body_names]; oi=names.index(objname(suite,task.language)); gi=names.index("gripper0_eef")
                 obj0=np.array(A.sim.data.body_xpos[oi])
                 step=0; succ=False; done=False; t=0; ok=True

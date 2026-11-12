@@ -50,12 +50,12 @@
 | update | 分支点写入候选 β，**4 段内保持**；每段重新观测、重新采样 |
 | latent | 每个 replan 两分支使用同一 action seed；按各自新观测独立采样 |
 | 分支实现 | 两个独立 env 从同一 init 重放相同前缀（双环境确定性已预检） |
-| 主要终点 | `τ = Δp_update − Δp_control`（proximity，H=24）；δ=**0.01** 预注册 |
-| 分类 | `τ>δ` 有益 / `|τ|≤δ` 不可辨识 / `τ<−δ` 有害 |
-| 次要终点 | success、物体位移、抓取/释放、动作变化（normalized + controller）、`‖Δz_A‖` |
+| 主要终点 | **仅局部 proximity**：`τ_prox = Δp_prox,update − Δp_prox,control`（H=24，固定 episode `d_ref`）；δ=0.01 操作性阈值 |
+| 分类 | `τ>δ` / `|τ|≤δ` / `τ<−δ`（仅辅助解释，主要结果看连续分布） |
+| 次要终点（本轮范围） | 每段 normalized action change、success 四类结果、production guard 诊断；**不采集** controller-space、实际 On/In 几何、多视图/历史信号 |
 | 统计 | task-cluster bootstrap 90% CI、任务级分布、分域、scipy Spearman（处理 ties）；每候选额外报告分类比例 |
-| 更新族 A（机制） | raw 方向 `proj/full/sens` × η∈{1,10,100}；记录 raw/effective Δβ、坐标截断比例、global shrink |
-| 更新族 B（生产） | 通过 `SGCpa.step()` 的候选（β 边界/A guard/backtrack），单独报告，不与 A 混合 |
+| 更新族 A（机制） | **仅 η=100 单剂量**：raw `proj/full/sens`；**整向量统一缩放**到 β 边界（α=min(1,0.15/‖Δβ‖∞)），不做逐坐标截断；记录 proposal/applied 范数、α、`‖J_A·Δβ_applied‖` |
+| 更新族 B（生产） | 通过 `SGCpa.step()` 的候选（β 边界/A guard/backtrack），单独报告；记录 `raw_d_beta_norm`/`d_beta_norm`、step_scale、accepted、backtracks |
 | 停止条件 | 若仅 η=100 产生可测 τ，或有效更新严重偏离 raw/动作变化超安全阈值，则只记为"大干预有作用"，不外推 TTA |
 
 δ 依据：zero-update 预检轨迹精确一致（噪声 0），δ=0.01 为预注册的最小任务相关进度变化（初始 object-target 距离的 1%）。
@@ -74,8 +74,11 @@
 
 | 分支点 | 分母 | 可用（contact≤0.10 且未 success） | skip | 物体轨迹差 | EEF 轨迹差 | 步数一致 |
 |---|---|---|---|---|---|---|
-| 8 | 24 | **19** | 5 | 0.0 | 0.0 | ✅ |
-| 12 | 24 | **18** | 6 | 0.0 | 0.0 | ✅ |
+| 8 | 24 | **19**（ep0 10 / ep1 9） | 5 | 0.0 | 0.0 | ✅ |
+| 12 | 24 | **20**（ep0 10 / ep1 10） | 4 | 0.0 | 0.0 | ✅ |
+
+（修正：此前 audit 的 `mkenv` 对所有 episode 都用 `states[0]`；现已改为 `states[ep % len(states)]`，
+branch 8 的 ep1 有 1 个 skip；branch 12 的 18→20。episode 1 的双环境 zero 配对同样为 0.0 轨迹差。）
 
 skip 原因（接触距离 >0.10 / 分支前已 success 或 done）逐条记录在
 `/hy-tmp/validation/b2_zero_branch_audit.json`；每个 episode 的 branch 8/12 独立判定，互不混淆。
@@ -109,7 +112,8 @@ zero 配对在有效分支上轨迹/步数逐位一致；部分 zero 分支在�
 | η 网格 | 条件支持（机制剂量扫描；不与生产约束结论混合） |
 | rollout / 调参 / 移除 A-projection | ❌ 未授权 |
 
-**当前请求**：审查修正后的 `scripts/sg_b2_v3.py` 与 `scripts/analyse_b2_v3.py`；
-批准后再进行**受限 dry-run**（单 task / 单 episode / 单 branch / 单 candidate，输出独立目录），
-dry-run 通过后才申请正式 24-episode B2。
-（本轮完成 P0 修正与逐分支审计，未运行 dry-run / 正式实验。）
+**范围冻结**：本轮 B2 只回答"在固定操作阶段、相同初始状态和 4×6 执行协议下，
+η=100 的 raw 方向更新与 production guard 更新是否造成可测的**局部 proximity 变化**"；
+不外推任务成功率、TTA 总体效益、剂量响应或信号预测能力。
+**当前请求**：审查 P0 修正（raw 统一缩放、success 分解、episode 状态索引、范围收窄），
+通过后再申请正式 24-episode B2 授权。
