@@ -127,6 +127,9 @@ def main():
             j = obj.jacobian_a(prep, seed=seed)
             P = obj.nullspace(j)
             Psens = torch.eye(768, dtype=torch.float64) - P
+            Pg = P @ g; (Sg := Psens @ g)
+            ortho_dot = float((Pg @ Sg) / ((Pg.norm() * Sg.norm()) + 1e-12))
+            idem_resid = float((P @ Pg - Pg).norm() / (g.norm() + 1e-12))
             with torch.no_grad():
                 rep = policy.representation_extractor(prep["images"], prep["state"], prep["instruction"])
             a0 = act(policy, rep, seed)
@@ -151,6 +154,7 @@ def main():
                 rows.append({"domain": o["domain"], "mode": name,
                              "g_norm": float(g.norm()),
                              "sens_ratio": float((Psens @ g).norm() / (g.norm() + 1e-12)),
+                             "ortho_dot": ortho_dot, "idem_resid": idem_resid,
                              "null_ratio": float((P @ g).norm() / (g.norm() + 1e-12)),
                              "dz": float(dz.norm()),
                              "dz_A_ratio": float((Acpu.T @ dz).norm() / (dz.norm() + 1e-12)),
@@ -242,6 +246,10 @@ def main():
           {m: {k: round(float(np.mean([r[k] for r in out["guard_path"] if r["mode"] == m])), 8)
                for k in ("da", "accepted", "backtracks")}
            for m in ("noproj_noguard", "proj_noguard", "proj_guard")})
+    ores = [r.get("ortho_dot", 0.0) for r in out["beta_space"]]
+    ires = [r.get("idem_resid", 0.0) for r in out["beta_space"]]
+    print("orthogonality dot median/max|.|", float(np.median(ores)), float(np.max(np.abs(ores))))
+    print("idempotence residual median/max", float(np.median(ires)), float(np.max(ires)))
     print("AUC", out["auc"], "overall", out["overall_auc_loss_neg"], out["overall_auc_loss_early_neg"])
     return 0
 
