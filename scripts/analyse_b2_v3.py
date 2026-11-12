@@ -40,8 +40,20 @@ def main():
     rows = [json.loads(l) for l in open(args.src) if l.strip()]
     complete = [r for r in rows if "tau_prox" in r and "censor" not in r]
     censored = [r for r in rows if "censor" in r]
+    def succ(r, side):
+        return bool(r.get(f"success_{side}", False))
+    succ_rows = [r for r in rows if "success_control" in r or "success_update" in r]
     res = {"n_records": len(rows), "n_complete": len(complete), "n_censored": len(censored),
-           "censor_reasons": {}, "candidates": {}}
+           "censor_reasons": {},
+           "success_outcomes": {
+               "control_success": sum(1 for r in succ_rows if succ(r, "control")),
+               "update_success": sum(1 for r in succ_rows if succ(r, "update")),
+               "update_only": sum(1 for r in succ_rows if succ(r, "update") and not succ(r, "control")),
+               "control_only": sum(1 for r in succ_rows if succ(r, "control") and not succ(r, "update")),
+               "both": sum(1 for r in succ_rows if succ(r, "control") and succ(r, "update")),
+               "neither": sum(1 for r in succ_rows if not succ(r, "control") and not succ(r, "update")),
+           },
+           "candidates": {}}
     for r in censored:
         res["censor_reasons"][r["censor"]] = res["censor_reasons"].get(r["censor"], 0) + 1
     for cand in sorted({r["candidate"] for r in complete}):

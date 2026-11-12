@@ -48,10 +48,10 @@ def target_pair(suite, instruction):
     raise RuntimeError("no target")
 
 
-def make_env(env_cls, bddl, states, seed):
+def make_env(env_cls, bddl, states, seed, episode=0):
     env = env_cls(bddl_file_name=str(bddl), camera_heights=256, camera_widths=256, render_gpu_device_id=0)
     np.random.seed(seed); torch.manual_seed(seed); env.seed(seed); env.reset()
-    obs = env.set_init_state(states[0])
+    obs = env.set_init_state(states[episode % len(states)])
     for _ in range(SETTLING_STEPS):
         obs, _, done, _ = env.step(DUMMY_ACTION)
         if done: break
@@ -92,6 +92,9 @@ def main():
         raise SystemExit("need --dry-run or --authorize-formal")
     if args.dry_run and (args.task_id is None or args.branch is None or args.candidate is None):
         raise SystemExit("dry-run requires --task-id --branch --candidate")
+    if args.dry_run and str(args.out) == "/hy-tmp/validation/b2v3":
+        raise SystemExit("dry-run requires an explicit independent --out directory")
+    args.out.mkdir(parents=True, exist_ok=True)
     class C: pass
     c = C(); c.libero_src = Path("/hy-tmp/libero_plus"); c.libero_config_path = Path("/hy-tmp/libero_plus_config")
     c.render_gpu = 0; c.device = DEV
@@ -118,15 +121,15 @@ def main():
                     branches = [args.branch] if args.dry_run else list(BRANCHES)
                     for branch in branches:
                         # rebuild envs for this branch, record d_ref at episode start
-                        env0, obs0 = make_env(OffScreenRenderEnv, bddl, states, seed)
+                        env0, obs0 = make_env(OffScreenRenderEnv, bddl, states, seed, ep)
                         names = [str(x) for x in env0.sim.model.body_names]
                         obj, tgt = target_pair(suite, task.language)
                         oi, ti = names.index(obj + "_main"), names.index(tgt + "_main")
                         names = [str(x) for x in env0.sim.model.body_names]
                         d_ref = dist(env0, names, oi, ti)
                         # replay prefix on a reference pair to reach the branch (and check eligibility)
-                        envA, oA = make_env(OffScreenRenderEnv, bddl, states, seed)
-                        envB, oB = make_env(OffScreenRenderEnv, bddl, states, seed)
+                        envA, oA = make_env(OffScreenRenderEnv, bddl, states, seed, ep)
+                        envB, oB = make_env(OffScreenRenderEnv, bddl, states, seed, ep)
                         steps = 0; succ = False; done = False; t = 0
                         while t < branch and not done:
                             for env, obs, isA in ((envA, oA, True), (envB, oB, False)):
@@ -152,7 +155,7 @@ def main():
                                          "contact": contact, "success_before": succ, "done_before": done})
                             continue
                         # candidates computed once at the branch observation
-                        envT, oT = make_env(OffScreenRenderEnv, bddl, states, seed)
+                        envT, oT = make_env(OffScreenRenderEnv, bddl, states, seed, ep)
                         # replay again on T to branch
                         for t in range(branch):
                             prep = prep_of(policy, oT, task)
@@ -162,7 +165,7 @@ def main():
                                 oT, _, d, _ = envT.step(np.clip(a, -1.0, 1.0))
                                 if d: break
                         preB = prep_of(policy, oT, task)
-                        sg.adapter.beta.zero_()
+                        with torch.no_grad(): sg.adapter.beta.zero_()
                         tgt_info = sg.build_target(preB, seed=seed + 7919 * branch, view_seed=seed + 7919 * branch + 1)
                         loss = sg.loss(preB, tgt_info, seed=seed + 7919 * branch)
                         sg.optimizer.zero_grad(set_to_none=True); loss.backward()
@@ -170,11 +173,11 @@ def main():
                         j = sg.jacobian_a(preB, seed=seed + 7919 * branch); P = sg.nullspace(j)
                         I = torch.eye(768, dtype=torch.float64)
                         raw = {"proj": -(100.0 * (P @ g)), "full": -(100.0 * g), "sens": -(100.0 * ((I - P) @ g))}
-                        sg.adapter.beta.zero_()
+                        with torch.no_grad(): sg.adapter.beta.zero_()
                         rec = sg.step(preB, seed=seed + 7919 * branch, view_seed=seed + 7919 * branch + 1,
                                       target_info=tgt_info)
                         prod_beta = sg.adapter.beta.detach().clone()
-                        sg.adapter.beta.zero_()
+                        with torch.no_grad(): sg.adapter.beta.zero_()
                         envT.close()
                         candidates = {f"raw_{k}_100": v.float() for k, v in raw.items()}
                         candidates["prod_step_005"] = prod_beta.float()
@@ -182,8 +185,8 @@ def main():
                             candidates = {args.candidate: candidates[args.candidate]}
                         for cname, dbeta in candidates.items():
                             # rebuild both envs for EVERY candidate and replay prefix
-                            envA, oA = make_env(OffScreenRenderEnv, bddl, states, seed)
-                            envB, oB = make_env(OffScreenRenderEnv, bddl, states, seed)
+                            envA, oA = make_env(OffScreenRenderEnv, bddl, states, seed, ep)
+                            envB, oB = make_env(OffScreenRenderEnv, bddl, states, seed, ep)
                             for t in range(branch):
                                 for env, obs, isA in ((envA, oA, True), (envB, oB, False)):
                                     prep = prep_of(policy, obs, task)
@@ -241,10 +244,12 @@ def main():
                                              "raw_norm": float(dbeta.double().norm()), "effective_norm": float(eff.norm()),
                                              "clip_ratio": clip_ratio,
                                              "beta_max": float(dbeta.double().abs().max()),
-                                             "step_scale": rec.get("step_scale"),
-                                             "accepted": rec.get("accepted"), "backtracks": rec.get("backtracks"),
-                                             "local_a_change": rec.get("local_a_change"),
-                                             "cumulative_a_change": rec.get("cumulative_a_change")})
+                                             "step_scale": rec.get("step_scale") if cname.startswith("prod") else None,
+                                             "accepted": rec.get("accepted") if cname.startswith("prod") else None,
+                                             "backtracks": rec.get("backtracks") if cname.startswith("prod") else None,
+                                             "local_a_change": rec.get("local_a_change") if cname.startswith("prod") else None,
+                                             "cumulative_a_change": rec.get("cumulative_a_change") if cname.startswith("prod") else None,
+                                             "target_contact": contact})
                             else:
                                 rows.append({"domain": domain, "suite": suite, "task_id": tid, "episode": ep,
                                              "branch": branch, "candidate": cname, "censor": censor or "incomplete",
@@ -258,3 +263,7 @@ def main():
         sg.close()
     (args.out / "b2_v3.jsonl").write_text("\n".join(json.dumps(r) for r in rows))
     print("rows", len(rows))
+
+
+if __name__ == "__main__":
+    main()
