@@ -29,6 +29,9 @@ def test_success_classification_and_stage_skip():
             success_control=False, success_update=False,
             proposal_norm=0.04, applied_norm=0.02, alpha=1.0, predicted_a_change=1e-3,
             step_scale=None, accepted=None, backtracks=None),
+        row(censor="action_cap", action_changes=[0.2], steps_control=6, steps_update=0,
+            success_control=True, success_update=False,
+            proposal_norm=0.04, applied_norm=0.02, alpha=1.0, predicted_a_change=1e-3),
     ]
     s = mod.summarise(rows)
     c = s["candidates"]["prod_step_005"]
@@ -36,5 +39,5 @@ def test_success_classification_and_stage_skip():
     assert c["success_outcomes"]["update_only"] == 1
     assert c["success_outcomes"]["control_only"] == 1
     assert c["success_outcomes"]["both"] == 1
-    assert c["success_outcomes"]["not_observed"] == 1
-    assert c["censor_reasons"]["action_cap"] == 1
+    assert c["success_outcomes"]["not_observed"] == 2
+    assert c["censor_reasons"]["action_cap"] == 2

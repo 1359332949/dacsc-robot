@@ -48,6 +48,10 @@ def _success_counts(rows):
         if r.get("censor") == "stage_or_success":
             continue
         c = _succ(r, "control"); u = _succ(r, "update")
+        sc = r.get("steps_control"); su = r.get("steps_update")
+        if sc is not None and su is not None and sc != su:
+            # partial pairing (e.g., action-cap stops update before executing): not observed
+            out["not_observed"] += 1; continue
         if c or u:
             out["control_success"] += int(c); out["update_success"] += int(u)
             if u and not c: out["update_only"] += 1

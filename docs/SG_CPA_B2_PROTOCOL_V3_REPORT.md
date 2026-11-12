@@ -120,6 +120,26 @@ zero 配对在有效分支上轨迹/步数逐位一致；部分 zero 分支在�
   dry-run 未重跑（动作注入逻辑不变，仅诊断口径变化）；
 - 单 episode dry-run **不构成效应结论**；仅验证路径与记录。
 
+## 3.8 正式运行前的最后两项修正（P0/P1）
+
+- P0：`exec_beta` 函数与 `main()` 内局部变量同名，触发 `UnboundLocalError`；已把候选构造抽成
+  `build_candidates()`，内部使用 `beta_exec`，并加 smoke test；dry-run 已重新验证通过。
+- P1：单边 success 但两分支执行步数不同（如 action-cap 时 update 未执行当前段）不能判为
+  update-only/control-only；分析规则改为 **steps 不等 → not_observed**，并保留 success flag。
+- 新增测试：build_candidates smoke、exec-beta float32/clamp、action-cap 6/0 单边 success → not_observed（7 passed）。
+
+## 3.9 与上游 CoRP 评估协议的差异（透明声明）
+
+| 项 | 上游 CoRP / LIBERO | 本轮 B2 |
+|---|---|---|
+| action chunk | H=12，执行完整 chunk 后重规划 | 仍生成 H=12，每 replan 执行前 **6 步** 后重规划 |
+| 精度 | evaluator 支持 CUDA BF16 autocast | 直接调用 extractor/generator，**FP32** 路径 |
+| 更新对象 | 完整 checkpoint | 冻结 checkpoint，仅 action generator attention K 的 β 子空间 |
+| 配对 | — | 同一 init/seed、共同 action latent、两环境重放 |
+
+因此 B2 结论限定为“固定 checkpoint、FP32、6 步重规划的局部反事实协议”，
+不能直接外推到上游 12 步 full-chunk 评估或完整 representation extractor 保护。
+
 ## 4. 当前状态与授权请求
 
 | 工作 | 状态 |

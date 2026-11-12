@@ -90,6 +90,48 @@ def dist(env, names, oi, ti):
     return float(np.linalg.norm(np.array(env.sim.data.body_xpos[oi]) - np.array(env.sim.data.body_xpos[ti])))
 
 
+def build_candidates(raw, prod_beta, rec, j, obj, tgt, oi, ti, contact):
+    """Build candidate betas and shared metadata; no local name shadows exec_beta()."""
+    candidates = {}
+    meta = {}
+    for k, v in raw.items():
+        applied, alpha, inf = uniform_scale(v.detach().double().cpu())
+        beta_exec = exec_beta(applied)
+        name = f"raw_{k}_100"
+        candidates[name] = beta_exec.float()
+        meta[name] = {
+            "alpha": alpha, "proposal_norm": float(v.double().norm()),
+            "applied_norm": float(beta_exec.norm()), "proposal_inf": inf,
+            "proposal_bound_violation_ratio": float((v.double().abs() > 0.15).float().mean()),
+            "post_scale_bound_violation_ratio": float((beta_exec.abs() > 0.15).float().mean()),
+            "beta_max": float(beta_exec.abs().max()),
+            "predicted_a_change": float((j @ beta_exec).norm()),
+            "last_attempt_norm": None, "step_scale": None, "accepted": None,
+            "backtracks": None, "local_a_change": None, "cumulative_a_change": None,
+            "target_pair": [obj, tgt], "target_body_ids": [int(oi), int(ti)],
+            "target_contact": contact,
+        }
+    prod_applied, _, _ = uniform_scale(prod_beta.detach().double().cpu())
+    prod_exec = exec_beta(prod_applied)
+    candidates["prod_step_005"] = prod_exec.float()
+    meta["prod_step_005"] = {
+        "alpha": None, "proposal_norm": rec.get("raw_d_beta_norm"),
+        "applied_norm": float(prod_exec.norm()), "proposal_inf": None,
+        "proposal_bound_violation_ratio": None,
+        "post_scale_bound_violation_ratio": float((prod_exec.abs() > 0.15).float().mean()),
+        "beta_max": float(prod_exec.abs().max()),
+        "predicted_a_change": float((j @ prod_exec).norm()),
+        "last_attempt_norm": rec.get("d_beta_norm"),
+        "step_scale": rec.get("step_scale"), "accepted": rec.get("accepted"),
+        "backtracks": rec.get("backtracks"),
+        "local_a_change": rec.get("local_a_change"),
+        "cumulative_a_change": rec.get("cumulative_a_change"),
+        "target_pair": [obj, tgt], "target_body_ids": [int(oi), int(ti)],
+        "target_contact": contact,
+    }
+    return candidates, meta
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", type=Path, default=Path("/hy-tmp/validation/b2v3"))
@@ -191,46 +233,8 @@ def main():
                         prod_beta = sg.adapter.beta.detach().clone()
                         with torch.no_grad(): sg.adapter.beta.zero_()
                         envT.close()
-                        candidates = {}
-                        candidate_meta = {}
-                        for k, v in raw.items():
-                            applied, alpha, inf = uniform_scale(v)
-                            exec_beta = exec_beta(applied)
-                            name = f"raw_{k}_100"
-                            candidates[name] = exec_beta.float()
-                            candidate_meta[name] = {
-                                "alpha": alpha, "proposal_norm": float(v.double().norm()),
-                                "applied_norm": float(exec_beta.norm()),
-                                "proposal_inf": inf,
-                                "proposal_bound_violation_ratio": float((v.double().abs() > 0.15).float().mean()),
-                                "post_scale_bound_violation_ratio": float((exec_beta.abs() > 0.15).float().mean()),
-                                "beta_max": float(exec_beta.abs().max()),
-                                "predicted_a_change": float((j @ exec_beta).norm()),
-                                "last_attempt_norm": None,
-                                "step_scale": None, "accepted": None, "backtracks": None,
-                                "local_a_change": None, "cumulative_a_change": None,
-                                "target_pair": [obj, tgt], "target_body_ids": [int(oi), int(ti)],
-                                "target_contact": contact,
-                            }
-                        prod_applied, _, _ = uniform_scale(prod_beta.double())
-                        prod_exec = exec_beta(prod_applied)
-                        candidates["prod_step_005"] = prod_exec.float()
-                        candidate_meta["prod_step_005"] = {
-                            "alpha": None, "proposal_norm": rec.get("raw_d_beta_norm"),
-                            "applied_norm": float(prod_exec.norm()),
-                            "proposal_inf": None,
-                            "proposal_bound_violation_ratio": None,
-                            "post_scale_bound_violation_ratio": float((prod_exec.abs() > 0.15).float().mean()),
-                            "beta_max": float(prod_exec.abs().max()),
-                            "predicted_a_change": float((j @ prod_exec).norm()),
-                            "last_attempt_norm": rec.get("d_beta_norm"),
-                            "step_scale": rec.get("step_scale"), "accepted": rec.get("accepted"),
-                            "backtracks": rec.get("backtracks"),
-                            "local_a_change": rec.get("local_a_change"),
-                            "cumulative_a_change": rec.get("cumulative_a_change"),
-                            "target_pair": [obj, tgt], "target_body_ids": [int(oi), int(ti)],
-                            "target_contact": contact,
-                        }
+                        candidates, candidate_meta = build_candidates(
+                            raw, prod_beta, rec, j, obj, tgt, oi, ti, contact)
                         if args.dry_run:
                             candidates = {args.candidate: candidates[args.candidate]}
                         for cname, dbeta in candidates.items():

@@ -4,7 +4,7 @@ import numpy as np
 import torch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from scripts.sg_b2_v3 import exec_beta, uniform_scale
+from scripts.sg_b2_v3 import build_candidates, exec_beta, uniform_scale
 
 
 def test_uniform_scale_direction_and_bound():
@@ -45,3 +45,23 @@ def test_predicted_a_change_uses_exec_beta():
     pred = (J @ b).norm()
     assert float(pred) >= 0.0
     assert abs(float(pred) - float((J @ applied.float().double().clamp(-0.15, 0.15)).norm())) < 1e-12
+
+
+def test_build_candidates_smoke_no_shadowing():
+    torch.manual_seed(3)
+    J = torch.randn(5, 768, dtype=torch.float64)
+    _, _, vh = torch.linalg.svd(J, full_matrices=False)
+    P = torch.eye(768, dtype=torch.float64) - vh.T @ vh
+    raw = {"proj": P @ torch.randn(768, dtype=torch.float64),
+           "full": torch.randn(768, dtype=torch.float64),
+           "sens": (torch.eye(768, dtype=torch.float64) - P) @ torch.randn(768, dtype=torch.float64)}
+    prod = torch.randn(768, dtype=torch.float32) * 1e-5
+    rec = {"raw_d_beta_norm": 1e-4, "d_beta_norm": 1e-5, "accepted": True,
+           "backtracks": 0, "step_scale": 1.0, "local_a_change": 1e-8, "cumulative_a_change": 1e-8}
+    cands, meta = build_candidates(raw, prod, rec, J, "a", "b", 0, 1, 0.05)
+    assert set(cands) == {"raw_proj_100", "raw_full_100", "raw_sens_100", "prod_step_005"}
+    for k, v in cands.items():
+        assert float(v.abs().max()) <= 0.15 + 1e-6
+        assert meta[k]["applied_norm"] > 0
+    assert meta["raw_proj_100"]["predicted_a_change"] < 1e-6
+    assert meta["prod_step_005"]["last_attempt_norm"] == 1e-5
