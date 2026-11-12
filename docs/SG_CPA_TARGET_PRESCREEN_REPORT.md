@@ -5,6 +5,9 @@
 > 数据：4 域 × 2 套件 × 1 任务 × 4 chunks = **32 个观测**，每个观测 2 个 replan seeds（共 64 样本/目标）。
 > 所有目标共享相同 4 视图、参数化、A 投影；仅监督目标不同。
 > 原始 JSON：`/hy-tmp/validation/sg_cpa_prescreen/prescreen.json`；脚本 `scripts/sg_cpa_target_prescreen.py`。
+> **更新（η 标定后）**：预筛脚本原先手写更新且少负号，现已改为走真实 `SGCpa.step()`；
+> controller 单位变化改为 `unnormalize(a1)−unnormalize(a0)`；数字与首版基本一致（da≈1e-6），
+> 因为 η=0.05 一步本来就极小。真正的尺度问题见 `SG_CPA_ETA_CALIBRATION_REPORT.md`。
 
 ## 1. 结果
 

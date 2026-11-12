@@ -74,33 +74,35 @@ def main() -> int:
                     info = obj.build_target(prep, seed=action_seed, view_seed=view_seed)
                     ident = info["acts"][0]
                     target_dist = action_distance(info["target"], ident)
-                    # reset beta then initial loss / grad (student uses same latent as teacher)
+                    # real update path (projection + beta bound + A guard + rollback)
                     obj.adapter.beta.detach().zero_()
-                    loss = obj.loss(prep, info, seed=action_seed)
-                    obj.optimizer.zero_grad(set_to_none=True)
-                    loss.backward()
-                    g = obj.adapter.beta.grad.detach().double().cpu().clone()
-                    obj.optimizer.zero_grad(set_to_none=True)
-                    j = obj.jacobian_a(prep, seed=action_seed)
-                    p = obj.nullspace(j)
-                    update = p @ g
-                    d_beta = (obj.eta * update).float().to(obj.adapter.beta.device)
+                    a_old = sample_identity(policy, prep, obj.adapter.beta, action_seed)
+                    rec = obj.step(prep, seed=action_seed, view_seed=view_seed,
+                                   target_info=info)
+                    a_new = sample_identity(policy, prep, obj.adapter.beta, action_seed)
+                    loss = torch.tensor(rec["loss"])
+                    g_norm = rec["g_norm"]
+                    projected_norm = g_norm * rec["retained_fraction"]
+                    da_norm = float((a_new - a_old).abs().mean())
+                    a0u = policy.normalizer.unnormalize_action(a_old)
+                    a1u = policy.normalizer.unnormalize_action(a_new)
+                    da_ctrl = float((a1u - a0u).abs().mean())
                     with torch.no_grad():
-                        obj.adapter.beta.add_(d_beta)
-                        a_new = sample_identity(policy, prep, obj.adapter.beta, action_seed)
                         obj.adapter.beta.zero_()
-                        a_old = sample_identity(policy, prep, obj.adapter.beta, action_seed)
                     rec = {"mode": mode, "domain": b["domain"], "batch": bi, "replan": r,
                            "medoid_index": info["medoid_index"],
                            "medoid_identity": float(info["medoid_index"] == 0
                                                     if mode.startswith("medoid") else 0.0),
                            "target_distance": target_dist,
-                           "loss": float(loss.detach()),
-                           "grad_norm": float(g.norm()),
-                           "projected_norm": float(update.norm()),
-                           "retain": float(update.norm() / (g.norm() + 1e-12)),
-                           "action_change": float((a_new - a_old).abs().mean()),
-                           "beta_norm": float(d_beta.norm())}
+                           "loss": float(loss),
+                           "grad_norm": float(g_norm),
+                           "projected_norm": float(projected_norm),
+                           "retain": float(rec["retained_fraction"]),
+                           "action_change": da_norm,
+                           "action_change_ctrl": da_ctrl,
+                           "accepted": bool(rec["accepted"]),
+                           "backtracks": int(rec["backtracks"]),
+                           "beta_norm": float(rec["d_beta_norm"])}
                     results[mode].append(rec)
         finally:
             obj.close()

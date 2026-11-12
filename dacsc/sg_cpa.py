@@ -291,10 +291,11 @@ class SGCpa:
 
     # --------------------------------------------------------------- update
     def step(self, prepared: dict, seed: int | None = None,
-             view_seed: int | None = None) -> dict:
+             view_seed: int | None = None, target_info: dict | None = None) -> dict:
         seed = self.seed if seed is None else int(seed)
         view_seed = seed + 1 if view_seed is None else int(view_seed)
-        info = self.build_target(prepared, seed=seed, view_seed=view_seed)
+        info = target_info if target_info is not None else self.build_target(
+            prepared, seed=seed, view_seed=view_seed)
         z_before = self.write(prepared, seed).detach()
         with torch.no_grad():
             saved_ref = self.adapter.beta.detach().clone()
@@ -320,7 +321,8 @@ class SGCpa:
         else:
             j_a, p_null = None, None
             update = g
-        d_beta = -(self.eta * update).float().to(self.adapter.beta.device)
+        raw_d_beta = -(self.eta * update).float().to(self.adapter.beta.device)
+        d_beta = raw_d_beta.clone()
         with torch.no_grad():
             before = self.adapter.beta.detach().clone()
             step_scale = 1.0
@@ -354,6 +356,7 @@ class SGCpa:
             accepted = True
         rec = {"skipped": False, "attempted": True, "accepted": accepted,
                "loss": float(loss.detach()), "g_norm": float(g.norm()),
+               "raw_d_beta_norm": float(raw_d_beta.norm()),
                "d_beta_norm": float(d_beta.norm()),
                "local_a_change": local_change, "cumulative_a_change": cum_change,
                "backtracks": attempt,

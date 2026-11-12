@@ -319,6 +319,17 @@ def test_action_latent_per_replan(policy, prepared, a_basis):
         obj.close()
 
 
+# 18b ------------------- identity-only views, vary action seed only (latent test)
+def test_action_latent_identity_only(policy, prepared, a_basis):
+    obj = SGCpa(policy, a_basis, views=IDENTITY_VIEW, seed=1234)
+    try:
+        t1 = obj.build_target(prepared, seed=100, view_seed=100)["target"]
+        t2 = obj.build_target(prepared, seed=200, view_seed=100)["target"]
+        assert not torch.equal(t1, t2)
+    finally:
+        obj.close()
+
+
 # 19 ------------------------------ no-A-protection: no projection AND no A guard
 def test_no_a_protection_guard_off(policy, prepared, a_basis):
     obj = SGCpa(policy, a_basis, use_projection=False, a_guard=False,
