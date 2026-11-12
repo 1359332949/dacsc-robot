@@ -96,11 +96,14 @@ zero 配对在有效分支上轨迹/步数逐位一致；部分 zero 分支在�
 | τ 参考距离取错 | 记录 episode 初始 `d_ref`、分支时 `d_branch_control/update`、终点 `d_end_*`；`Δp=(d_branch−d_end)/d_ref`，各用自身环境 |
 | 输出与分析 schema 不匹配 | 统一为**每 candidate×episode×branch 一条记录**，字段含 `tau_prox`/censor；`scripts/analyse_b2_v3.py` 直接读取 |
 | 记录不足 | 增加 target_pair/body_ids、每段 action_changes、raw/effective β、clip_ratio、beta_max、step_scale、accepted/backtracks、local/cumulative A change |
-| 分析 `τ>0` | 改为 **δ=0.01 三分类**；scipy Spearman（ties/常数）；task-cluster bootstrap 90% CI；分域/分套件 |
+| 分析 `τ>0` | 改为 **δ=0.01 三分类**；scipy Spearman（ties/常数）；task-cluster bootstrap 90% CI（按 branch 记录加权）；分域/分套件 |
 
 - dry-run 门禁：`--dry-run --task-id --branch --candidate`（强制单任务/单分支/单候选），
   不需要 `--authorize-formal`；正式 24-episode 仍必须 `--authorize-formal`。
-- **尚未运行 dry-run 或正式实验**；正式脚本仍待一次受控 dry-run 联调。
+- dry-run 已在 production 与三个 raw 候选上执行（见 §3.7）；正式 24-episode 仍未运行。
+- `predicted_a_change` 现在基于**实际进入模型的向量**：`float32` 转换后再 clamp 到 ±0.15，避免用 float64 缩放向量做预测。
+- **complete 与 censor 记录都写入同一候选诊断**（proposal/applied/last_attempt norm、α、predicted A change、guard 字段），
+  避免 action-cap/success censor 时丢失参数信息。
 
 ## 3.7 raw 三候选受限 dry-run（task 705 / ep0 / branch 8，输出隔离）
 
@@ -113,6 +116,8 @@ zero 配对在有效分支上轨迹/步数逐位一致；部分 zero 分支在�
 - 三个 raw 路径均经模拟器执行验证；统一缩放未触发（α=1），无 action-cap censor；
 - `raw_proj` 的预测 A 变化 ~1e-17，验证投影方向保持；full/sens 的 A 变化同量级（2.2e-2）；
 - 动作变化在 2.5e-4–2.3e-3，明显大于 production η=0.05（~2e-7），但仍远低于 0.05 cap；
+- 这三个 dry-run 的 `predicted_a_change` 产生于旧的 float64 缩放向量路径；正式代码改用 float32→clamp 后的实际执行向量，
+  dry-run 未重跑（动作注入逻辑不变，仅诊断口径变化）；
 - 单 episode dry-run **不构成效应结论**；仅验证路径与记录。
 
 ## 4. 当前状态与授权请求

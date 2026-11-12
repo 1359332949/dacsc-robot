@@ -74,6 +74,11 @@ def sample_chunk(policy, sg, prep, seed, beta):
             return policy.action_generator.sample(rep).detach()
 
 
+def exec_beta(applied, bound=0.15):
+    """Beta actually entering the model: float32 cast then adapter bound clamp."""
+    return applied.float().double().clamp(-bound, bound)
+
+
 def uniform_scale(dbeta, bound=0.15):
     """Direction-preserving beta bound: scale the whole vector, never clamp coordinates."""
     inf = float(dbeta.double().abs().max()) if dbeta.numel() else 0.0
@@ -187,17 +192,45 @@ def main():
                         with torch.no_grad(): sg.adapter.beta.zero_()
                         envT.close()
                         candidates = {}
-                        raw_meta = {}
+                        candidate_meta = {}
                         for k, v in raw.items():
                             applied, alpha, inf = uniform_scale(v)
-                            candidates[f"raw_{k}_100"] = applied.float()
-                            raw_meta[f"raw_{k}_100"] = {"alpha": alpha, "proposal_norm": float(v.double().norm()),
-                                                        "applied_norm": float(applied.norm()),
-                                                        "proposal_inf": inf,
-                                                        "predicted_a_change": float((j @ applied).norm())}
+                            exec_beta = exec_beta(applied)
+                            name = f"raw_{k}_100"
+                            candidates[name] = exec_beta.float()
+                            candidate_meta[name] = {
+                                "alpha": alpha, "proposal_norm": float(v.double().norm()),
+                                "applied_norm": float(exec_beta.norm()),
+                                "proposal_inf": inf,
+                                "proposal_bound_violation_ratio": float((v.double().abs() > 0.15).float().mean()),
+                                "post_scale_bound_violation_ratio": float((exec_beta.abs() > 0.15).float().mean()),
+                                "beta_max": float(exec_beta.abs().max()),
+                                "predicted_a_change": float((j @ exec_beta).norm()),
+                                "last_attempt_norm": None,
+                                "step_scale": None, "accepted": None, "backtracks": None,
+                                "local_a_change": None, "cumulative_a_change": None,
+                                "target_pair": [obj, tgt], "target_body_ids": [int(oi), int(ti)],
+                                "target_contact": contact,
+                            }
                         prod_applied, _, _ = uniform_scale(prod_beta.double())
-                        candidates["prod_step_005"] = prod_applied.float()
-                        raw_meta["prod_step_005"] = None
+                        prod_exec = exec_beta(prod_applied)
+                        candidates["prod_step_005"] = prod_exec.float()
+                        candidate_meta["prod_step_005"] = {
+                            "alpha": None, "proposal_norm": rec.get("raw_d_beta_norm"),
+                            "applied_norm": float(prod_exec.norm()),
+                            "proposal_inf": None,
+                            "proposal_bound_violation_ratio": None,
+                            "post_scale_bound_violation_ratio": float((prod_exec.abs() > 0.15).float().mean()),
+                            "beta_max": float(prod_exec.abs().max()),
+                            "predicted_a_change": float((j @ prod_exec).norm()),
+                            "last_attempt_norm": rec.get("d_beta_norm"),
+                            "step_scale": rec.get("step_scale"), "accepted": rec.get("accepted"),
+                            "backtracks": rec.get("backtracks"),
+                            "local_a_change": rec.get("local_a_change"),
+                            "cumulative_a_change": rec.get("cumulative_a_change"),
+                            "target_pair": [obj, tgt], "target_body_ids": [int(oi), int(ti)],
+                            "target_contact": contact,
+                        }
                         if args.dry_run:
                             candidates = {args.candidate: candidates[args.candidate]}
                         for cname, dbeta in candidates.items():
@@ -251,32 +284,20 @@ def main():
                                 dpB = (d_branch_B - d_end_B) / d_ref
                                 rows.append({"domain": domain, "suite": suite, "task_id": tid, "episode": ep,
                                              "branch": branch, "candidate": cname,
-                                             "target_pair": [obj, tgt], "target_body_ids": [oi, ti],
                                              "d_ref": d_ref, "d_branch_control": d_branch_A, "d_branch_update": d_branch_B,
                                              "d_end_control": d_end_A, "d_end_update": d_end_B,
                                              "dp_control": dpA, "dp_update": dpB, "tau_prox": dpB - dpA,
                                              "steps_control": stepsA, "steps_update": stepsB,
                                              "action_changes": action_changes, "action_change": float(np.mean(action_changes)),
-                                             "proposal_norm": (raw_meta[cname]["proposal_norm"] if raw_meta.get(cname) else rec.get("raw_d_beta_norm")),
-                                             "applied_norm": (raw_meta[cname]["applied_norm"] if raw_meta.get(cname) else float(prod_applied.norm())),
-                                             "last_attempt_norm": (None if raw_meta.get(cname) else rec.get("d_beta_norm")),
-                                             "alpha": (raw_meta[cname]["alpha"] if raw_meta.get(cname) else None),
-                                             "clip_ratio": float((dbeta.double().abs() > 0.15).float().mean()),
-                                             "beta_max": float(dbeta.double().abs().max()),
-                                             "predicted_a_change": (raw_meta[cname]["predicted_a_change"] if raw_meta.get(cname) else float((j @ dbeta.double()).norm())),
-                                             "step_scale": rec.get("step_scale") if cname.startswith("prod") else None,
-                                             "accepted": rec.get("accepted") if cname.startswith("prod") else None,
-                                             "backtracks": rec.get("backtracks") if cname.startswith("prod") else None,
-                                             "local_a_change": rec.get("local_a_change") if cname.startswith("prod") else None,
-                                             "cumulative_a_change": rec.get("cumulative_a_change") if cname.startswith("prod") else None,
-                                             "target_contact": contact})
+                                             **candidate_meta[cname]})
                             else:
                                 rows.append({"domain": domain, "suite": suite, "task_id": tid, "episode": ep,
                                              "branch": branch, "candidate": cname, "censor": censor or "incomplete",
                                              "steps_control": stepsA, "steps_update": stepsB,
                                              "success_control": bool(succA), "success_update": bool(succB),
                                              "done_control": bool(doneA), "done_update": bool(doneB),
-                                             "action_changes": action_changes})
+                                             "action_changes": action_changes,
+                                             **candidate_meta[cname]})
                             envA.close(); envB.close()
                     print("formal", domain, suite, tid, ep, flush=True)
     finally:
