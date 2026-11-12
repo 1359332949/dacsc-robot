@@ -26,7 +26,7 @@ from dacsc.sg_cpa import (  # noqa: E402
 CKPT = ROOT / "repos" / "CoRP" / "checkpoints" / "corp_libero.pt"
 A_FILE = Path("/hy-tmp/validation/interface_stats_spatial_k32_big2.json")
 DEV = "cuda:0" if torch.cuda.is_available() else "cpu"
-IDENTITY_VIEW = [("identity", lambda im: im)]
+IDENTITY_VIEW = [("identity", lambda im, sd: im)]
 
 
 @pytest.fixture(scope="module")
@@ -283,11 +283,62 @@ def test_only_beta_changes(policy, prepared, cpa):
     assert cpa.optimizer.param_groups[0]["params"] == [cpa.adapter.beta]
 
 
-# 16 --------------------------------------------- ablation without projection runs
+# 16 ---------------------------------------- ablation without projection runs
 def test_no_projection_ablation(policy, prepared, a_basis):
     obj = SGCpa(policy, a_basis, use_projection=False, seed=1234, a_change_tol=1e6)
     try:
         rec = obj.step(prepared, seed=1234)
         assert rec["retained_fraction"] == 1.0
+        assert rec["use_projection"] is False and rec["a_guard"] is True
+    finally:
+        obj.close()
+
+
+# 17 ------------------------------- view noise is re-drawn for different replan seeds
+def test_view_noise_per_replan(prepared, cpa):
+    a = cpa.make_view_images(prepared, seed=100)
+    b = cpa.make_view_images(prepared, seed=100)
+    c = cpa.make_view_images(prepared, seed=200)
+    cam = next(iter(a[0]))
+    for x, y in zip(a, b):
+        assert torch.equal(x[cam], y[cam])
+    assert not torch.equal(a[1][cam], c[1][cam])      # noise view changes with seed
+
+
+# 18 --------------------------- action latent is re-drawn for different replan seeds
+def test_action_latent_per_replan(policy, prepared, a_basis):
+    obj = SGCpa(policy, a_basis, seed=1234)
+    try:
+        t1 = obj.build_target(prepared, seed=100, view_seed=101)["target"]
+        t2 = obj.build_target(prepared, seed=200, view_seed=201)["target"]
+        assert not torch.equal(t1, t2)
+        # teacher and student share the same latent within one step
+        info = obj.build_target(prepared, seed=100, view_seed=101)
+        assert max(float((info["target"] - a).abs().mean()) for a in info["acts"]) < 0.5
+    finally:
+        obj.close()
+
+
+# 19 ------------------------------ no-A-protection: no projection AND no A guard
+def test_no_a_protection_guard_off(policy, prepared, a_basis):
+    obj = SGCpa(policy, a_basis, use_projection=False, a_guard=False,
+                a_change_tol=1e-15, seed=1234)
+    try:
+        rec = obj.step(prepared, seed=1234)
+        assert rec["accepted"] is True
+        assert rec["cumulative_a_change"] is None
+        assert rec["use_projection"] is False and rec["a_guard"] is False
+    finally:
+        obj.close()
+
+
+# 20 --------------------------- no tangent projection but A guard still rejects
+def test_no_tangent_projection_guard_on(policy, prepared, a_basis):
+    obj = SGCpa(policy, a_basis, use_projection=False, a_guard=True,
+                a_change_tol=1e-15, max_backtracks=1, seed=1234)
+    try:
+        rec = obj.step(prepared, seed=1234)
+        assert rec["accepted"] is False
+        assert rec["use_projection"] is False and rec["a_guard"] is True
     finally:
         obj.close()

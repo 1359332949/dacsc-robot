@@ -58,8 +58,9 @@ def apply_pixel_transform(images, fn):
     return from_pixel(fn(to_pixel(images)))
 
 
-def _noise_fn(sigma, seed):
-    def fn(images):  # images are pixel-space [0,1], one generator per camera
+def _noise_fn(sigma):
+    """fn(images, seed): Gaussian noise in pixel space; seed is per call/replan."""
+    def fn(images, seed):
         out = {}
         for ci, (k, v) in enumerate(images.items()):
             g = torch.Generator(device=v.device).manual_seed(int(seed) + ci * 1000)
@@ -68,13 +69,17 @@ def _noise_fn(sigma, seed):
     return fn
 
 
+def _identity_fn(images, seed):
+    return images
+
+
 def _blur_fn(kernel, sigma):
-    return lambda images: {k: TF.gaussian_blur(v, kernel_size=[kernel, kernel],
-                                               sigma=[sigma, sigma]) for k, v in images.items()}
+    return lambda images, seed: {k: TF.gaussian_blur(v, kernel_size=[kernel, kernel],
+                                                     sigma=[sigma, sigma]) for k, v in images.items()}
 
 
 def _photo_fn(factor):
-    def fn(images):
+    def fn(images, seed):
         out = {}
         for k, v in images.items():
             x = torch.clamp(v * factor, 0, 1)
@@ -85,12 +90,11 @@ def _photo_fn(factor):
     return fn
 
 
-def build_views(seed: int, sigma: float = 0.05, blur_sigma: float = 0.5,
-                photo: float = 1.05):
-    """Return [(name, pixel-space transform fn)] with the identity first."""
+def build_views(sigma: float = 0.05, blur_sigma: float = 0.5, photo: float = 1.05):
+    """Return [(name, fn(images, seed))] with the identity first."""
     return [
-        ("identity", lambda im: im),
-        ("noise", _noise_fn(sigma, seed + 11)),
+        ("identity", _identity_fn),
+        ("noise", _noise_fn(sigma)),
         ("blur", _blur_fn(3, blur_sigma)),
         ("photo", _photo_fn(photo)),
     ]
@@ -123,7 +127,8 @@ class SGCpa:
                  seed: int = 1234, a_change_tol: float = 5e-3,
                  max_backtracks: int = 3, views: list | None = None,
                  sigma: float = 0.05, blur_sigma: float = 0.5, photo: float = 1.05,
-                 use_projection: bool = True, medoid_include_identity: bool = True):
+                 use_projection: bool = True, a_guard: bool = True,
+                 medoid_include_identity: bool = True):
         for p in policy.parameters():
             p.requires_grad_(False)
         self.policy = policy
@@ -137,8 +142,9 @@ class SGCpa:
         self.a_change_tol = float(a_change_tol)
         self.max_backtracks = int(max_backtracks)
         self.use_projection = bool(use_projection)
+        self.a_guard = bool(a_guard)
         self.medoid_include_identity = bool(medoid_include_identity)
-        self.view_specs = views if views is not None else build_views(seed, sigma, blur_sigma, photo)
+        self.view_specs = views if views is not None else build_views(sigma, blur_sigma, photo)
         self.optimizer = torch.optim.SGD([self.adapter.beta], lr=1.0)
         self.diagnostics: list[dict] = []
 
@@ -174,19 +180,22 @@ class SGCpa:
         seed = self.seed if seed is None else int(seed)
         images = []
         for name, fn in self.view_specs:
-            images.append(apply_pixel_transform(prepared["images"], fn) if name != "identity"
-                          else prepared["images"])
+            images.append(prepared["images"] if name == "identity"
+                          else apply_pixel_transform(prepared["images"],
+                                                     lambda im, f=fn, sd=seed: f(im, sd)))
         return images
 
     # --------------------------------------------------------------- target
-    def build_target(self, prepared: dict, seed: int | None = None) -> dict:
+    def build_target(self, prepared: dict, seed: int | None = None,
+                     view_seed: int | None = None) -> dict:
         """Frozen teacher: K views with shared action noise -> medoid / anchored mean."""
         seed = self.seed if seed is None else int(seed)
+        view_seed = seed + 1 if view_seed is None else int(view_seed)
         with torch.no_grad():
             saved = self.adapter.beta.detach().clone()
             self.adapter.beta.zero_()
         try:
-            views = self.make_view_images(prepared, seed)
+            views = self.make_view_images(prepared, view_seed)
             acts = []
             for img in views:
                 rep = self._rep(img, prepared["state"], prepared["instruction"])
@@ -281,9 +290,11 @@ class SGCpa:
         return torch.eye(d, dtype=torch.float64) - v.T @ v
 
     # --------------------------------------------------------------- update
-    def step(self, prepared: dict, seed: int | None = None) -> dict:
+    def step(self, prepared: dict, seed: int | None = None,
+             view_seed: int | None = None) -> dict:
         seed = self.seed if seed is None else int(seed)
-        info = self.build_target(prepared, seed=seed)
+        view_seed = seed + 1 if view_seed is None else int(view_seed)
+        info = self.build_target(prepared, seed=seed, view_seed=view_seed)
         z_before = self.write(prepared, seed).detach()
         with torch.no_grad():
             saved_ref = self.adapter.beta.detach().clone()
@@ -322,19 +333,25 @@ class SGCpa:
                 d_beta = d_beta * step_scale
         accepted = False
         local_change = cum_change = None
-        for attempt in range(self.max_backtracks + 1):
+        attempt = 0
+        if self.a_guard:
+            for attempt in range(self.max_backtracks + 1):
+                with torch.no_grad():
+                    self.adapter.beta.copy_(before + d_beta)
+                z1 = self.write(prepared, seed).detach().double().cpu()
+                local_change = float((self.a_basis.T @ (z1 - z_before.double().cpu())).norm())
+                cum_change = float((self.a_basis.T @ (z1 - z_ref_cur)).norm())
+                if max(local_change, cum_change) <= self.a_change_tol:
+                    accepted = True
+                    break
+                d_beta = d_beta * 0.5
+            if not accepted:
+                with torch.no_grad():
+                    self.adapter.beta.copy_(before)
+        else:
             with torch.no_grad():
                 self.adapter.beta.copy_(before + d_beta)
-            z1 = self.write(prepared, seed).detach().double().cpu()
-            local_change = float((self.a_basis.T @ (z1 - z_before.double().cpu())).norm())
-            cum_change = float((self.a_basis.T @ (z1 - z_ref_cur)).norm())
-            if max(local_change, cum_change) <= self.a_change_tol:
-                accepted = True
-                break
-            d_beta = d_beta * 0.5
-        if not accepted:
-            with torch.no_grad():
-                self.adapter.beta.copy_(before)
+            accepted = True
         rec = {"skipped": False, "attempted": True, "accepted": accepted,
                "loss": float(loss.detach()), "g_norm": float(g.norm()),
                "d_beta_norm": float(d_beta.norm()),
@@ -344,6 +361,7 @@ class SGCpa:
                "beta_abs_max": float(self.adapter.beta.detach().abs().max()),
                "retained_fraction": (float((p_null @ g).norm() / (g.norm() + 1e-12))
                                     if p_null is not None else 1.0),
+               "use_projection": self.use_projection, "a_guard": self.a_guard,
                "medoid_index": info["medoid_index"],
                "view_distances": info["view_distances"],
                "step_scale": step_scale}

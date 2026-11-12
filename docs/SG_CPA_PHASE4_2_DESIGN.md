@@ -1,4 +1,8 @@
-# 工单 4.2 实验设计（批准设计，暂不批准 rollout）
+# 工单 4.2 实验设计（已过期，实际执行见 4.2 报告与勘误）
+
+> **状态：本文档描述的是旧版设计（Identity+3 Noise、Anchored Mean、α=0.1、420 episodes）。**
+> 实际执行（commit `cc5ab91`）为 Identity+Noise+Blur+Photo、Medoid 主目标、Mean 消融、600 episodes。
+> 以 `SG_CPA_PHASE4_2_REPORT.md` 与 `SG_CPA_PHASE4_2_ERRATUM.md` 为准。
 
 > 前置：4.1 三个 P0 修复已完成（β 边界、累计 A 参考、RNG 隔离、SVD 零空间），回归测试 14/14，
 > 全量测试 46 passed。**本文件只做设计；rollout 需单独批准。**

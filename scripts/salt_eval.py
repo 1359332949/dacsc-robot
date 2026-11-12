@@ -120,7 +120,8 @@ def run_episode(args, policy, env, task, task_id: int, seed, episode: int, tta, 
                   "updates": 0, "probe_before": None, "probe_after": None}
         if tta is not None and gate_active and prev_norm is not None and args.mode == "sg_cpa":
             t_step = time.time()
-            rec = tta.step(prepared, seed=seed)
+            action_seed = seed + 7919 * predict_index
+            rec = tta.step(prepared, seed=action_seed, view_seed=action_seed + 1)
             replan_times.append(time.time() - t_step)
             sg_records.append(rec)
             sg_attempted += 1
@@ -300,6 +301,7 @@ def main() -> int:
     ap.add_argument("--sgcpa-blur-sigma", type=float, default=0.5)
     ap.add_argument("--sgcpa-no-projection", action="store_true")
     ap.add_argument("--sgcpa-medoid-exclude-identity", action="store_true")
+    ap.add_argument("--sgcpa-no-a-guard", action="store_true")
     ap.add_argument("--episodes-per-task", type=int, default=1)
     ap.add_argument("--lambda-protect", type=float, default=0.0)
     ap.add_argument("--a-basis", type=Path, default=None)
@@ -353,6 +355,7 @@ def main() -> int:
                     seed=args.seed, aggregation=args.sgcpa_aggregation,
                     photo=args.sgcpa_photo, blur_sigma=args.sgcpa_blur_sigma,
                     use_projection=not args.sgcpa_no_projection,
+                    a_guard=not args.sgcpa_no_a_guard,
                     medoid_include_identity=not args.sgcpa_medoid_exclude_identity)
     else:
         tta = SaltTTA(policy, eta=args.eta, adapt_steps=args.adapt_steps, draws=args.draws) \
