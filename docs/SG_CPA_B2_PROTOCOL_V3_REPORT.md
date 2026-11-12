@@ -53,7 +53,7 @@
 | 主要终点 | **仅局部 proximity**：`τ_prox = Δp_prox,update − Δp_prox,control`（H=24，固定 episode `d_ref`）；δ=0.01 操作性阈值 |
 | 分类 | `τ>δ` / `|τ|≤δ` / `τ<−δ`（仅辅助解释，主要结果看连续分布） |
 | 次要终点（本轮范围） | 每段 normalized action change、success 四类结果、production guard 诊断；**不采集** controller-space、实际 On/In 几何、多视图/历史信号 |
-| 统计 | task-cluster bootstrap 90% CI、任务级分布、分域、scipy Spearman（处理 ties）；每候选额外报告分类比例 |
+| 统计 | task-cluster bootstrap 90% CI（**estimand：按 eligible branch 记录加权**；若需 task 等权，应先算 task 内均值再 bootstrap）；任务级分布、分域、scipy Spearman |
 | 更新族 A（机制） | **仅 η=100 单剂量**：raw `proj/full/sens`；**整向量统一缩放**到 β 边界（α=min(1,0.15/‖Δβ‖∞)），不做逐坐标截断；记录 proposal/applied 范数、α、`‖J_A·Δβ_applied‖` |
 | 更新族 B（生产） | 通过 `SGCpa.step()` 的候选（β 边界/A guard/backtrack），单独报告；记录 `raw_d_beta_norm`/`d_beta_norm`、step_scale、accepted、backtracks |
 | 停止条件 | 若仅 η=100 产生可测 τ，或有效更新严重偏离 raw/动作变化超安全阈值，则只记为"大干预有作用"，不外推 TTA |
@@ -66,7 +66,7 @@
 - Spearman 使用 `scipy.stats.spearmanr`，常数输入返回 NaN 并显式处理；
 - 引入 δ 三分类，不再用 `τ>0`；
 - 每候选报告 task-cluster bootstrap 90% CI、任务级效应与分域结果；
-- 信号（多视图/历史连续性）对 `τ>δ` 的预测仅作探索性，不称验证器性能。
+- 本轮**不采集也不分析**多视图/历史连续性信号；不声称 B2 验证了信号预测能力。
 
 ## 3.5 全流程 zero-update 配对审计（修正分母后）
 
@@ -102,6 +102,19 @@ zero 配对在有效分支上轨迹/步数逐位一致；部分 zero 分支在�
   不需要 `--authorize-formal`；正式 24-episode 仍必须 `--authorize-formal`。
 - **尚未运行 dry-run 或正式实验**；正式脚本仍待一次受控 dry-run 联调。
 
+## 3.7 raw 三候选受限 dry-run（task 705 / ep0 / branch 8，输出隔离）
+
+| candidate | proposal/applied norm | α | beta_max | predicted ‖J_A·Δβ‖ | 动作变化（4 段） | 24 步 | τ_prox | censor |
+|---|---|---|---|---|---|---|---|---|
+| raw_proj_100 | 0.02049 / 0.02049 | 1.0 | 8.10e-3 | **1.02e-17** | 2.5e-4–4.0e-4 | ✅ | -0.01127 | 无 |
+| raw_full_100 | 0.04264 / 0.04264 | 1.0 | 2.17e-2 | 2.24e-2 | 5.4e-4–1.6e-3 | ✅ | -0.01222 | 无 |
+| raw_sens_100 | 0.03739 / 0.03739 | 1.0 | 1.73e-2 | 2.24e-2 | 5.9e-4–2.3e-3 | ✅ | -0.00227 | 无 |
+
+- 三个 raw 路径均经模拟器执行验证；统一缩放未触发（α=1），无 action-cap censor；
+- `raw_proj` 的预测 A 变化 ~1e-17，验证投影方向保持；full/sens 的 A 变化同量级（2.2e-2）；
+- 动作变化在 2.5e-4–2.3e-3，明显大于 production η=0.05（~2e-7），但仍远低于 0.05 cap；
+- 单 episode dry-run **不构成效应结论**；仅验证路径与记录。
+
 ## 4. 当前状态与授权请求
 
 | 工作 | 状态 |
@@ -109,7 +122,7 @@ zero 配对在有效分支上轨迹/步数逐位一致；部分 zero 分支在�
 | 预检：双环境确定性、zero 4×6、目标映射、抓取阶段 | ✅ 完成（本报告 §1） |
 | 正式 B2 协议 v3 | 已冻结（§2），代码待最后联调 |
 | 正式 24 episodes 分支实验 | ⏳ **等待授权** |
-| η 网格 | 条件支持（机制剂量扫描；不与生产约束结论混合） |
+| η 网格 | **本轮不做剂量扫描**（仅 η=100 单剂量） |
 | rollout / 调参 / 移除 A-projection | ❌ 未授权 |
 
 **范围冻结**：本轮 B2 只回答"在固定操作阶段、相同初始状态和 4×6 执行协议下，

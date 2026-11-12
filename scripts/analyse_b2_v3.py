@@ -43,17 +43,19 @@ def _success_counts(rows):
            "control_only": 0, "both": 0, "neither": 0, "not_observed": 0}
     for r in rows:
         complete = "tau_prox" in r and "censor" not in r
-        has_flags = "success_control" in r or "success_update" in r
         if complete:
             out["neither"] += 1; continue
-        if not has_flags:
-            out["not_observed"] += 1; continue
-        c, u = _succ(r, "control"), _succ(r, "update")
-        out["control_success"] += int(c); out["update_success"] += int(u)
-        if u and not c: out["update_only"] += 1
-        elif c and not u: out["control_only"] += 1
-        elif c and u: out["both"] += 1
-        else: out["neither"] += 1
+        if r.get("censor") == "stage_or_success":
+            continue
+        c = _succ(r, "control"); u = _succ(r, "update")
+        if c or u:
+            out["control_success"] += int(c); out["update_success"] += int(u)
+            if u and not c: out["update_only"] += 1
+            elif c and not u: out["control_only"] += 1
+            else: out["both"] += 1
+        else:
+            # action-cap / incomplete / termination without success: window not observed
+            out["not_observed"] += 1
     return out
 
 
@@ -90,7 +92,10 @@ def summarise(rows):
             "per_task": {k: {"n": len(v), "tau_mean": float(np.mean(v))} for k, v in per_task.items()},
             "spearman_tau_action": spear(taus, [r["action_change"] for r in comp]) if taus else None,
             "mean_action_change": float(np.mean([r["action_change"] for r in comp])) if comp else None,
-            "mean_applied_norm": float(np.mean([r.get("applied_norm") or 0.0 for r in comp])) if comp else None,
+            "mean_applied_norm": (float(np.mean([(r.get("applied_norm") if r.get("applied_norm") is not None
+                                                 else r.get("effective_norm")) for r in comp
+                                                if (r.get("applied_norm") is not None or r.get("effective_norm") is not None)]))
+                                  if any((r.get("applied_norm") is not None or r.get("effective_norm") is not None) for r in comp) else None),
             "mean_alpha": float(np.mean([r["alpha"] for r in comp if r.get("alpha") is not None])) if any(r.get("alpha") is not None for r in comp) else None,
         }
     return res

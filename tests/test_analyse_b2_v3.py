@@ -25,7 +25,8 @@ def test_success_classification_and_stage_skip():
         row(censor="termination_or_success", success_control=False, success_update=True),
         row(censor="termination_or_success", success_control=True, success_update=False),
         row(censor="termination_or_success", success_control=True, success_update=True),
-        row(censor="action_cap", action_changes=[0.2], steps_control=6, steps_update=6),
+        row(censor="action_cap", action_changes=[0.2], steps_control=6, steps_update=6,
+            success_control=False, success_update=False),
     ]
     s = mod.summarise(rows)
     c = s["candidates"]["prod_step_005"]
