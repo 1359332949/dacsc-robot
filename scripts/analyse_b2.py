@@ -6,7 +6,7 @@ import numpy as np
 
 import argparse
 _ap = argparse.ArgumentParser()
-_ap.add_argument("--src", default="/hy-tmp/validation/b2/b2.jsonl")
+_ap.add_argument("--src", default="/hy-tmp/validation/b2v3/b2_v3.jsonl")
 _ap.add_argument("--out", default="/hy-tmp/validation/b2_analysis")
 _args = _ap.parse_args()
 SRC = Path(_args.src)
@@ -22,8 +22,36 @@ def auc(score, labels):
 
 
 def spear(a, b):
-    ra = np.argsort(np.argsort(a)); rb = np.argsort(np.argsort(b))
-    return float(np.corrcoef(ra, rb)[0, 1])
+    a = np.asarray(a, dtype=float); b = np.asarray(b, dtype=float)
+    if len(a) < 3 or np.all(a == a[0]) or np.all(b == b[0]):
+        return float("nan")
+    try:
+        from scipy.stats import spearmanr
+        return float(spearmanr(a, b).statistic)
+    except Exception:
+        ra = np.argsort(np.argsort(a)); rb = np.argsort(np.argsort(b))
+        return float(np.corrcoef(ra, rb)[0, 1])
+
+
+DELTA = 0.01
+
+
+def classify(tau):
+    if tau > DELTA: return "beneficial"
+    if tau < -DELTA: return "harmful"
+    return "unidentifiable"
+
+
+def cluster_boot(vals, groups, n=1000, seed=0):
+    rng = np.random.default_rng(seed)
+    keys = sorted(set(groups))
+    by = {k: [v for v, g in zip(vals, groups) if g == k] for k in keys}
+    out = []
+    for _ in range(n):
+        pick = [keys[i] for i in rng.integers(0, len(keys), len(keys))]
+        vals2 = [v for k in pick for v in by[k]]
+        out.append(float(np.mean(vals2)))
+    return [float(np.percentile(out, 5)), float(np.percentile(out, 95))] if out else None
 
 
 def main():
@@ -50,7 +78,13 @@ def main():
         taus = np.array([r["tau"] for r in sel])
         res["candidates"][cand] = {
             "n": len(sel), "tau_mean": float(taus.mean()), "tau_median": float(np.median(taus)),
-            "tau_std": float(taus.std()), "frac_tau_pos": float((taus > 0).mean()),
+            "tau_std": float(taus.std()), "tau_ci90": cluster_boot(
+                [r["tau"] for r in sel], [(r["suite"], r["task_id"]) for r in sel]),
+            "class_counts": {k: int(sum(1 for r in sel if classify(r["tau"]) == k))
+                             for k in ("beneficial", "unidentifiable", "harmful")},
+            "per_domain": {d: float(np.mean([r["tau"] for r in sel if r["domain"] == d]))
+                           for d in sorted({r["domain"] for r in sel})},
+            "frac_tau_pos": float((taus > 0).mean()),
             "dp_control_mean": float(np.mean([r["dp_control"] for r in sel])),
             "dp_update_mean": float(np.mean([r["dp_update"] for r in sel])),
             "success_control": float(np.mean([r["success_control"] for r in sel])),
