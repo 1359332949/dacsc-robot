@@ -68,24 +68,36 @@
 - 每候选报告 task-cluster bootstrap 90% CI、任务级效应与分域结果；
 - 信号（多视图/历史连续性）对 `τ>δ` 的预测仅作探索性，不称验证器性能。
 
-## 3.5 全流程 zero-update 配对审计（24 episodes，branch 8 / 12）
+## 3.5 全流程 zero-update 配对审计（修正分母后）
 
-| 分支点 | 可用分支（满足 eef≤0.10 且未 success） | skip | obs 最大差 | action chunk 最大差 | 物体轨迹最大差 | EEF 轨迹最大差 | 步数一致 |
-|---|---|---|---|---|---|---|---|
-| 8 | **22** | 7 | 0.0 | 0.0 | 0.0 | 0.0 | ✅ |
-| 12 | **18** | 6 | 0.0 | 0.0 | 0.0 | 0.0 | ✅ |
+此前把 branch 8 的 skip 与 branch 12 的 eligible 混在一起（22+7=29），分母不是 24；已用**逐分支独立审计**修正：
 
-结论：在正式 24 episodes 上，双环境重放 + 4×6 步协议在 branch 8/12 的 zero-update 配对达到**逐位一致**
-（观测、动作块、物体/EEF 轨迹、步数），配对协议通过预检。
-（skip 均记录原因：接触距离不足或已成功；覆盖率约 76%/75%。）
+| 分支点 | 分母 | 可用（contact≤0.10 且未 success） | skip | 物体轨迹差 | EEF 轨迹差 | 步数一致 |
+|---|---|---|---|---|---|---|
+| 8 | 24 | **19** | 5 | 0.0 | 0.0 | ✅ |
+| 12 | 24 | **18** | 6 | 0.0 | 0.0 | ✅ |
 
-## 3.6 正式代码与分析落地
+skip 原因（接触距离 >0.10 / 分支前已 success 或 done）逐条记录在
+`/hy-tmp/validation/b2_zero_branch_audit.json`；每个 episode 的 branch 8/12 独立判定，互不混淆。
+zero 配对在有效分支上轨迹/步数逐位一致；部分 zero 分支在窗口内成功，正式 τ 将按规则 censor。
 
-- `scripts/sg_b2_v3.py`：正式分支脚本已实现（双环境、4×6、raw/prod 候选、终止/截断/动作上限、
-  raw/effective β、clip/shrink、δ 分类），带 `--authorize-formal` 门禁；**尚未运行**。
-- `scripts/analyse_b2.py`：默认路径改为 b2v3；δ=0.01 三分类；scipy Spearman（ties/常数处理）；
-  task-cluster bootstrap 90% CI；分域/任务级结果。
-- 已知：正式脚本尚未做一次 dry-run 联调；正式运行前应先用 1 个 episode/1 候选做端到端 dry-run。
+## 3.6 正式代码修正（针对 P0 审查）
+
+已修复：
+
+| 问题 | 修正 |
+|---|---|
+| `chunk_of()` 隐式清零 β | 改为 `sample_chunk(..., beta)` **必须显式传 β**；control 传零向量，update 传候选 |
+| 每个候选后环境重置但未重放 | 每个 candidate **重建 env 对并重放冻结前缀到同一 branch**；branch 8/12 分别重放 |
+| 终止/censor 不严格 | 记录 stepsA/B、doneA/B、succA/B；仅当 **stepsA==stepsB==24 且无 success/termination** 才计算 τ |
+| τ 参考距离取错 | 记录 episode 初始 `d_ref`、分支时 `d_branch_control/update`、终点 `d_end_*`；`Δp=(d_branch−d_end)/d_ref`，各用自身环境 |
+| 输出与分析 schema 不匹配 | 统一为**每 candidate×episode×branch 一条记录**，字段含 `tau_prox`/censor；`scripts/analyse_b2_v3.py` 直接读取 |
+| 记录不足 | 增加 target_pair/body_ids、每段 action_changes、raw/effective β、clip_ratio、beta_max、step_scale、accepted/backtracks、local/cumulative A change |
+| 分析 `τ>0` | 改为 **δ=0.01 三分类**；scipy Spearman（ties/常数）；task-cluster bootstrap 90% CI；分域/分套件 |
+
+- dry-run 门禁：`--dry-run --task-id --branch --candidate`（强制单任务/单分支/单候选），
+  不需要 `--authorize-formal`；正式 24-episode 仍必须 `--authorize-formal`。
+- **尚未运行 dry-run 或正式实验**；正式脚本仍待一次受控 dry-run 联调。
 
 ## 4. 当前状态与授权请求
 
@@ -97,6 +109,7 @@
 | η 网格 | 条件支持（机制剂量扫描；不与生产约束结论混合） |
 | rollout / 调参 / 移除 A-projection | ❌ 未授权 |
 
-**当前请求**：先批准对 `scripts/sg_b2_v3.py` 做 1-episode dry-run 与代码审查（不产生正式结论）；
-dry-run 通过并冻结脚本后，再单独请求正式 24-episode B2 授权。
-（本轮只完成代码实现与全覆盖预检，未运行正式分支实验。）
+**当前请求**：审查修正后的 `scripts/sg_b2_v3.py` 与 `scripts/analyse_b2_v3.py`；
+批准后再进行**受限 dry-run**（单 task / 单 episode / 单 branch / 单 candidate，输出独立目录），
+dry-run 通过后才申请正式 24-episode B2。
+（本轮完成 P0 修正与逐分支审计，未运行 dry-run / 正式实验。）
