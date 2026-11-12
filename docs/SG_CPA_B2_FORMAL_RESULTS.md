@@ -2,7 +2,7 @@
 
 > 授权范围：12 tasks × 2 episodes、branch 8/12、raw proj/full/sens η=100、production `SGCpa.step()` 单独报告。
 > 主要终点：完整 24 步窗口的局部 `τ_prox`；success/censor 独立报告。
-> 数据：`/hy-tmp/validation/b2v3_formal/b2_v3.jsonl`（165 条候选记录 + 9 条 stage skip）。
+> 数据：`/hy-tmp/validation/b2v3_formal/b2_v3.jsonl`（**165 条 JSONL：156 条候选记录 + 9 条 stage skip**）。
 > 运行：固定 CoRP checkpoint、FP32、每 replan 执行 6 步、双环境重放、共同 action latent。
 
 ## 1. 数据完整性
@@ -10,11 +10,11 @@
 | 项 | 值 |
 |---|---|
 | episodes | 24（12 tasks × 2） |
-| candidate 记录 | 165 |
+| JSONL 总记录 | 165（候选 156 + stage skip 9） |
 | stage skip（contact>0.10 或分支前已 success） | 9 |
 | 每候选完整窗口 | prod 33 / raw_full 32 / raw_proj 33 / raw_sens 32 |
 | 执行期 censor | 6–7 / candidate，全部为 `termination_or_success`；无 action-cap censor |
-| success 四类（全局） | update-only **3**、control-only **0**、both 20、neither 130、not_observed 3 |
+| success 四类（156 条候选级 paired observations） | update-only **3**、control-only **0**、both 20、neither 130、not_observed 3 |
 
 ## 2. 主要结果（局部 proximity，24 步窗口）
 
@@ -30,7 +30,7 @@
 - raw 候选的动作变化（2–4e-3）比 production（3e-5）大约两个量级，但连续 τ 仍无稳定方向；
 - production 的 τ CI 完全贴近 0（[-8e-4, +6e-5]），在本窗口内没有可测的局部效应。
 
-## 3. Success（独立报告）
+## 3. Success（候选级，独立报告）
 
 | 结果 | 全局 | prod | raw_proj | raw_full | raw_sens |
 |---|---|---|---|---|---|
@@ -40,7 +40,7 @@
 | neither（完整窗口） | 130 | 33 | 33 | 32 | 32 |
 | not_observed | 3 | 0 | 0 | 1 | 2 |
 
-`update-only 3 vs control-only 0` 只是描述性计数，样本极小、无统计检验支持；不能据此声称更新提升成功率。
+`update-only 3 vs control-only 0` 是 156 条候选级观察的描述性计数，不是 3 个独立 episode 获益；，样本极小、无统计检验支持；不能据此声称更新提升成功率。
 
 ## 4. 解释与边界
 
@@ -51,6 +51,13 @@
    本实验固定 checkpoint、FP32、6 步重规划，且只更新 action generator 的 β 子空间。
 5. **成功/censor**：完整窗口 130 条 neither；3 条 update-only 与 0 条 control-only 不足以支持任何成功率结论。
 6. **未采集**：多视图/历史信号、controller-space 动作变化、实际 On/In 几何关系；B2 不回答信号预测问题。
+
+## 4.1 离线收尾补充
+
+- paired contrasts（raw 之间、raw vs production）全部跨 0：无系统方向差异；
+- censor 一致性检查：0 条 `done/success` 冲突；
+- B1/B2 branch 对齐：33 个 branch，contact/d_branch 最大差均为 0.0；
+- 更新前信号对 τ 的 LOO 预测无正向证据（详见 `SG_CPA_B2_OFFLINE_JOINT_REPORT.md`）。
 
 ## 5. 结论
 
