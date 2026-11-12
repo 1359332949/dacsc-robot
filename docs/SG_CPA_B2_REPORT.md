@@ -1,5 +1,8 @@
 # B2 报告：候选更新 vs 不更新的成对反事实（第一轮）
 
+> **后续状态**：第一轮的 save/restore 配对已被预检否决（恢复误差 1e-5 m，control vs zero 4×6 轨迹差 0.043）；
+> 双环境重放被验证为逐位确定。正式协议见 `SG_CPA_B2_PROTOCOL_V3_REPORT.md`，正式实验待授权。
+
 > 授权范围：模拟器内成对反事实分支，非物理 rollout；不调 η、不改 A-projection、不做适配训练。
 > 代码：`scripts/sg_b2_counterfactual_v2.py`（单环境状态保存/恢复，消除跨环境非确定性）。
 > 数据：`/hy-tmp/validation/b2v2/b2.jsonl`（288 行 = 24 episodes × 2 branches × 3 candidates × 2 modes）。
