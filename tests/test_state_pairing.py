@@ -60,7 +60,8 @@ class TestStatePairing(unittest.TestCase):
         self.assertTrue(camera_compare(a, b, expect_equal=True)["pass"])
         c = make_snap(); c["cam_pos"] = [[2, 0, 1], [0, 1, 1]]
         self.assertFalse(camera_compare(a, c, expect_equal=True)["pass"])
-        self.assertTrue(camera_compare(a, c, expect_equal=False)["pass"])
+        self.assertTrue(camera_compare(a, c, expect_equal=False,
+                                       target_cameras=["agentview"])["pass"])
 
     def test_camera_nan_fails(self):
         b = make_snap(); b["cam_pos"] = [[float("nan"), 0, 1], [0, 1, 1]]
@@ -70,6 +71,20 @@ class TestStatePairing(unittest.TestCase):
     def test_camera_shape_mismatch_fails(self):
         b = make_snap(); b["cam_pos"] = [[1, 0, 1]]
         self.assertFalse(camera_compare(make_snap(), b, expect_equal=False)["pass"])
+
+    def test_quaternion_sign_equivalence_passes(self):
+        b = make_snap(); b["body_xquat"] = [[-1, 0, 0, 0]] * 3
+        self.assertTrue(compare(make_snap(), b)["all_pass"])
+
+    def test_camera_target_subset_only(self):
+        # Only agentview changes: valid Camera shift when agentview is the target.
+        b = make_snap(); b["cam_pos"] = [[2, 0, 1], [0, 1, 1]]
+        self.assertTrue(camera_compare(make_snap(), b, expect_equal=False,
+                                       target_cameras=["agentview"])["pass"])
+        # If only eye_in_hand changes but agentview is target, fail.
+        c = make_snap(); c["cam_pos"] = [[1, 0, 1], [0, 2, 1]]
+        self.assertFalse(camera_compare(make_snap(), c, expect_equal=False,
+                                        target_cameras=["agentview"])["pass"])
 
     def test_model_compatibility(self):
         a = make_snap(); b = make_snap()

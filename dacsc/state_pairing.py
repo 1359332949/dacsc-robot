@@ -113,7 +113,7 @@ def restore(env, snap: dict[str, Any]) -> None:
     sim.forward()
 
 
-def _quat_angle_deg(q1, q2) -> float:
+def _quat_angle_rad(q1, q2) -> float:
     q1 = np.asarray(q1, dtype=np.float64); q2 = np.asarray(q2, dtype=np.float64)
     n1 = np.linalg.norm(q1, axis=-1, keepdims=True)
     n2 = np.linalg.norm(q2, axis=-1, keepdims=True)
@@ -122,7 +122,7 @@ def _quat_angle_deg(q1, q2) -> float:
     q1 = q1 / n1; q2 = q2 / n2
     dot = np.abs(np.sum(q1 * q2, axis=-1))
     dot = np.clip(dot, 0.0, 1.0)
-    return float(np.degrees(2.0 * np.arccos(dot)).max())
+    return float((2.0 * np.arccos(dot)).max())
 
 
 def _array_check(name, a, b, tol, optional_empty=False):
@@ -160,9 +160,9 @@ def compare(a: dict[str, Any], b: dict[str, Any], tol: dict[str, float] | None =
         if qa.shape != qb.shape:
             checks["body_xquat"] = {"present": True, "shape": False, "pass": False, "error": float("inf")}
         else:
-            ang = _quat_angle_deg(qa, qb)
+            ang = _quat_angle_rad(qa, qb)
             checks["body_xquat"] = {"present": True, "shape": True, "finite": bool(np.isfinite(ang)),
-                                    "error_deg": ang, "pass": bool(np.isfinite(ang) and ang <= tol["body_xquat_rad"])}
+                                    "error_rad": ang, "pass": bool(np.isfinite(ang) and ang <= tol["body_xquat_rad"])}
     names_ok = a.get("body_names") == b.get("body_names")
     cam_names_ok = a.get("camera_names") == b.get("camera_names")
     eef_ok = bool(a.get("eef_name")) and a.get("eef_name") == b.get("eef_name")
@@ -173,28 +173,45 @@ def compare(a: dict[str, Any], b: dict[str, Any], tol: dict[str, float] | None =
 
 
 def camera_compare(a: dict[str, Any], b: dict[str, Any], expect_equal: bool,
-                   tol: float = 1e-9) -> dict[str, Any]:
-    names_ok = a.get("camera_names") == b.get("camera_names") and bool(a.get("camera_names"))
+                   tol: float = 1e-9, target_cameras: list[str] | None = None) -> dict[str, Any]:
+    """Compare camera arrays; for expect_equal=False require target cameras to change.
+
+    target_cameras defaults to all cameras (legacy behaviour).  A Camera variant
+    may legitimately change only one policy view; non-target cameras are allowed
+    to stay identical.
+    """
+    names = list(a.get("camera_names", []))
+    names_ok = names == b.get("camera_names") and bool(names)
     checks = {"names": bool(names_ok)}
-    diffs = {}
-    finite = True
-    shape_ok = True
+    if target_cameras is None:
+        target_cameras = names
+    missing = [c for c in target_cameras if c not in names]
+    checks["targets_present"] = not missing
+    diffs: dict[str, dict[str, float]] = {c: {} for c in names}
+    shape_ok = True; finite = True
     for key in ("cam_pos", "cam_quat", "cam_fovy", "cam_xpos", "cam_xmat"):
         x = np.asarray(a.get(key, []), dtype=np.float64)
         y = np.asarray(b.get(key, []), dtype=np.float64)
         if x.size == 0 or y.size == 0 or x.shape != y.shape:
-            shape_ok = False; diffs[key] = float("inf"); continue
+            shape_ok = False
+            for c in names: diffs[c][key] = float("inf")
+            continue
         if not (np.isfinite(x).all() and np.isfinite(y).all()):
-            finite = False; diffs[key] = float("inf"); continue
-        diffs[key] = float(np.max(np.abs(x - y)))
+            finite = False
+            for c in names: diffs[c][key] = float("inf")
+            continue
+        for i, c in enumerate(names):
+            diffs[c][key] = float(np.max(np.abs(x[i] - y[i])))
     checks["shape"] = shape_ok
     checks["finite"] = finite
     if expect_equal:
-        checks["expected"] = bool(shape_ok and finite and all(v <= tol for v in diffs.values()))
+        checks["expected"] = bool(shape_ok and finite and all(
+            v <= tol for c in names for v in diffs[c].values()))
     else:
-        # Any actual camera parameter change is sufficient; shape/finite must still hold.
-        checks["expected"] = bool(shape_ok and finite and any(v > tol for v in diffs.values()))
-    return {"checks": checks, "diffs": diffs, "pass": all(checks.values())}
+        checks["expected"] = bool(shape_ok and finite and not missing and all(
+            any(diffs[c][k] > tol for k in diffs[c]) for c in target_cameras))
+    return {"checks": checks, "diffs": diffs, "target_cameras": list(target_cameras),
+            "pass": all(checks.values())}
 
 
 def digest(snap: dict[str, Any]) -> str:
