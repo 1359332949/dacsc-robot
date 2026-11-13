@@ -79,7 +79,48 @@
 
 在这些完成之前，实现 IR-ASTTA 的 DRAIL 部分没有可靠训练基础。
 
-## 5. 建议的降复杂度路径
+## 5. Gate 1 修订：Terminal Outcome Predictability Audit（episode-level）
+
+原“Reward Gate”设计有 credit assignment 和样本独立性问题，已按审查意见改为：
+
+- **每个 episode 一个特征向量**（固定 replan 8 或 12），标签为最终 success；
+- 不做 transition 级标签；
+- Leave-one-task-out 逻辑回归；
+- 任务簇 bootstrap 90% CI（探索性）；
+- 比较三组：
+  - A：域/任务套件/初始距离等元数据；
+  - B：A + 当前状态、当前物体-目标距离、EEF-物体距离、抬升；
+  - C：B + 执行动作统计、状态变化、距离变化。
+
+### 结果（B1，24 episodes，13 success，12 task clusters）
+
+| replan | A AUC | B AUC | C AUC | ΔAUC(B−A) | ΔAUC(C−B) |
+|---|---|---|---|---|---|
+| 8 | 0.455 | 0.469 | 0.406 | +0.014 | **-0.063** |
+| 12 | 0.643 | 0.895 | 0.937 | +0.252 | **+0.042** |
+
+（AUC 为 LOTO 预测的 pooled AUC；90% CI 很宽，例如 replan 12 的 C 为 [0.837, 1.0]。）
+
+### 解释
+
+1. **replan 8**：三组都接近随机，transition 特征没有增量；
+2. **replan 12**：当前状态（B）已经能强烈预测最终 success（AUC 0.895），
+   这主要是**任务阶段/当前几何进展**的信息，不是动作质量；
+   transition 特征只增加约 0.04 AUC，且 CI 宽、12 个 task cluster，不能作为稳定证据；
+3. 因此 Gate 1 的结论是：**没有可靠证据表明 transition 特征提供了超出当前状态的行为质量信号**；
+   不能用它支持 DRAIL 训练。
+
+### 仍未完成的 Gate 2
+
+现有数据无法做“同一状态下不同候选动作 → 完整 episode success”的反事实比较：
+
+- B2 只有 39 个 eligible branch、156 条候选记录，终点是局部中心距离；
+- 成功/终止分支被 censor；
+- 没有完整 episode 的配对反事实。
+
+所以即使 Gate 1 有信号，也不能直接进入 Reward 指导的 A-active 更新。
+
+## 6. 建议的降复杂度路径
 
 在补大数据之前，先做一个**低成本 Reward Gate**：
 
@@ -90,14 +131,14 @@
 
 这样避免一上来就训练扩散奖励模型，也符合“不要复杂”的原则。
 
-## 6. 与 IR-ASTTA 的关系
+## 7. 与 IR-ASTTA 的关系
 
 - IR-ASTTA 的潜在贡献不在“用 DRAIL”（已有工作），而在：
   > 把行为质量奖励通过 advantage-weighted flow matching 路由到 A-active 参数子空间。
 - 但这个贡献只有在 Reward Gate 通过后才有意义；
 - 当前数据审计的结论是：**先补数据/做小模型 Gate，不实现 DRAIL，不跑 rollout。**
 
-## 7. 参考
+## 8. 参考
 
 - DiffAIL: arXiv:2312.06348
 - DRAIL: arXiv:2412.06805
