@@ -4,12 +4,14 @@
     "agentview",
     "eye_in_hand"
   ],
-  "identity_tokens_equal": true,
+  "patch_dim": 384,
+  "identity_raw_patches_equal": true,
+  "identity_representation_equal": true,
   "identity_pooled_equal": true,
   "identity_dtype_equal": true,
   "identity_action_equal": true,
-  "scale_tokens_changed": true,
-  "scale_action_changed": true,
-  "max_token_abs_diff": 0.0,
+  "suppression_tokens_changed": true,
+  "suppression_action_changed": true,
+  "max_representation_abs_diff": 0.0,
   "max_action_abs_diff": 0.0
 }

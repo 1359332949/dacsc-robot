@@ -13,6 +13,19 @@
 | `tests/test_visual_gate.py` | gate identity/scale/异常 view 单测 |
 | `tests/test_state_pairing.py` | snapshot 比较、digest、camera 单测 |
 
+## 2. V1.1 hardening（针对静态审查）
+
+已修复：
+
+- `compare()` fail-closed：缺失字段、单侧空数组、shape 不一致、非 finite 一律失败；不再用默认 0.0 表示未比较。
+- 增加 `body_xquat`（四元数 q/−q 等价角误差）、`eef_pos`、`eef_name` 必需检查。
+- `model_signature` / `model_compatible()`：restore 前比较 nq/nv/nu、关节名/类型/地址、actuator、body names。
+- `camera_compare()`：names/shape/finite 检查；区分“应相同”和“应发生 camera 变化”；NaN 不会误判为相同。
+- V1.1 脚本 fail-closed：物理状态、模型兼容、camera 预期、必需视角、实际图像差异任一失败 → 非零退出。
+- 图像用无损 PNG；计算 mean abs diff 与 changed fraction；不再只用 SHA 判断。
+- `init_index` 严格范围检查；记录 init 文件 hash；输出目录按 task/init 唯一化；manifest 单行 JSONL。
+- 测试改为 unittest，覆盖缺失字段、单侧空 act、body 四元数、NaN camera、shape mismatch、EEF 缺失、model mismatch。
+
 ## 2. V0 结果（本机 CPU，官方 checkpoint）
 
 命令：
@@ -26,18 +39,21 @@
 
 ```json
 {
-  "identity_tokens_equal": true,
+  "patch_dim": 384,
+  "identity_raw_patches_equal": true,
+  "identity_representation_equal": true,
   "identity_pooled_equal": true,
   "identity_dtype_equal": true,
   "identity_action_equal": true,
-  "scale_tokens_changed": true,
-  "scale_action_changed": true
+  "suppression_tokens_changed": true,
+  "suppression_action_changed": true
 }
 ```
 
 - identity gate 直接返回原 tensor，不乘 1；
 - patch → resampler token → action chunk 全链路一致；
-- 非 identity（gamma=0.5）会改变 token 和动作，说明插入点有效。
+- 非 identity（suppression gamma=0.5）会改变 token 和动作，说明插入点有效；
+- V0 退出条件包含 raw patches/representation/action 一致 + suppression token 变化。
 
 > 这是接口验收，不是方法有效性结论。
 
@@ -89,15 +105,11 @@ python scripts/v11_state_pair_audit.py \
 
 ## 6. 单测
 
-本机没有 pytest，使用手动断言运行：
+已统一为 unittest（符合仓库 `python -m unittest discover -s tests -v`）：
 
-- gate identity 返回同一 tensor；
-- scale gate 按 view/dimension 正确；
-- snapshot compare 精确/偏移检测；
-- digest 确定性；
-- camera_equal 正确。
-
-均通过。
+- `test_visual_gate.py`：5 tests passed；
+- `test_state_pairing.py`：12 tests passed；
+- 覆盖 identity no-op、错误 view/dim、suppression bound、缺失字段、单侧空 act、四元数、NaN camera、shape mismatch、EEF 缺失、model mismatch。
 
 ## 7. 下一步
 

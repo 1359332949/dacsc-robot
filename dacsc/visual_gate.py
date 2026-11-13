@@ -1,8 +1,11 @@
 """Lightweight visual-token gate inserted between CoRP's DINO and Resampler.
 
-The gate operates on each view's [B, N, D] patch-token tensor.  In "identity"
-mode it returns the exact input tensor (no multiply-by-one), so a no-op gate can
-be audited end-to-end against the unmodified representation extractor.
+Modes:
+  identity    : return the exact input tensor (no arithmetic);
+  suppression : gamma clamped to [0, 1];
+  reweight    : gamma unrestricted (can amplify);
+  signed      : gamma unrestricted (can be negative);
+  scale       : backward-compatible alias of reweight.
 """
 
 from __future__ import annotations
@@ -12,25 +15,35 @@ import types
 import torch
 from torch import nn
 
+VALID_MODES = ("identity", "suppression", "reweight", "signed", "scale")
+
 
 class VisualTokenGate(nn.Module):
     def __init__(self, view_names, dim: int, mode: str = "identity") -> None:
         super().__init__()
-        if mode not in ("identity", "scale"):
-            raise ValueError("mode must be 'identity' or 'scale'")
+        if mode not in VALID_MODES:
+            raise ValueError(f"mode must be one of {VALID_MODES}")
         self.view_names = tuple(view_names)
         self.dim = int(dim)
         self.mode = mode
-        # One scalar per (view, embedding dimension); initialized to 1.0.
         self.gamma = nn.Parameter(torch.ones(len(self.view_names), self.dim))
 
-    def forward(self, tokens: torch.Tensor, view: str) -> torch.Tensor:
-        if self.mode == "identity":
-            return tokens
+    def _check(self, tokens: torch.Tensor, view: str) -> int:
+        if not isinstance(tokens, torch.Tensor) or tokens.ndim != 3:
+            raise ValueError("tokens must be a [B, N, D] tensor")
         if view not in self.view_names:
             raise KeyError(f"unknown view {view!r}")
-        index = self.view_names.index(view)
+        if tokens.shape[-1] != self.dim:
+            raise ValueError(f"token dim {tokens.shape[-1]} != gate dim {self.dim}")
+        return self.view_names.index(view)
+
+    def forward(self, tokens: torch.Tensor, view: str) -> torch.Tensor:
+        index = self._check(tokens, view)  # validate even for identity
+        if self.mode == "identity":
+            return tokens
         gamma = self.gamma[index].to(device=tokens.device, dtype=tokens.dtype)
+        if self.mode == "suppression":
+            gamma = gamma.clamp(0.0, 1.0)
         return tokens * gamma.view(1, 1, -1)
 
     @torch.no_grad()
@@ -39,11 +52,7 @@ class VisualTokenGate(nn.Module):
 
 
 class GatedRepresentationExtractor(nn.Module):
-    """Wrap a frozen RepresentationExtractor and gate patch tokens before fusion.
-
-    The wrapper reuses the base extractor's modules without modifying the
-    checkpoint.  It is intended for V0 interface checks and later V2 gates.
-    """
+    """Wrap a frozen RepresentationExtractor and gate patch tokens before fusion."""
 
     def __init__(self, base, gate: VisualTokenGate) -> None:
         super().__init__()
@@ -51,8 +60,24 @@ class GatedRepresentationExtractor(nn.Module):
         self.gate = gate
         self.view_names = tuple(base.view_names)
 
+    def _validate(self, images, state, instruction) -> int:
+        if not isinstance(images, dict):
+            raise TypeError("images must be a dict")
+        missing = [v for v in self.view_names if v not in images]
+        if missing:
+            raise KeyError(f"missing views: {missing}")
+        if state.ndim != 2:
+            raise ValueError("state must be [B, state_dim]")
+        batch = state.shape[0]
+        for name in self.view_names:
+            if images[name].shape[0] != batch:
+                raise ValueError(f"view {name} batch {images[name].shape[0]} != state batch {batch}")
+        if isinstance(instruction, (list, tuple)) and len(instruction) != batch:
+            raise ValueError("instruction count must match batch")
+        return batch
+
     def forward(self, images, state, instruction):
-        batch_size = state.shape[0]
+        batch_size = self._validate(images, state, instruction)
         patches = self.base.visual_encoder(
             torch.cat([images[name] for name in self.view_names], dim=0)
         )
