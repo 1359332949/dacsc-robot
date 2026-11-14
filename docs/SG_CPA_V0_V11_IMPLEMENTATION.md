@@ -13,7 +13,7 @@
 | `tests/test_visual_gate.py` | gate identity/scale/异常 view 单测 |
 | `tests/test_state_pairing.py` | snapshot 比较、digest、camera 单测 |
 
-## 2. V1.1 hardening v3（针对 e770d7d 复审）
+## 2. V1.1 hardening v4（针对 7d79d28 复审）
 
 已修复：
 
@@ -41,6 +41,11 @@
 - **category 别名**：Camera Viewpoints / Background Textures / Light Conditions 精确映射；Clean 排除规则覆盖 light/sensor/noise。
 - **Camera 模式强制显式 `--target-cameras`**；不再默认所有策略视角。
 - **失败 Manifest 更稳**：环境 close 单独捕获；cleanup_errors 写入；setup/import 在 try 内；vanilla 的 clean task id 记为 null。
+- **Clean 文件身份硬校验**：vanilla 要求 `clean_bddl.stem == clean_task_name`，init 文件名必须是 `<name>.pruned_init` / `.init` / `.pruned_init.pkl`；不再只比较 CLI 参数与自身副本。
+- **共同 policy instruction 冻结**：Clean/Shift 使用同一 `policy_instruction`；要求 `canonical_instruction(clean_policy) == canonical_instruction(shift_task.language)`；manifest 分别记录 raw/canonical/actual policy instruction。
+- **classification 严格唯一 + 完整 variant name**：必须恰好一条记录；若有 name，必须与 task map 完整任务名一致（不只是 base name）；category 精确匹配。
+- **物理几何签名**：`model_signature` 记录 geom names/bodyid/type/size/pos/quat；Camera 模式 `strict_geometry=True`，防止 Camera 变体同时改变物理几何。
+- **顶层 import 移入事务**：`evaluate_libero` 在 run_id/record 创建后导入；import/config 失败也写失败 manifest。
 
 ## 2. V0 结果（本机 CPU，官方 checkpoint）
 
@@ -179,12 +184,12 @@ python scripts/v11_state_pair_audit.py   --clean-source vanilla   --clean-suite 
 
 - `test_visual_gate.py`：5 tests passed；
 - `test_state_pairing.py`：14 tests passed；
-- `test_task_pairing.py`：9 tests passed；
+- `test_task_pairing.py`：10 tests passed；
 - 覆盖 identity no-op、错误 view/dim、suppression bound、缺失字段、单侧空 act、四元数、NaN camera、shape mismatch、EEF 缺失、model mismatch。
 
 ## 9. 仍未闭合的 P1
 
-- `from evaluate_libero` 等顶层 import 仍可能在 main 之前失败；此类失败目前无 manifest。
+- 顶层 `dacsc`/torch import 仍在 main 前；但 `evaluate_libero` 已移入事务。
 - vanilla Clean 的 BDDL/init 资产与本机 Plus 包混用；需要在服务器 revision 上确认资产一致。
 - `task_classification` 的真实 schema 尚未在服务器验证；本地测试是合成结构。
 - 未执行真实 MuJoCo restore。

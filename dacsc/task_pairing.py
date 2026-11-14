@@ -187,10 +187,11 @@ def classification_entries(data, suite: str, task_id: int) -> list[dict]:
     return found
 
 
-def validate_classification(entries: list[dict], expected_categories: set[str] | None = None) -> dict:
+def validate_classification(entries: list[dict], expected_categories: set[str] | None = None,
+                            expected_name: str | None = None) -> dict:
     checks = {"present": bool(entries)}
     if not entries:
-        return {"checks": checks, "pass": False, "categories": []}
+        return {"checks": checks, "pass": False, "categories": [], "names": []}
     cats = []
     for e in entries:
         cat = None
@@ -203,4 +204,11 @@ def validate_classification(entries: list[dict], expected_categories: set[str] |
         checks["category"] = any(c is not None and c.strip().lower() in expected_categories
                                  for c in cats)
     names = [str(e.get("name", e.get("task_name", ""))) for e in entries]
-    return {"checks": checks, "pass": all(checks.values()), "categories": cats, "names": names}
+    checks["unique"] = len(entries) == 1
+    if expected_name is not None:
+        def _norm(x: str) -> str:
+            return x[:-5] if x.endswith(".bddl") else x
+        checks["name"] = any(norm == _norm(expected_name)
+                             for norm in (_norm(n) for n in names) if norm)
+    return {"checks": checks, "pass": all(checks.values()), "categories": cats,
+            "names": names, "expected_name": expected_name}

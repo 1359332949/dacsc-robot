@@ -85,6 +85,16 @@ class TestTaskPairing(unittest.TestCase):
         self.assertFalse(validate_classification(e, {"light conditions"})["pass"])
         self.assertEqual(classification_entries(data, "libero_spatial", 999), [])
 
+    def test_classification_full_name_required(self):
+        e = [{"task_id": 705, "name": "task_view_46_initstate_0", "category": "Camera Viewpoints"}]
+        self.assertTrue(validate_classification(e, {"camera viewpoints"},
+                                                expected_name="task_view_46_initstate_0")["pass"])
+        self.assertFalse(validate_classification(e, {"camera viewpoints"},
+                                                 expected_name="task_view_47_initstate_0")["pass"])
+        self.assertFalse(validate_classification([{"task_id": 705, "category": "Camera Viewpoints"}],
+                                                 {"camera viewpoints"},
+                                                 expected_name="task_view_46_initstate_0")["pass"])
+
 
 if __name__ == "__main__":
     unittest.main()

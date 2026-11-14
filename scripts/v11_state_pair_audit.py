@@ -15,11 +15,10 @@ from PIL import Image
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT)); sys.path.insert(0, str(ROOT / "repos/CoRP")); sys.path.insert(0, str(ROOT / "repos/CoRP/scripts"))
-from evaluate_libero import DUMMY_ACTION, SETTLING_STEPS, configure_libero  # noqa: E402
 from dacsc.state_pairing import camera_compare, compare, digest, model_compatible, restore, snapshot  # noqa: E402
-from dacsc.task_pairing import (canonical_base_name, classification_entries,  # noqa: E402
-                                load_task_map, resolve_task_name, task_fingerprint,
-                                task_pair_compatible, validate_classification)
+from dacsc.task_pairing import (canonical_base_name, canonical_instruction,  # noqa: E402
+                                classification_entries, load_task_map, resolve_task_name,
+                                task_fingerprint, task_pair_compatible, validate_classification)
 
 
 def sha256_file(path: Path) -> str:
@@ -158,7 +157,7 @@ def main():
                      "torch": torch.__version__, "numpy": np.__version__},
         "thresholds": {"mean_abs_diff": args.diff_threshold,
                        "changed_fraction": args.changed_threshold},
-        "seed": 0, "settling_steps": int(SETTLING_STEPS),
+        "seed": 0, "settling_steps": None,
     }
     try:
         import mujoco, robosuite  # noqa: E402
@@ -174,6 +173,10 @@ def main():
     c.render_gpu = args.render_gpu; c.device = args.device
     env_c = None; env_s = None; exit_code = 0
     try:
+        from evaluate_libero import (DUMMY_ACTION as _DUMMY_ACTION,
+                                     SETTLING_STEPS as _SETTLING_STEPS,
+                                     configure_libero)
+        record["settling_steps"] = int(_SETTLING_STEPS)
         configure_libero(c)
         from libero.libero import benchmark, get_libero_path
         from libero.libero.envs import OffScreenRenderEnv
@@ -206,9 +209,10 @@ def main():
         clean_entries = (classification_entries(tc_data, args.clean_suite, args.clean_task)
                          if args.clean_source == "plus" else [])
         shift_entries = classification_entries(tc_data, args.shift_suite, args.shift_task)
-        clean_cls = (validate_classification(clean_entries) if args.clean_source == "plus"
+        clean_cls = (validate_classification(clean_entries, expected_name=clean_map_name)
+                     if args.clean_source == "plus"
                      else {"checks": {"present": True}, "pass": True, "categories": []})
-        shift_cls = validate_classification(shift_entries, expected)
+        shift_cls = validate_classification(shift_entries, expected, expected_name=shift_map_name)
         record["classification"] = {"clean": clean_cls, "shift": shift_cls,
                                     "clean_entries": clean_entries, "shift_entries": shift_entries}
         if not clean_cls["pass"] or not shift_cls["pass"]:
@@ -240,6 +244,34 @@ def main():
             clean_states = clean_suite_obj.get_task_init_states(args.clean_task)
             record["init_state_source"] = "clean_suite.get_task_init_states"
         shift_task = shift_suite_obj.get_task(args.shift_task)
+        # Clean file identity: task name, BDDL stem and init basename must agree.
+        init_name = clean_init_path.name
+        init_ok = (init_name == clean_map_name + ".pruned_init" or
+                   init_name == clean_map_name + ".init" or
+                   init_name == clean_map_name + ".pruned_init.pkl")
+        clean_identity = {
+            "task_name": args.clean_task_name if args.clean_source == "vanilla" else clean_task.name,
+            "bddl_stem": clean_bddl.stem,
+            "init_name": init_name,
+            "task_vs_bddl": clean_bddl.stem == clean_map_name,
+            "task_vs_init": init_ok,
+        }
+        record["clean_file_identity"] = clean_identity
+        if not (clean_identity["task_vs_bddl"] and clean_identity["task_vs_init"]):
+            record["audit"] = {"pass": False, "reason": "clean_file_identity_mismatch"}
+            raise SystemExit(2)
+        clean_policy = args.clean_language if args.clean_source == "vanilla" else clean_task.language
+        shift_policy = clean_policy  # deliberately frozen: visual-only study
+        prompt_ok = (canonical_instruction(clean_policy) == canonical_instruction(shift_task.language))
+        record["policy_instruction"] = {
+            "clean_raw": clean_task.language, "shift_raw": shift_task.language,
+            "clean_policy_instruction": clean_policy,
+            "shift_policy_instruction": shift_policy,
+            "canonical_match": bool(prompt_ok),
+        }
+        if not prompt_ok:
+            record["audit"] = {"pass": False, "reason": "policy_instruction_mismatch"}
+            raise SystemExit(2)
         if args.clean_source == "vanilla":
             clean_bddl = args.clean_bddl.expanduser().resolve()
             clean_init_path = args.clean_init_file.expanduser().resolve()
@@ -265,10 +297,12 @@ def main():
         # Three-way identity: task map name == benchmark task name; classification name if present.
         shift_cls_names = [n for n in shift_cls.get("names", []) if n]
         consistency = {
-            "clean_map_vs_input": bool(clean_map_name == clean_task.name),
+            "clean_task_vs_bddl": bool(clean_identity["task_vs_bddl"]),
+            "clean_task_vs_init": bool(clean_identity["task_vs_init"]),
             "shift_map_vs_benchmark": bool(shift_map_name == shift_task.name),
-            "shift_class_vs_map": (not shift_cls_names) or any(
-                canonical_base_name(n) == canonical_base_name(shift_map_name) for n in shift_cls_names),
+            "shift_class_unique": bool(len(shift_entries) == 1),
+            "shift_class_name_full": bool(shift_cls_names) and any(
+                (n[:-5] if n.endswith(".bddl") else n) == shift_map_name for n in shift_cls_names),
         }
         record["identity_consistency"] = consistency
         if not all(consistency.values()):
@@ -295,8 +329,8 @@ def main():
             env.seed(record["seed"]); env.reset()
         env_c.set_init_state(clean_states[args.init_index])
         settling_done = False
-        for i in range(SETTLING_STEPS):
-            _, _, done, _ = env_c.step(DUMMY_ACTION)
+        for i in range(_SETTLING_STEPS):
+            _, _, done, _ = env_c.step(_DUMMY_ACTION)
             if done:
                 settling_done = True
                 record["settling_done_at"] = i
@@ -307,7 +341,8 @@ def main():
             raise SystemExit(2)
 
         snap_c = snapshot(env_c); snap_s_pre = snapshot(env_s)
-        compat = model_compatible(snap_c, snap_s_pre, strict_bodies=True)
+        compat = model_compatible(snap_c, snap_s_pre, strict_bodies=True,
+                                  strict_geometry=(args.shift_kind == "camera"))
         record["model_compatible"] = compat
         if not compat["pass"]:
             record["audit"] = {"pass": False, "reason": "model_incompatible"}

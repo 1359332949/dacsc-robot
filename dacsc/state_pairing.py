@@ -78,10 +78,17 @@ def model_signature(env) -> dict[str, Any]:
         "jnt_qposadr": [int(x) for x in m.jnt_qposadr],
         "jnt_dofadr": [int(x) for x in m.jnt_dofadr],
         "actuator_names": [str(x) for x in m.actuator_names],
+        "geom_names": [str(x) for x in m.geom_names],
+        "geom_bodyid": [int(x) for x in m.geom_bodyid],
+        "geom_type": [int(x) for x in m.geom_type],
+        "geom_size": _arr(m.geom_size).round(12).tolist(),
+        "geom_pos": _arr(m.geom_pos).round(12).tolist(),
+        "geom_quat": _arr(m.geom_quat).round(12).tolist(),
     }
 
 
-def model_compatible(a: dict[str, Any], b: dict[str, Any], strict_bodies: bool = True) -> dict[str, Any]:
+def model_compatible(a: dict[str, Any], b: dict[str, Any], strict_bodies: bool = True,
+                     strict_geometry: bool = False) -> dict[str, Any]:
     sa, sb = a["model_signature"], b["model_signature"]
     checks = {}
     for key in ("nq", "nv", "nu", "njnt", "jnt_qposadr", "jnt_dofadr",
@@ -90,6 +97,10 @@ def model_compatible(a: dict[str, Any], b: dict[str, Any], strict_bodies: bool =
     if strict_bodies:
         checks["nbody"] = sa.get("nbody") == sb.get("nbody")
         checks["body_names"] = sa.get("body_names") == sb.get("body_names")
+    if strict_geometry:
+        checks["ngeom"] = sa.get("ngeom") == sb.get("ngeom")
+        for key in ("geom_names", "geom_bodyid", "geom_type", "geom_size", "geom_pos", "geom_quat"):
+            checks[key] = sa.get(key) == sb.get(key)
     return {"checks": checks, "pass": all(checks.values())}
 
 
