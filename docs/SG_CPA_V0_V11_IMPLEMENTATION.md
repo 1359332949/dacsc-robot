@@ -13,7 +13,7 @@
 | `tests/test_visual_gate.py` | gate identity/scale/异常 view 单测 |
 | `tests/test_state_pairing.py` | snapshot 比较、digest、camera 单测 |
 
-## 2. V1.1 hardening v4（针对 7d79d28 复审）
+## 2. V1.1 hardening v5（针对 530793a 复审）
 
 已修复：
 
@@ -46,6 +46,10 @@
 - **classification 严格唯一 + 完整 variant name**：必须恰好一条记录；若有 name，必须与 task map 完整任务名一致（不只是 base name）；category 精确匹配。
 - **物理几何签名**：`model_signature` 记录 geom names/bodyid/type/size/pos/quat；Camera 模式 `strict_geometry=True`，防止 Camera 变体同时改变物理几何。
 - **顶层 import 移入事务**：`evaluate_libero` 在 run_id/record 创建后导入；import/config 失败也写失败 manifest。
+- **物理模型签名扩展**：geom collision/friction/solref/margin/gap、body mass/inertia、dof damping/frictionloss/armature、actuator gain/bias/gear/ctrlrange；Camera 模式 `strict_physics=True`。
+- **Clean 身份/prompt 抽成纯函数**：`dacsc/pairing_checks.py`；测试覆盖错误 BDDL/init、错误 vanilla prompt。
+- **Camera 非目标视角**：Camera 模式要求非目标相机参数保持不变，并拒绝重复 camera-map。
+- **vanilla prompt 独立锚定**：由 task name 生成 `expected_vanilla_instruction`，与用户输入比较后才冻结。
 
 ## 2. V0 结果（本机 CPU，官方 checkpoint）
 
@@ -80,28 +84,42 @@
 
 ## 3. V1.1 使用方式（需 GPU/LIBERO 环境）
 
-```
+旧命令 `--clean-task 0 --shift-task 705` 已废弃：Plus task 0 与 705 不是同一基础任务。  
+当前必须提供 task map、classification 和显式 Clean 来源。示例（路径按服务器 revision 替换）：
+
+```bash
 python scripts/v11_state_pair_audit.py \
-  --clean-suite libero_spatial --clean-task 0 \
-  --shift-suite libero_spatial --shift-task 705 \
-  --shift-kind camera --init-index 0 \
+  --clean-source vanilla \
+  --clean-suite libero_spatial \
+  --clean-task-name pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate \
+  --clean-bddl /path/to/vanilla/bddl_files/libero_spatial/<name>.bddl \
+  --clean-language "pick up the black bowl on the cookie box and place it on the plate" \
+  --clean-init-file /path/to/vanilla/init_files/libero_spatial/<name>.pruned_init \
+  --shift-suite libero_spatial --shift-task 705 --shift-kind camera \
+  --task-map /path/to/libero_suite_task_map.py \
+  --task-classification /path/to/task_classification.json \
+  --policy-views agentview eye_in_hand \
+  --camera-map eye_in_hand=robot0_eye_in_hand \
+  --target-cameras agentview \
+  --init-index 0 \
   --out /hy-tmp/validation/v11_pair_audit
 ```
 
 脚本做：
 
-1. 建 Clean / Shift 两个 `OffScreenRenderEnv`；
-2. Clean 环境 `set_init_state` + settling，取全状态快照；
-3. 把快照恢复进 Shift 环境；
-4. 比较 qpos/qvel/act/mocap/time/body_xpos、body names；
-5. 比较 camera 参数，并按 `shift-kind` 检查预期（Background/Lighting 应相同，Camera 应不同）；
-6. 保存双视角 JPEG + sha256、pair manifest。
+1. 校验 task map、classification、Clean 文件身份和共同 policy instruction；
+2. 建 Clean / Shift 两个 `OffScreenRenderEnv`；
+3. Clean 环境 `set_init_state` + settling，取全状态快照；
+4. 把快照恢复进 Shift 环境；
+5. 比较物理状态、body pose/EEF、Camera 参数与物理几何/动力学签名；
+6. 保存 policy views 的**无损 PNG** + sha256、像素差异和 pair manifest。
 
 输出：
 
 ```
-/hy-tmp/validation/v11_pair_audit/pair_manifest.json
-/hy-tmp/validation/v11_pair_audit/<kind>/*.jpg
+/hy-tmp/validation/v11_pair_audit/pair_manifest.jsonl   # append-only
+/hy-tmp/validation/v11_pair_audit/pair_manifest_<run_id>.json
+/hy-tmp/validation/v11_pair_audit/<kind>/<task-pair>/run_<run_id>/*.png
 ```
 
 ## 4. 已确认：libero_spatial 0 → 705 不是有效配对
@@ -183,8 +201,9 @@ python scripts/v11_state_pair_audit.py   --clean-source vanilla   --clean-suite 
 已统一为 unittest（符合仓库 `python -m unittest discover -s tests -v`）：
 
 - `test_visual_gate.py`：5 tests passed；
-- `test_state_pairing.py`：14 tests passed；
+- `test_state_pairing.py`：15 tests passed（含 strict geometry/physics）；
 - `test_task_pairing.py`：10 tests passed；
+- `test_pairing_checks.py`：3 tests passed（Clean 文件身份 + prompt 源锚定）；
 - 覆盖 identity no-op、错误 view/dim、suppression bound、缺失字段、单侧空 act、四元数、NaN camera、shape mismatch、EEF 缺失、model mismatch。
 
 ## 9. 仍未闭合的 P1

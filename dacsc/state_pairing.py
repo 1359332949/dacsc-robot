@@ -84,11 +84,28 @@ def model_signature(env) -> dict[str, Any]:
         "geom_size": _arr(m.geom_size).round(12).tolist(),
         "geom_pos": _arr(m.geom_pos).round(12).tolist(),
         "geom_quat": _arr(m.geom_quat).round(12).tolist(),
+        "geom_contype": [int(x) for x in m.geom_contype],
+        "geom_conaffinity": [int(x) for x in m.geom_conaffinity],
+        "geom_condim": [int(x) for x in m.geom_condim],
+        "geom_friction": _arr(m.geom_friction).round(12).tolist(),
+        "geom_solref": _arr(m.geom_solref).round(12).tolist(),
+        "geom_solimp": _arr(m.geom_solimp).round(12).tolist(),
+        "geom_margin": _arr(m.geom_margin).round(12).tolist(),
+        "geom_gap": _arr(m.geom_gap).round(12).tolist(),
+        "body_mass": _arr(m.body_mass).round(12).tolist(),
+        "body_inertia": _arr(m.body_inertia).round(12).tolist(),
+        "dof_damping": _arr(m.dof_damping).round(12).tolist(),
+        "dof_frictionloss": _arr(m.dof_frictionloss).round(12).tolist(),
+        "dof_armature": _arr(m.dof_armature).round(12).tolist(),
+        "actuator_gainprm": _arr(m.actuator_gainprm).round(12).tolist(),
+        "actuator_biasprm": _arr(m.actuator_biasprm).round(12).tolist(),
+        "actuator_gear": _arr(m.actuator_gear).round(12).tolist(),
+        "actuator_ctrlrange": _arr(m.actuator_ctrlrange).round(12).tolist(),
     }
 
 
 def model_compatible(a: dict[str, Any], b: dict[str, Any], strict_bodies: bool = True,
-                     strict_geometry: bool = False) -> dict[str, Any]:
+                     strict_geometry: bool = False, strict_physics: bool = False) -> dict[str, Any]:
     sa, sb = a["model_signature"], b["model_signature"]
     checks = {}
     for key in ("nq", "nv", "nu", "njnt", "jnt_qposadr", "jnt_dofadr",
@@ -100,6 +117,13 @@ def model_compatible(a: dict[str, Any], b: dict[str, Any], strict_bodies: bool =
     if strict_geometry:
         checks["ngeom"] = sa.get("ngeom") == sb.get("ngeom")
         for key in ("geom_names", "geom_bodyid", "geom_type", "geom_size", "geom_pos", "geom_quat"):
+            checks[key] = sa.get(key) == sb.get(key)
+    if strict_physics:
+        for key in ("geom_contype", "geom_conaffinity", "geom_condim", "geom_friction",
+                    "geom_solref", "geom_solimp", "geom_margin", "geom_gap",
+                    "body_mass", "body_inertia", "dof_damping", "dof_frictionloss",
+                    "dof_armature", "actuator_gainprm", "actuator_biasprm",
+                    "actuator_gear", "actuator_ctrlrange"):
             checks[key] = sa.get(key) == sb.get(key)
     return {"checks": checks, "pass": all(checks.values())}
 
@@ -219,8 +243,11 @@ def camera_compare(a: dict[str, Any], b: dict[str, Any], expect_equal: bool,
         checks["expected"] = bool(shape_ok and finite and all(
             v <= tol for c in names for v in diffs[c].values()))
     else:
+        changed = {c: any(diffs[c][k] > tol for k in diffs[c]) for c in names}
         checks["expected"] = bool(shape_ok and finite and not missing and all(
-            any(diffs[c][k] > tol for k in diffs[c]) for c in target_cameras))
+            changed[c] for c in target_cameras))
+        non_target = [c for c in names if c not in target_cameras]
+        checks["non_target_unchanged"] = all(not changed[c] for c in non_target)
     return {"checks": checks, "diffs": diffs, "target_cameras": list(target_cameras),
             "pass": all(checks.values())}
 

@@ -86,6 +86,35 @@ class TestStatePairing(unittest.TestCase):
         self.assertFalse(camera_compare(make_snap(), c, expect_equal=False,
                                         target_cameras=["agentview"])["pass"])
 
+    def test_strict_geometry_and_physics(self):
+        sig = {"nq": 3, "nv": 3, "nu": 2, "njnt": 3, "nbody": 3,
+               "body_names": ["w", "table", "eef"],
+               "joint_names": ["j1", "j2", "j3"], "joint_types": [0, 0, 0],
+               "jnt_qposadr": [0, 1, 2], "jnt_dofadr": [0, 1, 2],
+               "actuator_names": ["a1", "a2"],
+               "ngeom": 2, "geom_names": ["g1", "g2"], "geom_bodyid": [1, 2],
+               "geom_type": [0, 0], "geom_size": [[1, 1, 1], [1, 1, 1]],
+               "geom_pos": [[0, 0, 0], [0, 0, 0]], "geom_quat": [[1, 0, 0, 0], [1, 0, 0, 0]],
+               "geom_contype": [1, 1], "geom_conaffinity": [1, 1], "geom_condim": [3, 3],
+               "geom_friction": [[1, 1, 1], [1, 1, 1]], "geom_solref": [[1, 1], [1, 1]],
+               "geom_solimp": [[1, 1, 1, 1, 1], [1, 1, 1, 1, 1]],
+               "geom_margin": [0, 0], "geom_gap": [0, 0],
+               "body_mass": [1, 1, 1], "body_inertia": [[1, 1, 1]] * 3,
+               "dof_damping": [1, 1, 1], "dof_frictionloss": [0, 0, 0],
+               "dof_armature": [0, 0, 0],
+               "actuator_gainprm": [[1, 0, 0], [1, 0, 0]],
+               "actuator_biasprm": [[0, -1, 0], [0, -1, 0]],
+               "actuator_gear": [[1, 0, 0, 0, 0, 0]] * 2,
+               "actuator_ctrlrange": [[-1, 1], [-1, 1]]}
+        a = make_snap(); a["model_signature"] = sig
+        b = make_snap(); b["model_signature"] = {k: (v[:] if isinstance(v, list) else v) for k, v in sig.items()}
+        self.assertTrue(model_compatible(a, b, strict_geometry=True, strict_physics=True)["pass"])
+        b["model_signature"]["geom_size"] = [[2, 1, 1], [1, 1, 1]]
+        self.assertFalse(model_compatible(a, b, strict_geometry=True)["pass"])
+        b["model_signature"]["geom_size"] = sig["geom_size"]
+        b["model_signature"]["body_mass"] = [2, 1, 1]
+        self.assertFalse(model_compatible(a, b, strict_geometry=True, strict_physics=True)["pass"])
+
     def test_model_compatibility(self):
         a = make_snap(); b = make_snap()
         a["model_signature"] = {"nq": 3, "nv": 3, "nu": 2, "njnt": 3,

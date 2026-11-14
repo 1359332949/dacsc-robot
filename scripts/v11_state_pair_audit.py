@@ -19,6 +19,7 @@ from dacsc.state_pairing import camera_compare, compare, digest, model_compatibl
 from dacsc.task_pairing import (canonical_base_name, canonical_instruction,  # noqa: E402
                                 classification_entries, load_task_map, resolve_task_name,
                                 task_fingerprint, task_pair_compatible, validate_classification)
+from dacsc.pairing_checks import freeze_policy_instruction, validate_clean_file_identity  # noqa: E402
 
 
 def sha256_file(path: Path) -> str:
@@ -134,6 +135,12 @@ def main():
         k, v = item.split("=", 1); camera_map[k] = v
     if args.shift_kind == "camera" and not args.target_cameras:
         raise SystemExit("Camera mode requires explicit --target-cameras")
+    unknown_map = [k for k in camera_map if k not in policy_views]
+    if unknown_map:
+        raise SystemExit(f"camera-map keys not in policy views: {unknown_map}")
+    mapped_all = {v: camera_map.get(v, v) for v in policy_views}
+    if len(set(mapped_all.values())) != len(policy_views):
+        raise SystemExit(f"duplicate MuJoCo camera mapping: {mapped_all}")
     target_cameras = list(args.target_cameras or policy_views)
     bad_targets = [c for c in target_cameras if c not in policy_views]
     if bad_targets:
@@ -244,32 +251,24 @@ def main():
             clean_states = clean_suite_obj.get_task_init_states(args.clean_task)
             record["init_state_source"] = "clean_suite.get_task_init_states"
         shift_task = shift_suite_obj.get_task(args.shift_task)
-        # Clean file identity: task name, BDDL stem and init basename must agree.
-        init_name = clean_init_path.name
-        init_ok = (init_name == clean_map_name + ".pruned_init" or
-                   init_name == clean_map_name + ".init" or
-                   init_name == clean_map_name + ".pruned_init.pkl")
-        clean_identity = {
-            "task_name": args.clean_task_name if args.clean_source == "vanilla" else clean_task.name,
-            "bddl_stem": clean_bddl.stem,
-            "init_name": init_name,
-            "task_vs_bddl": clean_bddl.stem == clean_map_name,
-            "task_vs_init": init_ok,
-        }
-        record["clean_file_identity"] = clean_identity
-        if not (clean_identity["task_vs_bddl"] and clean_identity["task_vs_init"]):
+        clean_id = validate_clean_file_identity(clean_map_name, clean_bddl, clean_init_path)
+        record["clean_file_identity"] = clean_id
+        if not clean_id["pass"]:
             record["audit"] = {"pass": False, "reason": "clean_file_identity_mismatch"}
             raise SystemExit(2)
         clean_policy = args.clean_language if args.clean_source == "vanilla" else clean_task.language
-        shift_policy = clean_policy  # deliberately frozen: visual-only study
-        prompt_ok = (canonical_instruction(clean_policy) == canonical_instruction(shift_task.language))
+        prompt = freeze_policy_instruction(
+            clean_policy, shift_task.language,
+            clean_task_name=clean_map_name if args.clean_source == "vanilla" else None,
+            require_vanilla_source=(args.clean_source == "vanilla"))
         record["policy_instruction"] = {
             "clean_raw": clean_task.language, "shift_raw": shift_task.language,
-            "clean_policy_instruction": clean_policy,
-            "shift_policy_instruction": shift_policy,
-            "canonical_match": bool(prompt_ok),
+            "clean_policy_instruction": prompt["clean_policy_instruction"],
+            "shift_policy_instruction": prompt["shift_policy_instruction"],
+            "expected_vanilla_instruction": prompt.get("expected_vanilla_instruction"),
+            "checks": prompt["checks"],
         }
-        if not prompt_ok:
+        if not prompt["pass"]:
             record["audit"] = {"pass": False, "reason": "policy_instruction_mismatch"}
             raise SystemExit(2)
         if args.clean_source == "vanilla":
@@ -297,8 +296,8 @@ def main():
         # Three-way identity: task map name == benchmark task name; classification name if present.
         shift_cls_names = [n for n in shift_cls.get("names", []) if n]
         consistency = {
-            "clean_task_vs_bddl": bool(clean_identity["task_vs_bddl"]),
-            "clean_task_vs_init": bool(clean_identity["task_vs_init"]),
+            "clean_task_vs_bddl": bool(clean_id["checks"]["bddl_stem"]),
+            "clean_task_vs_init": bool(clean_id["checks"]["init_name"]),
             "shift_map_vs_benchmark": bool(shift_map_name == shift_task.name),
             "shift_class_unique": bool(len(shift_entries) == 1),
             "shift_class_name_full": bool(shift_cls_names) and any(
@@ -342,7 +341,8 @@ def main():
 
         snap_c = snapshot(env_c); snap_s_pre = snapshot(env_s)
         compat = model_compatible(snap_c, snap_s_pre, strict_bodies=True,
-                                  strict_geometry=(args.shift_kind == "camera"))
+                                  strict_geometry=(args.shift_kind == "camera"),
+                                  strict_physics=(args.shift_kind == "camera"))
         record["model_compatible"] = compat
         if not compat["pass"]:
             record["audit"] = {"pass": False, "reason": "model_incompatible"}
