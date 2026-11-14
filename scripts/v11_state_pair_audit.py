@@ -133,6 +133,8 @@ def main():
         if "=" not in item:
             raise SystemExit(f"bad --camera-map entry: {item!r}")
         k, v = item.split("=", 1); camera_map[k] = v
+    if args.shift_kind == "camera" and not args.target_cameras:
+        raise SystemExit("Camera mode requires explicit --target-cameras")
     target_cameras = list(args.target_cameras or policy_views)
     bad_targets = [c for c in target_cameras if c not in policy_views]
     if bad_targets:
@@ -141,7 +143,10 @@ def main():
 
     record: dict = {
         "run_id": run_id,
-        "clean": {"suite": args.clean_suite, "task": args.clean_task},
+        "clean": {"suite": args.clean_suite,
+                  "task": args.clean_task if args.clean_source == "plus" else None,
+                  "source": args.clean_source,
+                  "task_name": args.clean_task_name},
         "shift": {"suite": args.shift_suite, "task": args.shift_task, "kind": args.shift_kind},
         "init_index": args.init_index,
         "policy_views": policy_views,
@@ -192,7 +197,12 @@ def main():
                 [args.clean_task_name, args.clean_bddl, args.clean_language, args.clean_init_file]):
             record["audit"] = {"pass": False, "reason": "vanilla_clean_requires_name_bddl_language_init"}
             raise SystemExit(2)
-        expected = {"camera": "Camera", "background": "Background", "lighting": "Lighting"}[args.shift_kind]
+        expected_categories = {
+            "camera": {"camera viewpoints"},
+            "background": {"background textures"},
+            "lighting": {"light conditions"},
+        }[args.shift_kind]
+        expected = expected_categories
         clean_entries = (classification_entries(tc_data, args.clean_suite, args.clean_task)
                          if args.clean_source == "plus" else [])
         shift_entries = classification_entries(tc_data, args.shift_suite, args.shift_task)
@@ -206,8 +216,8 @@ def main():
             raise SystemExit(2)
         # A Clean reference must not itself be a labeled visual/robot/language variant.
         clean_cats = [c.lower() for c in clean_cls.get("categories", []) if c]
-        if any(any(x in c for x in ("camera", "background", "lighting", "table", "language", "layout", "robot"))
-               for c in clean_cats):
+        variant_tokens = ("camera", "background", "light", "table", "language", "layout", "robot", "sensor", "noise")
+        if any(any(x in c for x in variant_tokens) for c in clean_cats):
             record["audit"] = {"pass": False, "reason": "clean_reference_is_variant"}
             raise SystemExit(2)
         suites = {s: benchmark.get_benchmark_dict()[s]() for s in (args.clean_suite, args.shift_suite)}
@@ -230,12 +240,21 @@ def main():
             clean_states = clean_suite_obj.get_task_init_states(args.clean_task)
             record["init_state_source"] = "clean_suite.get_task_init_states"
         shift_task = shift_suite_obj.get_task(args.shift_task)
-        clean_bddl = Path(get_libero_path("bddl_files")) / clean_task.problem_folder / clean_task.bddl_file
+        if args.clean_source == "vanilla":
+            clean_bddl = args.clean_bddl.expanduser().resolve()
+            clean_init_path = args.clean_init_file.expanduser().resolve()
+            if not clean_bddl.is_file():
+                raise FileNotFoundError(clean_bddl)
+            if not clean_init_path.is_file():
+                raise FileNotFoundError(clean_init_path)
         shift_bddl = Path(get_libero_path("bddl_files")) / shift_task.problem_folder / shift_task.bddl_file
-        record["clean"].update({"bddl": str(clean_bddl), "bddl_sha256": sha256_file(clean_bddl),
-                                "language": clean_task.language})
+        record["clean"].update({"bddl_input": str(args.clean_bddl) if args.clean_bddl else None,
+                                "bddl": str(clean_bddl), "bddl_sha256": sha256_file(clean_bddl),
+                                "language": clean_task.language,
+                                "policy_instruction": args.clean_language if args.clean_source == "vanilla" else clean_task.language})
         record["shift"].update({"bddl": str(shift_bddl), "bddl_sha256": sha256_file(shift_bddl),
-                                "language": shift_task.language})
+                                "language": shift_task.language,
+                                "canonical_language": canonical_instruction(shift_task.language)})
         record["init_file"] = str(clean_init_path)
         record["init_file_sha256"] = sha256_file(clean_init_path)
         clean_fp = task_fingerprint(clean_task, clean_bddl)
@@ -243,6 +262,18 @@ def main():
         pairing = task_pair_compatible(clean_fp, shift_fp)
         record["task_fingerprints"] = {"clean": clean_fp, "shift": shift_fp}
         record["task_pairing"] = pairing
+        # Three-way identity: task map name == benchmark task name; classification name if present.
+        shift_cls_names = [n for n in shift_cls.get("names", []) if n]
+        consistency = {
+            "clean_map_vs_input": bool(clean_map_name == clean_task.name),
+            "shift_map_vs_benchmark": bool(shift_map_name == shift_task.name),
+            "shift_class_vs_map": (not shift_cls_names) or any(
+                canonical_base_name(n) == canonical_base_name(shift_map_name) for n in shift_cls_names),
+        }
+        record["identity_consistency"] = consistency
+        if not all(consistency.values()):
+            record["audit"] = {"pass": False, "reason": "identity_consistency_failed"}
+            raise SystemExit(2)
         if not pairing["pass"]:
             record["audit"] = {"pass": False, "reason": "task_identity_mismatch"}
             raise SystemExit(2)
@@ -301,8 +332,10 @@ def main():
             record["audit"] = {"pass": False, "reason": f"policy_views_missing: {missing_views}"}
             raise SystemExit(2)
 
+        clean_label = (args.clean_task_name if args.clean_source == "vanilla"
+                       else str(args.clean_task))
         run_dir = args.out / args.shift_kind / (
-            f"{args.clean_suite}-{args.clean_task}_to_{args.shift_suite}-{args.shift_task}_init{args.init_index}"
+            f"{args.clean_suite}-{clean_label}_to_{args.shift_suite}-{args.shift_task}_init{args.init_index}"
         ) / f"run_{run_id}"
         images = {}
         for view_name in policy_views:
@@ -338,14 +371,24 @@ def main():
         record["unexpected_error"] = repr(exc)
         record["audit"] = {"pass": False, "reason": "unexpected_error"}
     finally:
-        if env_s is not None: env_s.close()
-        if env_c is not None: env_c.close()
-        args.out.mkdir(parents=True, exist_ok=True)
-        (args.out / "pair_manifest.jsonl").open("a").write(json.dumps(record, separators=(",", ":")) + "\n")
-        (args.out / f"pair_manifest_{run_id}.json").write_text(json.dumps(record, indent=2))
+        cleanup_errors = []
+        for label, env in (("shift", env_s), ("clean", env_c)):
+            if env is not None:
+                try:
+                    env.close()
+                except Exception as exc:
+                    cleanup_errors.append({"env": label, "error": repr(exc)})
+        record["cleanup_errors"] = cleanup_errors
+        try:
+            args.out.mkdir(parents=True, exist_ok=True)
+            with (args.out / "pair_manifest.jsonl").open("a") as fh:
+                fh.write(json.dumps(record, separators=(",", ":")) + "\n")
+            (args.out / f"pair_manifest_{run_id}.json").write_text(json.dumps(record, indent=2))
+        except Exception as exc:
+            print(f"manifest write failed: {exc!r}", file=sys.stderr)
         print(json.dumps({"run_id": run_id, "audit_pass": bool(record.get("audit", {}).get("pass")),
                           "reason": record.get("audit", {}).get("reason"),
-                          "exit_code": exit_code}, indent=2))
+                          "exit_code": exit_code, "cleanup_errors": cleanup_errors}, indent=2))
     sys.exit(exit_code)
 
 

@@ -13,7 +13,7 @@
 | `tests/test_visual_gate.py` | gate identity/scale/异常 view 单测 |
 | `tests/test_state_pairing.py` | snapshot 比较、digest、camera 单测 |
 
-## 2. V1.1 hardening v2（针对 4h 后复审）
+## 2. V1.1 hardening v3（针对 e770d7d 复审）
 
 已修复：
 
@@ -33,6 +33,14 @@
 - **render GPU 参数**：`--render-gpu` 控制 `render_gpu_device_id`，不再与 `--device` 混淆。
 - **settling 检查**：settling 期间 episode 提前结束 → fail。
 - **任务身份记录**：记录 BDDL SHA、goal/objects/language、LIBERO git rev、task classification SHA、版本、seed、thresholds。
+- **官方 Python task map loader 修复**：读取 `module.libero_task_map`，不再要求外层字典值全是字符串；新增官方结构测试。
+- **vanilla Clean BDDL 不再被覆盖**：`--clean-source vanilla` 使用显式 `--clean-bddl` / `--clean-init-file`，resolve 后校验文件存在；manifest 记录输入路径与实际路径。
+- **实际 instruction 修复**：`canonical_instruction()` 同时处理下划线后缀和空格形式（`view 46 0 100 0 0 initstate 0`）；manifest 分开记录 task.language、canonical_language、clean policy_instruction。
+- **分组对象声明**：`parse_objects()` 支持 `name_1 name_2 - type`，所有 pending names 获得同一 type。
+- **三方身份一致性**：task map name vs benchmark task name vs classification name（若提供）；不一致 fail。
+- **category 别名**：Camera Viewpoints / Background Textures / Light Conditions 精确映射；Clean 排除规则覆盖 light/sensor/noise。
+- **Camera 模式强制显式 `--target-cameras`**；不再默认所有策略视角。
+- **失败 Manifest 更稳**：环境 close 单独捕获；cleanup_errors 写入；setup/import 在 try 内；vanilla 的 clean task id 记为 null。
 
 ## 2. V0 结果（本机 CPU，官方 checkpoint）
 
@@ -171,10 +179,18 @@ python scripts/v11_state_pair_audit.py   --clean-source vanilla   --clean-suite 
 
 - `test_visual_gate.py`：5 tests passed；
 - `test_state_pairing.py`：14 tests passed；
-- `test_task_pairing.py`：6 tests passed；
+- `test_task_pairing.py`：9 tests passed；
 - 覆盖 identity no-op、错误 view/dim、suppression bound、缺失字段、单侧空 act、四元数、NaN camera、shape mismatch、EEF 缺失、model mismatch。
 
-## 9. 下一步
+## 9. 仍未闭合的 P1
+
+- `from evaluate_libero` 等顶层 import 仍可能在 main 之前失败；此类失败目前无 manifest。
+- vanilla Clean 的 BDDL/init 资产与本机 Plus 包混用；需要在服务器 revision 上确认资产一致。
+- `task_classification` 的真实 schema 尚未在服务器验证；本地测试是合成结构。
+- 未执行真实 MuJoCo restore。
+- 未做 V1.2、训练或 rollout。
+
+## 10. 下一步
 
 1. 服务器先跑 Preflight A：确认 LIBERO-Plus revision、task_classification、clean/shift 是否同 base task；
 2. 再跑 V1.1 单 pair，只做一个 task × 一个扰动 × 一个 init state；

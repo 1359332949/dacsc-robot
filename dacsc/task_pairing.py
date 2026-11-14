@@ -22,6 +22,10 @@ _VARIANT_SUFFIX = re.compile(
 _INITSTATE_SUFFIX = re.compile(r"_initstate_\d+$")
 _PARAM_SUFFIX = re.compile(r"_(?:view|views|camera|cameras|table|tb|light|lighting|"
                            r"background|bg|language|lang|noise|sensor|layout)_\d[^ ]*$")
+_SPACE_PARAM_SUFFIX = re.compile(
+    r"\s+(?:view|views|camera|cameras|table|tb|light|lighting|background|bg|"
+    r"language|lang|noise|sensor|layout)\s+[\d\s]+(?:initstate\s+\d+)?$",
+    re.IGNORECASE)
 
 
 def canonical_base_name(name: str) -> str:
@@ -34,6 +38,7 @@ def canonical_base_name(name: str) -> str:
 def canonical_instruction(text: str) -> str:
     out = re.sub(r"\s+", " ", text.strip())
     out = _PARAM_SUFFIX.sub("", out)
+    out = _SPACE_PARAM_SUFFIX.sub("", out)
     return out.strip()
 
 
@@ -61,17 +66,24 @@ def parse_objects(text: str) -> list[dict[str, str]]:
     body = re.sub(r";.*", "", body)
     tokens = body.replace("(", " ").replace(")", " ").split()
     out = []
+    pending: list[str] = []
     i = 0
     while i < len(tokens):
         tok = tokens[i]
-        if tok in {"-", "and", "or", "not", "default"} or tok.startswith(":"):
+        if tok == "-":
+            if i + 1 >= len(tokens):
+                raise ValueError("dangling '-' in BDDL objects")
+            typ = tokens[i + 1]
+            for name in pending:
+                out.append({"name": name, "type": typ})
+            pending = []
+            i += 2; continue
+        if tok in {"and", "or", "not", "default"} or tok.startswith(":"):
             i += 1; continue
-        if i + 2 < len(tokens) and tokens[i + 1] == "-":
-            out.append({"name": tok, "type": tokens[i + 2]})
-            i += 3
-        else:
-            out.append({"name": tok, "type": "unknown"})
-            i += 1
+        pending.append(tok)
+        i += 1
+    for name in pending:
+        out.append({"name": name, "type": "unknown"})
     # stable unique by (name, type)
     seen = set(); unique = []
     for obj in out:
@@ -123,14 +135,21 @@ def load_task_map(path: Path) -> dict[str, list[str]]:
         spec = importlib.util.spec_from_file_location("_libero_task_map", path)
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
-        raw = vars(module)
+        raw = getattr(module, "libero_task_map", None)
+        if raw is None:
+            # fallback only for older layouts; official file uses libero_task_map
+            candidates = [v for v in vars(module).values()
+                          if isinstance(v, dict) and all(isinstance(x, list) for x in v.values())]
+            if len(candidates) != 1:
+                raise ValueError(f"cannot find libero_task_map in {path}")
+            raw = candidates[0]
+    if not isinstance(raw, dict):
+        raise ValueError(f"invalid LIBERO task map: {path}")
     out: dict[str, list[str]] = {}
-    if isinstance(raw, dict):
-        for key, value in raw.items():
-            if isinstance(value, list) and value and all(isinstance(x, str) for x in value):
-                out[str(key)] = list(value)
-            elif isinstance(value, dict) and all(isinstance(x, str) for x in value.values()):
-                out[str(key)] = list(value.values())
+    for suite, names in raw.items():
+        if not isinstance(names, list) or not all(isinstance(x, str) for x in names):
+            raise ValueError(f"invalid task list for {suite!r} in {path}")
+        out[str(suite)] = list(names)
     return out
 
 
@@ -168,7 +187,7 @@ def classification_entries(data, suite: str, task_id: int) -> list[dict]:
     return found
 
 
-def validate_classification(entries: list[dict], expected_category: str | None = None) -> dict:
+def validate_classification(entries: list[dict], expected_categories: set[str] | None = None) -> dict:
     checks = {"present": bool(entries)}
     if not entries:
         return {"checks": checks, "pass": False, "categories": []}
@@ -180,7 +199,8 @@ def validate_classification(entries: list[dict], expected_category: str | None =
                 cat = str(e[key]); break
         cats.append(cat)
     checks["category"] = True
-    if expected_category:
-        checks["category"] = any(c is not None and expected_category.lower() in c.lower()
+    if expected_categories:
+        checks["category"] = any(c is not None and c.strip().lower() in expected_categories
                                  for c in cats)
-    return {"checks": checks, "pass": all(checks.values()), "categories": cats}
+    names = [str(e.get("name", e.get("task_name", ""))) for e in entries]
+    return {"checks": checks, "pass": all(checks.values()), "categories": cats, "names": names}

@@ -25,6 +25,13 @@ class TestTaskPairing(unittest.TestCase):
         self.assertEqual(canonical_base_name(camera), base)
         self.assertEqual(canonical_instruction(camera), base)
 
+    def test_space_separated_language_suffix(self):
+        text = ("pick up the black bowl on the cookie box and place it on the plate "
+                "view 46 0 100 0 0 initstate 0")
+        self.assertEqual(
+            canonical_instruction(text),
+            "pick up the black bowl on the cookie box and place it on the plate")
+
     def test_no_broad_digit_strip(self):
         self.assertEqual(canonical_base_name("task_2024"), "task_2024")
 
@@ -35,6 +42,13 @@ class TestTaskPairing(unittest.TestCase):
         # same name, different type must be distinguishable
         alt = parse_objects("(:objects black_bowl - plate)")
         self.assertNotEqual(objs, alt)
+
+    def test_grouped_object_declaration(self):
+        grouped = ("(:objects akita_black_bowl_1 akita_black_bowl_2 - akita_black_bowl "
+                   "cookies_1 - cookies plate_1 - plate)")
+        objs = parse_objects(grouped)
+        self.assertIn({"name": "akita_black_bowl_1", "type": "akita_black_bowl"}, objs)
+        self.assertIn({"name": "akita_black_bowl_2", "type": "akita_black_bowl"}, objs)
 
     def test_pair_compatible(self):
         with tempfile.TemporaryDirectory() as d:
@@ -53,13 +67,22 @@ class TestTaskPairing(unittest.TestCase):
         with self.assertRaises(IndexError):
             resolve_task_name(m, "libero_spatial", 2)
 
+    def test_official_python_task_map(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "libero_suite_task_map.py"
+            p.write_text("libero_task_map = {'libero_spatial': ['a_view_1_initstate_0', 'b'],"
+                         " 'libero_object': ['c']}\n")
+            m = load_task_map(p)
+        self.assertIn("libero_spatial", m)
+        self.assertEqual(resolve_task_name(m, "libero_spatial", 0)[1], "a")
+
     def test_classification_suite_scoped(self):
         data = {"libero_spatial": [{"task_id": 705, "category": "Camera Viewpoints"}],
                 "libero_object": [{"task_id": 705, "category": "Lighting"}]}
         e = classification_entries(data, "libero_spatial", 705)
         self.assertEqual(len(e), 1)
-        self.assertTrue(validate_classification(e, "Camera")["pass"])
-        self.assertFalse(validate_classification(e, "Lighting")["pass"])
+        self.assertTrue(validate_classification(e, {"camera viewpoints"})["pass"])
+        self.assertFalse(validate_classification(e, {"light conditions"})["pass"])
         self.assertEqual(classification_entries(data, "libero_spatial", 999), [])
 
 
