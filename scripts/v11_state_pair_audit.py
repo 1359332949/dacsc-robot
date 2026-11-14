@@ -14,10 +14,12 @@ import torch
 from PIL import Image
 
 ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT)); sys.path.insert(0, str(ROOT / "repos/CoRP/scripts"))
+sys.path.insert(0, str(ROOT)); sys.path.insert(0, str(ROOT / "repos/CoRP")); sys.path.insert(0, str(ROOT / "repos/CoRP/scripts"))
 from evaluate_libero import DUMMY_ACTION, SETTLING_STEPS, configure_libero  # noqa: E402
 from dacsc.state_pairing import camera_compare, compare, digest, model_compatible, restore, snapshot  # noqa: E402
-from dacsc.task_pairing import task_fingerprint, task_pair_compatible  # noqa: E402
+from dacsc.task_pairing import (canonical_base_name, classification_entries,  # noqa: E402
+                                load_task_map, resolve_task_name, task_fingerprint,
+                                task_pair_compatible, validate_classification)
 
 
 def sha256_file(path: Path) -> str:
@@ -101,9 +103,20 @@ def main():
     ap.add_argument("--init-index", type=int, required=True)
     ap.add_argument("--shift-kind", choices=["background", "lighting", "camera"], required=True)
     ap.add_argument("--policy-views", nargs="+", default=["agentview", "eye_in_hand"])
+    ap.add_argument("--camera-map", nargs="*", default=["eye_in_hand=robot0_eye_in_hand"],
+                    help="policy-view=MuJoCo-camera mapping")
     ap.add_argument("--target-cameras", nargs="+", default=None,
-                    help="cameras that must show the expected visual change; defaults to policy views")
-    ap.add_argument("--task-classification", type=Path, default=None)
+                    help="policy views that must show the expected visual change")
+    ap.add_argument("--task-map", type=Path, required=True,
+                    help="libero_suite_task_map.py (or JSON) from the installed revision")
+    ap.add_argument("--task-classification", type=Path, required=True,
+                    help="task_classification.json from the installed revision")
+    ap.add_argument("--clean-source", choices=["plus", "vanilla"], default="plus")
+    ap.add_argument("--clean-task-name", default=None,
+                    help="explicit vanilla base task name; required for --clean-source vanilla")
+    ap.add_argument("--clean-bddl", type=Path, default=None)
+    ap.add_argument("--clean-language", default=None)
+    ap.add_argument("--clean-init-file", type=Path, default=None)
     ap.add_argument("--libero-src", type=Path, default=Path("/hy-tmp/libero_plus"))
     ap.add_argument("--libero-config", type=Path, default=Path("/hy-tmp/libero_plus_config"))
     ap.add_argument("--device", default="cuda:0")
@@ -115,10 +128,16 @@ def main():
 
     run_id = time.strftime("%Y%m%dT%H%M%SZ", time.gmtime()) + "_" + uuid.uuid4().hex[:8]
     policy_views = list(args.policy_views)
+    camera_map = {}
+    for item in args.camera_map:
+        if "=" not in item:
+            raise SystemExit(f"bad --camera-map entry: {item!r}")
+        k, v = item.split("=", 1); camera_map[k] = v
     target_cameras = list(args.target_cameras or policy_views)
     bad_targets = [c for c in target_cameras if c not in policy_views]
     if bad_targets:
         raise SystemExit(f"target cameras not in policy views: {bad_targets}")
+    target_camera_names = [camera_map.get(c, c) for c in target_cameras]
 
     record: dict = {
         "run_id": run_id,
@@ -126,7 +145,9 @@ def main():
         "shift": {"suite": args.shift_suite, "task": args.shift_task, "kind": args.shift_kind},
         "init_index": args.init_index,
         "policy_views": policy_views,
+        "camera_map": camera_map,
         "target_cameras": target_cameras,
+        "target_camera_names": target_camera_names,
         "cli": {k: (str(v) if isinstance(v, Path) else v) for k, v in vars(args).items()},
         "versions": {"python": sys.version, "platform": platform.platform(),
                      "torch": torch.__version__, "numpy": np.__version__},
@@ -146,20 +167,71 @@ def main():
     class C: pass
     c = C(); c.libero_src = args.libero_src; c.libero_config_path = args.libero_config
     c.render_gpu = args.render_gpu; c.device = args.device
-    configure_libero(c)
-    from libero.libero import benchmark, get_libero_path
-    from libero.libero.envs import OffScreenRenderEnv
-
     env_c = None; env_s = None; exit_code = 0
     try:
-        record["task_classification"] = load_classification(
-            args.task_classification, [args.clean_task, args.shift_task])
+        configure_libero(c)
+        from libero.libero import benchmark, get_libero_path
+        from libero.libero.envs import OffScreenRenderEnv
+        tc_data = json.loads(args.task_classification.read_text())
+        record["task_classification"] = {
+            "path": str(args.task_classification), "sha256": sha256_file(args.task_classification)}
+        task_map = load_task_map(args.task_map)
+        record["task_map"] = {"path": str(args.task_map), "sha256": sha256_file(args.task_map),
+                              "n_suites": len(task_map)}
+        clean_map_name, clean_map_base = (
+            (args.clean_task_name, canonical_base_name(args.clean_task_name))
+            if args.clean_source == "vanilla" else
+            resolve_task_name(task_map, args.clean_suite, args.clean_task))
+        shift_map_name, shift_map_base = resolve_task_name(task_map, args.shift_suite, args.shift_task)
+        record["task_map_names"] = {"clean": clean_map_name, "shift": shift_map_name,
+                                    "clean_base": clean_map_base, "shift_base": shift_map_base}
+        if clean_map_base != shift_map_base:
+            record["audit"] = {"pass": False, "reason": "task_map_base_mismatch"}
+            raise SystemExit(2)
+        if args.clean_source == "vanilla" and not all(
+                [args.clean_task_name, args.clean_bddl, args.clean_language, args.clean_init_file]):
+            record["audit"] = {"pass": False, "reason": "vanilla_clean_requires_name_bddl_language_init"}
+            raise SystemExit(2)
+        expected = {"camera": "Camera", "background": "Background", "lighting": "Lighting"}[args.shift_kind]
+        clean_entries = (classification_entries(tc_data, args.clean_suite, args.clean_task)
+                         if args.clean_source == "plus" else [])
+        shift_entries = classification_entries(tc_data, args.shift_suite, args.shift_task)
+        clean_cls = (validate_classification(clean_entries) if args.clean_source == "plus"
+                     else {"checks": {"present": True}, "pass": True, "categories": []})
+        shift_cls = validate_classification(shift_entries, expected)
+        record["classification"] = {"clean": clean_cls, "shift": shift_cls,
+                                    "clean_entries": clean_entries, "shift_entries": shift_entries}
+        if not clean_cls["pass"] or not shift_cls["pass"]:
+            record["audit"] = {"pass": False, "reason": "task_classification_mismatch"}
+            raise SystemExit(2)
+        # A Clean reference must not itself be a labeled visual/robot/language variant.
+        clean_cats = [c.lower() for c in clean_cls.get("categories", []) if c]
+        if any(any(x in c for x in ("camera", "background", "lighting", "table", "language", "layout", "robot"))
+               for c in clean_cats):
+            record["audit"] = {"pass": False, "reason": "clean_reference_is_variant"}
+            raise SystemExit(2)
         suites = {s: benchmark.get_benchmark_dict()[s]() for s in (args.clean_suite, args.shift_suite)}
-        clean_task = suites[args.clean_suite].get_task(args.clean_task)
-        shift_task = suites[args.shift_suite].get_task(args.shift_task)
+        clean_suite_obj = suites[args.clean_suite]
+        shift_suite_obj = suites[args.shift_suite]
+        if args.clean_source == "vanilla":
+            from types import SimpleNamespace
+            clean_task = SimpleNamespace(name=args.clean_task_name, language=args.clean_language,
+                                         problem_folder=args.clean_suite,
+                                         bddl_file=args.clean_bddl.name,
+                                         init_states_file=args.clean_init_file.name)
+            clean_bddl = args.clean_bddl
+            clean_init_path = args.clean_init_file
+            clean_states = torch.load(clean_init_path, weights_only=False)
+            record["init_state_source"] = "explicit_vanilla_file"
+        else:
+            clean_task = clean_suite_obj.get_task(args.clean_task)
+            clean_bddl = Path(get_libero_path("bddl_files")) / clean_task.problem_folder / clean_task.bddl_file
+            clean_init_path = Path(get_libero_path("init_states")) / clean_task.problem_folder / clean_task.init_states_file
+            clean_states = clean_suite_obj.get_task_init_states(args.clean_task)
+            record["init_state_source"] = "clean_suite.get_task_init_states"
+        shift_task = shift_suite_obj.get_task(args.shift_task)
         clean_bddl = Path(get_libero_path("bddl_files")) / clean_task.problem_folder / clean_task.bddl_file
         shift_bddl = Path(get_libero_path("bddl_files")) / shift_task.problem_folder / shift_task.bddl_file
-        clean_init_path = Path(get_libero_path("init_states")) / clean_task.problem_folder / clean_task.init_states_file
         record["clean"].update({"bddl": str(clean_bddl), "bddl_sha256": sha256_file(clean_bddl),
                                 "language": clean_task.language})
         record["shift"].update({"bddl": str(shift_bddl), "bddl_sha256": sha256_file(shift_bddl),
@@ -175,7 +247,6 @@ def main():
             record["audit"] = {"pass": False, "reason": "task_identity_mismatch"}
             raise SystemExit(2)
 
-        clean_states = torch.load(clean_init_path, weights_only=False)
         n_init = len(clean_states)
         record["n_init"] = n_init
         if not (0 <= args.init_index < n_init):
@@ -220,11 +291,12 @@ def main():
         cmp = compare(snap_c, snap_s)
         cam = camera_compare(snap_c, snap_s,
                              expect_equal=(args.shift_kind in ("background", "lighting")),
-                             target_cameras=target_cameras)
+                             target_cameras=target_camera_names)
         record.update({"state_digest_clean": digest(snap_c),
                        "state_digest_restored": digest(snap_s),
                        "compare": cmp, "camera": cam})
-        missing_views = [v for v in policy_views if v not in snap_c["camera_names"]]
+        mapped_views = {v: camera_map.get(v, v) for v in policy_views}
+        missing_views = [v for v, c in mapped_views.items() if c not in snap_c["camera_names"]]
         if missing_views:
             record["audit"] = {"pass": False, "reason": f"policy_views_missing: {missing_views}"}
             raise SystemExit(2)
@@ -233,20 +305,21 @@ def main():
             f"{args.clean_suite}-{args.clean_task}_to_{args.shift_suite}-{args.shift_task}_init{args.init_index}"
         ) / f"run_{run_id}"
         images = {}
-        for cam_name in policy_views:
+        for view_name in policy_views:
+            cam_name = mapped_views[view_name]
             try:
                 arr_c, meta_c = to_hwc(env_c.sim.render(camera_name=cam_name, width=256, height=256))
                 arr_s, meta_s = to_hwc(env_s.sim.render(camera_name=cam_name, width=256, height=256))
-                ent_c = save_png(arr_c, run_dir / f"clean_{cam_name}.png")
-                ent_s = save_png(arr_s, run_dir / f"shift_{cam_name}.png")
+                ent_c = save_png(arr_c, run_dir / f"clean_{view_name}.png")
+                ent_s = save_png(arr_s, run_dir / f"shift_{view_name}.png")
                 diff = image_diff(arr_c, arr_s)
-                images[cam_name] = {"clean": ent_c, "shift": ent_s, "diff": diff,
+                images[view_name] = {"camera_name": cam_name, "clean": ent_c, "shift": ent_s, "diff": diff,
                                     "image_meta": {"clean": meta_c, "shift": meta_s},
                                     "visual_changed": bool(diff["shape_match"] and
                                                            diff["mean_abs_diff"] >= args.diff_threshold and
                                                            diff["changed_fraction"] >= args.changed_threshold)}
             except Exception as exc:
-                images[cam_name] = {"error": repr(exc), "visual_changed": False}
+                images[view_name] = {"camera_name": cam_name, "error": repr(exc), "visual_changed": False}
         record["images"] = images
         images_ok = all(name in images and "error" not in images[name] for name in policy_views)
         visual_ok = bool(target_cameras) and all(images.get(c, {}).get("visual_changed", False)

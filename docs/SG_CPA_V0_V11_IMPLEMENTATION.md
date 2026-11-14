@@ -91,13 +91,61 @@ python scripts/v11_state_pair_audit.py \
 /hy-tmp/validation/v11_pair_audit/<kind>/*.jpg
 ```
 
-## 4. 重要：task 0 → 705 尚未确认
+## 4. 已确认：libero_spatial 0 → 705 不是有效配对
 
-`phase3_final_tasks.json` 只说明 705 是 Camera 候选，不能证明它与 clean task 0 是同一基础任务。  
-新 preflight 会比较 BDDL goal/objects/base name/language；**如果 0 和 705 不是同一任务，V1.1 会直接 fail，这是预期行为。**  
-在确认 `task_classification.json` 与 base task 对应关系前，不要把 0→705 当成有效配对。
+根据当前 LIBERO-Plus task map：
 
-## 5. 验收标准
+- Plus `libero_spatial` task 0 = `pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate_table_1`；
+- Plus `libero_spatial` task 705 = Camera View 变体，基础任务是 `pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate`。
+
+两者基础操作不同，**不是同一任务的 Clean/Shift 配对**。旧命令 `--clean-task 0 --shift-task 705` 已废弃。
+
+当前正确的候选 Clean reference 是 **vanilla LIBERO spatial task 3**（同样的 cookie-box 基础任务），而不是 Plus 的 task 0。  
+V1.1 现在要求显式 `--task-map` 与 `--task-classification`，并比较 base name / goal / objects / canonical language；它不会再把 0→705 当作合法配对。
+
+### Camera suffix canonicalization
+
+真实 Camera 名称如：
+
+```
+..._view_46_0_100_0_0_initstate_0
+```
+
+现在 `canonical_base_name()` 只剥离已知参数化 variant 后缀（`_view_<params>...`、`_table_...`、`_initstate_N` 等），**不再使用宽泛的 `_\d+$`**。测试覆盖真实 Camera 后缀和同名不同物体类型。
+
+### 新的 Clean/Shift 输入
+
+- Shift：Plus suite/task index + `task_map` + `task_classification`；
+- Clean：
+  - Plus 来源：`--clean-source plus`，走 `clean_suite.get_task_init_states()`；
+  - Vanilla 来源：`--clean-source vanilla`，必须显式提供 `--clean-task-name`、`--clean-bddl`、`--clean-language`、`--clean-init-file`，避免把 Plus variant 当 Clean。
+
+### Camera 名称拆分
+
+```text
+CoRP policy view   : agentview / eye_in_hand
+LIBERO obs key     : agentview_image / robot0_eye_in_hand_image
+MuJoCo camera name : agentview / robot0_eye_in_hand
+```
+
+默认映射：`--camera-map eye_in_hand=robot0_eye_in_hand`；`--target-cameras` 现在按 **policy view** 指定，内部再映射到 MuJoCo camera。Camera 模式不再默认要求所有视角都变化。
+
+## 5. 运行前必读
+
+V1.1 现在**必须**提供：
+
+```
+--task-map <installed libero_suite_task_map.py>
+--task-classification <installed task_classification.json>
+```
+
+Vanilla Clean 示例（路径按服务器实际安装替换）：
+
+```
+python scripts/v11_state_pair_audit.py   --clean-source vanilla   --clean-suite libero_spatial   --clean-task-name pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate   --clean-bddl /path/to/libero/bddl_files/libero_spatial/<name>.bddl   --clean-language "pick up the black bowl on the cookie box and place it on the plate"   --clean-init-file /path/to/libero/init_files/libero_spatial/<name>.pruned_init   --shift-suite libero_spatial --shift-task 705 --shift-kind camera   --task-map /path/to/libero_suite_task_map.py   --task-classification /path/to/task_classification.json   --target-cameras agentview --init-index 0
+```
+
+## 6. 验收标准
 
 | 检查 | 标准 |
 |---|---|
@@ -110,23 +158,23 @@ python scripts/v11_state_pair_audit.py \
 
 如果 qpos/body 误差超过容差，说明“同状态配对”没有成立，不能进入 V1.2。
 
-## 6. 当前阻塞与未做项
+## 7. 当前阻塞与未做项
 
 - V1.1 尚未在服务器运行（GPU 主机当前不可达）；
 - V1.2–V1.4、V2 未实现；
 - 没有 teacher-student、可学习 gate、delayed-feedback β、reward model；
 - 没有正式 rollout。
 
-## 7. 单测
+## 8. 单测
 
 已统一为 unittest（符合仓库 `python -m unittest discover -s tests -v`）：
 
 - `test_visual_gate.py`：5 tests passed；
 - `test_state_pairing.py`：14 tests passed；
-- `test_task_pairing.py`：3 tests passed；
+- `test_task_pairing.py`：6 tests passed；
 - 覆盖 identity no-op、错误 view/dim、suppression bound、缺失字段、单侧空 act、四元数、NaN camera、shape mismatch、EEF 缺失、model mismatch。
 
-## 8. 下一步
+## 9. 下一步
 
 1. 服务器先跑 Preflight A：确认 LIBERO-Plus revision、task_classification、clean/shift 是否同 base task；
 2. 再跑 V1.1 单 pair，只做一个 task × 一个扰动 × 一个 init state；
