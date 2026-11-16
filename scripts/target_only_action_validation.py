@@ -181,8 +181,8 @@ def main():
     ap.add_argument("--source-folds", type=int, default=5)
     ap.add_argument("--rotation-budget-rad", type=float, default=0.0,
                     help="SO(3) action-space trust region relative to Frozen; 0 preserves Frozen rotations")
-    ap.add_argument("--min-update-confidence", type=float, default=0.25,
-                    help="minimum source-only confidence required to update episode EMA")
+    ap.add_argument("--min-update-confidence", type=float, default=None,
+                    help="optional diagnostic override; default is maximum source-OOF calibration confidence")
     ap.add_argument("--seed", type=int, default=20261116)
     ap.add_argument("--checkpoint", type=Path, default=CKPT)
     ap.add_argument("--libero-src", type=Path, default=Path("/hy-tmp/libero_plus"))
@@ -640,8 +640,9 @@ def main():
         "source_calibration": source_diagnostics,
         "confidence_gate": {
             "type": "source-oof residual novelty multiplied by nearest-source-context support",
-            "min_update_confidence": args.min_update_confidence,
-            "update_semantics": "only accepted observations update episode EMA; rejected observations hold last accepted estimate",
+            "min_update_confidence_override": args.min_update_confidence,
+            "default_min_update_confidence": source_diagnostics["confidence_gate"]["source_calibrated_min_update_confidence"],
+            "update_semantics": "only observations above the source-OOF calibration confidence maximum update episode EMA; rejected observations hold last accepted estimate",
             "logged_components": [
                 "residual_distance", "residual_threshold", "residual_confidence",
                 "nearest_context_distance", "context_support_radius",

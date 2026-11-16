@@ -126,6 +126,8 @@ class SourceResidualConfidenceGate:
     support_radius: float
     residual_center: np.ndarray
     residual_threshold: float
+    calibrated_min_update_confidence: float
+    source_calibration_confidence_max: float
     support_outer_multiplier: float = 2.0
 
     @classmethod
@@ -165,13 +167,34 @@ class SourceResidualConfidenceGate:
             distances = np.linalg.norm(x_z - x_z[i], axis=1)
             distances[i] = np.inf
             loo_distances.append(float(distances.min()))
+        loo_distances = np.asarray(loo_distances, dtype=np.float64)
         support_radius = max(float(np.quantile(loo_distances, support_quantile)), 1e-6)
+        support_outer_radius = support_radius * float(support_outer_multiplier)
+        source_context_confidence = np.clip(
+            (support_outer_radius - loo_distances)
+            / max(support_outer_radius - support_radius, 1e-8),
+            0.0,
+            1.0,
+        )
 
         residual_center = r.mean(axis=0)
         centered_norms = np.linalg.norm(r - residual_center, axis=1)
         residual_threshold = max(
             float(np.quantile(centered_norms, residual_quantile)), 1e-8
         )
+        source_residual_confidence = np.clip(
+            1.0 - residual_threshold / np.maximum(centered_norms, 1e-8),
+            0.0,
+            1.0,
+        )
+        source_calibration_confidence = (
+            source_context_confidence * source_residual_confidence
+        )
+        # Strict source-only rejection boundary: no source OOF calibration row
+        # should be accepted by the default online gate. Target observations
+        # must exceed the maximum confidence seen on source-Clean calibration.
+        calibrated_min_update_confidence = float(source_calibration_confidence.max())
+
         return cls(
             source_contexts_z=x_z,
             context_mean=context_mean,
@@ -179,6 +202,8 @@ class SourceResidualConfidenceGate:
             support_radius=support_radius,
             residual_center=residual_center,
             residual_threshold=residual_threshold,
+            calibrated_min_update_confidence=calibrated_min_update_confidence,
+            source_calibration_confidence_max=calibrated_min_update_confidence,
             support_outer_multiplier=float(support_outer_multiplier),
         )
 
@@ -240,6 +265,9 @@ class SourceResidualConfidenceGate:
             "context_support_outer_radius": torch.full_like(nearest, outer).to(dtype),
             "context_confidence": context_conf.to(dtype),
             "combined_confidence": combined.to(dtype),
+            "source_calibrated_min_update_confidence": torch.full_like(
+                nearest, self.calibrated_min_update_confidence
+            ).to(dtype),
             "abstain_reasons": reasons,
         }
 
@@ -309,6 +337,12 @@ def fit_source_calibration(
             "context_support_outer_radius": (
                 confidence_gate.support_radius * confidence_gate.support_outer_multiplier
             ),
+            "source_calibrated_min_update_confidence": (
+                confidence_gate.calibrated_min_update_confidence
+            ),
+            "source_calibration_confidence_max": (
+                confidence_gate.source_calibration_confidence_max
+            ),
             "calibration_rows": int(x.shape[0]),
             "warning": "small source calibration set; log confidence and abstentions",
         },
@@ -332,7 +366,7 @@ class TargetOnlyMeanEstimator:
         clip_norm: float | None = None,
         residual_projector: SourceResidualProjector | None = None,
         confidence_gate: SourceResidualConfidenceGate | None = None,
-        min_update_confidence: float = 0.25,
+        min_update_confidence: float | None = None,
     ):
         if not np.isfinite(momentum) or not 0.0 <= momentum < 1.0:
             raise ValueError("momentum must be finite and in [0,1)")
@@ -340,7 +374,10 @@ class TargetOnlyMeanEstimator:
             raise ValueError("alpha must be finite")
         if clip_norm is not None and (not np.isfinite(clip_norm) or clip_norm <= 0):
             raise ValueError("clip_norm must be finite and positive")
-        if not np.isfinite(min_update_confidence) or not 0.0 <= min_update_confidence <= 1.0:
+        if min_update_confidence is not None and (
+            not np.isfinite(min_update_confidence)
+            or not 0.0 <= min_update_confidence <= 1.0
+        ):
             raise ValueError("min_update_confidence must be finite and in [0,1]")
         self.source = source_baseline
         self.momentum = float(momentum)
@@ -348,7 +385,17 @@ class TargetOnlyMeanEstimator:
         self.clip_norm = None if clip_norm is None else float(clip_norm)
         self.residual_projector = residual_projector
         self.confidence_gate = confidence_gate
-        self.min_update_confidence = float(min_update_confidence)
+        if min_update_confidence is None:
+            self.min_update_confidence = (
+                confidence_gate.calibrated_min_update_confidence
+                if confidence_gate is not None else 0.0
+            )
+            self.min_update_confidence_source = (
+                "source_oof_max" if confidence_gate is not None else "ungated"
+            )
+        else:
+            self.min_update_confidence = float(min_update_confidence)
+            self.min_update_confidence_source = "explicit_override"
 
         self.ema: torch.Tensor | None = None
         self.ema_confidence: torch.Tensor | None = None
@@ -425,7 +472,9 @@ class TargetOnlyMeanEstimator:
             gate_diagnostics = self.confidence_gate.diagnostics(raw, context)
             confidence = gate_diagnostics["combined_confidence"]
 
-        accepted = confidence >= self.min_update_confidence
+        # Strict comparison also ensures a zero calibrated threshold does not
+        # accidentally accept a zero-confidence observation.
+        accepted = confidence > self.min_update_confidence
         previous_accepted = self.has_accepted
         candidate_ema = torch.where(
             previous_accepted,
@@ -453,6 +502,7 @@ class TargetOnlyMeanEstimator:
         gate_diagnostics["abstain_reasons"] = reasons
         gate_diagnostics["update_accepted"] = accepted
         gate_diagnostics["min_update_confidence"] = self.min_update_confidence
+        gate_diagnostics["min_update_confidence_source"] = self.min_update_confidence_source
 
         self.last_confidence = confidence
         self.last_update_accepted = accepted

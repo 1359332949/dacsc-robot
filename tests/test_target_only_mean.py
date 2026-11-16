@@ -246,6 +246,14 @@ class TestSourceCalibration(unittest.TestCase):
         self.assertEqual(base.predict(x[:2]).shape, (2, 7))
         self.assertEqual(projector.basis.shape, (7, 2))
         self.assertEqual(gate.source_contexts_z.shape, x.shape)
+        self.assertAlmostEqual(
+            gate.calibrated_min_update_confidence,
+            gate.source_calibration_confidence_max,
+        )
+        self.assertAlmostEqual(
+            diagnostics["confidence_gate"]["source_calibrated_min_update_confidence"],
+            gate.calibrated_min_update_confidence,
+        )
         self.assertEqual(diagnostics["source_rows"], 20)
 
 
