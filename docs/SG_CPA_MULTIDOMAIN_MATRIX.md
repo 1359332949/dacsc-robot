@@ -1,175 +1,140 @@
-# 多视觉域实验矩阵（冻结稿）
+# 多视觉域实验矩阵与 Phase-A 数据验证
 
 日期：2026-11-16  
-状态：**仅建立实验矩阵；未写新 Gate，未跑新 rollout。**
+状态：**矩阵骨架 + 4 个 Phase-A 单元已通过构造审计；未批量采集；未写新 Gate；未跑 rollout。**
 
 ## 1. 研究定位
 
-正式定位：
+> **Visual Sensitivity-Guided Test-Time Adaptation for VLA under Heterogeneous Domain Shifts.**
 
-> **Visual Sensitivity-Guided Test-Time Adaptation for Vision-Language-Action Policies under Heterogeneous Domain Shifts.**
+核心问题不是“找与任务无关的有害子空间”，而是：
 
-研究目标不是 Camera adaptation，而是：
+> 给定任务、状态、域扰动和冻结策略，预测某个视觉特征干预是否带来**闭环条件收益**：
+> \[
+> \tau_{i,d,m}=\mathbb E_\epsilon[Y^{repair}_{i,d,m}-Y^{frozen}_{i,d}]
+> \]
 
-> 冻结 CoRP 面对异质视觉目标域时，能否用目标域无标签观测估计有害视觉敏感方向，并做选择性校正，提高 OOD 任务成功率且保持 Clean。
-
-Camera 只是第一个受控切片。
+视觉敏感度和动作传播是机制证据，不能替代闭环收益。
 
 ## 2. 域分类
 
-| 类别 | 是否主研究 | 说明 |
-|---|---|---|
-| Background / Appearance | 核心 | 背景、桌面纹理、场景主题 |
-| Lighting | 核心 | 亮度、颜色、方向光、阴影 |
-| Sensor / Image Quality | 核心 | 噪声、模糊、退化 |
-| Camera / View Geometry | 核心 | 位置、角度、FOV |
-| Object Layout / Scene Content | 单独阶段 | 任务相关空间状态，不能当 nuisance |
-| Robot Initial State | 辅助评价 | 状态域，不是纯视觉 |
-| Language | 暂不纳入主线 | 跨模态扰动，另设协议 |
-
-第一轮矩阵只包含四类视觉域；Object Layout、Robot State、Language 不混入。
+| 类别 | 第一轮 |
+|---|---|
+| Background / Appearance | 核心 |
+| Lighting | 核心 |
+| Sensor / Image Quality | 核心；第一轮限定 agentview motion-blur 子集 |
+| Camera / View Geometry | 核心 |
+| Object Layout | 后续 |
+| Robot Initial State | 辅助评价 |
+| Language | 暂不纳入 |
 
 ## 3. 矩阵结构
 
-- Base tasks：4 个
-  - `libero_spatial` / cookie-box（dev task）
-  - `libero_object` / alphabet soup（dev task）
-  - `libero_goal` / cabinet drawer（held-out task）
-  - `libero_10` / KITCHEN_SCENE3 moka-pot（held-out task）
-- Domains：Background、Lighting、Sensor、Camera
-- Variants：每个 base task × 每个 domain 选 2 个变体
-- Pairs：32 个 Clean/Shift 配对单元
-- State split：每单元 30 dev / 20 held-out（固定 seed，episode/state 级）
-- 不把同一 episode 连续帧拆到不同 split。
+- 4 个 base task：
+  - `libero_spatial` cookie-box（dev task）
+  - `libero_object` alphabet soup（dev task）
+  - `libero_goal` cabinet drawer（held-out task）
+  - `libero_10` KITCHEN_SCENE3 moka-pot（held-out task）
+- 4 个视觉域 × 每任务每域 2 个变体
+- 共 **32 个 Clean/Shift 配对单元**
+- 每单元状态划分：seed=1234，30 dev / 20 held-out
+- 实际 `dev_indices` / `heldout_indices`、init 文件 SHA256 已写入矩阵 JSON。
+- 变体选择规则：`max_parameter_separation`，不再按 ID 取前两个。
+- 复合键：`suite:classification_id:variant_name`，classification id 不单独当全局键。
 
-### 3.1 角色
+角色：
 
 | 维度 | 角色 |
 |---|---|
-| base task | spatial/object = dev_task；goal = heldout_task |
-| Background / Lighting variant | 第 1 个 = dev_domain；第 2 个 = heldout_same_domain |
-| Sensor / Camera | 全部 = heldout_unseen_category |
-| state | 30 dev / 20 heldout，所有单元共用固定划分规则 |
+| spatial/object | dev_task |
+| goal/libero_10 | heldout_task |
+| Background/Lighting 第 1 变体 | dev_domain |
+| Background/Lighting 第 2 变体 | heldout_same_domain |
+| Sensor/Camera | heldout_unseen_category |
 
-`cell_role = base_role + variant_role`，不是所有交叉单元都独立。  
-正式报告要明确每个对比属于哪一种泛化：
+`cell_role = base_role + variant_role`。  
+held-out task 的状态永远不能用于调参，即使它同时属于 dev_domain。
 
-1. 同域新实例：Background/Lighting 的 heldout_same_domain；
-2. 未见域类别：Sensor/Camera；
-3. 未见任务：goal 的 heldout_task 单元。
+机器可读：`docs/data/multidomain_matrix.json`。
 
-## 4. 实际选中的变体
+## 4. 上游实现审计
 
-完整机器可读清单：`docs/data/multidomain_matrix.json`。
+已核对 `env_wrapper.py`、`benchmark/__init__.py`、`libero_tabletop_manipulation.py`：
 
-| Base task | Domain | Dev variant id | Held-out variant id |
-|---|---|---:|---:|
-| spatial cookie-box | Background | 138 | 139 |
-| spatial cookie-box | Lighting | 2292 | 2293 |
-| spatial cookie-box | Sensor | — | 1476 / 1477 |
-| spatial cookie-box | Camera | — | 687 / 688 |
-| object soup | Background | 1 | 2 |
-| object soup | Lighting | 2222 | 2223 |
-| object soup | Sensor | — | 1397 / 1398 |
-| object soup | Camera | — | 647 / 648 |
-| goal cabinet | Background | 1 | 2 |
-| goal cabinet | Lighting | 2313 | 2314 |
-| goal cabinet | Sensor | — | 1509 / 1510 |
-| goal cabinet | Camera | — | 691 / 692 |
-| long kitchen | Background | 1 | 2 |
-| long kitchen | Lighting | 2246 | 2247 |
-| long kitchen | Sensor | — | 1485 / 1486 |
-| long kitchen | Camera | — | 683 / 684 |
+| 域 | 变体形式 | 数据路径 |
+|---|---|---|
+| Background | `_table_*` | 实际 variant BDDL |
+| Lighting | `_light_*` | 实际 variant BDDL |
+| Camera | `_view_*` virtual | env 从 name 解析相机参数，加载 base BDDL |
+| Sensor | `_view_*_noise_*` virtual | env 解析 noise；**只污染 agentview_image** |
 
-注意：classification id 是 **1-based**；benchmark/task-map index 是 0-based。  
-没有把 Camera 705 直接混入这个矩阵；Camera 705 的既有结果是独立 camera slice，保留为历史对照。
+关键结论：
 
-## 5. 配对协议
+1. `set_init_state()` / `regenerate_obs_from_state()` **不会施加 Sensor Noise**；
+2. `ControlEnv.step()/reset()` 才施加 noise；
+3. 因此 Sensor 必须在恢复状态后显式调用 `apply_agentview_noise()`，不能直接 `sim.render()`，也不能为了噪声而 step 物理；
+4. Sensor 第一轮只覆盖 `noise<=10` 的 motion-blur 子集；
+5. Camera 在同一 env 内修改相机参数，避免多 env 静态物体 placement 差异；
+6. 静态物体必须比较 body_xpos/xquat，不能只比 qpos；
+7. 正式 success 的统计单位是 episode，不是 frame/state。
 
-每个单元：
+## 5. Phase-A 四域单元审计
 
-1. 固定 base task、instruction、物理初始状态；
-2. Clean 观测用 base BDDL；
-3. Shift 观测用变体 virtual BDDL 名（`_table_*`、`_light_*`、`_view_*`、`_noise_*`），由 `OffScreenRenderEnv` 解析；
-4. 同一物理状态 restore 后渲染；
-5. 保存 Clean/Shift 双视角图像、DINO patch features、8D policy state、state digest、camera params；
-6. Clean/Shift 配对只用于离线 Oracle，不进入任何 proxy 估计器。
+每个域选 1 个 cell、2 个初始状态，检查：
 
-## 6. 分阶段执行
+- 状态恢复；
+- 语言一致；
+- 目标/控制视角图像变化；
+- Camera 参数变化；
+- Sensor 噪声机制和污染视角。
 
-### Phase A：矩阵与数据构造（当前）
-- 矩阵元数据；
-- 配对合法性；
-- 数据分布审计；
-- **不写 Gate**。
+结果（`docs/data/phase_a_cell_audit.json`）：
 
-### Phase B：多域敏感度地图
-对每个域、任务、状态计算：
+| 域 | cell | 状态一致 | 语言一致 | agentview Δ | eye-in-hand Δ | 备注 |
+|---|---|---:|---:|---:|---:|---|
+| Background | 146 | ✅ | ✅ | 0.206–0.207 | 0.286 | 两视角都变 |
+| Lighting | 2292 | ✅ | ✅ | 0.073 | 0.051 | 两视角都变 |
+| Sensor | 1476 | ✅ | ✅ | 0.028–0.030 | 0.000 | motion_blur(5)，只污染 agentview |
+| Camera | 705 | ✅ | ✅ | 0.114 | 0.000 | agentview 相机参数变，非目标相机不变 |
 
-- signed feature displacement；
-- `s_pair` 与 low-rank covariance；
-- 跨状态稳定性；
-- 跨域共享/特异方向；
-- agentview / eye-in-hand 差异；
-- 动作传播（仅推理，不 rollout）。
+结论：
 
-### Phase C：Target-only Estimator
-只允许目标域无标签观测；额外结构需预先声明：
+> 四个域的数据构造路径已打通；可以进入 Phase-A 退化筛查，但仍不能批量采集 32 个单元。
 
-- 多视角一致性；
-- 相机几何（若部署可用）；
-- 时间连续性；
-- 冻结源模型参考。
+## 6. 阶段顺序（已修正）
 
-必须在：
-- 同域新变体；
-- 未见域类别；
-- 未见任务；
-上分别验证。
+1. **Phase A：数据与退化验证**
+   - 四域单元构造（当前 4 个已过）；
+   - 多域 Frozen CoRP 退化筛查；
+   - 10 episode 初始筛查，不作为确认统计。
+2. **Phase B：配对修复可行性**
+   - Visual-subspace repair；
+   - Action-aware repair；
+   - Matched random / Reverse-sign / Clean-difference oracle；
+   - Dev 选择 α，held-out 验证；
+   - 动作指标拆 xyz/rot/gripper。
+3. **Phase C：闭环修复确认**
+   - 独立 episode seeds；
+   - 配对成功率差、置信区间、Clean retention；
+   - 统计单位 episode。
+4. **Phase D：Target-only 收益预测器**
+   - 只允许目标域无标签观测；
+   - 在 held-out same-domain / unseen-category / held-out-task 上验证；
+   - 只有 Phase B/C 证明有稳定修复收益后才做。
 
-### Phase D：选择性适应与完整任务评价
-- Channel suppression；
-- Feature-space projection；
-- Affine modulation（含 FTM-style baseline）；
-- 完整 success + Clean retention；
-- 组合域测试。
+## 7. 下一批工作
 
-## 7. 不做什么
+不批量采集 32 单元。先做：
 
-- 不继续增加 photo/crop/zoom 代理；
-- 不在第一阶段混入 Object Layout / Robot State / Language；
-- 不把 Camera 单域结论推广到所有视觉域；
+1. 每个域再验证 1–2 个 cell（不同 task / 不同 variant）；
+2. Sensor 的 `apply_agentview_noise` 固定 seed 重复性测试；
+3. 多域 Frozen CoRP 退化筛查（10 episodes，独立 seed）；
+4. 退化筛查结果出来后再决定是否进入 Phase B。
+
+## 8. 不做什么
+
+- 不把 Camera 705 当主线；
+- 不把 `s_aug` 当核心算法；
 - 不在 proxy 未通过前启动 V2；
-- 不根据 held-out Clean 结果调 Gate。
-
-
-## 8. 上游源码审计结论（执行前）
-
-已核对 `LIBERO-plus` 的 `env_wrapper.py`、`benchmark/__init__.py`、`envs/problems/libero_tabletop_manipulation.py`：
-
-1. **Background / Lighting**
-   - 变体是真实 BDDL 文件（如 `_table_11.bddl`、`_light_1.bddl`）；
-   - 使用实际 variant BDDL 建 env。
-
-2. **Camera**
-   - 变体 BDDL 文件不存在，名字是 virtual `_view_<params>_initstate_0`；
-   - `OffScreenRenderEnv` 会 split `_view_` 并加载 base BDDL；
-   - 同一 env 内修改相机参数比多 env 更可靠（多 env 的静态物体 placement 可能不同）。
-
-3. **Sensor Noise**
-   - 名字是 `_view_..._initstate_0_noise_N`，属于 virtual；
-   - **noise 在 `ControlEnv.step()` 中施加到 observation**；
-   - 直接调用 `sim.render()` 会绕过 noise，因此 Sensor 单元必须使用 `env.step` 返回的观测，或复现同样的 noise 函数，不能复用 Camera 的 render 路径。
-
-4. **Init states**
-   - `Benchmark.get_task_init_states()` 会把 variant 映射回 base init state；
-   - classification id 是 **1-based**，benchmark/task-map index 是 0-based；
-   - 同一 base task 的 Clean/Shift 必须共享同一个 base init state。
-
-5. **静态物体**
-   - 多 env 的 reset/placement 可能导致 body 几何不同；
-   - 同状态配对必须使用同一 env 或显式恢复/固定静态 body 位置，并验证 body_xpos/xquat，不能只比较 qpos。
-
-6. **动作/任务 rollout**
-   - `evaluate_libero.py` 使用 episode-level success；统计单位是 episode，不是 frame/state；
-   - 正式成功率必须用独立 episode seeds，配对状态实验只能作为机制诊断。
+- 不在 held-out task 上调任何超参数；
+- 不把 frame/state 数量当 episode 样本量。

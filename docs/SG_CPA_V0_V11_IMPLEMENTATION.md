@@ -642,3 +642,21 @@ Camera 705 保留为第一块受控实验，不再是整个研究目标。新的
 `docs/data/multidomain_matrix.json`。
 
 当前只建立矩阵，不写新 Gate，不跑新 rollout。
+
+
+## 21. Phase-A 四域单元验证
+
+多域矩阵扩展为 4 tasks × 4 domains × 2 variants = 32 单元，状态 split seed=1234、30/20，并写入实际 indices 与 init SHA。
+
+四个域的 Phase-A cell audit 已通过：
+
+| 域 | cell | 状态 | 语言 | agent Δ | eye Δ |
+|---|---|---:|---:|---:|---:|
+| Background | 146 | ✅ | ✅ | 0.2065 | 0.2862 |
+| Lighting | 2292 | ✅ | ✅ | 0.0730 | 0.0512 |
+| Sensor | 1476 | ✅ | ✅ | 0.0283 | 0.0000 |
+| Camera | 705 | ✅ | ✅ | 0.1139 | 0.0000 |
+
+Sensor 为 motion_blur(5)，只污染 agentview；Camera 为 view_0_0_100_8_358，同 env 参数修改，非目标相机不变。
+
+详见 `docs/SG_CPA_MULTIDOMAIN_MATRIX.md` 与 `docs/data/phase_a_cell_audit.json`。

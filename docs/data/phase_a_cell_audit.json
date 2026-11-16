@@ -1,0 +1,2828 @@
+[
+  {
+    "domain": "background",
+    "classification_id": "146",
+    "name": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_table_27",
+    "variant_kind": "bddl",
+    "base_bddl": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate.bddl",
+    "states": [
+      {
+        "state": 0,
+        "state_compare": {
+          "checks": {
+            "qpos": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error": 0.0,
+              "pass": true
+            },
+            "qvel": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error": 0.0,
+              "pass": true
+            },
+            "act": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error": 0.0,
+              "pass": true
+            },
+            "mocap_pos": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error": 0.0,
+              "pass": true
+            },
+            "mocap_quat": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error": 0.0,
+              "pass": true
+            },
+            "time": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error": 0.0,
+              "pass": true
+            },
+            "body_xpos": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error": 0.0,
+              "pass": true
+            },
+            "eef_pos": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error": 0.0,
+              "pass": true
+            },
+            "body_xquat": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error_rad": 4.2146848510894035e-08,
+              "pass": true
+            },
+            "body_names": {
+              "pass": true
+            },
+            "camera_names": {
+              "pass": true
+            },
+            "eef_name": {
+              "pass": true
+            }
+          },
+          "all_pass": true
+        },
+        "camera_compare": {
+          "checks": {
+            "names": true,
+            "targets_present": true,
+            "shape": true,
+            "finite": true,
+            "expected": true
+          },
+          "diffs": {
+            "frontview": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "birdview": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_30": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_60": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_330": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_300": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_120": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_240": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_180": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_90": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_270": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_15_30": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_15_60": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_15_330": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_15_300": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_15_120": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_15_240": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_15_180": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_30_30": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_30_60": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_30_330": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_30_300": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_30_120": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_30_240": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_30_180": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_345_30": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_345_60": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_345_330": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_345_300": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_345_120": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_345_240": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_345_180": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_15": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_30": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_345": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "sideview": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "galleryview": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "robot0_robotview": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "robot0_eye_in_hand": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            }
+          },
+          "target_cameras": [
+            "frontview",
+            "birdview",
+            "agentview",
+            "agentview_30",
+            "agentview_60",
+            "agentview_330",
+            "agentview_300",
+            "agentview_120",
+            "agentview_240",
+            "agentview_180",
+            "agentview_90",
+            "agentview_270",
+            "agentview_up_15_30",
+            "agentview_up_15_60",
+            "agentview_up_15_330",
+            "agentview_up_15_300",
+            "agentview_up_15_120",
+            "agentview_up_15_240",
+            "agentview_up_15_180",
+            "agentview_up_30_30",
+            "agentview_up_30_60",
+            "agentview_up_30_330",
+            "agentview_up_30_300",
+            "agentview_up_30_120",
+            "agentview_up_30_240",
+            "agentview_up_30_180",
+            "agentview_up_345_30",
+            "agentview_up_345_60",
+            "agentview_up_345_330",
+            "agentview_up_345_300",
+            "agentview_up_345_120",
+            "agentview_up_345_240",
+            "agentview_up_345_180",
+            "agentview_up_15",
+            "agentview_up_30",
+            "agentview_up_345",
+            "sideview",
+            "galleryview",
+            "robot0_robotview",
+            "robot0_eye_in_hand"
+          ],
+          "pass": true
+        },
+        "language_equal": true,
+        "image_agentview": {
+          "shape_match": true,
+          "mean_abs_diff": 0.20650285708358865,
+          "changed_fraction": 0.4514923095703125
+        },
+        "image_eye_in_hand": {
+          "shape_match": true,
+          "mean_abs_diff": 0.28620314255259394,
+          "changed_fraction": 0.5749969482421875
+        }
+      },
+      {
+        "state": 1,
+        "state_compare": {
+          "checks": {
+            "qpos": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error": 0.0,
+              "pass": true
+            },
+            "qvel": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error": 0.0,
+              "pass": true
+            },
+            "act": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error": 0.0,
+              "pass": true
+            },
+            "mocap_pos": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error": 0.0,
+              "pass": true
+            },
+            "mocap_quat": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error": 0.0,
+              "pass": true
+            },
+            "time": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error": 0.0,
+              "pass": true
+            },
+            "body_xpos": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error": 0.0,
+              "pass": true
+            },
+            "eef_pos": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error": 0.0,
+              "pass": true
+            },
+            "body_xquat": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error_rad": 2.9802322387695312e-08,
+              "pass": true
+            },
+            "body_names": {
+              "pass": true
+            },
+            "camera_names": {
+              "pass": true
+            },
+            "eef_name": {
+              "pass": true
+            }
+          },
+          "all_pass": true
+        },
+        "camera_compare": {
+          "checks": {
+            "names": true,
+            "targets_present": true,
+            "shape": true,
+            "finite": true,
+            "expected": true
+          },
+          "diffs": {
+            "frontview": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "birdview": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_30": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_60": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_330": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_300": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_120": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_240": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_180": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_90": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_270": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_15_30": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_15_60": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_15_330": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_15_300": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_15_120": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_15_240": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_15_180": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_30_30": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_30_60": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_30_330": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_30_300": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_30_120": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_30_240": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_30_180": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_345_30": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_345_60": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_345_330": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_345_300": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_345_120": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_345_240": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_345_180": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_15": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_30": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_345": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "sideview": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "galleryview": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "robot0_robotview": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "robot0_eye_in_hand": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            }
+          },
+          "target_cameras": [
+            "frontview",
+            "birdview",
+            "agentview",
+            "agentview_30",
+            "agentview_60",
+            "agentview_330",
+            "agentview_300",
+            "agentview_120",
+            "agentview_240",
+            "agentview_180",
+            "agentview_90",
+            "agentview_270",
+            "agentview_up_15_30",
+            "agentview_up_15_60",
+            "agentview_up_15_330",
+            "agentview_up_15_300",
+            "agentview_up_15_120",
+            "agentview_up_15_240",
+            "agentview_up_15_180",
+            "agentview_up_30_30",
+            "agentview_up_30_60",
+            "agentview_up_30_330",
+            "agentview_up_30_300",
+            "agentview_up_30_120",
+            "agentview_up_30_240",
+            "agentview_up_30_180",
+            "agentview_up_345_30",
+            "agentview_up_345_60",
+            "agentview_up_345_330",
+            "agentview_up_345_300",
+            "agentview_up_345_120",
+            "agentview_up_345_240",
+            "agentview_up_345_180",
+            "agentview_up_15",
+            "agentview_up_30",
+            "agentview_up_345",
+            "sideview",
+            "galleryview",
+            "robot0_robotview",
+            "robot0_eye_in_hand"
+          ],
+          "pass": true
+        },
+        "language_equal": true,
+        "image_agentview": {
+          "shape_match": true,
+          "mean_abs_diff": 0.20602285347732843,
+          "changed_fraction": 0.4514007568359375
+        },
+        "image_eye_in_hand": {
+          "shape_match": true,
+          "mean_abs_diff": 0.2865856694240196,
+          "changed_fraction": 0.576751708984375
+        }
+      }
+    ],
+    "all_states_state_pass": true,
+    "all_states_language": true
+  },
+  {
+    "domain": "lighting",
+    "classification_id": "2292",
+    "name": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_light_1",
+    "variant_kind": "bddl",
+    "base_bddl": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate.bddl",
+    "states": [
+      {
+        "state": 0,
+        "state_compare": {
+          "checks": {
+            "qpos": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error": 0.0,
+              "pass": true
+            },
+            "qvel": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error": 0.0,
+              "pass": true
+            },
+            "act": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error": 0.0,
+              "pass": true
+            },
+            "mocap_pos": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error": 0.0,
+              "pass": true
+            },
+            "mocap_quat": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error": 0.0,
+              "pass": true
+            },
+            "time": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error": 0.0,
+              "pass": true
+            },
+            "body_xpos": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error": 0.0,
+              "pass": true
+            },
+            "eef_pos": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error": 0.0,
+              "pass": true
+            },
+            "body_xquat": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error_rad": 4.2146848510894035e-08,
+              "pass": true
+            },
+            "body_names": {
+              "pass": true
+            },
+            "camera_names": {
+              "pass": true
+            },
+            "eef_name": {
+              "pass": true
+            }
+          },
+          "all_pass": true
+        },
+        "camera_compare": {
+          "checks": {
+            "names": true,
+            "targets_present": true,
+            "shape": true,
+            "finite": true,
+            "expected": true
+          },
+          "diffs": {
+            "frontview": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "birdview": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_30": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_60": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_330": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_300": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_120": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_240": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_180": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_90": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_270": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_15_30": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_15_60": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_15_330": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_15_300": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_15_120": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_15_240": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_15_180": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_30_30": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_30_60": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_30_330": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_30_300": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_30_120": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_30_240": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_30_180": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_345_30": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_345_60": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_345_330": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_345_300": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_345_120": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_345_240": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_345_180": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_15": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_30": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_345": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "sideview": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "galleryview": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "robot0_robotview": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "robot0_eye_in_hand": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            }
+          },
+          "target_cameras": [
+            "frontview",
+            "birdview",
+            "agentview",
+            "agentview_30",
+            "agentview_60",
+            "agentview_330",
+            "agentview_300",
+            "agentview_120",
+            "agentview_240",
+            "agentview_180",
+            "agentview_90",
+            "agentview_270",
+            "agentview_up_15_30",
+            "agentview_up_15_60",
+            "agentview_up_15_330",
+            "agentview_up_15_300",
+            "agentview_up_15_120",
+            "agentview_up_15_240",
+            "agentview_up_15_180",
+            "agentview_up_30_30",
+            "agentview_up_30_60",
+            "agentview_up_30_330",
+            "agentview_up_30_300",
+            "agentview_up_30_120",
+            "agentview_up_30_240",
+            "agentview_up_30_180",
+            "agentview_up_345_30",
+            "agentview_up_345_60",
+            "agentview_up_345_330",
+            "agentview_up_345_300",
+            "agentview_up_345_120",
+            "agentview_up_345_240",
+            "agentview_up_345_180",
+            "agentview_up_15",
+            "agentview_up_30",
+            "agentview_up_345",
+            "sideview",
+            "galleryview",
+            "robot0_robotview",
+            "robot0_eye_in_hand"
+          ],
+          "pass": true
+        },
+        "language_equal": true,
+        "image_agentview": {
+          "shape_match": true,
+          "mean_abs_diff": 0.07295003654130924,
+          "changed_fraction": 0.8165740966796875
+        },
+        "image_eye_in_hand": {
+          "shape_match": true,
+          "mean_abs_diff": 0.0511880513110192,
+          "changed_fraction": 0.756439208984375
+        }
+      },
+      {
+        "state": 1,
+        "state_compare": {
+          "checks": {
+            "qpos": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error": 0.0,
+              "pass": true
+            },
+            "qvel": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error": 0.0,
+              "pass": true
+            },
+            "act": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error": 0.0,
+              "pass": true
+            },
+            "mocap_pos": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error": 0.0,
+              "pass": true
+            },
+            "mocap_quat": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error": 0.0,
+              "pass": true
+            },
+            "time": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error": 0.0,
+              "pass": true
+            },
+            "body_xpos": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error": 0.0,
+              "pass": true
+            },
+            "eef_pos": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error": 0.0,
+              "pass": true
+            },
+            "body_xquat": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error_rad": 2.9802322387695312e-08,
+              "pass": true
+            },
+            "body_names": {
+              "pass": true
+            },
+            "camera_names": {
+              "pass": true
+            },
+            "eef_name": {
+              "pass": true
+            }
+          },
+          "all_pass": true
+        },
+        "camera_compare": {
+          "checks": {
+            "names": true,
+            "targets_present": true,
+            "shape": true,
+            "finite": true,
+            "expected": true
+          },
+          "diffs": {
+            "frontview": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "birdview": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_30": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_60": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_330": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_300": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_120": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_240": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_180": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_90": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_270": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_15_30": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_15_60": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_15_330": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_15_300": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_15_120": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_15_240": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_15_180": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_30_30": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_30_60": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_30_330": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_30_300": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_30_120": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_30_240": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_30_180": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_345_30": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_345_60": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_345_330": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_345_300": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_345_120": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_345_240": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_345_180": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_15": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_30": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_345": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "sideview": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "galleryview": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "robot0_robotview": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "robot0_eye_in_hand": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            }
+          },
+          "target_cameras": [
+            "frontview",
+            "birdview",
+            "agentview",
+            "agentview_30",
+            "agentview_60",
+            "agentview_330",
+            "agentview_300",
+            "agentview_120",
+            "agentview_240",
+            "agentview_180",
+            "agentview_90",
+            "agentview_270",
+            "agentview_up_15_30",
+            "agentview_up_15_60",
+            "agentview_up_15_330",
+            "agentview_up_15_300",
+            "agentview_up_15_120",
+            "agentview_up_15_240",
+            "agentview_up_15_180",
+            "agentview_up_30_30",
+            "agentview_up_30_60",
+            "agentview_up_30_330",
+            "agentview_up_30_300",
+            "agentview_up_30_120",
+            "agentview_up_30_240",
+            "agentview_up_30_180",
+            "agentview_up_345_30",
+            "agentview_up_345_60",
+            "agentview_up_345_330",
+            "agentview_up_345_300",
+            "agentview_up_345_120",
+            "agentview_up_345_240",
+            "agentview_up_345_180",
+            "agentview_up_15",
+            "agentview_up_30",
+            "agentview_up_345",
+            "sideview",
+            "galleryview",
+            "robot0_robotview",
+            "robot0_eye_in_hand"
+          ],
+          "pass": true
+        },
+        "language_equal": true,
+        "image_agentview": {
+          "shape_match": true,
+          "mean_abs_diff": 0.07336371926700368,
+          "changed_fraction": 0.81280517578125
+        },
+        "image_eye_in_hand": {
+          "shape_match": true,
+          "mean_abs_diff": 0.05089364643969567,
+          "changed_fraction": 0.76220703125
+        }
+      }
+    ],
+    "all_states_state_pass": true,
+    "all_states_language": true
+  },
+  {
+    "domain": "sensor",
+    "classification_id": "1476",
+    "name": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_view_0_0_100_0_0_initstate_0_noise_5",
+    "variant_kind": "virtual_noise",
+    "base_bddl": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate.bddl",
+    "states": [
+      {
+        "state": 0,
+        "noise": {
+          "noise": 5,
+          "seed": 1234,
+          "mechanism": "motion_blur",
+          "affected_view": "agentview_image only"
+        },
+        "state_compare": {
+          "checks": {
+            "qpos": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error": 0.0,
+              "pass": true
+            },
+            "qvel": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error": 0.0,
+              "pass": true
+            },
+            "act": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error": 0.0,
+              "pass": true
+            },
+            "mocap_pos": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error": 0.0,
+              "pass": true
+            },
+            "mocap_quat": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error": 0.0,
+              "pass": true
+            },
+            "time": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error": 0.0,
+              "pass": true
+            },
+            "body_xpos": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error": 0.0,
+              "pass": true
+            },
+            "eef_pos": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error": 0.0,
+              "pass": true
+            },
+            "body_xquat": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error_rad": 4.2146848510894035e-08,
+              "pass": true
+            },
+            "body_names": {
+              "pass": true
+            },
+            "camera_names": {
+              "pass": true
+            },
+            "eef_name": {
+              "pass": true
+            }
+          },
+          "all_pass": true
+        },
+        "camera_compare": {
+          "checks": {
+            "names": true,
+            "targets_present": true,
+            "shape": true,
+            "finite": true,
+            "expected": true
+          },
+          "diffs": {
+            "frontview": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "birdview": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_30": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_60": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_330": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_300": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_120": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_240": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_180": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_90": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_270": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_15_30": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_15_60": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_15_330": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_15_300": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_15_120": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_15_240": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_15_180": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_30_30": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_30_60": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_30_330": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_30_300": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_30_120": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_30_240": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_30_180": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_345_30": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_345_60": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_345_330": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_345_300": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_345_120": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_345_240": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_345_180": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_15": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_30": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_345": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "sideview": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "galleryview": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "robot0_robotview": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "robot0_eye_in_hand": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            }
+          },
+          "target_cameras": [
+            "frontview",
+            "birdview",
+            "agentview",
+            "agentview_30",
+            "agentview_60",
+            "agentview_330",
+            "agentview_300",
+            "agentview_120",
+            "agentview_240",
+            "agentview_180",
+            "agentview_90",
+            "agentview_270",
+            "agentview_up_15_30",
+            "agentview_up_15_60",
+            "agentview_up_15_330",
+            "agentview_up_15_300",
+            "agentview_up_15_120",
+            "agentview_up_15_240",
+            "agentview_up_15_180",
+            "agentview_up_30_30",
+            "agentview_up_30_60",
+            "agentview_up_30_330",
+            "agentview_up_30_300",
+            "agentview_up_30_120",
+            "agentview_up_30_240",
+            "agentview_up_30_180",
+            "agentview_up_345_30",
+            "agentview_up_345_60",
+            "agentview_up_345_330",
+            "agentview_up_345_300",
+            "agentview_up_345_120",
+            "agentview_up_345_240",
+            "agentview_up_345_180",
+            "agentview_up_15",
+            "agentview_up_30",
+            "agentview_up_345",
+            "sideview",
+            "galleryview",
+            "robot0_robotview",
+            "robot0_eye_in_hand"
+          ],
+          "pass": true
+        },
+        "language_equal": true,
+        "image_agentview": {
+          "shape_match": true,
+          "mean_abs_diff": 0.02825650483175041,
+          "changed_fraction": 0.242767333984375
+        },
+        "image_eye_in_hand": {
+          "shape_match": true,
+          "mean_abs_diff": 0.0,
+          "changed_fraction": 0.0
+        }
+      },
+      {
+        "state": 1,
+        "noise": {
+          "noise": 5,
+          "seed": 1235,
+          "mechanism": "motion_blur",
+          "affected_view": "agentview_image only"
+        },
+        "state_compare": {
+          "checks": {
+            "qpos": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error": 0.0,
+              "pass": true
+            },
+            "qvel": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error": 0.0,
+              "pass": true
+            },
+            "act": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error": 0.0,
+              "pass": true
+            },
+            "mocap_pos": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error": 0.0,
+              "pass": true
+            },
+            "mocap_quat": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error": 0.0,
+              "pass": true
+            },
+            "time": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error": 0.0,
+              "pass": true
+            },
+            "body_xpos": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error": 0.0,
+              "pass": true
+            },
+            "eef_pos": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error": 0.0,
+              "pass": true
+            },
+            "body_xquat": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error_rad": 2.9802322387695312e-08,
+              "pass": true
+            },
+            "body_names": {
+              "pass": true
+            },
+            "camera_names": {
+              "pass": true
+            },
+            "eef_name": {
+              "pass": true
+            }
+          },
+          "all_pass": true
+        },
+        "camera_compare": {
+          "checks": {
+            "names": true,
+            "targets_present": true,
+            "shape": true,
+            "finite": true,
+            "expected": true
+          },
+          "diffs": {
+            "frontview": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "birdview": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_30": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_60": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_330": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_300": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_120": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_240": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_180": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_90": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_270": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_15_30": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_15_60": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_15_330": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_15_300": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_15_120": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_15_240": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_15_180": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_30_30": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_30_60": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_30_330": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_30_300": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_30_120": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_30_240": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_30_180": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_345_30": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_345_60": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_345_330": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_345_300": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_345_120": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_345_240": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_345_180": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_15": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_30": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "agentview_up_345": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "sideview": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "galleryview": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "robot0_robotview": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            },
+            "robot0_eye_in_hand": {
+              "cam_pos": 0.0,
+              "cam_quat": 0.0,
+              "cam_fovy": 0.0,
+              "cam_xpos": 0.0,
+              "cam_xmat": 0.0
+            }
+          },
+          "target_cameras": [
+            "frontview",
+            "birdview",
+            "agentview",
+            "agentview_30",
+            "agentview_60",
+            "agentview_330",
+            "agentview_300",
+            "agentview_120",
+            "agentview_240",
+            "agentview_180",
+            "agentview_90",
+            "agentview_270",
+            "agentview_up_15_30",
+            "agentview_up_15_60",
+            "agentview_up_15_330",
+            "agentview_up_15_300",
+            "agentview_up_15_120",
+            "agentview_up_15_240",
+            "agentview_up_15_180",
+            "agentview_up_30_30",
+            "agentview_up_30_60",
+            "agentview_up_30_330",
+            "agentview_up_30_300",
+            "agentview_up_30_120",
+            "agentview_up_30_240",
+            "agentview_up_30_180",
+            "agentview_up_345_30",
+            "agentview_up_345_60",
+            "agentview_up_345_330",
+            "agentview_up_345_300",
+            "agentview_up_345_120",
+            "agentview_up_345_240",
+            "agentview_up_345_180",
+            "agentview_up_15",
+            "agentview_up_30",
+            "agentview_up_345",
+            "sideview",
+            "galleryview",
+            "robot0_robotview",
+            "robot0_eye_in_hand"
+          ],
+          "pass": true
+        },
+        "language_equal": true,
+        "image_agentview": {
+          "shape_match": true,
+          "mean_abs_diff": 0.030188786126429737,
+          "changed_fraction": 0.2796478271484375
+        },
+        "image_eye_in_hand": {
+          "shape_match": true,
+          "mean_abs_diff": 0.0,
+          "changed_fraction": 0.0
+        }
+      }
+    ],
+    "all_states_state_pass": true,
+    "all_states_language": true
+  },
+  {
+    "domain": "camera",
+    "classification_id": "705",
+    "name": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_view_0_0_100_8_358_initstate_0",
+    "variant_kind": "virtual_view",
+    "base_bddl": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate.bddl",
+    "states": [
+      {
+        "state": 0,
+        "camera_config": [
+          0,
+          0,
+          100,
+          8,
+          358
+        ],
+        "camera_changed": true,
+        "non_target_camera_unchanged": true,
+        "camera_pos_quat": {
+          "pos": [
+            0.6586,
+            0.0,
+            1.6104
+          ],
+          "quat": [
+            -0.5862,
+            -0.2947,
+            -0.3357,
+            -0.6759
+          ]
+        },
+        "state_compare": {
+          "checks": {
+            "qpos": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error": 0.0,
+              "pass": true
+            },
+            "qvel": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error": 0.0,
+              "pass": true
+            },
+            "act": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error": 0.0,
+              "pass": true
+            },
+            "mocap_pos": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error": 0.0,
+              "pass": true
+            },
+            "mocap_quat": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error": 0.0,
+              "pass": true
+            },
+            "time": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error": 0.0,
+              "pass": true
+            },
+            "body_xpos": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error": 0.0,
+              "pass": true
+            },
+            "eef_pos": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error": 0.0,
+              "pass": true
+            },
+            "body_xquat": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error_rad": 4.2146848510894035e-08,
+              "pass": true
+            },
+            "body_names": {
+              "pass": true
+            },
+            "eef_name": {
+              "pass": true
+            }
+          },
+          "all_pass": true
+        },
+        "language_equal": true,
+        "image_agentview": {
+          "shape_match": true,
+          "mean_abs_diff": 0.11392507116779003,
+          "changed_fraction": 0.7670440673828125
+        },
+        "image_eye_in_hand": {
+          "shape_match": true,
+          "mean_abs_diff": 0.0,
+          "changed_fraction": 0.0
+        }
+      },
+      {
+        "state": 1,
+        "camera_config": [
+          0,
+          0,
+          100,
+          8,
+          358
+        ],
+        "camera_changed": true,
+        "non_target_camera_unchanged": true,
+        "camera_pos_quat": {
+          "pos": [
+            0.6586,
+            0.0,
+            1.6104
+          ],
+          "quat": [
+            -0.5862,
+            -0.2947,
+            -0.3357,
+            -0.6759
+          ]
+        },
+        "state_compare": {
+          "checks": {
+            "qpos": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error": 0.0,
+              "pass": true
+            },
+            "qvel": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error": 0.0,
+              "pass": true
+            },
+            "act": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error": 0.0,
+              "pass": true
+            },
+            "mocap_pos": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error": 0.0,
+              "pass": true
+            },
+            "mocap_quat": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error": 0.0,
+              "pass": true
+            },
+            "time": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error": 0.0,
+              "pass": true
+            },
+            "body_xpos": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error": 0.0,
+              "pass": true
+            },
+            "eef_pos": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error": 0.0,
+              "pass": true
+            },
+            "body_xquat": {
+              "present": true,
+              "shape": true,
+              "finite": true,
+              "error_rad": 2.9802322387695312e-08,
+              "pass": true
+            },
+            "body_names": {
+              "pass": true
+            },
+            "eef_name": {
+              "pass": true
+            }
+          },
+          "all_pass": true
+        },
+        "language_equal": true,
+        "image_agentview": {
+          "shape_match": true,
+          "mean_abs_diff": 0.11450167387918708,
+          "changed_fraction": 0.7736053466796875
+        },
+        "image_eye_in_hand": {
+          "shape_match": true,
+          "mean_abs_diff": 0.0,
+          "changed_fraction": 0.0
+        }
+      }
+    ],
+    "all_states_state_pass": true,
+    "all_states_language": true
+  }
+]
