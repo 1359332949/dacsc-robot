@@ -1,116 +1,111 @@
-"""V1.2 scores from captured paired DINO features.
+"""V1.2 per-view scores from captured paired DINO features.
 
-s_pair : mean |F_clean - F_shift| per embedding dimension
-s_stat : cross-state std of shift features per dimension (proxy, not nuisance)
-s_aug  : optional augmentation sensitivity of target shift images
+No cross-view averaging.  agentview is the target view; eye-in-hand is a control.
+Definitions:
+  s_pair_v(d) = mean_{state,patch} |F_clean - F_shift|
+  s_stat_v(d) = std_state( mean_patch F_shift )   [primary]
+  s_stat_alt_v(d) = mean_patch( std_state F_shift ) [sensitivity analysis]
+Reliability: dev/held rank correlation, top-k overlap, repeated split-half,
+state bootstrap.  s_aug is intentionally not computed here yet.
 """
 
 from __future__ import annotations
-import argparse, json, sys
+import argparse, json
 from pathlib import Path
 import numpy as np
 from scipy.stats import spearmanr
-from PIL import Image, ImageEnhance
-
-ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT)); sys.path.insert(0, str(ROOT / "scripts")); sys.path.insert(0, str(ROOT / "repos/CoRP"))
-from corp import load_policy  # noqa: E402
-from corp.preprocessing import prepare_observation  # noqa: E402
-from sg_cpa_phase4_final import CKPT  # noqa: E402
-import torch  # noqa: E402
 
 
-def policy_image(raw: np.ndarray, size: int) -> torch.Tensor:
-    img = np.ascontiguousarray(np.asarray(raw, dtype=np.uint8)[::-1, ::-1])
-    if img.shape[:2] != (size, size):
-        img = np.asarray(Image.fromarray(img).resize((size, size), Image.Resampling.BILINEAR))
-    return torch.from_numpy(np.ascontiguousarray(img).copy()).unsqueeze(0)
-
-
-def dino(policy, raw, view, instruction):
-    size = int(policy.config["image_size"])
-    device = next(policy.parameters()).device
-    img = policy_image(raw, size).to(device)
-    batch = prepare_observation({"images": {view: img},
-                                 "state": torch.zeros(1, policy.config["state_dim"], device=device),
-                                 "instruction": [instruction]},
-                                config=policy.config, normalizer=policy.normalizer, device=device)
-    with torch.no_grad():
-        p = policy.representation_extractor.visual_encoder(batch["images"][view])
-    return p[0].detach().cpu().numpy()
+def topk_overlap(a: np.ndarray, b: np.ndarray, k: int) -> float:
+    ia = set(np.argsort(-a)[:k].tolist()); ib = set(np.argsort(-b)[:k].tolist())
+    return len(ia & ib) / float(k)
 
 
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dir", type=Path, required=True)
-    ap.add_argument("--augment", action="store_true")
-    ap.add_argument("--device", default="cuda:0")
+    ap.add_argument("--k", type=int, default=20)
+    ap.add_argument("--repeat", type=int, default=100)
+    ap.add_argument("--bootstrap", type=int, default=200)
+    ap.add_argument("--seed", type=int, default=20261116)
     args = ap.parse_args()
     z = np.load(args.dir / "features.npz")
     manifest = json.loads((args.dir / "manifest.json").read_text())
     views = manifest["policy_views"]
-    # normalize per-view absolute difference
-    pair_scores = {}
-    stat_scores = {}
-    for v in views:
-        c = z[f"clean_{v}"].astype(np.float64); s = z[f"shift_{v}"].astype(np.float64)
-        pair_scores[v] = np.abs(c - s).mean(axis=(0, 1))
-        stat_scores[v] = s.std(axis=0).mean(axis=(0, 1))
-    pair = np.mean([pair_scores[v] for v in views], axis=0)
-    stat = np.mean([stat_scores[v] for v in views], axis=0)
-
     valid = [r["index"] for r in manifest["records"] if r.get("compare_pass")]
-    dev = [i for i in manifest["dev_indices"] if i in valid]
-    held = [i for i in manifest["heldout_indices"] if i in valid]
     pos = {state: j for j, state in enumerate(valid)}
-    def sub_score(idx):
-        vals = []
-        for v in views:
-            pidx = [pos[i] for i in idx]
-            c = z[f"clean_{v}"][pidx].astype(np.float64); s = z[f"shift_{v}"][pidx].astype(np.float64)
-            vals.append(np.abs(c - s).mean(axis=(0, 1)))
-        return np.mean(vals, axis=0)
-    dev_score = sub_score(dev); held_score = sub_score(held)
-    mid = len(dev) // 2
-    half_a, half_b = sub_score(dev[:mid]), sub_score(dev[mid:])
-    rel = {
-        "dev_vs_held_spearman": float(spearmanr(dev_score, held_score).statistic),
-        "split_half_spearman": float(spearmanr(half_a, half_b).statistic),
-        "view_correlation": float(spearmanr(pair_scores[views[0]], pair_scores[views[1]]).statistic) if len(views) > 1 else None,
-    }
-    topk = 20
-    top = np.argsort(-pair)[:topk]
-    out = {
-        "num_states": len(valid), "dev": len(dev), "heldout": len(held), "skipped": len(manifest["records"]) - len(valid),
-        "pair_mean": float(pair.mean()), "pair_std": float(pair.std()),
-        "top_dims": top.tolist(), "top_values": pair[top].tolist(),
-        "reliability": rel,
-        "view_pair_scores": {v: pair_scores[v].tolist() for v in views},
-        "stat": stat.tolist(),
-    }
-    if args.augment:
-        policy = load_policy(CKPT, device=args.device); policy.eval()
-        aug_scores = []
-        for v in views:
-            vals = []
-            for i in range(len(dev) + len(held)):
-                idx = (dev + held)[i]
-                raw = np.asarray(Image.open(args.dir / "images" / f"state_{idx:03d}" / f"shift_{v}.png"))
-                base = dino(policy, raw, v, manifest["clean_language"])
-                for factor in (0.8, 1.2):
-                    img = ImageEnhance.Brightness(Image.fromarray(raw)).enhance(factor)
-                    aug_scores.append(np.abs(dino(policy, np.asarray(img), v, manifest["clean_language"]) - base).mean(axis=(0, 1)))
-            pair_scores[v] = np.mean(vals, axis=0) if vals else pair_scores[v]
-        aug = np.mean(aug_scores, axis=0)
-        out["aug"] = aug.tolist()
-        out["aug_vs_pair_spearman"] = float(spearmanr(aug, pair).statistic)
-    (args.dir / "scores.json").write_text(json.dumps(out, indent=2))
-    np.savez_compressed(args.dir / "scores.npz", pair=pair, stat=stat,
-                        **{f"pair_{v}": pair_scores[v] for v in views})
-    print(json.dumps({k: out[k] for k in ("num_states", "dev", "heldout", "reliability",
-                                          "pair_mean", "top_dims")}, indent=2))
-    if "aug_vs_pair_spearman" in out:
-        print("aug_vs_pair_spearman", out["aug_vs_pair_spearman"])
+    dev_idx = [i for i in manifest["dev_indices"] if i in valid]
+    held_idx = [i for i in manifest["heldout_indices"] if i in valid]
+    dev_pos = [pos[i] for i in dev_idx]; held_pos = [pos[i] for i in held_idx]
+    rng = np.random.RandomState(args.seed)
+
+    def pair_for(pos_idx, view):
+        c = z[f"clean_{view}"][pos_idx].astype(np.float64)
+        s = z[f"shift_{view}"][pos_idx].astype(np.float64)
+        return np.abs(c - s).mean(axis=(0, 1))
+
+    def stat_for(pos_idx, view, alt=False):
+        s = z[f"shift_{view}"][pos_idx].astype(np.float64)  # [N,P,D]
+        if alt:
+            return s.std(axis=0).mean(axis=0)
+        return s.mean(axis=1).std(axis=0)
+
+    out = {"num_states": len(valid), "dev": len(dev_pos), "heldout": len(held_pos),
+           "skipped": len(manifest["records"]) - len(valid), "views": {},
+           "reliability": {}, "bootstrap": {}}
+    for view in views:
+        dev_pair = pair_for(dev_pos, view); held_pair = pair_for(held_pos, view)
+        all_pair = pair_for(list(range(len(valid))), view)
+        stat_dev = stat_for(dev_pos, view); stat_held = stat_for(held_pos, view)
+        stat_alt = stat_for(list(range(len(valid))), view, alt=True)
+        # repeated split-half on dev
+        rhos = []
+        for _ in range(args.repeat):
+            p = rng.permutation(len(dev_pos)); h = len(p) // 2
+            a = pair_for([dev_pos[j] for j in p[:h]], view)
+            b = pair_for([dev_pos[j] for j in p[h:]], view)
+            rhos.append(float(spearmanr(a, b).statistic))
+        rhos = np.asarray(rhos, dtype=float)
+        # state bootstrap for s_pair mean/top-k frequency
+        boot_means = []; top_freq = np.zeros(all_pair.shape[0], dtype=float)
+        for _ in range(args.bootstrap):
+            idx = rng.randint(0, len(valid), len(valid))
+            sc = pair_for(idx, view)
+            boot_means.append(float(sc.mean()))
+            top_freq[np.argsort(-sc)[:args.k]] += 1.0
+        top_freq /= args.bootstrap
+        out["views"][view] = {
+            "pair_dev": dev_pair.tolist(), "pair_heldout": held_pair.tolist(),
+            "pair_all": all_pair.tolist(),
+            "stat_dev": stat_dev.tolist(), "stat_heldout": stat_held.tolist(),
+            "stat_alt_all": stat_alt.tolist(),
+            "pair_mean_dev": float(dev_pair.mean()),
+            "pair_mean_heldout": float(held_pair.mean()),
+            "top_dims_all": np.argsort(-all_pair)[:args.k].tolist(),
+        }
+        out["reliability"][view] = {
+            "dev_vs_held_spearman": float(spearmanr(dev_pair, held_pair).statistic),
+            "dev_vs_held_topk_overlap": topk_overlap(dev_pair, held_pair, args.k),
+            "repeated_split_half_median": float(np.nanmedian(rhos)),
+            "repeated_split_half_q05": float(np.nanquantile(rhos, 0.05)),
+            "repeated_split_half_q95": float(np.nanquantile(rhos, 0.95)),
+        }
+        out["bootstrap"][view] = {
+            "pair_mean_ci95": [float(np.quantile(boot_means, 0.025)),
+                               float(np.quantile(boot_means, 0.975))],
+            "topk_frequency_max": float(top_freq.max()),
+            "topk_dim_stability": top_freq.tolist(),
+        }
+    (args.dir / "scores_per_view.json").write_text(json.dumps(out, indent=2))
+    np.savez_compressed(args.dir / "scores_per_view.npz",
+                        **{f"pair_all_{v}": np.asarray(out["views"][v]["pair_all"]) for v in views},
+                        **{f"stat_heldout_{v}": np.asarray(out["views"][v]["stat_heldout"]) for v in views})
+    print(json.dumps({v: {
+        "pair_dev_mean": out["views"][v]["pair_mean_dev"],
+        "pair_heldout_mean": out["views"][v]["pair_mean_heldout"],
+        "reliability": out["reliability"][v],
+        "bootstrap_pair_mean_ci95": out["bootstrap"][v]["pair_mean_ci95"],
+    } for v in views}, indent=2))
 
 
 if __name__ == "__main__":

@@ -327,3 +327,43 @@ Clean base BDDL/init 与 Camera 705（virtual `_view_` BDDL）各建一个 env�
 - 49 个状态只能作为 pilot，不能作为 V1.4 结论。
 
 结果文件：`docs/data/v12_scores.json`、`docs/data/v12_manifest.json`。
+
+
+## 14. V1.2 score correction（针对 71ed644 复审）
+
+旧 `v12_scores.py` 的全局 `pair_mean` 是两个视角的平均，不能作为正式 V1.2 结果；已改为 **per-view** 统计。
+
+### 修正后的 pilot 结果（49 valid；30 dev / 19 held-out）
+
+| 视角 | s_pair dev mean | s_pair held-out mean | dev-vs-held Spearman | top-20 overlap | repeated split-half median |
+|---|---:|---:|---:|---:|---:|
+| agentview（目标） | 2.4430 | 2.4455 | 0.9698 | 0.80 | 0.9532 |
+| eye-in-hand（对照） | 0.02173 | 0.02098 | 0.7465 | 0.45 | 0.6366 |
+
+- agentview 的 bootstrap 95% CI（s_pair mean）：[2.4243, 2.4668]；
+- eye-in-hand：[0.02049, 0.02245]；
+- `s_stat` 现在是 **每个视角 384 维**：
+  - primary：`std_state( mean_patch F_shift )`
+  - alt：`mean_patch( std_state F_shift )`
+- 不再跨视角平均。
+
+### 解释边界
+
+- agentview 是目标 Camera 视角；eye-in-hand 是未受 Camera 扰动的对照。
+- agentview 与 eye-in-hand 的 s_pair 尺度相差约 114×，排序相关性很低；**不能合并**。
+- 49 个状态仍是单 task / 单 Camera 变体的 pilot，不能外推到其他任务/扰动。
+- `s_aug` 仍未实现；V1.3 action propagation 未启动。
+- `s_stat` 仍是跨状态波动 proxy，不是已证明的 nuisance sensitivity。
+
+### Provenance
+
+当前 manifest 追加了：
+
+- Clean init 文件路径与 SHA256；
+- `features.npz` SHA256；
+- 196 张 PNG 的组合 hash；
+- Python/torch/numpy/mujoco/robosuite 版本；
+- LIBERO-plus tarball SHA256。
+
+文件：`docs/data/v12_scores_per_view.json`、`docs/data/v12_manifest_provenance.json`。
+旧 `v12_scores.json`（全局平均版）只作历史记录，不再作为正式结果。
