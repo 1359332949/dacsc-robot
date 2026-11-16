@@ -419,6 +419,29 @@
           ],
           "pass": true
         },
+        "model_compatible": {
+          "checks": {
+            "nq": true,
+            "nv": true,
+            "nu": true,
+            "njnt": true,
+            "jnt_qposadr": true,
+            "jnt_dofadr": true,
+            "joint_names": true,
+            "joint_types": true,
+            "actuator_names": true,
+            "nbody": true,
+            "body_names": true,
+            "ngeom": true,
+            "geom_names": true,
+            "geom_bodyid": true,
+            "geom_type": true,
+            "geom_size": true,
+            "geom_pos": true,
+            "geom_quat": true
+          },
+          "pass": true
+        },
         "language_equal": true,
         "image_agentview": {
           "shape_match": true,
@@ -842,6 +865,29 @@
             "robot0_robotview",
             "robot0_eye_in_hand"
           ],
+          "pass": true
+        },
+        "model_compatible": {
+          "checks": {
+            "nq": true,
+            "nv": true,
+            "nu": true,
+            "njnt": true,
+            "jnt_qposadr": true,
+            "jnt_dofadr": true,
+            "joint_names": true,
+            "joint_types": true,
+            "actuator_names": true,
+            "nbody": true,
+            "body_names": true,
+            "ngeom": true,
+            "geom_names": true,
+            "geom_bodyid": true,
+            "geom_type": true,
+            "geom_size": true,
+            "geom_pos": true,
+            "geom_quat": true
+          },
           "pass": true
         },
         "language_equal": true,
@@ -1280,6 +1326,29 @@
           ],
           "pass": true
         },
+        "model_compatible": {
+          "checks": {
+            "nq": true,
+            "nv": true,
+            "nu": true,
+            "njnt": true,
+            "jnt_qposadr": true,
+            "jnt_dofadr": true,
+            "joint_names": true,
+            "joint_types": true,
+            "actuator_names": true,
+            "nbody": true,
+            "body_names": true,
+            "ngeom": true,
+            "geom_names": true,
+            "geom_bodyid": true,
+            "geom_type": true,
+            "geom_size": true,
+            "geom_pos": true,
+            "geom_quat": true
+          },
+          "pass": true
+        },
         "language_equal": true,
         "image_agentview": {
           "shape_match": true,
@@ -1703,6 +1772,29 @@
             "robot0_robotview",
             "robot0_eye_in_hand"
           ],
+          "pass": true
+        },
+        "model_compatible": {
+          "checks": {
+            "nq": true,
+            "nv": true,
+            "nu": true,
+            "njnt": true,
+            "jnt_qposadr": true,
+            "jnt_dofadr": true,
+            "joint_names": true,
+            "joint_types": true,
+            "actuator_names": true,
+            "nbody": true,
+            "body_names": true,
+            "ngeom": true,
+            "geom_names": true,
+            "geom_bodyid": true,
+            "geom_type": true,
+            "geom_size": true,
+            "geom_pos": true,
+            "geom_quat": true
+          },
           "pass": true
         },
         "language_equal": true,
@@ -2147,6 +2239,29 @@
           ],
           "pass": true
         },
+        "model_compatible": {
+          "checks": {
+            "nq": true,
+            "nv": true,
+            "nu": true,
+            "njnt": true,
+            "jnt_qposadr": true,
+            "jnt_dofadr": true,
+            "joint_names": true,
+            "joint_types": true,
+            "actuator_names": true,
+            "nbody": true,
+            "body_names": true,
+            "ngeom": true,
+            "geom_names": true,
+            "geom_bodyid": true,
+            "geom_type": true,
+            "geom_size": true,
+            "geom_pos": true,
+            "geom_quat": true
+          },
+          "pass": true
+        },
         "language_equal": true,
         "image_agentview": {
           "shape_match": true,
@@ -2578,6 +2693,29 @@
           ],
           "pass": true
         },
+        "model_compatible": {
+          "checks": {
+            "nq": true,
+            "nv": true,
+            "nu": true,
+            "njnt": true,
+            "jnt_qposadr": true,
+            "jnt_dofadr": true,
+            "joint_names": true,
+            "joint_types": true,
+            "actuator_names": true,
+            "nbody": true,
+            "body_names": true,
+            "ngeom": true,
+            "geom_names": true,
+            "geom_bodyid": true,
+            "geom_type": true,
+            "geom_size": true,
+            "geom_pos": true,
+            "geom_quat": true
+          },
+          "pass": true
+        },
         "language_equal": true,
         "image_agentview": {
           "shape_match": true,
@@ -2596,8 +2734,8 @@
   },
   {
     "domain": "camera",
-    "classification_id": "705",
-    "name": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_view_0_0_100_8_358_initstate_0",
+    "classification_id": "704",
+    "name": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_view_0_0_100_8_356_initstate_0",
     "variant_kind": "virtual_view",
     "base_bddl": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate.bddl",
     "states": [
@@ -2608,7 +2746,7 @@
           0,
           100,
           8,
-          358
+          356
         ],
         "camera_changed": true,
         "non_target_camera_unchanged": true,
@@ -2619,10 +2757,10 @@
             1.6104
           ],
           "quat": [
-            -0.5862,
-            -0.2947,
-            -0.3357,
-            -0.6759
+            -0.5802,
+            -0.3064,
+            -0.3458,
+            -0.6707
           ]
         },
         "state_compare": {
@@ -2699,11 +2837,51 @@
           },
           "all_pass": true
         },
+        "model_compatible": {
+          "checks": {
+            "nq": true,
+            "nv": true,
+            "nu": true,
+            "njnt": true,
+            "jnt_qposadr": true,
+            "jnt_dofadr": true,
+            "joint_names": true,
+            "joint_types": true,
+            "actuator_names": true,
+            "nbody": true,
+            "body_names": true,
+            "ngeom": true,
+            "geom_names": true,
+            "geom_bodyid": true,
+            "geom_type": true,
+            "geom_size": true,
+            "geom_pos": true,
+            "geom_quat": true,
+            "geom_contype": true,
+            "geom_conaffinity": true,
+            "geom_condim": true,
+            "geom_friction": true,
+            "geom_solref": true,
+            "geom_solimp": true,
+            "geom_margin": true,
+            "geom_gap": true,
+            "body_mass": true,
+            "body_inertia": true,
+            "dof_damping": true,
+            "dof_frictionloss": true,
+            "dof_armature": true,
+            "actuator_gainprm": true,
+            "actuator_biasprm": true,
+            "actuator_gear": true,
+            "actuator_ctrlrange": true
+          },
+          "pass": true
+        },
         "language_equal": true,
         "image_agentview": {
           "shape_match": true,
-          "mean_abs_diff": 0.11392507116779003,
-          "changed_fraction": 0.7670440673828125
+          "mean_abs_diff": 0.12746711681091707,
+          "changed_fraction": 0.8394927978515625
         },
         "image_eye_in_hand": {
           "shape_match": true,
@@ -2718,7 +2896,7 @@
           0,
           100,
           8,
-          358
+          356
         ],
         "camera_changed": true,
         "non_target_camera_unchanged": true,
@@ -2729,10 +2907,10 @@
             1.6104
           ],
           "quat": [
-            -0.5862,
-            -0.2947,
-            -0.3357,
-            -0.6759
+            -0.5802,
+            -0.3064,
+            -0.3458,
+            -0.6707
           ]
         },
         "state_compare": {
@@ -2809,11 +2987,51 @@
           },
           "all_pass": true
         },
+        "model_compatible": {
+          "checks": {
+            "nq": true,
+            "nv": true,
+            "nu": true,
+            "njnt": true,
+            "jnt_qposadr": true,
+            "jnt_dofadr": true,
+            "joint_names": true,
+            "joint_types": true,
+            "actuator_names": true,
+            "nbody": true,
+            "body_names": true,
+            "ngeom": true,
+            "geom_names": true,
+            "geom_bodyid": true,
+            "geom_type": true,
+            "geom_size": true,
+            "geom_pos": true,
+            "geom_quat": true,
+            "geom_contype": true,
+            "geom_conaffinity": true,
+            "geom_condim": true,
+            "geom_friction": true,
+            "geom_solref": true,
+            "geom_solimp": true,
+            "geom_margin": true,
+            "geom_gap": true,
+            "body_mass": true,
+            "body_inertia": true,
+            "dof_damping": true,
+            "dof_frictionloss": true,
+            "dof_armature": true,
+            "actuator_gainprm": true,
+            "actuator_biasprm": true,
+            "actuator_gear": true,
+            "actuator_ctrlrange": true
+          },
+          "pass": true
+        },
         "language_equal": true,
         "image_agentview": {
           "shape_match": true,
-          "mean_abs_diff": 0.11450167387918708,
-          "changed_fraction": 0.7736053466796875
+          "mean_abs_diff": 0.12943839278875613,
+          "changed_fraction": 0.8491058349609375
         },
         "image_eye_in_hand": {
           "shape_match": true,

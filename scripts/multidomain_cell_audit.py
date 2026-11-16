@@ -12,7 +12,7 @@ import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT)); sys.path.insert(0, str(ROOT / "repos/CoRP/scripts")); sys.path.insert(0, str(ROOT / "repos/CoRP"))
-from dacsc.state_pairing import camera_compare, compare, digest, snapshot  # noqa: E402
+from dacsc.state_pairing import camera_compare, compare, digest, model_compatible, snapshot  # noqa: E402
 from dacsc.libero_camera import apply_camera, parse_view_name  # noqa: E402
 from dacsc.libero_noise import apply_agentview_noise  # noqa: E402
 
@@ -101,6 +101,9 @@ def main():
                     snap_v = snapshot(variant_env)
                     st["state_compare"] = compare(snap_c, snap_v)
                     st["camera_compare"] = camera_compare(snap_c, snap_v, expect_equal=True)
+                    st["model_compatible"] = model_compatible(
+                        snap_c, snap_v, strict_bodies=True,
+                        strict_geometry=True, strict_physics=False)
                     st["language_equal"] = str(getattr(clean_env, "language_instruction", "")) == str(getattr(variant_env, "language_instruction", ""))
                 elif domain == "sensor":
                     variant_env.seed(0); variant_env.reset()
@@ -110,6 +113,9 @@ def main():
                     st["noise"] = meta
                     st["state_compare"] = compare(snap_c, snap_v)
                     st["camera_compare"] = camera_compare(snap_c, snap_v, expect_equal=True)
+                    st["model_compatible"] = model_compatible(
+                        snap_c, snap_v, strict_bodies=True,
+                        strict_geometry=True, strict_physics=False)
                     st["language_equal"] = str(getattr(clean_env, "language_instruction", "")) == str(getattr(variant_env, "language_instruction", ""))
                 else:  # camera
                     cfg = parse_view_name(v["name"])
@@ -127,6 +133,9 @@ def main():
                     st["camera_pos_quat"] = {"pos": cam_pos, "quat": cam_quat}
                     st["state_compare"] = compare(snap_c, snap_v)
                     st["state_compare"]["checks"].pop("camera_names", None)
+                    st["model_compatible"] = model_compatible(
+                        snap_c, snap_v, strict_bodies=True,
+                        strict_geometry=True, strict_physics=True)
                     st["language_equal"] = True
                 for view, key in OBS_KEYS.items():
                     if key in clean_obs and key in var_obs:

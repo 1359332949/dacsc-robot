@@ -109,9 +109,9 @@
         ],
         "camera": [
           {
-            "classification_id": 705,
-            "name": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_view_0_0_100_8_358_initstate_0",
-            "composite_key": "libero_spatial:705:pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_view_0_0_100_8_358_initstate_0",
+            "classification_id": 704,
+            "name": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_view_0_0_100_8_356_initstate_0",
+            "composite_key": "libero_spatial:704:pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_view_0_0_100_8_356_initstate_0",
             "category": "Camera Viewpoints",
             "difficulty": 1,
             "role": "heldout_unseen_category",
@@ -119,7 +119,7 @@
             "base_bddl_exists": true,
             "base_init": "/hy-tmp/libero_plus/libero/libero/init_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate.pruned_init",
             "base_init_exists": true,
-            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_view_0_0_100_8_358_initstate_0.bddl",
+            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_view_0_0_100_8_356_initstate_0.bddl",
             "variant_kind": "virtual_view",
             "actual_bddl_exists": false,
             "note": "Camera _view_ BDDL is virtual; env derives base BDDL"
@@ -206,7 +206,7 @@
       "selection_rule": {
         "background": "max_parameter_separation",
         "lighting": "max_parameter_separation",
-        "sensor": "max_parameter_separation",
+        "sensor": "all_available",
         "camera": "max_parameter_separation"
       }
     },
@@ -285,9 +285,9 @@
         ],
         "sensor": [
           {
-            "classification_id": 1397,
-            "name": "pick_up_the_alphabet_soup_and_place_it_in_the_basket_view_0_0_100_0_0_initstate_0_noise_2",
-            "composite_key": "libero_object:1397:pick_up_the_alphabet_soup_and_place_it_in_the_basket_view_0_0_100_0_0_initstate_0_noise_2",
+            "classification_id": 1400,
+            "name": "pick_up_the_alphabet_soup_and_place_it_in_the_basket_view_0_0_100_0_0_initstate_0_noise_5",
+            "composite_key": "libero_object:1400:pick_up_the_alphabet_soup_and_place_it_in_the_basket_view_0_0_100_0_0_initstate_0_noise_5",
             "category": "Sensor Noise",
             "difficulty": 2,
             "role": "heldout_unseen_category",
@@ -295,7 +295,7 @@
             "base_bddl_exists": true,
             "base_init": "/hy-tmp/libero_plus/libero/libero/init_files/libero_object/pick_up_the_alphabet_soup_and_place_it_in_the_basket.pruned_init",
             "base_init_exists": true,
-            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_object/pick_up_the_alphabet_soup_and_place_it_in_the_basket_view_0_0_100_0_0_initstate_0_noise_2.bddl",
+            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_object/pick_up_the_alphabet_soup_and_place_it_in_the_basket_view_0_0_100_0_0_initstate_0_noise_5.bddl",
             "variant_kind": "virtual_noise",
             "actual_bddl_exists": false,
             "note": "sensor noise is applied in ControlEnv.step; raw sim.render bypasses it"
@@ -416,7 +416,7 @@
       "selection_rule": {
         "background": "max_parameter_separation",
         "lighting": "max_parameter_separation",
-        "sensor": "max_parameter_separation",
+        "sensor": "all_available",
         "camera": "max_parameter_separation"
       }
     },
@@ -495,9 +495,9 @@
         ],
         "sensor": [
           {
-            "classification_id": 1509,
-            "name": "open_the_middle_drawer_of_the_cabinet_view_0_0_100_0_0_initstate_0_noise_1",
-            "composite_key": "libero_goal:1509:open_the_middle_drawer_of_the_cabinet_view_0_0_100_0_0_initstate_0_noise_1",
+            "classification_id": 1513,
+            "name": "open_the_middle_drawer_of_the_cabinet_view_0_0_100_0_0_initstate_0_noise_5",
+            "composite_key": "libero_goal:1513:open_the_middle_drawer_of_the_cabinet_view_0_0_100_0_0_initstate_0_noise_5",
             "category": "Sensor Noise",
             "difficulty": 2,
             "role": "heldout_unseen_category",
@@ -505,7 +505,7 @@
             "base_bddl_exists": true,
             "base_init": "/hy-tmp/libero_plus/libero/libero/init_files/libero_goal/open_the_middle_drawer_of_the_cabinet.pruned_init",
             "base_init_exists": true,
-            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_goal/open_the_middle_drawer_of_the_cabinet_view_0_0_100_0_0_initstate_0_noise_1.bddl",
+            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_goal/open_the_middle_drawer_of_the_cabinet_view_0_0_100_0_0_initstate_0_noise_5.bddl",
             "variant_kind": "virtual_noise",
             "actual_bddl_exists": false,
             "note": "sensor noise is applied in ControlEnv.step; raw sim.render bypasses it"
@@ -626,7 +626,7 @@
       "selection_rule": {
         "background": "max_parameter_separation",
         "lighting": "max_parameter_separation",
-        "sensor": "max_parameter_separation",
+        "sensor": "all_available",
         "camera": "max_parameter_separation"
       }
     },
@@ -705,17 +705,17 @@
         ],
         "sensor": [
           {
-            "classification_id": 1566,
-            "name": "KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it_view_0_0_100_0_0_initstate_0_noise_1",
-            "composite_key": "libero_10:1566:KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it_view_0_0_100_0_0_initstate_0_noise_1",
+            "classification_id": 1570,
+            "name": "KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it_view_0_0_100_0_0_initstate_0_noise_5",
+            "composite_key": "libero_10:1570:KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it_view_0_0_100_0_0_initstate_0_noise_5",
             "category": "Sensor Noise",
-            "difficulty": 2,
+            "difficulty": 4,
             "role": "heldout_unseen_category",
             "base_bddl": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_10/KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it.bddl",
             "base_bddl_exists": true,
             "base_init": "/hy-tmp/libero_plus/libero/libero/init_files/libero_10/KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it.pruned_init",
             "base_init_exists": true,
-            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_10/KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it_view_0_0_100_0_0_initstate_0_noise_1.bddl",
+            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_10/KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it_view_0_0_100_0_0_initstate_0_noise_5.bddl",
             "variant_kind": "virtual_noise",
             "actual_bddl_exists": false,
             "note": "sensor noise is applied in ControlEnv.step; raw sim.render bypasses it"
@@ -836,7 +836,7 @@
       "selection_rule": {
         "background": "max_parameter_separation",
         "lighting": "max_parameter_separation",
-        "sensor": "max_parameter_separation",
+        "sensor": "all_available",
         "camera": "max_parameter_separation"
       }
     }

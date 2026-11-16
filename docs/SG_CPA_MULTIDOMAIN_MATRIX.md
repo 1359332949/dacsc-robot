@@ -39,8 +39,9 @@
 - 共 **32 个 Clean/Shift 配对单元**
 - 每单元状态划分：seed=1234，30 dev / 20 held-out
 - 实际 `dev_indices` / `heldout_indices`、init 文件 SHA256 已写入矩阵 JSON。
-- 变体选择规则：`max_parameter_separation`，不再按 ID 取前两个。
+- 变体选择：Sensor 固定为 motion-blur 5/10；Camera 排除已用于历史 Camera pilot 的 705；其余仍为 provisional，Background/Lighting 的参数编号不代表真实视觉距离，正式冻结前需人工确认。
 - 复合键：`suite:classification_id:variant_name`，classification id 不单独当全局键。
+- 状态划分的 `seed`、`dev_indices`、`heldout_indices`、init 文件 SHA256 已写入 JSON。
 
 角色：
 
@@ -95,11 +96,26 @@ held-out task 的状态永远不能用于调参，即使它同时属于 dev_doma
 | Background | 146 | ✅ | ✅ | 0.206–0.207 | 0.286 | 两视角都变 |
 | Lighting | 2292 | ✅ | ✅ | 0.073 | 0.051 | 两视角都变 |
 | Sensor | 1476 | ✅ | ✅ | 0.028–0.030 | 0.000 | motion_blur(5)，只污染 agentview |
-| Camera | 705 | ✅ | ✅ | 0.114 | 0.000 | agentview 相机参数变，非目标相机不变 |
+| Camera | 704 | ✅ | ✅ | 0.127–0.129 | 0.000 | agentview 相机参数变，非目标相机不变 |
+
+四个 cell 的 `model_compatible` 均为 True（严格 body/geometry；Camera/Sensor 同时 strict physics）。
 
 结论：
 
 > 四个域的数据构造路径已打通；可以进入 Phase-A 退化筛查，但仍不能批量采集 32 个单元。
+
+### 5.1 E0 清理
+
+- Camera 705 已从矩阵排除，标记为历史 Camera slice；
+- Sensor 固定为 motion_blur 5/10，只污染 agentview；
+- Noise helper 修复 `noise=0` 和全局 RNG 状态恢复；
+- 状态审计增加 `model_compatible` 检查；
+- Background/Lighting 变体选择仍标记 provisional，正式采集前需要人工按实际视觉差异复核。
+
+### 5.2 E1 Frozen 退化筛查
+
+E1 正在运行：4 tasks × (1 Clean + 8 Shift) × 10 episodes = 360 episodes。  
+`batch` 不是确认实验；E1 只用于筛选哪些域/变体值得进入 Phase B。
 
 ## 6. 阶段顺序（已修正）
 

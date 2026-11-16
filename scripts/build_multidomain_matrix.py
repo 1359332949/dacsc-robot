@@ -92,14 +92,18 @@ def main():
                     canonical_base_name(str(e.get("name", ""))) == base]
             cand = sorted(cand, key=lambda e: int(e.get("id", 0)))
             if domain == "sensor":
-                motion = []
+                # Frozen first-round protocol: motion-blur levels 5 and 10.
+                import re
+                by_level = {}
                 for e in cand:
-                    import re
                     m = re.search(r"_noise_(\d+)", str(e.get("name", "")))
-                    if m and int(m.group(1)) <= 10:
-                        motion.append(e)
-                if len(motion) >= 2:
-                    cand = motion
+                    if m:
+                        by_level[int(m.group(1))] = e
+                cand = [by_level[x] for x in (5, 10) if x in by_level]
+            if domain == "camera":
+                # Camera 705 was used in the earlier Camera pilot; do not treat it
+                # as an independent held-out camera variant.
+                cand = [e for e in cand if int(e.get("id", -1)) != 705]
             chosen = []
             picked, selection_rule = select_variants(domain, cand)
             for i, e in enumerate(picked):
