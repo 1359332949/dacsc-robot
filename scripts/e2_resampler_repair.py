@@ -152,9 +152,10 @@ def main():
         deltas.append((vs - vc).reshape(-1).float().detach().cpu().numpy())
     D = np.stack(deltas, 0)
     delta_mean = D.mean(axis=0)
-    _, sv, vt = np.linalg.svd(D.astype(np.float64), full_matrices=False)
+    Dc = D - delta_mean
+    _, sv, vt = np.linalg.svd(Dc.astype(np.float64), full_matrices=False)
     r = min(args.rank, vt.shape[0])
-    U = vt[:r].T  # [D, r]
+    U = vt[:r].T  # centered residual directions [D, r]
     rng = np.random.RandomState(args.seed)
     randoms = []
     for seed in range(3):
@@ -180,22 +181,30 @@ def main():
             a_s = sample_with_z0(policy.action_generator, rep_s, z0)
             base.append((a_c, a_s))
         delta = (vs - vc).reshape(-1).detach().cpu().numpy()
-        candidates = {
-            "frozen": rep_s,
-            "clean": rep_c,
-            "mean": repr_from_visual(policy, vs - torch.as_tensor(delta_mean.reshape(vs.shape),
-                                                                   device=vs.device, dtype=vs.dtype), lang, pooled, state8),
-        }
+        candidates = {"frozen": rep_s, "clean": rep_c}
         for alpha in args.alphas:
-            proj = U @ (U.T @ delta)
-            low = vs - alpha * torch.as_tensor(proj.reshape(vs.shape), device=vs.device, dtype=vs.dtype)
-            rev = vs + alpha * torch.as_tensor(proj.reshape(vs.shape), device=vs.device, dtype=vs.dtype)
-            candidates[f"lowrank_a{alpha}"] = repr_from_visual(policy, low, lang, pooled, state8)
-            candidates[f"reverse_a{alpha}"] = repr_from_visual(policy, rev, lang, pooled, state8)
+            # 1) mean-only correction
+            v_mean = vs - alpha * torch.as_tensor(delta_mean.reshape(vs.shape),
+                                                  device=vs.device, dtype=vs.dtype)
+            candidates[f"mean_a{alpha}"] = repr_from_visual(policy, v_mean, lang, pooled, state8)
+            # 2) centered residual low-rank
+            d = delta - delta_mean
+            proj = U @ (U.T @ d)
+            proj_t = torch.as_tensor(proj.reshape(vs.shape), device=vs.device, dtype=vs.dtype)
+            candidates[f"lowrank_a{alpha}"] = repr_from_visual(policy, vs - alpha * proj_t, lang, pooled, state8)
+            candidates[f"reverse_a{alpha}"] = repr_from_visual(policy, vs + alpha * proj_t, lang, pooled, state8)
+            # 3) mean + centered low-rank
+            v_both = vs - alpha * torch.as_tensor(delta_mean.reshape(vs.shape), device=vs.device, dtype=vs.dtype) - alpha * proj_t
+            candidates[f"mean_lowrank_a{alpha}"] = repr_from_visual(policy, v_both, lang, pooled, state8)
+            # 4) norm-matched random directions, several seeds
+            ref_norm = float(np.linalg.norm(proj) + 1e-12)
             for si, Q in enumerate(randoms):
-                rp = Q @ (Q.T @ delta)
-                vr = vs - alpha * torch.as_tensor(rp.reshape(vs.shape), device=vs.device, dtype=vs.dtype)
-                candidates[f"random{si}_a{alpha}"] = repr_from_visual(policy, vr, lang, pooled, state8)
+                rp = Q @ (Q.T @ d)
+                rn = float(np.linalg.norm(rp))
+                if rn > 1e-12:
+                    rp = rp * (ref_norm / rn)
+                rp_t = torch.as_tensor(rp.reshape(vs.shape), device=vs.device, dtype=vs.dtype)
+                candidates[f"random{si}_a{alpha}"] = repr_from_visual(policy, vs - alpha * rp_t, lang, pooled, state8)
         rec = {"state": state, "split": "eval", "candidates": {}}
         for name, rep in candidates.items():
             vals = []
