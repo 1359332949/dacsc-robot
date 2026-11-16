@@ -131,17 +131,21 @@ class TestTargetOnlyMeanEstimator(unittest.TestCase):
 
     def test_confidence_gate_makes_clean_like_residual_identity(self):
         contexts = np.array([
-            [0.0, 0.0], [0.1, 0.0], [0.0, 0.1], [0.1, 0.1],
-            [0.2, 0.0], [0.0, 0.2], [0.2, 0.2], [0.15, 0.05],
+            [0.0, 0.1, 0.2, 0.3], [0.1, 0.1, 0.2, 0.3],
+            [0.0, 0.2, 0.2, 0.3], [0.1, 0.2, 0.2, 0.3],
+            [0.2, 0.1, 0.3, 0.4], [0.0, 0.3, 0.3, 0.4],
+            [0.2, 0.3, 0.3, 0.4], [0.15, 0.25, 0.3, 0.4],
         ])
         residuals = np.array([
-            [0.1, 0.0], [-0.1, 0.0], [0.0, 0.1], [0.0, -0.1],
-            [0.05, 0.05], [-0.05, -0.05], [0.08, -0.02], [-0.08, 0.02],
+            [0.1, 0.0, 0.0], [-0.1, 0.0, 0.0],
+            [0.0, 0.1, 0.0], [0.0, -0.1, 0.0],
+            [0.05, 0.05, 0.0], [-0.05, -0.05, 0.0],
+            [0.08, -0.02, 0.0], [-0.08, 0.02, 0.0],
         ])
         gate = SourceResidualConfidenceGate.fit(contexts, residuals)
         source = torch.tensor(self.base.predict(self.context), dtype=torch.float32)
         est = TargetOnlyMeanEstimator(self.base, confidence_gate=gate)
-        est.update(source + torch.tensor([[0.02, -0.01, 0.0]]), np.array([[0.05, 0.05]]))
+        est.update(source + torch.tensor([[0.02, -0.01, 0.0]]), self.context)
         self.assertTrue(torch.equal(est.applied_correction(), torch.zeros(1, 3)))
 
     def test_rejects_batch_size_change_without_reset(self):
