@@ -6,11 +6,12 @@ All methods using eval Vc are Oracle; paired-fit mean uses fit Clean/Shift pairs
 """
 
 from __future__ import annotations
-import argparse, hashlib, json, sys
+import argparse, hashlib, json, os, platform, subprocess, sys
 from pathlib import Path
 
 import numpy as np
 import torch
+from scipy.spatial.transform import Rotation
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT)); sys.path.insert(0, str(ROOT / "repos/CoRP")); sys.path.insert(0, str(ROOT / "repos/CoRP/scripts"))
@@ -33,6 +34,7 @@ def sample_with_z0(generator, representation, z0, steps=None):
     return action
 
 
+@torch.no_grad()
 def build_visual(policy, patches, instruction):
     ext = policy.representation_extractor
     device = next(policy.parameters()).device
@@ -52,13 +54,29 @@ def build_repr(policy, visual, lang, pooled, state8):
     return Representation(tokens=tokens, pooled_language=pooled, action_dtype=visual.dtype)
 
 
+def _rot_geodesic(a, b):
+    """Mean geodesic angle (radians) between two [N,H,3] rotvec chunks."""
+    aa = a.detach().cpu().numpy().reshape(-1, 3)
+    bb = b.detach().cpu().numpy().reshape(-1, 3)
+    ra = Rotation.from_rotvec(aa)
+    rb = Rotation.from_rotvec(bb)
+    ang = (ra.inv() * rb).magnitude()
+    return float(np.mean(ang))
+
+
 def dist(a, b, normalizer, prefix=6):
     def un(x): return normalizer.unnormalize_action(x)
     x, y = un(a), un(b)
+    scale = (normalizer.action_max - normalizer.action_min).to(x.device).clamp_min(1e-6)
     def one(m):
-        z = (x[:, :m] - y[:, :m]).abs()
-        return {"xyz": float(z[..., :3].mean()), "rot": float(z[..., 3:6].mean()),
-                "gripper": float(z[..., 6].mean()), "all": float(z.mean())}
+        dx = x[:, :m] - y[:, :m]
+        norm = (dx.abs() / scale).mean()
+        return {
+            "xyz_mae": float(dx[..., :3].abs().mean()),
+            "rot_geo_rad": _rot_geodesic(x[:, :m, 3:6], y[:, :m, 3:6]),
+            "gripper_mae": float(dx[..., 6].abs().mean()),
+            "normalized_mae": float(norm),
+        }
     return {"full": one(x.shape[1]), f"prefix{prefix}": one(min(prefix, x.shape[1]))}
 
 
@@ -91,20 +109,43 @@ def main():
     args.out.mkdir(parents=True, exist_ok=True)
     manifest = json.loads((args.dir / "manifest.json").read_text())
     z = np.load(args.dir / "features.npz")
+    # Fail-closed input/provenance checks.
+    actual_feat = sha(args.dir / "features.npz")
+    if manifest.get("features_sha256") and actual_feat != manifest["features_sha256"]:
+        raise SystemExit("features.npz SHA mismatch with capture manifest")
+    ck = sha(args.checkpoint)
+    if manifest.get("checkpoint_sha256") and ck != manifest["checkpoint_sha256"]:
+        raise SystemExit("checkpoint SHA mismatch with capture manifest")
+    cfg = args.checkpoint.parent / "config.json"
+    if manifest.get("corp_config_sha256") and cfg.is_file() and sha(cfg) != manifest["corp_config_sha256"]:
+        raise SystemExit("checkpoint config SHA mismatch with capture manifest")
+    if manifest.get("clean_bddl_sha256") and sha(args.clean_bddl) != manifest["clean_bddl_sha256"]:
+        raise SystemExit("clean BDDL SHA mismatch with capture manifest")
+    if manifest.get("clean_init_sha256") and sha(args.clean_init_file) != manifest["clean_init_sha256"]:
+        raise SystemExit("clean init SHA mismatch with capture manifest")
+    if manifest.get("clean_language") and args.clean_language != manifest["clean_language"]:
+        raise SystemExit("clean language mismatch with capture manifest")
     rows = [r for r in manifest["records"] if r.get("compare_pass") and r.get("feature_row") is not None]
     if not rows:
         raise SystemExit("no valid feature rows")
     # Hard validation of feature_row / state8 alignment.
-    seen = set()
+    seen = set(); state_ids = []
     for r in rows:
+        sid = int(r["index"])
+        if sid in state_ids: raise SystemExit(f"duplicate state index {sid}")
+        state_ids.append(sid)
         row = int(r["feature_row"])
         if row in seen: raise SystemExit(f"duplicate feature_row {row}")
         seen.add(row)
         for v in manifest["policy_views"]:
             if row >= z[f"clean_{v}"].shape[0] or row >= z[f"shift_{v}"].shape[0]:
                 raise SystemExit(f"feature_row {row} out of range")
-    if "state8" not in z or z["state8"].shape[0] != z[f"clean_{manifest['policy_views'][0]}"].shape[0]:
+    nrows = z[f"clean_{manifest['policy_views'][0]}"].shape[0]
+    if "state8" not in z or z["state8"].shape[0] != nrows:
         raise SystemExit("state8 missing or row count mismatch")
+    for v in manifest["policy_views"]:
+        if z[f"clean_{v}"].shape[0] != nrows or z[f"shift_{v}"].shape[0] != nrows:
+            raise SystemExit(f"feature row count mismatch for view {v}")
     by_state = {int(r["index"]): int(r["feature_row"]) for r in rows}
     dev = [i for i in manifest["dev_indices"] if i in by_state]
     remaining = dev[10:]
@@ -137,6 +178,14 @@ def main():
            "fit_ids": fit_ids, "eval_ids": eval_ids, "ranks": ranks,
            "singular_values": sv[:max(ranks)].tolist(),
            "alphas": args.alphas, "z0_count": args.z0_count,
+           "seed": args.seed, "split_seed": args.split_seed,
+           "random_seeds": args.random_seeds, "prefix_note": "full chunk is official E1 path; prefix6 is diagnostic only",
+           "args": {k: (str(v) if isinstance(v, Path) else v) for k, v in vars(args).items()},
+           "versions": {"python": sys.version, "platform": platform.platform(),
+                        "torch": torch.__version__, "numpy": np.__version__,
+                        "mujoco": getattr(__import__("mujoco"), "__version__", None)},
+           "git_rev": subprocess.check_output(["git", "-C", str(ROOT), "rev-parse", "HEAD"],
+                                              stderr=subprocess.DEVNULL, text=True).strip() if (ROOT / ".git").exists() else None,
            "information_budget": {
                "paired_fit_mean": "fit Clean/Shift pairs only; no eval Vc",
                "centered_lowrank": "fit U + eval Vc",
@@ -156,10 +205,15 @@ def main():
                            policy.action_generator.action_dim, device=dev,
                            dtype=rep_c.action_dtype) for _ in range(args.z0_count)]
         base = []
+        clean_samples = []
         for z0 in z0s:
             ac = sample_with_z0(policy.action_generator, rep_c, z0)
             as_ = sample_with_z0(policy.action_generator, rep_s, z0)
-            base.append((ac, as_))
+            base.append((ac, as_)); clean_samples.append(ac)
+        # Sampling noise floor: same clean representation, different z0.
+        noise_pairs = [(clean_samples[i], clean_samples[j])
+                       for i in range(len(clean_samples)) for j in range(i + 1, len(clean_samples))]
+        noise = avg_metric([dist(a, b, policy.normalizer) for a, b in noise_pairs]) if noise_pairs else None
         delta = (vs - vc).reshape(-1).detach().cpu().numpy().astype(np.float64)
         cands = {"frozen": rep_s, "full_clean": rep_c}
         for alpha in args.alphas:
@@ -184,10 +238,17 @@ def main():
                 for si in range(args.random_seeds):
                     q = rng2.normal(size=d.shape[0])
                     rp = q / (np.linalg.norm(q) + 1e-12) * ref
-                    cands[f"random_lowrank_r{r}_{si}_a{alpha}"] = build_repr(
+                    cands[f"random_vector_r{r}_{si}_a{alpha}"] = build_repr(
                         policy, vs - alpha * torch.as_tensor(rp.reshape(vs.shape), device=vs.device, dtype=vs.dtype),
                         lang, pooled, state8)
-        rec = {"state": state, "candidates": {}}
+                    Qr, _ = np.linalg.qr(rng2.normal(size=(d.shape[0], r)))
+                    rs = Qr @ (Qr.T @ d)
+                    rn = np.linalg.norm(rs)
+                    if rn > 1e-12: rs = rs * (ref / rn)
+                    cands[f"random_subspace_r{r}_{si}_a{alpha}"] = build_repr(
+                        policy, vs - alpha * torch.as_tensor(rs.reshape(vs.shape), device=vs.device, dtype=vs.dtype),
+                        lang, pooled, state8)
+        rec = {"state": state, "sampling_noise": noise, "candidates": {}}
         for name, rep in cands.items():
             vals = []
             for z0, (ac, as_) in zip(z0s, base):
@@ -197,6 +258,20 @@ def main():
         out["per_state"].append(rec)
     for name in out["per_state"][0]["candidates"]:
         out["aggregates"][name] = avg_metric([r["candidates"][name] for r in out["per_state"]])
+    noises = [r["sampling_noise"] for r in out["per_state"] if r.get("sampling_noise")]
+    out["sampling_noise"] = avg_metric(noises) if noises else None
+    # Per-state paired deltas for the only fair comparison: mean vs mean+lowrank.
+    def diff_for(a_name, b_name, field="normalized_mae"):
+        ds = [r["candidates"][a_name]["full"][field] - r["candidates"][b_name]["full"][field]
+              for r in out["per_state"] if a_name in r["candidates"] and b_name in r["candidates"]]
+        if not ds: return None
+        rs = np.random.RandomState(args.seed)
+        boot = [np.mean(rs.choice(ds, len(ds), replace=True)) for _ in range(5000)]
+        return {"n": len(ds), "mean": float(np.mean(ds)),
+                "ci95": [float(np.percentile(boot, 2.5)), float(np.percentile(boot, 97.5))],
+                "per_state": ds}
+    out["paired_deltas"] = {
+        "mean_minus_mean_lowrank_r8": diff_for("paired_fit_mean_a1.0", "mean_lowrank_r8_a1.0")}
     (args.out / "e2_resampler_repair_v2.json").write_text(json.dumps(out, indent=2))
     print(json.dumps({"fit": fit_ids, "eval": eval_ids, "ranks": ranks}, indent=2))
 
