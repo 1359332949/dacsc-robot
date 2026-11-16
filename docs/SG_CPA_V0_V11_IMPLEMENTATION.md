@@ -13,7 +13,7 @@
 | `tests/test_visual_gate.py` | gate identity/scale/异常 view 单测 |
 | `tests/test_state_pairing.py` | snapshot 比较、digest、camera 单测 |
 
-## 2. V1.1 hardening v5（针对 530793a 复审）
+## 2. V1.1 hardening v6（Preflight A 冻结）
 
 已修复：
 
@@ -82,7 +82,25 @@
 
 > 这是接口验收，不是方法有效性结论。
 
-## 3. V1.1 使用方式（需 GPU/LIBERO 环境）
+## 3. Preflight A（只读，不建环境）
+
+```bash
+python scripts/v11_state_pair_audit.py --preflight-only \
+  --clean-source vanilla --clean-suite libero_spatial \
+  --clean-task-name pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate \
+  --clean-bddl /path/to/vanilla/bddl_files/libero_spatial/<name>.bddl \
+  --clean-language "pick up the black bowl on the cookie box and place it on the plate" \
+  --clean-init-file /path/to/vanilla/init_files/libero_spatial/<name>.pruned_init \
+  --vanilla-src /path/to/vanilla \
+  --shift-suite libero_spatial --shift-task 705 --shift-kind camera \
+  --task-map /path/to/libero_suite_task_map.py \
+  --task-classification /path/to/task_classification.json \
+  --target-cameras agentview --init-index 0 --out /hy-tmp/validation/v11_preflight_a
+```
+
+`--preflight-only` 只做身份/文件/prompt 检查，不创建 `OffScreenRenderEnv`、不 reset、不 render；通过后退出 0，并写 manifest。
+
+## 3.1 V1.1 使用方式（需 GPU/LIBERO 环境）
 
 旧命令 `--clean-task 0 --shift-task 705` 已废弃：Plus task 0 与 705 不是同一基础任务。  
 当前必须提供 task map、classification 和显式 Clean 来源。示例（路径按服务器 revision 替换）：
@@ -204,6 +222,7 @@ python scripts/v11_state_pair_audit.py   --clean-source vanilla   --clean-suite 
 - `test_state_pairing.py`：15 tests passed（含 strict geometry/physics）；
 - `test_task_pairing.py`：10 tests passed；
 - `test_pairing_checks.py`：3 tests passed（Clean 文件身份 + prompt 源锚定）；
+- 新增 `--preflight-only` 与 `--vanilla-src`；source binding 检查 task map/classification/vanilla 文件是否在指定 checkout 下；Camera 模式严格要求 target cameras。
 - 覆盖 identity no-op、错误 view/dim、suppression bound、缺失字段、单侧空 act、四元数、NaN camera、shape mismatch、EEF 缺失、model mismatch。
 
 ## 9. 仍未闭合的 P1

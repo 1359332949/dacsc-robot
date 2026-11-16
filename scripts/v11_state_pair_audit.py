@@ -34,6 +34,14 @@ def git_rev(path: Path) -> str | None:
         return None
 
 
+def under_root(path: Path, root: Path) -> bool:
+    try:
+        path.resolve().relative_to(root.resolve())
+        return True
+    except Exception:
+        return False
+
+
 def to_hwc(arr) -> tuple[np.ndarray, dict]:
     raw = np.asarray(arr)
     meta = {"raw_dtype": str(raw.dtype), "raw_shape": list(raw.shape),
@@ -121,6 +129,12 @@ def main():
     ap.add_argument("--libero-config", type=Path, default=Path("/hy-tmp/libero_plus_config"))
     ap.add_argument("--device", default="cuda:0")
     ap.add_argument("--render-gpu", type=int, default=0)
+    ap.add_argument("--preflight-only", action="store_true",
+                    help="read-only identity checks; do not create environments")
+    ap.add_argument("--vanilla-src", type=Path, default=None,
+                    help="optional vanilla LIBERO checkout root for Clean source binding")
+    ap.add_argument("--allow-external-task-files", action="store_true",
+                    help="allow task-map/classification outside --libero-src")
     ap.add_argument("--out", type=Path, default=Path("/hy-tmp/validation/v11_pair_audit"))
     ap.add_argument("--diff-threshold", type=float, default=0.002)
     ap.add_argument("--changed-threshold", type=float, default=0.01)
@@ -186,11 +200,19 @@ def main():
         record["settling_steps"] = int(_SETTLING_STEPS)
         configure_libero(c)
         from libero.libero import benchmark, get_libero_path
-        from libero.libero.envs import OffScreenRenderEnv
         tc_data = json.loads(args.task_classification.read_text())
         record["task_classification"] = {
             "path": str(args.task_classification), "sha256": sha256_file(args.task_classification)}
         task_map = load_task_map(args.task_map)
+        source_binding = {
+            "libero_src": str(args.libero_src),
+            "task_map_under_libero_src": under_root(args.task_map, args.libero_src),
+            "classification_under_libero_src": under_root(args.task_classification, args.libero_src),
+        }
+        record["source_binding"] = source_binding
+        if not args.allow_external_task_files and not all(source_binding.values()):
+            record["audit"] = {"pass": False, "reason": "task_files_outside_libero_src"}
+            raise SystemExit(2)
         record["task_map"] = {"path": str(args.task_map), "sha256": sha256_file(args.task_map),
                               "n_suites": len(task_map)}
         clean_map_name, clean_map_base = (
@@ -204,8 +226,10 @@ def main():
             record["audit"] = {"pass": False, "reason": "task_map_base_mismatch"}
             raise SystemExit(2)
         if args.clean_source == "vanilla" and not all(
-                [args.clean_task_name, args.clean_bddl, args.clean_language, args.clean_init_file]):
-            record["audit"] = {"pass": False, "reason": "vanilla_clean_requires_name_bddl_language_init"}
+                [args.clean_task_name, args.clean_bddl, args.clean_language, args.clean_init_file,
+                 args.vanilla_src]):
+            record["audit"] = {"pass": False,
+                               "reason": "vanilla_clean_requires_name_bddl_language_init_vanilla_src"}
             raise SystemExit(2)
         expected_categories = {
             "camera": {"camera viewpoints"},
@@ -278,6 +302,15 @@ def main():
                 raise FileNotFoundError(clean_bddl)
             if not clean_init_path.is_file():
                 raise FileNotFoundError(clean_init_path)
+            if args.vanilla_src is not None:
+                vb = under_root(clean_bddl, args.vanilla_src)
+                vi = under_root(clean_init_path, args.vanilla_src)
+                record["vanilla_source_binding"] = {
+                    "vanilla_src": str(args.vanilla_src),
+                    "bddl_under_vanilla_src": vb, "init_under_vanilla_src": vi}
+                if not (vb and vi):
+                    record["audit"] = {"pass": False, "reason": "clean_files_outside_vanilla_src"}
+                    raise SystemExit(2)
         shift_bddl = Path(get_libero_path("bddl_files")) / shift_task.problem_folder / shift_task.bddl_file
         record["clean"].update({"bddl_input": str(args.clean_bddl) if args.clean_bddl else None,
                                 "bddl": str(clean_bddl), "bddl_sha256": sha256_file(clean_bddl),
@@ -307,6 +340,10 @@ def main():
         if not all(consistency.values()):
             record["audit"] = {"pass": False, "reason": "identity_consistency_failed"}
             raise SystemExit(2)
+        if args.preflight_only:
+            record["audit"] = {"pass": True, "reason": "preflight_only_ok"}
+            record["preflight_only"] = True
+            raise SystemExit(0)
         if not pairing["pass"]:
             record["audit"] = {"pass": False, "reason": "task_identity_mismatch"}
             raise SystemExit(2)
@@ -316,6 +353,7 @@ def main():
         if not (0 <= args.init_index < n_init):
             record["audit"] = {"pass": False, "reason": "init_index_out_of_range"}
             raise SystemExit(2)
+        from libero.libero.envs import OffScreenRenderEnv
         env_c = OffScreenRenderEnv(bddl_file_name=str(clean_bddl), camera_heights=256,
                                    camera_widths=256, render_gpu_device_id=args.render_gpu)
         try:
