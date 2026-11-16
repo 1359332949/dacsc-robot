@@ -25,10 +25,10 @@ BASE_TASKS = [
     ("libero_10", "KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it", "heldout_task"),
 ]
 ROLE = {
-    "background": ("dev_domain", "heldout_same_domain"),
-    "lighting": ("dev_domain", "heldout_same_domain"),
-    "sensor": ("heldout_unseen_category", "heldout_unseen_category"),
-    "camera": ("heldout_unseen_category", "heldout_unseen_category"),
+    "background": ("dev_domain_variant", "heldout_same_domain_variant"),
+    "lighting": ("dev_domain_variant", "heldout_same_domain_variant"),
+    "sensor": ("dev_same_mechanism_severity", "heldout_same_mechanism_severity"),
+    "camera": ("dev_camera_variant", "heldout_camera_variant"),
 }
 
 

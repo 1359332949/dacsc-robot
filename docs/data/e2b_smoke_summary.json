@@ -1,0 +1,111 @@
+{
+  "conditions": [
+    {
+      "suite": "libero_object",
+      "domain": "lighting",
+      "classification_id": 2222,
+      "states": [
+        3,
+        5
+      ],
+      "records": 20,
+      "success": {
+        "clean": 0,
+        "shift": 0
+      },
+      "phase_counts": {
+        "align_release": 4,
+        "approach": 8,
+        "contact": 4,
+        "transport": 4
+      },
+      "agentview_diff_mean": 53.8244270324707
+    },
+    {
+      "suite": "libero_object",
+      "domain": "background",
+      "classification_id": 1,
+      "states": [
+        3,
+        5
+      ],
+      "records": 20,
+      "success": {
+        "clean": 0,
+        "shift": 0
+      },
+      "phase_counts": {
+        "align_release": 4,
+        "approach": 8,
+        "contact": 4,
+        "transport": 4
+      },
+      "agentview_diff_mean": 0.03376007080078125
+    },
+    {
+      "suite": "libero_spatial",
+      "domain": "camera",
+      "classification_id": 735,
+      "states": [
+        3,
+        5
+      ],
+      "records": 20,
+      "success": {
+        "clean": 0,
+        "shift": 0
+      },
+      "phase_counts": {
+        "align_release": 4,
+        "approach": 8,
+        "contact": 4,
+        "transport": 4
+      },
+      "agentview_diff_mean": 41.10193939208985
+    },
+    {
+      "suite": "libero_spatial",
+      "domain": "sensor",
+      "classification_id": 1481,
+      "states": [
+        3,
+        5
+      ],
+      "records": 20,
+      "success": {
+        "clean": 0,
+        "shift": 0
+      },
+      "phase_counts": {
+        "align_release": 4,
+        "approach": 8,
+        "contact": 4,
+        "transport": 4
+      },
+      "agentview_diff_mean": 13.806593577067057
+    },
+    {
+      "suite": "libero_spatial",
+      "domain": "background",
+      "classification_id": 146,
+      "states": [
+        3,
+        5
+      ],
+      "records": 20,
+      "success": {
+        "clean": 0,
+        "shift": 0
+      },
+      "phase_counts": {
+        "align_release": 4,
+        "approach": 8,
+        "contact": 4,
+        "transport": 4
+      },
+      "agentview_diff_mean": 1.5579022725423175
+    }
+  ],
+  "n_records": 100,
+  "note": "smoke only; temporal phase labels; max_steps=50"
+}
