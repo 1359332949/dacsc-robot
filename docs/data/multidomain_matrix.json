@@ -16,7 +16,10 @@
             "base_bddl_exists": true,
             "base_init": "/hy-tmp/libero_plus/libero/libero/init_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate.pruned_init",
             "base_init_exists": true,
-            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_table_11.bddl"
+            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_table_11.bddl",
+            "variant_kind": "bddl",
+            "actual_bddl_exists": true,
+            "note": "actual variant BDDL file"
           },
           {
             "classification_id": 139,
@@ -28,7 +31,10 @@
             "base_bddl_exists": true,
             "base_init": "/hy-tmp/libero_plus/libero/libero/init_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate.pruned_init",
             "base_init_exists": true,
-            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_table_12.bddl"
+            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_table_12.bddl",
+            "variant_kind": "bddl",
+            "actual_bddl_exists": true,
+            "note": "actual variant BDDL file"
           }
         ],
         "lighting": [
@@ -42,7 +48,10 @@
             "base_bddl_exists": true,
             "base_init": "/hy-tmp/libero_plus/libero/libero/init_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate.pruned_init",
             "base_init_exists": true,
-            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_light_1.bddl"
+            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_light_1.bddl",
+            "variant_kind": "bddl",
+            "actual_bddl_exists": true,
+            "note": "actual variant BDDL file"
           },
           {
             "classification_id": 2293,
@@ -54,7 +63,10 @@
             "base_bddl_exists": true,
             "base_init": "/hy-tmp/libero_plus/libero/libero/init_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate.pruned_init",
             "base_init_exists": true,
-            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_light_10.bddl"
+            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_light_10.bddl",
+            "variant_kind": "bddl",
+            "actual_bddl_exists": true,
+            "note": "actual variant BDDL file"
           }
         ],
         "sensor": [
@@ -68,7 +80,10 @@
             "base_bddl_exists": true,
             "base_init": "/hy-tmp/libero_plus/libero/libero/init_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate.pruned_init",
             "base_init_exists": true,
-            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_view_0_0_100_0_0_initstate_0_noise_5.bddl"
+            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_view_0_0_100_0_0_initstate_0_noise_5.bddl",
+            "variant_kind": "virtual_noise",
+            "actual_bddl_exists": false,
+            "note": "sensor noise is applied in ControlEnv.step; raw sim.render bypasses it"
           },
           {
             "classification_id": 1477,
@@ -80,7 +95,10 @@
             "base_bddl_exists": true,
             "base_init": "/hy-tmp/libero_plus/libero/libero/init_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate.pruned_init",
             "base_init_exists": true,
-            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_view_0_0_100_0_0_initstate_0_noise_6.bddl"
+            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_view_0_0_100_0_0_initstate_0_noise_6.bddl",
+            "variant_kind": "virtual_noise",
+            "actual_bddl_exists": false,
+            "note": "sensor noise is applied in ControlEnv.step; raw sim.render bypasses it"
           }
         ],
         "camera": [
@@ -94,7 +112,10 @@
             "base_bddl_exists": true,
             "base_init": "/hy-tmp/libero_plus/libero/libero/init_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate.pruned_init",
             "base_init_exists": true,
-            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_view_0_0_131_0_0_initstate_0.bddl"
+            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_view_0_0_131_0_0_initstate_0.bddl",
+            "variant_kind": "virtual_view",
+            "actual_bddl_exists": false,
+            "note": "Camera _view_ BDDL is virtual; env derives base BDDL"
           },
           {
             "classification_id": 688,
@@ -106,7 +127,10 @@
             "base_bddl_exists": true,
             "base_init": "/hy-tmp/libero_plus/libero/libero/init_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate.pruned_init",
             "base_init_exists": true,
-            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_view_0_0_132_0_0_initstate_0.bddl"
+            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_view_0_0_132_0_0_initstate_0.bddl",
+            "variant_kind": "virtual_view",
+            "actual_bddl_exists": false,
+            "note": "Camera _view_ BDDL is virtual; env derives base BDDL"
           }
         ]
       }
@@ -127,7 +151,10 @@
             "base_bddl_exists": true,
             "base_init": "/hy-tmp/libero_plus/libero/libero/init_files/libero_object/pick_up_the_alphabet_soup_and_place_it_in_the_basket.pruned_init",
             "base_init_exists": true,
-            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_object/pick_up_the_alphabet_soup_and_place_it_in_the_basket_table_1.bddl"
+            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_object/pick_up_the_alphabet_soup_and_place_it_in_the_basket_table_1.bddl",
+            "variant_kind": "bddl",
+            "actual_bddl_exists": true,
+            "note": "actual variant BDDL file"
           },
           {
             "classification_id": 2,
@@ -139,7 +166,10 @@
             "base_bddl_exists": true,
             "base_init": "/hy-tmp/libero_plus/libero/libero/init_files/libero_object/pick_up_the_alphabet_soup_and_place_it_in_the_basket.pruned_init",
             "base_init_exists": true,
-            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_object/pick_up_the_alphabet_soup_and_place_it_in_the_basket_table_10.bddl"
+            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_object/pick_up_the_alphabet_soup_and_place_it_in_the_basket_table_10.bddl",
+            "variant_kind": "bddl",
+            "actual_bddl_exists": true,
+            "note": "actual variant BDDL file"
           }
         ],
         "lighting": [
@@ -153,7 +183,10 @@
             "base_bddl_exists": true,
             "base_init": "/hy-tmp/libero_plus/libero/libero/init_files/libero_object/pick_up_the_alphabet_soup_and_place_it_in_the_basket.pruned_init",
             "base_init_exists": true,
-            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_object/pick_up_the_alphabet_soup_and_place_it_in_the_basket_light_1.bddl"
+            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_object/pick_up_the_alphabet_soup_and_place_it_in_the_basket_light_1.bddl",
+            "variant_kind": "bddl",
+            "actual_bddl_exists": true,
+            "note": "actual variant BDDL file"
           },
           {
             "classification_id": 2223,
@@ -165,7 +198,10 @@
             "base_bddl_exists": true,
             "base_init": "/hy-tmp/libero_plus/libero/libero/init_files/libero_object/pick_up_the_alphabet_soup_and_place_it_in_the_basket.pruned_init",
             "base_init_exists": true,
-            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_object/pick_up_the_alphabet_soup_and_place_it_in_the_basket_light_10.bddl"
+            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_object/pick_up_the_alphabet_soup_and_place_it_in_the_basket_light_10.bddl",
+            "variant_kind": "bddl",
+            "actual_bddl_exists": true,
+            "note": "actual variant BDDL file"
           }
         ],
         "sensor": [
@@ -179,7 +215,10 @@
             "base_bddl_exists": true,
             "base_init": "/hy-tmp/libero_plus/libero/libero/init_files/libero_object/pick_up_the_alphabet_soup_and_place_it_in_the_basket.pruned_init",
             "base_init_exists": true,
-            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_object/pick_up_the_alphabet_soup_and_place_it_in_the_basket_view_0_0_100_0_0_initstate_0_noise_2.bddl"
+            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_object/pick_up_the_alphabet_soup_and_place_it_in_the_basket_view_0_0_100_0_0_initstate_0_noise_2.bddl",
+            "variant_kind": "virtual_noise",
+            "actual_bddl_exists": false,
+            "note": "sensor noise is applied in ControlEnv.step; raw sim.render bypasses it"
           },
           {
             "classification_id": 1398,
@@ -191,7 +230,10 @@
             "base_bddl_exists": true,
             "base_init": "/hy-tmp/libero_plus/libero/libero/init_files/libero_object/pick_up_the_alphabet_soup_and_place_it_in_the_basket.pruned_init",
             "base_init_exists": true,
-            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_object/pick_up_the_alphabet_soup_and_place_it_in_the_basket_view_0_0_100_0_0_initstate_0_noise_3.bddl"
+            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_object/pick_up_the_alphabet_soup_and_place_it_in_the_basket_view_0_0_100_0_0_initstate_0_noise_3.bddl",
+            "variant_kind": "virtual_noise",
+            "actual_bddl_exists": false,
+            "note": "sensor noise is applied in ControlEnv.step; raw sim.render bypasses it"
           }
         ],
         "camera": [
@@ -205,7 +247,10 @@
             "base_bddl_exists": true,
             "base_init": "/hy-tmp/libero_plus/libero/libero/init_files/libero_object/pick_up_the_alphabet_soup_and_place_it_in_the_basket.pruned_init",
             "base_init_exists": true,
-            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_object/pick_up_the_alphabet_soup_and_place_it_in_the_basket_view_0_0_100_2_4_initstate_0.bddl"
+            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_object/pick_up_the_alphabet_soup_and_place_it_in_the_basket_view_0_0_100_2_4_initstate_0.bddl",
+            "variant_kind": "virtual_view",
+            "actual_bddl_exists": false,
+            "note": "Camera _view_ BDDL is virtual; env derives base BDDL"
           },
           {
             "classification_id": 648,
@@ -217,7 +262,10 @@
             "base_bddl_exists": true,
             "base_init": "/hy-tmp/libero_plus/libero/libero/init_files/libero_object/pick_up_the_alphabet_soup_and_place_it_in_the_basket.pruned_init",
             "base_init_exists": true,
-            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_object/pick_up_the_alphabet_soup_and_place_it_in_the_basket_view_0_0_100_2_6_initstate_0.bddl"
+            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_object/pick_up_the_alphabet_soup_and_place_it_in_the_basket_view_0_0_100_2_6_initstate_0.bddl",
+            "variant_kind": "virtual_view",
+            "actual_bddl_exists": false,
+            "note": "Camera _view_ BDDL is virtual; env derives base BDDL"
           }
         ]
       }
@@ -238,7 +286,10 @@
             "base_bddl_exists": true,
             "base_init": "/hy-tmp/libero_plus/libero/libero/init_files/libero_goal/open_the_middle_drawer_of_the_cabinet.pruned_init",
             "base_init_exists": true,
-            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_goal/open_the_middle_drawer_of_the_cabinet_table_1.bddl"
+            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_goal/open_the_middle_drawer_of_the_cabinet_table_1.bddl",
+            "variant_kind": "bddl",
+            "actual_bddl_exists": true,
+            "note": "actual variant BDDL file"
           },
           {
             "classification_id": 2,
@@ -250,7 +301,10 @@
             "base_bddl_exists": true,
             "base_init": "/hy-tmp/libero_plus/libero/libero/init_files/libero_goal/open_the_middle_drawer_of_the_cabinet.pruned_init",
             "base_init_exists": true,
-            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_goal/open_the_middle_drawer_of_the_cabinet_table_10.bddl"
+            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_goal/open_the_middle_drawer_of_the_cabinet_table_10.bddl",
+            "variant_kind": "bddl",
+            "actual_bddl_exists": true,
+            "note": "actual variant BDDL file"
           }
         ],
         "lighting": [
@@ -264,7 +318,10 @@
             "base_bddl_exists": true,
             "base_init": "/hy-tmp/libero_plus/libero/libero/init_files/libero_goal/open_the_middle_drawer_of_the_cabinet.pruned_init",
             "base_init_exists": true,
-            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_goal/open_the_middle_drawer_of_the_cabinet_light_1.bddl"
+            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_goal/open_the_middle_drawer_of_the_cabinet_light_1.bddl",
+            "variant_kind": "bddl",
+            "actual_bddl_exists": true,
+            "note": "actual variant BDDL file"
           },
           {
             "classification_id": 2314,
@@ -276,7 +333,10 @@
             "base_bddl_exists": true,
             "base_init": "/hy-tmp/libero_plus/libero/libero/init_files/libero_goal/open_the_middle_drawer_of_the_cabinet.pruned_init",
             "base_init_exists": true,
-            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_goal/open_the_middle_drawer_of_the_cabinet_light_10.bddl"
+            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_goal/open_the_middle_drawer_of_the_cabinet_light_10.bddl",
+            "variant_kind": "bddl",
+            "actual_bddl_exists": true,
+            "note": "actual variant BDDL file"
           }
         ],
         "sensor": [
@@ -290,7 +350,10 @@
             "base_bddl_exists": true,
             "base_init": "/hy-tmp/libero_plus/libero/libero/init_files/libero_goal/open_the_middle_drawer_of_the_cabinet.pruned_init",
             "base_init_exists": true,
-            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_goal/open_the_middle_drawer_of_the_cabinet_view_0_0_100_0_0_initstate_0_noise_1.bddl"
+            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_goal/open_the_middle_drawer_of_the_cabinet_view_0_0_100_0_0_initstate_0_noise_1.bddl",
+            "variant_kind": "virtual_noise",
+            "actual_bddl_exists": false,
+            "note": "sensor noise is applied in ControlEnv.step; raw sim.render bypasses it"
           },
           {
             "classification_id": 1510,
@@ -302,7 +365,10 @@
             "base_bddl_exists": true,
             "base_init": "/hy-tmp/libero_plus/libero/libero/init_files/libero_goal/open_the_middle_drawer_of_the_cabinet.pruned_init",
             "base_init_exists": true,
-            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_goal/open_the_middle_drawer_of_the_cabinet_view_0_0_100_0_0_initstate_0_noise_2.bddl"
+            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_goal/open_the_middle_drawer_of_the_cabinet_view_0_0_100_0_0_initstate_0_noise_2.bddl",
+            "variant_kind": "virtual_noise",
+            "actual_bddl_exists": false,
+            "note": "sensor noise is applied in ControlEnv.step; raw sim.render bypasses it"
           }
         ],
         "camera": [
@@ -316,7 +382,10 @@
             "base_bddl_exists": true,
             "base_init": "/hy-tmp/libero_plus/libero/libero/init_files/libero_goal/open_the_middle_drawer_of_the_cabinet.pruned_init",
             "base_init_exists": true,
-            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_goal/open_the_middle_drawer_of_the_cabinet_view_0_0_100_2_4_initstate_0.bddl"
+            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_goal/open_the_middle_drawer_of_the_cabinet_view_0_0_100_2_4_initstate_0.bddl",
+            "variant_kind": "virtual_view",
+            "actual_bddl_exists": false,
+            "note": "Camera _view_ BDDL is virtual; env derives base BDDL"
           },
           {
             "classification_id": 692,
@@ -328,7 +397,145 @@
             "base_bddl_exists": true,
             "base_init": "/hy-tmp/libero_plus/libero/libero/init_files/libero_goal/open_the_middle_drawer_of_the_cabinet.pruned_init",
             "base_init_exists": true,
-            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_goal/open_the_middle_drawer_of_the_cabinet_view_0_0_100_2_6_initstate_0.bddl"
+            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_goal/open_the_middle_drawer_of_the_cabinet_view_0_0_100_2_6_initstate_0.bddl",
+            "variant_kind": "virtual_view",
+            "actual_bddl_exists": false,
+            "note": "Camera _view_ BDDL is virtual; env derives base BDDL"
+          }
+        ]
+      }
+    },
+    {
+      "suite": "libero_10",
+      "base_task": "KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it",
+      "base_role": "heldout_task",
+      "variants": {
+        "background": [
+          {
+            "classification_id": 1,
+            "name": "KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it_table_1",
+            "category": "Background Textures",
+            "difficulty": 4,
+            "role": "dev_domain",
+            "base_bddl": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_10/KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it.bddl",
+            "base_bddl_exists": true,
+            "base_init": "/hy-tmp/libero_plus/libero/libero/init_files/libero_10/KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it.pruned_init",
+            "base_init_exists": true,
+            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_10/KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it_table_1.bddl",
+            "variant_kind": "bddl",
+            "actual_bddl_exists": true,
+            "note": "actual variant BDDL file"
+          },
+          {
+            "classification_id": 2,
+            "name": "KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it_table_10",
+            "category": "Background Textures",
+            "difficulty": 3,
+            "role": "heldout_same_domain",
+            "base_bddl": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_10/KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it.bddl",
+            "base_bddl_exists": true,
+            "base_init": "/hy-tmp/libero_plus/libero/libero/init_files/libero_10/KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it.pruned_init",
+            "base_init_exists": true,
+            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_10/KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it_table_10.bddl",
+            "variant_kind": "bddl",
+            "actual_bddl_exists": true,
+            "note": "actual variant BDDL file"
+          }
+        ],
+        "lighting": [
+          {
+            "classification_id": 2246,
+            "name": "KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it_light_1",
+            "category": "Light Conditions",
+            "difficulty": 4,
+            "role": "dev_domain",
+            "base_bddl": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_10/KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it.bddl",
+            "base_bddl_exists": true,
+            "base_init": "/hy-tmp/libero_plus/libero/libero/init_files/libero_10/KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it.pruned_init",
+            "base_init_exists": true,
+            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_10/KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it_light_1.bddl",
+            "variant_kind": "bddl",
+            "actual_bddl_exists": true,
+            "note": "actual variant BDDL file"
+          },
+          {
+            "classification_id": 2247,
+            "name": "KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it_light_10",
+            "category": "Light Conditions",
+            "difficulty": 4,
+            "role": "heldout_same_domain",
+            "base_bddl": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_10/KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it.bddl",
+            "base_bddl_exists": true,
+            "base_init": "/hy-tmp/libero_plus/libero/libero/init_files/libero_10/KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it.pruned_init",
+            "base_init_exists": true,
+            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_10/KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it_light_10.bddl",
+            "variant_kind": "bddl",
+            "actual_bddl_exists": true,
+            "note": "actual variant BDDL file"
+          }
+        ],
+        "sensor": [
+          {
+            "classification_id": 1566,
+            "name": "KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it_view_0_0_100_0_0_initstate_0_noise_1",
+            "category": "Sensor Noise",
+            "difficulty": 2,
+            "role": "heldout_unseen_category",
+            "base_bddl": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_10/KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it.bddl",
+            "base_bddl_exists": true,
+            "base_init": "/hy-tmp/libero_plus/libero/libero/init_files/libero_10/KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it.pruned_init",
+            "base_init_exists": true,
+            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_10/KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it_view_0_0_100_0_0_initstate_0_noise_1.bddl",
+            "variant_kind": "virtual_noise",
+            "actual_bddl_exists": false,
+            "note": "sensor noise is applied in ControlEnv.step; raw sim.render bypasses it"
+          },
+          {
+            "classification_id": 1567,
+            "name": "KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it_view_0_0_100_0_0_initstate_0_noise_2",
+            "category": "Sensor Noise",
+            "difficulty": 3,
+            "role": "heldout_unseen_category",
+            "base_bddl": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_10/KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it.bddl",
+            "base_bddl_exists": true,
+            "base_init": "/hy-tmp/libero_plus/libero/libero/init_files/libero_10/KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it.pruned_init",
+            "base_init_exists": true,
+            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_10/KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it_view_0_0_100_0_0_initstate_0_noise_2.bddl",
+            "variant_kind": "virtual_noise",
+            "actual_bddl_exists": false,
+            "note": "sensor noise is applied in ControlEnv.step; raw sim.render bypasses it"
+          }
+        ],
+        "camera": [
+          {
+            "classification_id": 735,
+            "name": "KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it_view_0_0_121_0_0_initstate_0",
+            "category": "Camera Viewpoints",
+            "difficulty": 4,
+            "role": "heldout_unseen_category",
+            "base_bddl": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_10/KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it.bddl",
+            "base_bddl_exists": true,
+            "base_init": "/hy-tmp/libero_plus/libero/libero/init_files/libero_10/KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it.pruned_init",
+            "base_init_exists": true,
+            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_10/KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it_view_0_0_121_0_0_initstate_0.bddl",
+            "variant_kind": "virtual_view",
+            "actual_bddl_exists": false,
+            "note": "Camera _view_ BDDL is virtual; env derives base BDDL"
+          },
+          {
+            "classification_id": 736,
+            "name": "KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it_view_0_0_122_0_0_initstate_0",
+            "category": "Camera Viewpoints",
+            "difficulty": 3,
+            "role": "heldout_unseen_category",
+            "base_bddl": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_10/KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it.bddl",
+            "base_bddl_exists": true,
+            "base_init": "/hy-tmp/libero_plus/libero/libero/init_files/libero_10/KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it.pruned_init",
+            "base_init_exists": true,
+            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_10/KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it_view_0_0_122_0_0_initstate_0.bddl",
+            "variant_kind": "virtual_view",
+            "actual_bddl_exists": false,
+            "note": "Camera _view_ BDDL is virtual; env derives base BDDL"
           }
         ]
       }

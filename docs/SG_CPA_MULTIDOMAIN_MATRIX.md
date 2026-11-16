@@ -31,13 +31,14 @@ Camera 只是第一个受控切片。
 
 ## 3. 矩阵结构
 
-- Base tasks：3 个
+- Base tasks：4 个
   - `libero_spatial` / cookie-box（dev task）
   - `libero_object` / alphabet soup（dev task）
   - `libero_goal` / cabinet drawer（held-out task）
+  - `libero_10` / KITCHEN_SCENE3 moka-pot（held-out task）
 - Domains：Background、Lighting、Sensor、Camera
 - Variants：每个 base task × 每个 domain 选 2 个变体
-- Pairs：24 个 Clean/Shift 配对单元
+- Pairs：32 个 Clean/Shift 配对单元
 - State split：每单元 30 dev / 20 held-out（固定 seed，episode/state 级）
 - 不把同一 episode 连续帧拆到不同 split。
 
@@ -75,6 +76,10 @@ Camera 只是第一个受控切片。
 | goal cabinet | Lighting | 2313 | 2314 |
 | goal cabinet | Sensor | — | 1509 / 1510 |
 | goal cabinet | Camera | — | 691 / 692 |
+| long kitchen | Background | 1 | 2 |
+| long kitchen | Lighting | 2246 | 2247 |
+| long kitchen | Sensor | — | 1485 / 1486 |
+| long kitchen | Camera | — | 683 / 684 |
 
 注意：classification id 是 **1-based**；benchmark/task-map index 是 0-based。  
 没有把 Camera 705 直接混入这个矩阵；Camera 705 的既有结果是独立 camera slice，保留为历史对照。
@@ -136,3 +141,35 @@ Camera 只是第一个受控切片。
 - 不把 Camera 单域结论推广到所有视觉域；
 - 不在 proxy 未通过前启动 V2；
 - 不根据 held-out Clean 结果调 Gate。
+
+
+## 8. 上游源码审计结论（执行前）
+
+已核对 `LIBERO-plus` 的 `env_wrapper.py`、`benchmark/__init__.py`、`envs/problems/libero_tabletop_manipulation.py`：
+
+1. **Background / Lighting**
+   - 变体是真实 BDDL 文件（如 `_table_11.bddl`、`_light_1.bddl`）；
+   - 使用实际 variant BDDL 建 env。
+
+2. **Camera**
+   - 变体 BDDL 文件不存在，名字是 virtual `_view_<params>_initstate_0`；
+   - `OffScreenRenderEnv` 会 split `_view_` 并加载 base BDDL；
+   - 同一 env 内修改相机参数比多 env 更可靠（多 env 的静态物体 placement 可能不同）。
+
+3. **Sensor Noise**
+   - 名字是 `_view_..._initstate_0_noise_N`，属于 virtual；
+   - **noise 在 `ControlEnv.step()` 中施加到 observation**；
+   - 直接调用 `sim.render()` 会绕过 noise，因此 Sensor 单元必须使用 `env.step` 返回的观测，或复现同样的 noise 函数，不能复用 Camera 的 render 路径。
+
+4. **Init states**
+   - `Benchmark.get_task_init_states()` 会把 variant 映射回 base init state；
+   - classification id 是 **1-based**，benchmark/task-map index 是 0-based；
+   - 同一 base task 的 Clean/Shift 必须共享同一个 base init state。
+
+5. **静态物体**
+   - 多 env 的 reset/placement 可能导致 body 几何不同；
+   - 同状态配对必须使用同一 env 或显式恢复/固定静态 body 位置，并验证 body_xpos/xquat，不能只比较 qpos。
+
+6. **动作/任务 rollout**
+   - `evaluate_libero.py` 使用 episode-level success；统计单位是 episode，不是 frame/state；
+   - 正式成功率必须用独立 episode seeds，配对状态实验只能作为机制诊断。

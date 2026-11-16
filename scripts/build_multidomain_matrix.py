@@ -21,6 +21,7 @@ BASE_TASKS = [
     ("libero_spatial", "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate", "dev_task"),
     ("libero_object", "pick_up_the_alphabet_soup_and_place_it_in_the_basket", "dev_task"),
     ("libero_goal", "open_the_middle_drawer_of_the_cabinet", "heldout_task"),
+    ("libero_10", "KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it", "heldout_task"),
 ]
 ROLE = {
     "background": ("dev_domain", "heldout_same_domain"),
@@ -61,6 +62,13 @@ def main():
                     "base_bddl": str(base_bddl), "base_bddl_exists": base_bddl.is_file(),
                     "base_init": str(init), "base_init_exists": init.is_file(),
                     "env_bddl_name": str(args.bddl_root / suite / f"{name}.bddl"),
+                    "variant_kind": ("virtual_noise" if domain == "sensor" else
+                                     "virtual_view" if domain == "camera" else "bddl"),
+                    "actual_bddl_exists": (args.bddl_root / suite / f"{name}.bddl").is_file(),
+                    "note": ("sensor noise is applied in ControlEnv.step; raw sim.render bypasses it"
+                             if domain == "sensor" else
+                             "Camera _view_ BDDL is virtual; env derives base BDDL"
+                             if domain == "camera" else "actual variant BDDL file"),
                 })
             base_entry["variants"][domain] = chosen
         matrix["base_tasks"].append(base_entry)
