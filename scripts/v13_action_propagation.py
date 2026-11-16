@@ -108,7 +108,6 @@ def main():
     ap.add_argument("--z0-count", type=int, default=10)
     ap.add_argument("--noise-pairs", type=int, default=4)
     ap.add_argument("--seed", type=int, default=20261116)
-    ap.add_argument("--precision", choices=["fp32", "bf16"], default="fp32")
     ap.add_argument("--libero-src", type=Path, default=Path("/hy-tmp/libero_plus"))
     ap.add_argument("--libero-config", type=Path, default=Path("/hy-tmp/libero_config"))
     ap.add_argument("--device", default="cuda:0")
@@ -146,12 +145,25 @@ def main():
         env.close()
 
     oracle_dims = np.argsort(-np.asarray(scores["views"][args.target_view]["pair_dev"]))[:args.k].tolist()
+    # Fixed random masks, pre-selected on Dev energy only; reused for all states.
+    dev_pos = [pos[i] for i in dev_idx]
+    dev_feat = z[f"shift_{args.target_view}"][dev_pos].astype(np.float64)
+    dim_energy = (dev_feat ** 2).mean(axis=(0, 1))
+    oracle_energy_target = float(dim_energy[oracle_dims].sum())
+    rng0 = np.random.RandomState(args.seed)
+    candidates = [rng0.choice(384, size=args.k, replace=False) for _ in range(500)]
+    cand_energy = [float(dim_energy[c].sum()) for c in candidates]
+    order = np.argsort(np.abs(np.asarray(cand_energy) - oracle_energy_target))
+    random_gates = [candidates[j].tolist() for j in order[:args.random_gates]]
     device = next(policy.parameters()).device
     H, A = policy.action_generator.action_horizon, policy.action_generator.action_dim
     out = {"num_states": len(valid), "dev": len(dev_idx), "heldout": len(held_idx),
            "target_view": args.target_view, "k": args.k, "oracle_dims": oracle_dims,
-           "random_gates": args.random_gates, "z0_count": args.z0_count,
-           "noise_pairs": args.noise_pairs, "seed": args.seed, "precision": args.precision,
+           "random_gates_n": args.random_gates, "random_gates": random_gates,
+           "energy_match": {"dev_oracle_target": oracle_energy_target,
+                            "selected_candidate_energies": [cand_energy[j] for j in order[:args.random_gates]]},
+           "z0_count": args.z0_count,
+           "noise_pairs": args.noise_pairs, "seed": args.seed, "precision": "fp32",
            "per_state": []}
     for state in valid:
         j = pos[state]
@@ -162,9 +174,6 @@ def main():
         rep_s = repr_from_features(policy, feats, state8, args.clean_language)
         rep_go = repr_from_features(policy, gate_features(feats, args.target_view, oracle_dims),
                                     state8, args.clean_language)
-        local = np.random.RandomState(args.seed + state)
-        random_gates = [local.choice(384, size=args.k, replace=False).tolist()
-                        for _ in range(args.random_gates)]
         rep_gr = [repr_from_features(policy, gate_features(feats, args.target_view, dims),
                                      state8, args.clean_language) for dims in random_gates]
         oracle_energy = float(np.square(feats[args.target_view][..., oracle_dims]).sum())
@@ -181,8 +190,13 @@ def main():
             m = action_metrics(a_c, a_s, a_go, policy.normalizer)
             gr = [action_metrics(a_c, a_s, sample_with_z0(policy.action_generator, r, z0),
                                  policy.normalizer) for r in rep_gr]
-            m["gate_random"] = {key: float(np.mean([x["gate_oracle"][key] for x in gr]))
-                                for key in m["gate_oracle"]}
+            m["gate_random"] = {key: {sub: float(np.mean([x["gate_oracle"][sub] for x in gr]))
+                                      for sub in m["gate_oracle"]}
+                                for key in ("gate_random",)}["gate_random"]
+            m["gate_random_to_clean"] = {sub: float(np.mean([x["gate_to_clean"][sub] for x in gr]))
+                                         for sub in m["gate_to_clean"]}
+            m["gate_random_align_cos"] = float(np.mean([x["align_cos"] for x in gr]))
+            m["gate_random_align_proj"] = float(np.mean([x["align_proj"] for x in gr]))
             per.append(m)
         noise = []
         for i in range(args.noise_pairs):

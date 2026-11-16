@@ -25,3 +25,17 @@ class TestV12Aug(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestV12AugContent(unittest.TestCase):
+    def test_translate_and_zoom_change_content(self):
+        img = np.zeros((32, 32, 3), dtype=np.uint8)
+        img[:, 16:, :] = 255  # vertical edge
+        tr = v12.geo_aug(img, "translate", 4)
+        self.assertFalse(np.array_equal(tr, img))
+        # reflect padding: right edge contains reflected content
+        self.assertGreater(int(tr[:, -1, 0].max()), 0)
+        cb = np.indices((32, 32)).sum(axis=0) % 2 * 255
+        cb = np.repeat(cb[..., None], 3, axis=2).astype(np.uint8)
+        z = v12.geo_aug(cb, "zoom", 1.05)
+        self.assertFalse(np.array_equal(z, cb))

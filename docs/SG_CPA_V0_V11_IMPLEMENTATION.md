@@ -502,3 +502,82 @@ Dev（30 states）：pair 0.07406，oracle 0.01160，gate-to-clean 0.06455，ran
 > Dev 选的配对敏感维度，在 held-out 初始状态上造成了比随机维度更大的动作扰动，并使动作略向 Clean 靠近；但干预能量不匹配、只有单 task/单 Camera、且无成功率证据。
 
 不能说：TTA Gate 有效、动作被修复、成功率提高。
+
+
+## 18. 第二轮修正（d87f4e7 复审）
+
+### 18.1 s_aug 去重与分组
+
+- `crop` 改为 **0.85**，与 `zoom 1.05`（等价 crop 0.952）区分；
+- `translate` 使用 reflect padding；
+- `zoom` 使用真正 center-crop + resize；
+- 分别输出 `translate / crop / zoom` 的 Dev/Held-out 384 维向量；
+- 测试增加垂直边缘/棋盘格，验证平移和 zoom 确实改变图像内容。
+
+修正后（Held-out）：
+
+| 视角 | photo vs pair | geo vs pair | translate | crop | zoom |
+|---|---:|---:|---:|---:|---:|
+| agentview | 0.2267 | 0.1851 | 0.1834 | 0.1733 | 0.1566 |
+| eye-in-hand | 0.4291 | 0.2630 | 0.2678 | 0.1819 | 0.2570 |
+
+各组 Dev/Held 稳定性：
+
+| 视角 | translate | crop | zoom |
+|---|---:|---:|---:|
+| agentview | 0.8572 | 0.8759 | 0.8495 |
+| eye-in-hand | 0.9709 | 0.9684 | 0.9790 |
+
+结论不变：增强代理自身稳定，但不能预测 Camera 配对敏感度。
+
+### 18.2 V1.3 energy-matched random
+
+修正：
+
+- Random masks 在 Dev 特征能量上预选，固定后跨所有状态复用；
+- 增加 `gate_random_to_clean`、`gate_random_align_cos/proj`；
+- Oracle/Random 都报告 `Gate-Shift` 和 `Gate-Clean`；
+- `--precision` 无效选项已删除；当前结果明确为 **FP32 协议**。
+
+Held-out（19 states）：
+
+| 指标 | Oracle | Random (energy-matched) |
+|---|---:|---:|
+| Gate-Shift all | 0.01073 | 0.00577 |
+| Gate-Clean all | 0.06218 | 0.07080 |
+| Shift-Clean all | 0.07095 | 0.07095 |
+| align_cos | 0.8155 | 0.0762 |
+| suppressed energy | 59,846 | 43,951 |
+
+- Oracle 把 Gate-Clean 从 0.07095 降到 0.06218（约 12.4%）；
+- Energy-matched Random 的 Gate-Clean 仍为 0.07080，几乎没有纠正；
+- Oracle align_cos 0.816，Random 0.076；
+- 但 Random 能量仍只有 Oracle 的约 73.5%，还不是完全 energy-matched；这仍是限制，不能把差异全部归因于方向选择。
+
+Dev（30 states）：
+
+- pair 0.07406，oracle 0.01160，random 0.00588；
+- Gate-Clean：oracle 0.06455，random 0.07384；
+- align_cos：oracle 0.8149，random 0.0830；
+- energy：62,128 vs 44,783。
+
+### 18.3 测试
+
+当前本地 unittest：
+
+- visual gate 5
+- state pairing 15
+- task pairing 11
+- pairing checks 3
+- v12 scores 4
+- v12 aug 3
+
+共 **41 passed**。
+
+### 18.4 仍未完成
+
+- 真正 energy-matched random（当前只到 73.5% 能量）；
+- 状态分布审计 `state_distribution.json`；
+- 目标域完整 episode 轨迹观测池；
+- 新的无标签 proxy；
+- V1.4/V2。

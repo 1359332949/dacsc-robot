@@ -101,7 +101,8 @@ def main():
     photo_cfgs = [(k, f) for k in ("brightness", "contrast", "saturation") for f in (0.8, 1.2)]
     geo_groups = {
         "translate": [("translate", -8), ("translate", 8)],
-        "crop": [("crop", 0.95)],
+        # crop 0.85 is intentionally distinct from zoom 1/1.05=0.952.
+        "crop": [("crop", 0.85)],
         "zoom": [("zoom", 1.05), ("zoom", 1.10)],
     }
     geo_cfgs = [x for xs in geo_groups.values() for x in xs]
@@ -138,6 +139,12 @@ def main():
         out["photo"][target] = photo.tolist(); out["geo"][target] = geo.tolist()
         out.setdefault("geo_groups", {})[target] = {
             g: np.mean(group_scores[g], axis=0).tolist() for g in geo_groups}
+        for g in geo_groups:
+            gs_arr = np.stack(group_state[g])
+            for split_name, idxs in (("dev", manifest["dev_indices"]), ("heldout", manifest["heldout_indices"])):
+                pidx = [pos[i] for i in idxs if i in pos]
+                if pidx:
+                    out.setdefault(f"geo_groups_{split_name}", {}).setdefault(target, {})[g] = np.mean(gs_arr[pidx], axis=0).tolist()
         out.setdefault("photo_by_state", {})[target] = np.stack(photo_state).tolist()
         out.setdefault("geo_by_state", {})[target] = np.stack(geo_state).tolist()
         # dev/held indices are state ids; map through valid order
