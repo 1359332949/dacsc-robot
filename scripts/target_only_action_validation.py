@@ -32,6 +32,7 @@ from sg_cpa_phase4_final import CKPT  # noqa: E402
 from evaluate_libero import DUMMY_ACTION, SETTLING_STEPS, policy_observation  # noqa: E402
 from dacsc.state_pairing import model_compatible, snapshot  # noqa: E402
 from dacsc.observation_render import render_policy_observation  # noqa: E402
+from dacsc.action_guard import limit_rotation_delta  # noqa: E402
 from dacsc.target_only_mean import (  # noqa: E402
     ConditionalSourceBaseline,
     TargetOnlyMeanEstimator,
@@ -164,6 +165,8 @@ def main():
     ap.add_argument("--clip-norm", type=float, default=20.0)
     ap.add_argument("--content-rank", type=int, default=2)
     ap.add_argument("--source-folds", type=int, default=5)
+    ap.add_argument("--rotation-budget-rad", type=float, default=0.0,
+                    help="SO(3) action-space trust region relative to Frozen; 0 preserves Frozen rotations")
     ap.add_argument("--seed", type=int, default=20261116)
     ap.add_argument("--checkpoint", type=Path, default=CKPT)
     ap.add_argument("--libero-src", type=Path, default=Path("/hy-tmp/libero_plus"))
@@ -226,7 +229,7 @@ def main():
     source_context = np.stack([z["state8"][by_state[state]] for state in fit_ids])
     source_clean_visual = np.stack([clean_fit[state] for state in fit_ids])
 
-    source, content_projector, source_diagnostics = fit_source_calibration(
+    source, content_projector, confidence_gate, source_diagnostics = fit_source_calibration(
         source_context,
         source_clean_visual,
         l2=args.l2,
@@ -283,23 +286,32 @@ def main():
                 if done:
                     raise RuntimeError(f"episode ended during settling: state={init_index}")
 
+            # Ungated branches reproduce the existing estimator as diagnostics.
             target_estimator = TargetOnlyMeanEstimator(
                 source, momentum=0.5, alpha=args.alpha, clip_norm=args.clip_norm
             )
             filtered_estimator = TargetOnlyMeanEstimator(
-                source,
-                momentum=0.5,
-                alpha=args.alpha,
-                clip_norm=args.clip_norm,
+                source, momentum=0.5, alpha=args.alpha, clip_norm=args.clip_norm,
                 residual_projector=content_projector,
             )
-            # Independent Clean-only branches are offline negative controls.
+            # Source-only confidence gate abstains on source-like residuals and
+            # contexts outside source calibration support.
+            target_gated_estimator = TargetOnlyMeanEstimator(
+                source, momentum=0.5, alpha=args.alpha, clip_norm=args.clip_norm,
+                confidence_gate=confidence_gate,
+            )
+            filtered_gated_estimator = TargetOnlyMeanEstimator(
+                source, momentum=0.5, alpha=args.alpha, clip_norm=args.clip_norm,
+                residual_projector=content_projector, confidence_gate=confidence_gate,
+            )
+            # Separate Clean-stream branches are offline negative controls.
             clean_estimator = TargetOnlyMeanEstimator(
-                source, momentum=0.5, alpha=args.alpha, clip_norm=args.clip_norm
+                source, momentum=0.5, alpha=args.alpha, clip_norm=args.clip_norm,
+                confidence_gate=confidence_gate,
             )
             clean_filtered_estimator = TargetOnlyMeanEstimator(
                 source, momentum=0.5, alpha=args.alpha, clip_norm=args.clip_norm,
-                residual_projector=content_projector,
+                residual_projector=content_projector, confidence_gate=confidence_gate,
             )
 
             for chunk_index in range(args.chunks):
@@ -329,28 +341,44 @@ def main():
 
                 raw_target_residual = target_estimator.raw_residual(pooled_shift, context)
                 target_mean = target_estimator.update(pooled_shift, context)
+                target_correction = target_estimator.applied_correction()
                 filtered_target_residual = filtered_estimator.residual(pooled_shift, context)
                 filtered_mean = filtered_estimator.update(pooled_shift, context)
+                filtered_correction = filtered_estimator.applied_correction()
 
-                # Clean residuals are offline negative controls only.
+                target_gated_mean = target_gated_estimator.update(pooled_shift, context)
+                target_gated_correction = target_gated_estimator.applied_correction()
+                filtered_gated_mean = filtered_gated_estimator.update(pooled_shift, context)
+                filtered_gated_correction = filtered_gated_estimator.applied_correction()
+
+                # Clean residuals are offline negative controls only. The Clean
+                # estimators consume their own Clean stream and separate EMA.
                 clean_raw_residual = target_estimator.raw_residual(pooled_clean, context)
                 clean_filtered_residual = content_projector.transform(clean_raw_residual)
                 clean_mean = clean_estimator.update(pooled_clean, context)
+                clean_correction = clean_estimator.applied_correction()
                 clean_filtered_mean = clean_filtered_estimator.update(pooled_clean, context)
+                clean_filtered_correction = clean_filtered_estimator.applied_correction()
 
                 paired_correction = torch.as_tensor(
                     paired_fit_mean, device=device, dtype=visual_shift.dtype
                 ).view(1, 1, -1)
-                target_correction = target_mean.to(
+                target_correction = target_correction.to(
                     device=device, dtype=visual_shift.dtype
                 ).view(1, 1, -1)
-                filtered_correction = filtered_mean.to(
+                filtered_correction = filtered_correction.to(
                     device=device, dtype=visual_shift.dtype
                 ).view(1, 1, -1)
-                clean_correction = clean_mean.to(
+                target_gated_correction = target_gated_correction.to(
+                    device=device, dtype=visual_shift.dtype
+                ).view(1, 1, -1)
+                filtered_gated_correction = filtered_gated_correction.to(
+                    device=device, dtype=visual_shift.dtype
+                ).view(1, 1, -1)
+                clean_correction = clean_correction.to(
                     device=device, dtype=visual_clean.dtype
                 ).view(1, 1, -1)
-                clean_filtered_correction = clean_filtered_mean.to(
+                clean_filtered_correction = clean_filtered_correction.to(
                     device=device, dtype=visual_clean.dtype
                 ).view(1, 1, -1)
 
@@ -381,10 +409,29 @@ def main():
                 action_paired = act(visual_shift - paired_correction, rep_shift)
                 action_target = act(visual_shift - target_correction, rep_shift)
                 action_filtered = act(visual_shift - filtered_correction, rep_shift)
+                action_target_gated = act(visual_shift - target_gated_correction, rep_shift)
+                action_filtered_gated = act(visual_shift - filtered_gated_correction, rep_shift)
+                action_target_gated_guarded = limit_rotation_delta(
+                    action_target_gated, action_frozen, policy.normalizer,
+                    args.rotation_budget_rad,
+                )
+                action_filtered_gated_guarded = limit_rotation_delta(
+                    action_filtered_gated, action_frozen, policy.normalizer,
+                    args.rotation_budget_rad,
+                )
                 action_reverse = act(visual_shift + target_correction, rep_shift)
-                # These are offline Clean-retention controls, never target estimator inputs.
+
+                # Shift-derived correction applied to Clean is a cross-domain
+                # transfer stress test, not operational Clean-only retention.
                 clean_target_cost = act(visual_clean - target_correction, rep_clean)
                 clean_filtered_cost = act(visual_clean - filtered_correction, rep_clean)
+                clean_target_gated_transfer = act(
+                    visual_clean - target_gated_correction, rep_clean
+                )
+                clean_filtered_gated_transfer = act(
+                    visual_clean - filtered_gated_correction, rep_clean
+                )
+                # Operational Clean negative controls: independent Clean-stream EMA.
                 clean_only_action = act(visual_clean - clean_correction, rep_clean)
                 clean_filtered_only_action = act(
                     visual_clean - clean_filtered_correction, rep_clean
@@ -402,6 +449,18 @@ def main():
                     "target_only_content_filtered": action_metrics(
                         policy, action_filtered, action_clean
                     ),
+                    "target_only_gated": action_metrics(
+                        policy, action_target_gated, action_clean
+                    ),
+                    "target_only_content_filtered_gated": action_metrics(
+                        policy, action_filtered_gated, action_clean
+                    ),
+                    "target_only_gated_rotation_guarded": action_metrics(
+                        policy, action_target_gated_guarded, action_clean
+                    ),
+                    "target_only_content_filtered_gated_rotation_guarded": action_metrics(
+                        policy, action_filtered_gated_guarded, action_clean
+                    ),
                     "target_only_reverse": action_metrics(
                         policy, action_reverse, action_clean
                     ),
@@ -414,6 +473,12 @@ def main():
                     "clean_cost_filtered_target_estimate": action_metrics(
                         policy, clean_filtered_cost, action_clean
                     ),
+                    "clean_cost_target_gated_transfer": action_metrics(
+                        policy, clean_target_gated_transfer, action_clean
+                    ),
+                    "clean_cost_filtered_gated_transfer": action_metrics(
+                        policy, clean_filtered_gated_transfer, action_clean
+                    ),
                     "clean_only_estimate_negative_control": action_metrics(
                         policy, clean_only_action, action_clean
                     ),
@@ -423,6 +488,12 @@ def main():
                     "target_raw_residual_norm": float(raw_target_residual.norm()),
                     "target_ema_residual_norm": float(target_mean.norm()),
                     "target_filtered_residual_norm": float(filtered_mean.norm()),
+                    "target_gated_correction_norm": float(target_gated_correction.norm()),
+                    "target_filtered_gated_correction_norm": float(filtered_gated_correction.norm()),
+                    "target_confidence": float(target_gated_estimator.last_confidence.mean()),
+                    "filtered_confidence": float(filtered_gated_estimator.last_confidence.mean()),
+                    "clean_confidence": float(clean_estimator.last_confidence.mean()),
+                    "clean_filtered_confidence": float(clean_filtered_estimator.last_confidence.mean()),
                     "clean_raw_residual_norm": float(clean_raw_residual.norm()),
                     "clean_filtered_residual_norm": float(clean_filtered_residual.norm()),
                     "target_clean_raw_gap_norm": float(
@@ -463,8 +534,20 @@ def main():
         "paired_fit_mean",
         "target_only_mean",
         "target_only_content_filtered",
+        "target_only_gated",
+        "target_only_content_filtered_gated",
+        "target_only_gated_rotation_guarded",
+        "target_only_content_filtered_gated_rotation_guarded",
         "target_only_reverse",
         "oracle_clean_replacement",
+    )
+    clean_control_names = (
+        "clean_cost_target_estimate",
+        "clean_cost_filtered_target_estimate",
+        "clean_cost_target_gated_transfer",
+        "clean_cost_filtered_gated_transfer",
+        "clean_only_estimate_negative_control",
+        "clean_only_filtered_negative_control",
     )
     metric_names = (
         "normalized_mae",
@@ -483,14 +566,48 @@ def main():
                 for metric in metric_names
             }
 
+    per_episode_summary = {}
+    all_names = method_names + clean_control_names
+    for episode_id in sorted({record["init_index"] for record in records}):
+        episode_records = [r for r in records if r["init_index"] == episode_id]
+        per_episode_summary[str(episode_id)] = {}
+        for method in all_names:
+            per_episode_summary[str(episode_id)][method] = {}
+            for horizon_name in ("full", "prefix6"):
+                per_episode_summary[str(episode_id)][method][horizon_name] = {
+                    metric: float(np.mean([
+                        r[method][horizon_name][metric] for r in episode_records
+                    ]))
+                    for metric in metric_names
+                }
+
+    clean_control_summary = {}
+    for method in clean_control_names:
+        clean_control_summary[method] = {}
+        for horizon_name in ("full", "prefix6"):
+            clean_control_summary[method][horizon_name] = {
+                metric: float(np.mean([
+                    r[method][horizon_name][metric] for r in records
+                ]))
+                for metric in metric_names
+            }
+
     payload = {
-        "schema": "target_only_action_validation_v2",
+        "schema": "target_only_action_validation_v3",
         "status": "completed",
         "claim_scope": "counterfactual action-distance validation only; not closed-loop SR",
         "condition": "Object x Lighting 2222",
         "fit_ids": fit_ids,
         "heldout_ids": held,
         "source_calibration": source_diagnostics,
+        "confidence_gate": {
+            "type": "source-oof residual novelty multiplied by nearest-source-context support",
+            "interpretation": "conservative abstention heuristic; inspect per-state confidence",
+        },
+        "rotation_trust_region": {
+            "max_relative_so3_change_rad": args.rotation_budget_rad,
+            "zero_budget_preserves_frozen_rotation": args.rotation_budget_rad == 0.0,
+        },
         "args": {
             key: (str(value) if isinstance(value, Path) else value)
             for key, value in vars(args).items()
@@ -514,11 +631,19 @@ def main():
             "executed_action_conversion": "normalizer.unnormalize_action then clip to controller range",
         },
         "records": records,
+        "record_count": len(records),
+        "episode_count": len(per_episode_summary),
         "summary": summary,
+        "clean_control_summary": clean_control_summary,
+        "per_episode_summary": per_episode_summary,
     }
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(payload, indent=2) + "\n")
-    print(json.dumps(summary, indent=2))
+    print(json.dumps({
+        "summary": summary,
+        "clean_control_summary": clean_control_summary,
+        "per_episode_summary": per_episode_summary,
+    }, indent=2))
 
 
 if __name__ == "__main__":

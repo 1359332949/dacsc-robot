@@ -1,8 +1,9 @@
 """Source-calibrated target-only visual residual estimation.
 
-The source baseline and residual-content subspace are fitted from source-domain
-Clean observations only. At deployment, the estimator consumes target visual
-features and observable context only; target Clean features are never required.
+The source baseline and optional content filter are fitted from source-domain
+Clean observations only. A source-calibrated confidence gate abstains when the
+target residual looks like ordinary source residual noise or the proprioceptive
+context is outside the support of source calibration data.
 """
 
 from __future__ import annotations
@@ -71,11 +72,10 @@ class ConditionalSourceBaseline:
 
 @dataclass
 class SourceResidualProjector:
-    """Remove source baseline error and dominant source-content residual directions.
+    """Remove dominant source-content residual directions.
 
-    The mean and PCA basis must be fitted from out-of-fold source-Clean residuals.
-    This is an experimental filter: a genuine style shift may overlap the
-    source-content directions and be removed as well.
+    A genuine visual-style shift can overlap these directions, so this remains
+    an ablation rather than a guaranteed content/style decomposition.
     """
 
     mean: np.ndarray
@@ -111,6 +111,115 @@ class SourceResidualProjector:
         return centered - (centered @ basis) @ basis.T
 
 
+@dataclass
+class SourceResidualConfidenceGate:
+    """Source-only residual novelty × source-context support confidence.
+
+    Calibrated from out-of-fold source-Clean residuals. It abstains on residuals
+    within the source noise envelope and outside source-context support.
+    This is a conservative heuristic, not a learned content/style separator.
+    """
+
+    source_contexts_z: np.ndarray
+    context_mean: np.ndarray
+    context_scale: np.ndarray
+    support_radius: float
+    residual_center: np.ndarray
+    residual_threshold: float
+    support_outer_multiplier: float = 2.0
+
+    @classmethod
+    def fit(
+        cls,
+        source_contexts: np.ndarray,
+        source_oof_residuals: np.ndarray,
+        *,
+        residual_quantile: float = 0.95,
+        support_quantile: float = 0.95,
+        support_outer_multiplier: float = 2.0,
+    ) -> "SourceResidualConfidenceGate":
+        x = np.asarray(source_contexts, dtype=np.float64)
+        r = np.asarray(source_oof_residuals, dtype=np.float64)
+        if x.ndim != 2 or r.ndim != 2 or x.shape[0] != r.shape[0]:
+            raise ValueError("contexts/residuals must be [N,D] with equal N")
+        if x.shape[0] < 3 or x.shape[1] < 1 or r.shape[1] < 1:
+            raise ValueError("confidence calibration requires at least three source rows")
+        if not np.isfinite(x).all() or not np.isfinite(r).all():
+            raise ValueError("confidence calibration data must be finite")
+        for name, value in (
+            ("residual_quantile", residual_quantile),
+            ("support_quantile", support_quantile),
+        ):
+            if not np.isfinite(value) or not 0.5 <= value < 1.0:
+                raise ValueError(f"{name} must be in [0.5,1)")
+        if not np.isfinite(support_outer_multiplier) or support_outer_multiplier <= 1.0:
+            raise ValueError("support_outer_multiplier must be > 1")
+
+        context_mean = x.mean(axis=0)
+        context_scale = x.std(axis=0)
+        context_scale[context_scale < 1e-8] = 1.0
+        x_z = (x - context_mean) / context_scale
+
+        loo_distances = []
+        for i in range(x_z.shape[0]):
+            distances = np.linalg.norm(x_z - x_z[i], axis=1)
+            distances[i] = np.inf
+            loo_distances.append(float(distances.min()))
+        support_radius = max(float(np.quantile(loo_distances, support_quantile)), 1e-6)
+
+        residual_center = r.mean(axis=0)
+        centered_norms = np.linalg.norm(r - residual_center, axis=1)
+        residual_threshold = max(
+            float(np.quantile(centered_norms, residual_quantile)), 1e-8
+        )
+        return cls(
+            source_contexts_z=x_z,
+            context_mean=context_mean,
+            context_scale=context_scale,
+            support_radius=support_radius,
+            residual_center=residual_center,
+            residual_threshold=residual_threshold,
+            support_outer_multiplier=float(support_outer_multiplier),
+        )
+
+    @torch.no_grad()
+    def confidence(
+        self,
+        raw_residual: torch.Tensor,
+        context: np.ndarray | torch.Tensor,
+    ) -> torch.Tensor:
+        if raw_residual.ndim != 2 or raw_residual.shape[1] != self.residual_center.shape[0]:
+            raise ValueError("raw_residual must be [B,visual_dim]")
+        ctx = context.detach().cpu().numpy() if torch.is_tensor(context) else np.asarray(context)
+        if ctx.ndim == 1:
+            ctx = ctx[None, :]
+        if ctx.ndim != 2 or ctx.shape[0] != raw_residual.shape[0]:
+            raise ValueError("context batch size must match residual batch size")
+        if ctx.shape[1] != self.context_mean.shape[0] or not np.isfinite(ctx).all():
+            raise ValueError("context shape/non-finite values do not match source calibration")
+
+        device, dtype = raw_residual.device, raw_residual.dtype
+        ctx_z = torch.as_tensor(
+            (ctx - self.context_mean) / self.context_scale, device=device, dtype=dtype
+        )
+        bank = torch.as_tensor(self.source_contexts_z, device=device, dtype=dtype)
+        nearest = torch.cdist(ctx_z, bank).min(dim=1, keepdim=True).values
+        inner = self.support_radius
+        outer = self.support_radius * self.support_outer_multiplier
+        support_conf = ((outer - nearest) / max(outer - inner, 1e-8)).clamp(0.0, 1.0)
+
+        residual_center = torch.as_tensor(
+            self.residual_center, device=device, dtype=dtype
+        ).unsqueeze(0)
+        residual_norm = torch.linalg.vector_norm(
+            raw_residual - residual_center, dim=-1, keepdim=True
+        )
+        residual_conf = (
+            1.0 - self.residual_threshold / residual_norm.clamp_min(1e-8)
+        ).clamp(0.0, 1.0)
+        return support_conf * residual_conf
+
+
 def fit_source_calibration(
     x: np.ndarray,
     y: np.ndarray,
@@ -120,12 +229,13 @@ def fit_source_calibration(
     folds: int = 5,
     seed: int = 0,
     standardize: bool = True,
-) -> tuple[ConditionalSourceBaseline, SourceResidualProjector, dict]:
-    """Fit source baseline and content filter from cross-fitted Clean residuals.
-
-    Cross-fitting avoids learning the content subspace from artificially small
-    in-sample residuals produced by the source baseline itself.
-    """
+) -> tuple[
+    ConditionalSourceBaseline,
+    SourceResidualProjector,
+    SourceResidualConfidenceGate,
+    dict,
+]:
+    """Fit source baseline, content filter and confidence gate from Clean data."""
     x = np.asarray(x, dtype=np.float64)
     y = np.asarray(y, dtype=np.float64)
     if x.ndim != 2 or y.ndim != 2 or x.shape[0] != y.shape[0]:
@@ -149,6 +259,7 @@ def fit_source_calibration(
     baseline = ConditionalSourceBaseline(l2=l2, standardize=standardize)
     baseline.fit(x, y)
     projector = SourceResidualProjector.fit(oof, content_rank)
+    confidence_gate = SourceResidualConfidenceGate.fit(x, oof)
     singular_values = np.linalg.svd(oof - oof.mean(axis=0), compute_uv=False)
     total_energy = float(np.square(singular_values).sum())
     removed_energy = float(np.square(singular_values[:content_rank]).sum())
@@ -161,12 +272,21 @@ def fit_source_calibration(
         "content_energy_fraction_removed": (
             removed_energy / total_energy if total_energy > 0 else 0.0
         ),
+        "confidence_gate": {
+            "residual_norm_threshold": confidence_gate.residual_threshold,
+            "context_support_radius": confidence_gate.support_radius,
+            "context_support_outer_radius": (
+                confidence_gate.support_radius * confidence_gate.support_outer_multiplier
+            ),
+            "calibration_rows": int(x.shape[0]),
+            "warning": "small source calibration set; log confidence and abstentions",
+        },
     }
-    return baseline, projector, diagnostics
+    return baseline, projector, confidence_gate, diagnostics
 
 
 class TargetOnlyMeanEstimator:
-    """Episode-local EMA of target residuals; optionally filters source content."""
+    """Episode-local EMA of target residuals with optional source-only abstention."""
 
     def __init__(
         self,
@@ -175,6 +295,7 @@ class TargetOnlyMeanEstimator:
         alpha: float = 1.0,
         clip_norm: float | None = None,
         residual_projector: SourceResidualProjector | None = None,
+        confidence_gate: SourceResidualConfidenceGate | None = None,
     ):
         if not np.isfinite(momentum) or not 0.0 <= momentum < 1.0:
             raise ValueError("momentum must be finite and in [0,1)")
@@ -187,14 +308,22 @@ class TargetOnlyMeanEstimator:
         self.alpha = float(alpha)
         self.clip_norm = None if clip_norm is None else float(clip_norm)
         self.residual_projector = residual_projector
+        self.confidence_gate = confidence_gate
         self.ema: torch.Tensor | None = None
+        self.last_raw_residual: torch.Tensor | None = None
+        self.last_confidence: torch.Tensor | None = None
 
     def reset(self) -> None:
         self.ema = None
+        self.last_raw_residual = None
+        self.last_confidence = None
 
     @torch.no_grad()
-    def raw_residual(self, visual: torch.Tensor, context: np.ndarray) -> torch.Tensor:
-        """Return pooled V_t - g_src(context), before source-content filtering."""
+    def raw_residual(
+        self,
+        visual: torch.Tensor,
+        context: np.ndarray | torch.Tensor,
+    ) -> torch.Tensor:
         if visual.ndim == 3:
             pooled = visual.mean(dim=1)
         elif visual.ndim == 2:
@@ -218,27 +347,42 @@ class TargetOnlyMeanEstimator:
         return pooled - prediction
 
     @torch.no_grad()
-    def residual(self, visual: torch.Tensor, context: np.ndarray) -> torch.Tensor:
+    def residual(self, visual, context) -> torch.Tensor:
         raw = self.raw_residual(visual, context)
-        if self.residual_projector is None:
-            return raw
-        return self.residual_projector.transform(raw)
+        return raw if self.residual_projector is None else self.residual_projector.transform(raw)
 
     @torch.no_grad()
-    def update(self, visual: torch.Tensor, context: np.ndarray) -> torch.Tensor:
-        residual = self.residual(visual, context)
+    def update(self, visual, context) -> torch.Tensor:
+        raw = self.raw_residual(visual, context)
+        residual = raw if self.residual_projector is None else self.residual_projector.transform(raw)
         if self.ema is None:
             self.ema = residual.clone()
         else:
             if self.ema.shape != residual.shape:
                 raise ValueError("target batch shape changed; reset estimator before changing batch size")
             self.ema = self.momentum * self.ema + (1.0 - self.momentum) * residual
+        self.last_raw_residual = raw
+        if self.confidence_gate is None:
+            self.last_confidence = torch.ones(
+                (raw.shape[0], 1), device=raw.device, dtype=raw.dtype
+            )
+        else:
+            self.last_confidence = self.confidence_gate.confidence(raw, context)
         return self.ema
 
     @torch.no_grad()
-    def correction(self, visual: torch.Tensor, context: np.ndarray) -> torch.Tensor:
-        delta = self.update(visual, context).clone()
+    def applied_correction(self) -> torch.Tensor:
+        if self.ema is None:
+            raise RuntimeError("update must be called before applied_correction")
+        delta = self.ema.clone()
         if self.clip_norm is not None:
             norm = delta.norm(dim=-1, keepdim=True).clamp_min(1e-12)
             delta = delta * (self.clip_norm / norm).clamp(max=1.0)
+        if self.last_confidence is not None:
+            delta = delta * self.last_confidence
         return self.alpha * delta
+
+    @torch.no_grad()
+    def correction(self, visual, context) -> torch.Tensor:
+        self.update(visual, context)
+        return self.applied_correction()

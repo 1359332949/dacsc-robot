@@ -1,3 +1,0 @@
-torchview==0.2.7
-torchinfo==1.8.0
-graphviz==0.21

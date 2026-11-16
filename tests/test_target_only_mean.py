@@ -3,12 +3,22 @@ import unittest
 import numpy as np
 import torch
 
+from dacsc.action_guard import limit_rotation_delta
 from dacsc.target_only_mean import (
     ConditionalSourceBaseline,
+    SourceResidualConfidenceGate,
     SourceResidualProjector,
     TargetOnlyMeanEstimator,
     fit_source_calibration,
 )
+
+
+class IdentityNormalizer:
+    def unnormalize_action(self, action):
+        return action
+
+    def normalize_action(self, action):
+        return action
 
 
 class TestConditionalSourceBaseline(unittest.TestCase):
@@ -19,23 +29,19 @@ class TestConditionalSourceBaseline(unittest.TestCase):
         y = x @ w + 2.0
         base = ConditionalSourceBaseline(l2=1e-6)
         base.fit(x, y)
-        pred = base.predict(x)
-        self.assertLess(float(np.abs(pred - y).mean()), 1e-3)
+        self.assertLess(float(np.abs(base.predict(x) - y).mean()), 1e-3)
 
     def test_standardize_switch_is_effective(self):
         rng = np.random.RandomState(1)
         x = rng.randn(40, 3) * np.array([0.01, 10.0, 100.0])
         y = x @ rng.randn(3, 2)
-        standardized = ConditionalSourceBaseline(l2=1.0, standardize=True)
-        raw = ConditionalSourceBaseline(l2=1.0, standardize=False)
-        standardized.fit(x, y)
-        raw.fit(x, y)
-        self.assertFalse(np.allclose(standardized.scale, raw.scale))
+        a = ConditionalSourceBaseline(l2=1.0, standardize=True)
+        b = ConditionalSourceBaseline(l2=1.0, standardize=False)
+        a.fit(x, y); b.fit(x, y)
+        self.assertFalse(np.allclose(a.scale, b.scale))
 
     def test_rejects_non_finite_fit_data(self):
-        x = np.ones((3, 2))
-        y = np.ones((3, 4))
-        y[0, 0] = np.nan
+        x = np.ones((3, 2)); y = np.ones((3, 4)); y[0, 0] = np.nan
         with self.assertRaises(ValueError):
             ConditionalSourceBaseline().fit(x, y)
 
@@ -43,14 +49,12 @@ class TestConditionalSourceBaseline(unittest.TestCase):
 class TestSourceResidualProjector(unittest.TestCase):
     def test_removes_source_mean_and_content_direction(self):
         source_residuals = np.array([
-            [1.0, -1.0, 0.0],
-            [3.0, 1.0, 0.0],
-            [2.0, 0.0, 0.0],
-            [4.0, 2.0, 0.0],
+            [1.0, -1.0, 0.0], [3.0, 1.0, 0.0],
+            [2.0, 0.0, 0.0], [4.0, 2.0, 0.0],
         ])
         projector = SourceResidualProjector.fit(source_residuals, rank=1)
-        target_residual = torch.tensor([[4.0, 0.0, 5.0]], dtype=torch.float64)
-        filtered = projector.transform(target_residual)
+        target = torch.tensor([[4.0, 0.0, 5.0]], dtype=torch.float64)
+        filtered = projector.transform(target)
         basis = torch.as_tensor(projector.basis, dtype=torch.float64)
         self.assertLess(float((filtered @ basis).abs().max()), 1e-10)
         self.assertGreater(float(filtered[0, 2]), 4.9)
@@ -58,60 +62,91 @@ class TestSourceResidualProjector(unittest.TestCase):
     def test_rank_zero_only_subtracts_source_residual_mean(self):
         residuals = np.array([[1.0, 2.0], [3.0, 4.0], [2.0, 3.0]])
         projector = SourceResidualProjector.fit(residuals, rank=0)
-        x = torch.tensor([[5.0, 7.0]])
-        y = projector.transform(x)
-        # Source residual mean is [2, 3], so [5, 7] -> [3, 4].
-        self.assertTrue(torch.allclose(y, torch.tensor([[3.0, 4.0]])))
+        actual = projector.transform(torch.tensor([[5.0, 7.0]]))
+        self.assertTrue(torch.allclose(actual, torch.tensor([[3.0, 4.0]])))
+
+
+class TestSourceResidualConfidenceGate(unittest.TestCase):
+    def setUp(self):
+        self.contexts = np.array([
+            [0.0, 0.0], [0.1, 0.0], [0.0, 0.1], [0.1, 0.1],
+            [0.2, 0.0], [0.0, 0.2], [0.2, 0.2], [0.15, 0.05],
+        ])
+        self.residuals = np.array([
+            [0.1, 0.0], [-0.1, 0.0], [0.0, 0.1], [0.0, -0.1],
+            [0.05, 0.05], [-0.05, -0.05], [0.08, -0.02], [-0.08, 0.02],
+        ])
+        self.gate = SourceResidualConfidenceGate.fit(self.contexts, self.residuals)
+
+    def test_source_noise_residual_is_abstained(self):
+        confidence = self.gate.confidence(
+            torch.tensor([[0.02, -0.01]]), torch.tensor([[0.05, 0.05]])
+        )
+        self.assertEqual(float(confidence), 0.0)
+
+    def test_large_residual_inside_support_is_admitted(self):
+        confidence = self.gate.confidence(
+            torch.tensor([[2.0, 1.0]]), torch.tensor([[0.05, 0.05]])
+        )
+        self.assertGreater(float(confidence), 0.0)
+
+    def test_out_of_support_context_abstains(self):
+        confidence = self.gate.confidence(
+            torch.tensor([[2.0, 1.0]]), torch.tensor([[20.0, -20.0]])
+        )
+        self.assertEqual(float(confidence), 0.0)
 
 
 class TestTargetOnlyMeanEstimator(unittest.TestCase):
     def setUp(self):
         rng = np.random.RandomState(0)
-        x = rng.randn(80, 4)
-        w = rng.randn(4, 3)
+        x = rng.randn(80, 4); w = rng.randn(4, 3)
         self.base = ConditionalSourceBaseline(l2=1e-6)
         self.base.fit(x, x @ w)
         self.context = np.array([[0.1, 0.2, 0.3, 0.4]])
 
     def test_target_only_residual(self):
-        est = TargetOnlyMeanEstimator(self.base, momentum=0.5, alpha=1.0)
-        source = self.base.predict(self.context)
-        visual = torch.tensor(source + np.array([[1.0, 2.0, 3.0]]), dtype=torch.float32)
-        res = est.residual(visual, self.context)
-        self.assertTrue(torch.allclose(res, torch.tensor([[1.0, 2.0, 3.0]]), atol=1e-4))
+        source = torch.tensor(self.base.predict(self.context), dtype=torch.float32)
+        est = TargetOnlyMeanEstimator(self.base)
+        residual = est.residual(source + torch.tensor([[1.0, 2.0, 3.0]]), self.context)
+        self.assertTrue(torch.allclose(residual, torch.tensor([[1.0, 2.0, 3.0]]), atol=1e-4))
 
     def test_episode_reset_clears_history(self):
-        est = TargetOnlyMeanEstimator(self.base, momentum=0.5)
         source = torch.tensor(self.base.predict(self.context), dtype=torch.float32)
-        first = torch.tensor([[1.0, 2.0, 3.0]])
-        est.update(source + first, self.context)
+        est = TargetOnlyMeanEstimator(self.base, momentum=0.5)
+        est.update(source + torch.tensor([[1.0, 2.0, 3.0]]), self.context)
         est.reset()
-        second = torch.tensor([[4.0, 5.0, 6.0]])
-        out = est.update(source + second, self.context)
-        self.assertTrue(torch.allclose(out, second))
+        out = est.update(source + torch.tensor([[4.0, 5.0, 6.0]]), self.context)
+        self.assertTrue(torch.allclose(out, torch.tensor([[4.0, 5.0, 6.0]])))
 
     def test_content_projector_is_applied_before_ema(self):
         projector = SourceResidualProjector.fit(
-            np.array([[1.0, 0.0, 0.0], [-1.0, 0.0, 0.0], [0.0, 1.0, 0.0]]),
-            rank=1,
+            np.array([[1., 0., 0.], [-1., 0., 0.], [0., 1., 0.]]), rank=1
         )
-        est = TargetOnlyMeanEstimator(self.base, residual_projector=projector)
-        raw = torch.tensor([[1.0, 2.0, 3.0]])
         source = torch.tensor(self.base.predict(self.context), dtype=torch.float32)
-        out = est.update(source + raw, self.context)
+        est = TargetOnlyMeanEstimator(self.base, residual_projector=projector)
+        out = est.update(source + torch.tensor([[1., 2., 3.]]), self.context)
         basis = torch.as_tensor(projector.basis, dtype=out.dtype)
         self.assertLess(float((out @ basis).abs().max()), 1e-5)
 
-    def test_clip(self):
-        est = TargetOnlyMeanEstimator(self.base, alpha=1.0, clip_norm=0.5)
+    def test_confidence_gate_makes_clean_like_residual_identity(self):
+        contexts = np.array([
+            [0.0, 0.0], [0.1, 0.0], [0.0, 0.1], [0.1, 0.1],
+            [0.2, 0.0], [0.0, 0.2], [0.2, 0.2], [0.15, 0.05],
+        ])
+        residuals = np.array([
+            [0.1, 0.0], [-0.1, 0.0], [0.0, 0.1], [0.0, -0.1],
+            [0.05, 0.05], [-0.05, -0.05], [0.08, -0.02], [-0.08, 0.02],
+        ])
+        gate = SourceResidualConfidenceGate.fit(contexts, residuals)
         source = torch.tensor(self.base.predict(self.context), dtype=torch.float32)
-        vec = torch.tensor([[10.0, 10.0, 10.0]])
-        corr = est.correction(source + vec, self.context)
-        self.assertLessEqual(float(corr.norm()), 0.5001)
+        est = TargetOnlyMeanEstimator(self.base, confidence_gate=gate)
+        est.update(source + torch.tensor([[0.02, -0.01, 0.0]]), np.array([[0.05, 0.05]]))
+        self.assertTrue(torch.equal(est.applied_correction(), torch.zeros(1, 3)))
 
     def test_rejects_batch_size_change_without_reset(self):
-        est = TargetOnlyMeanEstimator(self.base, momentum=0.5)
         source = torch.tensor(self.base.predict(self.context), dtype=torch.float32)
+        est = TargetOnlyMeanEstimator(self.base)
         est.update(source, self.context)
         with self.assertRaises(ValueError):
             est.update(source.repeat(2, 1), np.repeat(self.context, 2, axis=0))
@@ -120,15 +155,38 @@ class TestTargetOnlyMeanEstimator(unittest.TestCase):
 class TestSourceCalibration(unittest.TestCase):
     def test_cross_fitted_calibration(self):
         rng = np.random.RandomState(42)
-        x = rng.randn(20, 5)
-        w = rng.randn(5, 7)
+        x = rng.randn(20, 5); w = rng.randn(5, 7)
         y = x @ w + rng.randn(20, 7) * 0.05
-        base, projector, diagnostics = fit_source_calibration(
+        base, projector, gate, diagnostics = fit_source_calibration(
             x, y, l2=1.0, content_rank=2, folds=5, seed=3
         )
         self.assertEqual(base.predict(x[:2]).shape, (2, 7))
         self.assertEqual(projector.basis.shape, (7, 2))
+        self.assertEqual(gate.source_contexts_z.shape, x.shape)
         self.assertEqual(diagnostics["source_rows"], 20)
+
+
+class TestActionRotationGuard(unittest.TestCase):
+    def test_rotation_budget_is_respected_and_other_dims_unchanged(self):
+        reference = torch.zeros(1, 2, 7)
+        candidate = torch.zeros(1, 2, 7)
+        candidate[..., :3] = 0.3
+        candidate[..., 3:6] = torch.tensor([0.0, 0.0, 0.4])
+        candidate[..., 6] = 1.0
+        bounded = limit_rotation_delta(candidate, reference, IdentityNormalizer(), 0.05)
+        self.assertTrue(torch.allclose(bounded[..., :3], candidate[..., :3]))
+        self.assertTrue(torch.allclose(bounded[..., 6], candidate[..., 6]))
+        from scipy.spatial.transform import Rotation
+        r = Rotation.from_rotvec(bounded[..., 3:6].numpy().reshape(-1, 3))
+        a = r.magnitude()
+        self.assertLessEqual(float(a.max()), 0.050001)
+
+    def test_zero_rotation_budget_preserves_reference_rotation(self):
+        reference = torch.zeros(1, 1, 7)
+        candidate = torch.zeros(1, 1, 7)
+        candidate[..., 3:6] = torch.tensor([0.2, -0.1, 0.3])
+        bounded = limit_rotation_delta(candidate, reference, IdentityNormalizer(), 0.0)
+        self.assertTrue(torch.equal(bounded[..., 3:6], reference[..., 3:6]))
 
 
 if __name__ == "__main__":
