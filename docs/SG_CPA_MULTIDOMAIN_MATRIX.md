@@ -112,10 +112,55 @@ held-out task 的状态永远不能用于调参，即使它同时属于 dev_doma
 - 状态审计增加 `model_compatible` 检查；
 - Background/Lighting 变体选择仍标记 provisional，正式采集前需要人工按实际视觉差异复核。
 
-### 5.2 E1 Frozen 退化筛查
+### 5.2 E1 Frozen 退化筛查结果
 
-E1 正在运行：4 tasks × (1 Clean + 8 Shift) × 10 episodes = 360 episodes。  
-`batch` 不是确认实验；E1 只用于筛选哪些域/变体值得进入 Phase B。
+**已完成：360 / 360 episodes，20 个 worker 并行，无 Traceback。**
+
+配置：4 tasks × (1 Clean + 8 Shift) × 10 episodes；BF16；同一 init index 和 episode seed 配对；只跑 Frozen CoRP。
+
+Clean baseline：
+
+| task | Clean success |
+|---|---:|
+| spatial cookie-box | 10/10 |
+| object alphabet soup | 9/10 |
+| goal cabinet | 10/10 |
+| libero_10 moka-pot | 9/10 |
+
+Shift 结果（10 episodes/cell，筛查级）：
+
+| task | domain | variant successes | Δ vs paired clean |
+|---|---|---|---:|
+| spatial | Background | 8/10, 9/10 | -0.2, -0.1 |
+| spatial | Lighting | 9/10, 7/10 | -0.1, -0.3 |
+| spatial | Sensor | 10/10, 6/10 | 0.0, -0.4 |
+| spatial | Camera | 5/10, 7/10 | -0.5, -0.3 |
+| object | Background | 6/10, 7/10 | -0.3, -0.2 |
+| object | Lighting | **0/10**, 10/10 | **-0.9**, +0.1 |
+| object | Sensor | 10/10, **1/10** | +0.1, **-0.8** |
+| object | Camera | 10/10, 10/10 | +0.1, +0.1 |
+| goal | Background | **0/10, 0/10** | **-1.0, -1.0** |
+| goal | Lighting | 9/10, 9/10 | -0.1, -0.1 |
+| goal | Sensor | 10/10, **0/10** | 0.0, **-1.0** |
+| goal | Camera | 7/10, 4/10 | -0.3, -0.6 |
+| libero_10 | Background | 1/10, 2/10 | -0.8, -0.7 |
+| libero_10 | Lighting | **0/10**, 2/10 | **-0.9, -0.7** |
+| libero_10 | Sensor | 9/10, **0/10** | 0.0, **-0.9** |
+| libero_10 | Camera | 10/10, 2/10 | +0.1, -0.7 |
+
+筛查结论：
+
+- **最稳定的退化候选**：goal + Background；libero_10 + Background/Lighting；object + Lighting(2222)；Sensor noise=10 在多个任务上严重退化。
+- **Camera 不一致**：spatial/goal/libero_10 有明显退化，object Camera 两个变体都 1.0；不能把 Camera 当统一退化域。
+- **Sensor noise=5 多数不退化**，noise=10 才明显；Sensor 只污染 agentview，wrist 仍正常。
+- Clean baseline 接近 1.0，存在明显天花板效应；10 episodes 只能筛查。
+
+统计限制：
+
+- 10 episodes/cell；
+- 配对 bootstrap 的 95% 区间很宽，部分为 [-1,-1] 或 [0,0]；
+- 不能据此宣称显著性或泛化；
+- 这些 cell 是开发/筛查证据，最终确认必须换独立 episode seeds 和未用于选择的变体。
 
 ## 6. 阶段顺序（已修正）
 

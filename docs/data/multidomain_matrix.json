@@ -8,6 +8,7 @@
         "background": [
           {
             "classification_id": 146,
+            "benchmark_index": 145,
             "name": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_table_27",
             "composite_key": "libero_spatial:146:pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_table_27",
             "category": "Background Textures",
@@ -24,6 +25,7 @@
           },
           {
             "classification_id": 147,
+            "benchmark_index": 146,
             "name": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_table_4",
             "composite_key": "libero_spatial:147:pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_table_4",
             "category": "Background Textures",
@@ -42,6 +44,7 @@
         "lighting": [
           {
             "classification_id": 2292,
+            "benchmark_index": 2291,
             "name": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_light_1",
             "composite_key": "libero_spatial:2292:pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_light_1",
             "category": "Light Conditions",
@@ -58,6 +61,7 @@
           },
           {
             "classification_id": 2312,
+            "benchmark_index": 2311,
             "name": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_light_50",
             "composite_key": "libero_spatial:2312:pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_light_50",
             "category": "Light Conditions",
@@ -76,6 +80,7 @@
         "sensor": [
           {
             "classification_id": 1476,
+            "benchmark_index": 1475,
             "name": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_view_0_0_100_0_0_initstate_0_noise_5",
             "composite_key": "libero_spatial:1476:pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_view_0_0_100_0_0_initstate_0_noise_5",
             "category": "Sensor Noise",
@@ -92,6 +97,7 @@
           },
           {
             "classification_id": 1481,
+            "benchmark_index": 1480,
             "name": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_view_0_0_100_0_0_initstate_0_noise_10",
             "composite_key": "libero_spatial:1481:pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_view_0_0_100_0_0_initstate_0_noise_10",
             "category": "Sensor Noise",
@@ -110,6 +116,7 @@
         "camera": [
           {
             "classification_id": 704,
+            "benchmark_index": 703,
             "name": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_view_0_0_100_8_356_initstate_0",
             "composite_key": "libero_spatial:704:pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_view_0_0_100_8_356_initstate_0",
             "category": "Camera Viewpoints",
@@ -126,6 +133,7 @@
           },
           {
             "classification_id": 735,
+            "benchmark_index": 734,
             "name": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_view_60_15_100_0_0_initstate_0",
             "composite_key": "libero_spatial:735:pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_view_60_15_100_0_0_initstate_0",
             "category": "Camera Viewpoints",
@@ -218,6 +226,7 @@
         "background": [
           {
             "classification_id": 1,
+            "benchmark_index": 0,
             "name": "pick_up_the_alphabet_soup_and_place_it_in_the_basket_table_1",
             "composite_key": "libero_object:1:pick_up_the_alphabet_soup_and_place_it_in_the_basket_table_1",
             "category": "Background Textures",
@@ -234,6 +243,7 @@
           },
           {
             "classification_id": 17,
+            "benchmark_index": 16,
             "name": "pick_up_the_alphabet_soup_and_place_it_in_the_basket_table_28",
             "composite_key": "libero_object:17:pick_up_the_alphabet_soup_and_place_it_in_the_basket_table_28",
             "category": "Background Textures",
@@ -252,6 +262,7 @@
         "lighting": [
           {
             "classification_id": 2222,
+            "benchmark_index": 2221,
             "name": "pick_up_the_alphabet_soup_and_place_it_in_the_basket_light_1",
             "composite_key": "libero_object:2222:pick_up_the_alphabet_soup_and_place_it_in_the_basket_light_1",
             "category": "Light Conditions",
@@ -268,6 +279,7 @@
           },
           {
             "classification_id": 2259,
+            "benchmark_index": 2258,
             "name": "pick_up_the_alphabet_soup_and_place_it_in_the_basket_light_50",
             "composite_key": "libero_object:2259:pick_up_the_alphabet_soup_and_place_it_in_the_basket_light_50",
             "category": "Light Conditions",
@@ -286,6 +298,7 @@
         "sensor": [
           {
             "classification_id": 1400,
+            "benchmark_index": 1399,
             "name": "pick_up_the_alphabet_soup_and_place_it_in_the_basket_view_0_0_100_0_0_initstate_0_noise_5",
             "composite_key": "libero_object:1400:pick_up_the_alphabet_soup_and_place_it_in_the_basket_view_0_0_100_0_0_initstate_0_noise_5",
             "category": "Sensor Noise",
@@ -302,6 +315,7 @@
           },
           {
             "classification_id": 1405,
+            "benchmark_index": 1404,
             "name": "pick_up_the_alphabet_soup_and_place_it_in_the_basket_view_0_0_100_0_0_initstate_0_noise_10",
             "composite_key": "libero_object:1405:pick_up_the_alphabet_soup_and_place_it_in_the_basket_view_0_0_100_0_0_initstate_0_noise_10",
             "category": "Sensor Noise",
@@ -320,6 +334,7 @@
         "camera": [
           {
             "classification_id": 653,
+            "benchmark_index": 652,
             "name": "pick_up_the_alphabet_soup_and_place_it_in_the_basket_view_0_0_100_2_354_initstate_0",
             "composite_key": "libero_object:653:pick_up_the_alphabet_soup_and_place_it_in_the_basket_view_0_0_100_2_354_initstate_0",
             "category": "Camera Viewpoints",
@@ -336,6 +351,7 @@
           },
           {
             "classification_id": 667,
+            "benchmark_index": 666,
             "name": "pick_up_the_alphabet_soup_and_place_it_in_the_basket_view_15_15_100_0_0_initstate_0",
             "composite_key": "libero_object:667:pick_up_the_alphabet_soup_and_place_it_in_the_basket_view_15_15_100_0_0_initstate_0",
             "category": "Camera Viewpoints",
@@ -428,6 +444,7 @@
         "background": [
           {
             "classification_id": 1,
+            "benchmark_index": 0,
             "name": "open_the_middle_drawer_of_the_cabinet_table_1",
             "composite_key": "libero_goal:1:open_the_middle_drawer_of_the_cabinet_table_1",
             "category": "Background Textures",
@@ -444,6 +461,7 @@
           },
           {
             "classification_id": 15,
+            "benchmark_index": 14,
             "name": "open_the_middle_drawer_of_the_cabinet_table_28",
             "composite_key": "libero_goal:15:open_the_middle_drawer_of_the_cabinet_table_28",
             "category": "Background Textures",
@@ -462,6 +480,7 @@
         "lighting": [
           {
             "classification_id": 2313,
+            "benchmark_index": 2312,
             "name": "open_the_middle_drawer_of_the_cabinet_light_1",
             "composite_key": "libero_goal:2313:open_the_middle_drawer_of_the_cabinet_light_1",
             "category": "Light Conditions",
@@ -478,6 +497,7 @@
           },
           {
             "classification_id": 2351,
+            "benchmark_index": 2350,
             "name": "open_the_middle_drawer_of_the_cabinet_light_50",
             "composite_key": "libero_goal:2351:open_the_middle_drawer_of_the_cabinet_light_50",
             "category": "Light Conditions",
@@ -496,6 +516,7 @@
         "sensor": [
           {
             "classification_id": 1513,
+            "benchmark_index": 1512,
             "name": "open_the_middle_drawer_of_the_cabinet_view_0_0_100_0_0_initstate_0_noise_5",
             "composite_key": "libero_goal:1513:open_the_middle_drawer_of_the_cabinet_view_0_0_100_0_0_initstate_0_noise_5",
             "category": "Sensor Noise",
@@ -512,6 +533,7 @@
           },
           {
             "classification_id": 1518,
+            "benchmark_index": 1517,
             "name": "open_the_middle_drawer_of_the_cabinet_view_0_0_100_0_0_initstate_0_noise_10",
             "composite_key": "libero_goal:1518:open_the_middle_drawer_of_the_cabinet_view_0_0_100_0_0_initstate_0_noise_10",
             "category": "Sensor Noise",
@@ -530,6 +552,7 @@
         "camera": [
           {
             "classification_id": 697,
+            "benchmark_index": 696,
             "name": "open_the_middle_drawer_of_the_cabinet_view_0_0_100_2_354_initstate_0",
             "composite_key": "libero_goal:697:open_the_middle_drawer_of_the_cabinet_view_0_0_100_2_354_initstate_0",
             "category": "Camera Viewpoints",
@@ -546,6 +569,7 @@
           },
           {
             "classification_id": 711,
+            "benchmark_index": 710,
             "name": "open_the_middle_drawer_of_the_cabinet_view_15_15_100_0_0_initstate_0",
             "composite_key": "libero_goal:711:open_the_middle_drawer_of_the_cabinet_view_15_15_100_0_0_initstate_0",
             "category": "Camera Viewpoints",
@@ -638,6 +662,7 @@
         "background": [
           {
             "classification_id": 1,
+            "benchmark_index": 0,
             "name": "KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it_table_1",
             "composite_key": "libero_10:1:KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it_table_1",
             "category": "Background Textures",
@@ -654,6 +679,7 @@
           },
           {
             "classification_id": 17,
+            "benchmark_index": 16,
             "name": "KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it_table_28",
             "composite_key": "libero_10:17:KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it_table_28",
             "category": "Background Textures",
@@ -672,6 +698,7 @@
         "lighting": [
           {
             "classification_id": 2246,
+            "benchmark_index": 2245,
             "name": "KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it_light_1",
             "composite_key": "libero_10:2246:KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it_light_1",
             "category": "Light Conditions",
@@ -688,6 +715,7 @@
           },
           {
             "classification_id": 2284,
+            "benchmark_index": 2283,
             "name": "KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it_light_50",
             "composite_key": "libero_10:2284:KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it_light_50",
             "category": "Light Conditions",
@@ -706,6 +734,7 @@
         "sensor": [
           {
             "classification_id": 1570,
+            "benchmark_index": 1569,
             "name": "KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it_view_0_0_100_0_0_initstate_0_noise_5",
             "composite_key": "libero_10:1570:KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it_view_0_0_100_0_0_initstate_0_noise_5",
             "category": "Sensor Noise",
@@ -722,6 +751,7 @@
           },
           {
             "classification_id": 1573,
+            "benchmark_index": 1572,
             "name": "KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it_view_0_0_100_0_0_initstate_0_noise_10",
             "composite_key": "libero_10:1573:KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it_view_0_0_100_0_0_initstate_0_noise_10",
             "category": "Sensor Noise",
@@ -740,6 +770,7 @@
         "camera": [
           {
             "classification_id": 753,
+            "benchmark_index": 752,
             "name": "KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it_view_0_0_100_6_356_initstate_0",
             "composite_key": "libero_10:753:KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it_view_0_0_100_6_356_initstate_0",
             "category": "Camera Viewpoints",
@@ -756,6 +787,7 @@
           },
           {
             "classification_id": 781,
+            "benchmark_index": 780,
             "name": "KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it_view_45_15_100_0_0_initstate_0",
             "composite_key": "libero_10:781:KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it_view_45_15_100_0_0_initstate_0",
             "category": "Camera Viewpoints",

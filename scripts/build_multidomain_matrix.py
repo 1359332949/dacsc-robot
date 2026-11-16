@@ -4,7 +4,7 @@ No Gate code, no rollout.  This only selects planned pairs and records roles.
 """
 
 from __future__ import annotations
-import argparse, json, sys
+import argparse, hashlib, json, subprocess, sys
 import torch
 from pathlib import Path
 
@@ -77,7 +77,24 @@ def main():
     ap.add_argument("--heldout-count", type=int, default=20)
     args = ap.parse_args()
     data = json.loads(args.classification.read_text())
+    try:
+        sys.path.insert(0, "/hy-tmp/libero_plus")
+        from libero.libero.benchmark import libero_suite_task_map
+        task_maps = libero_suite_task_map.libero_task_map
+    except Exception:
+        task_maps = {}
+    try:
+        code_commit = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=str(ROOT),
+                                              text=True, stderr=subprocess.DEVNULL).strip()
+        code_dirty = bool(subprocess.check_output(["git", "status", "--porcelain"], cwd=str(ROOT),
+                                                   text=True, stderr=subprocess.DEVNULL).strip())
+    except Exception:
+        code_commit, code_dirty = None, None
     matrix = {"base_tasks": [], "domains": CATEGORIES,
+              "provenance": {"code_commit": code_commit, "code_dirty": code_dirty,
+                             "classification": str(args.classification),
+                             "classification_sha256": hashlib.sha256(args.classification.read_bytes()).hexdigest(),
+                             "bddl_root": str(args.bddl_root), "init_root": str(args.init_root)},
               "state_split": {"seed": args.state_seed, "dev": args.dev_count,
                               "heldout": args.heldout_count},
               "notes": ["Clean is paired per state; no Clean/Shift labels are used by any proxy.",
@@ -110,8 +127,10 @@ def main():
                 name = str(e["name"])
                 base_bddl = args.bddl_root / suite / f"{base}.bddl"
                 init = args.init_root / suite / f"{base}.pruned_init"
+                suite_map = task_maps.get(suite, [])
+                benchmark_index = suite_map.index(name) if name in suite_map else None
                 chosen.append({
-                    "classification_id": e.get("id"), "name": name,
+                    "classification_id": e.get("id"), "benchmark_index": benchmark_index, "name": name,
                     "composite_key": f"{suite}:{e.get('id')}:{name}",
                     "category": category, "difficulty": e.get("difficulty_level"),
                     "role": ROLE[domain][min(i, 1)],

@@ -1,0 +1,444 @@
+{
+  "screening": true,
+  "episodes_per_cell": 10,
+  "clean": {
+    "libero_spatial::pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate": {
+      "n": 10,
+      "successes": 10,
+      "success_rate": 1.0
+    },
+    "libero_object::pick_up_the_alphabet_soup_and_place_it_in_the_basket": {
+      "n": 10,
+      "successes": 9,
+      "success_rate": 0.9
+    },
+    "libero_goal::open_the_middle_drawer_of_the_cabinet": {
+      "n": 10,
+      "successes": 10,
+      "success_rate": 1.0
+    },
+    "libero_10::KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it": {
+      "n": 10,
+      "successes": 9,
+      "success_rate": 0.9
+    }
+  },
+  "shift": {
+    "libero_10::KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it::background::1": {
+      "n": 10,
+      "successes": 1,
+      "success_rate": 0.1,
+      "paired_clean_success_rate": 0.9,
+      "delta_sr": -0.8,
+      "paired_delta_mean": -0.8,
+      "paired_delta_ci95": [
+        -1.0,
+        -0.5
+      ],
+      "mean_steps": 493.0
+    },
+    "libero_10::KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it::background::17": {
+      "n": 10,
+      "successes": 2,
+      "success_rate": 0.2,
+      "paired_clean_success_rate": 0.9,
+      "delta_sr": -0.7,
+      "paired_delta_mean": -0.7,
+      "paired_delta_ci95": [
+        -1.0,
+        -0.4
+      ],
+      "mean_steps": 466.2
+    },
+    "libero_10::KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it::camera::753": {
+      "n": 10,
+      "successes": 10,
+      "success_rate": 1.0,
+      "paired_clean_success_rate": 0.9,
+      "delta_sr": 0.09999999999999998,
+      "paired_delta_mean": 0.1,
+      "paired_delta_ci95": [
+        0.0,
+        0.3
+      ],
+      "mean_steps": 239.7
+    },
+    "libero_10::KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it::camera::781": {
+      "n": 10,
+      "successes": 2,
+      "success_rate": 0.2,
+      "paired_clean_success_rate": 0.9,
+      "delta_sr": -0.7,
+      "paired_delta_mean": -0.7,
+      "paired_delta_ci95": [
+        -1.0,
+        -0.4
+      ],
+      "mean_steps": 467.6
+    },
+    "libero_10::KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it::lighting::2246": {
+      "n": 10,
+      "successes": 0,
+      "success_rate": 0.0,
+      "paired_clean_success_rate": 0.9,
+      "delta_sr": -0.9,
+      "paired_delta_mean": -0.9,
+      "paired_delta_ci95": [
+        -1.0,
+        -0.7
+      ],
+      "mean_steps": 520.0
+    },
+    "libero_10::KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it::lighting::2284": {
+      "n": 10,
+      "successes": 2,
+      "success_rate": 0.2,
+      "paired_clean_success_rate": 0.9,
+      "delta_sr": -0.7,
+      "paired_delta_mean": -0.7,
+      "paired_delta_ci95": [
+        -1.0,
+        -0.4
+      ],
+      "mean_steps": 467.3
+    },
+    "libero_10::KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it::sensor::1570": {
+      "n": 10,
+      "successes": 9,
+      "success_rate": 0.9,
+      "paired_clean_success_rate": 0.9,
+      "delta_sr": 0.0,
+      "paired_delta_mean": 0.0,
+      "paired_delta_ci95": [
+        -0.3,
+        0.3
+      ],
+      "mean_steps": 266.6
+    },
+    "libero_10::KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it::sensor::1573": {
+      "n": 10,
+      "successes": 0,
+      "success_rate": 0.0,
+      "paired_clean_success_rate": 0.9,
+      "delta_sr": -0.9,
+      "paired_delta_mean": -0.9,
+      "paired_delta_ci95": [
+        -1.0,
+        -0.7
+      ],
+      "mean_steps": 520.0
+    },
+    "libero_goal::open_the_middle_drawer_of_the_cabinet::background::1": {
+      "n": 10,
+      "successes": 0,
+      "success_rate": 0.0,
+      "paired_clean_success_rate": 1.0,
+      "delta_sr": -1.0,
+      "paired_delta_mean": -1.0,
+      "paired_delta_ci95": [
+        -1.0,
+        -1.0
+      ],
+      "mean_steps": 300.0
+    },
+    "libero_goal::open_the_middle_drawer_of_the_cabinet::background::15": {
+      "n": 10,
+      "successes": 0,
+      "success_rate": 0.0,
+      "paired_clean_success_rate": 1.0,
+      "delta_sr": -1.0,
+      "paired_delta_mean": -1.0,
+      "paired_delta_ci95": [
+        -1.0,
+        -1.0
+      ],
+      "mean_steps": 300.0
+    },
+    "libero_goal::open_the_middle_drawer_of_the_cabinet::camera::697": {
+      "n": 10,
+      "successes": 7,
+      "success_rate": 0.7,
+      "paired_clean_success_rate": 1.0,
+      "delta_sr": -0.30000000000000004,
+      "paired_delta_mean": -0.3,
+      "paired_delta_ci95": [
+        -0.6,
+        0.0
+      ],
+      "mean_steps": 190.5
+    },
+    "libero_goal::open_the_middle_drawer_of_the_cabinet::camera::711": {
+      "n": 10,
+      "successes": 4,
+      "success_rate": 0.4,
+      "paired_clean_success_rate": 1.0,
+      "delta_sr": -0.6,
+      "paired_delta_mean": -0.6,
+      "paired_delta_ci95": [
+        -0.9,
+        -0.3
+      ],
+      "mean_steps": 236.2
+    },
+    "libero_goal::open_the_middle_drawer_of_the_cabinet::lighting::2313": {
+      "n": 10,
+      "successes": 9,
+      "success_rate": 0.9,
+      "paired_clean_success_rate": 1.0,
+      "delta_sr": -0.09999999999999998,
+      "paired_delta_mean": -0.1,
+      "paired_delta_ci95": [
+        -0.3,
+        0.0
+      ],
+      "mean_steps": 149.5
+    },
+    "libero_goal::open_the_middle_drawer_of_the_cabinet::lighting::2351": {
+      "n": 10,
+      "successes": 9,
+      "success_rate": 0.9,
+      "paired_clean_success_rate": 1.0,
+      "delta_sr": -0.09999999999999998,
+      "paired_delta_mean": -0.1,
+      "paired_delta_ci95": [
+        -0.3,
+        0.0
+      ],
+      "mean_steps": 149.1
+    },
+    "libero_goal::open_the_middle_drawer_of_the_cabinet::sensor::1513": {
+      "n": 10,
+      "successes": 10,
+      "success_rate": 1.0,
+      "paired_clean_success_rate": 1.0,
+      "delta_sr": 0.0,
+      "paired_delta_mean": 0.0,
+      "paired_delta_ci95": [
+        0.0,
+        0.0
+      ],
+      "mean_steps": 128.9
+    },
+    "libero_goal::open_the_middle_drawer_of_the_cabinet::sensor::1518": {
+      "n": 10,
+      "successes": 0,
+      "success_rate": 0.0,
+      "paired_clean_success_rate": 1.0,
+      "delta_sr": -1.0,
+      "paired_delta_mean": -1.0,
+      "paired_delta_ci95": [
+        -1.0,
+        -1.0
+      ],
+      "mean_steps": 300.0
+    },
+    "libero_object::pick_up_the_alphabet_soup_and_place_it_in_the_basket::background::1": {
+      "n": 10,
+      "successes": 6,
+      "success_rate": 0.6,
+      "paired_clean_success_rate": 0.9,
+      "delta_sr": -0.30000000000000004,
+      "paired_delta_mean": -0.3,
+      "paired_delta_ci95": [
+        -0.6,
+        0.0
+      ],
+      "mean_steps": 219.5
+    },
+    "libero_object::pick_up_the_alphabet_soup_and_place_it_in_the_basket::background::17": {
+      "n": 10,
+      "successes": 7,
+      "success_rate": 0.7,
+      "paired_clean_success_rate": 0.9,
+      "delta_sr": -0.20000000000000007,
+      "paired_delta_mean": -0.2,
+      "paired_delta_ci95": [
+        -0.6,
+        0.2
+      ],
+      "mean_steps": 217.0
+    },
+    "libero_object::pick_up_the_alphabet_soup_and_place_it_in_the_basket::camera::653": {
+      "n": 10,
+      "successes": 10,
+      "success_rate": 1.0,
+      "paired_clean_success_rate": 0.9,
+      "delta_sr": 0.09999999999999998,
+      "paired_delta_mean": 0.1,
+      "paired_delta_ci95": [
+        0.0,
+        0.3
+      ],
+      "mean_steps": 165.4
+    },
+    "libero_object::pick_up_the_alphabet_soup_and_place_it_in_the_basket::camera::667": {
+      "n": 10,
+      "successes": 10,
+      "success_rate": 1.0,
+      "paired_clean_success_rate": 0.9,
+      "delta_sr": 0.09999999999999998,
+      "paired_delta_mean": 0.1,
+      "paired_delta_ci95": [
+        0.0,
+        0.3
+      ],
+      "mean_steps": 138.2
+    },
+    "libero_object::pick_up_the_alphabet_soup_and_place_it_in_the_basket::lighting::2222": {
+      "n": 10,
+      "successes": 0,
+      "success_rate": 0.0,
+      "paired_clean_success_rate": 0.9,
+      "delta_sr": -0.9,
+      "paired_delta_mean": -0.9,
+      "paired_delta_ci95": [
+        -1.0,
+        -0.7
+      ],
+      "mean_steps": 280.0
+    },
+    "libero_object::pick_up_the_alphabet_soup_and_place_it_in_the_basket::lighting::2259": {
+      "n": 10,
+      "successes": 10,
+      "success_rate": 1.0,
+      "paired_clean_success_rate": 0.9,
+      "delta_sr": 0.09999999999999998,
+      "paired_delta_mean": 0.1,
+      "paired_delta_ci95": [
+        0.0,
+        0.3
+      ],
+      "mean_steps": 136.9
+    },
+    "libero_object::pick_up_the_alphabet_soup_and_place_it_in_the_basket::sensor::1400": {
+      "n": 10,
+      "successes": 10,
+      "success_rate": 1.0,
+      "paired_clean_success_rate": 0.9,
+      "delta_sr": 0.09999999999999998,
+      "paired_delta_mean": 0.1,
+      "paired_delta_ci95": [
+        0.0,
+        0.3
+      ],
+      "mean_steps": 146.6
+    },
+    "libero_object::pick_up_the_alphabet_soup_and_place_it_in_the_basket::sensor::1405": {
+      "n": 10,
+      "successes": 1,
+      "success_rate": 0.1,
+      "paired_clean_success_rate": 0.9,
+      "delta_sr": -0.8,
+      "paired_delta_mean": -0.8,
+      "paired_delta_ci95": [
+        -1.0,
+        -0.5
+      ],
+      "mean_steps": 275.1
+    },
+    "libero_spatial::pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate::background::146": {
+      "n": 10,
+      "successes": 8,
+      "success_rate": 0.8,
+      "paired_clean_success_rate": 1.0,
+      "delta_sr": -0.19999999999999996,
+      "paired_delta_mean": -0.2,
+      "paired_delta_ci95": [
+        -0.5,
+        0.0
+      ],
+      "mean_steps": 137.0
+    },
+    "libero_spatial::pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate::background::147": {
+      "n": 10,
+      "successes": 9,
+      "success_rate": 0.9,
+      "paired_clean_success_rate": 1.0,
+      "delta_sr": -0.09999999999999998,
+      "paired_delta_mean": -0.1,
+      "paired_delta_ci95": [
+        -0.3,
+        0.0
+      ],
+      "mean_steps": 124.7
+    },
+    "libero_spatial::pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate::camera::704": {
+      "n": 10,
+      "successes": 5,
+      "success_rate": 0.5,
+      "paired_clean_success_rate": 1.0,
+      "delta_sr": -0.5,
+      "paired_delta_mean": -0.5,
+      "paired_delta_ci95": [
+        -0.8,
+        -0.2
+      ],
+      "mean_steps": 156.5
+    },
+    "libero_spatial::pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate::camera::735": {
+      "n": 10,
+      "successes": 7,
+      "success_rate": 0.7,
+      "paired_clean_success_rate": 1.0,
+      "delta_sr": -0.30000000000000004,
+      "paired_delta_mean": -0.3,
+      "paired_delta_ci95": [
+        -0.6,
+        0.0
+      ],
+      "mean_steps": 151.6
+    },
+    "libero_spatial::pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate::lighting::2292": {
+      "n": 10,
+      "successes": 9,
+      "success_rate": 0.9,
+      "paired_clean_success_rate": 1.0,
+      "delta_sr": -0.09999999999999998,
+      "paired_delta_mean": -0.1,
+      "paired_delta_ci95": [
+        -0.3,
+        0.0
+      ],
+      "mean_steps": 109.9
+    },
+    "libero_spatial::pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate::lighting::2312": {
+      "n": 10,
+      "successes": 7,
+      "success_rate": 0.7,
+      "paired_clean_success_rate": 1.0,
+      "delta_sr": -0.30000000000000004,
+      "paired_delta_mean": -0.3,
+      "paired_delta_ci95": [
+        -0.6,
+        0.0
+      ],
+      "mean_steps": 131.6
+    },
+    "libero_spatial::pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate::sensor::1476": {
+      "n": 10,
+      "successes": 10,
+      "success_rate": 1.0,
+      "paired_clean_success_rate": 1.0,
+      "delta_sr": 0.0,
+      "paired_delta_mean": 0.0,
+      "paired_delta_ci95": [
+        0.0,
+        0.0
+      ],
+      "mean_steps": 86.3
+    },
+    "libero_spatial::pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate::sensor::1481": {
+      "n": 10,
+      "successes": 6,
+      "success_rate": 0.6,
+      "paired_clean_success_rate": 1.0,
+      "delta_sr": -0.4,
+      "paired_delta_mean": -0.4,
+      "paired_delta_ci95": [
+        -0.7,
+        -0.1
+      ],
+      "mean_steps": 164.6
+    }
+  }
+}

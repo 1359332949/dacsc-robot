@@ -660,3 +660,36 @@ Camera 705 保留为第一块受控实验，不再是整个研究目标。新的
 Sensor 为 motion_blur(5)，只污染 agentview；Camera 为 view_0_0_100_8_358，同 env 参数修改，非目标相机不变。
 
 详见 `docs/SG_CPA_MULTIDOMAIN_MATRIX.md` 与 `docs/data/phase_a_cell_audit.json`。
+
+
+## 22. E1 Frozen 多域退化筛查（2026-11-16）
+
+- 4 tasks × (1 Clean + 4 domains × 2 variants) × 10 episodes = 360；
+- 20 个 worker 并行，BF16，Frozen CoRP；
+- 同 init index + episode seed 配对；统计单位 episode。
+
+Clean：spatial 10/10，object 9/10，goal 10/10，libero_10 9/10。
+
+主要退化候选：
+
+| task | domain | 结果 |
+|---|---|---|
+| goal | Background | 0/10, 0/10 |
+| libero_10 | Background | 1/10, 2/10 |
+| libero_10 | Lighting | 0/10, 2/10 |
+| object | Lighting 2222 | 0/10 |
+| object | Sensor noise=10 | 1/10 |
+| goal | Sensor noise=10 | 0/10 |
+| libero_10 | Sensor noise=10 | 0/10 |
+| spatial | Camera 704/735 | 5/10, 7/10 |
+
+反例：
+
+- object 的 Camera 两变体均 10/10；
+- Sensor noise=5 多数 task 不退化；
+- goal Lighting 9/10、9/10。
+
+结论：**退化是条件性的，不是“Camera 一律坏”或“Sensor 一律坏”。**  
+10 episodes/cell 只用于筛选；Phase B 只选有明确退化的条件，并另留确认 seeds/变体。
+
+产物：`docs/data/e1_frozen.jsonl`、`docs/data/e1_analysis.json`。
