@@ -1,0 +1,352 @@
+{
+  "base_tasks": [
+    {
+      "suite": "libero_spatial",
+      "base_task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "base_role": "dev_task",
+      "variants": {
+        "background": [
+          {
+            "classification_id": 138,
+            "name": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_table_11",
+            "category": "Background Textures",
+            "difficulty": 1,
+            "role": "dev_domain",
+            "base_bddl": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate.bddl",
+            "base_bddl_exists": true,
+            "base_init": "/hy-tmp/libero_plus/libero/libero/init_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate.pruned_init",
+            "base_init_exists": true,
+            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_table_11.bddl"
+          },
+          {
+            "classification_id": 139,
+            "name": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_table_12",
+            "category": "Background Textures",
+            "difficulty": 1,
+            "role": "heldout_same_domain",
+            "base_bddl": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate.bddl",
+            "base_bddl_exists": true,
+            "base_init": "/hy-tmp/libero_plus/libero/libero/init_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate.pruned_init",
+            "base_init_exists": true,
+            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_table_12.bddl"
+          }
+        ],
+        "lighting": [
+          {
+            "classification_id": 2292,
+            "name": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_light_1",
+            "category": "Light Conditions",
+            "difficulty": 1,
+            "role": "dev_domain",
+            "base_bddl": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate.bddl",
+            "base_bddl_exists": true,
+            "base_init": "/hy-tmp/libero_plus/libero/libero/init_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate.pruned_init",
+            "base_init_exists": true,
+            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_light_1.bddl"
+          },
+          {
+            "classification_id": 2293,
+            "name": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_light_10",
+            "category": "Light Conditions",
+            "difficulty": 2,
+            "role": "heldout_same_domain",
+            "base_bddl": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate.bddl",
+            "base_bddl_exists": true,
+            "base_init": "/hy-tmp/libero_plus/libero/libero/init_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate.pruned_init",
+            "base_init_exists": true,
+            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_light_10.bddl"
+          }
+        ],
+        "sensor": [
+          {
+            "classification_id": 1476,
+            "name": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_view_0_0_100_0_0_initstate_0_noise_5",
+            "category": "Sensor Noise",
+            "difficulty": 2,
+            "role": "heldout_unseen_category",
+            "base_bddl": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate.bddl",
+            "base_bddl_exists": true,
+            "base_init": "/hy-tmp/libero_plus/libero/libero/init_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate.pruned_init",
+            "base_init_exists": true,
+            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_view_0_0_100_0_0_initstate_0_noise_5.bddl"
+          },
+          {
+            "classification_id": 1477,
+            "name": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_view_0_0_100_0_0_initstate_0_noise_6",
+            "category": "Sensor Noise",
+            "difficulty": 2,
+            "role": "heldout_unseen_category",
+            "base_bddl": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate.bddl",
+            "base_bddl_exists": true,
+            "base_init": "/hy-tmp/libero_plus/libero/libero/init_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate.pruned_init",
+            "base_init_exists": true,
+            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_view_0_0_100_0_0_initstate_0_noise_6.bddl"
+          }
+        ],
+        "camera": [
+          {
+            "classification_id": 687,
+            "name": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_view_0_0_131_0_0_initstate_0",
+            "category": "Camera Viewpoints",
+            "difficulty": 2,
+            "role": "heldout_unseen_category",
+            "base_bddl": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate.bddl",
+            "base_bddl_exists": true,
+            "base_init": "/hy-tmp/libero_plus/libero/libero/init_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate.pruned_init",
+            "base_init_exists": true,
+            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_view_0_0_131_0_0_initstate_0.bddl"
+          },
+          {
+            "classification_id": 688,
+            "name": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_view_0_0_132_0_0_initstate_0",
+            "category": "Camera Viewpoints",
+            "difficulty": 2,
+            "role": "heldout_unseen_category",
+            "base_bddl": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate.bddl",
+            "base_bddl_exists": true,
+            "base_init": "/hy-tmp/libero_plus/libero/libero/init_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate.pruned_init",
+            "base_init_exists": true,
+            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_view_0_0_132_0_0_initstate_0.bddl"
+          }
+        ]
+      }
+    },
+    {
+      "suite": "libero_object",
+      "base_task": "pick_up_the_alphabet_soup_and_place_it_in_the_basket",
+      "base_role": "dev_task",
+      "variants": {
+        "background": [
+          {
+            "classification_id": 1,
+            "name": "pick_up_the_alphabet_soup_and_place_it_in_the_basket_table_1",
+            "category": "Background Textures",
+            "difficulty": 4,
+            "role": "dev_domain",
+            "base_bddl": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_object/pick_up_the_alphabet_soup_and_place_it_in_the_basket.bddl",
+            "base_bddl_exists": true,
+            "base_init": "/hy-tmp/libero_plus/libero/libero/init_files/libero_object/pick_up_the_alphabet_soup_and_place_it_in_the_basket.pruned_init",
+            "base_init_exists": true,
+            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_object/pick_up_the_alphabet_soup_and_place_it_in_the_basket_table_1.bddl"
+          },
+          {
+            "classification_id": 2,
+            "name": "pick_up_the_alphabet_soup_and_place_it_in_the_basket_table_10",
+            "category": "Background Textures",
+            "difficulty": 3,
+            "role": "heldout_same_domain",
+            "base_bddl": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_object/pick_up_the_alphabet_soup_and_place_it_in_the_basket.bddl",
+            "base_bddl_exists": true,
+            "base_init": "/hy-tmp/libero_plus/libero/libero/init_files/libero_object/pick_up_the_alphabet_soup_and_place_it_in_the_basket.pruned_init",
+            "base_init_exists": true,
+            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_object/pick_up_the_alphabet_soup_and_place_it_in_the_basket_table_10.bddl"
+          }
+        ],
+        "lighting": [
+          {
+            "classification_id": 2222,
+            "name": "pick_up_the_alphabet_soup_and_place_it_in_the_basket_light_1",
+            "category": "Light Conditions",
+            "difficulty": 5,
+            "role": "dev_domain",
+            "base_bddl": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_object/pick_up_the_alphabet_soup_and_place_it_in_the_basket.bddl",
+            "base_bddl_exists": true,
+            "base_init": "/hy-tmp/libero_plus/libero/libero/init_files/libero_object/pick_up_the_alphabet_soup_and_place_it_in_the_basket.pruned_init",
+            "base_init_exists": true,
+            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_object/pick_up_the_alphabet_soup_and_place_it_in_the_basket_light_1.bddl"
+          },
+          {
+            "classification_id": 2223,
+            "name": "pick_up_the_alphabet_soup_and_place_it_in_the_basket_light_10",
+            "category": "Light Conditions",
+            "difficulty": 5,
+            "role": "heldout_same_domain",
+            "base_bddl": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_object/pick_up_the_alphabet_soup_and_place_it_in_the_basket.bddl",
+            "base_bddl_exists": true,
+            "base_init": "/hy-tmp/libero_plus/libero/libero/init_files/libero_object/pick_up_the_alphabet_soup_and_place_it_in_the_basket.pruned_init",
+            "base_init_exists": true,
+            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_object/pick_up_the_alphabet_soup_and_place_it_in_the_basket_light_10.bddl"
+          }
+        ],
+        "sensor": [
+          {
+            "classification_id": 1397,
+            "name": "pick_up_the_alphabet_soup_and_place_it_in_the_basket_view_0_0_100_0_0_initstate_0_noise_2",
+            "category": "Sensor Noise",
+            "difficulty": 2,
+            "role": "heldout_unseen_category",
+            "base_bddl": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_object/pick_up_the_alphabet_soup_and_place_it_in_the_basket.bddl",
+            "base_bddl_exists": true,
+            "base_init": "/hy-tmp/libero_plus/libero/libero/init_files/libero_object/pick_up_the_alphabet_soup_and_place_it_in_the_basket.pruned_init",
+            "base_init_exists": true,
+            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_object/pick_up_the_alphabet_soup_and_place_it_in_the_basket_view_0_0_100_0_0_initstate_0_noise_2.bddl"
+          },
+          {
+            "classification_id": 1398,
+            "name": "pick_up_the_alphabet_soup_and_place_it_in_the_basket_view_0_0_100_0_0_initstate_0_noise_3",
+            "category": "Sensor Noise",
+            "difficulty": 3,
+            "role": "heldout_unseen_category",
+            "base_bddl": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_object/pick_up_the_alphabet_soup_and_place_it_in_the_basket.bddl",
+            "base_bddl_exists": true,
+            "base_init": "/hy-tmp/libero_plus/libero/libero/init_files/libero_object/pick_up_the_alphabet_soup_and_place_it_in_the_basket.pruned_init",
+            "base_init_exists": true,
+            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_object/pick_up_the_alphabet_soup_and_place_it_in_the_basket_view_0_0_100_0_0_initstate_0_noise_3.bddl"
+          }
+        ],
+        "camera": [
+          {
+            "classification_id": 647,
+            "name": "pick_up_the_alphabet_soup_and_place_it_in_the_basket_view_0_0_100_2_4_initstate_0",
+            "category": "Camera Viewpoints",
+            "difficulty": 1,
+            "role": "heldout_unseen_category",
+            "base_bddl": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_object/pick_up_the_alphabet_soup_and_place_it_in_the_basket.bddl",
+            "base_bddl_exists": true,
+            "base_init": "/hy-tmp/libero_plus/libero/libero/init_files/libero_object/pick_up_the_alphabet_soup_and_place_it_in_the_basket.pruned_init",
+            "base_init_exists": true,
+            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_object/pick_up_the_alphabet_soup_and_place_it_in_the_basket_view_0_0_100_2_4_initstate_0.bddl"
+          },
+          {
+            "classification_id": 648,
+            "name": "pick_up_the_alphabet_soup_and_place_it_in_the_basket_view_0_0_100_2_6_initstate_0",
+            "category": "Camera Viewpoints",
+            "difficulty": 2,
+            "role": "heldout_unseen_category",
+            "base_bddl": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_object/pick_up_the_alphabet_soup_and_place_it_in_the_basket.bddl",
+            "base_bddl_exists": true,
+            "base_init": "/hy-tmp/libero_plus/libero/libero/init_files/libero_object/pick_up_the_alphabet_soup_and_place_it_in_the_basket.pruned_init",
+            "base_init_exists": true,
+            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_object/pick_up_the_alphabet_soup_and_place_it_in_the_basket_view_0_0_100_2_6_initstate_0.bddl"
+          }
+        ]
+      }
+    },
+    {
+      "suite": "libero_goal",
+      "base_task": "open_the_middle_drawer_of_the_cabinet",
+      "base_role": "heldout_task",
+      "variants": {
+        "background": [
+          {
+            "classification_id": 1,
+            "name": "open_the_middle_drawer_of_the_cabinet_table_1",
+            "category": "Background Textures",
+            "difficulty": 3,
+            "role": "dev_domain",
+            "base_bddl": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_goal/open_the_middle_drawer_of_the_cabinet.bddl",
+            "base_bddl_exists": true,
+            "base_init": "/hy-tmp/libero_plus/libero/libero/init_files/libero_goal/open_the_middle_drawer_of_the_cabinet.pruned_init",
+            "base_init_exists": true,
+            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_goal/open_the_middle_drawer_of_the_cabinet_table_1.bddl"
+          },
+          {
+            "classification_id": 2,
+            "name": "open_the_middle_drawer_of_the_cabinet_table_10",
+            "category": "Background Textures",
+            "difficulty": 1,
+            "role": "heldout_same_domain",
+            "base_bddl": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_goal/open_the_middle_drawer_of_the_cabinet.bddl",
+            "base_bddl_exists": true,
+            "base_init": "/hy-tmp/libero_plus/libero/libero/init_files/libero_goal/open_the_middle_drawer_of_the_cabinet.pruned_init",
+            "base_init_exists": true,
+            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_goal/open_the_middle_drawer_of_the_cabinet_table_10.bddl"
+          }
+        ],
+        "lighting": [
+          {
+            "classification_id": 2313,
+            "name": "open_the_middle_drawer_of_the_cabinet_light_1",
+            "category": "Light Conditions",
+            "difficulty": 2,
+            "role": "dev_domain",
+            "base_bddl": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_goal/open_the_middle_drawer_of_the_cabinet.bddl",
+            "base_bddl_exists": true,
+            "base_init": "/hy-tmp/libero_plus/libero/libero/init_files/libero_goal/open_the_middle_drawer_of_the_cabinet.pruned_init",
+            "base_init_exists": true,
+            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_goal/open_the_middle_drawer_of_the_cabinet_light_1.bddl"
+          },
+          {
+            "classification_id": 2314,
+            "name": "open_the_middle_drawer_of_the_cabinet_light_10",
+            "category": "Light Conditions",
+            "difficulty": 1,
+            "role": "heldout_same_domain",
+            "base_bddl": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_goal/open_the_middle_drawer_of_the_cabinet.bddl",
+            "base_bddl_exists": true,
+            "base_init": "/hy-tmp/libero_plus/libero/libero/init_files/libero_goal/open_the_middle_drawer_of_the_cabinet.pruned_init",
+            "base_init_exists": true,
+            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_goal/open_the_middle_drawer_of_the_cabinet_light_10.bddl"
+          }
+        ],
+        "sensor": [
+          {
+            "classification_id": 1509,
+            "name": "open_the_middle_drawer_of_the_cabinet_view_0_0_100_0_0_initstate_0_noise_1",
+            "category": "Sensor Noise",
+            "difficulty": 2,
+            "role": "heldout_unseen_category",
+            "base_bddl": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_goal/open_the_middle_drawer_of_the_cabinet.bddl",
+            "base_bddl_exists": true,
+            "base_init": "/hy-tmp/libero_plus/libero/libero/init_files/libero_goal/open_the_middle_drawer_of_the_cabinet.pruned_init",
+            "base_init_exists": true,
+            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_goal/open_the_middle_drawer_of_the_cabinet_view_0_0_100_0_0_initstate_0_noise_1.bddl"
+          },
+          {
+            "classification_id": 1510,
+            "name": "open_the_middle_drawer_of_the_cabinet_view_0_0_100_0_0_initstate_0_noise_2",
+            "category": "Sensor Noise",
+            "difficulty": 2,
+            "role": "heldout_unseen_category",
+            "base_bddl": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_goal/open_the_middle_drawer_of_the_cabinet.bddl",
+            "base_bddl_exists": true,
+            "base_init": "/hy-tmp/libero_plus/libero/libero/init_files/libero_goal/open_the_middle_drawer_of_the_cabinet.pruned_init",
+            "base_init_exists": true,
+            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_goal/open_the_middle_drawer_of_the_cabinet_view_0_0_100_0_0_initstate_0_noise_2.bddl"
+          }
+        ],
+        "camera": [
+          {
+            "classification_id": 691,
+            "name": "open_the_middle_drawer_of_the_cabinet_view_0_0_100_2_4_initstate_0",
+            "category": "Camera Viewpoints",
+            "difficulty": 2,
+            "role": "heldout_unseen_category",
+            "base_bddl": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_goal/open_the_middle_drawer_of_the_cabinet.bddl",
+            "base_bddl_exists": true,
+            "base_init": "/hy-tmp/libero_plus/libero/libero/init_files/libero_goal/open_the_middle_drawer_of_the_cabinet.pruned_init",
+            "base_init_exists": true,
+            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_goal/open_the_middle_drawer_of_the_cabinet_view_0_0_100_2_4_initstate_0.bddl"
+          },
+          {
+            "classification_id": 692,
+            "name": "open_the_middle_drawer_of_the_cabinet_view_0_0_100_2_6_initstate_0",
+            "category": "Camera Viewpoints",
+            "difficulty": 3,
+            "role": "heldout_unseen_category",
+            "base_bddl": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_goal/open_the_middle_drawer_of_the_cabinet.bddl",
+            "base_bddl_exists": true,
+            "base_init": "/hy-tmp/libero_plus/libero/libero/init_files/libero_goal/open_the_middle_drawer_of_the_cabinet.pruned_init",
+            "base_init_exists": true,
+            "env_bddl_name": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_goal/open_the_middle_drawer_of_the_cabinet_view_0_0_100_2_6_initstate_0.bddl"
+          }
+        ]
+      }
+    }
+  ],
+  "domains": {
+    "background": "Background Textures",
+    "lighting": "Light Conditions",
+    "sensor": "Sensor Noise",
+    "camera": "Camera Viewpoints"
+  },
+  "state_split": {
+    "dev": 30,
+    "heldout": 20
+  },
+  "notes": [
+    "Clean is paired per state; no Clean/Shift labels are used by any proxy.",
+    "Episode/state split must be fixed before any adaptation.",
+    "Roles are frozen before running."
+  ]
+}

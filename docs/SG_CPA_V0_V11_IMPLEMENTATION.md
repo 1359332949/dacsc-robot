@@ -629,3 +629,16 @@ Dev（30 states）：
 - `docs/data/v14_camera_sweep_analysis.json`
 - `docs/data/v14_camera_sweep_manifest.json`
 - 服务器 features：`/hy-tmp/validation/v14_camera_sweep/features.npz`（126MB，未入库）
+
+
+## 20. 研究范围重新冻结
+
+已从 Camera adaptation 扩展为：
+
+> Visual Sensitivity-Guided TTA for VLA under Heterogeneous Domain Shifts.
+
+Camera 705 保留为第一块受控实验，不再是整个研究目标。新的多域实验矩阵见
+[SG_CPA_MULTIDOMAIN_MATRIX.md](SG_CPA_MULTIDOMAIN_MATRIX.md) 和
+`docs/data/multidomain_matrix.json`。
+
+当前只建立矩阵，不写新 Gate，不跑新 rollout。
