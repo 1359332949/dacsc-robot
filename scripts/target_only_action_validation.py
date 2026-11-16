@@ -293,6 +293,14 @@ def main():
                 clip_norm=args.clip_norm,
                 residual_projector=content_projector,
             )
+            # Independent Clean-only branches are offline negative controls.
+            clean_estimator = TargetOnlyMeanEstimator(
+                source, momentum=0.5, alpha=args.alpha, clip_norm=args.clip_norm
+            )
+            clean_filtered_estimator = TargetOnlyMeanEstimator(
+                source, momentum=0.5, alpha=args.alpha, clip_norm=args.clip_norm,
+                residual_projector=content_projector,
+            )
 
             for chunk_index in range(args.chunks):
                 state_snapshot = snapshot(env_shift)
@@ -324,6 +332,8 @@ def main():
                 # Clean residuals are offline negative controls only.
                 clean_raw_residual = target_estimator.raw_residual(pooled_clean, context)
                 clean_filtered_residual = content_projector.transform(clean_raw_residual)
+                clean_mean = clean_estimator.update(pooled_clean, context)
+                clean_filtered_mean = clean_filtered_estimator.update(pooled_clean, context)
 
                 paired_correction = torch.as_tensor(
                     paired_fit_mean, device=device, dtype=visual_shift.dtype
@@ -333,6 +343,12 @@ def main():
                 ).view(1, 1, -1)
                 filtered_correction = filtered_mean.to(
                     device=device, dtype=visual_shift.dtype
+                ).view(1, 1, -1)
+                clean_correction = clean_mean.to(
+                    device=device, dtype=visual_clean.dtype
+                ).view(1, 1, -1)
+                clean_filtered_correction = clean_filtered_mean.to(
+                    device=device, dtype=visual_clean.dtype
                 ).view(1, 1, -1)
 
                 z0_seed = int(args.seed + 100000 * init_index + chunk_index)
@@ -363,6 +379,13 @@ def main():
                 action_target = act(visual_shift - target_correction, rep_shift)
                 action_filtered = act(visual_shift - filtered_correction, rep_shift)
                 action_reverse = act(visual_shift + target_correction, rep_shift)
+                # These are offline Clean-retention controls, never target estimator inputs.
+                clean_target_cost = act(visual_clean - target_correction, rep_clean)
+                clean_filtered_cost = act(visual_clean - filtered_correction, rep_clean)
+                clean_only_action = act(visual_clean - clean_correction, rep_clean)
+                clean_filtered_only_action = act(
+                    visual_clean - clean_filtered_correction, rep_clean
+                )
 
                 records.append({
                     "init_index": init_index,
@@ -380,6 +403,18 @@ def main():
                     ),
                     "oracle_clean_replacement": action_metrics(
                         policy, action_clean, action_clean
+                    ),
+                    "clean_cost_target_estimate": action_metrics(
+                        policy, clean_target_cost, action_clean
+                    ),
+                    "clean_cost_filtered_target_estimate": action_metrics(
+                        policy, clean_filtered_cost, action_clean
+                    ),
+                    "clean_only_estimate_negative_control": action_metrics(
+                        policy, clean_only_action, action_clean
+                    ),
+                    "clean_only_filtered_negative_control": action_metrics(
+                        policy, clean_filtered_only_action, action_clean
                     ),
                     "target_raw_residual_norm": float(raw_target_residual.norm()),
                     "target_ema_residual_norm": float(target_mean.norm()),

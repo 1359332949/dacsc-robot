@@ -16,8 +16,13 @@ from pathlib import Path
 import numpy as np
 import torch
 
-from corp import load_policy
-from dacsc.target_only_mean import ConditionalSourceBaseline, TargetOnlyMeanEstimator
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(ROOT / "repos/CoRP"))
+sys.path.insert(0, str(ROOT / "repos/CoRP/scripts"))
+
+from corp import load_policy  # noqa: E402
+from dacsc.target_only_mean import ConditionalSourceBaseline, TargetOnlyMeanEstimator  # noqa: E402
 
 
 def sha256(path: Path) -> str:
