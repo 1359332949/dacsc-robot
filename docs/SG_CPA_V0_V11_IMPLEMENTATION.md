@@ -407,3 +407,39 @@ Clean base BDDL/init 与 Camera 705（virtual `_view_` BDDL）各建一个 env�
 - 未做 V1.3；
 - 未用 Held-out `s_pair` 调整增强参数；
 - `s_aug` 结论只适用于本次 Camera 变体，不能外推到 Background/Lighting。
+
+
+## 16. V1.3 action propagation pilot（2026-11-16）
+
+使用 V1.2 的 49 个有效状态、保存的 DINO features 和图片；重新从 clean env 取得真实 8D policy state；
+使用 common initial action noise z0；不执行 simulator action，不跑 rollout。
+
+对照：
+
+- `pair`：A_shift(z0) - A_clean(z0)；
+- `gate_oracle`：在 shift features 上抑制 Dev s_pair(agentview) Top-20 DINO dims，A_gate(z0) - A_shift(z0)；
+- `gate_random`：同预算随机 20 dims，A_random(z0) - A_shift(z0)，20 组随机 gate 平均；
+- `noise`：同一 shift 输入、不同 z1/z2，A_shift(z1)-A_shift(z2)。
+
+单位为反归一化 controller units 的平均绝对差。
+
+| 指标 | xyz | rot | gripper | all | norm_all |
+|---|---:|---:|---:|---:|---:|
+| pair | 0.1483 | 0.02000 | 0.002576 | 0.07251 | 0.04710 |
+| gate_oracle | 0.02327 | 0.002629 | 0.000590 | 0.01118 | 0.006984 |
+| gate_random | 0.008393 | 0.001508 | 0.000439 | 0.004306 | 0.002860 |
+| noise | 0.07070 | 0.01335 | 0.002677 | 0.03640 | 0.02440 |
+
+初步解释：
+
+- Camera Clean→Shift 的动作差异（all 0.0725）约为采样噪声（0.0364）的 2 倍，存在动作传播信号；
+- Oracle Gate 的动作改变（0.01118）约为 Matched Random（0.00431）的 2.6 倍，方向选择并非完全随机；
+- 但 Oracle Gate 的改动幅度远小于 Clean→Shift 差异，且尚未比较 Gate 是否让动作更接近 Clean；
+- 仍是单 task / 单 Camera / 49 states pilot，不能作为方法有效性或成功率证据。
+
+未做：
+
+- ΔA_GC（Gate 后动作到 Clean 的距离）；
+- 按 state 的 bootstrap / 置信区间；
+- V1.4 代理验证；
+- V2 完整任务成功率与 Clean retention。
