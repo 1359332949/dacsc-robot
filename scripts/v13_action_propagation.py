@@ -1,10 +1,8 @@
-"""V1.3 pilot: does the Camera-sensitive feature change propagate to actions?
+"""V1.3 pilot: action propagation with Oracle/Random gates and common noise.
 
-Uses saved V1.2 features/images, real 8D policy state from the clean env, and a
-common initial action noise z0.  Compares:
-  A_C(z0), A_S(z0), A_G_oracle(z0), A_G_random(z0)
-  A_S(z1) vs A_S(z2) as sampling-noise floor.
-No simulator action, no rollout, no success labels.
+Strict split: Gate dimensions come from Dev s_pair only; held-out states are
+reported separately and are never used to choose dimensions.  Real 8D policy
+state is used.  No simulator action or rollout.
 """
 
 from __future__ import annotations
@@ -21,9 +19,8 @@ from corp.representation.extractor import Representation  # noqa: E402
 from sg_cpa_phase4_final import CKPT  # noqa: E402
 from evaluate_libero import DUMMY_ACTION, SETTLING_STEPS, state_from_observation  # noqa: E402
 
-K_DEFAULT = 20
 
-
+@torch.no_grad()
 def sample_with_z0(generator, representation, z0, num_steps=None):
     steps = generator.num_sample_steps if num_steps is None else num_steps
     action = z0.to(device=representation.tokens.device, dtype=representation.action_dtype).clone()
@@ -55,13 +52,30 @@ def gate_features(features_by_view, target_view, dims):
     return out
 
 
-def action_diff(a, b, normalizer):
-    a = normalizer.unnormalize_action(a); b = normalizer.unnormalize_action(b)
+def _unnorm(a, normalizer):
+    return normalizer.unnormalize_action(a)
+
+
+def _diff(a, b, normalizer):
+    a = _unnorm(a, normalizer); b = _unnorm(b, normalizer)
     d = (a - b).abs()
     scale = (normalizer.action_max - normalizer.action_min).to(d.device).clamp_min(1e-6)
-    groups = {"xyz": d[..., :3].mean(), "rot": d[..., 3:6].mean(), "gripper": d[..., 6].mean(),
-              "all": d.mean(), "norm_all": (d / scale).mean()}
-    return {k: float(v.cpu()) for k, v in groups.items()}
+    return {"xyz": float(d[..., :3].mean().cpu()), "rot": float(d[..., 3:6].mean().cpu()),
+            "gripper": float(d[..., 6].mean().cpu()), "all": float(d.mean().cpu()),
+            "norm_all": float((d / scale).mean().cpu())}
+
+
+def action_metrics(a_c, a_s, a_g, normalizer):
+    dc = _unnorm(a_c, normalizer); ds = _unnorm(a_s, normalizer); dg = _unnorm(a_g, normalizer)
+    v_cs = (dc - ds).reshape(-1); v_gs = (dg - ds).reshape(-1)
+    denom = float(v_cs.norm() * v_gs.norm() + 1e-12)
+    return {
+        "pair": _diff(a_s, a_c, normalizer),
+        "gate_oracle": _diff(a_g, a_s, normalizer),
+        "gate_to_clean": _diff(a_g, a_c, normalizer),
+        "align_cos": float(torch.dot(v_gs, v_cs).cpu() / denom),
+        "align_proj": float(torch.dot(v_gs, v_cs).cpu() / (torch.dot(v_cs, v_cs).cpu() + 1e-12)),
+    }
 
 
 def configure(args):
@@ -89,14 +103,17 @@ def main():
     ap.add_argument("--clean-language", required=True)
     ap.add_argument("--clean-suite", default="libero_spatial")
     ap.add_argument("--target-view", default="agentview")
-    ap.add_argument("--k", type=int, default=K_DEFAULT)
-    ap.add_argument("--random-gates", type=int, default=20)
+    ap.add_argument("--k", type=int, default=20)
+    ap.add_argument("--random-gates", type=int, default=8)
+    ap.add_argument("--z0-count", type=int, default=10)
     ap.add_argument("--noise-pairs", type=int, default=4)
     ap.add_argument("--seed", type=int, default=20261116)
+    ap.add_argument("--precision", choices=["fp32", "bf16"], default="fp32")
     ap.add_argument("--libero-src", type=Path, default=Path("/hy-tmp/libero_plus"))
     ap.add_argument("--libero-config", type=Path, default=Path("/hy-tmp/libero_config"))
     ap.add_argument("--device", default="cuda:0")
     args = ap.parse_args()
+    torch.manual_seed(args.seed); torch.cuda.manual_seed_all(args.seed)
     configure(args)
     from libero.libero import benchmark
     from libero.libero.envs import OffScreenRenderEnv
@@ -105,12 +122,14 @@ def main():
     scores = json.loads((args.dir / "scores_per_view.json").read_text())
     z = np.load(args.dir / "features.npz")
     valid = [r["index"] for r in manifest["records"] if r.get("compare_pass")]
-    valid_pos = {s: j for j, s in enumerate(valid)}
+    pos = {s: j for j, s in enumerate(valid)}
+    dev_idx = [i for i in manifest["dev_indices"] if i in pos]
+    held_idx = [i for i in manifest["heldout_indices"] if i in pos]
     views = manifest["policy_views"]
-    assert args.target_view in views
     policy = load_policy(CKPT, device=args.device); policy.eval()
     clean_states = torch.load(args.clean_init_file, weights_only=False)
 
+    # real 8D state per valid state, from the clean env
     suite = benchmark.get_benchmark_dict()[args.clean_suite]()
     env = OffScreenRenderEnv(bddl_file_name=str(args.clean_bddl), camera_heights=256,
                              camera_widths=256, render_gpu_device_id=0)
@@ -125,55 +144,81 @@ def main():
             states8[state] = state_from_observation(obs, policy.normalizer).astype(np.float32)
     finally:
         env.close()
-    rng = np.random.RandomState(args.seed)
-    dev_idx = [i for i in manifest["dev_indices"] if i in valid]
+
     oracle_dims = np.argsort(-np.asarray(scores["views"][args.target_view]["pair_dev"]))[:args.k].tolist()
-    random_gates = [rng.choice(384, size=args.k, replace=False).tolist() for _ in range(args.random_gates)]
     device = next(policy.parameters()).device
     H, A = policy.action_generator.action_horizon, policy.action_generator.action_dim
-    out = {"num_states": len(valid), "target_view": args.target_view, "k": args.k,
-           "oracle_dims": oracle_dims, "random_gates": random_gates,
-           "noise_pairs": args.noise_pairs, "per_state": []}
-    aggregate = {k: [] for k in ("pair", "gate_oracle", "gate_random", "noise")}
+    out = {"num_states": len(valid), "dev": len(dev_idx), "heldout": len(held_idx),
+           "target_view": args.target_view, "k": args.k, "oracle_dims": oracle_dims,
+           "random_gates": args.random_gates, "z0_count": args.z0_count,
+           "noise_pairs": args.noise_pairs, "seed": args.seed, "precision": args.precision,
+           "per_state": []}
     for state in valid:
-        j = valid_pos[state]
+        j = pos[state]
         feats = {v: z[f"shift_{v}"][j].copy() for v in views}
         clean_feats = {v: z[f"clean_{v}"][j].copy() for v in views}
         state8 = states8[state]
         rep_c = repr_from_features(policy, clean_feats, state8, args.clean_language)
         rep_s = repr_from_features(policy, feats, state8, args.clean_language)
-        gate_oracle = gate_features(feats, args.target_view, oracle_dims)
-        rep_go = repr_from_features(policy, gate_oracle, state8, args.clean_language)
-        z0 = torch.randn(1, H, A, device=device)
-        a_c = sample_with_z0(policy.action_generator, rep_c, z0)
-        a_s = sample_with_z0(policy.action_generator, rep_s, z0)
-        a_go = sample_with_z0(policy.action_generator, rep_go, z0)
-        pair = action_diff(a_s, a_c, policy.normalizer)
-        gate_o = action_diff(a_go, a_s, policy.normalizer)
-        # random gates on the same Shift features
-        rand_diffs = []
-        for dims in random_gates:
-            r = repr_from_features(policy, gate_features(feats, args.target_view, dims),
-                                   state8, args.clean_language)
-            rand_diffs.append(action_diff(sample_with_z0(policy.action_generator, r, z0), a_s,
-                                          policy.normalizer))
-        gate_r = {k: float(np.mean([r[k] for r in rand_diffs])) for k in pair}
-        # sampling noise: same Shift features, different z
-        noise_diffs = []
-        for _ in range(args.noise_pairs):
-            z1 = torch.randn(1, H, A, device=device); z2 = torch.randn(1, H, A, device=device)
-            noise_diffs.append(action_diff(sample_with_z0(policy.action_generator, rep_s, z1),
-                                           sample_with_z0(policy.action_generator, rep_s, z2),
-                                           policy.normalizer))
-        noise = {k: float(np.mean([d[k] for d in noise_diffs])) for k in pair}
-        for key, val in (("pair", pair), ("gate_oracle", gate_o), ("gate_random", gate_r), ("noise", noise)):
-            aggregate[key].append(val)
-        out["per_state"].append({"state": state, "pair": pair, "gate_oracle": gate_o,
-                                 "gate_random": gate_r, "noise": noise})
-    out["aggregate"] = {k: {m: float(np.mean([d[m] for d in v])) for m in v[0]}
-                        for k, v in aggregate.items()}
+        rep_go = repr_from_features(policy, gate_features(feats, args.target_view, oracle_dims),
+                                    state8, args.clean_language)
+        local = np.random.RandomState(args.seed + state)
+        random_gates = [local.choice(384, size=args.k, replace=False).tolist()
+                        for _ in range(args.random_gates)]
+        rep_gr = [repr_from_features(policy, gate_features(feats, args.target_view, dims),
+                                     state8, args.clean_language) for dims in random_gates]
+        oracle_energy = float(np.square(feats[args.target_view][..., oracle_dims]).sum())
+        random_energy = float(np.mean([np.square(feats[args.target_view][..., d]).sum()
+                                       for d in random_gates]))
+        torch.manual_seed(args.seed + state)
+        z0s = [torch.randn(1, H, A, device=device) for _ in range(args.z0_count)]
+        zs = [torch.randn(1, H, A, device=device) for _ in range(args.noise_pairs)]
+        per = []
+        for z0 in z0s:
+            a_c = sample_with_z0(policy.action_generator, rep_c, z0)
+            a_s = sample_with_z0(policy.action_generator, rep_s, z0)
+            a_go = sample_with_z0(policy.action_generator, rep_go, z0)
+            m = action_metrics(a_c, a_s, a_go, policy.normalizer)
+            gr = [action_metrics(a_c, a_s, sample_with_z0(policy.action_generator, r, z0),
+                                 policy.normalizer) for r in rep_gr]
+            m["gate_random"] = {key: float(np.mean([x["gate_oracle"][key] for x in gr]))
+                                for key in m["gate_oracle"]}
+            per.append(m)
+        noise = []
+        for i in range(args.noise_pairs):
+            z1, z2 = zs[i], zs[(i + 1) % len(zs)]
+            noise.append(_diff(sample_with_z0(policy.action_generator, rep_s, z1),
+                               sample_with_z0(policy.action_generator, rep_s, z2),
+                               policy.normalizer))
+        def avg(dcts):
+            out = {}
+            for k, first in dcts[0].items():
+                if isinstance(first, dict):
+                    out[k] = {m: float(np.mean([d[k][m] for d in dcts])) for m in first}
+                else:
+                    out[k] = float(np.mean([d[k] for d in dcts]))
+            return out
+        rec = {"state": state, "split": "dev" if state in dev_idx else "heldout",
+               "oracle_energy": oracle_energy, "random_energy": random_energy,
+               "aggregate": avg(per),
+               "noise": {m: float(np.mean([d[m] for d in noise])) for m in noise[0]}}
+        out["per_state"].append(rec)
+    def agg(records):
+        out = {}
+        for k, first in records[0]["aggregate"].items():
+            if isinstance(first, dict):
+                out[k] = {m: float(np.mean([r["aggregate"][k][m] for r in records])) for m in first}
+            else:
+                out[k] = float(np.mean([r["aggregate"][k] for r in records]))
+        return out
+    for split, ids in (("dev", dev_idx), ("heldout", held_idx)):
+        rs = [r for r in out["per_state"] if r["state"] in ids]
+        out[split] = {"aggregate": agg(rs),
+                      "noise": {m: float(np.mean([r["noise"][m] for r in rs])) for m in rs[0]["noise"]},
+                      "oracle_energy": float(np.mean([r["oracle_energy"] for r in rs])),
+                      "random_energy": float(np.mean([r["random_energy"] for r in rs]))}
     (args.dir / "v13_action_propagation.json").write_text(json.dumps(out, indent=2))
-    print(json.dumps(out["aggregate"], indent=2))
+    print(json.dumps({"dev": out["dev"], "heldout": out["heldout"]}, indent=2))
 
 
 if __name__ == "__main__":

@@ -53,18 +53,38 @@ def photo_aug(img: np.ndarray, kind: str, factor: float) -> np.ndarray:
     return np.asarray(im)
 
 
+def _translate_reflect(img: np.ndarray, dx: int, dy: int) -> np.ndarray:
+    arr = np.asarray(img, dtype=np.uint8)
+    h, w = arr.shape[:2]
+    pad = max(abs(dx), abs(dy))
+    if pad == 0:
+        return arr.copy()
+    padded = np.pad(arr, ((pad, pad), (pad, pad), (0, 0)), mode="reflect")
+    y0 = pad + dy; x0 = pad + dx
+    return padded[y0:y0 + h, x0:x0 + w].copy()
+
+
 def geo_aug(img: np.ndarray, kind: str, value: float) -> np.ndarray:
-    im = Image.fromarray(np.asarray(img, dtype=np.uint8)); w, h = im.size
+    """True 2D geometry proxy.
+
+    translate: reflect padding (no black border);
+    crop: center crop fraction then resize;
+    zoom: center crop 1/value then resize (view really narrows).
+    """
+    arr = np.asarray(img, dtype=np.uint8); h, w = arr.shape[:2]
     if kind == "translate":
-        dx = int(value)
-        im = im.transform((w, h), Image.AFFINE, (1, 0, dx, 0, 1, value * 0.5), resample=Image.BILINEAR)
-    elif kind == "crop":
-        m = int(round(w * value)); box = ((w - m) // 2, (h - m) // 2, (w + m) // 2, (h + m) // 2)
-        im = im.crop(box).resize((w, h), Image.BILINEAR)
-    elif kind == "scale":
-        nw, nh = int(w * value), int(h * value)
-        im = im.resize((nw, nh), Image.BILINEAR).resize((w, h), Image.BILINEAR)
-    return np.asarray(im)
+        return _translate_reflect(arr, int(value), int(value * 0.5))
+    if kind == "crop":
+        m = int(round(w * value)); box = ((w - m) // 2, (h - m) // 2,
+                                         (w + m) // 2, (h + m) // 2)
+        return np.asarray(Image.fromarray(arr).crop(box).resize((w, h), Image.BILINEAR))
+    if kind == "zoom":
+        if value < 1.0:
+            raise ValueError("zoom proxy only supports zoom-in factors >= 1")
+        m = int(round(w / value)); box = ((w - m) // 2, (h - m) // 2,
+                                         (w + m) // 2, (h + m) // 2)
+        return np.asarray(Image.fromarray(arr).crop(box).resize((w, h), Image.BILINEAR))
+    raise ValueError(f"unknown geo kind {kind}")
 
 
 def main():
@@ -79,13 +99,20 @@ def main():
     views = manifest["policy_views"]
     policy = load_policy(CKPT, device=args.device); policy.eval()
     photo_cfgs = [(k, f) for k in ("brightness", "contrast", "saturation") for f in (0.8, 1.2)]
-    geo_cfgs = [("translate", -8), ("translate", 8), ("crop", 0.95), ("scale", 1.05), ("scale", 0.95)]
-    out = {"photo": {}, "geo": {}, "num_states": len(valid),
+    geo_groups = {
+        "translate": [("translate", -8), ("translate", 8)],
+        "crop": [("crop", 0.95)],
+        "zoom": [("zoom", 1.05), ("zoom", 1.10)],
+    }
+    geo_cfgs = [x for xs in geo_groups.values() for x in xs]
+    out = {"photo": {}, "geo": {}, "geo_groups": {}, "num_states": len(valid),
            "views": views, "photo_cfgs": photo_cfgs, "geo_cfgs": geo_cfgs}
     for target in views:
         other = [v for v in views if v != target]
         photo_scores, geo_scores = [], []
         photo_state, geo_state = [], []
+        group_scores = {g: [] for g in geo_groups}
+        group_state = {g: [] for g in geo_groups}
         for state in valid:
             d = args.dir / "images" / f"state_{state:03d}"
             raw = {v: np.asarray(Image.open(d / f"shift_{v}.png")) for v in views}
@@ -95,13 +122,22 @@ def main():
                 imgs = dict(raw); imgs[target] = photo_aug(raw[target], kind, factor)
                 f = features(policy, imgs, views, manifest["clean_language"])[target]
                 score = np.abs(f - base).mean(axis=0); photo_scores.append(score); ps.append(score)
+            grp = {g: [] for g in geo_groups}
             for kind, value in geo_cfgs:
                 imgs = dict(raw); imgs[target] = geo_aug(raw[target], kind, value)
                 f = features(policy, imgs, views, manifest["clean_language"])[target]
                 score = np.abs(f - base).mean(axis=0); geo_scores.append(score); gs.append(score)
+                for g, configs in geo_groups.items():
+                    if (kind, value) in configs:
+                        grp[g].append(score)
+            for g in geo_groups:
+                group_scores[g].append(np.mean(grp[g], axis=0))
+                group_state[g].append(np.mean(grp[g], axis=0))
             photo_state.append(np.mean(ps, axis=0)); geo_state.append(np.mean(gs, axis=0))
         photo = np.mean(photo_scores, axis=0); geo = np.mean(geo_scores, axis=0)
         out["photo"][target] = photo.tolist(); out["geo"][target] = geo.tolist()
+        out.setdefault("geo_groups", {})[target] = {
+            g: np.mean(group_scores[g], axis=0).tolist() for g in geo_groups}
         out.setdefault("photo_by_state", {})[target] = np.stack(photo_state).tolist()
         out.setdefault("geo_by_state", {})[target] = np.stack(geo_state).tolist()
         # dev/held indices are state ids; map through valid order

@@ -30,7 +30,7 @@ def stat_primary(shift: np.ndarray) -> np.ndarray:
     return shift.astype(np.float64).mean(axis=1).std(axis=0)
 
 
-def stat_alt(shift: np.ndarray) -> np.ndarray:
+def stat_alt_score(shift: np.ndarray) -> np.ndarray:
     """mean_patch(std_state F), output [D]."""
     return shift.astype(np.float64).std(axis=0).mean(axis=0)
 
@@ -68,7 +68,7 @@ def main():
 
     def stat_for(pos_idx, view, alt=False):
         s = z[f"shift_{view}"][pos_idx]
-        return stat_alt(s) if alt else stat_primary(s)
+        return stat_alt_score(s) if alt else stat_primary(s)
 
     out = {"num_states": len(valid), "dev": len(dev_pos), "heldout": len(held_pos),
            "skipped": len(manifest["records"]) - len(valid), "views": {},
@@ -78,6 +78,8 @@ def main():
         all_pair = pair_for(list(range(len(valid))), view)
         stat_dev = stat_for(dev_pos, view); stat_held = stat_for(held_pos, view)
         stat_alt = stat_for(list(range(len(valid))), view, alt=True)
+        stat_alt_dev = stat_for(dev_pos, view, alt=True)
+        stat_alt_held = stat_for(held_pos, view, alt=True)
         # repeated split-half on dev
         rhos = []
         for _ in range(args.repeat):
@@ -99,6 +101,8 @@ def main():
             "pair_all": all_pair.tolist(),
             "stat_dev": stat_dev.tolist(), "stat_heldout": stat_held.tolist(),
             "stat_alt_all": stat_alt.tolist(),
+            "stat_alt_dev": stat_alt_dev.tolist(),
+            "stat_alt_heldout": stat_alt_held.tolist(),
             "pair_mean_dev": float(dev_pair.mean()),
             "pair_mean_heldout": float(held_pair.mean()),
             "top_dims_all": np.argsort(-all_pair)[:args.k].tolist(),

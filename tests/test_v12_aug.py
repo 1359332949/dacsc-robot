@@ -18,7 +18,7 @@ class TestV12Aug(unittest.TestCase):
 
     def test_geo_shape(self):
         img = np.full((32, 32, 3), 100, dtype=np.uint8)
-        for kind, value in (("translate", 4), ("crop", 0.95), ("scale", 1.05)):
+        for kind, value in (("translate", 4), ("crop", 0.95), ("zoom", 1.05)):
             out = v12.geo_aug(img, kind, value)
             self.assertEqual(out.shape, img.shape)
 

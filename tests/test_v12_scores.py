@@ -23,7 +23,7 @@ class TestV12Scores(unittest.TestCase):
 
     def test_stat_primary_and_alt_dims(self):
         x = np.random.RandomState(0).randn(5, 7, 4)
-        p = v12.stat_primary(x); a = v12.stat_alt(x)
+        p = v12.stat_primary(x); a = v12.stat_alt_score(x)
         self.assertEqual(p.shape, (4,)); self.assertEqual(a.shape, (4,))
         # primary = std over states of spatial mean
         self.assertTrue(np.allclose(p, x.mean(axis=1).std(axis=0)))

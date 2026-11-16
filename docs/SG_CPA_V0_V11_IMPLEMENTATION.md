@@ -443,3 +443,62 @@ Clean base BDDL/init 与 Camera 705（virtual `_view_` BDDL）各建一个 env�
 - 按 state 的 bootstrap / 置信区间；
 - V1.4 代理验证；
 - V2 完整任务成功率与 Clean retention。
+
+
+## 17. 修正记录（针对 8325adf/eb7d2e7 复审）
+
+### 17.1 s_aug_geo 修正
+
+- `scale` 用“resize 两次”并未改变视野；已改为真正的 center-crop + resize zoom-in（1.05、1.10）；
+- `translate` 改为 reflect padding，避免黑色边缘成为额外扰动；
+- 分别输出 `geo_groups.translate/crop/zoom`，不再把三者混成一个不可解释的 geo 分数。
+
+修正后（held-out）：
+
+| 视角 | photo | geo | photo vs pair_held | geo vs pair_held | geo dev/held |
+|---|---:|---:|---:|---:|---:|
+| agentview | 0.3924 | 1.3097 | 0.2267 | 0.1811 | 0.8849 |
+| eye-in-hand | 0.2387 | 1.8267 | 0.4291 | 0.2683 | 0.9808 |
+
+结论不变：增强代理自身稳定，但不能复现 Camera 配对敏感度；geo 修正后仍弱。
+
+### 17.2 s_stat_alt 拆分
+
+已增加 `stat_alt_dev` / `stat_alt_heldout`。与 held-out `s_pair` 的 Spearman：
+
+| 视角 | stat_dev | stat_heldout | stat_alt_dev | stat_alt_heldout |
+|---|---:|---:|---:|---:|
+| agentview | 0.1256 | 0.1618 | 0.1713 | 0.1951 |
+| eye-in-hand | 0.3375 | 0.2842 | 0.3909 | 0.3377 |
+
+agentview 上当前 `s_stat` 仍不能作为可靠代理。
+
+### 17.3 V1.3 修正
+
+- Gate 维度只来自 Dev `s_pair`；Dev/Held-out 分开聚合；
+- 增加 `D_GC = ||A_G - A_C||` 和 `align_cos`；
+- 10 组 common z0；8 组随机 gate；torch seed 固定；
+- 当前为 FP32 协议（未用官方 BF16 autocast）。
+
+Held-out（19 states）：
+
+| 指标 | all | norm_all |
+|---|---:|---:|
+| pair (S-C) | 0.07095 | 0.04592 |
+| oracle gate (G-S) | 0.01073 | 0.00665 |
+| random gate (G-S) | 0.00415 | 0.00275 |
+| gate-to-clean (G-C) | 0.06218 | 0.04107 |
+| noise | 0.03549 | 0.02367 |
+
+- `D_GC ≈ 0.06218 < D_SC ≈ 0.07095`，约降低 12.4%；
+- `align_cos ≈ 0.815`，Gate 动作方向与 Clean 方向接近；
+- Oracle Gate 动作影响约为 Random 的 2.6 倍；
+- 但 Oracle 抑制的特征能量约 59.8k，Random 约 27.4k（2.18×），因此**不能排除能量差异**；还需 energy-matched random。
+
+Dev（30 states）：pair 0.07406，oracle 0.01160，gate-to-clean 0.06455，random 0.00427，noise 0.03647。
+
+### 17.4 当前可支持的最强结论
+
+> Dev 选的配对敏感维度，在 held-out 初始状态上造成了比随机维度更大的动作扰动，并使动作略向 Clean 靠近；但干预能量不匹配、只有单 task/单 Camera、且无成功率证据。
+
+不能说：TTA Gate 有效、动作被修复、成功率提高。
