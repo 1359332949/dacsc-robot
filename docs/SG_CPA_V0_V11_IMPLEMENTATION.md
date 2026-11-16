@@ -289,3 +289,41 @@ Clean base BDDL/init 与 Camera 705（virtual `_view_` BDDL）各建一个 env�
 - `get_task_init_states` 在 torch>=2.6 需要 `TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD=1`。
 - robosuite 1.4.0 与 mujoco 4.x 不兼容；已回钉 mujoco 2.3.7。
 - 运行环境：`LIBERO_CONFIG_PATH=/hy-tmp/libero_config MUJOCO_GL=egl TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD=1`。
+
+
+## 13. V1.2 pilot capture（2026-11-16）
+
+在 RTX 5090 上采集：
+
+- Base task：cookie-box spatial task；
+- Shift：Camera task 705；
+- 50 个 Clean init states（实际 49 个通过状态恢复，state 42 body quat 误差 1.12e-4 略超 1e-4，被跳过并记录）；
+- 每状态双视角 Clean/Shift PNG + DINO patch features `[256,384]`；
+- 固定 split seed 1234：30 dev / 19 held-out（按有效状态）；
+- 无策略动作、无 rollout。
+
+输出：
+
+```text
+/hy-tmp/validation/v12_pilot/features.npz   69MB
+/hy-tmp/validation/v12_pilot/manifest.json
+/hy-tmp/validation/v12_pilot/scores.json
+```
+
+### s_pair 初步结果
+
+- `s_pair(d) = E|F_clean - F_shift|`，跨 49 states、双视角、256 patches；
+- pair mean ≈ 1.2327；
+- dev vs held-out Spearman ≈ 0.970；
+- split-half Spearman ≈ 0.952；
+- agentview vs eye-in-hand pair-score correlation ≈ 0.070（视角差异明显，不能混成一个分数）。
+
+### 当前限制
+
+- 只有一个 task、一个 Camera 变体；
+- `s_stat` 只是跨状态 std proxy，不是已证明的 nuisance 分数；
+- `s_aug` 尚未实现；
+- V1.3 action propagation 尚未执行；
+- 49 个状态只能作为 pilot，不能作为 V1.4 结论。
+
+结果文件：`docs/data/v12_scores.json`、`docs/data/v12_manifest.json`。
