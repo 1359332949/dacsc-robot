@@ -21,6 +21,7 @@ from corp.preprocessing import prepare_observation  # noqa: E402
 from dacsc.state_pairing import compare, digest, model_compatible, restore, snapshot  # noqa: E402
 from evaluate_libero import state_from_observation  # noqa: E402
 from dacsc.task_pairing import classification_entries, load_task_map, resolve_task_name  # noqa: E402
+from dacsc.libero_noise import apply_agentview_noise  # noqa: E402
 from sg_cpa_phase4_final import CKPT  # noqa: E402
 
 DUMMY_ACTION = [0.0] * 6 + [-1.0]
@@ -48,10 +49,15 @@ def configure(args):
     sys.path.insert(0, str(src))
     cfg = args.libero_config.expanduser().resolve(); cfg.mkdir(parents=True, exist_ok=True)
     (cfg / "datasets").mkdir(exist_ok=True)
-    (cfg / "config.yaml").write_text(yaml.safe_dump({
-        "benchmark_root": str(root), "bddl_files": str(root / "bddl_files"),
-        "init_states": str(root / "init_files"), "assets": str(root / "assets"),
-        "datasets": str(cfg / "datasets")}))
+    config_path = cfg / "config.yaml"
+    if not config_path.is_file():
+        import os
+        tmp = cfg / f".config.{os.getpid()}.yaml"
+        tmp.write_text(yaml.safe_dump({
+            "benchmark_root": str(root), "bddl_files": str(root / "bddl_files"),
+            "init_states": str(root / "init_files"), "assets": str(root / "assets"),
+            "datasets": str(cfg / "datasets")}))
+        os.replace(tmp, config_path)
     import os
     os.environ["LIBERO_CONFIG_PATH"] = str(cfg)
     os.environ.setdefault("MUJOCO_GL", "egl")
@@ -93,7 +99,7 @@ def main():
     ap.add_argument("--clean-language", required=True)
     ap.add_argument("--shift-suite", default="libero_spatial")
     ap.add_argument("--shift-task", type=int, required=True)
-    ap.add_argument("--shift-kind", choices=["camera", "background", "lighting"], required=True)
+    ap.add_argument("--shift-kind", choices=["camera", "background", "lighting", "sensor"], required=True)
     ap.add_argument("--policy-views", nargs="+", default=["agentview", "eye_in_hand"])
     ap.add_argument("--camera-map", nargs="*", default=["eye_in_hand=robot0_eye_in_hand"])
     ap.add_argument("--target-cameras", nargs="+", default=["agentview"])
@@ -149,6 +155,13 @@ def main():
         "classification_category": tc_hits[0].get("category"),
         "classification_difficulty": tc_hits[0].get("difficulty_level"),
     }
+    noise_level = 0
+    if args.shift_kind == "sensor":
+        import re
+        m = re.search(r"_noise_(\d+)", shift_task.name)
+        if not m:
+            raise RuntimeError(f"cannot parse sensor noise level from {shift_task.name}")
+        noise_level = int(m.group(1))
     clean_states = torch.load(args.clean_init_file, weights_only=False)
     n = min(args.num_states, len(clean_states))
     perm = np.random.RandomState(args.split_seed).permutation(n)
@@ -161,8 +174,8 @@ def main():
                                render_gpu_device_id=0)
     env_c.reset(); env_s.reset()
     compat = model_compatible(snapshot(env_c), snapshot(env_s), strict_bodies=True,
-                              strict_geometry=(args.shift_kind == "camera"),
-                              strict_physics=(args.shift_kind == "camera"))
+                              strict_geometry=(args.shift_kind in ("camera", "sensor")),
+                              strict_physics=(args.shift_kind in ("camera", "sensor")))
     if not compat["pass"]:
         raise RuntimeError(f"Clean/Shift model incompatible: {compat}")
     features = {c: {v: [] for v in args.policy_views} for c in ("clean", "shift")}
@@ -191,6 +204,12 @@ def main():
                 cam = mapped_views[v]
                 raw["clean"][v] = env_c.sim.render(camera_name=cam, width=256, height=256)
                 raw["shift"][v] = env_s.sim.render(camera_name=cam, width=256, height=256)
+            noise_meta = None
+            if args.shift_kind == "sensor":
+                noise_obs, noise_meta = apply_agentview_noise(
+                    {"agentview_image": raw["shift"]["agentview"]}, noise_level,
+                    seed=1234 + idx)
+                raw["shift"]["agentview"] = noise_obs["agentview_image"]
                 d = args.out / "images" / f"state_{idx:03d}"
                 d.mkdir(parents=True, exist_ok=True)
                 Image.fromarray(np.asarray(raw["clean"][v], dtype=np.uint8)).save(d / f"clean_{v}.png")
@@ -203,7 +222,7 @@ def main():
                 features["shift"][v].append(feats_s[v].astype(np.float32))
             state8s.append(state_from_observation(obs_c, policy.normalizer).astype(np.float32))
             records.append({"index": idx, "state_digest": digest(snap), "compare_pass": True,
-                            "feature_row": feature_row})
+                            "feature_row": feature_row, "noise": noise_meta})
             print(f"[{pos+1}/{n}] state {idx} ok", flush=True)
     finally:
         env_s.close(); env_c.close()
@@ -219,7 +238,7 @@ def main():
         "condition": condition,
         "clean_task_name": args.clean_task_name, "clean_language": args.clean_language,
         "shift_task": args.shift_task, "shift_task_name": shift_task.name,
-        "shift_kind": args.shift_kind, "num_states": n,
+        "shift_kind": args.shift_kind, "sensor_noise_level": noise_level, "num_states": n,
         "split_seed": args.split_seed, "dev_indices": dev_idx, "heldout_indices": held_idx,
         "policy_views": args.policy_views, "camera_map": mapped_views,
         "target_cameras": args.target_cameras,
