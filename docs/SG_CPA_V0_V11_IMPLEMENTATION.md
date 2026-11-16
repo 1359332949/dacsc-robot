@@ -581,3 +581,51 @@ Dev（30 states）：
 - 目标域完整 episode 轨迹观测池；
 - 新的无标签 proxy；
 - V1.4/V2。
+
+
+## 19. 受控 Camera 参数扫描（工单 1，2026-11-16）
+
+固定 cookie-box base task、同一物理状态和 instruction；**在同一个 MuJoCo env 中只改 agentview 相机参数**，避免不同 env 的静态物体 placement 混淆。20 个初始状态 × 9 个相机配置；只提特征，不执行动作。
+
+相机配置：base(0,0,100)、h15、h30、h46、h60、v+10、v-10、scale90、scale110。
+
+### agentview s_pair（相对 base）
+
+| config | pair mean |
+|---|---:|
+| h15 | 1.724 |
+| h30 | 2.227 |
+| h46 | 2.457 |
+| h60 | 2.534 |
+| v+10 | 1.489 |
+| v-10 | 1.437 |
+| scale90 | 1.353 |
+| scale110 | 1.569 |
+
+### 跨参数一致性
+
+- h30↔h46 Spearman ≈ 0.734；h46↔h60 ≈ 0.791；
+- 但 h15↔h60 只有 ≈ 0.244；horizon 与 vertical/scale 的交叉相关约 0.18–0.54；
+- 不同 Camera 参数下的敏感度排序并不完全相同。
+
+### 低秩结构
+
+- agentview 所有 Camera 位移拼接后的前 20 个共享方向能量约 **0.644**；
+- 其余约 36% 能量是参数特异/交互的；
+- h15 与 h30 的 top-20 子空间主角度从约 13° 到 28°；
+- 说明存在共享的 Camera-sensitive 方向，但**不是一个固定不变的全局子空间**。
+
+### eye-in-hand
+
+- 所有 Camera 配置下 `s_pair = 0`（相机只改 agentview），符合预期；
+- 可作为 control view。
+
+### 结论
+
+> `s_pair` 不是“一个 Camera variant 的偶然现象”：Camera 参数确实产生稳定、可测的特征位移；但敏感度排序依赖 Camera 参数方向和幅度，不能把单个 variant 的 top-20 当作通用 Camera-sensitive subspace。
+
+产物：
+
+- `docs/data/v14_camera_sweep_analysis.json`
+- `docs/data/v14_camera_sweep_manifest.json`
+- 服务器 features：`/hy-tmp/validation/v14_camera_sweep/features.npz`（126MB，未入库）
