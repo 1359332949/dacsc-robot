@@ -60,7 +60,8 @@ class TestSourceResidualProjector(unittest.TestCase):
         projector = SourceResidualProjector.fit(residuals, rank=0)
         x = torch.tensor([[5.0, 7.0]])
         y = projector.transform(x)
-        self.assertTrue(torch.allclose(y, torch.tensor([[4.0, 5.0]])))
+        # Source residual mean is [2, 3], so [5, 7] -> [3, 4].
+        self.assertTrue(torch.allclose(y, torch.tensor([[3.0, 4.0]])))
 
 
 class TestTargetOnlyMeanEstimator(unittest.TestCase):
