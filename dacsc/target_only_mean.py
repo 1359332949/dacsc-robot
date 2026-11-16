@@ -26,9 +26,13 @@ class ConditionalSourceBaseline:
         x = np.asarray(x, dtype=np.float64); y = np.asarray(y, dtype=np.float64)
         if x.ndim != 2 or y.ndim != 2 or x.shape[0] != y.shape[0]:
             raise ValueError("x/y must be [N,D] with equal N")
-        self.mean = x.mean(0)
-        self.scale = x.std(0); self.scale[self.scale < 1e-8] = 1.0
-        z = (x - self.mean) / self.scale
+        if self.standardize:
+            self.mean = x.mean(0)
+            self.scale = x.std(0); self.scale[self.scale < 1e-8] = 1.0
+            z = (x - self.mean) / self.scale
+        else:
+            self.mean = np.zeros(x.shape[1]); self.scale = np.ones(x.shape[1])
+            z = x
         z = np.concatenate([z, np.ones((z.shape[0], 1))], axis=1)
         # Ridge with an unpenalized intercept.
         gram = z.T @ z
@@ -41,7 +45,7 @@ class ConditionalSourceBaseline:
         if self.coef is None:
             raise RuntimeError("fit must be called first")
         x = np.asarray(x, dtype=np.float64)
-        z = (x - self.mean) / self.scale
+        z = (x - self.mean) / self.scale if self.standardize else x
         return z @ self.coef + self.intercept
 
 
