@@ -158,6 +158,13 @@ def main():
                 x.get("camera_changed", False) and x.get("non_target_camera_unchanged", False)
                 for x in rec["states"])
             rec["all_states_noise_pass"] = True
+        elif rec["domain"] in ("background", "lighting"):
+            rec["all_states_camera_pass"] = True
+            rec["all_states_noise_pass"] = True
+            rec["all_states_visual_pass"] = all(
+                (x.get("image_agentview") or {}).get("mean_abs_diff", 0.0) >= 1.0
+                and (x.get("image_agentview") or {}).get("changed_fraction", 0.0) >= 1e-3
+                for x in rec["states"])
         elif rec["domain"] == "sensor":
             rec["all_states_camera_pass"] = True
             import re
@@ -177,10 +184,13 @@ def main():
         else:
             rec["all_states_camera_pass"] = True
             rec["all_states_noise_pass"] = True
+        if "all_states_visual_pass" not in rec:
+            rec["all_states_visual_pass"] = True
         rec["all_checks_pass"] = all([
             rec["all_states_state_pass"], rec["all_states_model_pass"],
             rec["all_states_camera_pass"], rec["all_states_language"],
-            rec["all_states_noise_pass"], "error" not in rec])
+            rec["all_states_noise_pass"], rec["all_states_visual_pass"],
+            "error" not in rec])
         results.append(rec)
     (args.out / "phase_a_cell_audit.json").write_text(json.dumps(results, indent=2))
     failed = [r.get("name") for r in results if not r.get("all_checks_pass", False)]
