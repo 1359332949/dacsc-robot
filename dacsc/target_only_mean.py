@@ -510,7 +510,17 @@ class TargetOnlyMeanEstimator:
         return self.ema
 
     @torch.no_grad()
-    def applied_correction(self) -> torch.Tensor:
+    def applied_correction(
+        self,
+        application_confidence: torch.Tensor | np.ndarray | None = None,
+    ) -> torch.Tensor:
+        """Return the episode correction, optionally gated for the current input.
+
+        application_confidence is an observation-local multiplier in [0, 1].
+        It does not update or erase the stored episode EMA. This separates the
+        decision to learn a persistent episode correction from the decision to
+        apply it to the current observation.
+        """
         if self.ema is None:
             raise RuntimeError("update must be called before applied_correction")
         delta = self.ema.clone()
@@ -521,6 +531,20 @@ class TargetOnlyMeanEstimator:
             # Scale by confidence attached to the last accepted observation.
             # A rejected later observation must hold, not erase, this estimate.
             delta = delta * self.ema_confidence
+        if application_confidence is not None:
+            app = torch.as_tensor(
+                application_confidence, device=delta.device, dtype=delta.dtype
+            )
+            if app.ndim == 1:
+                app = app.unsqueeze(-1)
+            if app.shape != (delta.shape[0], 1):
+                raise ValueError(
+                    f"application_confidence must have shape [{delta.shape[0]}] or "
+                    f"[{delta.shape[0]},1]"
+                )
+            if not torch.isfinite(app).all() or torch.any((app < 0.0) | (app > 1.0)):
+                raise ValueError("application_confidence must be finite and in [0,1]")
+            delta = delta * app
         return self.alpha * delta
 
     @torch.no_grad()
