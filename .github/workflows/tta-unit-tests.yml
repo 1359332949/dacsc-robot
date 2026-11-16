@@ -1,0 +1,33 @@
+name: TTA unit tests
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "dacsc/target_only_mean.py"
+      - "dacsc/action_guard.py"
+      - "tests/test_target_only_mean.py"
+      - ".github/workflows/tta-unit-tests.yml"
+  pull_request:
+    paths:
+      - "dacsc/target_only_mean.py"
+      - "dacsc/action_guard.py"
+      - "tests/test_target_only_mean.py"
+      - ".github/workflows/tta-unit-tests.yml"
+
+jobs:
+  target-only-mean:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install test dependencies
+        run: python -m pip install --upgrade pip numpy scipy torch --extra-index-url https://download.pytorch.org/whl/cpu
+      - name: Run target-only mean tests
+        env:
+          PYTHONPATH: .
+        run: python -m unittest -v tests.test_target_only_mean

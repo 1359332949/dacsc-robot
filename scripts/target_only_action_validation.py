@@ -631,7 +631,7 @@ def main():
             }
 
     payload = {
-        "schema": "target_only_action_validation_v3",
+        "schema": "target_only_action_validation_v4",
         "status": "completed",
         "claim_scope": "counterfactual action-distance validation only; not closed-loop SR",
         "condition": "Object x Lighting 2222",
