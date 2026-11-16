@@ -234,6 +234,33 @@ class TestTargetOnlyMeanEstimator(unittest.TestCase):
         with self.assertRaises(ValueError):
             est.update(source.repeat(2, 1), np.repeat(self.context, 2, axis=0))
 
+    def test_application_confidence_gates_current_input_without_mutating_ema(self):
+        source = torch.tensor(self.base.predict(self.context), dtype=torch.float32)
+        est = TargetOnlyMeanEstimator(self.base, alpha=1.0)
+        est.update(source + torch.tensor([[1.0, 2.0, 3.0]]), self.context)
+        stored = est.applied_correction().clone()
+
+        quarter = est.applied_correction(
+            application_confidence=torch.tensor([[0.25]])
+        )
+        self.assertTrue(torch.allclose(quarter, stored * 0.25))
+
+        rejected = est.applied_correction(
+            application_confidence=torch.tensor([0.0])
+        )
+        self.assertTrue(torch.equal(rejected, torch.zeros_like(stored)))
+        # Application abstention is input-local: it must not erase the episode EMA.
+        self.assertTrue(torch.equal(est.applied_correction(), stored))
+
+    def test_application_confidence_rejects_invalid_shape_or_range(self):
+        source = torch.tensor(self.base.predict(self.context), dtype=torch.float32)
+        est = TargetOnlyMeanEstimator(self.base)
+        est.update(source + torch.tensor([[1.0, 2.0, 3.0]]), self.context)
+        with self.assertRaises(ValueError):
+            est.applied_correction(application_confidence=torch.ones(1, 2))
+        with self.assertRaises(ValueError):
+            est.applied_correction(application_confidence=torch.tensor([[1.1]]))
+
 
 class TestSourceCalibration(unittest.TestCase):
     def test_cross_fitted_calibration(self):
