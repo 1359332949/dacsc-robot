@@ -161,9 +161,11 @@ def main():
         elif rec["domain"] in ("background", "lighting"):
             rec["all_states_camera_pass"] = True
             rec["all_states_noise_pass"] = True
+            # image_diff normalizes mean absolute pixel error by 255, so the
+            # metric is in [0, 1]; use a normalized-MAE threshold, not 1.0.
             rec["all_states_visual_pass"] = all(
-                (x.get("image_agentview") or {}).get("mean_abs_diff", 0.0) >= 1.0
-                and (x.get("image_agentview") or {}).get("changed_fraction", 0.0) >= 1e-3
+                (x.get("image_agentview") or {}).get("mean_abs_diff", 0.0) >= 0.02
+                and (x.get("image_agentview") or {}).get("changed_fraction", 0.0) >= 0.005
                 for x in rec["states"])
         elif rec["domain"] == "sensor":
             rec["all_states_camera_pass"] = True

@@ -21,6 +21,7 @@ from sg_cpa_phase4_final import CKPT  # noqa: E402
 from evaluate_libero import DUMMY_ACTION, SETTLING_STEPS, is_success, policy_observation  # noqa: E402
 from dacsc.state_pairing import digest, model_compatible, restore, snapshot  # noqa: E402
 from dacsc.libero_noise import apply_agentview_noise  # noqa: E402
+from dacsc.observation_render import render_policy_observation  # noqa: E402
 
 CONDITIONS = [
     ("libero_object", "lighting", 2222),
@@ -134,12 +135,10 @@ def main():
                                                   strict_geometry=True, strict_physics=True)
                         if not compat["pass"]:
                             raise RuntimeError(f"snapshot model mismatch {suite}/{domain}/{cid} {target}")
-                        restore(tenv, src)
-                        raw = {v: tenv.sim.render(camera_name=v, width=256, height=256)
-                               for v in ("agentview", "robot0_eye_in_hand")}
-                        if tnoise:
-                            raw["agentview"] = apply_agentview_noise(
-                                {"agentview_image": raw["agentview"]}, tnoise, seed=1234 + int(idx))[0]["agentview_image"]
+                        obs = render_policy_observation(tenv, src, sensor_noise=tnoise,
+                                                        noise_seed=1234 + int(idx))
+                        raw = {"agentview": obs["agentview_image"],
+                               "robot0_eye_in_hand": obs["robot0_eye_in_hand_image"]}
                         d = args.out / "images" / f"state_{idx}_{label}_{sj:02d}"
                         d.mkdir(parents=True, exist_ok=True)
                         for v, img in raw.items():

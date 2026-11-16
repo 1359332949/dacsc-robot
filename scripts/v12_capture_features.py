@@ -22,9 +22,11 @@ from dacsc.state_pairing import compare, digest, model_compatible, restore, snap
 from evaluate_libero import state_from_observation  # noqa: E402
 from dacsc.task_pairing import classification_entries, load_task_map, resolve_task_name  # noqa: E402
 from dacsc.libero_noise import apply_agentview_noise  # noqa: E402
+from dacsc.observation_render import render_policy_observation  # noqa: E402
 from sg_cpa_phase4_final import CKPT  # noqa: E402
 
 DUMMY_ACTION = [0.0] * 6 + [-1.0]
+OBS_KEYS = {"agentview": "agentview_image", "eye_in_hand": "robot0_eye_in_hand_image"}
 SETTLING_STEPS = 10
 
 
@@ -210,11 +212,13 @@ def main():
                 records.append({"index": idx, "error": "state_restore_failed", "compare": cmp,
                             "feature_row": None})
                 continue
+            # One shared policy-observation path for Clean and Shift.
+            obs_c = render_policy_observation(env_c, snap)
+            obs_s = render_policy_observation(env_s, snap)
             raw = {"clean": {}, "shift": {}}
             for v in args.policy_views:
-                cam = mapped_views[v]
-                raw["clean"][v] = env_c.sim.render(camera_name=cam, width=256, height=256)
-                raw["shift"][v] = env_s.sim.render(camera_name=cam, width=256, height=256)
+                raw["clean"][v] = obs_c[OBS_KEYS[v]]
+                raw["shift"][v] = obs_s[OBS_KEYS[v]]
             noise_meta = None
             if args.shift_kind == "sensor":
                 noise_obs, noise_meta = apply_agentview_noise(
