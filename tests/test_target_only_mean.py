@@ -146,13 +146,16 @@ class TestSourceResidualConfidenceGate(unittest.TestCase):
         )
 
     def test_rejected_clean_like_observation_preserves_identity(self):
+        source = ConditionalSourceBaseline(l2=1.0)
+        source.fit(self.contexts, np.zeros((len(self.contexts), 2)))
         est = TargetOnlyMeanEstimator(
-            self.base, confidence_gate=self.gate, min_update_confidence=0.25
+            source, confidence_gate=self.gate, min_update_confidence=0.25
         )
-        source = torch.tensor(self.base.predict(self.context), dtype=torch.float32)
-        est.update(source + torch.tensor([[0.02, -0.01, 0.0]]), self.context)
+        context = self.contexts[[0]]
+        prediction = torch.tensor(source.predict(context), dtype=torch.float32)
+        est.update(prediction + torch.tensor([[0.02, -0.01]]), context)
         self.assertFalse(bool(est.last_update_accepted))
-        self.assertTrue(torch.equal(est.applied_correction(), torch.zeros(1, 3)))
+        self.assertTrue(torch.equal(est.applied_correction(), torch.zeros(1, 2)))
 
     def test_source_noise_residual_is_abstained(self):
         confidence = self.gate.confidence(
