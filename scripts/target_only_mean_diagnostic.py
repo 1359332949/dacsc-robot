@@ -55,9 +55,10 @@ def main():
     source = ConditionalSourceBaseline(l2=args.l2)
     source.fit(np.stack([states[s] for s in fit_ids]), np.stack([clean[s] for s in fit_ids]))
     paired = np.mean([shift[s] - clean[s] for s in fit_ids], axis=0)
-    estimator = TargetOnlyMeanEstimator(source, momentum=args.momentum)
     per_state = []
     for s in eval_ids:
+        # Each eval state is a separate target episode: no cross-state EMA.
+        estimator = TargetOnlyMeanEstimator(source, momentum=args.momentum)
         delta = estimator.update(torch.from_numpy(shift[s][None, :]).float(), states[s][None, :])
         d = delta[0].numpy()
         cos = float(np.dot(d, paired) / (np.linalg.norm(d) * np.linalg.norm(paired) + 1e-12))
