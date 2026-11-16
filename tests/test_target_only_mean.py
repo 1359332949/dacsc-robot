@@ -94,6 +94,66 @@ class TestSourceResidualConfidenceGate(unittest.TestCase):
         ])
         self.gate = SourceResidualConfidenceGate.fit(self.contexts, self.residuals)
 
+    def test_diagnostics_separate_residual_and_context_rejection(self):
+        inside = torch.tensor([[0.05, 0.05]])
+        large = torch.tensor([[2.0, 1.0]])
+        in_diag = self.gate.diagnostics(large, inside)
+        self.assertGreater(float(in_diag["residual_confidence"]), 0.0)
+        self.assertGreater(float(in_diag["context_confidence"]), 0.0)
+
+        far = torch.tensor([[20.0, -20.0]])
+        far_diag = self.gate.diagnostics(large, far)
+        self.assertGreater(float(far_diag["residual_confidence"]), 0.0)
+        self.assertEqual(float(far_diag["context_confidence"]), 0.0)
+        self.assertIn("context_outside_source_support", far_diag["abstain_reasons"][0])
+
+        small = torch.tensor([[0.02, -0.01]])
+        small_diag = self.gate.diagnostics(small, inside)
+        self.assertEqual(float(small_diag["residual_confidence"]), 0.0)
+        self.assertGreater(float(small_diag["context_confidence"]), 0.0)
+        self.assertIn("residual_within_source_noise", small_diag["abstain_reasons"][0])
+
+    def test_rejected_ood_observation_holds_last_accepted_correction(self):
+        contexts = np.array([
+            [0.0, 0.0], [0.1, 0.0], [0.0, 0.1], [0.1, 0.1],
+            [0.2, 0.0], [0.0, 0.2], [0.2, 0.2], [0.15, 0.05],
+        ])
+        residuals = np.array([
+            [0.1, 0.0], [-0.1, 0.0], [0.0, 0.1], [0.0, -0.1],
+            [0.05, 0.05], [-0.05, -0.05], [0.08, -0.02], [-0.08, 0.02],
+        ])
+        source = ConditionalSourceBaseline(l2=1.0)
+        source.fit(contexts, np.zeros((8, 2)))
+        gate = SourceResidualConfidenceGate.fit(contexts, residuals)
+        est = TargetOnlyMeanEstimator(
+            source, confidence_gate=gate, min_update_confidence=0.25
+        )
+
+        near = contexts[[0]]
+        est.update(torch.tensor([[20.0, 0.0]]), near)
+        self.assertGreater(float(est.last_confidence), 0.25)
+        accepted_correction = est.applied_correction().clone()
+        self.assertGreater(float(accepted_correction.norm()), 0.0)
+
+        far = np.array([[100.0, -100.0]])
+        est.update(torch.tensor([[40.0, 0.0]]), far)
+        self.assertEqual(float(est.last_confidence), 0.0)
+        self.assertFalse(bool(est.last_update_accepted))
+        self.assertTrue(torch.allclose(est.applied_correction(), accepted_correction))
+        self.assertIn(
+            "context_outside_source_support",
+            est.last_gate_diagnostics["abstain_reasons"][0],
+        )
+
+    def test_rejected_clean_like_observation_preserves_identity(self):
+        est = TargetOnlyMeanEstimator(
+            self.base, confidence_gate=self.gate, min_update_confidence=0.25
+        )
+        source = torch.tensor(self.base.predict(self.context), dtype=torch.float32)
+        est.update(source + torch.tensor([[0.02, -0.01, 0.0]]), self.context)
+        self.assertFalse(bool(est.last_update_accepted))
+        self.assertTrue(torch.equal(est.applied_correction(), torch.zeros(1, 3)))
+
     def test_source_noise_residual_is_abstained(self):
         confidence = self.gate.confidence(
             torch.tensor([[0.02, -0.01]]), torch.tensor([[0.05, 0.05]])

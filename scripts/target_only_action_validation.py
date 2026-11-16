@@ -48,6 +48,20 @@ def sha256(path: Path) -> str:
     return h.hexdigest()
 
 
+def gate_diagnostics_json(diagnostics: dict) -> dict:
+    """Convert one-item gate diagnostics to JSON-safe scalar values."""
+    result = {}
+    for key, value in diagnostics.items():
+        if key == "abstain_reasons":
+            result[key] = value[0]
+        elif torch.is_tensor(value):
+            flat = value.detach().float().cpu().reshape(-1)
+            result[key] = float(flat[0]) if flat.numel() == 1 else flat.tolist()
+        else:
+            result[key] = value
+    return result
+
+
 def configure(args):
     import os
     import yaml
@@ -167,6 +181,8 @@ def main():
     ap.add_argument("--source-folds", type=int, default=5)
     ap.add_argument("--rotation-budget-rad", type=float, default=0.0,
                     help="SO(3) action-space trust region relative to Frozen; 0 preserves Frozen rotations")
+    ap.add_argument("--min-update-confidence", type=float, default=0.25,
+                    help="minimum source-only confidence required to update episode EMA")
     ap.add_argument("--seed", type=int, default=20261116)
     ap.add_argument("--checkpoint", type=Path, default=CKPT)
     ap.add_argument("--libero-src", type=Path, default=Path("/hy-tmp/libero_plus"))
@@ -299,19 +315,23 @@ def main():
             target_gated_estimator = TargetOnlyMeanEstimator(
                 source, momentum=0.5, alpha=args.alpha, clip_norm=args.clip_norm,
                 confidence_gate=confidence_gate,
+                min_update_confidence=args.min_update_confidence,
             )
             filtered_gated_estimator = TargetOnlyMeanEstimator(
                 source, momentum=0.5, alpha=args.alpha, clip_norm=args.clip_norm,
                 residual_projector=content_projector, confidence_gate=confidence_gate,
+                min_update_confidence=args.min_update_confidence,
             )
             # Separate Clean-stream branches are offline negative controls.
             clean_estimator = TargetOnlyMeanEstimator(
                 source, momentum=0.5, alpha=args.alpha, clip_norm=args.clip_norm,
                 confidence_gate=confidence_gate,
+                min_update_confidence=args.min_update_confidence,
             )
             clean_filtered_estimator = TargetOnlyMeanEstimator(
                 source, momentum=0.5, alpha=args.alpha, clip_norm=args.clip_norm,
                 residual_projector=content_projector, confidence_gate=confidence_gate,
+                min_update_confidence=args.min_update_confidence,
             )
 
             for chunk_index in range(args.chunks):
@@ -494,6 +514,24 @@ def main():
                     "filtered_confidence": float(filtered_gated_estimator.last_confidence.mean()),
                     "clean_confidence": float(clean_estimator.last_confidence.mean()),
                     "clean_filtered_confidence": float(clean_filtered_estimator.last_confidence.mean()),
+                    "target_gate_diagnostics": gate_diagnostics_json(
+                        target_gated_estimator.last_gate_diagnostics
+                    ),
+                    "filtered_gate_diagnostics": gate_diagnostics_json(
+                        filtered_gated_estimator.last_gate_diagnostics
+                    ),
+                    "clean_gate_diagnostics": gate_diagnostics_json(
+                        clean_estimator.last_gate_diagnostics
+                    ),
+                    "target_update_accepted": bool(
+                        target_gated_estimator.last_update_accepted.all()
+                    ),
+                    "filtered_update_accepted": bool(
+                        filtered_gated_estimator.last_update_accepted.all()
+                    ),
+                    "clean_update_accepted": bool(
+                        clean_estimator.last_update_accepted.all()
+                    ),
                     "clean_raw_residual_norm": float(clean_raw_residual.norm()),
                     "clean_filtered_residual_norm": float(clean_filtered_residual.norm()),
                     "target_clean_raw_gap_norm": float(
@@ -602,7 +640,15 @@ def main():
         "source_calibration": source_diagnostics,
         "confidence_gate": {
             "type": "source-oof residual novelty multiplied by nearest-source-context support",
-            "interpretation": "conservative abstention heuristic; inspect per-state confidence",
+            "min_update_confidence": args.min_update_confidence,
+            "update_semantics": "only accepted observations update episode EMA; rejected observations hold last accepted estimate",
+            "logged_components": [
+                "residual_distance", "residual_threshold", "residual_confidence",
+                "nearest_context_distance", "context_support_radius",
+                "context_support_outer_radius", "context_confidence",
+                "combined_confidence", "abstain_reasons", "update_accepted",
+            ],
+            "interpretation": "source-only abstention heuristic; appearance estimate is held across later OOD contexts",
         },
         "rotation_trust_region": {
             "max_relative_so3_change_rad": args.rotation_budget_rad,

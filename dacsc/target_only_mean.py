@@ -183,11 +183,12 @@ class SourceResidualConfidenceGate:
         )
 
     @torch.no_grad()
-    def confidence(
+    def diagnostics(
         self,
         raw_residual: torch.Tensor,
         context: np.ndarray | torch.Tensor,
-    ) -> torch.Tensor:
+    ) -> dict[str, object]:
+        """Expose residual novelty and source-context support separately."""
         if raw_residual.ndim != 2 or raw_residual.shape[1] != self.residual_center.shape[0]:
             raise ValueError("raw_residual must be [B,visual_dim]")
         ctx = context.detach().cpu().numpy() if torch.is_tensor(context) else np.asarray(context)
@@ -198,35 +199,57 @@ class SourceResidualConfidenceGate:
         if ctx.shape[1] != self.context_mean.shape[0] or not np.isfinite(ctx).all():
             raise ValueError("context shape/non-finite values do not match source calibration")
 
-        # torch.cdist is not implemented for every model dtype (notably some
-        # BF16 paths). Keep confidence geometry in FP32, then cast the scalar
-        # gate back to the visual residual dtype.
         device = raw_residual.device
         ctx_z = torch.as_tensor(
             (ctx - self.context_mean) / self.context_scale,
-            device=device,
-            dtype=torch.float32,
+            device=device, dtype=torch.float32,
         )
-        bank = torch.as_tensor(
-            self.source_contexts_z, device=device, dtype=torch.float32
-        )
+        bank = torch.as_tensor(self.source_contexts_z, device=device, dtype=torch.float32)
         nearest = torch.cdist(ctx_z, bank).min(dim=1, keepdim=True).values
-        inner = self.support_radius
-        outer = self.support_radius * self.support_outer_multiplier
-        support_conf = ((outer - nearest) / max(outer - inner, 1e-8)).clamp(0.0, 1.0)
+        inner = float(self.support_radius)
+        outer = float(self.support_radius * self.support_outer_multiplier)
+        context_conf = ((outer - nearest) / max(outer - inner, 1e-8)).clamp(0.0, 1.0)
 
-        residual_center = torch.as_tensor(
+        center = torch.as_tensor(
             self.residual_center, device=device, dtype=torch.float32
         ).unsqueeze(0)
-        residual_fp32 = raw_residual.float()
-        residual_norm = torch.linalg.vector_norm(
-            residual_fp32 - residual_center, dim=-1, keepdim=True
+        residual_distance = torch.linalg.vector_norm(
+            raw_residual.float() - center, dim=-1, keepdim=True
         )
         residual_conf = (
-            1.0 - self.residual_threshold / residual_norm.clamp_min(1e-8)
+            1.0 - self.residual_threshold / residual_distance.clamp_min(1e-8)
         ).clamp(0.0, 1.0)
-        return (support_conf * residual_conf).to(dtype=raw_residual.dtype)
+        combined = context_conf * residual_conf
 
+        reasons: list[list[str]] = []
+        for rc, cc in zip(residual_conf.flatten().tolist(), context_conf.flatten().tolist()):
+            reason = []
+            if rc <= 0.0:
+                reason.append("residual_within_source_noise")
+            if cc <= 0.0:
+                reason.append("context_outside_source_support")
+            reasons.append(reason)
+
+        dtype = raw_residual.dtype
+        return {
+            "residual_distance": residual_distance.to(dtype),
+            "residual_threshold": torch.full_like(residual_distance, self.residual_threshold).to(dtype),
+            "residual_confidence": residual_conf.to(dtype),
+            "nearest_context_distance": nearest.to(dtype),
+            "context_support_radius": torch.full_like(nearest, inner).to(dtype),
+            "context_support_outer_radius": torch.full_like(nearest, outer).to(dtype),
+            "context_confidence": context_conf.to(dtype),
+            "combined_confidence": combined.to(dtype),
+            "abstain_reasons": reasons,
+        }
+
+    @torch.no_grad()
+    def confidence(
+        self,
+        raw_residual: torch.Tensor,
+        context: np.ndarray | torch.Tensor,
+    ) -> torch.Tensor:
+        return self.diagnostics(raw_residual, context)["combined_confidence"]
 
 def fit_source_calibration(
     x: np.ndarray,
@@ -294,7 +317,12 @@ def fit_source_calibration(
 
 
 class TargetOnlyMeanEstimator:
-    """Episode-local EMA of target residuals with optional source-only abstention."""
+    """Episode-local EMA with source-only confidence and hold-on-abstain semantics.
+
+    The appearance estimate is expected to be approximately stationary within
+    an episode. Only accepted observations update the EMA. A rejected later
+    observation holds the last accepted correction instead of erasing it.
+    """
 
     def __init__(
         self,
@@ -304,6 +332,7 @@ class TargetOnlyMeanEstimator:
         clip_norm: float | None = None,
         residual_projector: SourceResidualProjector | None = None,
         confidence_gate: SourceResidualConfidenceGate | None = None,
+        min_update_confidence: float = 0.25,
     ):
         if not np.isfinite(momentum) or not 0.0 <= momentum < 1.0:
             raise ValueError("momentum must be finite and in [0,1)")
@@ -311,20 +340,32 @@ class TargetOnlyMeanEstimator:
             raise ValueError("alpha must be finite")
         if clip_norm is not None and (not np.isfinite(clip_norm) or clip_norm <= 0):
             raise ValueError("clip_norm must be finite and positive")
+        if not np.isfinite(min_update_confidence) or not 0.0 <= min_update_confidence <= 1.0:
+            raise ValueError("min_update_confidence must be finite and in [0,1]")
         self.source = source_baseline
         self.momentum = float(momentum)
         self.alpha = float(alpha)
         self.clip_norm = None if clip_norm is None else float(clip_norm)
         self.residual_projector = residual_projector
         self.confidence_gate = confidence_gate
+        self.min_update_confidence = float(min_update_confidence)
+
         self.ema: torch.Tensor | None = None
+        self.ema_confidence: torch.Tensor | None = None
+        self.has_accepted: torch.Tensor | None = None
         self.last_raw_residual: torch.Tensor | None = None
         self.last_confidence: torch.Tensor | None = None
+        self.last_update_accepted: torch.Tensor | None = None
+        self.last_gate_diagnostics: dict[str, object] | None = None
 
     def reset(self) -> None:
         self.ema = None
+        self.ema_confidence = None
+        self.has_accepted = None
         self.last_raw_residual = None
         self.last_confidence = None
+        self.last_update_accepted = None
+        self.last_gate_diagnostics = None
 
     @torch.no_grad()
     def raw_residual(
@@ -363,19 +404,59 @@ class TargetOnlyMeanEstimator:
     def update(self, visual, context) -> torch.Tensor:
         raw = self.raw_residual(visual, context)
         residual = raw if self.residual_projector is None else self.residual_projector.transform(raw)
+        batch = residual.shape[0]
         if self.ema is None:
-            self.ema = residual.clone()
-        else:
-            if self.ema.shape != residual.shape:
-                raise ValueError("target batch shape changed; reset estimator before changing batch size")
-            self.ema = self.momentum * self.ema + (1.0 - self.momentum) * residual
+            self.ema = torch.zeros_like(residual)
+            self.ema_confidence = torch.zeros((batch, 1), device=residual.device, dtype=residual.dtype)
+            self.has_accepted = torch.zeros((batch, 1), device=residual.device, dtype=torch.bool)
+        elif self.ema.shape != residual.shape:
+            raise ValueError("target batch shape changed; reset estimator before changing batch size")
+
         self.last_raw_residual = raw
         if self.confidence_gate is None:
-            self.last_confidence = torch.ones(
-                (raw.shape[0], 1), device=raw.device, dtype=raw.dtype
-            )
+            confidence = torch.ones((batch, 1), device=raw.device, dtype=raw.dtype)
+            gate_diagnostics: dict[str, object] = {
+                "residual_confidence": confidence,
+                "context_confidence": confidence,
+                "combined_confidence": confidence,
+                "abstain_reasons": [[] for _ in range(batch)],
+            }
         else:
-            self.last_confidence = self.confidence_gate.confidence(raw, context)
+            gate_diagnostics = self.confidence_gate.diagnostics(raw, context)
+            confidence = gate_diagnostics["combined_confidence"]
+
+        accepted = confidence >= self.min_update_confidence
+        previous_accepted = self.has_accepted
+        candidate_ema = torch.where(
+            previous_accepted,
+            self.momentum * self.ema + (1.0 - self.momentum) * residual,
+            residual,
+        )
+        self.ema = torch.where(accepted, candidate_ema, self.ema)
+
+        candidate_confidence = torch.where(
+            previous_accepted,
+            self.momentum * self.ema_confidence + (1.0 - self.momentum) * confidence,
+            confidence,
+        )
+        self.ema_confidence = torch.where(
+            accepted, candidate_confidence, self.ema_confidence
+        )
+        self.has_accepted = previous_accepted | accepted
+
+        reasons = gate_diagnostics["abstain_reasons"]
+        for i in range(batch):
+            if bool(accepted[i].item()):
+                reasons[i] = ["accepted"]
+            elif not reasons[i]:
+                reasons[i] = ["below_min_update_confidence"]
+        gate_diagnostics["abstain_reasons"] = reasons
+        gate_diagnostics["update_accepted"] = accepted
+        gate_diagnostics["min_update_confidence"] = self.min_update_confidence
+
+        self.last_confidence = confidence
+        self.last_update_accepted = accepted
+        self.last_gate_diagnostics = gate_diagnostics
         return self.ema
 
     @torch.no_grad()
@@ -386,8 +467,10 @@ class TargetOnlyMeanEstimator:
         if self.clip_norm is not None:
             norm = delta.norm(dim=-1, keepdim=True).clamp_min(1e-12)
             delta = delta * (self.clip_norm / norm).clamp(max=1.0)
-        if self.last_confidence is not None:
-            delta = delta * self.last_confidence
+        if self.confidence_gate is not None and self.ema_confidence is not None:
+            # Scale by confidence attached to the last accepted observation.
+            # A rejected later observation must hold, not erase, this estimate.
+            delta = delta * self.ema_confidence
         return self.alpha * delta
 
     @torch.no_grad()
