@@ -151,9 +151,33 @@ def main():
         rec["all_states_state_pass"] = all(
             (x.get("state_compare") or {}).get("all_pass", False) for x in rec["states"])
         rec["all_states_language"] = all(x.get("language_equal", False) for x in rec["states"])
+        rec["all_states_model_pass"] = all(
+            (x.get("model_compatible") or {}).get("pass", False) for x in rec["states"])
+        if rec["domain"] == "camera":
+            rec["all_states_camera_pass"] = all(
+                x.get("camera_changed", False) and x.get("non_target_camera_unchanged", False)
+                for x in rec["states"])
+            rec["all_states_noise_pass"] = True
+        elif rec["domain"] == "sensor":
+            rec["all_states_camera_pass"] = True
+            rec["all_states_noise_pass"] = all(
+                bool(x.get("noise")) and x["noise"].get("mechanism") == "motion_blur"
+                and x["noise"].get("affected_view") == "agentview_image only"
+                for x in rec["states"])
+        else:
+            rec["all_states_camera_pass"] = True
+            rec["all_states_noise_pass"] = True
+        rec["all_checks_pass"] = all([
+            rec["all_states_state_pass"], rec["all_states_model_pass"],
+            rec["all_states_camera_pass"], rec["all_states_language"],
+            rec["all_states_noise_pass"], "error" not in rec])
         results.append(rec)
     (args.out / "phase_a_cell_audit.json").write_text(json.dumps(results, indent=2))
-    print(json.dumps({"cells": len(results), "errors": sum(1 for r in results if "error" in r)}, indent=2))
+    failed = [r.get("name") for r in results if not r.get("all_checks_pass", False)]
+    print(json.dumps({"cells": len(results), "errors": sum(1 for r in results if "error" in r),
+                      "failed_cells": failed}, indent=2))
+    if failed:
+        raise SystemExit(1)
 
 
 if __name__ == "__main__":

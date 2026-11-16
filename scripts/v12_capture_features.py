@@ -32,6 +32,13 @@ def sha(path: Path) -> str:
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
 
+def clean_language(task_name: str) -> str:
+    parts = task_name.split("_")
+    if parts and parts[0].startswith("KITCHEN") and len(parts) >= 3 and parts[1].startswith("SCENE"):
+        return " ".join(parts[2:])
+    return " ".join(parts)
+
+
 def combined_image_hash(root: Path) -> str:
     h = hashlib.sha256()
     for p in sorted(Path(root).rglob("*.png")):
@@ -162,6 +169,9 @@ def main():
         if not m:
             raise RuntimeError(f"cannot parse sensor noise level from {shift_task.name}")
         noise_level = int(m.group(1))
+    expected_language = clean_language(args.clean_task_name)
+    if args.clean_language != expected_language:
+        raise RuntimeError(f"clean language mismatch: {args.clean_language!r} != {expected_language!r}")
     clean_states = torch.load(args.clean_init_file, weights_only=False)
     n = min(args.num_states, len(clean_states))
     perm = np.random.RandomState(args.split_seed).permutation(n)
@@ -210,8 +220,10 @@ def main():
                     {"agentview_image": raw["shift"]["agentview"]}, noise_level,
                     seed=1234 + idx)
                 raw["shift"]["agentview"] = noise_obs["agentview_image"]
-                d = args.out / "images" / f"state_{idx:03d}"
-                d.mkdir(parents=True, exist_ok=True)
+            # Save every view after any sensor noise is applied.
+            d = args.out / "images" / f"state_{idx:03d}"
+            d.mkdir(parents=True, exist_ok=True)
+            for v in args.policy_views:
                 Image.fromarray(np.asarray(raw["clean"][v], dtype=np.uint8)).save(d / f"clean_{v}.png")
                 Image.fromarray(np.asarray(raw["shift"][v], dtype=np.uint8)).save(d / f"shift_{v}.png")
             feats = dino_features(policy, raw["clean"], args.policy_views, args.clean_language)

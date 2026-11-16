@@ -12,6 +12,19 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def clean_language(task_name: str) -> str:
+    """Official LIBERO clean-task instruction.
+
+    LIBERO-10 names carry a scene prefix such as KITCHEN_SCENE3_; the
+    benchmark language drops that prefix.  Other suites use the underscore
+    name verbatim.
+    """
+    parts = task_name.split("_")
+    if parts and parts[0].startswith("KITCHEN") and len(parts) >= 3 and parts[1].startswith("SCENE"):
+        return " ".join(parts[2:])
+    return " ".join(parts)
+
+
 def tag_for(task, domain, cid):
     safe = task["base_task"].replace("/", "_")
     return f"{task['suite']}__{safe}__{domain}__{cid}"
@@ -23,6 +36,7 @@ def main():
     ap.add_argument("--out", type=Path, required=True)
     ap.add_argument("--workers", type=int, default=8)
     ap.add_argument("--domains", nargs="*", default=None)
+    ap.add_argument("--suites", nargs="*", default=None)
     ap.add_argument("--num-states", type=int, default=50)
     ap.add_argument("--checkpoint", type=Path, default=Path("/hy-tmp/dacsc-robot/repos/CoRP/checkpoints/corp_libero.pt"))
     ap.add_argument("--libero-src", type=Path, default=Path("/hy-tmp/libero_plus"))
@@ -31,9 +45,11 @@ def main():
     matrix = json.loads(args.matrix.read_text())
     conds = []
     for task in matrix["base_tasks"]:
+        if args.suites and task["suite"] not in args.suites:
+            continue
         clean_bddl = task["variants"][next(iter(task["variants"]))][0]["base_bddl"]
         clean_init = task["variants"][next(iter(task["variants"]))][0]["base_init"]
-        language = " ".join(task["base_task"].split("_"))
+        language = clean_language(task["base_task"])
         for domain, variants in task["variants"].items():
             if args.domains and domain not in args.domains:
                 continue
@@ -55,7 +71,7 @@ def main():
                    "--clean-suite", task["suite"], "--clean-task-name", task["base_task"],
                    "--clean-bddl", c["clean_bddl"], "--clean-init-file", c["clean_init"],
                    "--clean-language", c["language"], "--shift-suite", task["suite"],
-                   "--shift-task", str(v["classification_id"] - 1), "--shift-kind", c["domain"],
+                   "--shift-task", str(v.get("benchmark_index", v["classification_id"] - 1)), "--shift-kind", c["domain"],
                    "--task-map", str(args.libero_src / "libero/libero/benchmark/libero_suite_task_map.py"),
                    "--task-classification", str(args.libero_src / "libero/libero/benchmark/task_classification.json"),
                    "--num-states", str(args.num_states), "--out", str(cap)]
