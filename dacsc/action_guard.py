@@ -54,4 +54,18 @@ def limit_rotation_delta(
         dtype=out_ctrl.dtype,
     )
     out_ctrl[..., 3:6] = bounded_tensor
-    return normalizer.normalize_action(out_ctrl)
+    normalize = getattr(normalizer, "normalize_action", None)
+    if callable(normalize):
+        return normalize(out_ctrl)
+
+    # CoRP's checkpoint Normalizer exposes unnormalize_action plus action_min /
+    # action_max, but no normalize_action method. Invert its exact first-six
+    # min/max transform; gripper (index 6) is passed through unchanged.
+    if not hasattr(normalizer, "action_min") or not hasattr(normalizer, "action_max"):
+        raise TypeError("normalizer must provide normalize_action or action_min/action_max")
+    low = normalizer.action_min.to(device=out_ctrl.device, dtype=out_ctrl.dtype)
+    high = normalizer.action_max.to(device=out_ctrl.device, dtype=out_ctrl.dtype)
+    span = (high[:6] - low[:6]).clamp_min(1e-8)
+    normalized = out_ctrl.clone()
+    normalized[..., :6] = 2.0 * (out_ctrl[..., :6] - low[:6]) / span - 1.0
+    return normalized

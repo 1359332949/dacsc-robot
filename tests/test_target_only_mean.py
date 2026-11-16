@@ -21,6 +21,21 @@ class IdentityNormalizer:
         return action
 
 
+class CorpLikeNormalizer:
+    """Matches the checkpoint Normalizer API (no normalize_action method)."""
+
+    def __init__(self):
+        self.action_min = torch.tensor([-2., -2., -2., -1., -1., -1., -1.])
+        self.action_max = torch.tensor([2., 2., 2., 1., 1., 1., 1.])
+
+    def unnormalize_action(self, action):
+        low = self.action_min.to(action.device, action.dtype)
+        high = self.action_max.to(action.device, action.dtype)
+        out = action.clone()
+        out[..., :6] = 0.5 * (out[..., :6] + 1.0) * (high[:6] - low[:6]) + low[:6]
+        return out
+
+
 class TestConditionalSourceBaseline(unittest.TestCase):
     def test_ridge_recovers_linear_source(self):
         rng = np.random.RandomState(0)
@@ -191,6 +206,20 @@ class TestActionRotationGuard(unittest.TestCase):
         candidate[..., 3:6] = torch.tensor([0.2, -0.1, 0.3])
         bounded = limit_rotation_delta(candidate, reference, IdentityNormalizer(), 0.0)
         self.assertTrue(torch.equal(bounded[..., 3:6], reference[..., 3:6]))
+
+    def test_supports_corp_checkpoint_normalizer_api(self):
+        normalizer = CorpLikeNormalizer()
+        reference = torch.zeros(1, 1, 7)
+        candidate = torch.zeros(1, 1, 7)
+        candidate[..., :3] = torch.tensor([0.2, -0.1, 0.3])
+        candidate[..., 3:6] = torch.tensor([0.0, 0.0, 0.5])
+        candidate[..., 6] = 1.0
+        bounded = limit_rotation_delta(candidate, reference, normalizer, 0.05)
+        restored = normalizer.unnormalize_action(bounded)
+        relative = Rotation.from_rotvec(restored[..., 3:6].numpy().reshape(-1, 3))
+        self.assertLessEqual(float(relative.magnitude().max()), 0.050001)
+        self.assertTrue(torch.allclose(bounded[..., :3], candidate[..., :3], atol=1e-6))
+        self.assertTrue(torch.equal(bounded[..., 6], candidate[..., 6]))
 
 
 if __name__ == "__main__":

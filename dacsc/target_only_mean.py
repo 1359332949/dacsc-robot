@@ -198,26 +198,34 @@ class SourceResidualConfidenceGate:
         if ctx.shape[1] != self.context_mean.shape[0] or not np.isfinite(ctx).all():
             raise ValueError("context shape/non-finite values do not match source calibration")
 
-        device, dtype = raw_residual.device, raw_residual.dtype
+        # torch.cdist is not implemented for every model dtype (notably some
+        # BF16 paths). Keep confidence geometry in FP32, then cast the scalar
+        # gate back to the visual residual dtype.
+        device = raw_residual.device
         ctx_z = torch.as_tensor(
-            (ctx - self.context_mean) / self.context_scale, device=device, dtype=dtype
+            (ctx - self.context_mean) / self.context_scale,
+            device=device,
+            dtype=torch.float32,
         )
-        bank = torch.as_tensor(self.source_contexts_z, device=device, dtype=dtype)
+        bank = torch.as_tensor(
+            self.source_contexts_z, device=device, dtype=torch.float32
+        )
         nearest = torch.cdist(ctx_z, bank).min(dim=1, keepdim=True).values
         inner = self.support_radius
         outer = self.support_radius * self.support_outer_multiplier
         support_conf = ((outer - nearest) / max(outer - inner, 1e-8)).clamp(0.0, 1.0)
 
         residual_center = torch.as_tensor(
-            self.residual_center, device=device, dtype=dtype
+            self.residual_center, device=device, dtype=torch.float32
         ).unsqueeze(0)
+        residual_fp32 = raw_residual.float()
         residual_norm = torch.linalg.vector_norm(
-            raw_residual - residual_center, dim=-1, keepdim=True
+            residual_fp32 - residual_center, dim=-1, keepdim=True
         )
         residual_conf = (
             1.0 - self.residual_threshold / residual_norm.clamp_min(1e-8)
         ).clamp(0.0, 1.0)
-        return support_conf * residual_conf
+        return (support_conf * residual_conf).to(dtype=raw_residual.dtype)
 
 
 def fit_source_calibration(
