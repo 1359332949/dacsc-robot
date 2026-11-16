@@ -16,6 +16,30 @@ import numpy as np
 from scipy.stats import spearmanr
 
 
+
+
+def pair_score(clean: np.ndarray, shift: np.ndarray) -> np.ndarray:
+    """Per-dimension s_pair; input [N, P, D], output [D]. No view mixing."""
+    if clean.shape != shift.shape or clean.ndim != 3:
+        raise ValueError("clean/shift must have same [N,P,D] shape")
+    return np.abs(clean.astype(np.float64) - shift.astype(np.float64)).mean(axis=(0, 1))
+
+
+def stat_primary(shift: np.ndarray) -> np.ndarray:
+    """std_state(mean_patch F), output [D]."""
+    return shift.astype(np.float64).mean(axis=1).std(axis=0)
+
+
+def stat_alt(shift: np.ndarray) -> np.ndarray:
+    """mean_patch(std_state F), output [D]."""
+    return shift.astype(np.float64).std(axis=0).mean(axis=0)
+
+
+def valid_positions(manifest: dict) -> tuple[list[int], dict[int, int]]:
+    valid = [r["index"] for r in manifest["records"] if r.get("compare_pass")]
+    return valid, {state: j for j, state in enumerate(valid)}
+
+
 def topk_overlap(a: np.ndarray, b: np.ndarray, k: int) -> float:
     ia = set(np.argsort(-a)[:k].tolist()); ib = set(np.argsort(-b)[:k].tolist())
     return len(ia & ib) / float(k)
@@ -40,15 +64,11 @@ def main():
     rng = np.random.RandomState(args.seed)
 
     def pair_for(pos_idx, view):
-        c = z[f"clean_{view}"][pos_idx].astype(np.float64)
-        s = z[f"shift_{view}"][pos_idx].astype(np.float64)
-        return np.abs(c - s).mean(axis=(0, 1))
+        return pair_score(z[f"clean_{view}"][pos_idx], z[f"shift_{view}"][pos_idx])
 
     def stat_for(pos_idx, view, alt=False):
-        s = z[f"shift_{view}"][pos_idx].astype(np.float64)  # [N,P,D]
-        if alt:
-            return s.std(axis=0).mean(axis=0)
-        return s.mean(axis=1).std(axis=0)
+        s = z[f"shift_{view}"][pos_idx]
+        return stat_alt(s) if alt else stat_primary(s)
 
     out = {"num_states": len(valid), "dev": len(dev_pos), "heldout": len(held_pos),
            "skipped": len(manifest["records"]) - len(valid), "views": {},

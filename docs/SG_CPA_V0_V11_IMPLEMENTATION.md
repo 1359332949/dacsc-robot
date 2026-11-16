@@ -367,3 +367,43 @@ Clean base BDDL/init 与 Camera 705（virtual `_view_` BDDL）各建一个 env�
 
 文件：`docs/data/v12_scores_per_view.json`、`docs/data/v12_manifest_provenance.json`。
 旧 `v12_scores.json`（全局平均版）只作历史记录，不再作为正式结果。
+
+
+## 15. V1.2 s_aug pilot（定义冻结后）
+
+定义：
+
+- `s_aug_photo`：brightness / contrast / saturation，各 0.8、1.2；
+- `s_aug_geo`：translate ±8 px、crop 95%、scale 1.05/0.95；
+- 只增强目标视角，另一个视角保持原图；
+- 双视角完整输入 `prepare_observation`；
+- 在 Shift 原始图像上做增强，之后统一 180° rotate + resize + ImageNet normalize；
+- Dev 只用于定义/开发，Held-out 只用于评价。
+
+### Pilot 结果（49 valid；30 dev / 19 held-out）
+
+| 视角 | photo mean | geo mean | photo dev-vs-held | geo dev-vs-held |
+|---|---:|---:|---:|---:|
+| agentview | 0.3924 | 1.0082 | 0.9332 | 0.9015 |
+| eye-in-hand | 0.2387 | 1.2497 | 0.9372 | 0.9798 |
+
+与 Held-out `s_pair` 的 Spearman：
+
+| 视角 | photo vs pair | geo vs pair |
+|---|---:|---:|
+| agentview | 0.2267 | 0.1921 |
+| eye-in-hand | 0.4291 | 0.3018 |
+
+解释：
+
+- 两种增强代理在跨状态上自身是稳定的（dev/held 0.90–0.98）；
+- 但它们**不能复现 Camera 配对敏感度**，agentview 上相关性只有约 0.19–0.23；
+- 因此当前 `s_aug_photo/geo` 不能直接作为 V1.4 的可部署 gate 代理；至少对 Camera 变体不成立；
+- 这不是“增强无效”，而是“增强代理与真实 Camera 变化的机制不同”。
+
+### 当前边界
+
+- 只有单 task + 单 Camera 变体；
+- 未做 V1.3；
+- 未用 Held-out `s_pair` 调整增强参数；
+- `s_aug` 结论只适用于本次 Camera 变体，不能外推到 Background/Lighting。

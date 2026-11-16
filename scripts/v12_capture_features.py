@@ -29,6 +29,14 @@ def sha(path: Path) -> str:
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
 
+def combined_image_hash(root: Path) -> str:
+    h = hashlib.sha256()
+    for p in sorted(Path(root).rglob("*.png")):
+        h.update(str(p.relative_to(root)).encode())
+        h.update(bytes.fromhex(sha(p)))
+    return h.hexdigest()
+
+
 def configure(args):
     import yaml
     src = args.libero_src.expanduser().resolve()
@@ -127,6 +135,12 @@ def main():
                                render_gpu_device_id=0)
     env_s = OffScreenRenderEnv(bddl_file_name=str(shift_env_bddl), camera_heights=256, camera_widths=256,
                                render_gpu_device_id=0)
+    env_c.reset(); env_s.reset()
+    compat = model_compatible(snapshot(env_c), snapshot(env_s), strict_bodies=True,
+                              strict_geometry=(args.shift_kind == "camera"),
+                              strict_physics=(args.shift_kind == "camera"))
+    if not compat["pass"]:
+        raise RuntimeError(f"Clean/Shift model incompatible: {compat}")
     features = {c: {v: [] for v in args.policy_views} for c in ("clean", "shift")}
     records = []
     try:
@@ -180,6 +194,13 @@ def main():
         "records": records,
         "features": {f"{c}_{v}": list(features[c][v].shape) for c in features for v in features[c]},
         "checkpoint": str(CKPT), "checkpoint_sha256": sha(CKPT),
+        "clean_init_file": str(args.clean_init_file), "clean_init_sha256": sha(args.clean_init_file),
+        "features_sha256": sha(args.out / "features.npz"),
+        "image_hashes_combined": combined_image_hash(args.out / "images"),
+        "model_compatible": compat,
+        "versions": {"python": sys.version, "torch": torch.__version__, "numpy": np.__version__},
+        "capture_script_sha256": sha(Path(__file__)),
+        "corp_config_sha256": sha(CKPT.parent / "config.json") if (CKPT.parent / "config.json").is_file() else None,
     }
     (args.out / "manifest.json").write_text(json.dumps(manifest, indent=2))
     print(json.dumps({"num_states": n, "dev": len(dev_idx), "heldout": len(held_idx),
