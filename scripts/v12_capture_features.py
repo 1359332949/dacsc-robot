@@ -20,6 +20,7 @@ from corp import load_policy  # noqa: E402
 from corp.preprocessing import prepare_observation  # noqa: E402
 from dacsc.state_pairing import compare, digest, model_compatible, restore, snapshot  # noqa: E402
 from evaluate_libero import state_from_observation  # noqa: E402
+from dacsc.task_pairing import classification_entries, load_task_map, resolve_task_name  # noqa: E402
 from sg_cpa_phase4_final import CKPT  # noqa: E402
 
 DUMMY_ACTION = [0.0] * 6 + [-1.0]
@@ -119,6 +120,16 @@ def main():
     suites = {s: benchmark.get_benchmark_dict()[s]() for s in (args.clean_suite, args.shift_suite)}
     clean_suite = suites[args.clean_suite]; shift_suite = suites[args.shift_suite]
     shift_task = shift_suite.get_task(args.shift_task)
+    task_map = load_task_map(args.task_map)
+    map_name, _ = resolve_task_name(task_map, args.shift_suite, args.shift_task)
+    if map_name != shift_task.name:
+        raise RuntimeError(f"task map/benchmark name mismatch: {map_name!r} vs {shift_task.name!r}")
+    tc_data = json.loads(args.task_classification.read_text())
+    tc_hits = [e for e in classification_entries(tc_data, args.shift_suite, args.shift_task + 1)
+               if str(e.get("name", e.get("task_name", ""))) == shift_task.name]
+    if len(tc_hits) != 1:
+        raise RuntimeError(f"cannot uniquely resolve classification id for {shift_task.name}")
+    classification_id = int(tc_hits[0].get("id", args.shift_task + 1))
     shift_bddl = Path(shift_suite.get_task_bddl_file_path(args.shift_task))
     if "_view_" in shift_task.name and not shift_bddl.is_file():
         shift_bddl = Path(get_libero_path("bddl_files")) / shift_task.problem_folder / (shift_task.name.split("_view_")[0] + ".bddl")
@@ -126,6 +137,18 @@ def main():
     if "_view_" in shift_task.name:
         shift_env_bddl = Path(get_libero_path("bddl_files")) / shift_task.problem_folder / (shift_task.name + ".bddl")
 
+    condition = {
+        "clean_suite": args.clean_suite, "clean_task_name": args.clean_task_name,
+        "shift_suite": args.shift_suite, "domain": args.shift_kind,
+        "classification_id": classification_id,
+        "variant_name": shift_task.name,
+        "benchmark_task_index": int(args.shift_task),
+        "resolved_bddl_path": str(shift_bddl),
+        "resolved_bddl_sha256": sha(shift_bddl),
+        "env_bddl_name": str(shift_env_bddl),
+        "classification_category": tc_hits[0].get("category"),
+        "classification_difficulty": tc_hits[0].get("difficulty_level"),
+    }
     clean_states = torch.load(args.clean_init_file, weights_only=False)
     n = min(args.num_states, len(clean_states))
     perm = np.random.RandomState(args.split_seed).permutation(n)
@@ -193,6 +216,7 @@ def main():
                         **{f"{c}_{v}": features[c][v] for c in features for v in features[c]},
                         state8=np.stack(state8s, axis=0) if state8s else np.zeros((0, policy.config["state_dim"]), dtype=np.float32))
     manifest = {
+        "condition": condition,
         "clean_task_name": args.clean_task_name, "clean_language": args.clean_language,
         "shift_task": args.shift_task, "shift_task_name": shift_task.name,
         "shift_kind": args.shift_kind, "num_states": n,

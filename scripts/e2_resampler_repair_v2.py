@@ -110,20 +110,23 @@ def main():
     manifest = json.loads((args.dir / "manifest.json").read_text())
     z = np.load(args.dir / "features.npz")
     # Fail-closed input/provenance checks.
-    actual_feat = sha(args.dir / "features.npz")
-    if manifest.get("features_sha256") and actual_feat != manifest["features_sha256"]:
-        raise SystemExit("features.npz SHA mismatch with capture manifest")
-    ck = sha(args.checkpoint)
-    if manifest.get("checkpoint_sha256") and ck != manifest["checkpoint_sha256"]:
-        raise SystemExit("checkpoint SHA mismatch with capture manifest")
-    cfg = args.checkpoint.parent / "config.json"
-    if manifest.get("corp_config_sha256") and cfg.is_file() and sha(cfg) != manifest["corp_config_sha256"]:
-        raise SystemExit("checkpoint config SHA mismatch with capture manifest")
-    if manifest.get("clean_bddl_sha256") and sha(args.clean_bddl) != manifest["clean_bddl_sha256"]:
-        raise SystemExit("clean BDDL SHA mismatch with capture manifest")
-    if manifest.get("clean_init_sha256") and sha(args.clean_init_file) != manifest["clean_init_sha256"]:
-        raise SystemExit("clean init SHA mismatch with capture manifest")
-    if manifest.get("clean_language") and args.clean_language != manifest["clean_language"]:
+    required = ["features_sha256", "checkpoint_sha256", "corp_config_sha256",
+                "clean_bddl_sha256", "clean_init_sha256", "clean_language"]
+    missing = [k for k in required if not manifest.get(k)]
+    if missing:
+        raise SystemExit(f"capture manifest missing required fields: {missing}")
+    def check_file(key, path: Path):
+        if not Path(path).is_file():
+            raise SystemExit(f"required file missing for {key}: {path}")
+        actual = sha(path)
+        if actual != manifest[key]:
+            raise SystemExit(f"{key} SHA mismatch: {actual} != {manifest[key]}")
+    check_file("features_sha256", args.dir / "features.npz")
+    check_file("checkpoint_sha256", args.checkpoint)
+    check_file("corp_config_sha256", args.checkpoint.parent / "config.json")
+    check_file("clean_bddl_sha256", args.clean_bddl)
+    check_file("clean_init_sha256", args.clean_init_file)
+    if args.clean_language != manifest["clean_language"]:
         raise SystemExit("clean language mismatch with capture manifest")
     rows = [r for r in manifest["records"] if r.get("compare_pass") and r.get("feature_row") is not None]
     if not rows:
@@ -135,14 +138,24 @@ def main():
         if sid in state_ids: raise SystemExit(f"duplicate state index {sid}")
         state_ids.append(sid)
         row = int(r["feature_row"])
+        if row < 0: raise SystemExit(f"negative feature_row {row}")
         if row in seen: raise SystemExit(f"duplicate feature_row {row}")
         seen.add(row)
         for v in manifest["policy_views"]:
             if row >= z[f"clean_{v}"].shape[0] or row >= z[f"shift_{v}"].shape[0]:
                 raise SystemExit(f"feature_row {row} out of range")
     nrows = z[f"clean_{manifest['policy_views'][0]}"].shape[0]
+    if set(seen) != set(range(nrows)):
+        raise SystemExit(f"feature_row set does not cover all NPZ rows: {len(seen)} vs {nrows}")
+    mf_rows = [r.get("feature_row") for r in manifest.get("records", []) if r.get("compare_pass")]
+    if sorted(int(x) for x in mf_rows if x is not None) != sorted(seen):
+        raise SystemExit("manifest feature_rows do not match valid records")
     if "state8" not in z or z["state8"].shape[0] != nrows:
         raise SystemExit("state8 missing or row count mismatch")
+    if z["state8"].ndim != 2:
+        raise SystemExit(f"state8 must be 2D, got {z['state8'].shape}")
+    if not np.isfinite(z["state8"]).all():
+        raise SystemExit("state8 contains NaN/Inf")
     for v in manifest["policy_views"]:
         if z[f"clean_{v}"].shape[0] != nrows or z[f"shift_{v}"].shape[0] != nrows:
             raise SystemExit(f"feature row count mismatch for view {v}")
@@ -271,7 +284,9 @@ def main():
                 "ci95": [float(np.percentile(boot, 2.5)), float(np.percentile(boot, 97.5))],
                 "per_state": ds}
     out["paired_deltas"] = {
+        "frozen_minus_mean": diff_for("frozen", "paired_fit_mean_a1.0"),
         "mean_minus_mean_lowrank_r8": diff_for("paired_fit_mean_a1.0", "mean_lowrank_r8_a1.0")}
+    out["sampling_noise_note"] = "Clean inter-seed variation, not a mathematical lower bound"
     (args.out / "e2_resampler_repair_v2.json").write_text(json.dumps(out, indent=2))
     print(json.dumps({"fit": fit_ids, "eval": eval_ids, "ranks": ranks}, indent=2))
 
