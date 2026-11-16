@@ -2,6 +2,7 @@ import unittest
 
 import numpy as np
 import torch
+from scipy.spatial.transform import Rotation
 
 from dacsc.action_guard import limit_rotation_delta
 from dacsc.target_only_mean import (
@@ -195,7 +196,6 @@ class TestActionRotationGuard(unittest.TestCase):
         bounded = limit_rotation_delta(candidate, reference, IdentityNormalizer(), 0.05)
         self.assertTrue(torch.allclose(bounded[..., :3], candidate[..., :3]))
         self.assertTrue(torch.allclose(bounded[..., 6], candidate[..., 6]))
-        from scipy.spatial.transform import Rotation
         r = Rotation.from_rotvec(bounded[..., 3:6].numpy().reshape(-1, 3))
         a = r.magnitude()
         self.assertLessEqual(float(a.max()), 0.050001)
