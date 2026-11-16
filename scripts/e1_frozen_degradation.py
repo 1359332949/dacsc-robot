@@ -36,10 +36,13 @@ def configure(args):
     os.environ.setdefault("TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD", "1")
 
 
-def run_episode(policy, env, init_state, language, episode_seed, max_steps, precision, sensor_noise=0):
+def run_episode(policy, env, init_state, language, episode_seed, max_steps, precision, sensor_noise=0,
+                reset_env=True):
     np.random.seed(episode_seed); torch.manual_seed(episode_seed)
     if torch.cuda.is_available(): torch.cuda.manual_seed_all(episode_seed)
-    env.seed(episode_seed); env.reset()
+    env.seed(episode_seed)
+    if reset_env:
+        env.reset()
     observation = env.set_init_state(init_state)
     if sensor_noise:
         observation, _ = apply_agentview_noise(observation, sensor_noise, seed=episode_seed)
@@ -124,9 +127,22 @@ def main():
             try:
                 for ep, idx in enumerate(idxs):
                     episode_seed = args.seed + bi * 1000 + ep
-                    r = run_episode(policy, env, init_states[idx], base_language,
-                                    episode_seed, MAX_STEPS[b["suite"]], args.precision,
-                                    sensor_noise=sensor_noise)
+                    if domain == "clean":
+                        run_env = env; reset_env = True
+                    else:
+                        # Shift variants must not be reset after construction:
+                        # reset() reloads the base scene and can discard
+                        # Background/Lighting/Camera assets.
+                        run_env = OffScreenRenderEnv(bddl_file_name=env_bddl, camera_heights=256,
+                                                     camera_widths=256, render_gpu_device_id=0)
+                        reset_env = False
+                    try:
+                        r = run_episode(policy, run_env, init_states[idx], base_language,
+                                        episode_seed, MAX_STEPS[b["suite"]], args.precision,
+                                        sensor_noise=sensor_noise, reset_env=reset_env)
+                    finally:
+                        if domain != "clean":
+                            run_env.close()
                     rec = {"suite": b["suite"], "base_task": b["base_task"], "domain": domain,
                            "variant_id": v["classification_id"] if v else None,
                            "benchmark_index": v.get("benchmark_index") if v else None,

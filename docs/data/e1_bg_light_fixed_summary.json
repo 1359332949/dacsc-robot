@@ -1,0 +1,165 @@
+{
+  "note": "fixed E1 shift reset; 10 screening episodes; clean paired from e1_parallel",
+  "cells": [
+    {
+      "suite": "libero_10",
+      "base_task": "KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it",
+      "domain": "background",
+      "classification_id": 1,
+      "n": 10,
+      "shift_sr": 0.0,
+      "paired_clean_sr": 0.9,
+      "delta_sr": -0.9
+    },
+    {
+      "suite": "libero_10",
+      "base_task": "KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it",
+      "domain": "background",
+      "classification_id": 17,
+      "n": 10,
+      "shift_sr": 0.0,
+      "paired_clean_sr": 0.9,
+      "delta_sr": -0.9
+    },
+    {
+      "suite": "libero_10",
+      "base_task": "KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it",
+      "domain": "lighting",
+      "classification_id": 2246,
+      "n": 10,
+      "shift_sr": 0.0,
+      "paired_clean_sr": 0.9,
+      "delta_sr": -0.9
+    },
+    {
+      "suite": "libero_10",
+      "base_task": "KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it",
+      "domain": "lighting",
+      "classification_id": 2284,
+      "n": 10,
+      "shift_sr": 0.0,
+      "paired_clean_sr": 0.9,
+      "delta_sr": -0.9
+    },
+    {
+      "suite": "libero_goal",
+      "base_task": "open_the_middle_drawer_of_the_cabinet",
+      "domain": "background",
+      "classification_id": 1,
+      "n": 10,
+      "shift_sr": 0.0,
+      "paired_clean_sr": 1.0,
+      "delta_sr": -1.0
+    },
+    {
+      "suite": "libero_goal",
+      "base_task": "open_the_middle_drawer_of_the_cabinet",
+      "domain": "background",
+      "classification_id": 15,
+      "n": 10,
+      "shift_sr": 0.0,
+      "paired_clean_sr": 1.0,
+      "delta_sr": -1.0
+    },
+    {
+      "suite": "libero_goal",
+      "base_task": "open_the_middle_drawer_of_the_cabinet",
+      "domain": "lighting",
+      "classification_id": 2313,
+      "n": 10,
+      "shift_sr": 0.9,
+      "paired_clean_sr": 1.0,
+      "delta_sr": -0.09999999999999998
+    },
+    {
+      "suite": "libero_goal",
+      "base_task": "open_the_middle_drawer_of_the_cabinet",
+      "domain": "lighting",
+      "classification_id": 2351,
+      "n": 10,
+      "shift_sr": 1.0,
+      "paired_clean_sr": 1.0,
+      "delta_sr": 0.0
+    },
+    {
+      "suite": "libero_object",
+      "base_task": "pick_up_the_alphabet_soup_and_place_it_in_the_basket",
+      "domain": "background",
+      "classification_id": 1,
+      "n": 10,
+      "shift_sr": 0.3,
+      "paired_clean_sr": 0.9,
+      "delta_sr": -0.6000000000000001
+    },
+    {
+      "suite": "libero_object",
+      "base_task": "pick_up_the_alphabet_soup_and_place_it_in_the_basket",
+      "domain": "background",
+      "classification_id": 17,
+      "n": 10,
+      "shift_sr": 0.1,
+      "paired_clean_sr": 0.9,
+      "delta_sr": -0.8
+    },
+    {
+      "suite": "libero_object",
+      "base_task": "pick_up_the_alphabet_soup_and_place_it_in_the_basket",
+      "domain": "lighting",
+      "classification_id": 2222,
+      "n": 10,
+      "shift_sr": 0.0,
+      "paired_clean_sr": 0.9,
+      "delta_sr": -0.9
+    },
+    {
+      "suite": "libero_object",
+      "base_task": "pick_up_the_alphabet_soup_and_place_it_in_the_basket",
+      "domain": "lighting",
+      "classification_id": 2259,
+      "n": 10,
+      "shift_sr": 0.9,
+      "paired_clean_sr": 0.9,
+      "delta_sr": 0.0
+    },
+    {
+      "suite": "libero_spatial",
+      "base_task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "domain": "background",
+      "classification_id": 146,
+      "n": 10,
+      "shift_sr": 0.9,
+      "paired_clean_sr": 1.0,
+      "delta_sr": -0.09999999999999998
+    },
+    {
+      "suite": "libero_spatial",
+      "base_task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "domain": "background",
+      "classification_id": 147,
+      "n": 10,
+      "shift_sr": 0.9,
+      "paired_clean_sr": 1.0,
+      "delta_sr": -0.09999999999999998
+    },
+    {
+      "suite": "libero_spatial",
+      "base_task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "domain": "lighting",
+      "classification_id": 2292,
+      "n": 10,
+      "shift_sr": 0.9,
+      "paired_clean_sr": 1.0,
+      "delta_sr": -0.09999999999999998
+    },
+    {
+      "suite": "libero_spatial",
+      "base_task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "domain": "lighting",
+      "classification_id": 2312,
+      "n": 10,
+      "shift_sr": 0.7,
+      "paired_clean_sr": 1.0,
+      "delta_sr": -0.30000000000000004
+    }
+  ]
+}

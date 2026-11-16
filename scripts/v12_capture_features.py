@@ -277,7 +277,7 @@ def main():
         "model_compatible": compat,
         "versions": {"python": sys.version, "torch": torch.__version__, "numpy": np.__version__},
         "capture_script_sha256": sha(Path(__file__)),
-        "corp_config_sha256": sha(CKPT.parent / "config.json") if (CKPT.parent / "config.json").is_file() else None,
+        "corp_config_sha256": sha(args.checkpoint.parent / "config.json") if (args.checkpoint.parent / "config.json").is_file() else None,
     }
     (args.out / "manifest.json").write_text(json.dumps(manifest, indent=2))
     print(json.dumps({"num_states": n, "dev": len(dev_idx), "heldout": len(held_idx),
