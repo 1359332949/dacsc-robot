@@ -82,6 +82,7 @@ def main():
     ap.add_argument("--libero-src", type=Path, default=Path("/hy-tmp/libero_plus"))
     ap.add_argument("--libero-config", type=Path, default=Path("/hy-tmp/libero_config"))
     ap.add_argument("--device", default="cuda:0")
+    ap.add_argument("--resume", action="store_true")
     args = ap.parse_args()
     configure(args)
     from libero.libero.envs import OffScreenRenderEnv
@@ -92,6 +93,8 @@ def main():
         tasks = [matrix["base_tasks"][args.task_index]]
     torch.set_num_threads(1)
     policy = load_policy(CKPT, device=args.device); policy.eval()
+    if args.out.exists() and any(args.out.iterdir()) and not args.resume:
+        raise SystemExit(f"refusing to reuse non-empty output dir: {args.out} (pass --resume)")
     args.out.mkdir(parents=True, exist_ok=True)
     records = []; started = time.time()
     for bi, b in enumerate(tasks):
@@ -122,8 +125,10 @@ def main():
                 env_bddl = str(base_bddl)
             elif domain == "sensor":
                 m = re.search(r"_noise_(\d+)", v["name"]); sensor_noise = int(m.group(1)) if m else 0
-            env = OffScreenRenderEnv(bddl_file_name=env_bddl, camera_heights=256,
-                                     camera_widths=256, render_gpu_device_id=0)
+            env = None
+            if domain == "clean":
+                env = OffScreenRenderEnv(bddl_file_name=env_bddl, camera_heights=256,
+                                         camera_widths=256, render_gpu_device_id=0)
             try:
                 for ep, idx in enumerate(idxs):
                     episode_seed = args.seed + bi * 1000 + ep
@@ -155,7 +160,8 @@ def main():
                     print(f"{b['suite']} {domain} {v['classification_id'] if v else 'clean'} "
                           f"ep={ep} success={int(r['success'])} steps={r['steps']}", flush=True)
             finally:
-                env.close()
+                if env is not None:
+                    env.close()
     summary = {}
     for r in records:
         key = f"{r['suite']}::{r['base_task']}::{r['domain']}::{r['variant_id']}"
@@ -163,10 +169,13 @@ def main():
         s["n"] += 1; s["success"] += int(r["success"]); s["steps"].append(r["steps"])
     for s in summary.values():
         s["success_rate"] = s["success"] / s["n"]; s["mean_steps"] = float(np.mean(s["steps"]))
+    raw = args.out / "e1_frozen.jsonl"
     (args.out / "e1_summary.json").write_text(json.dumps({
         "episodes": args.episodes, "seed": args.seed, "precision": args.precision,
         "matrix_sha256": hashlib.sha256(args.matrix.read_bytes()).hexdigest(),
         "checkpoint_sha256": hashlib.sha256(Path(CKPT).read_bytes()).hexdigest(),
+        "command": sys.argv, "raw_jsonl_sha256": hashlib.sha256(raw.read_bytes()).hexdigest() if raw.is_file() else None,
+        "git_rev": __import__("subprocess").check_output(["git","-C",str(ROOT),"rev-parse","HEAD"],stderr=__import__("subprocess").DEVNULL,text=True).strip(),
         "elapsed_seconds": time.time() - started, "cells": summary}, indent=2))
     print(json.dumps({"records": len(records), "cells": len(summary),
                       "elapsed": time.time() - started}, indent=2))
