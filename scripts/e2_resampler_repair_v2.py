@@ -97,6 +97,7 @@ def main():
     ap.add_argument("--clean-init-file", type=Path, required=True)
     ap.add_argument("--clean-language", required=True)
     ap.add_argument("--checkpoint", type=Path, required=True)
+    ap.add_argument("--audit-binding", type=Path, default=None)
     ap.add_argument("--rank-grid", nargs="+", type=int, default=[1, 2, 4, 8])
     ap.add_argument("--alphas", nargs="+", type=float, default=[0.5, 1.0])
     ap.add_argument("--random-seeds", type=int, default=3)
@@ -128,6 +129,15 @@ def main():
     check_file("clean_init_sha256", args.clean_init_file)
     if args.clean_language != manifest["clean_language"]:
         raise SystemExit("clean language mismatch with capture manifest")
+    audit_binding = None
+    if args.audit_binding is not None:
+        audit_binding = json.loads(args.audit_binding.read_text())
+        if not audit_binding.get("all_checks_pass", False):
+            raise SystemExit("audit binding does not pass")
+        if audit_binding.get("capture_manifest_sha256") != sha(args.dir / "manifest.json"):
+            raise SystemExit("audit binding capture-manifest SHA mismatch")
+        if audit_binding.get("capture_features_sha256") != sha(args.dir / "features.npz"):
+            raise SystemExit("audit binding features SHA mismatch")
     rows = [r for r in manifest["records"] if r.get("compare_pass") and r.get("feature_row") is not None]
     if not rows:
         raise SystemExit("no valid feature rows")

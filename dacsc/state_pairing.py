@@ -17,10 +17,13 @@ from typing import Any
 import numpy as np
 
 REQUIRED_ARRAYS = ("qpos", "qvel", "time", "body_xpos", "body_xquat", "eef_pos")
-OPTIONAL_EMPTY_OK = ("act", "mocap_pos", "mocap_quat")
+OPTIONAL_EMPTY_OK = ("act", "mocap_pos", "mocap_quat", "ctrl", "qacc_warmstart",
+                    "qfrc_applied", "xfrc_applied", "eq_active")
+EXTRA_STATE_ARRAYS = ("ctrl", "qacc_warmstart", "qfrc_applied", "xfrc_applied", "eq_active")
 DEFAULT_TOL = {"qpos": 1e-6, "qvel": 1e-6, "act": 1e-6, "time": 1e-9,
                "body_xpos": 1e-4, "eef_pos": 1e-4, "mocap": 1e-6,
-               "body_xquat_rad": 1e-4}
+               "body_xquat_rad": 1e-4, "ctrl": 1e-6, "qacc_warmstart": 1e-6,
+               "qfrc_applied": 1e-6, "xfrc_applied": 1e-6, "eq_active": 1e-6}
 
 
 def _arr(x) -> np.ndarray:
@@ -64,6 +67,9 @@ def snapshot(env) -> dict[str, Any]:
     mocap_quat = getattr(sim.data, "mocap_quat", None)
     out["mocap_pos"] = _arr(mocap_pos).tolist() if mocap_pos is not None else []
     out["mocap_quat"] = _arr(mocap_quat).tolist() if mocap_quat is not None else []
+    for key in EXTRA_STATE_ARRAYS:
+        value = getattr(sim.data, key, None)
+        out[key] = _arr(value).tolist() if value is not None else []
     return out
 
 
@@ -138,14 +144,21 @@ def restore(env, snap: dict[str, Any]) -> None:
         dst[...] = src
     put(sim.data.qpos, snap["qpos"])
     put(sim.data.qvel, snap["qvel"])
-    if getattr(sim.data, "act", None) is not None and len(snap.get("act", [])):
-        put(sim.data.act, snap["act"])
+    for key in EXTRA_STATE_ARRAYS + ("act",):
+        dst = getattr(sim.data, key, None)
+        src = snap.get(key, [])
+        if dst is not None and len(src):
+            put(dst, src)
     if getattr(sim.data, "mocap_pos", None) is not None and len(snap.get("mocap_pos", [])):
         put(sim.data.mocap_pos, snap["mocap_pos"])
     if getattr(sim.data, "mocap_quat", None) is not None and len(snap.get("mocap_quat", [])):
         put(sim.data.mocap_quat, snap["mocap_quat"])
     sim.data.time = float(snap["time"])
     sim.forward()
+    # mj_forward recomputes warm-start acceleration; restore it afterwards so
+    # the next integration step starts from the same solver state.
+    if getattr(sim.data, "qacc_warmstart", None) is not None and len(snap.get("qacc_warmstart", [])):
+        put(sim.data.qacc_warmstart, snap["qacc_warmstart"])
 
 
 def _quat_angle_rad(q1, q2) -> float:
@@ -266,6 +279,7 @@ def digest(snap: dict[str, Any]) -> str:
         "body_xpos": np.round(np.asarray(snap.get("body_xpos", [])), 8).tolist(),
         "body_xquat": np.round(np.asarray(snap.get("body_xquat", [])), 8).tolist(),
         "eef_pos": np.round(np.asarray(snap.get("eef_pos") or []), 8).tolist(),
+        **{k: np.round(np.asarray(snap.get(k, [])), 10).tolist() for k in EXTRA_STATE_ARRAYS},
     }
     blob = json.dumps(payload, sort_keys=True, separators=(",", ":")).encode()
     return hashlib.sha256(blob).hexdigest()
