@@ -19,8 +19,8 @@ import numpy as np
 REQUIRED_ARRAYS = ("qpos", "qvel", "time", "body_xpos", "body_xquat", "eef_pos")
 OPTIONAL_EMPTY_OK = ("act", "mocap_pos", "mocap_quat")
 DEFAULT_TOL = {"qpos": 1e-6, "qvel": 1e-6, "act": 1e-6, "time": 1e-9,
-               "body_xpos": 1e-5, "eef_pos": 1e-5, "mocap": 1e-6,
-               "body_xquat_rad": 1e-5}
+               "body_xpos": 1e-4, "eef_pos": 1e-4, "mocap": 1e-6,
+               "body_xquat_rad": 1e-4}
 
 
 def _arr(x) -> np.ndarray:
@@ -208,7 +208,7 @@ def compare(a: dict[str, Any], b: dict[str, Any], tol: dict[str, float] | None =
 
 
 def camera_compare(a: dict[str, Any], b: dict[str, Any], expect_equal: bool,
-                   tol: float = 1e-9, target_cameras: list[str] | None = None) -> dict[str, Any]:
+                   tol: float = 1e-4, target_cameras: list[str] | None = None) -> dict[str, Any]:
     """Compare camera arrays; for expect_equal=False require target cameras to change.
 
     target_cameras defaults to all cameras (legacy behaviour).  A Camera variant

@@ -6,7 +6,7 @@ pixel changes.  Every run writes a structured manifest, including failures.
 """
 
 from __future__ import annotations
-import argparse, hashlib, json, platform, subprocess, sys, time, uuid
+import argparse, hashlib, json, platform, subprocess, sys, time, traceback, uuid
 from pathlib import Path
 
 import numpy as np
@@ -17,7 +17,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT)); sys.path.insert(0, str(ROOT / "repos/CoRP")); sys.path.insert(0, str(ROOT / "repos/CoRP/scripts"))
 from dacsc.state_pairing import camera_compare, compare, digest, model_compatible, restore, snapshot  # noqa: E402
 from dacsc.task_pairing import (canonical_base_name, canonical_instruction,  # noqa: E402
-                                classification_entries, load_task_map, resolve_task_name,
+                                classification_entries, load_task_map, lookup_task_classification, resolve_task_name,
                                 task_fingerprint, task_pair_compatible, validate_classification)
 from dacsc.pairing_checks import freeze_policy_instruction, validate_clean_file_identity  # noqa: E402
 
@@ -237,15 +237,26 @@ def main():
             "lighting": {"light conditions"},
         }[args.shift_kind]
         expected = expected_categories
-        clean_entries = (classification_entries(tc_data, args.clean_suite, args.clean_task)
-                         if args.clean_source == "plus" else [])
-        shift_entries = classification_entries(tc_data, args.shift_suite, args.shift_task)
+        clean_lookup = (lookup_task_classification(tc_data, args.clean_suite,
+                                                   args.clean_task, clean_map_name)
+                        if args.clean_source == "plus" else
+                        {"pass": True, "classification_id": None, "entries": []})
+        shift_lookup = lookup_task_classification(tc_data, args.shift_suite,
+                                                  args.shift_task, shift_map_name)
+        clean_entries = clean_lookup["entries"]
+        shift_entries = shift_lookup["entries"]
         clean_cls = (validate_classification(clean_entries, expected_name=clean_map_name)
                      if args.clean_source == "plus"
                      else {"checks": {"present": True}, "pass": True, "categories": []})
         shift_cls = validate_classification(shift_entries, expected, expected_name=shift_map_name)
         record["classification"] = {"clean": clean_cls, "shift": shift_cls,
-                                    "clean_entries": clean_entries, "shift_entries": shift_entries}
+                                    "clean_entries": clean_entries, "shift_entries": shift_entries,
+                                    "clean_classification_id": clean_lookup["classification_id"],
+                                    "shift_classification_id": shift_lookup["classification_id"],
+                                    "lookup_pass": bool(clean_lookup["pass"] and shift_lookup["pass"])}
+        if not clean_lookup["pass"] or not shift_lookup["pass"]:
+            record["audit"] = {"pass": False, "reason": "classification_lookup_failed"}
+            raise SystemExit(2)
         if not clean_cls["pass"] or not shift_cls["pass"]:
             record["audit"] = {"pass": False, "reason": "task_classification_mismatch"}
             raise SystemExit(2)
@@ -270,7 +281,10 @@ def main():
             record["init_state_source"] = "explicit_vanilla_file"
         else:
             clean_task = clean_suite_obj.get_task(args.clean_task)
-            clean_bddl = Path(get_libero_path("bddl_files")) / clean_task.problem_folder / clean_task.bddl_file
+            clean_bddl = Path(clean_suite_obj.get_task_bddl_file_path(args.clean_task))
+            if "_view_" in clean_task.name and not clean_bddl.is_file():
+                base = clean_task.name.split("_view_")[0] + ".bddl"
+                clean_bddl = Path(get_libero_path("bddl_files")) / clean_task.problem_folder / base
             clean_init_path = Path(get_libero_path("init_states")) / clean_task.problem_folder / clean_task.init_states_file
             clean_states = clean_suite_obj.get_task_init_states(args.clean_task)
             record["init_state_source"] = "clean_suite.get_task_init_states"
@@ -311,12 +325,21 @@ def main():
                 if not (vb and vi):
                     record["audit"] = {"pass": False, "reason": "clean_files_outside_vanilla_src"}
                     raise SystemExit(2)
-        shift_bddl = Path(get_libero_path("bddl_files")) / shift_task.problem_folder / shift_task.bddl_file
+        shift_bddl = Path(shift_suite_obj.get_task_bddl_file_path(args.shift_task))
+        if "_view_" in shift_task.name and not shift_bddl.is_file():
+            base = shift_task.name.split("_view_")[0] + ".bddl"
+            shift_bddl = Path(get_libero_path("bddl_files")) / shift_task.problem_folder / base
+        # OffScreenRenderEnv parses the _view_ suffix from the *filename* and
+        # derives the real base BDDL itself; pass the virtual variant name.
+        shift_env_bddl = shift_bddl
+        if "_view_" in shift_task.name:
+            shift_env_bddl = Path(get_libero_path("bddl_files")) / shift_task.problem_folder / (shift_task.name + ".bddl")
         record["clean"].update({"bddl_input": str(args.clean_bddl) if args.clean_bddl else None,
                                 "bddl": str(clean_bddl), "bddl_sha256": sha256_file(clean_bddl),
                                 "language": clean_task.language,
                                 "policy_instruction": args.clean_language if args.clean_source == "vanilla" else clean_task.language})
         record["shift"].update({"bddl": str(shift_bddl), "bddl_sha256": sha256_file(shift_bddl),
+                                "env_bddl": str(shift_env_bddl),
                                 "language": shift_task.language,
                                 "canonical_language": canonical_instruction(shift_task.language)})
         record["init_file"] = str(clean_init_path)
@@ -357,7 +380,7 @@ def main():
         env_c = OffScreenRenderEnv(bddl_file_name=str(clean_bddl), camera_heights=256,
                                    camera_widths=256, render_gpu_device_id=args.render_gpu)
         try:
-            env_s = OffScreenRenderEnv(bddl_file_name=str(shift_bddl), camera_heights=256,
+            env_s = OffScreenRenderEnv(bddl_file_name=str(shift_env_bddl), camera_heights=256,
                                        camera_widths=256, render_gpu_device_id=args.render_gpu)
         except Exception:
             env_c.close(); env_c = None
@@ -437,11 +460,12 @@ def main():
         record["audit"] = {"pass": audit_ok, "reason": "ok" if audit_ok else "failed_required_check"}
         exit_code = 0 if audit_ok else 2
     except SystemExit as exc:
-        exit_code = int(exc.code or 2)
+        exit_code = int(exc.code) if exc.code is not None else 2
         record.setdefault("audit", {"pass": False, "reason": "system_exit"})
     except Exception as exc:
         exit_code = 2
         record["unexpected_error"] = repr(exc)
+        record["traceback"] = traceback.format_exc()
         record["audit"] = {"pass": False, "reason": "unexpected_error"}
     finally:
         cleanup_errors = []

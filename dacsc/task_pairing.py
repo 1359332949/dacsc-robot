@@ -212,3 +212,28 @@ def validate_classification(entries: list[dict], expected_categories: set[str] |
                              for norm in (_norm(n) for n in names) if norm)
     return {"checks": checks, "pass": all(checks.values()), "categories": cats,
             "names": names, "expected_name": expected_name}
+
+
+def lookup_task_classification(data, suite: str, index: int, expected_name: str) -> dict:
+    """Resolve 0-based benchmark index to 1-based official classification id.
+
+    LIBERO-Plus classification ids are 1-based while benchmark/task-map indices
+    are 0-based; we try both and require exactly one full-name match.
+    """
+    def _norm(x: str) -> str:
+        return x[:-5] if x.endswith(".bddl") else x
+    hits = []
+    for cid in (index, index + 1):
+        for entry in classification_entries(data, suite, cid):
+            name = str(entry.get("name", entry.get("task_name", "")))
+            if _norm(name) == _norm(expected_name):
+                hits.append((cid, entry))
+    # de-duplicate by (id, object identity)
+    seen = set(); unique = []
+    for cid, entry in hits:
+        key = (cid, id(entry))
+        if key not in seen:
+            seen.add(key); unique.append((cid, entry))
+    return {"pass": len(unique) == 1,
+            "classification_id": unique[0][0] if len(unique) == 1 else None,
+            "entries": [e for _, e in unique]}

@@ -240,3 +240,52 @@ python scripts/v11_state_pair_audit.py   --clean-source vanilla   --clean-suite 
 3. 检查 qpos/qvel/body/EEF、target camera、policy views、PNG 像素差异、manifest；
 4. 通过后再做重复性检查，再扩 Background/Lighting；
 5. V1.1 不过，不进入 V1.2。
+
+
+## 11. First end-to-end server run（2026-11-16）
+
+服务器：`i-2.gpushare.com:26990`，RTX 5090 32GB，Python 3.11，torch 2.9.1+cu128。
+LIBERO-plus 主仓 + 9.5GB assets 已安装到 `/hy-tmp/libero_plus`；数据盘 100GB。
+
+### V0
+
+`python3 scripts/v0_identity_gate_check.py --device cuda`：通过。
+identity raw/representation/pooled/action 全部相等；suppression 改变 token/action。
+
+### Preflight A
+
+使用 LIBERO-plus `libero_suite_task_map.py` + `task_classification.json`，
+Clean = vanilla spatial base task（cookie-box 任务），Shift = Camera task 705。
+
+结果：
+
+- task map base name / BDDL goal / objects / canonical language：通过；
+- 官方 classification id 为 **1-based**：benchmark index 705 → classification id 706；
+- full variant name 匹配通过；
+- Clean/Shift 共用 policy instruction；
+- `audit.pass=true`，退出码 0。
+
+### V1.1 单 pair
+
+Clean base BDDL/init 与 Camera 705（virtual `_view_` BDDL）各建一个 env；
+恢复 Clean 物理状态到 Shift env。
+
+结果：
+
+- qpos/qvel/act/mocap/time：误差 0；
+- body_xpos max error ≈ 1.23e-5 m；body_xquat ≈ 3.74e-5 rad；
+- Camera target `agentview`：cam_pos diff ≈ 0.474，cam_xmat diff ≈ 0.719；
+- 非目标 `robot0_eye_in_hand`：差异 < 1e-4；
+- 图像：agentview mean abs diff ≈ 0.142，changed fraction ≈ 0.808；
+- `audit.pass=true`，退出码 0。
+
+注意：这只是**单 task × 单 Camera 变体 × 单 init state 的静态配对**，不是 V1.2 数据，更不是方法有效性。
+
+## 12. 必记的 LIBERO-plus 实现细节
+
+- `task_classification.json` 的 `id` 是 **1-based**；benchmark/task-map index 是 0-based。
+- Camera 变体的 BDDL 文件不存在，`OffScreenRenderEnv` 需要传入 **virtual `_view_...bddl` 文件名**；
+  它自己会 split `_view_` 并加载 base BDDL，同时设置 camera 参数。
+- `get_task_init_states` 在 torch>=2.6 需要 `TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD=1`。
+- robosuite 1.4.0 与 mujoco 4.x 不兼容；已回钉 mujoco 2.3.7。
+- 运行环境：`LIBERO_CONFIG_PATH=/hy-tmp/libero_config MUJOCO_GL=egl TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD=1`。

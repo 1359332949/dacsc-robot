@@ -1,0 +1,122 @@
+{
+  "run_id": "20261116T033041Z_84fc8846",
+  "audit": {
+    "pass": true,
+    "reason": "ok"
+  },
+  "clean": {
+    "suite": "libero_spatial",
+    "task": null,
+    "source": "vanilla",
+    "task_name": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+    "bddl_input": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate.bddl",
+    "bddl": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate.bddl",
+    "bddl_sha256": "3d4ccf070c3d9883ae0676f2d888588f98c696ddad71b7694f47c379fc99ef36",
+    "language": "pick up the black bowl on the cookie box and place it on the plate",
+    "policy_instruction": "pick up the black bowl on the cookie box and place it on the plate"
+  },
+  "shift": {
+    "suite": "libero_spatial",
+    "task": 705,
+    "kind": "camera",
+    "bddl": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate.bddl",
+    "bddl_sha256": "3d4ccf070c3d9883ae0676f2d888588f98c696ddad71b7694f47c379fc99ef36",
+    "env_bddl": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_view_46_0_100_0_0_initstate_0.bddl",
+    "language": "pick up the black bowl on the cookie box and place it on the plate view 46 0 100 0 0 initstate 0",
+    "canonical_language": "pick up the black bowl on the cookie box and place it on the plate"
+  },
+  "init_index": 0,
+  "policy_instruction": {
+    "clean_raw": "pick up the black bowl on the cookie box and place it on the plate",
+    "shift_raw": "pick up the black bowl on the cookie box and place it on the plate view 46 0 100 0 0 initstate 0",
+    "clean_policy_instruction": "pick up the black bowl on the cookie box and place it on the plate",
+    "shift_policy_instruction": "pick up the black bowl on the cookie box and place it on the plate",
+    "expected_vanilla_instruction": "pick up the black bowl on the cookie box and place it on the plate",
+    "checks": {
+      "canonical_matches_shift": true,
+      "vanilla_source_matches": true
+    }
+  },
+  "task_pairing": {
+    "checks": {
+      "language": true,
+      "base_name": true,
+      "goal_text": true,
+      "objects": true
+    },
+    "pass": true
+  },
+  "identity_consistency": {
+    "clean_task_vs_bddl": true,
+    "clean_task_vs_init": true,
+    "shift_map_vs_benchmark": true,
+    "shift_class_unique": true,
+    "shift_class_name_full": true
+  },
+  "model_compatible_pass": true,
+  "state_compare": {
+    "qpos": true,
+    "qvel": true,
+    "act": true,
+    "mocap_pos": true,
+    "mocap_quat": true,
+    "time": true,
+    "body_xpos": true,
+    "eef_pos": true,
+    "body_xquat": true,
+    "body_names": true,
+    "camera_names": true,
+    "eef_name": true
+  },
+  "state_errors": {
+    "qpos": 0.0,
+    "qvel": 0.0,
+    "act": 0.0,
+    "mocap_pos": 0.0,
+    "mocap_quat": 0.0,
+    "time": 0.0,
+    "body_xpos": 1.231154171171811e-05,
+    "eef_pos": 4.625523404272469e-06,
+    "body_xquat": 3.74263896125513e-05
+  },
+  "camera": {
+    "names": true,
+    "targets_present": true,
+    "shape": true,
+    "finite": true,
+    "expected": true,
+    "non_target_unchanged": true
+  },
+  "camera_diffs": {
+    "cam_pos": 0.4738,
+    "cam_quat": 0.3000314082391942,
+    "cam_fovy": 0.0,
+    "cam_xpos": 0.4738,
+    "cam_xmat": 0.7193435427439527
+  },
+  "images": {
+    "agentview": {
+      "shape_match": true,
+      "mean_abs_diff": 0.14234096552032272,
+      "changed_fraction": 0.8083038330078125
+    },
+    "eye_in_hand": {
+      "shape_match": true,
+      "mean_abs_diff": 0.00010902554381127452,
+      "changed_fraction": 0.000885009765625
+    }
+  },
+  "versions": {
+    "python": "3.11.12 (main, Apr  9 2025, 08:55:54) [GCC 11.4.0]",
+    "platform": "Linux-5.15.0-161-generic-x86_64-with-glibc2.35",
+    "torch": "2.9.1+cu128",
+    "numpy": "1.26.4",
+    "mujoco": "2.3.7",
+    "robosuite": "1.4.0"
+  },
+  "source_binding": {
+    "libero_src": "/hy-tmp/libero_plus",
+    "task_map_under_libero_src": true,
+    "classification_under_libero_src": true
+  }
+}

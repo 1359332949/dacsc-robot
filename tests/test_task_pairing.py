@@ -4,7 +4,7 @@ from pathlib import Path
 from dacsc.task_pairing import (
     canonical_base_name, canonical_instruction, classification_entries,
     load_task_map, parse_objects, resolve_task_name, task_fingerprint,
-    task_pair_compatible, validate_classification,
+    lookup_task_classification, task_pair_compatible, validate_classification,
 )
 
 BDDL = """(define (problem test)
@@ -84,6 +84,15 @@ class TestTaskPairing(unittest.TestCase):
         self.assertTrue(validate_classification(e, {"camera viewpoints"})["pass"])
         self.assertFalse(validate_classification(e, {"light conditions"})["pass"])
         self.assertEqual(classification_entries(data, "libero_spatial", 999), [])
+
+    def test_classification_1_based_index(self):
+        data = {"libero_spatial": [
+            {"id": 705, "name": "task_view_0_initstate_0", "category": "Camera Viewpoints"},
+            {"id": 706, "name": "task_view_46_initstate_0", "category": "Camera Viewpoints"},
+        ]}
+        out = lookup_task_classification(data, "libero_spatial", 705, "task_view_46_initstate_0")
+        self.assertTrue(out["pass"], out)
+        self.assertEqual(out["classification_id"], 706)
 
     def test_classification_full_name_required(self):
         e = [{"task_id": 705, "name": "task_view_46_initstate_0", "category": "Camera Viewpoints"}]
