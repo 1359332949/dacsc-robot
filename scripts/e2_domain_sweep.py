@@ -74,7 +74,8 @@ def main():
                    "--shift-task", str(v.get("benchmark_index", v["classification_id"] - 1)), "--shift-kind", c["domain"],
                    "--task-map", str(args.libero_src / "libero/libero/benchmark/libero_suite_task_map.py"),
                    "--task-classification", str(args.libero_src / "libero/libero/benchmark/task_classification.json"),
-                   "--num-states", str(args.num_states), "--out", str(cap)]
+                   "--num-states", str(args.num_states), "--checkpoint", str(args.checkpoint),
+                   "--out", str(cap)]
         log = args.out / "logs" / f"{c['tag']}.log"; log.parent.mkdir(parents=True, exist_ok=True)
         with log.open("w") as fh:
             r = subprocess.run(cmd_cap, env=env, stdout=fh, stderr=subprocess.STDOUT)

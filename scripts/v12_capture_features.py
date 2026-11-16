@@ -114,6 +114,7 @@ def main():
     ap.add_argument("--task-classification", type=Path, required=True)
     ap.add_argument("--libero-src", type=Path, default=Path("/hy-tmp/libero_plus"))
     ap.add_argument("--libero-config", type=Path, default=Path("/hy-tmp/libero_config"))
+    ap.add_argument("--checkpoint", type=Path, default=CKPT)
     ap.add_argument("--device", default="cuda:0")
     ap.add_argument("--num-states", type=int, default=50)
     ap.add_argument("--split-seed", type=int, default=1234)
@@ -129,7 +130,7 @@ def main():
     mapped_views = {v: camera_map.get(v, v) for v in args.policy_views}
     if len(set(mapped_views.values())) != len(mapped_views):
         raise SystemExit("duplicate camera mapping")
-    policy = load_policy(CKPT, device=args.device); policy.eval()
+    policy = load_policy(args.checkpoint, device=args.device); policy.eval()
     suites = {s: benchmark.get_benchmark_dict()[s]() for s in (args.clean_suite, args.shift_suite)}
     clean_suite = suites[args.clean_suite]; shift_suite = suites[args.shift_suite]
     shift_task = shift_suite.get_task(args.shift_task)
@@ -260,7 +261,7 @@ def main():
         "feature_rows": [r.get("feature_row") for r in records],
         "state8_rows": len(state8s),
         "features": {f"{c}_{v}": list(features[c][v].shape) for c in features for v in features[c]},
-        "checkpoint": str(CKPT), "checkpoint_sha256": sha(CKPT),
+        "checkpoint": str(args.checkpoint), "checkpoint_sha256": sha(args.checkpoint),
         "clean_init_file": str(args.clean_init_file), "clean_init_sha256": sha(args.clean_init_file),
         "features_sha256": sha(args.out / "features.npz"),
         "image_hashes_combined": combined_image_hash(args.out / "images"),

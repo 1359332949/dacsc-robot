@@ -160,9 +160,19 @@ def main():
             rec["all_states_noise_pass"] = True
         elif rec["domain"] == "sensor":
             rec["all_states_camera_pass"] = True
+            import re
+            m = re.search(r"_noise_(\d+)", rec.get("name", ""))
+            expected_level = int(m.group(1)) if m else None
+            rec["sensor_expected_noise_level"] = expected_level
             rec["all_states_noise_pass"] = all(
-                bool(x.get("noise")) and x["noise"].get("mechanism") == "motion_blur"
+                bool(x.get("noise"))
+                and x["noise"].get("noise") == expected_level
+                and x["noise"].get("mechanism") == "motion_blur"
                 and x["noise"].get("affected_view") == "agentview_image only"
+                and (x.get("image_agentview") or {}).get("mean_abs_diff", 0) > 0
+                and (x.get("image_agentview") or {}).get("changed_fraction", 0) > 0
+                and (x.get("image_eye_in_hand") or {}).get("mean_abs_diff", 1) == 0
+                and (x.get("image_eye_in_hand") or {}).get("changed_fraction", 1) == 0
                 for x in rec["states"])
         else:
             rec["all_states_camera_pass"] = True
