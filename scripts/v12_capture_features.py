@@ -19,6 +19,7 @@ sys.path.insert(0, str(ROOT)); sys.path.insert(0, str(ROOT / "repos/CoRP")); sys
 from corp import load_policy  # noqa: E402
 from corp.preprocessing import prepare_observation  # noqa: E402
 from dacsc.state_pairing import compare, digest, model_compatible, restore, snapshot  # noqa: E402
+from evaluate_libero import state_from_observation  # noqa: E402
 from sg_cpa_phase4_final import CKPT  # noqa: E402
 
 DUMMY_ACTION = [0.0] * 6 + [-1.0]
@@ -142,20 +143,25 @@ def main():
     if not compat["pass"]:
         raise RuntimeError(f"Clean/Shift model incompatible: {compat}")
     features = {c: {v: [] for v in args.policy_views} for c in ("clean", "shift")}
+    state8s = []
     records = []
     try:
         for pos, idx in enumerate(range(n)):
             env_c.seed(0); env_c.reset(); env_s.seed(0); env_s.reset()
             env_c.set_init_state(clean_states[idx])
+            obs_c = None
             for _ in range(SETTLING_STEPS):
-                _, _, done, _ = env_c.step(DUMMY_ACTION)
+                obs_c, _, done, _ = env_c.step(DUMMY_ACTION)
                 if done:
                     raise RuntimeError(f"settling terminated at state {idx}")
+            if obs_c is None:
+                raise RuntimeError(f"no observation after settling at state {idx}")
             snap = snapshot(env_c)
             restore(env_s, snap)
             cmp = compare(snap, snapshot(env_s))
             if not cmp["all_pass"]:
-                records.append({"index": idx, "error": "state_restore_failed", "compare": cmp})
+                records.append({"index": idx, "error": "state_restore_failed", "compare": cmp,
+                            "feature_row": None})
                 continue
             raw = {"clean": {}, "shift": {}}
             for v in args.policy_views:
@@ -168,10 +174,13 @@ def main():
                 Image.fromarray(np.asarray(raw["shift"][v], dtype=np.uint8)).save(d / f"shift_{v}.png")
             feats = dino_features(policy, raw["clean"], args.policy_views, args.clean_language)
             feats_s = dino_features(policy, raw["shift"], args.policy_views, args.clean_language)
+            feature_row = len(features["clean"][args.policy_views[0]])
             for v in args.policy_views:
                 features["clean"][v].append(feats[v].astype(np.float32))
                 features["shift"][v].append(feats_s[v].astype(np.float32))
-            records.append({"index": idx, "state_digest": digest(snap), "compare_pass": True})
+            state8s.append(state_from_observation(obs_c, policy.normalizer).astype(np.float32))
+            records.append({"index": idx, "state_digest": digest(snap), "compare_pass": True,
+                            "feature_row": feature_row})
             print(f"[{pos+1}/{n}] state {idx} ok", flush=True)
     finally:
         env_s.close(); env_c.close()
@@ -181,7 +190,8 @@ def main():
             if features[c][v]:
                 features[c][v] = np.stack(features[c][v], axis=0)
     np.savez_compressed(args.out / "features.npz",
-                        **{f"{c}_{v}": features[c][v] for c in features for v in features[c]})
+                        **{f"{c}_{v}": features[c][v] for c in features for v in features[c]},
+                        state8=np.stack(state8s, axis=0) if state8s else np.zeros((0, policy.config["state_dim"]), dtype=np.float32))
     manifest = {
         "clean_task_name": args.clean_task_name, "clean_language": args.clean_language,
         "shift_task": args.shift_task, "shift_task_name": shift_task.name,
@@ -192,6 +202,8 @@ def main():
         "clean_bddl_sha256": sha(args.clean_bddl), "shift_bddl_sha256": sha(shift_bddl),
         "shift_env_bddl": str(shift_env_bddl),
         "records": records,
+        "feature_rows": [r.get("feature_row") for r in records],
+        "state8_rows": len(state8s),
         "features": {f"{c}_{v}": list(features[c][v].shape) for c in features for v in features[c]},
         "checkpoint": str(CKPT), "checkpoint_sha256": sha(CKPT),
         "clean_init_file": str(args.clean_init_file), "clean_init_sha256": sha(args.clean_init_file),
