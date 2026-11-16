@@ -65,7 +65,12 @@ def conditioned_obs(obs, sensor_noise, seed):
 def run_rollout(policy, env, init_state, language, episode_seed, max_steps, sensor_noise, label):
     np.random.seed(episode_seed); torch.manual_seed(episode_seed)
     if torch.cuda.is_available(): torch.cuda.manual_seed_all(episode_seed)
-    env.seed(episode_seed); env.reset(); obs = env.set_init_state(init_state)
+    env.seed(episode_seed)
+    if label == "clean":
+        env.reset()
+    # Shift envs must not be reset: reset() reloads the base scene and can
+    # discard Background/Lighting variant assets.
+    obs = env.set_init_state(init_state)
     for _ in range(SETTLING_STEPS):
         obs, _, done, _ = env.step(DUMMY_ACTION)
         if done: break

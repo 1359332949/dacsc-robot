@@ -185,7 +185,9 @@ def main():
                                render_gpu_device_id=0)
     env_s = OffScreenRenderEnv(bddl_file_name=str(shift_env_bddl), camera_heights=256, camera_widths=256,
                                render_gpu_device_id=0)
-    env_c.reset(); env_s.reset()
+    env_c.reset()
+    # Do not reset env_s: reset() can reload the base scene and discard
+    # Background/Lighting assets.  The complete state is restored per sample.
     compat = model_compatible(snapshot(env_c), snapshot(env_s), strict_bodies=True,
                               strict_geometry=(args.shift_kind in ("camera", "sensor")),
                               strict_physics=(args.shift_kind in ("camera", "sensor")))
@@ -196,7 +198,10 @@ def main():
     records = []
     try:
         for pos, idx in enumerate(range(n)):
-            env_c.seed(0); env_c.reset(); env_s.seed(0); env_s.reset()
+            env_c.seed(0); env_c.reset()
+            # Do not reset env_s here: reset() reloads the base scene and can
+            # discard Background/Lighting variant assets.  restore() below
+            # sets the complete physical state instead.
             env_c.set_init_state(clean_states[idx])
             obs_c = None
             for _ in range(SETTLING_STEPS):
