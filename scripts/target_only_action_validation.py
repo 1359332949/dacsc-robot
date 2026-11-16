@@ -380,6 +380,42 @@ def main():
                 clean_filtered_mean = clean_filtered_estimator.update(pooled_clean, context)
                 clean_filtered_correction = clean_filtered_estimator.applied_correction()
 
+                # V5: update acceptance remains residual novelty x context support,
+                # while application is gated by the current observation's residual
+                # novelty only. Context support is intentionally update-only because
+                # later task states may leave source-state support under valid rollout.
+                target_residual_application_confidence = (
+                    target_gated_estimator.last_gate_diagnostics["residual_confidence"]
+                )
+                filtered_residual_application_confidence = (
+                    filtered_gated_estimator.last_gate_diagnostics["residual_confidence"]
+                )
+                clean_residual_application_confidence = (
+                    clean_estimator.last_gate_diagnostics["residual_confidence"]
+                )
+                target_gated_residual_apply_correction = (
+                    target_gated_estimator.applied_correction(
+                        application_confidence=target_residual_application_confidence
+                    )
+                )
+                filtered_gated_residual_apply_correction = (
+                    filtered_gated_estimator.applied_correction(
+                        application_confidence=filtered_residual_application_confidence
+                    )
+                )
+                # Offline paired-Clean negative control: evaluate the same stored
+                # Target correction under Clean's current residual-novelty score.
+                target_gated_clean_residual_apply_correction = (
+                    target_gated_estimator.applied_correction(
+                        application_confidence=clean_residual_application_confidence
+                    )
+                )
+                filtered_gated_clean_residual_apply_correction = (
+                    filtered_gated_estimator.applied_correction(
+                        application_confidence=clean_residual_application_confidence
+                    )
+                )
+
                 paired_correction = torch.as_tensor(
                     paired_fit_mean, device=device, dtype=visual_shift.dtype
                 ).view(1, 1, -1)
@@ -395,6 +431,26 @@ def main():
                 filtered_gated_correction = filtered_gated_correction.to(
                     device=device, dtype=visual_shift.dtype
                 ).view(1, 1, -1)
+                target_gated_residual_apply_correction = (
+                    target_gated_residual_apply_correction.to(
+                        device=device, dtype=visual_shift.dtype
+                    ).view(1, 1, -1)
+                )
+                filtered_gated_residual_apply_correction = (
+                    filtered_gated_residual_apply_correction.to(
+                        device=device, dtype=visual_shift.dtype
+                    ).view(1, 1, -1)
+                )
+                target_gated_clean_residual_apply_correction = (
+                    target_gated_clean_residual_apply_correction.to(
+                        device=device, dtype=visual_clean.dtype
+                    ).view(1, 1, -1)
+                )
+                filtered_gated_clean_residual_apply_correction = (
+                    filtered_gated_clean_residual_apply_correction.to(
+                        device=device, dtype=visual_clean.dtype
+                    ).view(1, 1, -1)
+                )
                 clean_correction = clean_correction.to(
                     device=device, dtype=visual_clean.dtype
                 ).view(1, 1, -1)
@@ -431,6 +487,12 @@ def main():
                 action_filtered = act(visual_shift - filtered_correction, rep_shift)
                 action_target_gated = act(visual_shift - target_gated_correction, rep_shift)
                 action_filtered_gated = act(visual_shift - filtered_gated_correction, rep_shift)
+                action_target_gated_residual_apply = act(
+                    visual_shift - target_gated_residual_apply_correction, rep_shift
+                )
+                action_filtered_gated_residual_apply = act(
+                    visual_shift - filtered_gated_residual_apply_correction, rep_shift
+                )
                 action_target_gated_guarded = limit_rotation_delta(
                     action_target_gated, action_frozen, policy.normalizer,
                     args.rotation_budget_rad,
@@ -450,6 +512,12 @@ def main():
                 )
                 clean_filtered_gated_transfer = act(
                     visual_clean - filtered_gated_correction, rep_clean
+                )
+                clean_target_gated_residual_apply_transfer = act(
+                    visual_clean - target_gated_clean_residual_apply_correction, rep_clean
+                )
+                clean_filtered_gated_residual_apply_transfer = act(
+                    visual_clean - filtered_gated_clean_residual_apply_correction, rep_clean
                 )
                 # Operational Clean negative controls: independent Clean-stream EMA.
                 clean_only_action = act(visual_clean - clean_correction, rep_clean)
@@ -475,6 +543,12 @@ def main():
                     "target_only_content_filtered_gated": action_metrics(
                         policy, action_filtered_gated, action_clean
                     ),
+                    "target_only_gated_residual_apply": action_metrics(
+                        policy, action_target_gated_residual_apply, action_clean
+                    ),
+                    "target_only_content_filtered_gated_residual_apply": action_metrics(
+                        policy, action_filtered_gated_residual_apply, action_clean
+                    ),
                     "target_only_gated_rotation_guarded": action_metrics(
                         policy, action_target_gated_guarded, action_clean
                     ),
@@ -499,6 +573,12 @@ def main():
                     "clean_cost_filtered_gated_transfer": action_metrics(
                         policy, clean_filtered_gated_transfer, action_clean
                     ),
+                    "clean_cost_gated_residual_apply_transfer": action_metrics(
+                        policy, clean_target_gated_residual_apply_transfer, action_clean
+                    ),
+                    "clean_cost_filtered_gated_residual_apply_transfer": action_metrics(
+                        policy, clean_filtered_gated_residual_apply_transfer, action_clean
+                    ),
                     "clean_only_estimate_negative_control": action_metrics(
                         policy, clean_only_action, action_clean
                     ),
@@ -510,6 +590,18 @@ def main():
                     "target_filtered_residual_norm": float(filtered_mean.norm()),
                     "target_gated_correction_norm": float(target_gated_correction.norm()),
                     "target_filtered_gated_correction_norm": float(filtered_gated_correction.norm()),
+                    "target_gated_residual_apply_correction_norm": float(
+                        target_gated_residual_apply_correction.norm()
+                    ),
+                    "target_filtered_gated_residual_apply_correction_norm": float(
+                        filtered_gated_residual_apply_correction.norm()
+                    ),
+                    "target_residual_application_confidence": float(
+                        target_residual_application_confidence.mean()
+                    ),
+                    "clean_residual_application_confidence": float(
+                        clean_residual_application_confidence.mean()
+                    ),
                     "target_confidence": float(target_gated_estimator.last_confidence.mean()),
                     "filtered_confidence": float(filtered_gated_estimator.last_confidence.mean()),
                     "clean_confidence": float(clean_estimator.last_confidence.mean()),
@@ -574,6 +666,8 @@ def main():
         "target_only_content_filtered",
         "target_only_gated",
         "target_only_content_filtered_gated",
+        "target_only_gated_residual_apply",
+        "target_only_content_filtered_gated_residual_apply",
         "target_only_gated_rotation_guarded",
         "target_only_content_filtered_gated_rotation_guarded",
         "target_only_reverse",
@@ -584,6 +678,8 @@ def main():
         "clean_cost_filtered_target_estimate",
         "clean_cost_target_gated_transfer",
         "clean_cost_filtered_gated_transfer",
+        "clean_cost_gated_residual_apply_transfer",
+        "clean_cost_filtered_gated_residual_apply_transfer",
         "clean_only_estimate_negative_control",
         "clean_only_filtered_negative_control",
     )
@@ -631,7 +727,7 @@ def main():
             }
 
     payload = {
-        "schema": "target_only_action_validation_v4",
+        "schema": "target_only_action_validation_v5",
         "status": "completed",
         "claim_scope": "counterfactual action-distance validation only; not closed-loop SR",
         "condition": "Object x Lighting 2222",
@@ -639,7 +735,8 @@ def main():
         "heldout_ids": held,
         "source_calibration": source_diagnostics,
         "confidence_gate": {
-            "type": "source-oof residual novelty multiplied by nearest-source-context support",
+            "update_type": "source-oof residual novelty multiplied by nearest-source-context support",
+            "application_type": "current-observation source residual novelty only; context support is update-only",
             "min_update_confidence_override": args.min_update_confidence,
             "default_min_update_confidence": source_diagnostics["confidence_gate"]["source_calibrated_min_update_confidence"],
             "update_semantics": "only observations above the source-OOF calibration confidence maximum update episode EMA; rejected observations hold last accepted estimate",
@@ -649,7 +746,8 @@ def main():
                 "context_support_outer_radius", "context_confidence",
                 "combined_confidence", "abstain_reasons", "update_accepted",
             ],
-            "interpretation": "source-only abstention heuristic; appearance estimate is held across later OOD contexts",
+            "interpretation": "source-only update-abstention heuristic; appearance estimate is held across later OOD contexts",
+            "application_semantics": "the held correction is scaled per observation by residual_confidence without reusing the context-support term",
         },
         "rotation_trust_region": {
             "max_relative_so3_change_rad": args.rotation_budget_rad,
