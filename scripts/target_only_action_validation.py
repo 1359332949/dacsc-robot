@@ -238,20 +238,31 @@ def main():
     if len(fit_ids) < args.source_folds:
         raise ValueError("not enough source development states for requested cross-fit folds")
 
-    def captured_pooled(state: int, kind: str) -> np.ndarray:
+    source_views = list(manifest["policy_views"])
+
+    def captured_visual(state: int, kind: str) -> torch.Tensor:
         patches = {
             view: torch.as_tensor(
                 z[f"{kind}_{view}"][by_state[state]],
                 device=device,
                 dtype=torch.float32,
             ).unsqueeze(0)
-            for view in manifest["policy_views"]
+            for view in source_views
         }
         _, pooled_language = policy.representation_extractor.language_encoder([language])
         visual = policy.representation_extractor.cross_attention_resampler(
             patches, pooled_language
         )
-        return visual.mean(dim=1)[0].detach().float().cpu().numpy()
+        return visual[0].detach().float()
+
+    def captured_pooled(state: int, kind: str) -> np.ndarray:
+        return captured_visual(state, kind).mean(dim=0).cpu().numpy()
+
+    def captured_view_pooled(state: int, kind: str, view: str) -> np.ndarray:
+        visual = captured_visual(state, kind)
+        tokens_per_view = visual.shape[0] // len(source_views)
+        index = source_views.index(view)
+        return visual[index * tokens_per_view:(index + 1) * tokens_per_view].mean(dim=0).cpu().numpy()
 
     clean_fit = {state: captured_pooled(state, "clean") for state in fit_ids}
     shift_fit = {state: captured_pooled(state, "shift") for state in fit_ids}
@@ -270,6 +281,14 @@ def main():
     paired_fit_mean = np.mean(
         [shift_fit[state] - clean_fit[state] for state in fit_ids], axis=0
     )
+    paired_fit_view_mean = {
+        view: np.mean([
+            captured_view_pooled(state, "shift", view)
+            - captured_view_pooled(state, "clean", view)
+            for state in fit_ids
+        ], axis=0)
+        for view in source_views
+    }
 
     held = [
         int(state)
@@ -474,6 +493,14 @@ def main():
                 paired_correction = torch.as_tensor(
                     paired_fit_mean, device=device, dtype=visual_shift.dtype
                 ).view(1, 1, -1)
+                paired_view_correction = torch.zeros_like(visual_shift)
+                tokens_per_view = visual_shift.shape[1] // len(source_views)
+                for view_index, view in enumerate(source_views):
+                    paired_view_correction[:, view_index * tokens_per_view:
+                                           (view_index + 1) * tokens_per_view] = (
+                        torch.as_tensor(paired_fit_view_mean[view], device=device,
+                                        dtype=visual_shift.dtype).view(1, 1, -1)
+                    )
                 target_correction = target_correction.to(
                     device=device, dtype=visual_shift.dtype
                 ).view(1, 1, -1)
@@ -547,6 +574,7 @@ def main():
                 action_clean = act(visual_clean, rep_clean)
                 action_frozen = act(visual_shift, rep_shift)
                 action_paired = act(visual_shift - paired_correction, rep_shift)
+                action_paired_view = act(visual_shift - paired_view_correction, rep_shift)
                 action_target = act(visual_shift - target_correction, rep_shift)
                 action_filtered = act(visual_shift - filtered_correction, rep_shift)
                 action_target_gated = act(visual_shift - target_gated_correction, rep_shift)
@@ -575,6 +603,10 @@ def main():
                 # Shift-derived correction applied to Clean is a cross-domain
                 # transfer stress test, not operational Clean-only retention.
                 clean_target_cost = act(visual_clean - target_correction, rep_clean)
+                clean_paired_view_cost = act(
+                    visual_clean - paired_view_correction.to(dtype=visual_clean.dtype),
+                    rep_clean,
+                )
                 clean_filtered_cost = act(visual_clean - filtered_correction, rep_clean)
                 clean_target_gated_transfer = act(
                     visual_clean - target_gated_correction, rep_clean
@@ -610,6 +642,7 @@ def main():
                     "camera_invariance_pass": bool(camera_invariance["pass"]),
                     "frozen": action_metrics(policy, action_frozen, action_clean),
                     "paired_fit_mean": action_metrics(policy, action_paired, action_clean),
+                    "paired_fit_per_view_mean": action_metrics(policy, action_paired_view, action_clean),
                     "target_only_mean": action_metrics(policy, action_target, action_clean),
                     "target_only_content_filtered": action_metrics(
                         policy, action_filtered, action_clean
@@ -645,6 +678,9 @@ def main():
                     ),
                     "clean_cost_target_estimate": action_metrics(
                         policy, clean_target_cost, action_clean
+                    ),
+                    "clean_cost_paired_fit_per_view_transfer": action_metrics(
+                        policy, clean_paired_view_cost, action_clean
                     ),
                     "clean_cost_filtered_target_estimate": action_metrics(
                         policy, clean_filtered_cost, action_clean
@@ -749,6 +785,7 @@ def main():
     method_names = (
         "frozen",
         "paired_fit_mean",
+        "paired_fit_per_view_mean",
         "target_only_mean",
         "target_only_content_filtered",
         "target_only_gated",
@@ -765,6 +802,7 @@ def main():
     clean_control_names = (
         "clean_cost_target_estimate",
         "clean_cost_filtered_target_estimate",
+        "clean_cost_paired_fit_per_view_transfer",
         "clean_cost_target_gated_transfer",
         "clean_cost_filtered_gated_transfer",
         "clean_cost_gated_residual_apply_transfer",
