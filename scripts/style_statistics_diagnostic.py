@@ -149,6 +149,13 @@ def main():
         std_patches = {v: std_only(patches_shift[v], source_std[v]) for v in views}
         visual_std_only = policy.representation_extractor.cross_attention_resampler(
             std_patches, pooled_lang)
+        clean_mean_patches = {v: mean_only(patches_clean[v], source_mean[v]) for v in views}
+        visual_clean_mean = policy.representation_extractor.cross_attention_resampler(
+            clean_mean_patches, pooled_lang)
+        clean_adain_patches = {
+            v: adain_stats(patches_clean[v], source_mean[v], source_std[v]) for v in views}
+        visual_clean_adain = policy.representation_extractor.cross_attention_resampler(
+            clean_adain_patches, pooled_lang)
         # style statistics per view (channel mean/std over patch axis)
         stats = {}
         for v in views:
@@ -169,6 +176,8 @@ def main():
         rep_res_mean = build_rep(policy, visual_res_mean, language, state, device)
         rep_res_adain = build_rep(policy, visual_res_adain, language, state, device)
         rep_std_only = build_rep(policy, visual_std_only, language, state, device)
+        rep_clean_mean = build_rep(policy, visual_clean_mean, language, state, device)
+        rep_clean_adain = build_rep(policy, visual_clean_adain, language, state, device)
         gen = torch.Generator(device=device); gen.manual_seed(args.seed + int(r["index"]))
         z0 = torch.randn((1, policy.action_generator.action_horizon,
                           policy.action_generator.action_dim),
@@ -181,6 +190,8 @@ def main():
         a_res_mean = act(policy, visual_res_mean, rep_res_mean, z0)
         a_res_adain = act(policy, visual_res_adain, rep_res_adain, z0)
         a_std_only = act(policy, visual_std_only, rep_std_only, z0)
+        a_clean_mean = act(policy, visual_clean_mean, rep_clean_mean, z0)
+        a_clean_adain = act(policy, visual_clean_adain, rep_clean_adain, z0)
         records.append({
             "index": int(r["index"]),
             "style_stats": stats,
@@ -195,13 +206,20 @@ def main():
                 policy, a_res_adain, a_clean, a_clean.shape[1]),
             "std_only": _one_action_metrics(policy, a_std_only, a_clean, a_clean.shape[1]),
             "oracle_clean": _one_action_metrics(policy, a_clean, a_clean, a_clean.shape[1]),
+            "clean_identity_mean_only": _one_action_metrics(
+                policy, a_clean_mean, a_clean, a_clean.shape[1]),
+            "clean_identity_adain_source": _one_action_metrics(
+                policy, a_clean_adain, a_clean, a_clean.shape[1]),
         })
     methods = ("frozen", "adain", "adain_source_stats", "mean_only", "std_only",
                "resampler_mean_only", "resampler_adain", "oracle_clean")
     keys = ("normalized_mae", "xyz_mae_controller_units", "rotation_geodesic_rad",
             "gripper_mae", "action_saturation_fraction")
     summary = {m: {k: float(np.mean([r[m][k] for r in records])) for k in keys} for m in methods}
+    clean_identity = {m: {k: float(np.mean([r[m][k] for r in records])) for k in keys}
+                      for m in ("clean_identity_mean_only", "clean_identity_adain_source")}
     payload = {"schema": "style_statistics_diagnostic_v1", "language": language,
+               "clean_identity": clean_identity,
                "views": views, "records": records, "summary": summary,
                "claim_scope": "privileged paired diagnostic; AdaIN uses Clean statistics"}
     args.out.parent.mkdir(parents=True, exist_ok=True)
