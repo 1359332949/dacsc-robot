@@ -339,6 +339,8 @@ def main():
     ap.add_argument("--libero-config", type=Path, default=Path("/hy-tmp/libero_config"))
     ap.add_argument("--init-indices", default="3,5")
     ap.add_argument("--domain", choices=["shift", "clean"], default="shift")
+    ap.add_argument("--suite", default="libero_object")
+    ap.add_argument("--lighting-id", type=int, default=2222)
     ap.add_argument("--methods", default="frozen,first_observation,online")
     ap.add_argument("--max-steps", type=int, default=280)
     ap.add_argument("--executed-k", type=int, default=12)
@@ -364,31 +366,40 @@ def main():
     from libero.libero.envs import OffScreenRenderEnv
     import libero.libero.envs.bddl_utils as BDDLUtils
     matrix = json.loads(args.matrix.read_text())
-    task = next(b for b in matrix["base_tasks"] if b["suite"] == "libero_object")
-    variant = next(v for v in task["variants"]["lighting"] if v["classification_id"] == 2222)
+    task = next(b for b in matrix["base_tasks"] if b["suite"] == args.suite)
+    variant = next(v for v in task["variants"]["lighting"]
+                   if v["classification_id"] == args.lighting_id)
     base_bddl, shift_bddl = variant["base_bddl"], variant["env_bddl_name"]
     env_bddl = base_bddl if args.domain == "clean" else shift_bddl
     language = BDDLUtils.get_problem_info(base_bddl)["language_instruction"]
-    manifest = json.loads((args.capture / "manifest.json").read_text())
-    z = np.load(args.capture / "features.npz")
-    rows = [r for r in manifest["records"] if r.get("compare_pass")]
-    by_state = {int(r["index"]): int(r["feature_row"]) for r in rows}
+    methods = validate_methods(args.methods)
+    needs_source = any(m not in {"frozen", "frozen_predict", "paired_first"} for m in methods)
+    fit_ids = []
+    source = None
+    diag = {}
+    style_mean = None
+    style_std = None
+    if needs_source:
+        manifest = json.loads((args.capture / "manifest.json").read_text())
+        z = np.load(args.capture / "features.npz")
+        rows = [r for r in manifest["records"] if r.get("compare_pass")]
+        by_state = {int(r["index"]): int(r["feature_row"]) for r in rows}
     device = torch.device(args.device)
     policy = load_policy(args.checkpoint, device=device); policy.eval()
-    fit_ids, source, diag = build_source(args, policy, manifest, z, by_state, device, language)
-    fit_ids_style, style_mean, style_std = build_style_stats(
-        args, policy, manifest, z, by_state, device, language)
+    if needs_source:
+        fit_ids, source, diag = build_source(args, policy, manifest, z, by_state, device, language)
+        fit_ids_style, style_mean, style_std = build_style_stats(
+            args, policy, manifest, z, by_state, device, language)
+        requested = args.source_fit_count
+        if len(fit_ids) != requested:
+            raise ValueError(f"source fit returned {len(fit_ids)} states, requested {requested}")
     initial_states = torch.load(task["state_split"]["source_file"], weights_only=False)
-    methods = validate_methods(args.methods)
     init_indices = parse_init_indices(args.init_indices)
     horizon = int(policy.action_generator.action_horizon)
     validate_executed_k(args.executed_k, horizon)
     heldout = set(int(i) for i in task["state_split"]["heldout_indices"])
     validate_init_indices(init_indices, len(initial_states), heldout, fit_ids,
                           require_heldout=not args.allow_non_heldout)
-    requested = args.source_fit_count
-    if len(fit_ids) != requested:
-        raise ValueError(f"source fit returned {len(fit_ids)} states, requested {requested}")
     records = []
     seed_offsets = [int(x) for x in args.seed_offsets.split(",")]
     for init_index in init_indices:
