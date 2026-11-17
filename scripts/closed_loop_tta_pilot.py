@@ -29,6 +29,10 @@ from dacsc.target_only_mean import (  # noqa: E402
 from target_only_action_validation import configure, sample_z, visual_from_obs  # noqa: E402
 from dacsc.observation_render import render_policy_observation  # noqa: E402
 from dacsc.state_pairing import snapshot  # noqa: E402
+from dacsc.pilot_validation import (  # noqa: E402
+    ALLOWED_METHODS, parse_init_indices, validate_executed_k,
+    validate_init_indices, validate_methods,
+)
 
 
 def build_source(args, policy, manifest, z, by_state, device, language):
@@ -62,28 +66,6 @@ def make_rep(visual, base_rep):
         pooled_language=base_rep.pooled_language,
         action_dtype=visual.dtype,
     )
-
-
-ALLOWED_METHODS = {"frozen", "first_observation", "paired_first", "online"}
-
-
-def validate_methods(raw: str) -> list[str]:
-    methods = [m.strip() for m in raw.split(",") if m.strip()]
-    if not methods:
-        raise ValueError("at least one method is required")
-    if len(methods) != len(set(methods)):
-        raise ValueError(f"duplicate methods: {methods}")
-    unknown = set(methods) - ALLOWED_METHODS
-    if unknown:
-        raise ValueError(f"unknown methods: {sorted(unknown)}")
-    return methods
-
-
-def parse_init_indices(raw: str) -> list[int]:
-    values = [int(i) for i in raw.split(",") if i.strip()]
-    if not values or len(values) != len(set(values)):
-        raise ValueError("init indices must be non-empty and unique")
-    return values
 
 
 def sha256_file(path: Path) -> str:
@@ -270,15 +252,9 @@ def main():
     methods = validate_methods(args.methods)
     init_indices = parse_init_indices(args.init_indices)
     horizon = int(policy.action_generator.action_horizon)
-    if not 1 <= args.executed_k <= horizon:
-        raise ValueError(f"executed-k must be in [1,{horizon}]")
-    if any(i < 0 or i >= len(initial_states) for i in init_indices):
-        raise ValueError(f"init index out of range 0..{len(initial_states)-1}")
+    validate_executed_k(args.executed_k, horizon)
     heldout = set(int(i) for i in task["state_split"]["heldout_indices"])
-    if not set(init_indices) <= heldout:
-        raise ValueError(f"init indices must be heldout: {sorted(set(init_indices)-heldout)}")
-    if set(init_indices) & set(fit_ids):
-        raise ValueError("init indices overlap source fit IDs")
+    validate_init_indices(init_indices, len(initial_states), heldout, fit_ids)
     requested = args.source_fit_count
     if len(fit_ids) != requested:
         raise ValueError(f"source fit returned {len(fit_ids)} states, requested {requested}")
