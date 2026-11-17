@@ -182,3 +182,23 @@ requires a fresh perturbation configuration or a fresh task/suite.
 Seeds are repeated measures within an initial state. Report paired
 state-level results and cluster bootstrap over initial states; do not treat
 `20 states x 3 seeds = 60` as 60 independent scenes.
+
+## 11. Action/failure diagnostic (target dev, 2026-11-17)
+
+Frozen Clean vs Shift on the 10 target-dev states, seed 2014:
+
+- Clean: 9/10 success;
+- Shift: 4/10 success;
+- Shift failures: 5 `no_lift`, 1 `lift_failed`;
+- Paired action L2: 0.28–0.57 in successes, 0.64–1.17 in most failures;
+- Action cosine: 0.78–0.95 in successes, 0.30–0.46 in several failures;
+- Largest mean absolute action difference is the gripper dimension (0.399),
+  followed by eef x/y/z (0.18–0.25).
+
+Interpretation: under this Lighting shift the frozen policy often diverges
+before lift/grasp completion, and its action trajectory changes strongly.
+A single global visual-mean correction is not aligned with this state- and
+phase-dependent action change. This is evidence against further global
+visual-statistics adaptation, not evidence for a new adapter.
+
+The diagnostic is exploratory: one seed, 10 states, one Lighting ID.
