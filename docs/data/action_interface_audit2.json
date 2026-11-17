@@ -1,0 +1,870 @@
+{
+  "schema": "action_interface_audit_v1",
+  "views": [
+    "agentview",
+    "eye_in_hand"
+  ],
+  "records": {
+    "2": {
+      "n_heldout": 19,
+      "frozen_normalized_mae": 0.12233499633638482,
+      "projected_normalized_mae": 0.11672185008463107,
+      "frozen_xyz": 0.16553385594957754,
+      "projected_xyz": 0.14598206313032852,
+      "mean_projection_norm": 170.59087974146792,
+      "clean_identity_normalized_mae": 0.012419215734361819,
+      "clean_identity_xyz": 0.02060429077889574,
+      "records": [
+        {
+          "index": 3,
+          "frozen": {
+            "normalized_mae": 0.1315760463476181,
+            "xyz_mae_controller_units": 0.13814179599285126,
+            "rotation_geodesic_rad": 0.08259127258450023,
+            "gripper_mae": 0.15224327147006989
+          },
+          "projected_shift": {
+            "normalized_mae": 0.11160124093294144,
+            "xyz_mae_controller_units": 0.1430165320634842,
+            "rotation_geodesic_rad": 0.07914359142158423,
+            "gripper_mae": 0.00023777782917022705
+          },
+          "projection_norm": 143.0520782470703,
+          "clean_identity": {
+            "normalized_mae": 0.019419534131884575,
+            "xyz_mae_controller_units": 0.03128315880894661,
+            "rotation_geodesic_rad": 0.008878904594912798,
+            "gripper_mae": 0.0
+          }
+        },
+        {
+          "index": 5,
+          "frozen": {
+            "normalized_mae": 0.1200302317738533,
+            "xyz_mae_controller_units": 0.19535362720489502,
+            "rotation_geodesic_rad": 0.057445288186133,
+            "gripper_mae": 0.0010514060268178582
+          },
+          "projected_shift": {
+            "normalized_mae": 0.11482223868370056,
+            "xyz_mae_controller_units": 0.16414280235767365,
+            "rotation_geodesic_rad": 0.0727232328119224,
+            "gripper_mae": 0.00013571977615356445
+          },
+          "projection_norm": 203.18231201171875,
+          "clean_identity": {
+            "normalized_mae": 0.019243288785219193,
+            "xyz_mae_controller_units": 0.029808951541781425,
+            "rotation_geodesic_rad": 0.009488465563402942,
+            "gripper_mae": 0.0
+          }
+        },
+        {
+          "index": 7,
+          "frozen": {
+            "normalized_mae": 0.12911172211170197,
+            "xyz_mae_controller_units": 0.21250680088996887,
+            "rotation_geodesic_rad": 0.04755152182057892,
+            "gripper_mae": 0.000649015128146857
+          },
+          "projected_shift": {
+            "normalized_mae": 0.11177853494882584,
+            "xyz_mae_controller_units": 0.15043306350708008,
+            "rotation_geodesic_rad": 0.06137957539618257,
+            "gripper_mae": 0.0
+          },
+          "projection_norm": 166.4712677001953,
+          "clean_identity": {
+            "normalized_mae": 0.0072792768478393555,
+            "xyz_mae_controller_units": 0.012181181460618973,
+            "rotation_geodesic_rad": 0.0037180731337217074,
+            "gripper_mae": 0.0
+          }
+        },
+        {
+          "index": 9,
+          "frozen": {
+            "normalized_mae": 0.1248372420668602,
+            "xyz_mae_controller_units": 0.18340331315994263,
+            "rotation_geodesic_rad": 0.07947487536732104,
+            "gripper_mae": 8.759399497648701e-05
+          },
+          "projected_shift": {
+            "normalized_mae": 0.12372571229934692,
+            "xyz_mae_controller_units": 0.1568165123462677,
+            "rotation_geodesic_rad": 0.08783959402170866,
+            "gripper_mae": 0.0
+          },
+          "projection_norm": 147.10421752929688,
+          "clean_identity": {
+            "normalized_mae": 0.013422220014035702,
+            "xyz_mae_controller_units": 0.022020621225237846,
+            "rotation_geodesic_rad": 0.005791418701278628,
+            "gripper_mae": 0.0
+          }
+        },
+        {
+          "index": 11,
+          "frozen": {
+            "normalized_mae": 0.10208198428153992,
+            "xyz_mae_controller_units": 0.15077127516269684,
+            "rotation_geodesic_rad": 0.06369550750334958,
+            "gripper_mae": 0.0007625420694239438
+          },
+          "projected_shift": {
+            "normalized_mae": 0.1080058217048645,
+            "xyz_mae_controller_units": 0.1391833871603012,
+            "rotation_geodesic_rad": 0.07839949354781796,
+            "gripper_mae": 9.40312966122292e-05
+          },
+          "projection_norm": 181.9339599609375,
+          "clean_identity": {
+            "normalized_mae": 0.005633425433188677,
+            "xyz_mae_controller_units": 0.010482420213520527,
+            "rotation_geodesic_rad": 0.0014829396269299526,
+            "gripper_mae": 0.0
+          }
+        },
+        {
+          "index": 12,
+          "frozen": {
+            "normalized_mae": 0.1166481077671051,
+            "xyz_mae_controller_units": 0.17557671666145325,
+            "rotation_geodesic_rad": 0.060150072641021284,
+            "gripper_mae": 0.01475350558757782
+          },
+          "projected_shift": {
+            "normalized_mae": 0.11221129447221756,
+            "xyz_mae_controller_units": 0.15709584951400757,
+            "rotation_geodesic_rad": 0.06955959121789541,
+            "gripper_mae": 0.0001252293586730957
+          },
+          "projection_norm": 162.0928497314453,
+          "clean_identity": {
+            "normalized_mae": 0.019627433270215988,
+            "xyz_mae_controller_units": 0.03232501074671745,
+            "rotation_geodesic_rad": 0.008716461519306159,
+            "gripper_mae": 0.0
+          }
+        },
+        {
+          "index": 15,
+          "frozen": {
+            "normalized_mae": 0.12377101182937622,
+            "xyz_mae_controller_units": 0.16780900955200195,
+            "rotation_geodesic_rad": 0.09755107295696053,
+            "gripper_mae": 0.0012155920267105103
+          },
+          "projected_shift": {
+            "normalized_mae": 0.11756257712841034,
+            "xyz_mae_controller_units": 0.13664285838603973,
+            "rotation_geodesic_rad": 0.10334939530167646,
+            "gripper_mae": 0.0
+          },
+          "projection_norm": 195.54727172851562,
+          "clean_identity": {
+            "normalized_mae": 0.007529092021286488,
+            "xyz_mae_controller_units": 0.01384030096232891,
+            "rotation_geodesic_rad": 0.0018415248388653199,
+            "gripper_mae": 0.0
+          }
+        },
+        {
+          "index": 16,
+          "frozen": {
+            "normalized_mae": 0.11849107593297958,
+            "xyz_mae_controller_units": 0.1632089614868164,
+            "rotation_geodesic_rad": 0.06885852072381986,
+            "gripper_mae": 3.201762956450693e-05
+          },
+          "projected_shift": {
+            "normalized_mae": 0.12087726593017578,
+            "xyz_mae_controller_units": 0.1362391710281372,
+            "rotation_geodesic_rad": 0.08460343589882204,
+            "gripper_mae": 0.0
+          },
+          "projection_norm": 179.0998077392578,
+          "clean_identity": {
+            "normalized_mae": 0.011354980058968067,
+            "xyz_mae_controller_units": 0.017697706818580627,
+            "rotation_geodesic_rad": 0.005300121427393473,
+            "gripper_mae": 0.0
+          }
+        },
+        {
+          "index": 19,
+          "frozen": {
+            "normalized_mae": 0.14918668568134308,
+            "xyz_mae_controller_units": 0.1994665265083313,
+            "rotation_geodesic_rad": 0.09785830644368533,
+            "gripper_mae": 0.0008730689878575504
+          },
+          "projected_shift": {
+            "normalized_mae": 0.14653322100639343,
+            "xyz_mae_controller_units": 0.17055632174015045,
+            "rotation_geodesic_rad": 0.10837877159560094,
+            "gripper_mae": 1.4066696166992188e-05
+          },
+          "projection_norm": 149.9473419189453,
+          "clean_identity": {
+            "normalized_mae": 0.0040166061371564865,
+            "xyz_mae_controller_units": 0.006112104281783104,
+            "rotation_geodesic_rad": 0.0020637682128202104,
+            "gripper_mae": 0.0
+          }
+        },
+        {
+          "index": 23,
+          "frozen": {
+            "normalized_mae": 0.13701511919498444,
+            "xyz_mae_controller_units": 0.16429990530014038,
+            "rotation_geodesic_rad": 0.0757547504468251,
+            "gripper_mae": 0.11237132549285889
+          },
+          "projected_shift": {
+            "normalized_mae": 0.1365884691476822,
+            "xyz_mae_controller_units": 0.18976810574531555,
+            "rotation_geodesic_rad": 0.07957790675402118,
+            "gripper_mae": 0.0
+          },
+          "projection_norm": 203.40090942382812,
+          "clean_identity": {
+            "normalized_mae": 0.022073835134506226,
+            "xyz_mae_controller_units": 0.03632662817835808,
+            "rotation_geodesic_rad": 0.009525459190105797,
+            "gripper_mae": 0.0
+          }
+        },
+        {
+          "index": 24,
+          "frozen": {
+            "normalized_mae": 0.1113770455121994,
+            "xyz_mae_controller_units": 0.1690254658460617,
+            "rotation_geodesic_rad": 0.05387134671890672,
+            "gripper_mae": 3.409882265259512e-05
+          },
+          "projected_shift": {
+            "normalized_mae": 0.1082247942686081,
+            "xyz_mae_controller_units": 0.12792359292507172,
+            "rotation_geodesic_rad": 0.077739608192238,
+            "gripper_mae": 0.0
+          },
+          "projection_norm": 182.508544921875,
+          "clean_identity": {
+            "normalized_mae": 0.012032527476549149,
+            "xyz_mae_controller_units": 0.01845673844218254,
+            "rotation_geodesic_rad": 0.005617684784173275,
+            "gripper_mae": 0.0
+          }
+        },
+        {
+          "index": 26,
+          "frozen": {
+            "normalized_mae": 0.11417877674102783,
+            "xyz_mae_controller_units": 0.18521836400032043,
+            "rotation_geodesic_rad": 0.04852785336089191,
+            "gripper_mae": 0.0006557802553288639
+          },
+          "projected_shift": {
+            "normalized_mae": 0.10717365145683289,
+            "xyz_mae_controller_units": 0.15662407875061035,
+            "rotation_geodesic_rad": 0.05521666541866349,
+            "gripper_mae": 2.0364919691928662e-05
+          },
+          "projection_norm": 163.51510620117188,
+          "clean_identity": {
+            "normalized_mae": 0.01651739701628685,
+            "xyz_mae_controller_units": 0.029010139405727386,
+            "rotation_geodesic_rad": 0.006317695436253986,
+            "gripper_mae": 6.000200755806873e-06
+          }
+        },
+        {
+          "index": 28,
+          "frozen": {
+            "normalized_mae": 0.12387006729841232,
+            "xyz_mae_controller_units": 0.17904257774353027,
+            "rotation_geodesic_rad": 0.07684655882079525,
+            "gripper_mae": 0.0014843145618215203
+          },
+          "projected_shift": {
+            "normalized_mae": 0.12551207840442657,
+            "xyz_mae_controller_units": 0.17470785975456238,
+            "rotation_geodesic_rad": 0.08323888448666844,
+            "gripper_mae": 0.0002926290035247803
+          },
+          "projection_norm": 185.00636291503906,
+          "clean_identity": {
+            "normalized_mae": 0.022515948861837387,
+            "xyz_mae_controller_units": 0.0374004989862442,
+            "rotation_geodesic_rad": 0.009721560873126473,
+            "gripper_mae": 0.0
+          }
+        },
+        {
+          "index": 30,
+          "frozen": {
+            "normalized_mae": 0.14839127659797668,
+            "xyz_mae_controller_units": 0.16678638756275177,
+            "rotation_geodesic_rad": 0.05854371644794135,
+            "gripper_mae": 0.2819339334964752
+          },
+          "projected_shift": {
+            "normalized_mae": 0.10357920825481415,
+            "xyz_mae_controller_units": 0.10837122797966003,
+            "rotation_geodesic_rad": 0.07387126473366433,
+            "gripper_mae": 0.03076225519180298
+          },
+          "projection_norm": 154.29071044921875,
+          "clean_identity": {
+            "normalized_mae": 0.006868463940918446,
+            "xyz_mae_controller_units": 0.010437654331326485,
+            "rotation_geodesic_rad": 0.003706776867248582,
+            "gripper_mae": 0.0
+          }
+        },
+        {
+          "index": 38,
+          "frozen": {
+            "normalized_mae": 0.1746315062046051,
+            "xyz_mae_controller_units": 0.1885208934545517,
+            "rotation_geodesic_rad": 0.07498683352349846,
+            "gripper_mae": 0.298401802778244
+          },
+          "projected_shift": {
+            "normalized_mae": 0.13604876399040222,
+            "xyz_mae_controller_units": 0.1613357663154602,
+            "rotation_geodesic_rad": 0.09237422394882329,
+            "gripper_mae": 0.00047963857650756836
+          },
+          "projection_norm": 155.22227478027344,
+          "clean_identity": {
+            "normalized_mae": 0.00971166230738163,
+            "xyz_mae_controller_units": 0.018314111977815628,
+            "rotation_geodesic_rad": 0.0020390497319260027,
+            "gripper_mae": 0.0
+          }
+        },
+        {
+          "index": 40,
+          "frozen": {
+            "normalized_mae": 0.07307075709104538,
+            "xyz_mae_controller_units": 0.09553762525320053,
+            "rotation_geodesic_rad": 0.05784080913632103,
+            "gripper_mae": 0.0004928112030029297
+          },
+          "projected_shift": {
+            "normalized_mae": 0.08955607563257217,
+            "xyz_mae_controller_units": 0.11736422032117844,
+            "rotation_geodesic_rad": 0.0689250792183619,
+            "gripper_mae": 0.00017431874584872276
+          },
+          "projection_norm": 189.1868133544922,
+          "clean_identity": {
+            "normalized_mae": 0.014600633643567562,
+            "xyz_mae_controller_units": 0.025493767112493515,
+            "rotation_geodesic_rad": 0.0054956728614839615,
+            "gripper_mae": 1.3902783393859863e-05
+          }
+        },
+        {
+          "index": 41,
+          "frozen": {
+            "normalized_mae": 0.1270369440317154,
+            "xyz_mae_controller_units": 0.14083172380924225,
+            "rotation_geodesic_rad": 0.09908079964948725,
+            "gripper_mae": 0.01006306242197752
+          },
+          "projected_shift": {
+            "normalized_mae": 0.13369205594062805,
+            "xyz_mae_controller_units": 0.13218954205513,
+            "rotation_geodesic_rad": 0.10935039218550646,
+            "gripper_mae": 0.0002532204089220613
+          },
+          "projection_norm": 141.87271118164062,
+          "clean_identity": {
+            "normalized_mae": 0.013384870253503323,
+            "xyz_mae_controller_units": 0.02165229432284832,
+            "rotation_geodesic_rad": 0.006224086633769014,
+            "gripper_mae": 0.0
+          }
+        },
+        {
+          "index": 46,
+          "frozen": {
+            "normalized_mae": 0.10061845183372498,
+            "xyz_mae_controller_units": 0.13308529555797577,
+            "rotation_geodesic_rad": 0.07239527366063993,
+            "gripper_mae": 0.0
+          },
+          "projected_shift": {
+            "normalized_mae": 0.10841811448335648,
+            "xyz_mae_controller_units": 0.12876534461975098,
+            "rotation_geodesic_rad": 0.08442500098065207,
+            "gripper_mae": 0.0
+          },
+          "projection_norm": 172.1271514892578,
+          "clean_identity": {
+            "normalized_mae": 0.0034296864178031683,
+            "xyz_mae_controller_units": 0.0063382708467543125,
+            "rotation_geodesic_rad": 0.000885071453660278,
+            "gripper_mae": 0.0
+          }
+        },
+        {
+          "index": 47,
+          "frozen": {
+            "normalized_mae": 0.09844087809324265,
+            "xyz_mae_controller_units": 0.13655699789524078,
+            "rotation_geodesic_rad": 0.062472685820623264,
+            "gripper_mae": 0.001984054921194911
+          },
+          "projected_shift": {
+            "normalized_mae": 0.10180403292179108,
+            "xyz_mae_controller_units": 0.12248296290636063,
+            "rotation_geodesic_rad": 0.0718731954700747,
+            "gripper_mae": 0.00025246539735235274
+          },
+          "projection_norm": 165.66502380371094,
+          "clean_identity": {
+            "normalized_mae": 0.007304217200726271,
+            "xyz_mae_controller_units": 0.012299965135753155,
+            "rotation_geodesic_rad": 0.0026301586829240147,
+            "gripper_mae": 2.1209318674664246e-06
+          }
+        }
+      ]
+    },
+    "8": {
+      "n_heldout": 19,
+      "frozen_normalized_mae": 0.12233499633638482,
+      "projected_normalized_mae": 0.09270209113233968,
+      "frozen_xyz": 0.16553385594957754,
+      "projected_xyz": 0.12490033201481167,
+      "mean_projection_norm": 197.50616455078125,
+      "clean_identity_normalized_mae": 0.018570813007260625,
+      "clean_identity_xyz": 0.02538779951435955,
+      "records": [
+        {
+          "index": 3,
+          "frozen": {
+            "normalized_mae": 0.1315760463476181,
+            "xyz_mae_controller_units": 0.13814179599285126,
+            "rotation_geodesic_rad": 0.08259127258450023,
+            "gripper_mae": 0.15224327147006989
+          },
+          "projected_shift": {
+            "normalized_mae": 0.09062368422746658,
+            "xyz_mae_controller_units": 0.12451466917991638,
+            "rotation_geodesic_rad": 0.05870563285164752,
+            "gripper_mae": 0.00027554729604162276
+          },
+          "projection_norm": 163.68023681640625,
+          "clean_identity": {
+            "normalized_mae": 0.019153501838445663,
+            "xyz_mae_controller_units": 0.03251809626817703,
+            "rotation_geodesic_rad": 0.007011834341767537,
+            "gripper_mae": 0.0
+          }
+        },
+        {
+          "index": 5,
+          "frozen": {
+            "normalized_mae": 0.1200302317738533,
+            "xyz_mae_controller_units": 0.19535362720489502,
+            "rotation_geodesic_rad": 0.057445288186133,
+            "gripper_mae": 0.0010514060268178582
+          },
+          "projected_shift": {
+            "normalized_mae": 0.10396870970726013,
+            "xyz_mae_controller_units": 0.1396384835243225,
+            "rotation_geodesic_rad": 0.07055055134352235,
+            "gripper_mae": 0.00011598566925385967
+          },
+          "projection_norm": 217.025146484375,
+          "clean_identity": {
+            "normalized_mae": 0.020701441913843155,
+            "xyz_mae_controller_units": 0.031688254326581955,
+            "rotation_geodesic_rad": 0.009275419553226055,
+            "gripper_mae": 0.0
+          }
+        },
+        {
+          "index": 7,
+          "frozen": {
+            "normalized_mae": 0.12911172211170197,
+            "xyz_mae_controller_units": 0.21250680088996887,
+            "rotation_geodesic_rad": 0.04755152182057892,
+            "gripper_mae": 0.000649015128146857
+          },
+          "projected_shift": {
+            "normalized_mae": 0.08845891803503036,
+            "xyz_mae_controller_units": 0.12553055584430695,
+            "rotation_geodesic_rad": 0.04580008889222309,
+            "gripper_mae": 0.00019613404583651572
+          },
+          "projection_norm": 198.01072692871094,
+          "clean_identity": {
+            "normalized_mae": 0.019016340374946594,
+            "xyz_mae_controller_units": 0.020500533282756805,
+            "rotation_geodesic_rad": 0.015715869003249037,
+            "gripper_mae": 0.0
+          }
+        },
+        {
+          "index": 9,
+          "frozen": {
+            "normalized_mae": 0.1248372420668602,
+            "xyz_mae_controller_units": 0.18340331315994263,
+            "rotation_geodesic_rad": 0.07947487536732104,
+            "gripper_mae": 8.759399497648701e-05
+          },
+          "projected_shift": {
+            "normalized_mae": 0.10479534417390823,
+            "xyz_mae_controller_units": 0.14485517144203186,
+            "rotation_geodesic_rad": 0.06962681984957626,
+            "gripper_mae": 0.0
+          },
+          "projection_norm": 168.39891052246094,
+          "clean_identity": {
+            "normalized_mae": 0.014791537076234818,
+            "xyz_mae_controller_units": 0.026297181844711304,
+            "rotation_geodesic_rad": 0.004647304820618752,
+            "gripper_mae": 0.0
+          }
+        },
+        {
+          "index": 11,
+          "frozen": {
+            "normalized_mae": 0.10208198428153992,
+            "xyz_mae_controller_units": 0.15077127516269684,
+            "rotation_geodesic_rad": 0.06369550750334958,
+            "gripper_mae": 0.0007625420694239438
+          },
+          "projected_shift": {
+            "normalized_mae": 0.0857749804854393,
+            "xyz_mae_controller_units": 0.1188693419098854,
+            "rotation_geodesic_rad": 0.05812306739230049,
+            "gripper_mae": 0.00018662214279174805
+          },
+          "projection_norm": 204.54026794433594,
+          "clean_identity": {
+            "normalized_mae": 0.009686916135251522,
+            "xyz_mae_controller_units": 0.009160596877336502,
+            "rotation_geodesic_rad": 0.009238683330960418,
+            "gripper_mae": 0.0
+          }
+        },
+        {
+          "index": 12,
+          "frozen": {
+            "normalized_mae": 0.1166481077671051,
+            "xyz_mae_controller_units": 0.17557671666145325,
+            "rotation_geodesic_rad": 0.060150072641021284,
+            "gripper_mae": 0.01475350558757782
+          },
+          "projected_shift": {
+            "normalized_mae": 0.09305375069379807,
+            "xyz_mae_controller_units": 0.1457570195198059,
+            "rotation_geodesic_rad": 0.05461378914355566,
+            "gripper_mae": 0.00019549827266018838
+          },
+          "projection_norm": 187.7720184326172,
+          "clean_identity": {
+            "normalized_mae": 0.018921347334980965,
+            "xyz_mae_controller_units": 0.024220488965511322,
+            "rotation_geodesic_rad": 0.015297477882200766,
+            "gripper_mae": 0.0
+          }
+        },
+        {
+          "index": 15,
+          "frozen": {
+            "normalized_mae": 0.12377101182937622,
+            "xyz_mae_controller_units": 0.16780900955200195,
+            "rotation_geodesic_rad": 0.09755107295696053,
+            "gripper_mae": 0.0012155920267105103
+          },
+          "projected_shift": {
+            "normalized_mae": 0.08769550919532776,
+            "xyz_mae_controller_units": 0.11390635371208191,
+            "rotation_geodesic_rad": 0.06588010959982844,
+            "gripper_mae": 0.00012350082397460938
+          },
+          "projection_norm": 219.35824584960938,
+          "clean_identity": {
+            "normalized_mae": 0.011771950870752335,
+            "xyz_mae_controller_units": 0.016293732449412346,
+            "rotation_geodesic_rad": 0.007408686149577918,
+            "gripper_mae": 0.0
+          }
+        },
+        {
+          "index": 16,
+          "frozen": {
+            "normalized_mae": 0.11849107593297958,
+            "xyz_mae_controller_units": 0.1632089614868164,
+            "rotation_geodesic_rad": 0.06885852072381986,
+            "gripper_mae": 3.201762956450693e-05
+          },
+          "projected_shift": {
+            "normalized_mae": 0.09170256555080414,
+            "xyz_mae_controller_units": 0.10965252667665482,
+            "rotation_geodesic_rad": 0.06423166844442643,
+            "gripper_mae": 0.00017202396702487022
+          },
+          "projection_norm": 220.93307495117188,
+          "clean_identity": {
+            "normalized_mae": 0.013309198431670666,
+            "xyz_mae_controller_units": 0.012218871153891087,
+            "rotation_geodesic_rad": 0.015064589722416427,
+            "gripper_mae": 0.0
+          }
+        },
+        {
+          "index": 19,
+          "frozen": {
+            "normalized_mae": 0.14918668568134308,
+            "xyz_mae_controller_units": 0.1994665265083313,
+            "rotation_geodesic_rad": 0.09785830644368533,
+            "gripper_mae": 0.0008730689878575504
+          },
+          "projected_shift": {
+            "normalized_mae": 0.11179191619157791,
+            "xyz_mae_controller_units": 0.14449423551559448,
+            "rotation_geodesic_rad": 0.07679422541298914,
+            "gripper_mae": 0.00016253690409939736
+          },
+          "projection_norm": 183.37091064453125,
+          "clean_identity": {
+            "normalized_mae": 0.014036646112799644,
+            "xyz_mae_controller_units": 0.01708582416176796,
+            "rotation_geodesic_rad": 0.00922654356662801,
+            "gripper_mae": 0.0
+          }
+        },
+        {
+          "index": 23,
+          "frozen": {
+            "normalized_mae": 0.13701511919498444,
+            "xyz_mae_controller_units": 0.16429990530014038,
+            "rotation_geodesic_rad": 0.0757547504468251,
+            "gripper_mae": 0.11237132549285889
+          },
+          "projected_shift": {
+            "normalized_mae": 0.09557422250509262,
+            "xyz_mae_controller_units": 0.1361779272556305,
+            "rotation_geodesic_rad": 0.05856063521022595,
+            "gripper_mae": 0.0004242559371050447
+          },
+          "projection_norm": 228.05767822265625,
+          "clean_identity": {
+            "normalized_mae": 0.03585353121161461,
+            "xyz_mae_controller_units": 0.04977155104279518,
+            "rotation_geodesic_rad": 0.024118876830728192,
+            "gripper_mae": 0.0
+          }
+        },
+        {
+          "index": 24,
+          "frozen": {
+            "normalized_mae": 0.1113770455121994,
+            "xyz_mae_controller_units": 0.1690254658460617,
+            "rotation_geodesic_rad": 0.05387134671890672,
+            "gripper_mae": 3.409882265259512e-05
+          },
+          "projected_shift": {
+            "normalized_mae": 0.08044766634702682,
+            "xyz_mae_controller_units": 0.1002470925450325,
+            "rotation_geodesic_rad": 0.05335190827440702,
+            "gripper_mae": 0.0
+          },
+          "projection_norm": 216.139404296875,
+          "clean_identity": {
+            "normalized_mae": 0.011323305778205395,
+            "xyz_mae_controller_units": 0.01863819546997547,
+            "rotation_geodesic_rad": 0.004252231120104544,
+            "gripper_mae": 0.0
+          }
+        },
+        {
+          "index": 26,
+          "frozen": {
+            "normalized_mae": 0.11417877674102783,
+            "xyz_mae_controller_units": 0.18521836400032043,
+            "rotation_geodesic_rad": 0.04852785336089191,
+            "gripper_mae": 0.0006557802553288639
+          },
+          "projected_shift": {
+            "normalized_mae": 0.08583619445562363,
+            "xyz_mae_controller_units": 0.12833787500858307,
+            "rotation_geodesic_rad": 0.04332320849911465,
+            "gripper_mae": 8.65707770572044e-05
+          },
+          "projection_norm": 198.26708984375,
+          "clean_identity": {
+            "normalized_mae": 0.03345126658678055,
+            "xyz_mae_controller_units": 0.04625453054904938,
+            "rotation_geodesic_rad": 0.024106485153961205,
+            "gripper_mae": 8.185704245988745e-06
+          }
+        },
+        {
+          "index": 28,
+          "frozen": {
+            "normalized_mae": 0.12387006729841232,
+            "xyz_mae_controller_units": 0.17904257774353027,
+            "rotation_geodesic_rad": 0.07684655882079525,
+            "gripper_mae": 0.0014843145618215203
+          },
+          "projected_shift": {
+            "normalized_mae": 0.10801991820335388,
+            "xyz_mae_controller_units": 0.16638444364070892,
+            "rotation_geodesic_rad": 0.05743087258083964,
+            "gripper_mae": 0.0005101462011225522
+          },
+          "projection_norm": 207.71775817871094,
+          "clean_identity": {
+            "normalized_mae": 0.022212432697415352,
+            "xyz_mae_controller_units": 0.035395391285419464,
+            "rotation_geodesic_rad": 0.010337619093187133,
+            "gripper_mae": 0.0
+          }
+        },
+        {
+          "index": 30,
+          "frozen": {
+            "normalized_mae": 0.14839127659797668,
+            "xyz_mae_controller_units": 0.16678638756275177,
+            "rotation_geodesic_rad": 0.05854371644794135,
+            "gripper_mae": 0.2819339334964752
+          },
+          "projected_shift": {
+            "normalized_mae": 0.08134691417217255,
+            "xyz_mae_controller_units": 0.10106591135263443,
+            "rotation_geodesic_rad": 0.054609441330725365,
+            "gripper_mae": 0.00015322367835324258
+          },
+          "projection_norm": 188.42910766601562,
+          "clean_identity": {
+            "normalized_mae": 0.01605139672756195,
+            "xyz_mae_controller_units": 0.014049078337848186,
+            "rotation_geodesic_rad": 0.01523915615417893,
+            "gripper_mae": 0.0
+          }
+        },
+        {
+          "index": 38,
+          "frozen": {
+            "normalized_mae": 0.1746315062046051,
+            "xyz_mae_controller_units": 0.1885208934545517,
+            "rotation_geodesic_rad": 0.07498683352349846,
+            "gripper_mae": 0.298401802778244
+          },
+          "projected_shift": {
+            "normalized_mae": 0.10353145003318787,
+            "xyz_mae_controller_units": 0.13422593474388123,
+            "rotation_geodesic_rad": 0.06512150187962983,
+            "gripper_mae": 0.0008673767442815006
+          },
+          "projection_norm": 192.02586364746094,
+          "clean_identity": {
+            "normalized_mae": 0.013734020292758942,
+            "xyz_mae_controller_units": 0.021072128787636757,
+            "rotation_geodesic_rad": 0.007403478402643975,
+            "gripper_mae": 3.477931022644043e-05
+          }
+        },
+        {
+          "index": 40,
+          "frozen": {
+            "normalized_mae": 0.07307075709104538,
+            "xyz_mae_controller_units": 0.09553762525320053,
+            "rotation_geodesic_rad": 0.05784080913632103,
+            "gripper_mae": 0.0004928112030029297
+          },
+          "projected_shift": {
+            "normalized_mae": 0.07987526804208755,
+            "xyz_mae_controller_units": 0.10087407380342484,
+            "rotation_geodesic_rad": 0.06299429083020994,
+            "gripper_mae": 0.00022437672305386513
+          },
+          "projection_norm": 202.44223022460938,
+          "clean_identity": {
+            "normalized_mae": 0.023533420637249947,
+            "xyz_mae_controller_units": 0.03925716131925583,
+            "rotation_geodesic_rad": 0.00880770993412918,
+            "gripper_mae": 9.094675078813452e-06
+          }
+        },
+        {
+          "index": 41,
+          "frozen": {
+            "normalized_mae": 0.1270369440317154,
+            "xyz_mae_controller_units": 0.14083172380924225,
+            "rotation_geodesic_rad": 0.09908079964948725,
+            "gripper_mae": 0.01006306242197752
+          },
+          "projected_shift": {
+            "normalized_mae": 0.09511977434158325,
+            "xyz_mae_controller_units": 0.11129467934370041,
+            "rotation_geodesic_rad": 0.0654747753423837,
+            "gripper_mae": 0.00040995082235895097
+          },
+          "projection_norm": 179.4107666015625,
+          "clean_identity": {
+            "normalized_mae": 0.03206346929073334,
+            "xyz_mae_controller_units": 0.043035898357629776,
+            "rotation_geodesic_rad": 0.01910729461216829,
+            "gripper_mae": 0.0
+          }
+        },
+        {
+          "index": 46,
+          "frozen": {
+            "normalized_mae": 0.10061845183372498,
+            "xyz_mae_controller_units": 0.13308529555797577,
+            "rotation_geodesic_rad": 0.07239527366063993,
+            "gripper_mae": 0.0
+          },
+          "projected_shift": {
+            "normalized_mae": 0.09207334369421005,
+            "xyz_mae_controller_units": 0.13080036640167236,
+            "rotation_geodesic_rad": 0.06288993943481819,
+            "gripper_mae": 0.0
+          },
+          "projection_norm": 195.84864807128906,
+          "clean_identity": {
+            "normalized_mae": 0.01018160954117775,
+            "xyz_mae_controller_units": 0.011925740167498589,
+            "rotation_geodesic_rad": 0.008562242581129897,
+            "gripper_mae": 0.0
+          }
+        },
+        {
+          "index": 47,
+          "frozen": {
+            "normalized_mae": 0.09844087809324265,
+            "xyz_mae_controller_units": 0.13655699789524078,
+            "rotation_geodesic_rad": 0.062472685820623264,
+            "gripper_mae": 0.001984054921194911
+          },
+          "projected_shift": {
+            "normalized_mae": 0.08164960145950317,
+            "xyz_mae_controller_units": 0.09647964686155319,
+            "rotation_geodesic_rad": 0.05971429509382006,
+            "gripper_mae": 0.0004197061061859131
+          },
+          "projection_norm": 181.1890411376953,
+          "clean_identity": {
+            "normalized_mae": 0.01305211428552866,
+            "xyz_mae_controller_units": 0.012984936125576496,
+            "rotation_geodesic_rad": 0.011255585435844746,
+            "gripper_mae": 3.019968744411017e-06
+          }
+        }
+      ]
+    }
+  },
+  "claim_scope": "privileged paired diagnostic; no closed-loop claim"
+}
