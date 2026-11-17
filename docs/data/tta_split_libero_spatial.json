@@ -80,5 +80,25 @@
     "target labels evaluation-only",
     "source calibration uses clean source states only"
   ],
-  "note": "libero_goal protocol failed clean validation (0/20); libero_spatial is the fresh validated suite"
+  "note": "libero_goal protocol failed clean validation (0/20); libero_spatial is the fresh validated suite",
+  "status": "frozen_pilot_not_confirmatory",
+  "frozen_at": "2026-11-17",
+  "protocol_doc": "docs/EVALUATION_PROTOCOL.md",
+  "tta_mode": "episodic",
+  "matrix_sha256": "d51806a933d82ac5d78e7e9ab310cbe7a888fa6ef49ceace0438df95052db205",
+  "checkpoint_sha256": "f933ab03c1a4664f7a11690645cdd5fa81788a5b98db81913024f7a23326dfe6",
+  "target_test_used_for": [
+    "exploratory_frozen_vs_first",
+    "exploratory_online"
+  ],
+  "confirmatory_test": false,
+  "retired_splits": [
+    "libero_object_heldout_20",
+    "libero_goal_lighting_2313_0_of_20"
+  ],
+  "history": [
+    "libero_object heldout consumed during development",
+    "libero_goal failed clean validation",
+    "libero_spatial pilot frozen 2026-11-17"
+  ]
 }
