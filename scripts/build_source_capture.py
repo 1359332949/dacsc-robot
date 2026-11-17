@@ -25,7 +25,11 @@ def main():
     ap.add_argument("--out", type=Path, required=True)
     ap.add_argument("--suite", default="libero_spatial")
     ap.add_argument("--lighting-id", type=int, default=2292)
-    ap.add_argument("--state-ids", required=True)
+    ap.add_argument("--state-ids", default="")
+    ap.add_argument("--source-train-ids", default="")
+    ap.add_argument("--source-val-ids", default="")
+    ap.add_argument("--source-fit-ids", default="",
+                    help="explicit estimator fit ids; must be subset of captured states")
     ap.add_argument("--seed", type=int, default=2014)
     ap.add_argument("--device", default="cuda:0")
     ap.add_argument("--render-gpu", type=int, default=0)
@@ -45,7 +49,18 @@ def main():
     states = torch.load(task["state_split"]["source_file"], weights_only=False)
     device = torch.device(args.device)
     policy = load_policy(args.checkpoint, device=device); policy.eval()
-    ids = [int(x) for x in args.state_ids.split(",")]
+    train_ids = [int(x) for x in args.source_train_ids.split(",") if x.strip()]
+    val_ids = [int(x) for x in args.source_val_ids.split(",") if x.strip()]
+    if train_ids or val_ids:
+        ids = train_ids + val_ids
+    else:
+        ids = [int(x) for x in args.state_ids.split(",") if x.strip()]
+    if args.source_fit_ids:
+        fit_ids = [int(x) for x in args.source_fit_ids.split(",") if x.strip()]
+        if not set(fit_ids) <= set(ids):
+            raise ValueError("source fit ids must be captured")
+    else:
+        fit_ids = train_ids
     features = {v: [] for v in task["variants"]["lighting"][0].get("policy_views", [])} if False else None
     arrays = {}
     records = []
@@ -73,6 +88,9 @@ def main():
     manifest = {
         "condition": f"{args.suite}_clean", "policy_views": views,
         "dev_indices": ids, "heldout_indices": [], "records": records,
+        "source_train_state_ids": train_ids,
+        "source_val_state_ids": val_ids,
+        "source_fit_state_ids": fit_ids,
         "num_states": len(ids), "split_seed": args.seed,
         "clean_bddl_sha256": hashlib.sha256(Path(base_bddl).read_bytes()).hexdigest(),
     }

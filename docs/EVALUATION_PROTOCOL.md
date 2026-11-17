@@ -129,3 +129,56 @@ Do not run 20-episode confirmatory experiments until:
 2. Frozen Clean/Shift is validated on it;
 3. only target dev is used for method selection;
 4. target test is evaluated once for the selected method.
+
+## 10. Enforcement (P0 fixes, 2026-11-17)
+
+The split is no longer advisory. The runner must be invoked with
+`--split-json` and `--role` for formal runs:
+
+```
+--split-json docs/data/tta_split_libero_spatial.json
+--role target_dev|target_test|source_fit|source_validation
+```
+
+The runner:
+
+- resolves the state list from the split role, not from `--init-indices`;
+- rejects states outside the requested role unless `--allow-role-override`
+  is passed (diagnostic only, recorded as such);
+- fits source calibration only on `source_fit_state_ids`, never on
+  `source_validation_state_ids`;
+- uses `evaluation_seeds` from the split JSON as actual episode seeds;
+- records `seed`, `split_role`, `split_sha256`, and `z0_schedule_sha256`
+  in every record and in the run payload;
+- computes hashes for checkpoint, matrix, split, BDDL, initial-state file,
+  capture manifest, and capture features; `input_files_exist` is only a
+  file-presence flag, not provenance.
+
+### Inference-path rule
+
+Frozen and First must use the same inference path in the main paired
+comparison: `sample_z` with the same normalization, precision, and cached
+`z0` schedule. `frozen_predict` is a separate official-reference check and
+must not be mixed into the First-vs-Frozen pair.
+
+### Clean retention
+
+For every target test state/seed, run both:
+
+- target Shift episode: adapter may use Shift observations only;
+- Clean twin episode in a separate environment.
+
+The Clean twin is evaluation-only. Clean images are never passed to the
+Shift adapter.
+
+### Target-test status
+
+The 20 spatial target-test states have been used for exploratory
+Frozen/First/Online comparisons. They are not confirmatory. A final claim
+requires a fresh perturbation configuration or a fresh task/suite.
+
+### Statistics
+
+Seeds are repeated measures within an initial state. Report paired
+state-level results and cluster bootstrap over initial states; do not treat
+`20 states x 3 seeds = 60` as 60 independent scenes.

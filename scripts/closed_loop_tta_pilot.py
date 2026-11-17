@@ -8,7 +8,7 @@ Protocol mirrors repos/CoRP/scripts/evaluate_libero.py:
 """
 
 from __future__ import annotations
-import argparse, json, sys, time
+import argparse, hashlib, json, sys, time
 from pathlib import Path
 from types import SimpleNamespace
 import numpy as np
@@ -33,11 +33,18 @@ from dacsc.pilot_validation import (  # noqa: E402
     ALLOWED_METHODS, parse_init_indices, validate_executed_k,
     validate_init_indices, validate_methods,
 )
+from dacsc.tta_protocol import (  # noqa: E402
+    load_split, resolve_indices, role_for_state, role_ids,
+    sha256_file as split_sha256_file, validate_split_identity,
+)
 
 
-def build_source(args, policy, manifest, z, by_state, device, language):
-    dev = [int(i) for i in manifest["dev_indices"] if int(i) in by_state]
-    fit_ids = dev[args.source_fit_start:args.source_fit_start + args.source_fit_count]
+def build_source(args, policy, manifest, z, by_state, device, language, fit_ids_override=None):
+    if fit_ids_override is None:
+        dev = [int(i) for i in manifest["dev_indices"] if int(i) in by_state]
+        fit_ids = dev[args.source_fit_start:args.source_fit_start + args.source_fit_count]
+    else:
+        fit_ids = [int(x) for x in fit_ids_override]
     if len(fit_ids) < args.source_folds:
         raise ValueError("not enough source fit states")
 
@@ -87,10 +94,13 @@ def style_transfer(patches, source_mean, source_std):
     return (patches - mean_t) / std_t * source_std + source_mean
 
 
-def build_style_stats(args, policy, manifest, z, by_state, device, language):
+def build_style_stats(args, policy, manifest, z, by_state, device, language, fit_ids_override=None):
     import numpy as np
-    dev = [int(i) for i in manifest["dev_indices"] if int(i) in by_state]
-    fit_ids = dev[args.source_fit_start:args.source_fit_start + args.source_fit_count]
+    if fit_ids_override is None:
+        dev = [int(i) for i in manifest["dev_indices"] if int(i) in by_state]
+        fit_ids = dev[args.source_fit_start:args.source_fit_start + args.source_fit_count]
+    else:
+        fit_ids = [int(x) for x in fit_ids_override]
     if len(fit_ids) != args.source_fit_count:
         raise ValueError(f"source fit returned {len(fit_ids)}, requested {args.source_fit_count}")
     views = list(manifest["policy_views"])
@@ -350,11 +360,15 @@ def main():
     ap.add_argument("--checkpoint", type=Path, required=True)
     ap.add_argument("--libero-src", type=Path, default=Path("/hy-tmp/libero_plus"))
     ap.add_argument("--libero-config", type=Path, default=Path("/hy-tmp/libero_config"))
-    ap.add_argument("--init-indices", default="3,5")
+    ap.add_argument("--init-indices", default="")
     ap.add_argument("--domain", choices=["shift", "clean"], default="shift")
     ap.add_argument("--tta-mode", choices=["episodic"], default="episodic",
                     help="episodic TTA: fresh adapter/estimator per episode")
     ap.add_argument("--suite", default="libero_object")
+    ap.add_argument("--split-json", type=Path, default=None)
+    ap.add_argument("--role", choices=["source_fit", "source_validation", "target_dev", "target_test"],
+                    default="target_test")
+    ap.add_argument("--allow-role-override", action="store_true")
     ap.add_argument("--lighting-id", type=int, default=2222)
     ap.add_argument("--methods", default="frozen,first_observation,online")
     ap.add_argument("--max-steps", type=int, default=280)
@@ -387,6 +401,9 @@ def main():
     base_bddl, shift_bddl = variant["base_bddl"], variant["env_bddl_name"]
     env_bddl = base_bddl if args.domain == "clean" else shift_bddl
     language = BDDLUtils.get_problem_info(base_bddl)["language_instruction"]
+    split = load_split(args.split_json) if args.split_json else None
+    if split is not None:
+        validate_split_identity(split, args.suite, task.get("base_task") or "", args.lighting_id)
     methods = validate_methods(args.methods)
     needs_source = any(m not in {"frozen", "frozen_predict", "paired_first"} for m in methods)
     fit_ids = []
@@ -402,25 +419,44 @@ def main():
     device = torch.device(args.device)
     policy = load_policy(args.checkpoint, device=device); policy.eval()
     if needs_source:
-        fit_ids, source, diag = build_source(args, policy, manifest, z, by_state, device, language)
+        source_fit_ids = role_ids(split, "source_fit") if split is not None else None
+        fit_ids, source, diag = build_source(args, policy, manifest, z, by_state, device,
+                                             language, fit_ids_override=source_fit_ids)
         fit_ids_style, style_mean, style_std = build_style_stats(
-            args, policy, manifest, z, by_state, device, language)
-        requested = args.source_fit_count
+            args, policy, manifest, z, by_state, device, language,
+            fit_ids_override=source_fit_ids)
+        requested = len(source_fit_ids) if source_fit_ids is not None else args.source_fit_count
         if len(fit_ids) != requested:
             raise ValueError(f"source fit returned {len(fit_ids)} states, requested {requested}")
+        if source_fit_ids is not None:
+            val = set(role_ids(split, "source_validation"))
+            if set(fit_ids) & val:
+                raise ValueError("source fit overlaps source validation")
     initial_states = torch.load(task["state_split"]["source_file"], weights_only=False)
-    init_indices = parse_init_indices(args.init_indices)
+    if split is not None:
+        init_indices = resolve_indices(split, args.role, args.init_indices,
+                                       allow_role_override=args.allow_role_override)
+        seeds = [int(x) for x in split["evaluation_seeds"]]
+    else:
+        init_indices = parse_init_indices(args.init_indices)
+        seeds = [args.seed + i + int(x) for i in init_indices
+                 for x in args.seed_offsets.split(",")]
     horizon = int(policy.action_generator.action_horizon)
     validate_executed_k(args.executed_k, horizon)
     heldout = set(int(i) for i in task["state_split"]["heldout_indices"])
+    allowed = set(role_ids(split, args.role)) if split is not None else None
     validate_init_indices(init_indices, len(initial_states), heldout, fit_ids,
-                          require_heldout=not args.allow_non_heldout)
+                          require_heldout=(split is None and not args.allow_non_heldout))
+    if allowed is not None:
+        outside = set(init_indices) - allowed
+        if outside:
+            raise ValueError(f"states outside frozen role {args.role}: {sorted(outside)}")
     records = []
-    seed_offsets = [int(x) for x in args.seed_offsets.split(",")]
     for init_index in init_indices:
         for method in methods:
-            for seed_offset in seed_offsets:
-                seed = args.seed + init_index + seed_offset
+            for seed in seeds:
+                # split evaluation seeds are actual seeds; legacy path keeps offset semantics
+                seed_offset = 0 if split is not None else seed - args.seed - init_index
                 env = OffScreenRenderEnv(bddl_file_name=env_bddl, camera_heights=256,
                                          camera_widths=256, render_gpu_device_id=args.render_gpu)
                 clean_env = None
@@ -438,13 +474,19 @@ def main():
                                       else None,
                                       z0_schedule=z0_schedule)
                     rec["init_index"] = init_index
+                    rec["seed"] = int(seed)
                     rec["seed_offset"] = seed_offset
+                    rec["split_role"] = role_for_state(split, init_index) if split is not None else None
+                    rec["z0_schedule_sha256"] = hashlib.sha256(
+                        b"".join(x.cpu().numpy().tobytes() for x in z0_schedule)
+                    ).hexdigest()
                     records.append(rec)
                     print(json.dumps(rec), flush=True)
                 finally:
                     env.close()
                     if clean_env is not None:
                         clean_env.close()
+    state_file = Path(task["state_split"]["source_file"])
     payload = {"schema": "closed_loop_tta_pilot_v2", "fit_ids": fit_ids, "domain": args.domain,
                "script_sha256": sha256_file(Path(__file__)),
                "checkpoint_sha256": sha256_file(args.checkpoint),
@@ -452,9 +494,24 @@ def main():
                "capture_features_sha256": sha256_file(args.capture / "features.npz"),
                "matrix_sha256": sha256_file(args.matrix),
                "libero_source": str(args.libero_src),
-               "provenance_complete": all([
+               "split_sha256": split_sha256_file(args.split_json) if args.split_json else None,
+               "split_role": args.role if split is not None else None,
+               "actual_seeds": seeds,
+               "source_validation_state_ids": role_ids(split, "source_validation") if split is not None else None,
+               "split_status": split.get("status") if split is not None else None,
+               "input_files_exist": all([
                    args.checkpoint.exists(), (args.capture / "manifest.json").exists(),
                    (args.capture / "features.npz").exists(), args.matrix.exists()]),
+               "provenance": {
+                   "checkpoint_sha256": sha256_file(args.checkpoint),
+                   "matrix_sha256": sha256_file(args.matrix),
+                   "split_sha256": split_sha256_file(args.split_json) if args.split_json else None,
+                   "capture_manifest_sha256": sha256_file(args.capture / "manifest.json"),
+                   "capture_features_sha256": sha256_file(args.capture / "features.npz"),
+                   "bddl_sha256": sha256_file(Path(base_bddl)),
+                   "initial_state_file_sha256": sha256_file(state_file),
+                   "training_data_provenance": "official CoRP LIBERO checkpoint; overlap not independently verified",
+               },
                "source_diagnostics": diag, "records": records,
                "methods": methods, "init_indices": init_indices,
                "claim_scope": "exploratory pilot; not statistical significance",
