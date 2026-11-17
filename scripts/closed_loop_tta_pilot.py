@@ -62,6 +62,37 @@ def make_rep(visual, base_rep):
     )
 
 
+ALLOWED_METHODS = {"frozen", "first_observation", "online"}
+
+
+def validate_methods(raw: str) -> list[str]:
+    methods = [m.strip() for m in raw.split(",") if m.strip()]
+    if not methods:
+        raise ValueError("at least one method is required")
+    if len(methods) != len(set(methods)):
+        raise ValueError(f"duplicate methods: {methods}")
+    unknown = set(methods) - ALLOWED_METHODS
+    if unknown:
+        raise ValueError(f"unknown methods: {sorted(unknown)}")
+    return methods
+
+
+def parse_init_indices(raw: str) -> list[int]:
+    values = [int(i) for i in raw.split(",") if i.strip()]
+    if not values or len(values) != len(set(values)):
+        raise ValueError("init indices must be non-empty and unique")
+    return values
+
+
+def sha256_file(path: Path) -> str:
+    import hashlib
+    h = hashlib.sha256()
+    with Path(path).open("rb") as f:
+        for block in iter(lambda: f.read(1024 * 1024), b""):
+            h.update(block)
+    return h.hexdigest()
+
+
 def run_episode(env, policy, language, initial_state, method, source, args, device, seed):
     # Mirror evaluate_libero.py's per-episode seeding.
     np.random.seed(seed)
@@ -87,6 +118,10 @@ def run_episode(env, policy, language, initial_state, method, source, args, devi
     held_correction = None
     executed_actions = []
     correction_norms = []
+    correction_stats = []
+    preclip_saturation = []
+    update_count = 0
+    application_count = 0
     generator = torch.Generator(device=device)
     generator.manual_seed(seed)
     while not success and not done and steps < args.max_steps:
@@ -98,23 +133,40 @@ def run_episode(env, policy, language, initial_state, method, source, args, devi
             pooled = visual.mean(dim=1)
             if method == "first_observation" and chunk_index == 0:
                 estimator.update(pooled, context)
+                update_count += 1
                 held_correction = estimator.applied_correction()
                 correction = held_correction
             elif method == "online":
                 estimator.update(pooled, context)
+                update_count += 1
                 correction = estimator.applied_correction()
             elif held_correction is not None:
                 correction = held_correction
         if correction is not None:
-            correction_norms.append(float(correction.norm()))
+            applied = float(correction.norm())
+            ema_norm = float(estimator.ema.norm()) if estimator.ema is not None else 0.0
+            raw_norm = (float(estimator.last_raw_residual.norm())
+                        if getattr(estimator, "last_raw_residual", None) is not None else 0.0)
+            preclip = float(estimator.alpha) * ema_norm
+            correction_norms.append(applied)
+            correction_stats.append({
+                "raw_residual_norm": raw_norm,
+                "ema_norm": ema_norm,
+                "preclip_correction_norm": preclip,
+                "applied_correction_norm": applied,
+                "clip_scale": applied / (preclip + 1e-12),
+            })
+            application_count += 1
         visual_used = visual if correction is None else visual - correction
         z0 = torch.randn((1, policy.action_generator.action_horizon,
                           policy.action_generator.action_dim),
                          device=device, dtype=torch.float32, generator=generator)
         action_norm = sample_z(policy, make_rep(visual_used, base_rep), z0)
         controller = policy.normalizer.unnormalize_action(action_norm)[0].float().cpu().numpy()
-        for k in range(min(args.executed_k, controller.shape[0])):
-            clipped = np.clip(controller[k], -1.0, 1.0)
+        for k in range(args.executed_k):
+            raw_action = controller[k]
+            preclip_saturation.append(float(np.any(np.abs(raw_action) > 1.0)))
+            clipped = np.clip(raw_action, -1.0, 1.0)
             executed_actions.append(clipped.astype(np.float32))
             obs, reward, done, info = env.step(clipped)
             steps += 1
@@ -128,7 +180,12 @@ def run_episode(env, policy, language, initial_state, method, source, args, devi
             "steps": int(steps), "chunks": int(chunk_index),
             "action_abs_mean": float(np.abs(arr).mean()) if len(arr) else None,
             "action_saturation_fraction": float((np.abs(arr) >= 1.0).mean()) if len(arr) else None,
+            "preclip_action_saturation_fraction": (float(np.mean(preclip_saturation))
+                                                    if preclip_saturation else None),
             "correction_norms": correction_norms,
+            "correction_stats": correction_stats,
+            "update_count": update_count,
+            "application_count": application_count,
             "action_sha256": hashlib.sha256(arr.tobytes()).hexdigest()}
 
 
@@ -175,8 +232,21 @@ def main():
     policy = load_policy(args.checkpoint, device=device); policy.eval()
     fit_ids, source, diag = build_source(args, policy, manifest, z, by_state, device, language)
     initial_states = torch.load(task["state_split"]["source_file"], weights_only=False)
-    methods = [m.strip() for m in args.methods.split(",") if m.strip()]
-    init_indices = [int(i) for i in args.init_indices.split(",")]
+    methods = validate_methods(args.methods)
+    init_indices = parse_init_indices(args.init_indices)
+    horizon = int(policy.action_generator.action_horizon)
+    if not 1 <= args.executed_k <= horizon:
+        raise ValueError(f"executed-k must be in [1,{horizon}]")
+    if any(i < 0 or i >= len(initial_states) for i in init_indices):
+        raise ValueError(f"init index out of range 0..{len(initial_states)-1}")
+    heldout = set(int(i) for i in task["state_split"]["heldout_indices"])
+    if not set(init_indices) <= heldout:
+        raise ValueError(f"init indices must be heldout: {sorted(set(init_indices)-heldout)}")
+    if set(init_indices) & set(fit_ids):
+        raise ValueError("init indices overlap source fit IDs")
+    requested = args.source_fit_count
+    if len(fit_ids) != requested:
+        raise ValueError(f"source fit returned {len(fit_ids)} states, requested {requested}")
     records = []
     for init_index in init_indices:
         for method in methods:
@@ -190,7 +260,16 @@ def main():
                 print(json.dumps(rec), flush=True)
             finally:
                 env.close()
-    payload = {"schema": "closed_loop_tta_pilot_v1", "fit_ids": fit_ids, "domain": args.domain,
+    payload = {"schema": "closed_loop_tta_pilot_v2", "fit_ids": fit_ids, "domain": args.domain,
+               "script_sha256": sha256_file(Path(__file__)),
+               "checkpoint_sha256": sha256_file(args.checkpoint),
+               "capture_manifest_sha256": sha256_file(args.capture / "manifest.json"),
+               "capture_features_sha256": sha256_file(args.capture / "features.npz"),
+               "matrix_sha256": sha256_file(args.matrix),
+               "libero_source": str(args.libero_src),
+               "provenance_complete": all([
+                   args.checkpoint.exists(), (args.capture / "manifest.json").exists(),
+                   (args.capture / "features.npz").exists(), args.matrix.exists()]),
                "source_diagnostics": diag, "records": records,
                "methods": methods, "init_indices": init_indices,
                "claim_scope": "exploratory pilot; not statistical significance",

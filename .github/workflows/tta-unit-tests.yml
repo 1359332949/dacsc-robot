@@ -15,6 +15,7 @@ on:
       - "tests/test_view_residual_diagnostic.py"
       - "scripts/target_only_action_validation.py"
       - "scripts/view_residual_diagnostic.py"
+      - "scripts/closed_loop_tta_pilot.py"
       - ".github/workflows/tta-unit-tests.yml"
   pull_request:
     paths:
@@ -29,6 +30,7 @@ on:
       - "tests/test_view_residual_diagnostic.py"
       - "scripts/target_only_action_validation.py"
       - "scripts/view_residual_diagnostic.py"
+      - "scripts/closed_loop_tta_pilot.py"
       - ".github/workflows/tta-unit-tests.yml"
 
 jobs:
@@ -46,7 +48,7 @@ jobs:
           python -m pip install numpy scipy
           python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
       - name: Compile TTA modules and diagnostic script
-        run: python -m py_compile dacsc/target_only_mean.py dacsc/action_guard.py dacsc/state_pairing.py dacsc/observation_render.py dacsc/libero_noise.py scripts/target_only_action_validation.py scripts/view_residual_diagnostic.py
+        run: python -m py_compile dacsc/target_only_mean.py dacsc/action_guard.py dacsc/state_pairing.py dacsc/observation_render.py dacsc/libero_noise.py scripts/target_only_action_validation.py scripts/view_residual_diagnostic.py scripts/closed_loop_tta_pilot.py
       - name: Import smoke tests
         env:
           PYTHONPATH: .
