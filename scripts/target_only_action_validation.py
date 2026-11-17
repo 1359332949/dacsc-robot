@@ -160,11 +160,20 @@ def _one_action_metrics(policy, pred_norm, ref_norm, horizon: int) -> dict:
     ref_ctrl = policy.normalizer.unnormalize_action(ref_norm).float()
     pred_np = pred_ctrl.detach().cpu().numpy()
     ref_np = ref_ctrl.detach().cpu().numpy()
+    # LIBERO receives clipped controller actions; report both raw and clipped.
+    pred_clip = np.clip(pred_np, -1.0, 1.0)
+    ref_clip = np.clip(ref_np, -1.0, 1.0)
     return {
         "normalized_mae": normalized_mae,
-        "xyz_mae_controller_units": float(np.abs(pred_np[..., :3] - ref_np[..., :3]).mean()),
-        "rotation_geodesic_rad": _rotation_geodesic(pred_np[..., 3:6], ref_np[..., 3:6]),
-        "gripper_mae": float(np.abs(pred_np[..., 6] - ref_np[..., 6]).mean()),
+        # Primary metrics: exactly what the controller receives.
+        "xyz_mae_controller_units": float(np.abs(pred_clip[..., :3] - ref_clip[..., :3]).mean()),
+        "rotation_geodesic_rad": _rotation_geodesic(pred_clip[..., 3:6], ref_clip[..., 3:6]),
+        "gripper_mae": float(np.abs(pred_clip[..., 6] - ref_clip[..., 6]).mean()),
+        # Raw metrics before clipping; diagnostic only.
+        "xyz_mae_raw": float(np.abs(pred_np[..., :3] - ref_np[..., :3]).mean()),
+        "rotation_geodesic_rad_raw": _rotation_geodesic(pred_np[..., 3:6], ref_np[..., 3:6]),
+        "gripper_mae_raw": float(np.abs(pred_np[..., 6] - ref_np[..., 6]).mean()),
+        "action_saturation_fraction": float((np.abs(pred_np) > 1.0).mean()),
     }
 
 
@@ -193,6 +202,8 @@ def main():
                     help="start index into source development states for calibration")
     ap.add_argument("--fit-count", type=int, default=10,
                     help="number of source development states for calibration")
+    ap.add_argument("--require-provenance", action="store_true",
+                    help="fail if repository/CoRP/LIBERO commits are unavailable")
     ap.add_argument("--source-folds", type=int, default=5)
     ap.add_argument("--fixed-application-confidence", type=float, default=None,
                     help="optional fixed strength for the gated Target correction")
@@ -756,6 +767,9 @@ def main():
                     "target_clean_raw_gap_norm": float(
                         (raw_target_residual - clean_raw_residual).norm()
                     ),
+                    "target_clean_gap_vector": (
+                        raw_target_residual - clean_raw_residual
+                    )[0].detach().float().cpu().tolist(),
                     "content_filter_retained_ratio": float(
                         filtered_target_residual.norm()
                         / raw_target_residual.norm().clamp_min(1e-12)
@@ -822,6 +836,10 @@ def main():
         "xyz_mae_controller_units",
         "rotation_geodesic_rad",
         "gripper_mae",
+        "xyz_mae_raw",
+        "rotation_geodesic_rad_raw",
+        "gripper_mae_raw",
+        "action_saturation_fraction",
     )
     summary = {}
     for method in method_names:
@@ -860,6 +878,28 @@ def main():
                 for metric in metric_names
             }
 
+    paired_gap = {}
+    for episode_id in sorted({r["init_index"] for r in records}):
+        episode = sorted([r for r in records if r["init_index"] == episode_id],
+                          key=lambda r: r["chunk"])
+        cosines = []
+        for a, b in zip(episode, episode[1:]):
+            va = np.asarray(a["target_clean_gap_vector"], dtype=np.float64)
+            vb = np.asarray(b["target_clean_gap_vector"], dtype=np.float64)
+            cosines.append(float(va @ vb / (np.linalg.norm(va) * np.linalg.norm(vb) + 1e-12)))
+        paired_gap[str(episode_id)] = cosines
+    paired_gap["mean_consecutive_cosine"] = float(np.mean(
+        [c for cs in paired_gap.values() for c in cs])) if any(paired_gap.values()) else None
+
+    provenance = {
+        "repository_commit": git_rev(ROOT),
+        "corp_commit": git_rev(ROOT / "repos/CoRP"),
+        "libero_commit": git_rev(Path(args.libero_src)),
+    }
+    provenance_complete = all(v is not None for v in provenance.values())
+    if args.require_provenance and not provenance_complete:
+        raise RuntimeError(f"incomplete provenance: {provenance}")
+
     payload = {
         "schema": "target_only_action_validation_v5",
         "status": "completed",
@@ -893,9 +933,8 @@ def main():
             for key, value in vars(args).items()
         },
         "script_sha256": sha256(Path(__file__)),
-        "repository_commit": git_rev(ROOT),
-        "corp_commit": git_rev(ROOT / "repos/CoRP"),
-        "libero_commit": git_rev(Path(args.libero_src)),
+        "provenance_complete": provenance_complete,
+        **provenance,
         "versions": {"python": sys.version, "platform": platform.platform(),
                       "torch": torch.__version__, "numpy": np.__version__,
                       "mujoco": getattr(__import__("mujoco"), "__version__", None)},
@@ -917,6 +956,7 @@ def main():
             "executed_policy": "Frozen CoRP",
             "executed_action_conversion": "normalizer.unnormalize_action then clip to controller range",
         },
+        "paired_gap_direction": paired_gap,
         "records": records,
         "record_count": len(records),
         "episode_count": len(per_episode_summary),
