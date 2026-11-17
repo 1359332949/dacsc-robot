@@ -206,5 +206,6 @@
     "tta_mode": "episodic",
     "episode_reset": true,
     "source_assisted": true
-  }
+  },
+  "target_test_status": "exploratory_accessed"
 }

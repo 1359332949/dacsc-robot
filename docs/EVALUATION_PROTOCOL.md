@@ -303,3 +303,16 @@ Corrected: global mean direction cosine 0.903 / orth 0.427; joint k=1 0.741 /
 0.671; joint k=3 0.855 / 0.516; joint k=5 0.894 / 0.447. Shuffled median
 0.771, p95 0.843. Thus k=1 is weak, k=3/5 show some local information but do
 not beat the global mean. The stop decision for source-paired residual remains.
+
+
+## 17. Formal execution guard (2026-11-17)
+
+Formal runs now require `--split-json` and `--role`. The legacy no-split path
+requires `--allow-legacy-diagnostic`. `target_test` is rejected unless
+`confirmatory_test=true`, `target_test_used_for` is empty, and
+`target_test_status=locked_unused`.
+
+Role seed pools: target_dev uses `screening_seeds`; target_test uses
+`evaluation_seeds`. Previous seed-2014 target-dev runs are legacy/exploratory,
+not protocol-compliant formal evidence. The current spatial target test is
+`exploratory_accessed`; it is not confirmatory.

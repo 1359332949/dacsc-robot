@@ -16,6 +16,7 @@ from corp import load_policy  # noqa: E402
 from evaluate_libero import DUMMY_ACTION, SETTLING_STEPS, policy_observation  # noqa: E402
 from target_only_action_validation import configure, visual_from_obs  # noqa: E402
 from dacsc.state_pairing import snapshot  # noqa: E402
+from dacsc.tta_protocol import load_split, role_ids, sha256_file as split_sha256_file, validate_split_identity  # noqa: E402
 
 
 def main():
@@ -30,6 +31,7 @@ def main():
     ap.add_argument("--source-val-ids", default="")
     ap.add_argument("--source-fit-ids", default="",
                     help="explicit estimator fit ids; must be subset of captured states")
+    ap.add_argument("--split-json", type=Path, default=None)
     ap.add_argument("--seed", type=int, default=2014)
     ap.add_argument("--device", default="cuda:0")
     ap.add_argument("--render-gpu", type=int, default=0)
@@ -44,17 +46,25 @@ def main():
     matrix = json.loads(args.matrix.read_text())
     task = next(b for b in matrix["base_tasks"] if b["suite"] == args.suite)
     variant = next(v for v in task["variants"]["lighting"] if v["classification_id"] == args.lighting_id)
+    split = load_split(args.split_json) if args.split_json else None
+    if split is not None:
+        validate_split_identity(split, args.suite, task.get("base_task") or "", args.lighting_id)
     base_bddl = variant["base_bddl"]
     language = BDDLUtils.get_problem_info(base_bddl)["language_instruction"]
     states = torch.load(task["state_split"]["source_file"], weights_only=False)
     device = torch.device(args.device)
     policy = load_policy(args.checkpoint, device=device); policy.eval()
-    train_ids = [int(x) for x in args.source_train_ids.split(",") if x.strip()]
-    val_ids = [int(x) for x in args.source_val_ids.split(",") if x.strip()]
-    if train_ids or val_ids:
+    if split is not None:
+        train_ids = role_ids(split, "source_fit")
+        val_ids = role_ids(split, "source_validation")
         ids = train_ids + val_ids
     else:
-        ids = [int(x) for x in args.state_ids.split(",") if x.strip()]
+        train_ids = [int(x) for x in args.source_train_ids.split(",") if x.strip()]
+        val_ids = [int(x) for x in args.source_val_ids.split(",") if x.strip()]
+        if train_ids or val_ids:
+            ids = train_ids + val_ids
+        else:
+            ids = [int(x) for x in args.state_ids.split(",") if x.strip()]
     if args.source_fit_ids:
         fit_ids = [int(x) for x in args.source_fit_ids.split(",") if x.strip()]
         if not set(fit_ids) <= set(ids):
@@ -93,6 +103,11 @@ def main():
         "source_fit_state_ids": fit_ids,
         "num_states": len(ids), "split_seed": args.seed,
         "clean_bddl_sha256": hashlib.sha256(Path(base_bddl).read_bytes()).hexdigest(),
+        "checkpoint_sha256": split_sha256_file(args.checkpoint),
+        "matrix_sha256": split_sha256_file(args.matrix),
+        "initial_state_file_sha256": split_sha256_file(Path(task["state_split"]["source_file"])),
+        "split_sha256": split_sha256_file(args.split_json) if args.split_json else None,
+        "capture_script_sha256": split_sha256_file(Path(__file__)),
     }
     (out / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
     print(json.dumps(manifest, indent=2))

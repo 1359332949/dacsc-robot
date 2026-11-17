@@ -34,8 +34,8 @@ from dacsc.pilot_validation import (  # noqa: E402
     validate_init_indices, validate_methods,
 )
 from dacsc.tta_protocol import (  # noqa: E402
-    load_split, resolve_indices, role_for_state, role_ids,
-    sha256_file as split_sha256_file, validate_split_identity,
+    assert_target_test_confirmatory, load_split, resolve_indices, role_for_state, role_ids,
+    seeds_for_role, sha256_file as split_sha256_file, validate_split_identity,
 )
 
 
@@ -73,6 +73,15 @@ def make_rep(visual, base_rep):
         pooled_language=base_rep.pooled_language,
         action_dtype=visual.dtype,
     )
+
+
+def _git_commit() -> str | None:
+    import subprocess
+    try:
+        return subprocess.check_output(["git", "-C", str(ROOT), "rev-parse", "HEAD"],
+                                       text=True).strip()
+    except Exception:
+        return None
 
 
 def sha256_file(path: Path) -> str:
@@ -421,6 +430,8 @@ def main():
     ap.add_argument("--role", choices=["source_fit", "source_validation", "target_dev", "target_test"],
                     default="target_test")
     ap.add_argument("--allow-role-override", action="store_true")
+    ap.add_argument("--allow-legacy-diagnostic", action="store_true",
+                    help="explicit opt-in to the old no-split diagnostic path")
     ap.add_argument("--lighting-id", type=int, default=2222)
     ap.add_argument("--methods", default="frozen,first_observation,online")
     ap.add_argument("--max-steps", type=int, default=280)
@@ -441,6 +452,9 @@ def main():
     ap.add_argument("--device", default="cuda:0")
     ap.add_argument("--render-gpu", type=int, default=0)
     args = ap.parse_args()
+    if args.split_json is None and not args.allow_legacy_diagnostic:
+        raise ValueError("formal experiments require --split-json and --role; "
+                         "use --allow-legacy-diagnostic only for the old diagnostic path")
     if args.out.exists():
         raise FileExistsError(f"refusing to overwrite {args.out}")
     configure(args)
@@ -456,6 +470,8 @@ def main():
     split = load_split(args.split_json) if args.split_json else None
     if split is not None:
         validate_split_identity(split, args.suite, task.get("base_task") or "", args.lighting_id)
+        if args.role == "target_test":
+            assert_target_test_confirmatory(split)
     methods = validate_methods(args.methods)
     if "frozen_predict" in methods and set(methods) != {"frozen_predict"}:
         raise ValueError("frozen_predict is an official-reference check; do not mix it "
@@ -468,6 +484,10 @@ def main():
     style_std = None
     if needs_source:
         manifest = json.loads((args.capture / "manifest.json").read_text())
+        if manifest.get("checkpoint_sha256") and manifest["checkpoint_sha256"] != sha256_file(args.checkpoint):
+            raise ValueError("capture checkpoint hash does not match runner checkpoint")
+        if args.split_json and manifest.get("split_sha256") and manifest["split_sha256"] != split_sha256_file(args.split_json):
+            raise ValueError("capture split hash does not match runner split")
         z = np.load(args.capture / "features.npz")
         rows = [r for r in manifest["records"] if r.get("compare_pass")]
         by_state = {int(r["index"]): int(r["feature_row"]) for r in rows}
@@ -491,7 +511,7 @@ def main():
     if split is not None:
         init_indices = resolve_indices(split, args.role, args.init_indices,
                                        allow_role_override=args.allow_role_override)
-        seeds = [int(x) for x in split["evaluation_seeds"]]
+        seeds = seeds_for_role(split, args.role)
     else:
         init_indices = parse_init_indices(args.init_indices)
         seeds = [args.seed + i + int(x) for i in init_indices
@@ -502,7 +522,7 @@ def main():
     allowed = set(role_ids(split, args.role)) if split is not None else None
     validate_init_indices(init_indices, len(initial_states), heldout, fit_ids,
                           require_heldout=(split is None and not args.allow_non_heldout))
-    if allowed is not None:
+    if allowed is not None and not args.allow_role_override:
         outside = set(init_indices) - allowed
         if outside:
             raise ValueError(f"states outside frozen role {args.role}: {sorted(outside)}")
@@ -552,6 +572,8 @@ def main():
                "split_sha256": split_sha256_file(args.split_json) if args.split_json else None,
                "split_role": args.role if split is not None else None,
                "actual_seeds": seeds,
+               "seed_pool_role": "screening_seeds" if split is not None and args.role == "target_dev" else "evaluation_seeds" if split is not None else "legacy_offsets",
+               "target_test_status": split.get("target_test_status") if split is not None else None,
                "source_validation_state_ids": role_ids(split, "source_validation") if split is not None else None,
                "split_status": split.get("status") if split is not None else None,
                "input_files_exist": all([

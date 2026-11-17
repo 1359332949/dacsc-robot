@@ -15,6 +15,7 @@ ROLES = {
     "target_dev": "target_dev_state_ids",
     "target_test": "target_test_state_ids",
 }
+TARGET_TEST_STATUSES = {"locked_unused", "exploratory_accessed", "retired", "confirmatory_evaluated"}
 
 
 def sha256_file(path: Path) -> str:
@@ -25,7 +26,7 @@ def sha256_file(path: Path) -> str:
     return h.hexdigest()
 
 
-def load_split(path: Path) -> dict:
+def load_split(path: Path, require_confirmatory: bool = False) -> dict:
     split = json.loads(Path(path).read_text())
     if split.get("schema") not in {"tta_split_v1", "tta_split_v2"}:
         raise ValueError(f"unsupported split schema: {split.get('schema')}")
@@ -46,7 +47,35 @@ def load_split(path: Path) -> dict:
         seeds = [int(x) for x in split.get(key, [])]
         if not seeds or len(seeds) != len(set(seeds)):
             raise ValueError(f"split {key} must be non-empty and unique")
+    used = list(split.get("target_test_used_for") or [])
+    status = split.get("target_test_status")
+    if status is None:
+        status = "exploratory_accessed" if (used or not split.get("confirmatory_test", False)) else "locked_unused"
+    if status not in TARGET_TEST_STATUSES:
+        raise ValueError(f"unknown target_test_status: {status}")
+    split["target_test_status"] = status
+    if require_confirmatory:
+        assert_target_test_confirmatory(split)
     return split
+
+
+def assert_target_test_confirmatory(split: dict) -> None:
+    if not split.get("confirmatory_test", False):
+        raise ValueError("split has no confirmatory target test (confirmatory_test=false)")
+    if split.get("target_test_used_for"):
+        raise ValueError("target test was already used for exploratory analysis")
+    if split.get("target_test_status") != "locked_unused":
+        raise ValueError(f"target test status is {split.get('target_test_status')}, not locked_unused")
+
+
+def seeds_for_role(split: dict, role: str) -> list[int]:
+    if role == "target_dev":
+        return [int(x) for x in split["screening_seeds"]]
+    return [int(x) for x in split["evaluation_seeds"]]
+
+
+def resolve_execution_seeds(split: dict, role: str) -> list[int]:
+    return seeds_for_role(split, role)
 
 
 def role_ids(split: dict, role: str) -> list[int]:
