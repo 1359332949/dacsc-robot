@@ -1,0 +1,319 @@
+{
+  "schema": "trajectory_observability_audit_v1",
+  "n_episodes": 20,
+  "n_states": 10,
+  "domains": [
+    "clean",
+    "shift"
+  ],
+  "success": {
+    "clean:True": 9,
+    "shift:False": 6,
+    "shift:True": 4,
+    "clean:False": 1
+  },
+  "steps_min": 81,
+  "steps_max": 220,
+  "steps_median": 115.5,
+  "n_state8_counts": {
+    "9": 3,
+    "19": 7,
+    "7": 1,
+    "10": 3,
+    "11": 2,
+    "8": 4
+  },
+  "phase_counts": {
+    "clean:success": 9,
+    "shift:lift_failed": 1,
+    "shift:success": 4,
+    "shift:no_lift": 5,
+    "clean:no_lift": 1
+  },
+  "required_fields": {
+    "per_step_rgb": false,
+    "per_step_visual_feature": false,
+    "per_step_proprio": true,
+    "per_chunk_index": true,
+    "policy_output_action": true,
+    "executed_action": true,
+    "raw_preclip_action": false,
+    "replan_timestamp": false,
+    "final_success": true,
+    "failure_event_time": false,
+    "task_phase_label": "proxy_only",
+    "object_ground_truth": false,
+    "contact_state": false
+  },
+  "available": {
+    "per_step_action": true,
+    "per_chunk_state8": true,
+    "per_step_state8": false
+  },
+  "split": {
+    "source_fit": 10,
+    "source_validation": 10,
+    "target_dev": 10,
+    "target_test": 20,
+    "target_test_status": "already used for exploratory comparisons; not confirmatory"
+  },
+  "source_pairs": {
+    "n_states": 20,
+    "scope": "first chunk only; used source_fit + source_validation; known-perturbation calibration"
+  },
+  "monitor_training_ready": false,
+  "blockers": [
+    "no per-step RGB or frozen visual features",
+    "no per-step executed-vs-policy action record",
+    "no raw pre-clip action",
+    "no failure-event timestamp; only final success",
+    "task phase is a heuristic proxy, not a verified label",
+    "no object/contact ground truth",
+    "no recovery-interface validation",
+    "target test already exploratory; no fresh confirmatory set"
+  ],
+  "warning_lead_time_computable": false,
+  "recovery_interface_tested": false,
+  "episodes": [
+    {
+      "state_id": 34,
+      "domain": "clean",
+      "seed": 2014,
+      "success": true,
+      "steps": 101,
+      "n_actions": 101,
+      "n_state8": 9,
+      "n_chunks_observed": 9,
+      "states_per_action": 0.0891089108910891,
+      "failure_phase": "success"
+    },
+    {
+      "state_id": 34,
+      "domain": "shift",
+      "seed": 2014,
+      "success": false,
+      "steps": 220,
+      "n_actions": 220,
+      "n_state8": 19,
+      "n_chunks_observed": 19,
+      "states_per_action": 0.08636363636363636,
+      "failure_phase": "lift_failed"
+    },
+    {
+      "state_id": 35,
+      "domain": "clean",
+      "seed": 2014,
+      "success": true,
+      "steps": 81,
+      "n_actions": 81,
+      "n_state8": 7,
+      "n_chunks_observed": 7,
+      "states_per_action": 0.08641975308641975,
+      "failure_phase": "success"
+    },
+    {
+      "state_id": 35,
+      "domain": "shift",
+      "seed": 2014,
+      "success": true,
+      "steps": 115,
+      "n_actions": 115,
+      "n_state8": 10,
+      "n_chunks_observed": 10,
+      "states_per_action": 0.08695652173913043,
+      "failure_phase": "success"
+    },
+    {
+      "state_id": 36,
+      "domain": "clean",
+      "seed": 2014,
+      "success": true,
+      "steps": 114,
+      "n_actions": 114,
+      "n_state8": 10,
+      "n_chunks_observed": 10,
+      "states_per_action": 0.08771929824561403,
+      "failure_phase": "success"
+    },
+    {
+      "state_id": 36,
+      "domain": "shift",
+      "seed": 2014,
+      "success": true,
+      "steps": 131,
+      "n_actions": 131,
+      "n_state8": 11,
+      "n_chunks_observed": 11,
+      "states_per_action": 0.08396946564885496,
+      "failure_phase": "success"
+    },
+    {
+      "state_id": 37,
+      "domain": "clean",
+      "seed": 2014,
+      "success": true,
+      "steps": 92,
+      "n_actions": 92,
+      "n_state8": 8,
+      "n_chunks_observed": 8,
+      "states_per_action": 0.08695652173913043,
+      "failure_phase": "success"
+    },
+    {
+      "state_id": 37,
+      "domain": "shift",
+      "seed": 2014,
+      "success": false,
+      "steps": 220,
+      "n_actions": 220,
+      "n_state8": 19,
+      "n_chunks_observed": 19,
+      "states_per_action": 0.08636363636363636,
+      "failure_phase": "no_lift"
+    },
+    {
+      "state_id": 39,
+      "domain": "clean",
+      "seed": 2014,
+      "success": true,
+      "steps": 99,
+      "n_actions": 99,
+      "n_state8": 9,
+      "n_chunks_observed": 9,
+      "states_per_action": 0.09090909090909091,
+      "failure_phase": "success"
+    },
+    {
+      "state_id": 39,
+      "domain": "shift",
+      "seed": 2014,
+      "success": false,
+      "steps": 220,
+      "n_actions": 220,
+      "n_state8": 19,
+      "n_chunks_observed": 19,
+      "states_per_action": 0.08636363636363636,
+      "failure_phase": "no_lift"
+    },
+    {
+      "state_id": 43,
+      "domain": "clean",
+      "seed": 2014,
+      "success": true,
+      "steps": 89,
+      "n_actions": 89,
+      "n_state8": 8,
+      "n_chunks_observed": 8,
+      "states_per_action": 0.0898876404494382,
+      "failure_phase": "success"
+    },
+    {
+      "state_id": 43,
+      "domain": "shift",
+      "seed": 2014,
+      "success": false,
+      "steps": 220,
+      "n_actions": 220,
+      "n_state8": 19,
+      "n_chunks_observed": 19,
+      "states_per_action": 0.08636363636363636,
+      "failure_phase": "no_lift"
+    },
+    {
+      "state_id": 44,
+      "domain": "clean",
+      "seed": 2014,
+      "success": true,
+      "steps": 102,
+      "n_actions": 102,
+      "n_state8": 9,
+      "n_chunks_observed": 9,
+      "states_per_action": 0.08823529411764706,
+      "failure_phase": "success"
+    },
+    {
+      "state_id": 44,
+      "domain": "shift",
+      "seed": 2014,
+      "success": false,
+      "steps": 220,
+      "n_actions": 220,
+      "n_state8": 19,
+      "n_chunks_observed": 19,
+      "states_per_action": 0.08636363636363636,
+      "failure_phase": "no_lift"
+    },
+    {
+      "state_id": 45,
+      "domain": "clean",
+      "seed": 2014,
+      "success": true,
+      "steps": 116,
+      "n_actions": 116,
+      "n_state8": 10,
+      "n_chunks_observed": 10,
+      "states_per_action": 0.08620689655172414,
+      "failure_phase": "success"
+    },
+    {
+      "state_id": 45,
+      "domain": "shift",
+      "seed": 2014,
+      "success": true,
+      "steps": 87,
+      "n_actions": 87,
+      "n_state8": 8,
+      "n_chunks_observed": 8,
+      "states_per_action": 0.09195402298850575,
+      "failure_phase": "success"
+    },
+    {
+      "state_id": 48,
+      "domain": "clean",
+      "seed": 2014,
+      "success": true,
+      "steps": 96,
+      "n_actions": 96,
+      "n_state8": 8,
+      "n_chunks_observed": 8,
+      "states_per_action": 0.08333333333333333,
+      "failure_phase": "success"
+    },
+    {
+      "state_id": 48,
+      "domain": "shift",
+      "seed": 2014,
+      "success": false,
+      "steps": 220,
+      "n_actions": 220,
+      "n_state8": 19,
+      "n_chunks_observed": 19,
+      "states_per_action": 0.08636363636363636,
+      "failure_phase": "no_lift"
+    },
+    {
+      "state_id": 49,
+      "domain": "clean",
+      "seed": 2014,
+      "success": false,
+      "steps": 220,
+      "n_actions": 220,
+      "n_state8": 19,
+      "n_chunks_observed": 19,
+      "states_per_action": 0.08636363636363636,
+      "failure_phase": "no_lift"
+    },
+    {
+      "state_id": 49,
+      "domain": "shift",
+      "seed": 2014,
+      "success": true,
+      "steps": 124,
+      "n_actions": 124,
+      "n_state8": 11,
+      "n_chunks_observed": 11,
+      "states_per_action": 0.08870967741935484,
+      "failure_phase": "success"
+    }
+  ]
+}
