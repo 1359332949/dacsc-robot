@@ -261,3 +261,31 @@ A weak +1 gain is not evidence of a working method. Source-state retrieval does
 not predict the target first-chunk correction well enough even though the
 privileged action oracle has large headroom. This rules out the simplest
 source-paired-kNN version, not the whole action-correction hypothesis.
+
+## 15. First-chunk residual identifiability audit (offline, 2026-11-17)
+
+Pairing sanity: source and target Clean/Shift state8 max abs diff = 0.0.
+Only 8D proprio was checked; full MuJoCo/camera pairing is not yet audited.
+
+Source residual mean norm: 0.508; target residual mean norm: 0.455;
+source vs target mean cosine: 0.993.
+
+Direction audit against privileged target residual:
+
+| predictor | cosine median | orthogonal error median |
+|---|---:|---:|
+| zero | 0.000 | 1.000 |
+| global source mean | **0.903** | **0.427** |
+| source kNN k=1 | 0.843 | 0.538 |
+| source kNN k=3 | 0.869 | 0.495 |
+| shuffled source pairs | 0.703 | 0.710 |
+
+The residual is mostly a shared global direction; kNN adds noise relative to
+the global mean. But a 0.427 orthogonal error is substantial, and a high
+cosine does not imply closed-loop benefit: the global-mean first-chunk
+correction scored 4/10 vs Frozen 5/10 and kNN 6/10.
+
+Therefore the source-paired first-chunk residual route is stopped in this
+form. Commit 282104c is reclassified as **known-perturbation paired simulator
+calibration**, not target-only TTA. No new regressor, no k/alpha search, no
+20-episode run.
