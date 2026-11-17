@@ -77,7 +77,31 @@ def sha256_file(path: Path) -> str:
     return h.hexdigest()
 
 
-def run_episode(env, clean_env, policy, language, initial_state, method, source, args, device, seed):
+def style_transfer(patches, source_mean, source_std):
+    mean_t = patches.mean(dim=1, keepdim=True)
+    std_t = patches.std(dim=1, keepdim=True, unbiased=False).clamp_min(1e-6)
+    return (patches - mean_t) / std_t * source_std + source_mean
+
+
+def build_style_stats(args, policy, manifest, z, by_state, device, language):
+    import numpy as np
+    dev = [int(i) for i in manifest["dev_indices"] if int(i) in by_state]
+    fit_ids = dev[args.source_fit_start:args.source_fit_start + args.source_fit_count]
+    if len(fit_ids) != args.source_fit_count:
+        raise ValueError(f"source fit returned {len(fit_ids)}, requested {args.source_fit_count}")
+    views = list(manifest["policy_views"])
+    mean, std = {}, {}
+    for view in views:
+        vals = torch.stack([
+            torch.as_tensor(z[f"clean_{view}"][by_state[s]], dtype=torch.float32)
+            for s in fit_ids
+        ])
+        mean[view] = vals.mean(dim=(0, 1), keepdim=True).to(device)
+        std[view] = vals.std(dim=(0, 1), unbiased=False, keepdim=True).clamp_min(1e-6).to(device)
+    return fit_ids, mean, std
+
+
+def run_episode(env, clean_env, policy, language, initial_state, method, source, args, device, seed, style_stats=None):
     # Mirror evaluate_libero.py's per-episode seeding.
     np.random.seed(seed)
     torch.manual_seed(seed)
@@ -112,12 +136,31 @@ def run_episode(env, clean_env, policy, language, initial_state, method, source,
     generator.manual_seed(seed)
     while not success and not done and steps < args.max_steps:
         policy_obs = policy_observation(obs, language, policy)
-        visual, base_rep = visual_from_obs(policy, policy_obs)
+        if method != "style_norm":
+            visual, base_rep = visual_from_obs(policy, policy_obs)
         context = policy_obs["state"].detach().cpu().numpy()
         correction = None
+        style_used = False
         paired_gap_norm = None
         shift_clean_image_diff = None
-        if method == "paired_first" and chunk_index == 0:
+        if method == "style_norm":
+            if style_stats is None:
+                raise RuntimeError("style_norm requires source style statistics")
+            visual_raw, base_rep, patches = visual_from_obs(policy, policy_obs, return_patches=True)
+            source_mean, source_std = style_stats
+            norm_patches = {v: style_transfer(patches[v], source_mean[v], source_std[v])
+                            for v in patches}
+            _, pooled_lang = policy.representation_extractor.language_encoder([language])
+            visual = policy.representation_extractor.cross_attention_resampler(
+                norm_patches, pooled_lang)
+            rep = SimpleNamespace(
+                tokens=torch.cat([visual, base_rep.tokens[:, visual.shape[1]:]], dim=1),
+                pooled_language=base_rep.pooled_language,
+                action_dtype=visual.dtype,
+            )
+            visual_used = visual
+            style_used = True
+        elif method == "paired_first" and chunk_index == 0:
             if clean_env is None:
                 raise RuntimeError("paired_first requires a clean twin environment")
             clean_obs = render_policy_observation(clean_env, snapshot(env))
@@ -170,7 +213,8 @@ def run_episode(env, clean_env, policy, language, initial_state, method, source,
                 "clip_scale": applied / (preclip + 1e-12),
             })
             application_count += 1
-        visual_used = visual if correction is None else visual - correction
+        if not style_used:
+            visual_used = visual if correction is None else visual - correction
         z0 = torch.randn((1, policy.action_generator.action_horizon,
                           policy.action_generator.action_dim),
                          device=device, dtype=torch.float32, generator=generator)
@@ -248,6 +292,8 @@ def main():
     device = torch.device(args.device)
     policy = load_policy(args.checkpoint, device=device); policy.eval()
     fit_ids, source, diag = build_source(args, policy, manifest, z, by_state, device, language)
+    fit_ids_style, style_mean, style_std = build_style_stats(
+        args, policy, manifest, z, by_state, device, language)
     initial_states = torch.load(task["state_split"]["source_file"], weights_only=False)
     methods = validate_methods(args.methods)
     init_indices = parse_init_indices(args.init_indices)
@@ -269,7 +315,8 @@ def main():
                                                camera_widths=256, render_gpu_device_id=args.render_gpu)
             try:
                 rec = run_episode(env, clean_env, policy, language, initial_states[init_index],
-                                  method, source, args, device, args.seed + init_index)
+                                  method, source, args, device, args.seed + init_index,
+                                  (style_mean, style_std) if method == "style_norm" else None)
                 rec["init_index"] = init_index
                 records.append(rec)
                 print(json.dumps(rec), flush=True)

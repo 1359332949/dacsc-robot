@@ -119,7 +119,7 @@ def sample_z(policy, representation, z0):
 
 
 @torch.no_grad()
-def visual_from_obs(policy, obs):
+def visual_from_obs(policy, obs, return_patches: bool = False):
     batch = prepare_observation(
         obs,
         config=policy.config,
@@ -142,6 +142,8 @@ def visual_from_obs(policy, obs):
         pooled_language=pooled_language,
         action_dtype=visual.dtype,
     )
+    if return_patches:
+        return visual, representation, patch_dict
     return visual, representation
 
 
