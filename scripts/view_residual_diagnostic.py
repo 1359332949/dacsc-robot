@@ -38,7 +38,11 @@ def main():
     ap.add_argument("--out", type=Path, required=True)
     ap.add_argument("--fit-start", type=int, default=10)
     ap.add_argument("--fit-count", type=int, default=10)
+    ap.add_argument("--include-heldout", action="store_true",
+                    help="include held-out states in mechanism statistics; default is Dev only")
     args = ap.parse_args()
+    if args.out.exists():
+        raise FileExistsError(f"refusing to overwrite existing result: {args.out}")
     manifest = json.loads((args.capture / "manifest.json").read_text())
     z = np.load(args.capture / "features.npz")
     rows = [r for r in manifest["records"] if r.get("compare_pass")]
@@ -50,18 +54,35 @@ def main():
     if len(fit_ids) < 2:
         raise RuntimeError("not enough source fit states")
     remaining_dev = [i for i in dev if i not in set(fit_ids)]
-    eval_ids = remaining_dev + held
+    analysis_ids = list(dev) if not args.include_heldout else list(dev) + list(held)
+    feature_rows = [row[s] for s in valid]
+    if len(set(feature_rows)) != len(feature_rows):
+        raise RuntimeError("duplicate feature_row mapping")
+    if any(i < 0 or i >= len(z["state8"]) for i in feature_rows):
+        raise RuntimeError("feature_row out of range")
     state8 = z["state8"]
     source_x = state8[[row[i] for i in fit_ids]]
     source_mean = source_x.mean(axis=0)
     source_scale = source_x.std(axis=0); source_scale[source_scale < 1e-8] = 1.0
+    import hashlib, subprocess
+    def sha(path):
+        return hashlib.sha256(Path(path).read_bytes()).hexdigest()
     out = {"capture": str(args.capture), "fit_ids": fit_ids,
            "remaining_dev": remaining_dev, "heldout_ids": held,
+           "analysis_ids": analysis_ids, "include_heldout": args.include_heldout,
+           "script_sha256": sha(Path(__file__)),
+           "capture_manifest_sha256": sha(args.capture / "manifest.json"),
+           "capture_features_sha256": sha(args.capture / "features.npz"),
+           "repository_commit": subprocess.check_output(
+               ["git", "-C", str(ROOT), "rev-parse", "HEAD"], text=True).strip(),
            "views": {}, "source_coverage": {}}
     for view in manifest["policy_views"]:
         clean = z[f"clean_{view}"]; shift = z[f"shift_{view}"]
-        # [N, P, D] with P=patch tokens, D=feature channels.
-        diff = shift - clean
+        if clean.shape != shift.shape or clean.ndim != 3:
+            raise RuntimeError(f"bad feature shape for {view}: {clean.shape} vs {shift.shape}")
+        # Align NPZ rows through feature_row; never assume state index == row.
+        analysis_rows = [row[s] for s in analysis_ids]
+        diff = shift[analysis_rows] - clean[analysis_rows]
         per_state = diff.mean(axis=1)                  # [N,D] for direction
         # Patch-token statistics: retain P axis.
         token_mean = diff.mean(axis=0)                 # [P,D]
@@ -79,12 +100,14 @@ def main():
             "residual_norm_std": float(np.linalg.norm(per_state, axis=1).std()),
             "across_state_cosine_mean": float(np.mean(cosines)),
             "across_state_cosine_std": float(np.std(cosines)),
-            "top10_patch_energy_fraction": float(np.sort(token_energy)[-10:].sum() /
-                                                 (token_energy.sum() + 1e-12)),
+            "top10_patch_norm_fraction": float(np.sort(token_energy)[-10:].sum() /
+                                               (token_energy.sum() + 1e-12)),
+            "top10_patch_energy_fraction": float(np.sort(token_energy ** 2)[-10:].sum() /
+                                                 ((token_energy ** 2).sum() + 1e-12)),
             "top10_patch_stability_fraction": float(np.sort(stable_score)[-10:].sum() /
                                                     (stable_score.sum() + 1e-12)),
-            "patch_energy_mean": float(token_energy.mean()),
-            "patch_energy_max": float(token_energy.max()),
+            "patch_norm_mean": float(token_energy.mean()),
+            "patch_norm_max": float(token_energy.max()),
         }
     # Source coverage using the actual V5 fit set and source-fit normalization.
     loo = []

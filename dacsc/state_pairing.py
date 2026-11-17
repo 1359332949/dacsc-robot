@@ -107,6 +107,14 @@ def model_signature(env) -> dict[str, Any]:
         "actuator_biasprm": _arr(m.actuator_biasprm).round(12).tolist(),
         "actuator_gear": _arr(m.actuator_gear).round(12).tolist(),
         "actuator_ctrlrange": _arr(m.actuator_ctrlrange).round(12).tolist(),
+        "opt_timestep": float(m.opt.timestep),
+        "opt_gravity": _arr(m.opt.gravity).round(12).tolist(),
+        "opt_integrator": int(m.opt.integrator),
+        "opt_solver": int(m.opt.solver),
+        "opt_iterations": int(m.opt.iterations),
+        "opt_tolerance": float(m.opt.tolerance),
+        "opt_cone": int(m.opt.cone),
+        "opt_jacobian": int(getattr(m.opt, "jacobian", -1)),
     }
 
 
@@ -129,7 +137,9 @@ def model_compatible(a: dict[str, Any], b: dict[str, Any], strict_bodies: bool =
                     "geom_solref", "geom_solimp", "geom_margin", "geom_gap",
                     "body_mass", "body_inertia", "dof_damping", "dof_frictionloss",
                     "dof_armature", "actuator_gainprm", "actuator_biasprm",
-                    "actuator_gear", "actuator_ctrlrange"):
+                    "actuator_gear", "actuator_ctrlrange", "opt_timestep", "opt_gravity",
+                    "opt_integrator", "opt_solver", "opt_iterations", "opt_tolerance",
+                    "opt_cone", "opt_jacobian"):
             checks[key] = sa.get(key) == sb.get(key)
     return {"checks": checks, "pass": all(checks.values())}
 
@@ -198,7 +208,11 @@ def compare(a: dict[str, Any], b: dict[str, Any], tol: dict[str, float] | None =
                                    optional_empty=key in OPTIONAL_EMPTY_OK)
     for key in EXTRA_STATE_ARRAYS:
         checks[key] = _array_check(key, a.get(key), b.get(key), tol, optional_empty=True)
-    checks["time"] = _array_check("time", [a.get("time")], [b.get("time")], tol)
+    if a.get("time") is None or b.get("time") is None:
+        checks["time"] = {"present": False, "shape": False, "finite": False,
+                          "error": float("inf"), "pass": False}
+    else:
+        checks["time"] = _array_check("time", [a["time"]], [b["time"]], tol)
     checks["body_xpos"] = _array_check("body_xpos", a.get("body_xpos"), b.get("body_xpos"), tol)
     checks["eef_pos"] = _array_check("eef_pos", a.get("eef_pos"), b.get("eef_pos"), tol)
     # quaternion equivalence (q == -q)

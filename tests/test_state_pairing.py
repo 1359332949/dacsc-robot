@@ -74,6 +74,19 @@ class TestStatePairing(unittest.TestCase):
         b = make_snap(); b["cam_pos"] = [[1, 0, 1]]
         self.assertFalse(camera_compare(make_snap(), b, expect_equal=False)["pass"])
 
+    def test_missing_time_fails_closed(self):
+        a = make_snap(); b = make_snap(); a.pop("time")
+        out = compare(a, b)
+        self.assertFalse(out["all_pass"])
+        self.assertFalse(out["checks"]["time"]["pass"])
+
+    def test_model_option_mismatch_fails(self):
+        a = make_snap(); b = make_snap()
+        a["model_signature"] = {"nq": 3, "opt_timestep": 0.002, "opt_gravity": [0, 0, -9.81]}
+        b["model_signature"] = {"nq": 3, "opt_timestep": 0.004, "opt_gravity": [0, 0, -9.81]}
+        self.assertFalse(model_compatible(a, b, strict_bodies=False,
+                                          strict_physics=True)["pass"])
+
     def test_extra_state_field_mismatch_fails(self):
         a = make_snap(); b = make_snap()
         a["ctrl"] = [0.0, 0.0]; b["ctrl"] = [0.0, 1.0]

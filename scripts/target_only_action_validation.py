@@ -358,18 +358,23 @@ def main():
                 clean_obs = render_policy_observation(env_clean, state_snapshot)
                 clean_policy_obs = policy_observation(clean_obs, language, policy)
                 visual_clean, rep_clean = visual_from_obs(policy, clean_policy_obs)
-                restored_compare = compare(state_snapshot, snapshot(env_clean))
+                restored_snapshot = snapshot(env_clean)
+                restored_compare = compare(state_snapshot, restored_snapshot)
+                runtime_camera_compare = camera_compare(
+                    state_snapshot, restored_snapshot, expect_equal=True)
                 state_error = float(
                     (clean_policy_obs["state"] - shift_policy_obs["state"]).abs().max()
                 )
                 # Twin rendering can differ at the 1e-3 proprio level after
                 # executed chunks because the controller state is not part of
                 # the MuJoCo snapshot; reject only larger mismatches and log it.
-                if state_error > 5e-3 or not restored_compare["all_pass"]:
+                if (state_error > 5e-3 or not restored_compare["all_pass"]
+                        or not runtime_camera_compare["pass"]):
                     raise RuntimeError(
                         f"Clean/Shift state mismatch at state={init_index}, "
                         f"chunk={chunk_index}: proprio={state_error}, "
-                        f"compare={restored_compare['checks']}"
+                        f"compare={restored_compare['checks']}, "
+                        f"camera={runtime_camera_compare['checks']}"
                     )
 
                 context = shift_policy_obs["state"].detach().cpu().numpy()
@@ -588,6 +593,7 @@ def main():
                     "z0_seed": z0_seed,
                     "state_pair_max_abs_error": state_error,
                     "state_restore_compare_pass": bool(restored_compare["all_pass"]),
+                    "runtime_camera_compare_pass": bool(runtime_camera_compare["pass"]),
                     "camera_invariance_pass": bool(camera_invariance["pass"]),
                     "frozen": action_metrics(policy, action_frozen, action_clean),
                     "paired_fit_mean": action_metrics(policy, action_paired, action_clean),
