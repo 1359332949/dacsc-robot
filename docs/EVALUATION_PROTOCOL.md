@@ -202,3 +202,17 @@ phase-dependent action change. This is evidence against further global
 visual-statistics adaptation, not evidence for a new adapter.
 
 The diagnostic is exploratory: one seed, 10 states, one Lighting ID.
+
+## 12. Execution-horizon diagnostic (target dev, 2026-11-17)
+
+Frozen, same 10 target-dev states, seed 2014:
+
+| E | Clean | Shift |
+|---|---:|---:|
+| 6 | 6/10 | 4/10 |
+| 12 | 9/10 | 5/10 |
+
+Shorter chunking is worse on both conditions in this pilot. There is no
+evidence here that the Lighting failure is caused by an overly long
+execution horizon; E=12 remains the frozen execution setting. This is a
+single seed, 10 states, one Lighting ID, so it is diagnostic only.
