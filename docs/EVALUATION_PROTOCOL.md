@@ -232,5 +232,12 @@ recoverable when the action interface receives clean-view actions. This
 supports action-level adaptation as a research direction; it does not provide
 a deployable target-only signal.
 
-A first-chunk-only action oracle was queued but the server became unreachable;
-do not report it until rerun.
+First-chunk-only action oracle: **9/10**. Only chunk 0 is queried on the
+Clean twin; all later chunks use the Shift policy. This shows that the
+critical action error is decided in the first chunk, not spread over the
+whole episode.
+
+First-chunk action differences are concentrated in end-effector x/y
+(mean |delta| ~0.08-0.16); gripper dims are nearly unchanged in chunk 0.
+A deployable method would need to predict this early translation correction
+without access to the Clean twin.
