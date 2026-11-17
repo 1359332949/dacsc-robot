@@ -151,6 +151,22 @@ def run_episode(env, clean_env, policy, language, initial_state, method, source,
     selection_records = []
     while not success and not done and steps < args.max_steps:
         policy_obs = policy_observation(obs, language, policy)
+        if method == "frozen_predict":
+            with torch.autocast(device_type=device.type, dtype=torch.bfloat16,
+                                enabled=(args.precision == "bf16" and device.type == "cuda")):
+                controller = policy.predict(policy_obs)[0].float().cpu().numpy()
+            for k in range(args.executed_k):
+                raw_action = controller[k]
+                preclip_saturation.append(float(np.any(np.abs(raw_action) > 1.0)))
+                clipped = np.clip(raw_action, -1.0, 1.0)
+                executed_actions.append(clipped.astype(np.float32))
+                obs, reward, done, info = env.step(clipped)
+                steps += 1
+                success = is_success(env, info, reward, done)
+                if success or done or steps >= args.max_steps:
+                    break
+            chunk_index += 1
+            continue
         if method == "leftover_select":
             if style_stats is None:
                 raise RuntimeError("leftover_select requires source style statistics")
@@ -328,6 +344,7 @@ def main():
     ap.add_argument("--executed-k", type=int, default=12)
     ap.add_argument("--alpha", type=float, default=1.0)
     ap.add_argument("--style-strength", type=float, default=1.0)
+    ap.add_argument("--precision", choices=["fp32", "bf16"], default="fp32")
     ap.add_argument("--clip-norm", type=float, default=20.0)
     ap.add_argument("--l2", type=float, default=10.0)
     ap.add_argument("--content-rank", type=int, default=2)
