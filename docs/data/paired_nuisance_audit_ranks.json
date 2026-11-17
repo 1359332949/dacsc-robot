@@ -1,0 +1,243 @@
+{
+  "pair_integrity": {
+    "n_dev": 30,
+    "n_heldout": 19,
+    "compare_pass_only": true
+  },
+  "stages": {},
+  "views": {
+    "agentview": {
+      "dino_patch_pooled": {
+        "by_rank": {
+          "2": {
+            "style_energy_fraction_dev": 0.07294939492399041,
+            "style_energy_fraction_heldout": 0.03498365714025851,
+            "content_leakage_clean_dev": 0.2617935252643039,
+            "rank": 2,
+            "dim": 384
+          },
+          "4": {
+            "style_energy_fraction_dev": 0.14793121003045845,
+            "style_energy_fraction_heldout": 0.09961857939406284,
+            "content_leakage_clean_dev": 0.43327969314097003,
+            "rank": 4,
+            "dim": 384
+          },
+          "8": {
+            "style_energy_fraction_dev": 0.2746628475207616,
+            "style_energy_fraction_heldout": 0.20615664109873186,
+            "content_leakage_clean_dev": 0.612451962203407,
+            "rank": 8,
+            "dim": 384
+          },
+          "16": {
+            "style_energy_fraction_dev": 0.3725314715119955,
+            "style_energy_fraction_heldout": 0.2858499674135883,
+            "content_leakage_clean_dev": 0.7912284512001344,
+            "rank": 16,
+            "dim": 384
+          },
+          "32": {
+            "style_energy_fraction_dev": 0.4927700147893872,
+            "style_energy_fraction_heldout": 0.4186210744572897,
+            "content_leakage_clean_dev": 0.8905596959925213,
+            "rank": 30,
+            "dim": 384
+          },
+          "64": {
+            "style_energy_fraction_dev": 0.4927700147893872,
+            "style_energy_fraction_heldout": 0.4186210744572897,
+            "content_leakage_clean_dev": 0.8905596959925213,
+            "rank": 30,
+            "dim": 384
+          }
+        },
+        "style_cosine_dev": {
+          "n": 30,
+          "mean": 0.7975680214574257,
+          "min": 0.6199414197430451
+        },
+        "style_cosine_heldout": {
+          "n": 19,
+          "mean": 0.8069994320072386,
+          "min": 0.6397508252840002
+        }
+      },
+      "resampler_pooled": {
+        "by_rank": {
+          "2": {
+            "style_energy_fraction_dev": 0.3702148291598049,
+            "style_energy_fraction_heldout": 0.35207340837682893,
+            "content_leakage_clean_dev": 0.16106863852396727,
+            "rank": 2,
+            "dim": 768
+          },
+          "4": {
+            "style_energy_fraction_dev": 0.39826036581383895,
+            "style_energy_fraction_heldout": 0.3800701158109981,
+            "content_leakage_clean_dev": 0.3047953325626263,
+            "rank": 4,
+            "dim": 768
+          },
+          "8": {
+            "style_energy_fraction_dev": 0.4894934402504866,
+            "style_energy_fraction_heldout": 0.4698441801950661,
+            "content_leakage_clean_dev": 0.489013497504584,
+            "rank": 8,
+            "dim": 768
+          },
+          "16": {
+            "style_energy_fraction_dev": 0.6537829154181255,
+            "style_energy_fraction_heldout": 0.629447332003096,
+            "content_leakage_clean_dev": 0.7256280839718259,
+            "rank": 16,
+            "dim": 768
+          },
+          "32": {
+            "style_energy_fraction_dev": 0.7621667803469616,
+            "style_energy_fraction_heldout": 0.7479841827097327,
+            "content_leakage_clean_dev": 0.8670706317773992,
+            "rank": 30,
+            "dim": 768
+          },
+          "64": {
+            "style_energy_fraction_dev": 0.7621667803469616,
+            "style_energy_fraction_heldout": 0.7479841827097327,
+            "content_leakage_clean_dev": 0.8670706317773992,
+            "rank": 30,
+            "dim": 768
+          }
+        },
+        "style_cosine_dev": {
+          "n": 30,
+          "mean": 0.9316294498184952,
+          "min": 0.829250527019827
+        },
+        "style_cosine_heldout": {
+          "n": 19,
+          "mean": 0.9357148462002739,
+          "min": 0.8717316438067981
+        }
+      }
+    },
+    "eye_in_hand": {
+      "dino_patch_pooled": {
+        "by_rank": {
+          "2": {
+            "style_energy_fraction_dev": 0.13054330558930213,
+            "style_energy_fraction_heldout": 0.10119142060022646,
+            "content_leakage_clean_dev": 0.2084088151456098,
+            "rank": 2,
+            "dim": 384
+          },
+          "4": {
+            "style_energy_fraction_dev": 0.19124883640482035,
+            "style_energy_fraction_heldout": 0.15103335488838926,
+            "content_leakage_clean_dev": 0.30185084595317757,
+            "rank": 4,
+            "dim": 384
+          },
+          "8": {
+            "style_energy_fraction_dev": 0.2380322375544992,
+            "style_energy_fraction_heldout": 0.19532376954943761,
+            "content_leakage_clean_dev": 0.42895117311847575,
+            "rank": 8,
+            "dim": 384
+          },
+          "16": {
+            "style_energy_fraction_dev": 0.4170716233995323,
+            "style_energy_fraction_heldout": 0.37296565890207173,
+            "content_leakage_clean_dev": 0.5916098322114782,
+            "rank": 16,
+            "dim": 384
+          },
+          "32": {
+            "style_energy_fraction_dev": 0.49227284186287656,
+            "style_energy_fraction_heldout": 0.4447678374123613,
+            "content_leakage_clean_dev": 0.6772372020915267,
+            "rank": 30,
+            "dim": 384
+          },
+          "64": {
+            "style_energy_fraction_dev": 0.49227284186287656,
+            "style_energy_fraction_heldout": 0.4447678374123613,
+            "content_leakage_clean_dev": 0.6772372020915267,
+            "rank": 30,
+            "dim": 384
+          }
+        },
+        "style_cosine_dev": {
+          "n": 30,
+          "mean": 0.8676975896699416,
+          "min": 0.6880132390296645
+        },
+        "style_cosine_heldout": {
+          "n": 19,
+          "mean": 0.8840245220702249,
+          "min": 0.7481327812423532
+        }
+      },
+      "resampler_pooled": {
+        "by_rank": {
+          "2": {
+            "style_energy_fraction_dev": 0.42544785864115936,
+            "style_energy_fraction_heldout": 0.36932075012187676,
+            "content_leakage_clean_dev": 0.2852460307226023,
+            "rank": 2,
+            "dim": 768
+          },
+          "4": {
+            "style_energy_fraction_dev": 0.51267542939559,
+            "style_energy_fraction_heldout": 0.4382955881238203,
+            "content_leakage_clean_dev": 0.41945150775331913,
+            "rank": 4,
+            "dim": 768
+          },
+          "8": {
+            "style_energy_fraction_dev": 0.5691116767305098,
+            "style_energy_fraction_heldout": 0.49255375413426605,
+            "content_leakage_clean_dev": 0.5933071400448232,
+            "rank": 8,
+            "dim": 768
+          },
+          "16": {
+            "style_energy_fraction_dev": 0.7629895946484174,
+            "style_energy_fraction_heldout": 0.7110881881079981,
+            "content_leakage_clean_dev": 0.7426800302294134,
+            "rank": 16,
+            "dim": 768
+          },
+          "32": {
+            "style_energy_fraction_dev": 0.8561955665292605,
+            "style_energy_fraction_heldout": 0.8228077296288334,
+            "content_leakage_clean_dev": 0.8625435632395253,
+            "rank": 30,
+            "dim": 768
+          },
+          "64": {
+            "style_energy_fraction_dev": 0.8561955665292605,
+            "style_energy_fraction_heldout": 0.8228077296288334,
+            "content_leakage_clean_dev": 0.8625435632395253,
+            "rank": 30,
+            "dim": 768
+          }
+        },
+        "style_cosine_dev": {
+          "n": 30,
+          "mean": 0.7931491526286556,
+          "min": 0.34368270674514806
+        },
+        "style_cosine_heldout": {
+          "n": 19,
+          "mean": 0.8214632754178754,
+          "min": 0.5461311930034914
+        }
+      }
+    }
+  },
+  "interpretation": {
+    "style_high_content_low": "possible separable nuisance subspace",
+    "content_high": "style subspace overlaps normal task variation",
+    "heldout_low": "subspace does not generalize"
+  }
+}
