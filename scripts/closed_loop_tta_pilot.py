@@ -1,0 +1,206 @@
+"""Minimal closed-loop pilot: execute each method's own actions.
+
+Protocol mirrors repos/CoRP/scripts/evaluate_libero.py:
+- 10 settling steps with DUMMY_ACTION
+- policy observations via the released policy_observation()
+- action chunks unnormalized, then np.clip(action, -1, 1)
+- official is_success(env, info, reward, done)
+"""
+
+from __future__ import annotations
+import argparse, json, sys, time
+from pathlib import Path
+from types import SimpleNamespace
+import numpy as np
+import torch
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(ROOT / "repos/CoRP"))
+sys.path.insert(0, str(ROOT / "repos/CoRP/scripts"))
+
+from evaluate_libero import (  # noqa: E402
+    DUMMY_ACTION, MAX_STEPS, SETTLING_STEPS, is_success, policy_observation,
+)
+from corp import load_policy  # noqa: E402
+from dacsc.target_only_mean import (  # noqa: E402
+    ConditionalSourceBaseline, TargetOnlyMeanEstimator, fit_source_calibration,
+)
+from target_only_action_validation import configure, sample_z, visual_from_obs  # noqa: E402
+
+
+def build_source(args, policy, manifest, z, by_state, device, language):
+    dev = [int(i) for i in manifest["dev_indices"] if int(i) in by_state]
+    fit_ids = dev[args.source_fit_start:args.source_fit_start + args.source_fit_count]
+    if len(fit_ids) < args.source_folds:
+        raise ValueError("not enough source fit states")
+
+    def captured_pooled(state):
+        patches = {
+            view: torch.as_tensor(z[f"clean_{view}"][by_state[state]], device=device,
+                                  dtype=torch.float32).unsqueeze(0)
+            for view in manifest["policy_views"]
+        }
+        _, pooled = policy.representation_extractor.language_encoder([language])
+        visual = policy.representation_extractor.cross_attention_resampler(patches, pooled)
+        return visual.mean(dim=1)[0].detach().float().cpu().numpy()
+
+    context = np.stack([z["state8"][by_state[s]] for s in fit_ids])
+    clean = np.stack([captured_pooled(s) for s in fit_ids])
+    source, _, _, diag = fit_source_calibration(
+        context, clean, l2=args.l2, content_rank=args.content_rank,
+        folds=args.source_folds, seed=args.seed,
+    )
+    return fit_ids, source, diag
+
+
+def make_rep(visual, base_rep):
+    return SimpleNamespace(
+        tokens=torch.cat([visual, base_rep.tokens[:, visual.shape[1]:]], dim=1),
+        pooled_language=base_rep.pooled_language,
+        action_dtype=visual.dtype,
+    )
+
+
+def run_episode(env, policy, language, initial_state, method, source, args, device, seed):
+    # Mirror evaluate_libero.py's per-episode seeding.
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(seed)
+    env.seed(seed)
+    env.reset()
+    obs = env.set_init_state(initial_state)
+    done = False
+    success = False
+    steps = 0
+    for _ in range(SETTLING_STEPS):
+        obs, reward, done, info = env.step(DUMMY_ACTION)
+        success = is_success(env, info, reward, done)
+        if success or done:
+            break
+    estimator = None
+    if method != "frozen":
+        estimator = TargetOnlyMeanEstimator(
+            source, momentum=0.5, alpha=args.alpha, clip_norm=args.clip_norm)
+    chunk_index = 0
+    held_correction = None
+    executed_actions = []
+    correction_norms = []
+    generator = torch.Generator(device=device)
+    generator.manual_seed(seed)
+    while not success and not done and steps < args.max_steps:
+        policy_obs = policy_observation(obs, language, policy)
+        visual, base_rep = visual_from_obs(policy, policy_obs)
+        context = policy_obs["state"].detach().cpu().numpy()
+        correction = None
+        if estimator is not None:
+            pooled = visual.mean(dim=1)
+            if method == "first_observation" and chunk_index == 0:
+                estimator.update(pooled, context)
+                held_correction = estimator.applied_correction()
+                correction = held_correction
+            elif method == "online":
+                estimator.update(pooled, context)
+                correction = estimator.applied_correction()
+            elif held_correction is not None:
+                correction = held_correction
+        if correction is not None:
+            correction_norms.append(float(correction.norm()))
+        visual_used = visual if correction is None else visual - correction
+        z0 = torch.randn((1, policy.action_generator.action_horizon,
+                          policy.action_generator.action_dim),
+                         device=device, dtype=torch.float32, generator=generator)
+        action_norm = sample_z(policy, make_rep(visual_used, base_rep), z0)
+        controller = policy.normalizer.unnormalize_action(action_norm)[0].float().cpu().numpy()
+        for k in range(min(args.executed_k, controller.shape[0])):
+            clipped = np.clip(controller[k], -1.0, 1.0)
+            executed_actions.append(clipped.astype(np.float32))
+            obs, reward, done, info = env.step(clipped)
+            steps += 1
+            success = is_success(env, info, reward, done)
+            if success or done or steps >= args.max_steps:
+                break
+        chunk_index += 1
+    import hashlib
+    arr = np.stack(executed_actions) if executed_actions else np.zeros((0, 7), np.float32)
+    return {"method": method, "init_index": None, "success": bool(success),
+            "steps": int(steps), "chunks": int(chunk_index),
+            "action_abs_mean": float(np.abs(arr).mean()) if len(arr) else None,
+            "action_saturation_fraction": float((np.abs(arr) >= 1.0).mean()) if len(arr) else None,
+            "correction_norms": correction_norms,
+            "action_sha256": hashlib.sha256(arr.tobytes()).hexdigest()}
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--matrix", type=Path, required=True)
+    ap.add_argument("--capture", type=Path, required=True)
+    ap.add_argument("--out", type=Path, required=True)
+    ap.add_argument("--checkpoint", type=Path, required=True)
+    ap.add_argument("--libero-src", type=Path, default=Path("/hy-tmp/libero_plus"))
+    ap.add_argument("--libero-config", type=Path, default=Path("/hy-tmp/libero_config"))
+    ap.add_argument("--init-indices", default="3,5")
+    ap.add_argument("--domain", choices=["shift", "clean"], default="shift")
+    ap.add_argument("--methods", default="frozen,first_observation,online")
+    ap.add_argument("--max-steps", type=int, default=280)
+    ap.add_argument("--executed-k", type=int, default=12)
+    ap.add_argument("--alpha", type=float, default=1.0)
+    ap.add_argument("--clip-norm", type=float, default=20.0)
+    ap.add_argument("--l2", type=float, default=10.0)
+    ap.add_argument("--content-rank", type=int, default=2)
+    ap.add_argument("--source-folds", type=int, default=5)
+    ap.add_argument("--source-fit-start", type=int, default=10)
+    ap.add_argument("--source-fit-count", type=int, default=10)
+    ap.add_argument("--seed", type=int, default=20261117)
+    ap.add_argument("--device", default="cuda:0")
+    ap.add_argument("--render-gpu", type=int, default=0)
+    args = ap.parse_args()
+    if args.out.exists():
+        raise FileExistsError(f"refusing to overwrite {args.out}")
+    configure(args)
+    from libero.libero.envs import OffScreenRenderEnv
+    import libero.libero.envs.bddl_utils as BDDLUtils
+    matrix = json.loads(args.matrix.read_text())
+    task = next(b for b in matrix["base_tasks"] if b["suite"] == "libero_object")
+    variant = next(v for v in task["variants"]["lighting"] if v["classification_id"] == 2222)
+    base_bddl, shift_bddl = variant["base_bddl"], variant["env_bddl_name"]
+    env_bddl = base_bddl if args.domain == "clean" else shift_bddl
+    language = BDDLUtils.get_problem_info(base_bddl)["language_instruction"]
+    manifest = json.loads((args.capture / "manifest.json").read_text())
+    z = np.load(args.capture / "features.npz")
+    rows = [r for r in manifest["records"] if r.get("compare_pass")]
+    by_state = {int(r["index"]): int(r["feature_row"]) for r in rows}
+    device = torch.device(args.device)
+    policy = load_policy(args.checkpoint, device=device); policy.eval()
+    fit_ids, source, diag = build_source(args, policy, manifest, z, by_state, device, language)
+    initial_states = torch.load(task["state_split"]["source_file"], weights_only=False)
+    methods = [m.strip() for m in args.methods.split(",") if m.strip()]
+    init_indices = [int(i) for i in args.init_indices.split(",")]
+    records = []
+    for init_index in init_indices:
+        for method in methods:
+            env = OffScreenRenderEnv(bddl_file_name=env_bddl, camera_heights=256,
+                                     camera_widths=256, render_gpu_device_id=args.render_gpu)
+            try:
+                rec = run_episode(env, policy, language, initial_states[init_index],
+                                  method, source, args, device, args.seed + init_index)
+                rec["init_index"] = init_index
+                records.append(rec)
+                print(json.dumps(rec), flush=True)
+            finally:
+                env.close()
+    payload = {"schema": "closed_loop_tta_pilot_v1", "fit_ids": fit_ids, "domain": args.domain,
+               "source_diagnostics": diag, "records": records,
+               "methods": methods, "init_indices": init_indices,
+               "claim_scope": "exploratory pilot; not statistical significance",
+               "protocol": {"settling_steps": SETTLING_STEPS, "max_steps": args.max_steps,
+                            "executed_k": args.executed_k, "action_clip": [-1, 1],
+                            "success": "official is_success"}}
+    args.out.parent.mkdir(parents=True, exist_ok=True)
+    args.out.write_text(json.dumps(payload, indent=2) + "\n")
+    print(json.dumps(payload, indent=2))
+
+
+if __name__ == "__main__":
+    main()
