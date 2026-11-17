@@ -114,7 +114,14 @@ def score_leftover(candidate_actions, prev_leftover, executed_k):
     return None
 
 
-def run_episode(env, clean_env, policy, language, initial_state, method, source, args, device, seed, style_stats=None):
+def make_z0_schedule(seed, count, horizon, dim, device):
+    gen = torch.Generator(device=device); gen.manual_seed(seed)
+    return [torch.randn((1, horizon, dim), device=device, dtype=torch.float32,
+                        generator=gen) for _ in range(count)]
+
+
+def run_episode(env, clean_env, policy, language, initial_state, method, source, args, device, seed,
+                style_stats=None, z0_schedule=None):
     # Mirror evaluate_libero.py's per-episode seeding.
     np.random.seed(seed)
     torch.manual_seed(seed)
@@ -177,9 +184,12 @@ def run_episode(env, clean_env, policy, language, initial_state, method, source,
             _, pooled_lang = policy.representation_extractor.language_encoder([language])
             visual_mean = policy.representation_extractor.cross_attention_resampler(
                 mean_patches, pooled_lang)
-            z0 = torch.randn((1, policy.action_generator.action_horizon,
-                              policy.action_generator.action_dim),
-                             device=device, dtype=torch.float32, generator=generator)
+            if z0_schedule is not None and chunk_index < len(z0_schedule):
+                z0 = z0_schedule[chunk_index]
+            else:
+                z0 = torch.randn((1, policy.action_generator.action_horizon,
+                                  policy.action_generator.action_dim),
+                                 device=device, dtype=torch.float32, generator=generator)
             candidates = []
             for visual_candidate in (visual_raw, visual_mean):
                 rep_candidate = make_rep(visual_candidate, base_rep)
@@ -293,9 +303,12 @@ def run_episode(env, clean_env, policy, language, initial_state, method, source,
             application_count += 1
         if not style_used:
             visual_used = visual if correction is None else visual - correction
-        z0 = torch.randn((1, policy.action_generator.action_horizon,
-                          policy.action_generator.action_dim),
-                         device=device, dtype=torch.float32, generator=generator)
+        if z0_schedule is not None and chunk_index < len(z0_schedule):
+            z0 = z0_schedule[chunk_index]
+        else:
+            z0 = torch.randn((1, policy.action_generator.action_horizon,
+                              policy.action_generator.action_dim),
+                             device=device, dtype=torch.float32, generator=generator)
         action_norm = sample_z(policy, make_rep(visual_used, base_rep), z0)
         controller = policy.normalizer.unnormalize_action(action_norm)[0].float().cpu().numpy()
         for k in range(args.executed_k):
@@ -415,11 +428,15 @@ def main():
                     clean_env = OffScreenRenderEnv(bddl_file_name=base_bddl, camera_heights=256,
                                                    camera_widths=256, render_gpu_device_id=args.render_gpu)
                 try:
+                    z0_schedule = make_z0_schedule(
+                        seed, 64, int(policy.action_generator.action_horizon),
+                        int(policy.action_generator.action_dim), device)
                     rec = run_episode(env, clean_env, policy, language, initial_states[init_index],
                                       method, source, args, device, seed,
                                       (style_mean, style_std)
                                       if method in ("style_norm", "style_mean", "leftover_select")
-                                      else None)
+                                      else None,
+                                      z0_schedule=z0_schedule)
                     rec["init_index"] = init_index
                     rec["seed_offset"] = seed_offset
                     records.append(rec)
