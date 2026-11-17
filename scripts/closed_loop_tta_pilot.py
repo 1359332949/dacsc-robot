@@ -27,6 +27,8 @@ from dacsc.target_only_mean import (  # noqa: E402
     ConditionalSourceBaseline, TargetOnlyMeanEstimator, fit_source_calibration,
 )
 from target_only_action_validation import configure, sample_z, visual_from_obs  # noqa: E402
+from dacsc.observation_render import render_policy_observation  # noqa: E402
+from dacsc.state_pairing import snapshot  # noqa: E402
 
 
 def build_source(args, policy, manifest, z, by_state, device, language):
@@ -62,7 +64,7 @@ def make_rep(visual, base_rep):
     )
 
 
-ALLOWED_METHODS = {"frozen", "first_observation", "online"}
+ALLOWED_METHODS = {"frozen", "first_observation", "paired_first", "online"}
 
 
 def validate_methods(raw: str) -> list[str]:
@@ -93,7 +95,7 @@ def sha256_file(path: Path) -> str:
     return h.hexdigest()
 
 
-def run_episode(env, policy, language, initial_state, method, source, args, device, seed):
+def run_episode(env, clean_env, policy, language, initial_state, method, source, args, device, seed):
     # Mirror evaluate_libero.py's per-episode seeding.
     np.random.seed(seed)
     torch.manual_seed(seed)
@@ -102,6 +104,7 @@ def run_episode(env, policy, language, initial_state, method, source, args, devi
     env.seed(seed)
     env.reset()
     obs = env.set_init_state(initial_state)
+    initial_image_mean = float(np.asarray(obs["agentview_image"]).mean())
     done = False
     success = False
     steps = 0
@@ -119,6 +122,7 @@ def run_episode(env, policy, language, initial_state, method, source, args, devi
     executed_actions = []
     correction_norms = []
     correction_stats = []
+    paired_gap_stats = []
     preclip_saturation = []
     update_count = 0
     application_count = 0
@@ -129,6 +133,30 @@ def run_episode(env, policy, language, initial_state, method, source, args, devi
         visual, base_rep = visual_from_obs(policy, policy_obs)
         context = policy_obs["state"].detach().cpu().numpy()
         correction = None
+        paired_gap_norm = None
+        shift_clean_image_diff = None
+        if method == "paired_first" and chunk_index == 0:
+            if clean_env is None:
+                raise RuntimeError("paired_first requires a clean twin environment")
+            clean_obs = render_policy_observation(clean_env, snapshot(env))
+            shift_clean_image_diff = float(np.abs(
+                np.asarray(obs["agentview_image"], dtype=np.float32)
+                - np.asarray(clean_obs["agentview_image"], dtype=np.float32)).mean())
+            clean_policy_obs = policy_observation(clean_obs, language, policy)
+            clean_visual, _ = visual_from_obs(policy, clean_policy_obs)
+            paired_gap = visual - clean_visual
+            paired_gap_norm = float(paired_gap.norm())
+            # Use the same amplitude rule as the estimator: L2 clip then alpha.
+            paired_scale = min(1.0, float(args.clip_norm) / (paired_gap_norm + 1e-12))
+            held_correction = float(args.alpha) * paired_scale * paired_gap
+            correction = held_correction
+            paired_gap_stats.append({
+                "gap_norm": paired_gap_norm,
+                "preclip_correction_norm": paired_gap_norm,
+                "applied_correction_norm": float(held_correction.norm()),
+                "clip_scale": paired_scale,
+                "shift_clean_image_mean_abs_diff": shift_clean_image_diff,
+            })
         if estimator is not None:
             pooled = visual.mean(dim=1)
             if method == "first_observation" and chunk_index == 0:
@@ -176,7 +204,10 @@ def run_episode(env, policy, language, initial_state, method, source, args, devi
         chunk_index += 1
     import hashlib
     arr = np.stack(executed_actions) if executed_actions else np.zeros((0, 7), np.float32)
-    return {"method": method, "init_index": None, "success": bool(success),
+    return {"method": method, "init_index": None,
+            "initial_agentview_mean": initial_image_mean,
+            "paired_first": method == "paired_first",
+            "success": bool(success),
             "steps": int(steps), "chunks": int(chunk_index),
             "action_abs_mean": float(np.abs(arr).mean()) if len(arr) else None,
             "action_saturation_fraction": float((np.abs(arr) >= 1.0).mean()) if len(arr) else None,
@@ -184,6 +215,7 @@ def run_episode(env, policy, language, initial_state, method, source, args, devi
                                                     if preclip_saturation else None),
             "correction_norms": correction_norms,
             "correction_stats": correction_stats,
+            "paired_gap_stats": paired_gap_stats,
             "update_count": update_count,
             "application_count": application_count,
             "action_sha256": hashlib.sha256(arr.tobytes()).hexdigest()}
@@ -252,14 +284,20 @@ def main():
         for method in methods:
             env = OffScreenRenderEnv(bddl_file_name=env_bddl, camera_heights=256,
                                      camera_widths=256, render_gpu_device_id=args.render_gpu)
+            clean_env = None
+            if method == "paired_first":
+                clean_env = OffScreenRenderEnv(bddl_file_name=base_bddl, camera_heights=256,
+                                               camera_widths=256, render_gpu_device_id=args.render_gpu)
             try:
-                rec = run_episode(env, policy, language, initial_states[init_index],
+                rec = run_episode(env, clean_env, policy, language, initial_states[init_index],
                                   method, source, args, device, args.seed + init_index)
                 rec["init_index"] = init_index
                 records.append(rec)
                 print(json.dumps(rec), flush=True)
             finally:
                 env.close()
+                if clean_env is not None:
+                    clean_env.close()
     payload = {"schema": "closed_loop_tta_pilot_v2", "fit_ids": fit_ids, "domain": args.domain,
                "script_sha256": sha256_file(Path(__file__)),
                "checkpoint_sha256": sha256_file(args.checkpoint),
