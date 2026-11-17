@@ -432,6 +432,8 @@ def main():
     ap.add_argument("--allow-role-override", action="store_true")
     ap.add_argument("--allow-legacy-diagnostic", action="store_true",
                     help="explicit opt-in to the old no-split diagnostic path")
+    ap.add_argument("--target-test-admission", action="store_true",
+                    help="Frozen-only baseline admission for a locked target test")
     ap.add_argument("--lighting-id", type=int, default=2222)
     ap.add_argument("--methods", default="frozen,first_observation,online")
     ap.add_argument("--max-steps", type=int, default=280)
@@ -462,17 +464,23 @@ def main():
     import libero.libero.envs.bddl_utils as BDDLUtils
     matrix = json.loads(args.matrix.read_text())
     task = next(b for b in matrix["base_tasks"] if b["suite"] == args.suite)
+    methods = validate_methods(args.methods)
+    split = load_split(args.split_json) if args.split_json else None
+    if split is not None:
+        if args.role == "target_dev":
+            args.lighting_id = int(split.get("target_dev_lighting_id", args.lighting_id))
+        elif args.role == "target_test":
+            args.lighting_id = int(split.get("target_test_lighting_id", args.lighting_id))
+        validate_split_identity(split, args.suite, task.get("base_task") or "", args.lighting_id)
+        if args.role == "target_test" and not args.target_test_admission:
+            assert_target_test_confirmatory(split)
+        if args.target_test_admission and methods != ["frozen_predict"]:
+            raise ValueError("--target-test-admission is Frozen-only")
     variant = next(v for v in task["variants"]["lighting"]
                    if v["classification_id"] == args.lighting_id)
     base_bddl, shift_bddl = variant["base_bddl"], variant["env_bddl_name"]
     env_bddl = base_bddl if args.domain == "clean" else shift_bddl
     language = BDDLUtils.get_problem_info(base_bddl)["language_instruction"]
-    split = load_split(args.split_json) if args.split_json else None
-    if split is not None:
-        validate_split_identity(split, args.suite, task.get("base_task") or "", args.lighting_id)
-        if args.role == "target_test":
-            assert_target_test_confirmatory(split)
-    methods = validate_methods(args.methods)
     if "frozen_predict" in methods and set(methods) != {"frozen_predict"}:
         raise ValueError("frozen_predict is an official-reference check; do not mix it "
                          "with sample_z methods in one paired run")
@@ -574,6 +582,7 @@ def main():
                "actual_seeds": seeds,
                "seed_pool_role": "screening_seeds" if split is not None and args.role == "target_dev" else "evaluation_seeds" if split is not None else "legacy_offsets",
                "target_test_status": split.get("target_test_status") if split is not None else None,
+               "target_test_admission": bool(args.target_test_admission),
                "source_validation_state_ids": role_ids(split, "source_validation") if split is not None else None,
                "split_status": split.get("status") if split is not None else None,
                "input_files_exist": all([
