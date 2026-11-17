@@ -39,3 +39,25 @@
 The current `libero_spatial` split is a pilot only. Any target-dev run now uses
 screening seeds, so previous target-dev numbers collected with seed 2014 are
 legacy/exploratory and must not be mixed with protocol-compliant runs.
+
+## Perturbation-level pilot split (2026-11-17)
+
+New pilot split: `docs/data/tta_split_libero_spatial_perturbation.json`
+
+- source: Clean;
+- target development: Lighting 2292, 10 dev states;
+- target test: Lighting 2312, 20 heldout states;
+- perturbation config 2312 was never used before;
+- target test states were used under 2292 exploratory test, so this is not a
+  fully fresh state test; it is a fresh perturbation configuration.
+
+The split status is `admission_accessed` after a Frozen-only baseline run. It
+is not confirmatory and cannot be used for method selection.
+
+Protocol-compliant target-dev Frozen (screening seeds 7777/8888/9999):
+11/30.
+
+Target-test admission on Lighting 2312, Frozen, seed 2014:
+Clean 18/20, Shift 1/20.
+
+These are admission/baseline numbers, not a TTA result.

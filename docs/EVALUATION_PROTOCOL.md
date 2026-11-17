@@ -316,3 +316,21 @@ Role seed pools: target_dev uses `screening_seeds`; target_test uses
 `evaluation_seeds`. Previous seed-2014 target-dev runs are legacy/exploratory,
 not protocol-compliant formal evidence. The current spatial target test is
 `exploratory_accessed`; it is not confirmatory.
+
+
+## 18. Perturbation-level pilot split
+
+`docs/data/tta_split_libero_spatial_perturbation.json` separates perturbation
+configurations:
+
+- target dev: Lighting 2292, dev states 34,35,36,37,39,43,44,45,48,49;
+- target test: Lighting 2312, heldout states 3,5,7,9,11,12,15,16,19,23,24,
+  26,28,30,38,40,41,42,46,47.
+
+The target-test perturbation config 2312 was not used before. The test state
+IDs were used under 2292 exploratory evaluation, so this is a perturbation-
+level holdout, not a fully fresh state holdout. Status after Frozen admission:
+`admission_accessed`; not confirmatory.
+
+Admission baseline (Frozen, seed 2014): Clean 18/20, Shift 1/20. Target-dev
+Frozen with screening seeds: 11/30. These are not TTA method results.

@@ -15,7 +15,8 @@ ROLES = {
     "target_dev": "target_dev_state_ids",
     "target_test": "target_test_state_ids",
 }
-TARGET_TEST_STATUSES = {"locked_unused", "exploratory_accessed", "retired", "confirmatory_evaluated"}
+TARGET_TEST_STATUSES = {"locked_unused", "admission_accessed", "exploratory_accessed",
+                       "retired", "confirmatory_evaluated"}
 
 
 def sha256_file(path: Path) -> str:
@@ -100,8 +101,11 @@ def validate_split_identity(split: dict, suite: str, task: str, lighting_id: int
         raise ValueError(f"split suite {split.get('task_suite')} != {suite}")
     if task and split.get("task") and split.get("task") != task:
         raise ValueError(f"split task {split.get('task')} != {task}")
-    if int(split.get("lighting_id", -1)) != int(lighting_id):
-        raise ValueError(f"split lighting {split.get('lighting_id')} != {lighting_id}")
+    expected = [split.get("lighting_id"), split.get("target_dev_lighting_id"),
+                split.get("target_test_lighting_id")]
+    expected = {int(x) for x in expected if x is not None}
+    if expected and int(lighting_id) not in expected:
+        raise ValueError(f"split lighting {sorted(expected)} does not include {lighting_id}")
 
 
 def role_for_state(split: dict, state_id: int) -> str | None:
