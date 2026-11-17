@@ -61,3 +61,27 @@ Target-test admission on Lighting 2312, Frozen, seed 2014:
 Clean 18/20, Shift 1/20.
 
 These are admission/baseline numbers, not a TTA result.
+
+## Protocol-compliant target-dev comparison (screening seeds)
+
+Lighting 2292, 10 target-dev states, seeds 7777/8888/9999:
+
+| method | success | paired gain/loss |
+|---|---:|---:|
+| Frozen | 11/30 | — |
+| First-observation | 8/30 | gain 5 / loss 8 |
+
+First-observation is negative under protocol-compliant seeds. This supersedes
+the earlier seed-2014 target-dev positive signal.
+
+## Target-test admission (Lighting 2312, seed 2014)
+
+Frozen only, 20 heldout states, new perturbation config:
+
+| condition | success |
+|---|---:|
+| Clean | 18/20 |
+| Shift | 1/20 |
+
+This is an admission baseline, not a TTA result. The split status is
+`admission_accessed`; it is not confirmatory.

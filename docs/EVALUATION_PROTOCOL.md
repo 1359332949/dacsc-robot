@@ -334,3 +334,18 @@ level holdout, not a fully fresh state holdout. Status after Frozen admission:
 
 Admission baseline (Frozen, seed 2014): Clean 18/20, Shift 1/20. Target-dev
 Frozen with screening seeds: 11/30. These are not TTA method results.
+
+
+## 19. Protocol-compliant target-dev result (2026-11-18)
+
+Lighting 2292, 10 target-dev states, screening seeds 7777/8888/9999:
+
+- Frozen 11/30;
+- First-observation 8/30;
+- paired gain 5 / loss 8.
+
+First-observation is negative under the protocol-compliant seed pool. The old
+seed-2014 target-dev positive result is legacy and must not be cited.
+
+Target-test admission on Lighting 2312 (Frozen, seed 2014): Clean 18/20,
+Shift 1/20. Status is `admission_accessed`, not confirmatory.
