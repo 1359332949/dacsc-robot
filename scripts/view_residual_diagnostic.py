@@ -67,14 +67,19 @@ def main():
     import hashlib, subprocess
     def sha(path):
         return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+    try:
+        repo_commit = subprocess.check_output(
+            ["git", "-C", str(ROOT), "rev-parse", "HEAD"], text=True,
+            stderr=subprocess.DEVNULL).strip()
+    except Exception:
+        repo_commit = None
     out = {"capture": str(args.capture), "fit_ids": fit_ids,
            "remaining_dev": remaining_dev, "heldout_ids": held,
            "analysis_ids": analysis_ids, "include_heldout": args.include_heldout,
            "script_sha256": sha(Path(__file__)),
            "capture_manifest_sha256": sha(args.capture / "manifest.json"),
            "capture_features_sha256": sha(args.capture / "features.npz"),
-           "repository_commit": subprocess.check_output(
-               ["git", "-C", str(ROOT), "rev-parse", "HEAD"], text=True).strip(),
+           "repository_commit": repo_commit,
            "views": {}, "source_coverage": {}}
     for view in manifest["policy_views"]:
         clean = z[f"clean_{view}"]; shift = z[f"shift_{view}"]

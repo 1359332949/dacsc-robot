@@ -26,6 +26,11 @@ def render_policy_observation(env, snapshot, sensor_noise: int = 0, noise_seed: 
             except TypeError:
                 fn()
     obs = env.env._get_observations()
+    # Rendering/post-processing can overwrite the solver warm-start hint;
+    # restore it so the snapshot remains the same physical state.
+    if snapshot.get("qacc_warmstart"):
+        np.copyto(env.env.sim.data.qacc_warmstart,
+                  np.asarray(snapshot["qacc_warmstart"], dtype=env.env.sim.data.qacc_warmstart.dtype))
     if sensor_noise:
         obs, _ = apply_agentview_noise(obs, int(sensor_noise), seed=int(noise_seed))
     return obs
