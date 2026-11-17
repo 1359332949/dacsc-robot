@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-ALLOWED_METHODS = {"frozen", "first_observation", "paired_first", "online", "style_norm", "style_mean"}
+ALLOWED_METHODS = {"frozen", "first_observation", "paired_first", "online", "style_norm", "style_mean", "leftover_select"}
 
 
 def validate_methods(raw: str) -> list[str]:

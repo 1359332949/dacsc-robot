@@ -105,6 +105,15 @@ def build_style_stats(args, policy, manifest, z, by_state, device, language):
     return fit_ids, mean, std
 
 
+def score_leftover(candidate_actions, prev_leftover, executed_k):
+    """Candidate controller chunks [N,H,7]; score aligned prefix vs previous leftover."""
+    if prev_leftover is None:
+        return None
+    horizon = candidate_actions.shape[1] if candidate_actions.ndim == 3 else len(candidate_actions)
+    # candidate_actions may be list; normalized below
+    return None
+
+
 def run_episode(env, clean_env, policy, language, initial_state, method, source, args, device, seed, style_stats=None):
     # Mirror evaluate_libero.py's per-episode seeding.
     np.random.seed(seed)
@@ -138,8 +147,52 @@ def run_episode(env, clean_env, policy, language, initial_state, method, source,
     application_count = 0
     generator = torch.Generator(device=device)
     generator.manual_seed(seed)
+    prev_leftover = None
+    selection_records = []
     while not success and not done and steps < args.max_steps:
         policy_obs = policy_observation(obs, language, policy)
+        if method == "leftover_select":
+            if style_stats is None:
+                raise RuntimeError("leftover_select requires source style statistics")
+            visual_raw, base_rep, patches = visual_from_obs(policy, policy_obs, return_patches=True)
+            source_mean, _ = style_stats
+            mean_patches = {v: style_mean_only(patches[v], source_mean[v], args.style_strength)
+                            for v in patches}
+            _, pooled_lang = policy.representation_extractor.language_encoder([language])
+            visual_mean = policy.representation_extractor.cross_attention_resampler(
+                mean_patches, pooled_lang)
+            z0 = torch.randn((1, policy.action_generator.action_horizon,
+                              policy.action_generator.action_dim),
+                             device=device, dtype=torch.float32, generator=generator)
+            candidates = []
+            for visual_candidate in (visual_raw, visual_mean):
+                rep_candidate = make_rep(visual_candidate, base_rep)
+                norm = sample_z(policy, rep_candidate, z0)
+                ctrl = policy.normalizer.unnormalize_action(norm)[0].float().cpu().numpy()
+                candidates.append(ctrl)
+            if prev_leftover is None:
+                chosen = 0
+                scores = []
+            else:
+                L = prev_leftover.shape[0]
+                scores = [float(np.mean((c[:L] - prev_leftover) ** 2)) for c in candidates]
+                chosen = int(np.argmin(scores))
+            controller = candidates[chosen]
+            for k in range(args.executed_k):
+                raw_action = controller[k]
+                preclip_saturation.append(float(np.any(np.abs(raw_action) > 1.0)))
+                clipped = np.clip(raw_action, -1.0, 1.0)
+                executed_actions.append(clipped.astype(np.float32))
+                obs, reward, done, info = env.step(clipped)
+                steps += 1
+                success = is_success(env, info, reward, done)
+                if success or done or steps >= args.max_steps:
+                    break
+            prev_leftover = controller[args.executed_k:].copy()
+            selection_records.append({"chunk": chunk_index, "chosen": chosen,
+                                      "scores": scores})
+            chunk_index += 1
+            continue
         if method not in ("style_norm", "style_mean"):
             visual, base_rep = visual_from_obs(policy, policy_obs)
         context = policy_obs["state"].detach().cpu().numpy()
@@ -256,6 +309,7 @@ def run_episode(env, clean_env, policy, language, initial_state, method, source,
             "paired_gap_stats": paired_gap_stats,
             "update_count": update_count,
             "application_count": application_count,
+            "selection_records": selection_records,
             "action_sha256": hashlib.sha256(arr.tobytes()).hexdigest()}
 
 
@@ -327,7 +381,8 @@ def main():
                 rec = run_episode(env, clean_env, policy, language, initial_states[init_index],
                                   method, source, args, device, args.seed + init_index,
                                   (style_mean, style_std)
-                                  if method in ("style_norm", "style_mean") else None)
+                                  if method in ("style_norm", "style_mean", "leftover_select")
+                                  else None)
                 rec["init_index"] = init_index
                 records.append(rec)
                 print(json.dumps(rec), flush=True)
