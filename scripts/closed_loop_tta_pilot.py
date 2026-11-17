@@ -405,6 +405,9 @@ def main():
     if split is not None:
         validate_split_identity(split, args.suite, task.get("base_task") or "", args.lighting_id)
     methods = validate_methods(args.methods)
+    if "frozen_predict" in methods and set(methods) != {"frozen_predict"}:
+        raise ValueError("frozen_predict is an official-reference check; do not mix it "
+                         "with sample_z methods in one paired run")
     needs_source = any(m not in {"frozen", "frozen_predict", "paired_first"} for m in methods)
     fit_ids = []
     source = None
