@@ -1,0 +1,90 @@
+{
+  "schema": "first_chunk_residual_eval_v1",
+  "suite": "libero_spatial",
+  "lighting_id": 2292,
+  "role": "target_dev",
+  "k": 1,
+  "alpha": 0.5,
+  "records": [
+    {
+      "state_id": 34,
+      "seed": 2014,
+      "success": false,
+      "steps": 220,
+      "k": 1,
+      "alpha": 0.5
+    },
+    {
+      "state_id": 35,
+      "seed": 2014,
+      "success": false,
+      "steps": 220,
+      "k": 1,
+      "alpha": 0.5
+    },
+    {
+      "state_id": 36,
+      "seed": 2014,
+      "success": true,
+      "steps": 145,
+      "k": 1,
+      "alpha": 0.5
+    },
+    {
+      "state_id": 37,
+      "seed": 2014,
+      "success": false,
+      "steps": 220,
+      "k": 1,
+      "alpha": 0.5
+    },
+    {
+      "state_id": 39,
+      "seed": 2014,
+      "success": false,
+      "steps": 220,
+      "k": 1,
+      "alpha": 0.5
+    },
+    {
+      "state_id": 43,
+      "seed": 2014,
+      "success": false,
+      "steps": 220,
+      "k": 1,
+      "alpha": 0.5
+    },
+    {
+      "state_id": 44,
+      "seed": 2014,
+      "success": true,
+      "steps": 88,
+      "k": 1,
+      "alpha": 0.5
+    },
+    {
+      "state_id": 45,
+      "seed": 2014,
+      "success": false,
+      "steps": 220,
+      "k": 1,
+      "alpha": 0.5
+    },
+    {
+      "state_id": 48,
+      "seed": 2014,
+      "success": false,
+      "steps": 220,
+      "k": 1,
+      "alpha": 0.5
+    },
+    {
+      "state_id": 49,
+      "seed": 2014,
+      "success": true,
+      "steps": 116,
+      "k": 1,
+      "alpha": 0.5
+    }
+  ]
+}

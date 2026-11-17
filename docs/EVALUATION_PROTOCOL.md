@@ -241,3 +241,23 @@ First-chunk action differences are concentrated in end-effector x/y
 (mean |delta| ~0.08-0.16); gripper dims are nearly unchanged in chunk 0.
 A deployable method would need to predict this early translation correction
 without access to the Clean twin.
+
+## 14. Source-paired first-chunk residual (target dev, seed 2014)
+
+Source paired first chunks were collected on source fit+val states (20 states).
+A kNN over shift state8 + pooled visual retrieves the source Clean-Shift action
+delta; it is added to the target Shift first chunk, then the unmodified Shift
+policy continues.
+
+| method | target-dev Shift |
+|---|---:|
+| Frozen | 5/10 |
+| kNN k=1, alpha=1 | 6/10 |
+| kNN k=3, alpha=1 | 5/10 |
+| kNN k=1, alpha=0.5 | 3/10 |
+| Clean-action oracle | 9/10 |
+
+A weak +1 gain is not evidence of a working method. Source-state retrieval does
+not predict the target first-chunk correction well enough even though the
+privileged action oracle has large headroom. This rules out the simplest
+source-paired-kNN version, not the whole action-correction hypothesis.
