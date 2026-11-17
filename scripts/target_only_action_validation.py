@@ -189,6 +189,10 @@ def main():
     ap.add_argument("--l2", type=float, default=10.0)
     ap.add_argument("--clip-norm", type=float, default=20.0)
     ap.add_argument("--content-rank", type=int, default=2)
+    ap.add_argument("--fit-start", type=int, default=10,
+                    help="start index into source development states for calibration")
+    ap.add_argument("--fit-count", type=int, default=10,
+                    help="number of source development states for calibration")
     ap.add_argument("--source-folds", type=int, default=5)
     ap.add_argument("--fixed-application-confidence", type=float, default=None,
                     help="optional fixed strength for the gated Target correction")
@@ -234,7 +238,7 @@ def main():
     rows = [r for r in manifest["records"] if r.get("compare_pass")]
     by_state = {int(r["index"]): int(r["feature_row"]) for r in rows}
     dev = [int(i) for i in manifest["dev_indices"] if int(i) in by_state]
-    fit_ids = dev[10:20]
+    fit_ids = dev[args.fit_start:args.fit_start + args.fit_count]
     if len(fit_ids) < args.source_folds:
         raise ValueError("not enough source development states for requested cross-fit folds")
 
