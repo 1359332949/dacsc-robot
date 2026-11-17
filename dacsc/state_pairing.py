@@ -196,6 +196,8 @@ def compare(a: dict[str, Any], b: dict[str, Any], tol: dict[str, float] | None =
         checks[key] = _array_check(key if key != "mocap_pos" and key != "mocap_quat" else "mocap",
                                    a.get(key), b.get(key), tol,
                                    optional_empty=key in OPTIONAL_EMPTY_OK)
+    for key in EXTRA_STATE_ARRAYS:
+        checks[key] = _array_check(key, a.get(key), b.get(key), tol, optional_empty=True)
     checks["time"] = _array_check("time", [a.get("time")], [b.get("time")], tol)
     checks["body_xpos"] = _array_check("body_xpos", a.get("body_xpos"), b.get("body_xpos"), tol)
     checks["eef_pos"] = _array_check("eef_pos", a.get("eef_pos"), b.get("eef_pos"), tol)

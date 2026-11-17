@@ -19,6 +19,8 @@ def make_snap(delta=0.0, act=None, eef_name="gripper0_eef"):
         "cam_fovy": [45.0, 45.0],
         "cam_xpos": [[1, 0, 1], [0, 1, 1]], "cam_xmat": [[1, 0, 0]] * 2,
         "mocap_pos": [], "mocap_quat": [],
+        "ctrl": [], "qacc_warmstart": [], "qfrc_applied": [],
+        "xfrc_applied": [], "eq_active": [],
         "model_signature": {"nq": 3},
     }
 
@@ -71,6 +73,11 @@ class TestStatePairing(unittest.TestCase):
     def test_camera_shape_mismatch_fails(self):
         b = make_snap(); b["cam_pos"] = [[1, 0, 1]]
         self.assertFalse(camera_compare(make_snap(), b, expect_equal=False)["pass"])
+
+    def test_extra_state_field_mismatch_fails(self):
+        a = make_snap(); b = make_snap()
+        a["ctrl"] = [0.0, 0.0]; b["ctrl"] = [0.0, 1.0]
+        self.assertFalse(compare(a, b)["all_pass"])
 
     def test_quaternion_sign_equivalence_passes(self):
         b = make_snap(); b["body_xquat"] = [[-1, 0, 0, 0]] * 3

@@ -15,10 +15,7 @@ def render_policy_observation(env, snapshot, sensor_noise: int = 0, noise_seed: 
     restore(env, snapshot)
     # Mirror ControlEnv.regenerate_obs_from_state after restoration.
     env.env.sim.forward()
-    try:
-        env.check_success()
-    except Exception:
-        pass
+    env.check_success()
     for name in ("_post_process", "_update_observables"):
         fn = getattr(env, name, None)
         if fn is None:
