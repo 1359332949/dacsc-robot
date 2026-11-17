@@ -289,3 +289,17 @@ Therefore the source-paired first-chunk residual route is stopped in this
 form. Commit 282104c is reclassified as **known-perturbation paired simulator
 calibration**, not target-only TTA. No new regressor, no k/alpha search, no
 20-episode run.
+
+
+## 16. Correction to residuals audit (2026-11-17)
+
+The earlier `residual_identifiability_audit.py` had an index-direction bug:
+the distance matrix was `[source, target]` but `argsort(axis=1)` was used as if
+it were `[target, source]`. Its kNN numbers are invalid. The corrected audit
+(v2) uses `[target, source]`, both state-only and joint state+visual metrics,
+and a 5000-permutation shuffled distribution.
+
+Corrected: global mean direction cosine 0.903 / orth 0.427; joint k=1 0.741 /
+0.671; joint k=3 0.855 / 0.516; joint k=5 0.894 / 0.447. Shuffled median
+0.771, p95 0.843. Thus k=1 is weak, k=3/5 show some local information but do
+not beat the global mean. The stop decision for source-paired residual remains.

@@ -69,3 +69,42 @@ residual/oracle script.
 4. Record full snapshot compatibility and camera config for paired runs.
 5. Rerun the offline identifiability audit with paired actions; then rerun
    target-dev closed loop.
+
+## Correction: kNN index direction and joint metric audit
+
+The first version of `residual_identifiability_audit.py` computed the distance
+matrix as `[N_source, N_target]` and then applied `argsort(axis=1)` as if it
+were `[N_target, N_source]`. The kNN audit numbers in the first report were
+therefore wrong and must not be used.
+
+Corrected audit:
+
+- distance matrix is `[N_target, N_source]`;
+- both `state8`-only and joint `[state8, visual768]` metrics are reported;
+- shuffled control is a 5000-permutation distribution, not one permutation.
+
+Corrected direction results:
+
+| predictor | cosine median | orthogonal error median |
+|---|---:|---:|
+| global source mean | 0.903 | 0.427 |
+| state kNN k=1 | 0.803 | 0.591 |
+| state kNN k=3 | 0.887 | 0.462 |
+| state kNN k=5 | 0.874 | 0.485 |
+| joint kNN k=1 | 0.741 | 0.671 |
+| joint kNN k=3 | 0.855 | 0.516 |
+| joint kNN k=5 | 0.894 | 0.447 |
+
+Shuffled cosine median distribution: median 0.771, 5th pct 0.695, 95th pct
+0.843.
+
+Revised interpretation: joint k=1 is below the shuffled median and is not
+evidence of local structure. Joint k=3/k=5 are above the shuffled 95th
+percentile, so some local information is present, but neither exceeds the
+global-mean direction. The first report's claim that "kNN adds noise" should
+be narrowed to "joint k=1 is weak; k=3/5 have some local signal but do not
+beat the global mean."
+
+The closed-loop decision does not change: k=1 gave +1/10, k=3 gave 0, and
+those rollouts were unpaired with the baseline. Do not restore the residual
+route from this audit.

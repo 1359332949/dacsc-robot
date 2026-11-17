@@ -58,21 +58,35 @@ def main():
     }
     # predictors
     global_pred = np.broadcast_to(src_delta.mean(0), tgt_delta.shape)
-    # state-only standardization, avoid 768-vs-8 implicit weighting
+    # standardize each modality separately
     sm, ss = src_s8.mean(0), src_s8.std(0) + 1e-6
-    tm = tgt_s8
-    src_n = (src_s8 - sm) / ss
-    tgt_n = (tm - sm) / ss
-    dist = np.linalg.norm(src_n[:, None, :] - tgt_n[None, :, :], axis=2)
-    nn = np.argsort(dist, axis=1)
+    vm, vs = src_vis.mean(0), src_vis.std(0) + 1e-6
+    src_state_n = (src_s8 - sm) / ss
+    tgt_state_n = (tgt_s8 - sm) / ss
+    src_joint_n = np.concatenate([src_state_n, (src_vis - vm) / vs], axis=1)
+    tgt_joint_n = np.concatenate([tgt_state_n, (tgt_vis - vm) / vs], axis=1)
     preds = {"zero": np.zeros_like(tgt_delta), "global_mean": global_pred}
-    for k in (1, 3, 5):
-        preds[f"knn_state_k{k}"] = np.stack([src_delta[nn[:k, j]].mean(0)
-                                             for j in range(len(tgt_delta))])
-    # shuffled negative control: fixed permutation of source residuals
+    # [N_target, N_source]: each target retrieves its own source neighbours
+    for metric, src_n, tgt_n in (
+        ("state", src_state_n, tgt_state_n),
+        ("joint", src_joint_n, tgt_joint_n),
+    ):
+        dist = np.linalg.norm(tgt_n[:, None, :] - src_n[None, :, :], axis=2)
+        nn = np.argsort(dist, axis=1)
+        for k in (1, 3, 5):
+            preds[f"knn_{metric}_k{k}"] = np.stack([
+                src_delta[nn[j, :k]].mean(0) for j in range(len(tgt_delta))
+            ])
+    # shuffled negative control: distribution over 5000 random source-residual pairings
     rng = np.random.default_rng(args.seed)
-    perm = rng.permutation(len(src_delta))[:len(tgt_delta)]
-    preds["shuffled"] = src_delta[perm]
+    shuffled_cosines = []
+    for _ in range(5000):
+        perm = rng.permutation(len(src_delta))[:len(tgt_delta)]
+        shuffled_cosines.append(np.median([
+            cos(src_delta[perm[j]], tgt_delta[j]) for j in range(len(tgt_delta))
+        ]))
+    shuffled_cosines = np.asarray(shuffled_cosines)
+    preds["shuffled"] = src_delta[rng.permutation(len(src_delta))[:len(tgt_delta)]]
     # success labels optional
     success = {}
     if args.target_results and Path(args.target_results).exists():
@@ -80,8 +94,14 @@ def main():
         for r in rd.get("records", []):
             if r.get("domain") == "shift":
                 success[int(r["state_id"])] = bool(r["success"])
-    report = {"schema": "residual_identifiability_audit_v1", "pairing": pairing,
+    report = {"schema": "residual_identifiability_audit_v2", "pairing": pairing,
               "source_n": len(src_delta), "target_n": len(tgt_delta),
+              "shuffled_cosine_median_distribution": {
+                  "n": int(len(shuffled_cosines)),
+                  "median": float(np.median(shuffled_cosines)),
+                  "p05": float(np.percentile(shuffled_cosines, 5)),
+                  "p95": float(np.percentile(shuffled_cosines, 95)),
+              },
               "predictors": {}}
     for name, pred in preds.items():
         per = []
