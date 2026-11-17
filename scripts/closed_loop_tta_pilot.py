@@ -144,7 +144,10 @@ def run_episode(env, clean_env, policy, language, initial_state, method, source,
                 - np.asarray(clean_obs["agentview_image"], dtype=np.float32)).mean())
             clean_policy_obs = policy_observation(clean_obs, language, policy)
             clean_visual, _ = visual_from_obs(policy, clean_policy_obs)
-            paired_gap = visual - clean_visual
+            # The method is a global mean correction; compute the paired gap
+            # on pooled tokens, not per-token, so it matches estimator space.
+            paired_gap = visual.mean(dim=1) - clean_visual.mean(dim=1)
+            paired_gap = paired_gap.unsqueeze(1)
             paired_gap_norm = float(paired_gap.norm())
             # Use the same amplitude rule as the estimator: L2 clip then alpha.
             paired_scale = min(1.0, float(args.clip_norm) / (paired_gap_norm + 1e-12))
