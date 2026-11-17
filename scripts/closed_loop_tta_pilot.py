@@ -339,6 +339,8 @@ def main():
     ap.add_argument("--libero-config", type=Path, default=Path("/hy-tmp/libero_config"))
     ap.add_argument("--init-indices", default="3,5")
     ap.add_argument("--domain", choices=["shift", "clean"], default="shift")
+    ap.add_argument("--tta-mode", choices=["episodic"], default="episodic",
+                    help="episodic TTA: fresh adapter/estimator per episode")
     ap.add_argument("--suite", default="libero_object")
     ap.add_argument("--lighting-id", type=int, default=2222)
     ap.add_argument("--methods", default="frozen,first_observation,online")
@@ -439,7 +441,9 @@ def main():
                "source_diagnostics": diag, "records": records,
                "methods": methods, "init_indices": init_indices,
                "claim_scope": "exploratory pilot; not statistical significance",
-               "protocol": {"settling_steps": SETTLING_STEPS, "max_steps": args.max_steps,
+               "protocol": {"tta_mode": args.tta_mode,
+                            "episode_reset": True,
+                            "settling_steps": SETTLING_STEPS, "max_steps": args.max_steps,
                             "executed_k": args.executed_k, "action_clip": [-1, 1],
                             "success": "official is_success"}}
     args.out.parent.mkdir(parents=True, exist_ok=True)
