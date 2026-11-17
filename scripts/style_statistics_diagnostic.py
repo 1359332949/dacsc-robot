@@ -82,6 +82,7 @@ def main():
     manifest = json.loads((args.capture / "manifest.json").read_text())
     z = np.load(args.capture / "features.npz")
     rows = [r for r in manifest["records"] if r.get("compare_pass")]
+    by_state = {int(r["index"]): int(r["feature_row"]) for r in rows}
     views = list(manifest["policy_views"])
     dev_ids = [int(i) for i in manifest["dev_indices"] if int(i) in
                {int(r["index"]): int(r["feature_row"]) for r in rows}]
@@ -101,6 +102,21 @@ def main():
     source_mean = {k: v.to(device) for k, v in source_mean.items()}
     source_std = {k: v.to(device) for k, v in source_std.items()}
     policy = load_policy(args.checkpoint, device=device); policy.eval()
+    source_res_mean = {}
+    source_res_std = {}
+    for view in views:
+        vals = []
+        for s in source_fit:
+            patches = {v: torch.as_tensor(z[f"clean_{v}"][by_state[s]], device=args.device,
+                                         dtype=torch.float32).unsqueeze(0) for v in views}
+            _, pooled = policy.representation_extractor.language_encoder([language])
+            vis = policy.representation_extractor.cross_attention_resampler(patches, pooled)
+            vals.append(vis[0].detach().cpu())
+        vals = torch.stack(vals)
+        source_res_mean[view] = vals.mean(dim=(0, 1), keepdim=True)
+        source_res_std[view] = vals.std(dim=(0, 1), unbiased=False, keepdim=True).clamp_min(1e-6)
+    source_res_mean = {k: v.to(device) for k, v in source_res_mean.items()}
+    source_res_std = {k: v.to(device) for k, v in source_res_std.items()}
     records = []
     for r in rows:
         row = int(r["feature_row"]); state = np.asarray(z["state8"][row], dtype=np.float32)
@@ -117,6 +133,16 @@ def main():
         }
         visual_adain_source = policy.representation_extractor.cross_attention_resampler(
             source_patches, pooled_lang)
+        # Post-Resampler intervention: statistics of the 96 output tokens.
+        tok_mean = visual_shift.mean(dim=1, keepdim=True)
+        tok_std = visual_shift.std(dim=1, keepdim=True, unbiased=False).clamp_min(1e-6)
+        tokens_per_view = visual_shift.shape[1] // len(views)
+        ref_mean = torch.cat([
+            source_res_mean[v].expand(-1, tokens_per_view, -1) for v in views], dim=1)
+        ref_std = torch.cat([
+            source_res_std[v].expand(-1, tokens_per_view, -1) for v in views], dim=1)
+        visual_res_mean = visual_shift - tok_mean + ref_mean
+        visual_res_adain = (visual_shift - tok_mean) / tok_std * ref_std + ref_mean
         mean_patches = {v: mean_only(patches_shift[v], source_mean[v]) for v in views}
         visual_mean_only = policy.representation_extractor.cross_attention_resampler(
             mean_patches, pooled_lang)
@@ -140,6 +166,8 @@ def main():
         rep_adain = build_rep(policy, visual_adain, language, state, device)
         rep_adain_source = build_rep(policy, visual_adain_source, language, state, device)
         rep_mean_only = build_rep(policy, visual_mean_only, language, state, device)
+        rep_res_mean = build_rep(policy, visual_res_mean, language, state, device)
+        rep_res_adain = build_rep(policy, visual_res_adain, language, state, device)
         rep_std_only = build_rep(policy, visual_std_only, language, state, device)
         gen = torch.Generator(device=device); gen.manual_seed(args.seed + int(r["index"]))
         z0 = torch.randn((1, policy.action_generator.action_horizon,
@@ -150,6 +178,8 @@ def main():
         a_adain = act(policy, visual_adain, rep_adain, z0)
         a_adain_source = act(policy, visual_adain_source, rep_adain_source, z0)
         a_mean_only = act(policy, visual_mean_only, rep_mean_only, z0)
+        a_res_mean = act(policy, visual_res_mean, rep_res_mean, z0)
+        a_res_adain = act(policy, visual_res_adain, rep_res_adain, z0)
         a_std_only = act(policy, visual_std_only, rep_std_only, z0)
         records.append({
             "index": int(r["index"]),
@@ -159,10 +189,15 @@ def main():
             "adain_source_stats": _one_action_metrics(
                 policy, a_adain_source, a_clean, a_clean.shape[1]),
             "mean_only": _one_action_metrics(policy, a_mean_only, a_clean, a_clean.shape[1]),
+            "resampler_mean_only": _one_action_metrics(
+                policy, a_res_mean, a_clean, a_clean.shape[1]),
+            "resampler_adain": _one_action_metrics(
+                policy, a_res_adain, a_clean, a_clean.shape[1]),
             "std_only": _one_action_metrics(policy, a_std_only, a_clean, a_clean.shape[1]),
             "oracle_clean": _one_action_metrics(policy, a_clean, a_clean, a_clean.shape[1]),
         })
-    methods = ("frozen", "adain", "adain_source_stats", "mean_only", "std_only", "oracle_clean")
+    methods = ("frozen", "adain", "adain_source_stats", "mean_only", "std_only",
+               "resampler_mean_only", "resampler_adain", "oracle_clean")
     keys = ("normalized_mae", "xyz_mae_controller_units", "rotation_geodesic_rad",
             "gripper_mae", "action_saturation_fraction")
     summary = {m: {k: float(np.mean([r[m][k] for r in records])) for k in keys} for m in methods}
