@@ -216,3 +216,21 @@ Shorter chunking is worse on both conditions in this pilot. There is no
 evidence here that the Lighting failure is caused by an overly long
 execution horizon; E=12 remains the frozen execution setting. This is a
 single seed, 10 states, one Lighting ID, so it is diagnostic only.
+
+## 13. Privileged action oracle (target dev, seed 2014)
+
+Frozen Shift baseline: 5/10.
+
+- Paired visual-gap correction (`paired_first`): 2/10.
+- Clean-action oracle (query Frozen on the paired Clean twin at every chunk,
+  execute those actions in the Shift environment): 8/10.
+
+The clean-action oracle is **privileged and not deployable**. It is used only
+to ask whether an action-level correction has headroom. Result: the same
+Lighting shift that defeats global visual-mean correction is largely
+recoverable when the action interface receives clean-view actions. This
+supports action-level adaptation as a research direction; it does not provide
+a deployable target-only signal.
+
+A first-chunk-only action oracle was queued but the server became unreachable;
+do not report it until rerun.

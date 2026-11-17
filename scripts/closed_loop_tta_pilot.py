@@ -184,6 +184,58 @@ def run_episode(env, clean_env, policy, language, initial_state, method, source,
                     break
             chunk_index += 1
             continue
+        if method == "clean_first_chunk_oracle" and chunk_index == 0:
+            if clean_env is None:
+                raise RuntimeError("clean_first_chunk_oracle requires a clean twin environment")
+            clean_obs = render_policy_observation(clean_env, snapshot(env))
+            clean_policy_obs = policy_observation(clean_obs, language, policy)
+            clean_visual, clean_rep = visual_from_obs(policy, clean_policy_obs)
+            if z0_schedule is not None and chunk_index < len(z0_schedule):
+                z0 = z0_schedule[chunk_index]
+            else:
+                z0 = torch.randn((1, policy.action_generator.action_horizon,
+                                  policy.action_generator.action_dim),
+                                 device=device, dtype=torch.float32, generator=generator)
+            norm = sample_z(policy, make_rep(clean_visual, clean_rep), z0)
+            controller = policy.normalizer.unnormalize_action(norm)[0].float().cpu().numpy()
+            for k in range(args.executed_k):
+                raw_action = controller[k]
+                preclip_saturation.append(float(np.any(np.abs(raw_action) > 1.0)))
+                clipped = np.clip(raw_action, -1.0, 1.0)
+                executed_actions.append(clipped.astype(np.float32))
+                obs, reward, done, info = env.step(clipped)
+                steps += 1
+                success = is_success(env, info, reward, done)
+                if success or done or steps >= args.max_steps:
+                    break
+            chunk_index += 1
+            continue
+        if method == "clean_action_oracle":
+            if clean_env is None:
+                raise RuntimeError("clean_action_oracle requires a clean twin environment")
+            clean_obs = render_policy_observation(clean_env, snapshot(env))
+            clean_policy_obs = policy_observation(clean_obs, language, policy)
+            clean_visual, clean_rep = visual_from_obs(policy, clean_policy_obs)
+            if z0_schedule is not None and chunk_index < len(z0_schedule):
+                z0 = z0_schedule[chunk_index]
+            else:
+                z0 = torch.randn((1, policy.action_generator.action_horizon,
+                                  policy.action_generator.action_dim),
+                                 device=device, dtype=torch.float32, generator=generator)
+            norm = sample_z(policy, make_rep(clean_visual, clean_rep), z0)
+            controller = policy.normalizer.unnormalize_action(norm)[0].float().cpu().numpy()
+            for k in range(args.executed_k):
+                raw_action = controller[k]
+                preclip_saturation.append(float(np.any(np.abs(raw_action) > 1.0)))
+                clipped = np.clip(raw_action, -1.0, 1.0)
+                executed_actions.append(clipped.astype(np.float32))
+                obs, reward, done, info = env.step(clipped)
+                steps += 1
+                success = is_success(env, info, reward, done)
+                if success or done or steps >= args.max_steps:
+                    break
+            chunk_index += 1
+            continue
         if method == "leftover_select":
             if style_stats is None:
                 raise RuntimeError("leftover_select requires source style statistics")
@@ -408,7 +460,7 @@ def main():
     if "frozen_predict" in methods and set(methods) != {"frozen_predict"}:
         raise ValueError("frozen_predict is an official-reference check; do not mix it "
                          "with sample_z methods in one paired run")
-    needs_source = any(m not in {"frozen", "frozen_predict", "paired_first"} for m in methods)
+    needs_source = any(m not in {"frozen", "frozen_predict", "paired_first", "clean_action_oracle", "clean_first_chunk_oracle"} for m in methods)
     fit_ids = []
     source = None
     diag = {}
@@ -463,7 +515,7 @@ def main():
                 env = OffScreenRenderEnv(bddl_file_name=env_bddl, camera_heights=256,
                                          camera_widths=256, render_gpu_device_id=args.render_gpu)
                 clean_env = None
-                if method == "paired_first":
+                if method in ("paired_first", "clean_action_oracle", "clean_first_chunk_oracle"):
                     clean_env = OffScreenRenderEnv(bddl_file_name=base_bddl, camera_heights=256,
                                                    camera_widths=256, render_gpu_device_id=args.render_gpu)
                 try:
