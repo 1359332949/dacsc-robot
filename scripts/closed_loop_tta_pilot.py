@@ -77,8 +77,8 @@ def sha256_file(path: Path) -> str:
     return h.hexdigest()
 
 
-def style_mean_only(patches, source_mean):
-    return patches - patches.mean(dim=1, keepdim=True) + source_mean
+def style_mean_only(patches, source_mean, strength=1.0):
+    return patches + strength * (source_mean - patches.mean(dim=1, keepdim=True))
 
 
 def style_transfer(patches, source_mean, source_std):
@@ -156,7 +156,8 @@ def run_episode(env, clean_env, policy, language, initial_state, method, source,
                 norm_patches = {v: style_transfer(patches[v], source_mean[v], source_std[v])
                                 for v in patches}
             else:
-                norm_patches = {v: style_mean_only(patches[v], source_mean[v])
+                norm_patches = {v: style_mean_only(patches[v], source_mean[v],
+                                                   args.style_strength)
                                 for v in patches}
             _, pooled_lang = policy.representation_extractor.language_encoder([language])
             visual = policy.representation_extractor.cross_attention_resampler(
@@ -272,6 +273,7 @@ def main():
     ap.add_argument("--max-steps", type=int, default=280)
     ap.add_argument("--executed-k", type=int, default=12)
     ap.add_argument("--alpha", type=float, default=1.0)
+    ap.add_argument("--style-strength", type=float, default=1.0)
     ap.add_argument("--clip-norm", type=float, default=20.0)
     ap.add_argument("--l2", type=float, default=10.0)
     ap.add_argument("--content-rank", type=int, default=2)

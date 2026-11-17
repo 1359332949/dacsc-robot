@@ -71,6 +71,7 @@ def main():
     ap.add_argument("--out", type=Path, required=True)
     ap.add_argument("--device", default="cuda:0")
     ap.add_argument("--seed", type=int, default=20261117)
+    ap.add_argument("--strengths", default="0.25,0.5,1.0")
     args = ap.parse_args()
     if args.out.exists():
         raise FileExistsError(f"refusing to overwrite {args.out}")
@@ -183,6 +184,30 @@ def main():
                           policy.action_generator.action_dim),
                          device=device, dtype=torch.float32, generator=gen)
         a_clean = act(policy, visual_clean, rep_clean, z0)
+        strength_records = {}
+        for strength in [float(x) for x in args.strengths.split(",")]:
+            shift_patches_s = {
+                v: patches_shift[v] + strength * (
+                    source_mean[v] - patches_shift[v].mean(dim=1, keepdim=True))
+                for v in views
+            }
+            clean_patches_s = {
+                v: patches_clean[v] + strength * (
+                    source_mean[v] - patches_clean[v].mean(dim=1, keepdim=True))
+                for v in views
+            }
+            shift_s = policy.representation_extractor.cross_attention_resampler(
+                shift_patches_s, pooled_lang)
+            clean_s = policy.representation_extractor.cross_attention_resampler(
+                clean_patches_s, pooled_lang)
+            rep_shift_s = build_rep(policy, shift_s, language, state, device)
+            rep_clean_s = build_rep(policy, clean_s, language, state, device)
+            a_shift_s = act(policy, shift_s, rep_shift_s, z0)
+            a_clean_s = act(policy, clean_s, rep_clean_s, z0)
+            strength_records[str(strength)] = {
+                "shift": _one_action_metrics(policy, a_shift_s, a_clean, a_clean.shape[1]),
+                "clean_identity": _one_action_metrics(policy, a_clean_s, a_clean, a_clean.shape[1]),
+            }
         a_shift = act(policy, visual_shift, rep_shift, z0)
         a_adain = act(policy, visual_adain, rep_adain, z0)
         a_adain_source = act(policy, visual_adain_source, rep_adain_source, z0)
@@ -210,6 +235,7 @@ def main():
                 policy, a_clean_mean, a_clean, a_clean.shape[1]),
             "clean_identity_adain_source": _one_action_metrics(
                 policy, a_clean_adain, a_clean, a_clean.shape[1]),
+            "mean_strength": strength_records,
         })
     methods = ("frozen", "adain", "adain_source_stats", "mean_only", "std_only",
                "resampler_mean_only", "resampler_adain", "oracle_clean")
@@ -218,8 +244,17 @@ def main():
     summary = {m: {k: float(np.mean([r[m][k] for r in records])) for k in keys} for m in methods}
     clean_identity = {m: {k: float(np.mean([r[m][k] for r in records])) for k in keys}
                       for m in ("clean_identity_mean_only", "clean_identity_adain_source")}
+    strength_summary = {}
+    for strength in [float(x) for x in args.strengths.split(",")]:
+        strength_summary[str(strength)] = {
+            "shift": {k: float(np.mean([r["mean_strength"][str(strength)]["shift"][k]
+                                        for r in records])) for k in keys},
+            "clean_identity": {k: float(np.mean([r["mean_strength"][str(strength)]["clean_identity"][k]
+                                                   for r in records])) for k in keys},
+        }
     payload = {"schema": "style_statistics_diagnostic_v1", "language": language,
                "clean_identity": clean_identity,
+               "strength_summary": strength_summary,
                "views": views, "records": records, "summary": summary,
                "claim_scope": "privileged paired diagnostic; AdaIN uses Clean statistics"}
     args.out.parent.mkdir(parents=True, exist_ok=True)
