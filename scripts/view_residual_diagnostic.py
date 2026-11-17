@@ -92,7 +92,7 @@ def main():
         stable_score = token_energy / (token_std + 1e-6)
         # Across-state direction stability: explicitly NOT temporal.
         cosines = [cosine(per_state[i], per_state[j])
-                   for i in range(len(valid)) for j in range(i + 1, len(valid))]
+                   for i in range(len(per_state)) for j in range(i + 1, len(per_state))]
         out["views"][view] = {
             "patch_tokens": int(diff.shape[1]),
             "feature_dim": int(diff.shape[2]),
