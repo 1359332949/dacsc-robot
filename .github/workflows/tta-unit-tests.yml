@@ -2,17 +2,27 @@ name: TTA unit tests
 
 on:
   push:
-    branches: [main]
+    branches: [main, "exp/**"]
     paths:
       - "dacsc/target_only_mean.py"
       - "dacsc/action_guard.py"
+      - "dacsc/state_pairing.py"
+      - "dacsc/observation_render.py"
+      - "dacsc/libero_noise.py"
       - "tests/test_target_only_mean.py"
+      - "tests/test_state_pairing.py"
+      - "tests/test_import_smoke.py"
       - ".github/workflows/tta-unit-tests.yml"
   pull_request:
     paths:
       - "dacsc/target_only_mean.py"
       - "dacsc/action_guard.py"
+      - "dacsc/state_pairing.py"
+      - "dacsc/observation_render.py"
+      - "dacsc/libero_noise.py"
       - "tests/test_target_only_mean.py"
+      - "tests/test_state_pairing.py"
+      - "tests/test_import_smoke.py"
       - ".github/workflows/tta-unit-tests.yml"
 
 jobs:
@@ -30,7 +40,15 @@ jobs:
           python -m pip install numpy scipy
           python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
       - name: Compile TTA modules and diagnostic script
-        run: python -m py_compile dacsc/target_only_mean.py dacsc/action_guard.py scripts/target_only_action_validation.py
+        run: python -m py_compile dacsc/target_only_mean.py dacsc/action_guard.py dacsc/state_pairing.py dacsc/observation_render.py dacsc/libero_noise.py scripts/target_only_action_validation.py scripts/view_residual_diagnostic.py
+      - name: Import smoke tests
+        env:
+          PYTHONPATH: .
+        run: python -m unittest tests.test_import_smoke -v
+      - name: State pairing tests
+        env:
+          PYTHONPATH: .
+        run: python -m unittest tests.test_state_pairing -v
       - name: Run target-only mean tests
         env:
           PYTHONPATH: .

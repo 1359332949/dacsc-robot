@@ -13,6 +13,8 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import platform
+import subprocess
 import sys
 from pathlib import Path
 from types import SimpleNamespace
@@ -30,7 +32,7 @@ from corp import load_policy  # noqa: E402
 from corp.preprocessing import prepare_observation  # noqa: E402
 from sg_cpa_phase4_final import CKPT  # noqa: E402
 from evaluate_libero import DUMMY_ACTION, SETTLING_STEPS, policy_observation  # noqa: E402
-from dacsc.state_pairing import model_compatible, snapshot  # noqa: E402
+from dacsc.state_pairing import camera_compare, compare, model_compatible, snapshot  # noqa: E402
 from dacsc.observation_render import render_policy_observation  # noqa: E402
 from dacsc.action_guard import limit_rotation_delta  # noqa: E402
 from dacsc.target_only_mean import (  # noqa: E402
@@ -286,11 +288,21 @@ def main():
             render_gpu_device_id=args.render_gpu,
         )
         try:
+            snap_shift0 = snapshot(env_shift)
+            snap_clean0 = snapshot(env_clean)
             compatibility = model_compatible(
-                snapshot(env_shift),
-                snapshot(env_clean),
+                snap_shift0,
+                snap_clean0,
+                strict_bodies=True,
+                strict_geometry=True,
                 strict_physics=True,
             )
+            camera_invariance = camera_compare(snap_shift0, snap_clean0, expect_equal=True)
+            if not camera_invariance["pass"]:
+                raise RuntimeError(
+                    "Lighting-only protocol requires equal cameras: "
+                    f"{camera_invariance['checks']}"
+                )
             if not compatibility["pass"]:
                 raise RuntimeError(
                     "Clean/Shift simulator models are not physics-compatible: "
@@ -346,16 +358,18 @@ def main():
                 clean_obs = render_policy_observation(env_clean, state_snapshot)
                 clean_policy_obs = policy_observation(clean_obs, language, policy)
                 visual_clean, rep_clean = visual_from_obs(policy, clean_policy_obs)
+                restored_compare = compare(state_snapshot, snapshot(env_clean))
                 state_error = float(
                     (clean_policy_obs["state"] - shift_policy_obs["state"]).abs().max()
                 )
                 # Twin rendering can differ at the 1e-3 proprio level after
                 # executed chunks because the controller state is not part of
                 # the MuJoCo snapshot; reject only larger mismatches and log it.
-                if state_error > 5e-3:
+                if state_error > 5e-3 or not restored_compare["all_pass"]:
                     raise RuntimeError(
-                        f"Clean/Shift proprio mismatch at state={init_index}, "
-                        f"chunk={chunk_index}: {state_error}"
+                        f"Clean/Shift state mismatch at state={init_index}, "
+                        f"chunk={chunk_index}: proprio={state_error}, "
+                        f"compare={restored_compare['checks']}"
                     )
 
                 context = shift_policy_obs["state"].detach().cpu().numpy()
@@ -573,6 +587,8 @@ def main():
                     "chunk": chunk_index,
                     "z0_seed": z0_seed,
                     "state_pair_max_abs_error": state_error,
+                    "state_restore_compare_pass": bool(restored_compare["all_pass"]),
+                    "camera_invariance_pass": bool(camera_invariance["pass"]),
                     "frozen": action_metrics(policy, action_frozen, action_clean),
                     "paired_fit_mean": action_metrics(policy, action_paired, action_clean),
                     "target_only_mean": action_metrics(policy, action_target, action_clean),
@@ -815,6 +831,16 @@ def main():
             key: (str(value) if isinstance(value, Path) else value)
             for key, value in vars(args).items()
         },
+        "script_sha256": sha256(Path(__file__)),
+        "repository_commit": subprocess.check_output(
+            ["git", "-C", str(ROOT), "rev-parse", "HEAD"], text=True).strip(),
+        "corp_commit": subprocess.check_output(
+            ["git", "-C", str(ROOT / "repos/CoRP"), "rev-parse", "HEAD"], text=True).strip(),
+        "libero_commit": subprocess.check_output(
+            ["git", "-C", str(Path(args.libero_src)), "rev-parse", "HEAD"], text=True).strip(),
+        "versions": {"python": sys.version, "platform": platform.platform(),
+                      "torch": torch.__version__, "numpy": np.__version__,
+                      "mujoco": getattr(__import__("mujoco"), "__version__", None)},
         "checkpoint_sha256": sha256(args.checkpoint),
         "capture_manifest_sha256": sha256(args.capture / "manifest.json"),
         "capture_features_sha256": sha256(features_path),
