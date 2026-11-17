@@ -1,0 +1,84 @@
+{
+  "schema": "tta_split_v1",
+  "task_suite": "libero_spatial",
+  "task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+  "source_domain": "clean",
+  "target_domain": "lighting_2292",
+  "lighting_id": 2292,
+  "source_train_state_ids": [
+    0,
+    1,
+    2,
+    4,
+    6,
+    8,
+    10,
+    13,
+    14,
+    17
+  ],
+  "source_val_state_ids": [
+    18,
+    20,
+    21,
+    22,
+    25,
+    27,
+    29,
+    31,
+    32,
+    33
+  ],
+  "target_dev_state_ids": [
+    34,
+    35,
+    36,
+    37,
+    39,
+    43,
+    44,
+    45,
+    48,
+    49
+  ],
+  "target_test_state_ids": [
+    3,
+    5,
+    7,
+    9,
+    11,
+    12,
+    15,
+    16,
+    19,
+    23,
+    24,
+    26,
+    28,
+    30,
+    38,
+    40,
+    41,
+    42,
+    46,
+    47
+  ],
+  "screening_seeds": [
+    7777,
+    8888,
+    9999
+  ],
+  "evaluation_seeds": [
+    2014,
+    2015,
+    2016
+  ],
+  "invariants": [
+    "all four state sets disjoint",
+    "target_test never used for method selection",
+    "adapter sees target_test observations only during test",
+    "target labels evaluation-only",
+    "source calibration uses clean source states only"
+  ],
+  "note": "libero_goal protocol failed clean validation (0/20); libero_spatial is the fresh validated suite"
+}
