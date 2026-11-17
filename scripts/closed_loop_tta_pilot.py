@@ -335,6 +335,7 @@ def main():
     ap.add_argument("--source-fit-start", type=int, default=10)
     ap.add_argument("--source-fit-count", type=int, default=10)
     ap.add_argument("--seed", type=int, default=20261117)
+    ap.add_argument("--seed-offsets", default="0")
     ap.add_argument("--device", default="cuda:0")
     ap.add_argument("--render-gpu", type=int, default=0)
     args = ap.parse_args()
@@ -369,27 +370,31 @@ def main():
     if len(fit_ids) != requested:
         raise ValueError(f"source fit returned {len(fit_ids)} states, requested {requested}")
     records = []
+    seed_offsets = [int(x) for x in args.seed_offsets.split(",")]
     for init_index in init_indices:
         for method in methods:
-            env = OffScreenRenderEnv(bddl_file_name=env_bddl, camera_heights=256,
-                                     camera_widths=256, render_gpu_device_id=args.render_gpu)
-            clean_env = None
-            if method == "paired_first":
-                clean_env = OffScreenRenderEnv(bddl_file_name=base_bddl, camera_heights=256,
-                                               camera_widths=256, render_gpu_device_id=args.render_gpu)
-            try:
-                rec = run_episode(env, clean_env, policy, language, initial_states[init_index],
-                                  method, source, args, device, args.seed + init_index,
-                                  (style_mean, style_std)
-                                  if method in ("style_norm", "style_mean", "leftover_select")
-                                  else None)
-                rec["init_index"] = init_index
-                records.append(rec)
-                print(json.dumps(rec), flush=True)
-            finally:
-                env.close()
-                if clean_env is not None:
-                    clean_env.close()
+            for seed_offset in seed_offsets:
+                seed = args.seed + init_index + seed_offset
+                env = OffScreenRenderEnv(bddl_file_name=env_bddl, camera_heights=256,
+                                         camera_widths=256, render_gpu_device_id=args.render_gpu)
+                clean_env = None
+                if method == "paired_first":
+                    clean_env = OffScreenRenderEnv(bddl_file_name=base_bddl, camera_heights=256,
+                                                   camera_widths=256, render_gpu_device_id=args.render_gpu)
+                try:
+                    rec = run_episode(env, clean_env, policy, language, initial_states[init_index],
+                                      method, source, args, device, seed,
+                                      (style_mean, style_std)
+                                      if method in ("style_norm", "style_mean", "leftover_select")
+                                      else None)
+                    rec["init_index"] = init_index
+                    rec["seed_offset"] = seed_offset
+                    records.append(rec)
+                    print(json.dumps(rec), flush=True)
+                finally:
+                    env.close()
+                    if clean_env is not None:
+                        clean_env.close()
     payload = {"schema": "closed_loop_tta_pilot_v2", "fit_ids": fit_ids, "domain": args.domain,
                "script_sha256": sha256_file(Path(__file__)),
                "checkpoint_sha256": sha256_file(args.checkpoint),
