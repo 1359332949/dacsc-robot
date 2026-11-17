@@ -77,6 +77,10 @@ def sha256_file(path: Path) -> str:
     return h.hexdigest()
 
 
+def style_mean_only(patches, source_mean):
+    return patches - patches.mean(dim=1, keepdim=True) + source_mean
+
+
 def style_transfer(patches, source_mean, source_std):
     mean_t = patches.mean(dim=1, keepdim=True)
     std_t = patches.std(dim=1, keepdim=True, unbiased=False).clamp_min(1e-6)
@@ -136,20 +140,24 @@ def run_episode(env, clean_env, policy, language, initial_state, method, source,
     generator.manual_seed(seed)
     while not success and not done and steps < args.max_steps:
         policy_obs = policy_observation(obs, language, policy)
-        if method != "style_norm":
+        if method not in ("style_norm", "style_mean"):
             visual, base_rep = visual_from_obs(policy, policy_obs)
         context = policy_obs["state"].detach().cpu().numpy()
         correction = None
         style_used = False
         paired_gap_norm = None
         shift_clean_image_diff = None
-        if method == "style_norm":
+        if method in ("style_norm", "style_mean"):
             if style_stats is None:
                 raise RuntimeError("style_norm requires source style statistics")
             visual_raw, base_rep, patches = visual_from_obs(policy, policy_obs, return_patches=True)
             source_mean, source_std = style_stats
-            norm_patches = {v: style_transfer(patches[v], source_mean[v], source_std[v])
-                            for v in patches}
+            if method == "style_norm":
+                norm_patches = {v: style_transfer(patches[v], source_mean[v], source_std[v])
+                                for v in patches}
+            else:
+                norm_patches = {v: style_mean_only(patches[v], source_mean[v])
+                                for v in patches}
             _, pooled_lang = policy.representation_extractor.language_encoder([language])
             visual = policy.representation_extractor.cross_attention_resampler(
                 norm_patches, pooled_lang)
@@ -316,7 +324,8 @@ def main():
             try:
                 rec = run_episode(env, clean_env, policy, language, initial_states[init_index],
                                   method, source, args, device, args.seed + init_index,
-                                  (style_mean, style_std) if method == "style_norm" else None)
+                                  (style_mean, style_std)
+                                  if method in ("style_norm", "style_mean") else None)
                 rec["init_index"] = init_index
                 records.append(rec)
                 print(json.dumps(rec), flush=True)
