@@ -36,15 +36,17 @@ def validate_executed_k(value: int, horizon: int) -> int:
 
 
 def validate_init_indices(indices: list[int], n_states: int,
-                           heldout: set[int], fit_ids: list[int]) -> None:
+                           heldout: set[int], fit_ids: list[int],
+                           require_heldout: bool = True) -> None:
     if len(indices) != len(set(indices)):
         raise ValueError("init indices must be unique")
     for index in indices:
         if index < 0 or index >= n_states:
             raise ValueError(f"init index out of range 0..{n_states - 1}: {index}")
-    missing = set(indices) - set(heldout)
-    if missing:
-        raise ValueError(f"init indices must be heldout: {sorted(missing)}")
+    if require_heldout:
+        missing = set(indices) - set(heldout)
+        if missing:
+            raise ValueError(f"init indices must be heldout: {sorted(missing)}")
     overlap = set(indices) & set(fit_ids)
     if overlap:
         raise ValueError(f"init indices overlap source fit IDs: {sorted(overlap)}")

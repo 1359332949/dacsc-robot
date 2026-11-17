@@ -353,6 +353,8 @@ def main():
     ap.add_argument("--source-fit-count", type=int, default=10)
     ap.add_argument("--seed", type=int, default=20261117)
     ap.add_argument("--seed-offsets", default="0")
+    ap.add_argument("--allow-non-heldout", action="store_true",
+                    help="protocol audit only; permits dev states")
     ap.add_argument("--device", default="cuda:0")
     ap.add_argument("--render-gpu", type=int, default=0)
     args = ap.parse_args()
@@ -382,7 +384,8 @@ def main():
     horizon = int(policy.action_generator.action_horizon)
     validate_executed_k(args.executed_k, horizon)
     heldout = set(int(i) for i in task["state_split"]["heldout_indices"])
-    validate_init_indices(init_indices, len(initial_states), heldout, fit_ids)
+    validate_init_indices(init_indices, len(initial_states), heldout, fit_ids,
+                          require_heldout=not args.allow_non_heldout)
     requested = args.source_fit_count
     if len(fit_ids) != requested:
         raise ValueError(f"source fit returned {len(fit_ids)} states, requested {requested}")
