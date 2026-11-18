@@ -23,7 +23,8 @@ from target_only_action_validation import configure  # noqa: E402
 from dacsc.action_adapter import ResidualVisualAdapter  # noqa: E402
 from dacsc.differentiable_policy import _encode_frozen, sample_from_z0  # noqa: E402
 from dacsc.state_pairing import (  # noqa: E402
-    snapshot, restore, model_compatible, compare, camera_compare, digest,
+    snapshot, restore, model_compatible, compare, camera_compare,
+    digest, digest_model, digest_controller,
 )
 from dacsc.tta_protocol import load_split, resolve_indices, validate_split_identity  # noqa: E402
 
@@ -144,6 +145,9 @@ def main():
                     "camera_compare_pass": bool(cam_check["pass"]),
                     "model_compatibility": compat["checks"], "state8_max_abs": state8_max,
                     "shift_snapshot_digest": digest(snap), "clean_snapshot_digest": digest(snap_clean),
+                    "shift_model_digest": digest_model(snap), "clean_model_digest": digest_model(snap_clean),
+                    "shift_controller_digest": digest_controller(snap), "clean_controller_digest": digest_controller(snap_clean),
+                    "controller_compare_pass": bool(state_check["checks"].get("controller", {}).get("pass", False)),
                     "z0_sha256": zhash,
                     "shift_visual_tokens": tok_s[0].float().cpu().numpy().tolist(),
                     "clean_visual_tokens": tok_c[0].float().cpu().numpy().tolist(),

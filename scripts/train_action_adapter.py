@@ -55,9 +55,13 @@ def main():
     ap.add_argument("--grip-weight", type=float, default=1.0)
     ap.add_argument("--z0-augment", type=int, default=1)
     ap.add_argument("--res-weight", type=float, default=0.0)
+    ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--z0-epoch-resample", action="store_true")
     ap.add_argument("--device", default="cuda:0")
     args = ap.parse_args()
     device = torch.device(args.device)
+    torch.manual_seed(args.seed); np.random.seed(args.seed)
+    if torch.cuda.is_available(): torch.cuda.manual_seed_all(args.seed)
     data = json.loads(args.pairs.read_text())["records"]
     data = [r for r in data if r.get("pairing_pass")]
     states = sorted({int(r["state_id"]) for r in data})
@@ -75,7 +79,7 @@ def main():
     lossf = nn.HuberLoss(reduction="none")
     weight = torch.ones(7, device=device)
     weight[6] = args.grip_weight
-    def one(rec):
+    def one(rec, epoch=0, resample=False):
         rep = build_rep(adapter, rec, device)
         c_rep = clean_rep(adapter, rec, device)
         frozen_rep = clean_frozen_rep(rec, device)
@@ -85,7 +89,8 @@ def main():
             if aug == 0:
                 z0 = base_z0
             else:
-                torch.manual_seed(900001 * int(rec["state_id"]) + 97 * int(rec["chunk_index"]) + aug)
+                seed_off = epoch * 100003 if resample else 0
+                torch.manual_seed(900001 * int(rec["state_id"]) + 97 * int(rec["chunk_index"]) + aug + seed_off)
                 z0 = torch.randn((1, policy.action_generator.action_horizon,
                                   policy.action_generator.action_dim), device=device, dtype=torch.float32)
             with torch.no_grad():
@@ -106,18 +111,21 @@ def main():
     for epoch in range(args.epochs):
         adapter.train(); tr = 0.0
         for rec in train:
-            opt.zero_grad(); loss, pair, ident = one(rec); loss.backward(); opt.step()
+            opt.zero_grad(); loss, pair, ident = one(rec, epoch=epoch, resample=args.z0_epoch_resample); loss.backward(); opt.step()
             tr += float(loss.detach())
         adapter.eval(); va = 0.0
         with torch.no_grad():
             for rec in val:
-                loss, _, _ = one(rec); va += float(loss)
+                loss, _, _ = one(rec, epoch=0, resample=False); va += float(loss)
         print(json.dumps({"epoch": epoch, "train": tr / len(train), "val": va / len(val)}))
     args.out.parent.mkdir(parents=True, exist_ok=True)
     torch.save({"adapter": adapter.state_dict(), "rank": args.rank, "dim": 768,
                 "val_states": sorted(val_states), "train_states": sorted(set(states) - val_states),
                 "id_weight": args.id_weight, "grip_weight": args.grip_weight,
-                "z0_augment": args.z0_augment, "res_weight": args.res_weight}, args.out)
+                "z0_augment": args.z0_augment, "res_weight": args.res_weight,
+                "training_seed": args.seed, "z0_epoch_resample": bool(args.z0_epoch_resample),
+                "pairs_sha256": __import__("hashlib").sha256(args.pairs.read_bytes()).hexdigest(),
+                "checkpoint_sha256": __import__("hashlib").sha256(args.checkpoint.read_bytes()).hexdigest()}, args.out)
     print(json.dumps({"out": str(args.out), "train_states": sorted(set(states) - val_states),
                       "val_states": sorted(val_states), "n_pairs": len(data)}))
 

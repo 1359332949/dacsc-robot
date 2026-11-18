@@ -31,6 +31,8 @@ def main():
     ap.add_argument("--state-ids", default="")
     ap.add_argument("--seed", type=int, default=7777)
     ap.add_argument("--seeds", default="")
+    ap.add_argument("--env-seeds", default="")
+    ap.add_argument("--z0-seeds", default="")
     ap.add_argument("--monitor-artifact", type=Path, default=Path("docs/data/monitor_artifact_v2.json"))
     ap.add_argument("--modes", default="frozen,adapter,gated,first")
     ap.add_argument("--gate-persistence", type=int, default=1)
@@ -67,39 +69,51 @@ def main():
         mthr = float(monitor.artifact["threshold"]); mpers = int(monitor.artifact["persistence"])
         mstride = int(monitor.artifact["stride"]); mwin = int(monitor.artifact["window"])
     records = []
-    seeds = ([int(x) for x in args.seeds.split(",")] if args.seeds else [args.seed])
+    legacy_seeds = ([int(x) for x in args.seeds.split(",")] if args.seeds else [args.seed])
+    env_seeds = ([int(x) for x in args.env_seeds.split(",")] if args.env_seeds else legacy_seeds)
+    z0_seeds = ([int(x) for x in args.z0_seeds.split(",")] if args.z0_seeds else legacy_seeds)
+    adapter_sha = __import__("hashlib").sha256(args.adapter.read_bytes()).hexdigest()
     for state_id in ids:
-        for seed in seeds:
+        for env_seed in env_seeds:
+          for z0_seed in z0_seeds:
             for mode in args.modes.split(","):
                 env = OffScreenRenderEnv(bddl_file_name=bddl, camera_heights=256, camera_widths=256,
                                          render_gpu_device_id=args.render_gpu)
                 try:
-                    np.random.seed(seed); torch.manual_seed(seed)
-                    if torch.cuda.is_available(): torch.cuda.manual_seed_all(seed)
-                    env.seed(seed); env.reset(); obs = env.set_init_state(states[state_id])
+                    np.random.seed(env_seed); torch.manual_seed(env_seed)
+                    if torch.cuda.is_available(): torch.cuda.manual_seed_all(env_seed)
+                    env.seed(env_seed); env.reset(); obs = env.set_init_state(states[state_id])
                     for _ in range(SETTLING_STEPS): obs, _, _, _ = env.step(DUMMY_ACTION)
                     steps = 0; success = False; done = False; chunk = 0
+                    adapter_forward_calls = 0; adapter_applied_chunks = 0
+                    adapter_first_applied_step = None; first_z0_hash = None
                     gate_active = False; alarm_run = 0
                     monitor_probs = []; monitor_alarms = 0; gate_step = None
-                    adapter_first_applied_step = None
                     buf_s, buf_a, buf_v = [], [], []
                     prev_vis = None
                     while not success and not done and steps < args.max_steps:
                         po = policy_observation(obs, language, policy)
-                        torch.manual_seed(seed + 100003 * state_id + chunk)
+                        torch.manual_seed(z0_seed + 100003 * state_id + chunk)
                         z0 = torch.randn((1, policy.action_generator.action_horizon,
                                           policy.action_generator.action_dim), device=device, dtype=torch.float32)
+                        z0_hash = __import__("hashlib").sha256(z0.detach().float().cpu().numpy().tobytes()).hexdigest()
+                        if first_z0_hash is None: first_z0_hash = z0_hash
                         if mode == "frozen":
                             out = forward_with_adapter(policy, po, zero, z0); used = False
                         elif mode == "adapter":
                             out = forward_with_adapter(policy, po, adapter, z0); used = True
+                            adapter_forward_calls += 1
+                            if adapter_first_applied_step is None: adapter_first_applied_step = steps
                         elif mode == "first":
                             used = chunk == 0
                             out = forward_with_adapter(policy, po, adapter if used else zero, z0)
+                            if used: adapter_forward_calls += 1
                         else:
                             used = bool(gate_active)
                             if used and adapter_first_applied_step is None: adapter_first_applied_step = steps
                             out = forward_with_adapter(policy, po, adapter if used else zero, z0)
+                            if used: adapter_forward_calls += 1
+                        if used: adapter_applied_chunks += 1
                         actions = out["controller_actions"][0].detach().float().cpu().numpy()
                         for k in range(min(args.executed_k, len(actions))):
                             obs, reward, done, info = env.step(np.clip(actions[k], -1.0, 1.0)); steps += 1
@@ -124,12 +138,20 @@ def main():
                                         gate_active = True; gate_step = steps
                             if success or done or steps >= args.max_steps: break
                         chunk += 1
-                    records.append({"state_id": state_id, "seed": seed, "mode": mode, "success": bool(success),
-                                    "gate_used": bool(used), "gate_active_final": bool(gate_active),
-                                    "gate_step": gate_step, "adapter_first_applied_step": adapter_first_applied_step,
+                    records.append({"state_id": state_id, "env_seed": env_seed, "z0_seed": z0_seed,
+                                    "mode": mode, "success": bool(success),
+                                    "adapter_enabled": bool(mode in ("adapter", "first", "gated") and used),
+                                    "adapter_forward_calls": adapter_forward_calls,
+                                    "adapter_applied_chunks": adapter_applied_chunks,
+                                    "adapter_first_applied_step": adapter_first_applied_step,
+                                    "adapter_checkpoint_sha256": adapter_sha,
+                                    "gate_used": bool(used) if mode == "gated" else None,
+                                    "gate_active_final": bool(gate_active),
+                                    "gate_step": gate_step,
                                     "monitor_alarm_windows": monitor_alarms,
                                     "monitor_max_prob": max(monitor_probs) if monitor_probs else None,
                                     "monitor_n_evals": len(monitor_probs),
+                                    "first_z0_sha256": first_z0_hash,
                                     "steps": steps, "hit_max_steps": bool(steps >= args.max_steps and not success)})
                     print(json.dumps(records[-1]), flush=True)
                 finally:

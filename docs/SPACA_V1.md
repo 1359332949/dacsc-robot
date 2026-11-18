@@ -176,3 +176,41 @@ But multi-seed is unstable:
 Conclusion: multi-z0 training removed the 36/37 breakage in this seed and
 gives a strong seed-7777 pilot, but the recovery is still seed-sensitive.
 Do not claim general SR improvement or start full target-dev confirmation.
+
+## Phase 1A stochasticity attribution
+
+Rollout provenance now records `env_seed`, `z0_seed`, z0 hash, adapter
+checkpoint hash, adapter forward calls, applied chunks and first application
+step. Adapter rollouts show `adapter_forward_calls > 0` and
+`adapter_first_applied_step = 0`, so they are not silent frozen runs.
+
+### State 43, fixed env seed 7777, varying z0 seed
+
+| z0 seed | frozen | adapter |
+|---|---:|---:|
+| 7777 | 0 | 1 |
+| 8888 | 0 | 1 |
+| 9999 | 0 | 1 |
+| 1111 | 0 | 0 |
+| 2222 | 0 | 1 |
+
+Adapter 4/5, frozen 0/5. Adapter recovery is z0-sensitive.
+
+### State 43, fixed z0 seed 7777, varying env seed
+
+| env seed | frozen | adapter |
+|---|---:|---:|
+| 7777 | 0 | 1 |
+| 8888 | 0 | 1 |
+| 9999 | 0 | 0 |
+| 1111 | 0 | 1 |
+
+Adapter 3/4, frozen 0/4. Adapter recovery is also env-sensitive.
+
+### Successful states 36/37, fixed env seed, varying z0 seed
+
+At z0=7777 adapter preserves both states. At z0=8888 and 9999 the adapter
+breaks state 36; state 37 also breaks at z0=8888. Thus the adapter is not a
+stable always-on method and cannot be released to full target-dev.
+
+Target test remains untouched.

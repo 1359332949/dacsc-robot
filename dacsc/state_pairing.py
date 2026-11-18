@@ -271,6 +271,50 @@ def _array_check(name, a, b, tol, optional_empty=False):
             "pass": bool(shape and finite and err <= tol[name])}
 
 
+def _controller_compare(a: dict[str, Any], b: dict[str, Any], tol: float = 1e-6) -> dict[str, Any]:
+    ca = a.get("controller", {}) or {}
+    cb = b.get("controller", {}) or {}
+    if not ca and not cb:
+        return {"present": False, "pass": True}
+    checks = {}
+    ok = True
+    for key in ("goal_pos", "goal_ori", "ori_ref", "relative_ori"):
+        x = np.asarray(ca.get(key, []), dtype=np.float64)
+        y = np.asarray(cb.get(key, []), dtype=np.float64)
+        if x.size == 0 and y.size == 0:
+            checks[key] = {"pass": True, "error": 0.0, "not_applicable": True}
+            continue
+        if x.size == 0 or y.size == 0 or x.shape != y.shape or not (np.isfinite(x).all() and np.isfinite(y).all()):
+            checks[key] = {"present": True, "pass": False, "error": float("inf")}
+            ok = False
+        else:
+            err = float(np.max(np.abs(x - y)))
+            checks[key] = {"present": True, "pass": bool(err <= tol), "error": err}
+            ok = ok and err <= tol
+    for key in ("interpolator_pos", "interpolator_ori"):
+        x = ca.get(key); y = cb.get(key)
+        if x is None and y is None:
+            checks[key] = {"pass": True, "error": 0.0, "not_applicable": True}
+            continue
+        if x is None or y is None:
+            checks[key] = {"present": True, "pass": False, "error": float("inf")}
+            ok = False
+            continue
+        ok_key = True; max_err = 0.0
+        for field in ("start", "goal"):
+            xa = np.asarray(x.get(field, []), dtype=np.float64)
+            ya = np.asarray(y.get(field, []), dtype=np.float64)
+            if xa.size == 0 or ya.size == 0 or xa.shape != ya.shape:
+                ok_key = False; max_err = float("inf"); continue
+            max_err = max(max_err, float(np.max(np.abs(xa - ya))))
+        step_ok = int(x.get("step", -1)) == int(y.get("step", -2))
+        total_ok = int(x.get("total_steps", -1)) == int(y.get("total_steps", -2))
+        checks[key] = {"pass": bool(ok_key and step_ok and total_ok and max_err <= tol),
+                       "error": max_err, "step_ok": step_ok, "total_steps_ok": total_ok}
+        ok = ok and checks[key]["pass"]
+    return {"present": True, "checks": checks, "pass": bool(ok)}
+
+
 def compare(a: dict[str, Any], b: dict[str, Any], tol: dict[str, float] | None = None) -> dict[str, Any]:
     tol = {**DEFAULT_TOL, **(tol or {})}
     checks = {}
@@ -305,6 +349,7 @@ def compare(a: dict[str, Any], b: dict[str, Any], tol: dict[str, float] | None =
     checks["body_names"] = {"pass": bool(names_ok)}
     checks["camera_names"] = {"pass": bool(cam_names_ok)}
     checks["eef_name"] = {"pass": eef_ok}
+    checks["controller"] = _controller_compare(a, b)
     return {"checks": checks, "all_pass": all(c["pass"] for c in checks.values())}
 
 
@@ -351,6 +396,16 @@ def camera_compare(a: dict[str, Any], b: dict[str, Any], expect_equal: bool,
         checks["non_target_unchanged"] = all(not changed[c] for c in non_target)
     return {"checks": checks, "diffs": diffs, "target_cameras": list(target_cameras),
             "pass": all(checks.values())}
+
+
+def digest_model(snap: dict[str, Any]) -> str:
+    blob = json.dumps(snap.get("model_signature", {}), sort_keys=True, separators=(",", ":")).encode()
+    return hashlib.sha256(blob).hexdigest()
+
+
+def digest_controller(snap: dict[str, Any]) -> str:
+    blob = json.dumps(snap.get("controller", {}), sort_keys=True, separators=(",", ":")).encode()
+    return hashlib.sha256(blob).hexdigest()
 
 
 def digest(snap: dict[str, Any]) -> str:
