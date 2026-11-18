@@ -1,0 +1,185 @@
+{
+  "schema": "reflex_recovery_eval_v1",
+  "records": [
+    {
+      "success": false,
+      "steps": 220,
+      "interventions": 0,
+      "hit_max_steps": true,
+      "state_id": 34,
+      "seed": 7777,
+      "mode": "frozen"
+    },
+    {
+      "success": false,
+      "steps": 220,
+      "interventions": 1,
+      "hit_max_steps": true,
+      "state_id": 34,
+      "seed": 7777,
+      "mode": "reflex"
+    },
+    {
+      "success": false,
+      "steps": 220,
+      "interventions": 0,
+      "hit_max_steps": true,
+      "state_id": 35,
+      "seed": 7777,
+      "mode": "frozen"
+    },
+    {
+      "success": false,
+      "steps": 220,
+      "interventions": 0,
+      "hit_max_steps": true,
+      "state_id": 35,
+      "seed": 7777,
+      "mode": "reflex"
+    },
+    {
+      "success": true,
+      "steps": 96,
+      "interventions": 0,
+      "hit_max_steps": false,
+      "state_id": 36,
+      "seed": 7777,
+      "mode": "frozen"
+    },
+    {
+      "success": true,
+      "steps": 159,
+      "interventions": 0,
+      "hit_max_steps": false,
+      "state_id": 36,
+      "seed": 7777,
+      "mode": "reflex"
+    },
+    {
+      "success": true,
+      "steps": 101,
+      "interventions": 0,
+      "hit_max_steps": false,
+      "state_id": 37,
+      "seed": 7777,
+      "mode": "frozen"
+    },
+    {
+      "success": true,
+      "steps": 101,
+      "interventions": 0,
+      "hit_max_steps": false,
+      "state_id": 37,
+      "seed": 7777,
+      "mode": "reflex"
+    },
+    {
+      "success": true,
+      "steps": 100,
+      "interventions": 0,
+      "hit_max_steps": false,
+      "state_id": 39,
+      "seed": 7777,
+      "mode": "frozen"
+    },
+    {
+      "success": true,
+      "steps": 100,
+      "interventions": 0,
+      "hit_max_steps": false,
+      "state_id": 39,
+      "seed": 7777,
+      "mode": "reflex"
+    },
+    {
+      "success": false,
+      "steps": 220,
+      "interventions": 0,
+      "hit_max_steps": true,
+      "state_id": 43,
+      "seed": 7777,
+      "mode": "frozen"
+    },
+    {
+      "success": false,
+      "steps": 220,
+      "interventions": 0,
+      "hit_max_steps": true,
+      "state_id": 43,
+      "seed": 7777,
+      "mode": "reflex"
+    },
+    {
+      "success": true,
+      "steps": 92,
+      "interventions": 0,
+      "hit_max_steps": false,
+      "state_id": 44,
+      "seed": 7777,
+      "mode": "frozen"
+    },
+    {
+      "success": true,
+      "steps": 92,
+      "interventions": 0,
+      "hit_max_steps": false,
+      "state_id": 44,
+      "seed": 7777,
+      "mode": "reflex"
+    },
+    {
+      "success": true,
+      "steps": 101,
+      "interventions": 0,
+      "hit_max_steps": false,
+      "state_id": 45,
+      "seed": 7777,
+      "mode": "frozen"
+    },
+    {
+      "success": true,
+      "steps": 137,
+      "interventions": 1,
+      "hit_max_steps": false,
+      "state_id": 45,
+      "seed": 7777,
+      "mode": "reflex"
+    },
+    {
+      "success": false,
+      "steps": 220,
+      "interventions": 0,
+      "hit_max_steps": true,
+      "state_id": 48,
+      "seed": 7777,
+      "mode": "frozen"
+    },
+    {
+      "success": false,
+      "steps": 220,
+      "interventions": 1,
+      "hit_max_steps": true,
+      "state_id": 48,
+      "seed": 7777,
+      "mode": "reflex"
+    },
+    {
+      "success": true,
+      "steps": 123,
+      "interventions": 0,
+      "hit_max_steps": false,
+      "state_id": 49,
+      "seed": 7777,
+      "mode": "frozen"
+    },
+    {
+      "success": false,
+      "steps": 220,
+      "interventions": 0,
+      "hit_max_steps": true,
+      "state_id": 49,
+      "seed": 7777,
+      "mode": "reflex"
+    }
+  ]
+}

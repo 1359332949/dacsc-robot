@@ -1,0 +1,23 @@
+{
+  "schema": "reflex_recovery_eval_v1",
+  "records": [
+    {
+      "success": false,
+      "steps": 220,
+      "interventions": 0,
+      "hit_max_steps": true,
+      "state_id": 34,
+      "seed": 7777,
+      "mode": "frozen"
+    },
+    {
+      "success": false,
+      "steps": 220,
+      "interventions": 1,
+      "hit_max_steps": true,
+      "state_id": 34,
+      "seed": 7777,
+      "mode": "reflex"
+    }
+  ]
+}
