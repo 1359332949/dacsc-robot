@@ -304,3 +304,23 @@ Rollout logs now include per-chunk z0 hashes, normalized/controller/clipped
 action deltas, clipping ratios, init state/model/controller digests and
 adapter application counts. This proves the adapter is actually applied but
 does not establish stable benefit.
+
+## Clean Frozen attribution baseline (critical)
+
+Corrected adapter on target-dev Clean, env seed 7777, z0 seed 7777:
+
+| state | Clean Frozen | Clean Adapter |
+|---|---:|---:|
+| 36 | 1 | 1 |
+| 37 | 1 | 1 |
+| 43 | 1 | 0 |
+| 45 | 1 | 1 |
+| total | 4/4 | 3/4 |
+
+Clean Frozen succeeds on all four target states; the adapter breaks Clean
+state 43. Thus the failure is not explained by "Clean CoRP itself fails".
+The adapter also harms the target Clean distribution, not only Shift.
+
+Combined shift result: Frozen 2/4, corrected adapter 2/4. No net gain, and
+Clean retention is not perfect. The always-on v1 adapter is not ready for
+full target-dev.
