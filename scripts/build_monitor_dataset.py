@@ -42,7 +42,7 @@ def main():
     Xs, As, Vs, Ys, remaining, groups, domains, episodes, times = [], [], [], [], [], [], [], [], []
     n_ep = 0
     for d in args.trajectory_dir:
-        for p in sorted(d.glob("s*_d*_seed*.json")):
+        for p in sorted(d.rglob("s*_d*_seed*.json")):
             e = load_episode(p); n_ep += 1
             n = len(e["state"])
             for t in range(args.window - 1, n, args.stride):

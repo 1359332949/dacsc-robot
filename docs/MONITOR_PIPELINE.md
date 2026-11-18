@@ -68,3 +68,10 @@ target-dev trajectory collection (target test is never collected). It supports
 trains on source only, and evaluates on target dev only. It supports
 `--execute`; default prints commands. The script refuses one-class training
 data and never reads target test.
+
+## First real-data result (2026-11-18)
+
+Source val AUROC 0.878, Recall@5%FPR 0.514; target dev AUROC 0.828,
+Recall@5%FPR 0.500, median first-alarm lead 180 steps, **7/15 false-alarm
+episodes**. The signal exists but is not deployment-ready; do not run recovery
+from this checkpoint.
