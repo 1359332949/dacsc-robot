@@ -16,24 +16,23 @@ from evaluate_libero import DUMMY_ACTION, SETTLING_STEPS, is_success, policy_obs
 from corp import load_policy  # noqa: E402
 from target_only_action_validation import configure, visual_from_obs  # noqa: E402
 from dacsc.failure_monitor import CausalFailureMonitor  # noqa: E402
-from dacsc.tta_protocol import load_split, resolve_indices, validate_split_identity  # noqa: E402
+from dacsc.tta_protocol import load_split, resolve_indices, seeds_for_role, sha256_file, validate_split_identity  # noqa: E402
 
 
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--matrix", type=Path, required=True)
     ap.add_argument("--checkpoint", type=Path, required=True)
-    ap.add_argument("--monitor", type=Path, required=True)
+    ap.add_argument("--artifact", type=Path, required=True)
     ap.add_argument("--split-json", type=Path, required=True)
     ap.add_argument("--out", type=Path, required=True)
     ap.add_argument("--role", default="target_dev")
     ap.add_argument("--suite", default="libero_spatial")
+    ap.add_argument("--domain", choices=["shift", "clean"], default="shift")
     ap.add_argument("--lighting-id", type=int, default=2292)
-    ap.add_argument("--seeds", default="7777")
+
     ap.add_argument("--modes", default="frozen,monitor")
-    ap.add_argument("--threshold", type=float, default=0.5)
-    ap.add_argument("--persistence", type=int, default=20,
-                    help="consecutive windows above threshold before intervention")
+
     ap.add_argument("--reflex", action="store_true")
     ap.add_argument("--max-steps", type=int, default=220)
     ap.add_argument("--executed-k", type=int, default=12)
@@ -51,23 +50,44 @@ def main():
     import libero.libero.envs.bddl_utils as BDDLUtils
     matrix = json.loads(args.matrix.read_text())
     task = next(b for b in matrix["base_tasks"] if b["suite"] == args.suite)
+    if args.role != "target_dev":
+        raise ValueError("monitor recovery is restricted to the frozen target_dev role")
     split = load_split(args.split_json)
     validate_split_identity(split, args.suite, task.get("base_task") or "", args.lighting_id)
+    artifact = json.loads(args.artifact.read_text())
+    if artifact.get("schema") != "monitor_artifact_v1":
+        raise ValueError("unsupported monitor artifact")
+    if artifact.get("role") != args.role:
+        raise ValueError("role does not match monitor artifact")
+    if artifact.get("split_sha256") != sha256_file(args.split_json):
+        raise ValueError("split hash does not match monitor artifact")
+    checkpoint = Path(artifact["checkpoint"])
+    if not checkpoint.exists():
+        checkpoint = args.checkpoint.parent / checkpoint.name
+    if sha256_file(checkpoint) != artifact["checkpoint_sha256"]:
+        raise ValueError("monitor checkpoint hash mismatch")
+    threshold = float(artifact["threshold"])
+    persistence = int(artifact["persistence"])
+    stride = int(artifact["stride"])
+    window = int(artifact["window"])
     variant = next(v for v in task["variants"]["lighting"] if v["classification_id"] == args.lighting_id)
+    env_bddl = variant["base_bddl"] if args.domain == "clean" else variant["env_bddl_name"]
     ids = resolve_indices(split, args.role, "")
     states = torch.load(task["state_split"]["source_file"], weights_only=False)
     language = BDDLUtils.get_problem_info(variant["base_bddl"])["language_instruction"]
-    ck = torch.load(args.monitor, map_location="cpu")
-    model = CausalFailureMonitor(window_size=ck["window"], hidden_dim=ck["hidden"])
+    ck = torch.load(checkpoint, map_location="cpu")
+    model = CausalFailureMonitor(window_size=ck["window"], hidden_dim=ck["hidden"],
+                                 use_visual=ck.get("use_visual", True))
     model.load_state_dict(ck["model"]); model.eval()
     W = int(ck["window"]); mu = {k: np.asarray(v[0]) for k, v in ck["normalization"].items()}
     sd = {k: np.asarray(v[1]) for k, v in ck["normalization"].items()}
+    seeds = seeds_for_role(split, args.role)
     policy = load_policy(args.checkpoint, device=torch.device(args.device)); policy.eval()
     records = []
     for state_id in ids:
-        for seed in [int(x) for x in args.seeds.split(",")]:
+        for seed in seeds:
             for mode in args.modes.split(","):
-                env = OffScreenRenderEnv(bddl_file_name=variant["env_bddl_name"], camera_heights=256,
+                env = OffScreenRenderEnv(bddl_file_name=env_bddl, camera_heights=256,
                                          camera_widths=256, render_gpu_device_id=args.render_gpu)
                 try:
                     np.random.seed(seed); torch.manual_seed(seed)
@@ -86,7 +106,7 @@ def main():
                         for k in range(args.executed_k):
                             raw = controller[k]; clipped = np.clip(raw, -1.0, 1.0)
                             obs, reward, done, info = env.step(clipped); steps += 1
-                            success = is_success(obs, info, reward, done)
+                            success = is_success(env, info, reward, done)
                             po_after = policy_observation(obs, language, policy)
                             st = po_after["state"][0].detach().cpu().numpy().astype(float)
                             vis, _ = visual_from_obs(policy, po_after); vis = vis.mean(dim=1)[0].detach().float().cpu().numpy().astype(float)
@@ -94,19 +114,20 @@ def main():
                             prev_vis_raw = vis
                             buf_s.append((st - mu["state"]) / sd["state"]); buf_a.append((clipped - mu["action"]) / sd["action"]); buf_v.append((delta - mu["visual_delta"]) / sd["visual_delta"])
                             if success or done or steps >= args.max_steps: break
-                            if mode == "monitor" and interventions < args.max_interventions and len(buf_s) >= W:
+                            if (mode == "monitor" and interventions < args.max_interventions
+                                    and len(buf_s) >= W and steps % stride == 0):
                                 with torch.no_grad():
                                     prob = model(torch.tensor(np.stack(buf_s[-W:]), dtype=torch.float32).unsqueeze(0),
                                                  torch.tensor(np.stack(buf_a[-W:]), dtype=torch.float32).unsqueeze(0),
                                                  torch.tensor(np.stack(buf_v[-W:]), dtype=torch.float32).unsqueeze(0)).item()
-                                alarm_run = alarm_run + 1 if prob >= args.threshold else 0
-                                if alarm_run >= args.persistence:
+                                alarm_run = alarm_run + 1 if prob >= threshold else 0
+                                if alarm_run >= persistence:
                                     alarms += 1; interventions += 1
                                     if args.reflex:
                                         reflex = np.array([0.0, 0.0, args.retreat_z, 0.0, 0.0, 0.0, -1.0], dtype=float)
                                         for _ in range(args.reflex_steps):
                                             obs, reward, done, info = env.step(reflex); steps += 1
-                                            success = is_success(obs, info, reward, done)
+                                            success = is_success(env, info, reward, done)
                                             if success or done or steps >= args.max_steps: break
                                     buf_s, buf_a, buf_v = [], [], []
                                     prev_vis_raw = None
@@ -114,7 +135,8 @@ def main():
                                     break
                     rec = {"state_id": state_id, "seed": seed, "mode": mode, "success": bool(success),
                            "steps": steps, "alarms": alarms, "interventions": interventions,
-                           "persistence": args.persistence,
+                           "persistence": persistence, "monitor_stride": stride,
+                           "artifact_sha256": sha256_file(args.artifact),
                            "hit_max_steps": bool(steps >= args.max_steps and not success)}
                     records.append(rec); print(json.dumps(rec), flush=True)
                 finally:

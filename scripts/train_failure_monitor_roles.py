@@ -48,6 +48,9 @@ def main():
     ap.add_argument("--domain-adversarial", action="store_true")
     ap.add_argument("--domain-weight", type=float, default=0.1)
     args = ap.parse_args()
+    torch.manual_seed(args.seed); np.random.seed(args.seed)
+    if torch.cuda.is_available(): torch.cuda.manual_seed_all(args.seed)
+    generator = torch.Generator(); generator.manual_seed(args.seed)
     tr_d = np.load(args.train_data, allow_pickle=True)
     va_d = np.load(args.val_data, allow_pickle=True)
     if len(set(tr_d["y"].tolist())) < 2:
@@ -71,7 +74,8 @@ def main():
         return TensorDataset(torch.from_numpy(d["state"]), torch.from_numpy(d["action"]),
                              torch.from_numpy(d["visual_delta"]), torch.from_numpy(tr_d["y"] if d is tr else va_d["y"]),
                              torch.from_numpy(dom))
-    train_loader = DataLoader(make(tr, tr_dom), batch_size=args.batch_size, shuffle=True)
+    train_loader = DataLoader(make(tr, tr_dom), batch_size=args.batch_size,
+                              shuffle=True, generator=generator)
     val_loader = DataLoader(make(va, (va_d["domain"] == "shift").astype(np.int64)), batch_size=args.batch_size, shuffle=False)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = CausalFailureMonitor(window_size=args.window, hidden_dim=args.hidden,
@@ -86,7 +90,8 @@ def main():
             s, a, v, y, dom = s.to(device), a.to(device), v.to(device), y.to(device), dom.to(device)
             opt.zero_grad(); p = model(s, a, v)
             w = torch.where(y > 0.5, torch.full_like(y, pos_weight), torch.ones_like(y))
-            loss = lossf(p, y) * w.mean()
+            per = nn.functional.binary_cross_entropy(p, y, reduction="none")
+            loss = (per * w).mean()
             if args.domain_adversarial:
                 h = model.encode(s, a, v)
                 dlog = model.domain_head(_GradReverse.apply(h, args.domain_weight))
@@ -105,7 +110,8 @@ def main():
     torch.save({"model": model.state_dict(), "window": args.window, "hidden": args.hidden,
                 "metrics": metrics, "val_groups": sorted(set(va_d["group"].tolist())),
                 "normalization": {k: (v[0].tolist(), v[1].tolist()) for k, v in stats.items()},
-                "use_visual": not args.no_visual, "domain_adversarial": bool(args.domain_adversarial)}, args.out)
+                "use_visual": not args.no_visual, "domain_adversarial": bool(args.domain_adversarial),
+                "training_seed": args.seed}, args.out)
     print(json.dumps(metrics))
 
 

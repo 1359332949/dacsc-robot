@@ -8,11 +8,11 @@ Target dev, Lighting 2292, seed 7777, 10 states:
 
 | mode | success | interventions |
 |---|---:|---:|
-| Frozen | 7/10 | 0 |
+| Frozen (same run as reflex) | 6/10 | 0 |
 | chunk interrupt only | 6/10 | — |
 | reflex retreat/open/replan | 5/10 | — |
 
-Both interruption and reflex are negative in this pilot. The detector can fire,
+Interrupt run: Frozen 7/10 vs interrupt 6/10. Reflex run: Frozen 6/10 vs reflex 5/10 (paired gain 0 / loss 1). Both are negative. The earlier 7/10 reflex baseline was a report error. The detector can fire,
 but the recovery action is not sufficient; do not tune thresholds or add a
 learned monitor until trajectory data and failure labels are complete.
 

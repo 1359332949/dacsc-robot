@@ -51,7 +51,12 @@ def main():
                     alarm = j; break
             if alarm is not None:
                 if fail:
-                    det += 1; lead.append(int(t["remaining"][idx][alarm]))
+                    det += 1
+                    ev = int(t["failure_event_step"][idx][alarm]) if "failure_event_step" in t else -1
+                    if ev >= 0:
+                        lead.append(max(0, ev - int(t["time"][idx][alarm])))
+                    else:
+                        lead.append(int(t["remaining"][idx][alarm]))
                 else:
                     false += 1
         nfail = len(set(t["episode"][t["y"] > 0.5].tolist()))

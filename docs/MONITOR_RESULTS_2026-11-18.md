@@ -191,3 +191,45 @@ source-selected operating point in this pilot.
 This is multi-seed evidence, but still one known perturbation condition
 (Lighting 2292), target test untouched, and only 10 target-dev states.
 Do not run recovery yet.
+
+## Correction: K=15 is development-selected, not source-selected
+
+The multi-seed source-validation table gives the same source detection/false
+alarm for K=5, 10 and 15, so source validation alone does not justify K=15.
+K=15 was chosen using target-dev behavior and is therefore a **development-set
+selection**, not independent generalization. The 13/13 and 1/27 numbers are
+target-dev development results.
+
+## Failure-event label caveat
+
+The current trajectories do not contain `failure_event_step`; the lead-time
+numbers are still remaining-to-episode-end, not lead to the first observable
+failure event. The dataset builder now supports
+`failure_event_step`/`failure_mode`, but the existing data has not been
+annotated. Do not call 164 steps "warning before failure" until event labels
+exist.
+
+## Recovery harness P0 fixes (code only, not run)
+
+- loads `use_visual` from the checkpoint;
+- calls `is_success(env, ...)`;
+- loads threshold, persistence and stride from an immutable monitor artifact;
+- restricts execution to `target_dev` and takes seeds from the split role;
+- rejects target-test role;
+- evaluates monitor every `stride` actions, matching the offline windows;
+- supports clean/shift BDDL selection.
+
+No monitor+recovery rollout has been run.
+
+## Reflex report correction
+
+Raw `reflex_dev_seed7777.json`:
+
+- Frozen 6/10; reflex 5/10; paired gain 0 / loss 1.
+
+Raw `interrupt_dev_seed7777.json`:
+
+- Frozen 7/10; interrupt 6/10.
+
+The earlier 7/10 Frozen reflex baseline was a documentation error. Do not call
+the hand-coded retreat a safe reflex.

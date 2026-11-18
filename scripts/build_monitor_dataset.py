@@ -27,7 +27,8 @@ def load_episode(path: Path) -> dict:
     return {"state": state, "action": action, "visual_delta": delta,
             "failure": int(not d["success"]), "success": bool(d["success"]),
             "steps": len(rows), "state_id": d["state_id"], "domain": d["domain"],
-            "seed": d["seed"]}
+            "seed": d["seed"], "failure_event_step": d.get("failure_event_step"),
+            "failure_mode": d.get("failure_mode")}
 
 
 def main():
@@ -41,6 +42,7 @@ def main():
     ap.add_argument("--state-mode", choices=["absolute", "delta"], default="absolute")
     args = ap.parse_args()
     Xs, As, Vs, Ys, remaining, groups, domains, episodes, times = [], [], [], [], [], [], [], [], []
+    event_steps, event_known = [], []
     n_ep = 0
     for d in args.trajectory_dir:
         for p in sorted(d.rglob("s*_d*_seed*.json")):
@@ -54,9 +56,14 @@ def main():
                 sl = slice(t - args.window + 1, t + 1)
                 Xs.append(e["state"][sl]); As.append(e["action"][sl]); Vs.append(e["visual_delta"][sl])
                 rem = n - 1 - t
+                event = e.get("failure_event_step")
+                if event is not None:
+                    event_rem = max(0, int(event) - (t + 1))
+                else:
+                    event_rem = rem
                 label = e["failure"]
                 if args.label_mode == "within_horizon":
-                    label = int(bool(e["failure"]) and rem <= args.horizon)
+                    label = int(bool(e["failure"]) and event_rem <= args.horizon)
                 Ys.append(label); remaining.append(rem)
                 groups.append(str(e["state_id"]))
                 domains.append(e["domain"])
@@ -73,7 +80,9 @@ def main():
                         visual_delta=np.stack(Vs), y=y,
                         remaining=np.asarray(remaining, dtype=np.int32),
                         group=np.asarray(groups), domain=np.asarray(domains),
-                        episode=np.asarray(episodes), time=np.asarray(times, dtype=np.int32))
+                        episode=np.asarray(episodes), time=np.asarray(times, dtype=np.int32),
+                        failure_event_step=np.asarray(event_steps, dtype=np.int32),
+                        event_known=np.asarray(event_known, dtype=np.int8))
     print(json.dumps({"out": str(out), "episodes": n_ep, "windows": len(Xs),
                       "positive_fraction": float(y.mean()), "window": args.window,
                       "stride": args.stride, "label_mode": args.label_mode,
