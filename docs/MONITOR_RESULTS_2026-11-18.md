@@ -330,3 +330,13 @@ Shadow smoke:
 - state 43: frozen 0/3, shadow 0/3, 4-6 alarms, 0 interventions.
 
 Shadow mode is validated; recovery is not.
+
+## PoNR and recovery validation (OSMesa)
+
+PoNR: failure states 43/45 have 0 successful branches at steps 0/40/80;
+candidate PoNR = 0 (unrecoverable from start). No effective lead claim.
+
+Recovery pilot: success state 36 frozen 3/3 vs monitor 3/3, 0 alarms/0
+interventions; failure state 43 frozen 0/3 vs monitor 0/3, 2 alarms/2
+interventions, no rescue. Recovery is non-harmful but not a success-rate
+improvement on these states.

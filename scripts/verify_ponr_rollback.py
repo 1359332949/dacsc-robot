@@ -216,8 +216,11 @@ def main():
         for i in range(len(rows)):
             if p[i] == 0 and any(x > 0 for x in p[:i]):
                 ponr = rows[i]["snapshot_step"]; break
+        all_zero = len(p) > 0 and all(x == 0 for x in p)
         summary[st] = {"branch_success_rates": p, "snapshot_steps": [r["snapshot_step"] for r in rows],
-                       "ponr_step": ponr, "final_success": rows[0]["final_success"] if rows else None}
+                       "ponr_step": 0 if (ponr is None and all_zero) else ponr,
+                       "ponr_note": "unrecoverable from step 0" if (ponr is None and all_zero) else None,
+                       "final_success": rows[0]["final_success"] if rows else None}
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps({"records": records, "summary": summary}, indent=2) + "\n")
     print(json.dumps({"out": str(args.out), "n": len(records)}))

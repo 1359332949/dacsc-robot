@@ -46,3 +46,31 @@ State 43 failure:
 
 This validates that the model can now be run deterministically in shadow mode.
 It does not validate recovery or effective PoNR.
+
+## PoNR result
+
+Under OSMesa, tested failure states 43 and 45 had zero successful policy
+branches at snapshots 0, 40 and 80. The harness now labels this as:
+
+```text
+ponr_step = 0
+ponr_note = unrecoverable from step 0
+```
+
+This is a negative PoNR result: these failures are not recoverable by mere
+chunk interruption, so no effective warning lead can be claimed for them.
+
+## Recovery pilot (OSMesa)
+
+Artifact v2, K=15, elastic interruption (executed_k=4 after alarm), no reflex.
+
+State 36 (success):
+- frozen 3/3; monitor 3/3; 0 alarms; 0 interventions.
+
+State 43 (failure):
+- frozen 0/3; monitor 0/3; 2 alarms / 2 interventions per seed at most;
+- no rescue.
+
+The monitor is safe on the tested success state and does not rescue this
+hopeless failure. Recovery is therefore validated as non-harmful here, but not
+as a success-rate improvement method.
