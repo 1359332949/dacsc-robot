@@ -129,3 +129,26 @@ recovery.
 
 This also shows state-delta is worse than absolute state in this pilot; the
 domain shortcut is not solved by relative state alone.
+
+## False-alarm diagnosis (best role-correct variant)
+
+Best variant: no-visual + absolute state, source-fixed threshold.
+
+- target AUC 0.873, recall 0.742, false alarms 4/15;
+- false alarms: 3 shift successes (states 35, 44, 45) alarm early (steps
+  35-37), and 1 clean success (state 49) alarms late (step 113).
+
+So the remaining errors are mostly early Shift successes, consistent with a
+residual domain shortcut rather than a pure failure signal.
+
+## Additional role-correct variants
+
+| monitor | target AUC | recall | false alarms |
+|---|---:|---:|---:|
+| no-visual + absolute (best) | 0.873 | 0.742 | 4/15 |
+| no-visual + domain-adversarial | 0.864 | 0.717 | 5/15 |
+| within-horizon labels (H=10) | 0.648 | 0.400 | 3/15 |
+
+Within-horizon labels reduce false alarms but lose too much failure
+discrimination (AUC 0.648, median lead 62). Domain-adversarial is not better
+than the no-visual baseline. No recovery run.

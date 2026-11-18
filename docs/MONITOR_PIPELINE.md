@@ -109,3 +109,12 @@ rerun with this grouping before citation.
 Best role-correct variant is no-visual + absolute state: source-val AUC 0.952,
 target AUC 0.873, source-fixed recall 0.742, false alarms 4/15. State-delta is
 worse (target 0.842). Still not deployment-ready; no recovery.
+
+
+## False-alarm diagnosis
+
+Best role-correct variant (no visual, absolute state): target AUC 0.873,
+recall 0.742, false alarms 4/15. Remaining false alarms are three early Shift
+successes (states 35,44,45) and one late Clean success (49), consistent with a
+residual domain shortcut. Within-horizon labels lose failure discrimination
+(AUC 0.648). No recovery.
