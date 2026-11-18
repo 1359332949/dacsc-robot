@@ -100,3 +100,16 @@ separate calibration/debug pass before any full target-dev run.
 
 Do not start the full target-dev adapter evaluation until the gate fix is
 validated.
+
+## Gate experiments (negative)
+
+Adapter-only rescues state 43 but breaks states 36/37. Gate diagnostics:
+
+- monitor persistence 15: gate activates at step 54; state 43 still fails;
+- monitor persistence 1: gate activates at step 26; state 43 still fails;
+- state 36 monitor max prob is 0.243, so gate correctly stays off;
+- adapter-first-chunk preserves state 36/37 (both success) but does not rescue
+  state 43.
+
+Therefore no current gate solves both success preservation and recovery.
+Adapter-only is not deployable. Do not start full target-dev / 20-episode.

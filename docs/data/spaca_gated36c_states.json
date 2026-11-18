@@ -1,0 +1,19 @@
+{
+  "schema": "adapter_policy_eval_v1",
+  "records": [
+    {
+      "state_id": 36,
+      "seed": 7777,
+      "mode": "gated",
+      "success": true,
+      "gate_used": false,
+      "gate_active_final": false,
+      "gate_step": null,
+      "monitor_alarm_windows": 0,
+      "monitor_max_prob": 0.24348247051239014,
+      "monitor_n_evals": 42,
+      "steps": 93,
+      "hit_max_steps": false
+    }
+  ]
+}
