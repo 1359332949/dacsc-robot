@@ -25,6 +25,9 @@ def main():
     ap.add_argument("--label-mode", choices=["episode", "within_horizon"], default="episode")
     ap.add_argument("--horizon", type=int, default=10)
     ap.add_argument("--epochs", type=int, default=30)
+    ap.add_argument("--state-mode", choices=["absolute", "delta"], default="absolute")
+    ap.add_argument("--no-visual", action="store_true")
+    ap.add_argument("--domain-adversarial", action="store_true")
     ap.add_argument("--execute", action="store_true")
     args = ap.parse_args()
     args.out_dir.mkdir(parents=True, exist_ok=True)
@@ -38,17 +41,22 @@ def main():
         [py, str(scripts / "build_monitor_dataset.py"), "--trajectory-dir", str(args.source_fit),
          "--trajectory-dir", str(args.source_val), "--out", str(source_npz),
          "--window", str(args.window), "--stride", str(args.stride),
-         "--label-mode", args.label_mode, "--horizon", str(args.horizon)],
+         "--label-mode", args.label_mode, "--horizon", str(args.horizon),
+         "--state-mode", args.state_mode],
         [py, str(scripts / "train_failure_monitor.py"), "--data", str(source_npz),
-         "--out", str(ckpt), "--epochs", str(args.epochs), "--window", str(args.window)],
+         "--out", str(ckpt), "--epochs", str(args.epochs), "--window", str(args.window)]
+        + (["--no-visual"] if args.no_visual else [])
+        + (["--domain-adversarial"] if args.domain_adversarial else []),
         [py, str(scripts / "evaluate_monitor_offline.py"), "--data", str(target_npz),
-         "--checkpoint", str(ckpt), "--out", str(metrics)],
+         "--checkpoint", str(ckpt), "--out", str(metrics),
+         "--source", str(source_npz)],
     ]
     # Build target windows without training on them.
     commands.insert(1, [py, str(scripts / "build_monitor_dataset.py"),
                         "--trajectory-dir", str(args.target_dev), "--out", str(target_npz),
                         "--window", str(args.window), "--stride", str(args.stride),
-                        "--label-mode", args.label_mode, "--horizon", str(args.horizon)])
+                        "--label-mode", args.label_mode, "--horizon", str(args.horizon),
+                        "--state-mode", args.state_mode])
     for cmd in commands:
         if args.execute:
             run(cmd)

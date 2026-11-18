@@ -63,3 +63,25 @@ deployment-ready, and the target threshold must be fixed from source
 validation, not target test.
 
 Do not run recovery from these checkpoints.
+
+## Next experiment (ready, not run)
+
+The next monitor run should use relative state features:
+
+```text
+state_delta, action, visual_delta
+```
+
+and fixed source-validation threshold. `scripts/build_monitor_dataset.py`
+supports `--state-mode delta`; `scripts/run_monitor_pipeline.py` supports
+`--state-mode delta --no-visual`, and `evaluate_monitor_offline.py` supports
+`--source` to fix the threshold from source validation rather than target test.
+
+Required comparison:
+
+- full monitor (visual, absolute state);
+- no-visual monitor;
+- no-visual + state-delta;
+- threshold fixed on source validation.
+
+Do not select a variant by target test.

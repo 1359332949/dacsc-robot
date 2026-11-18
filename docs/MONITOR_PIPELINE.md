@@ -83,3 +83,12 @@ The full monitor's features identify Clean vs Shift with target AUC 0.982.
 No-visual monitor: target failure AUC 0.830, source-fixed false alarms 4/15
 (vs 10/15 full), but domain AUC on state+action remains 0.872. The monitor is
 still a domain-sensitive detector; do not deploy or run recovery yet.
+
+
+## Relative-feature experiment
+
+`build_monitor_dataset.py --state-mode delta` replaces absolute state with
+successive state delta. `run_monitor_pipeline.py` supports
+`--state-mode delta --no-visual`, and `evaluate_monitor_offline.py --source`
+fixes the threshold on source-validation negatives. This is the next
+domain-invariance experiment; it has not been run.

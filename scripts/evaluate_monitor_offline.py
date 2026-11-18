@@ -23,6 +23,8 @@ def main():
     ap.add_argument("--checkpoint", type=Path, required=True)
     ap.add_argument("--out", type=Path, required=True)
     ap.add_argument("--fpr", type=float, default=0.05)
+    ap.add_argument("--source", type=Path, default=None,
+                    help="source windows used only to fix the threshold")
     args = ap.parse_args()
     d = np.load(args.data, allow_pickle=True); ck = torch.load(args.checkpoint, map_location="cpu")
     model = CausalFailureMonitor(window_size=ck["window"], hidden_dim=ck["hidden"],
@@ -34,7 +36,25 @@ def main():
     v = ((d["visual_delta"] - mu["visual_delta"]) / sd["visual_delta"]).astype(np.float32)
     with torch.no_grad():
         p = model(torch.from_numpy(s), torch.from_numpy(a), torch.from_numpy(v)).numpy()
-    y = d["y"]; neg = np.sort(p[y == 0]); thr = np.quantile(neg, 1 - args.fpr)
+    y = d["y"]
+    if args.source is not None:
+        sd = np.load(args.source, allow_pickle=True)
+        sd_s = ((sd["state"] - mu["state"]) / sd["state"]).astype(np.float32)
+        sd_a = ((sd["action"] - mu["action"]) / sd["action"]).astype(np.float32)
+        sd_v = ((sd["visual_delta"] - mu["visual_delta"]) / sd["visual_delta"]).astype(np.float32)
+        with torch.no_grad():
+            ps = model(torch.from_numpy(sd_s), torch.from_numpy(sd_a), torch.from_numpy(sd_v)).numpy()
+        val_groups = set(ck.get("val_groups", []))
+        vm = np.array([g in val_groups for g in sd["group"]])
+        src_y = sd["y"][vm]
+        src_p = ps[vm]
+        neg = np.sort(src_p[src_y == 0])
+        if len(neg) == 0: raise ValueError("source has no validation negatives")
+        thr = float(np.quantile(neg, 1 - args.fpr))
+        threshold_source = str(args.source)
+    else:
+        neg = np.sort(p[y == 0]); thr = float(np.quantile(neg, 1 - args.fpr)); threshold_source = None
+    thr = float(thr)
     # per episode first alarm
     ep = d["episode"]; t = d["time"]; rem = d["remaining"]
     lead = []; false_alarm = 0
@@ -46,7 +66,8 @@ def main():
             lead.append(int(rem[alarm[0]]))
         elif not fail and len(alarm):
             false_alarm += 1
-    report = {"auc": auc(y, p), "n_windows": len(y), "threshold": float(thr),
+    report = {"auc": auc(y, p), "n_windows": len(y), "threshold": thr,
+              "threshold_source": threshold_source,
               "recall_at_fpr": float(np.mean(p[y == 1] >= thr)) if np.any(y == 1) else None,
               "n_failure_episodes": int(len(set(ep[y > 0.5].tolist()))),
               "n_success_episodes": int(len(set(ep[y < 0.5].tolist()))),

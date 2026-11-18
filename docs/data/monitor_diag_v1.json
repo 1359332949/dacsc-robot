@@ -1,0 +1,98 @@
+{
+  "schema": "monitor_false_alarm_diagnosis_v1",
+  "source_val_threshold": 0.9969376921653748,
+  "source_val_auc": 0.878505864354921,
+  "target_auc": 0.8277983083929733,
+  "target_at_source_threshold": {
+    "recall": 0.6547169811320754,
+    "false_alarm_episode_fraction": 0.6666666666666666
+  },
+  "target_by_domain": {
+    "clean": {
+      "n_windows": 596,
+      "auc": 0.7545450078616353,
+      "recall_at_source_thr": 0.330188679245283
+    },
+    "shift": {
+      "n_windows": 659,
+      "auc": 0.9111058853907302,
+      "recall_at_source_thr": 0.8710691823899371
+    }
+  },
+  "domain_classifier": {
+    "source_auc": 0.9795201237918567,
+    "target_auc": 0.9817320324673341
+  },
+  "false_alarm_episodes": [
+    {
+      "episode": "s35_dshift_seed7777",
+      "domain": "shift",
+      "state": "35",
+      "first_alarm_step": 21,
+      "max_score": 0.9999954700469971
+    },
+    {
+      "episode": "s36_dshift_seed7777",
+      "domain": "shift",
+      "state": "36",
+      "first_alarm_step": 23,
+      "max_score": 0.9999897480010986
+    },
+    {
+      "episode": "s37_dshift_seed7777",
+      "domain": "shift",
+      "state": "37",
+      "first_alarm_step": 51,
+      "max_score": 0.9997795224189758
+    },
+    {
+      "episode": "s39_dclean_seed7777",
+      "domain": "clean",
+      "state": "39",
+      "first_alarm_step": 59,
+      "max_score": 0.999996542930603
+    },
+    {
+      "episode": "s39_dshift_seed7777",
+      "domain": "shift",
+      "state": "39",
+      "first_alarm_step": 15,
+      "max_score": 0.9999862909317017
+    },
+    {
+      "episode": "s44_dclean_seed7777",
+      "domain": "clean",
+      "state": "44",
+      "first_alarm_step": 17,
+      "max_score": 0.999963641166687
+    },
+    {
+      "episode": "s44_dshift_seed7777",
+      "domain": "shift",
+      "state": "44",
+      "first_alarm_step": 13,
+      "max_score": 0.9999872446060181
+    },
+    {
+      "episode": "s45_dshift_seed7777",
+      "domain": "shift",
+      "state": "45",
+      "first_alarm_step": 9,
+      "max_score": 0.9999982118606567
+    },
+    {
+      "episode": "s49_dclean_seed7777",
+      "domain": "clean",
+      "state": "49",
+      "first_alarm_step": 105,
+      "max_score": 0.9998430013656616
+    },
+    {
+      "episode": "s49_dshift_seed7777",
+      "domain": "shift",
+      "state": "49",
+      "first_alarm_step": 19,
+      "max_score": 0.9999841451644897
+    }
+  ]
+}
