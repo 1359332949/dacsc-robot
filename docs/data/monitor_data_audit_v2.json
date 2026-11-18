@@ -1,0 +1,113 @@
+{
+  "schema": "monitor_data_audit_v2",
+  "roles": {
+    "source_fit": {
+      "n_episodes": 20,
+      "states": [
+        0,
+        1,
+        2,
+        4,
+        6,
+        8,
+        10,
+        13,
+        14,
+        17
+      ],
+      "domains": {
+        "clean": 10,
+        "shift": 10
+      },
+      "n_rows_min": 88,
+      "n_rows_max": 220
+    },
+    "source_validation": {
+      "n_episodes": 20,
+      "states": [
+        18,
+        20,
+        21,
+        22,
+        25,
+        27,
+        29,
+        31,
+        32,
+        33
+      ],
+      "domains": {
+        "clean": 10,
+        "shift": 10
+      },
+      "n_rows_min": 89,
+      "n_rows_max": 220
+    },
+    "target_dev": {
+      "n_episodes": 20,
+      "states": [
+        34,
+        35,
+        36,
+        37,
+        39,
+        43,
+        44,
+        45,
+        48,
+        49
+      ],
+      "domains": {
+        "clean": 10,
+        "shift": 10
+      },
+      "n_rows_min": 87,
+      "n_rows_max": 220
+    }
+  },
+  "domain_manifests": {
+    "source_fit": {
+      "clean": {
+        "lighting_id": 2292,
+        "role": "source_fit",
+        "split_sha256": "0141c2e8e417f6686597930333e91782c62381a45f0bd9ebe9f38d08327a5fa1",
+        "n_records": 10
+      },
+      "shift": {
+        "lighting_id": 2292,
+        "role": "source_fit",
+        "split_sha256": "0141c2e8e417f6686597930333e91782c62381a45f0bd9ebe9f38d08327a5fa1",
+        "n_records": 10
+      }
+    },
+    "source_validation": {
+      "clean": {
+        "lighting_id": 2292,
+        "role": "source_validation",
+        "split_sha256": "0141c2e8e417f6686597930333e91782c62381a45f0bd9ebe9f38d08327a5fa1",
+        "n_records": 10
+      },
+      "shift": {
+        "lighting_id": 2292,
+        "role": "source_validation",
+        "split_sha256": "0141c2e8e417f6686597930333e91782c62381a45f0bd9ebe9f38d08327a5fa1",
+        "n_records": 10
+      }
+    },
+    "target_dev": {
+      "clean": {
+        "lighting_id": 2292,
+        "role": "target_dev",
+        "split_sha256": "0141c2e8e417f6686597930333e91782c62381a45f0bd9ebe9f38d08327a5fa1",
+        "n_records": 10
+      },
+      "shift": {
+        "lighting_id": 2292,
+        "role": "target_dev",
+        "split_sha256": "0141c2e8e417f6686597930333e91782c62381a45f0bd9ebe9f38d08327a5fa1",
+        "n_records": 10
+      }
+    }
+  },
+  "errors": []
+}

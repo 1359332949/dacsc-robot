@@ -19,7 +19,7 @@ def main():
         "target_dev": set(split["target_dev_state_ids"]),
         "target_test": set(split["target_test_state_ids"]),
     }
-    report = {"schema": "monitor_data_audit_v1", "roles": {}, "errors": []}
+    report = {"schema": "monitor_data_audit_v2", "roles": {}, "domain_manifests": {}, "errors": []}
     for role in ("source_fit", "source_validation", "target_dev"):
         rdir = args.data_root / role
         files = sorted(rdir.rglob("s*_d*_seed*.json"))
@@ -43,6 +43,20 @@ def main():
         if not files:
             report["errors"].append(f"missing role dir: {role}")
             continue
+        for domain in ("clean", "shift"):
+            mf = rdir / domain / "manifest.json"
+            if not mf.exists():
+                report["errors"].append(f"missing manifest: {mf}")
+                continue
+            m = json.loads(mf.read_text())
+            report["domain_manifests"].setdefault(role, {})[domain] = {
+                "lighting_id": m.get("lighting_id"), "role": m.get("role"),
+                "split_sha256": m.get("split_sha256"), "n_records": len(m.get("records", [])),
+            }
+            if m.get("lighting_id") != 2292:
+                report["errors"].append(f"{role}/{domain} lighting {m.get('lighting_id')} != 2292")
+            if m.get("role") != role:
+                report["errors"].append(f"{role}/{domain} manifest role {m.get('role')}")
         outside = set(states) - expected[role]
         if outside:
             report["errors"].append(f"{role} outside role: {sorted(outside)}")
