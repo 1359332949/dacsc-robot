@@ -1,0 +1,24 @@
+{
+  "records": [
+    {
+      "state_id": 35,
+      "snapshot_step": 0,
+      "branch_successes": 0,
+      "branches": 1,
+      "final_success": true,
+      "final_steps": 91
+    }
+  ],
+  "summary": {
+    "35": {
+      "branch_success_rates": [
+        0.0
+      ],
+      "snapshot_steps": [
+        0
+      ],
+      "ponr_step": null,
+      "final_success": true
+    }
+  }
+}

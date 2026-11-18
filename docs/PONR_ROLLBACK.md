@@ -41,3 +41,21 @@ success while the original rollout succeeded. The rollback harness is therefore
 **not yet validated**; do not use its branch success rates as PoNR evidence.
 Next check: compare the first post-restore action against the original action,
 and restore any remaining robot/controller buffers.
+
+## Additional rollback fixes and test
+
+Added:
+
+- robosuite episode `done`/`timestep` reset after restore;
+- exact observation at snapshot;
+- RNG state (torch/numpy/cuda) at snapshot;
+- exact-RNG branch for branch 0.
+
+Sanity test (state 35, shift, success):
+
+- snapshot 0: 1/2 branches success;
+- snapshot 20: 0/2 branches success.
+
+The exact-RNG branch still differs from the original first action by about
+0.14, so the harness is not exact yet. Do not interpret the step-20 drop as a
+validated PoNR; it is exploratory.

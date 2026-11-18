@@ -105,6 +105,15 @@ def controller_snapshot(env) -> dict[str, Any]:
     return out
 
 
+def reset_episode_flags(env, timestep: int = 0) -> None:
+    """Clear robosuite's episode-level done/timestep flags after restore."""
+    inner = getattr(env, "env", env)
+    if hasattr(inner, "done"):
+        inner.done = False
+    if hasattr(inner, "timestep"):
+        inner.timestep = int(timestep)
+
+
 def restore_controller(env, state: dict[str, Any]) -> None:
     ctrl = _robot_controller(env)
     if ctrl is None or not state:
@@ -212,6 +221,7 @@ def restore(env, snap: dict[str, Any]) -> None:
         if dst is not None and len(src):
             put(dst, src)
     restore_controller(env, snap.get("controller", {}))
+    reset_episode_flags(env, 0)
     if getattr(sim.data, "mocap_pos", None) is not None and len(snap.get("mocap_pos", [])):
         put(sim.data.mocap_pos, snap["mocap_pos"])
     if getattr(sim.data, "mocap_quat", None) is not None and len(snap.get("mocap_quat", [])):

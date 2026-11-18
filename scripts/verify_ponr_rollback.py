@@ -20,26 +20,36 @@ from dacsc.state_pairing import snapshot, restore, model_compatible  # noqa: E40
 from dacsc.tta_protocol import load_split, resolve_indices, validate_split_identity  # noqa: E402
 
 
-def branch(snap, first_obs, env, policy, language, seed, max_steps, executed_k):
-    np.random.seed(seed); torch.manual_seed(seed)
-    if torch.cuda.is_available(): torch.cuda.manual_seed_all(seed)
+def branch(snap, first_obs, first_action, rng_state, env, policy, language, seed, max_steps, executed_k,
+           exact_rng=False):
+    if exact_rng and rng_state is not None:
+        torch.set_rng_state(rng_state["torch"])
+        np.random.set_state(rng_state["numpy"])
+        if torch.cuda.is_available() and rng_state.get("cuda") is not None:
+            torch.cuda.set_rng_state_all(rng_state["cuda"])
+    else:
+        np.random.seed(seed); torch.manual_seed(seed)
+        if torch.cuda.is_available(): torch.cuda.manual_seed_all(seed)
     # Restore in the same simulator to preserve controller and renderer state.
     restore(env, snap)
     env.env.sim.forward()
     obs = first_obs if first_obs is not None else env.env._get_observations()
     success = False; done = False; steps = 0
+    action_diff = None
     with torch.no_grad():
         while not success and not done and steps < max_steps:
             po = policy_observation(obs, language, policy)
             with torch.autocast(device_type=torch.device("cuda").type, dtype=torch.bfloat16,
                                 enabled=torch.cuda.is_available()):
                 controller = policy.predict(po)[0].float().cpu().numpy()
+            if action_diff is None and first_action is not None:
+                action_diff = float(np.max(np.abs(controller - first_action)))
             for k in range(executed_k):
                 clipped = np.clip(controller[k], -1.0, 1.0)
                 obs, reward, done, info = env.step(clipped); steps += 1
                 success = is_success(env, info, reward, done)
                 if success or done or steps >= max_steps: break
-    return bool(success), steps
+    return bool(success), steps, action_diff
 
 
 def main():
@@ -84,28 +94,40 @@ def main():
             env.seed(args.seed); env.reset(); obs = env.set_init_state(states[state_id])
             for _ in range(SETTLING_STEPS): obs, _, _, _ = env.step(DUMMY_ACTION)
             snaps = {}; steps = 0; success = False; done = False
-            if 0 in steps_wanted: snaps[0] = {"state": snapshot(env), "obs": obs}
+            if 0 in steps_wanted:
+                snaps[0] = {"state": snapshot(env), "obs": obs, "action": None,
+                            "rng": {"torch": torch.get_rng_state(),
+                                    "numpy": np.random.get_state(),
+                                    "cuda": torch.cuda.get_rng_state_all() if torch.cuda.is_available() else None}}
             with torch.no_grad():
                 while not success and not done and steps < args.max_steps:
                     po = policy_observation(obs, language, policy)
                     with torch.autocast(device_type=torch.device(args.device).type, dtype=torch.bfloat16,
                                         enabled=args.device.startswith("cuda")):
                         controller = policy.predict(po)[0].float().cpu().numpy()
+                    if steps == 0 and 0 in snaps and snaps[0]["action"] is None:
+                        snaps[0]["action"] = controller.copy()
                     for k in range(args.executed_k):
                         obs, reward, done, info = env.step(np.clip(controller[k], -1.0, 1.0)); steps += 1
                         if steps in steps_wanted:
-                            snaps[steps] = {"state": snapshot(env), "obs": obs}
+                            snaps[steps] = {"state": snapshot(env), "obs": obs,
+                                            "rng": {"torch": torch.get_rng_state(),
+                                                    "numpy": np.random.get_state(),
+                                                    "cuda": torch.cuda.get_rng_state_all() if torch.cuda.is_available() else None}}
                         success = is_success(env, info, reward, done)
                         if success or done or steps >= args.max_steps: break
             for snap_step, pack in sorted(snaps.items()):
-                snap = pack["state"]; first_obs = pack["obs"]
+                snap = pack["state"]; first_obs = pack["obs"]; first_action = pack.get("action")
+                rng_state = pack.get("rng")
                 probs = []
                 for b in range(args.branches):
-                    ok, n = branch(snap, first_obs, env, policy, language, args.seed + 1000 * b,
-                                   args.max_steps - snap_step, args.executed_k)
+                    ok, n, adiff = branch(snap, first_obs, first_action, rng_state, env, policy, language,
+                                          args.seed if b == 0 else args.seed + 1000 * b,
+                                          args.max_steps - snap_step, args.executed_k, exact_rng=(b == 0))
                     probs.append(ok)
                 records.append({"state_id": state_id, "snapshot_step": snap_step,
                                 "branch_successes": int(sum(probs)), "branches": len(probs),
+                                "first_action_diff": adiff,
                                 "final_success": bool(success), "final_steps": steps})
         finally:
             env.close()

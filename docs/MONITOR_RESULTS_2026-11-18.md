@@ -277,3 +277,10 @@ Added controller state and exact initial observation to snapshots. A
 successful state-35 branch at step 0 still failed (0/1), so the rollback branch
 is not reproducing the original rollout. The PoNR probe remains unvalidated;
 its branch success rates must not be used as effective warning lead time.
+
+## Rollback harness update
+
+Added controller state, episode flags, exact observation, and torch/numpy/cuda
+RNG state to snapshots. State-35 sanity: step-0 branch 1/2 success, step-20
+branch 0/2; exact-RNG first-action diff ~0.14. The harness is still
+exploratory; no validated PoNR and no effective lead-time claim.
