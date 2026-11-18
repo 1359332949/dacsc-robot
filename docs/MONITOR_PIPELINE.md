@@ -92,3 +92,13 @@ successive state delta. `run_monitor_pipeline.py` supports
 `--state-mode delta --no-visual`, and `evaluate_monitor_offline.py --source`
 fixes the threshold on source-validation negatives. This is the next
 domain-invariance experiment; it has not been run.
+
+
+## Grouping correction
+
+The first pipeline mixed source_fit and source_validation and then randomly
+split source groups. The corrected pipeline trains on source_fit only,
+validates/thresholds on source_validation only, and evaluates on target_dev
+only. Role-correct full monitor: source-val AUROC 0.930, target-dev AUROC
+0.852, source-fixed false alarms 10/15. Prior no-visual/DA ablations must be
+rerun with this grouping before citation.

@@ -85,3 +85,31 @@ Required comparison:
 - threshold fixed on source validation.
 
 Do not select a variant by target test.
+
+## Grouping correction (important)
+
+The first monitor run combined `source_fit` and `source_validation` and then
+randomly held out state groups. That violates the split roles and invalidates
+the earlier ablation numbers as role-correct evidence.
+
+New role-correct pipeline:
+
+- train on `source_fit` only;
+- validate/threshold on `source_validation` only;
+- evaluate on `target_dev` only;
+- target test untouched.
+
+Role-correct full monitor:
+
+- source-validation AUROC 0.930;
+- target-dev AUROC 0.852;
+- source-fixed recall 0.689;
+- source-fixed false alarms **10/15**;
+- median lead 204 steps.
+
+This is still not deployable. The earlier no-visual/domain-adversarial
+ablations must be rerun with this role-correct pipeline before being cited.
+
+Data audit: source_fit/source_validation/target_dev each 20 episodes; state
+sets disjoint; no target-test state in target_dev; per-step dims valid
+(state8/action7/visual768). No audit errors.

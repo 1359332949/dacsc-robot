@@ -25,29 +25,35 @@ def main():
     ap.add_argument("--fpr", type=float, default=0.05)
     ap.add_argument("--source", type=Path, default=None,
                     help="source windows used only to fix the threshold")
+    ap.add_argument("--source-all", action="store_true",
+                    help="treat all --source windows as validation (explicit source-val file)")
     args = ap.parse_args()
     d = np.load(args.data, allow_pickle=True); ck = torch.load(args.checkpoint, map_location="cpu")
     model = CausalFailureMonitor(window_size=ck["window"], hidden_dim=ck["hidden"],
                                  use_visual=ck.get("use_visual", True)); model.load_state_dict(ck["model"]); model.eval()
     mu = {k: np.asarray(v[0]) for k, v in ck["normalization"].items()}
-    sd = {k: np.asarray(v[1]) for k, v in ck["normalization"].items()}
-    s = ((d["state"] - mu["state"]) / sd["state"]).astype(np.float32)
-    a = ((d["action"] - mu["action"]) / sd["action"]).astype(np.float32)
-    v = ((d["visual_delta"] - mu["visual_delta"]) / sd["visual_delta"]).astype(np.float32)
+    norm_sd = {k: np.asarray(v[1]) for k, v in ck["normalization"].items()}
+    s = ((d["state"] - mu["state"]) / norm_sd["state"]).astype(np.float32)
+    a = ((d["action"] - mu["action"]) / norm_sd["action"]).astype(np.float32)
+    v = ((d["visual_delta"] - mu["visual_delta"]) / norm_sd["visual_delta"]).astype(np.float32)
     with torch.no_grad():
         p = model(torch.from_numpy(s), torch.from_numpy(a), torch.from_numpy(v)).numpy()
     y = d["y"]
     if args.source is not None:
-        sd = np.load(args.source, allow_pickle=True)
-        sd_s = ((sd["state"] - mu["state"]) / sd["state"]).astype(np.float32)
-        sd_a = ((sd["action"] - mu["action"]) / sd["action"]).astype(np.float32)
-        sd_v = ((sd["visual_delta"] - mu["visual_delta"]) / sd["visual_delta"]).astype(np.float32)
+        src = np.load(args.source, allow_pickle=True)
+        sd_s = ((src["state"] - mu["state"]) / norm_sd["state"]).astype(np.float32)
+        sd_a = ((src["action"] - mu["action"]) / norm_sd["action"]).astype(np.float32)
+        sd_v = ((src["visual_delta"] - mu["visual_delta"]) / norm_sd["visual_delta"]).astype(np.float32)
         with torch.no_grad():
             ps = model(torch.from_numpy(sd_s), torch.from_numpy(sd_a), torch.from_numpy(sd_v)).numpy()
-        val_groups = set(ck.get("val_groups", []))
-        vm = np.array([g in val_groups for g in sd["group"]])
-        src_y = sd["y"][vm]
-        src_p = ps[vm]
+        if args.source_all:
+            src_y = src["y"]
+            src_p = ps
+        else:
+            val_groups = set(ck.get("val_groups", []))
+            vm = np.array([g in val_groups for g in src["group"]])
+            src_y = src["y"][vm]
+            src_p = ps[vm]
         neg = np.sort(src_p[src_y == 0])
         if len(neg) == 0: raise ValueError("source has no validation negatives")
         thr = float(np.quantile(neg, 1 - args.fpr))
