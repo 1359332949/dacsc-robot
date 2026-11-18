@@ -298,3 +298,9 @@ Environment replay is now validated: full action replay from state-35 step 0
 succeeds 1/1. Policy resampling from the same snapshot still fails (replay
 first chunk 0/1), so policy-branch success is not yet a validated PoNR.
 No effective lead-time claim.
+
+## Rollback: exact first action, later divergence
+
+State-35 step-0 branch 0: first_action_diff 0.0, restore_diff 0.0, but branch
+still fails; full action replay succeeds 1/1. So restore is exact at the start,
+but policy resampling diverges after the first chunk. PoNR remains unvalidated.

@@ -6,7 +6,7 @@ zero, that step is a candidate Point of No Return.
 """
 
 from __future__ import annotations
-import argparse, json, sys
+import argparse, copy, json, sys
 from pathlib import Path
 import numpy as np
 import torch
@@ -112,7 +112,7 @@ def main():
             for _ in range(SETTLING_STEPS): obs, _, _, _ = env.step(DUMMY_ACTION)
             snaps = {}; executed_actions = []; steps = 0; success = False; done = False
             if 0 in steps_wanted:
-                snaps[0] = {"state": snapshot(env), "obs": obs, "action": None,
+                snaps[0] = {"state": snapshot(env), "obs": copy.deepcopy(obs), "action": None,
                             "rng": {"torch": torch.get_rng_state(),
                                     "numpy": np.random.get_state(),
                                     "cuda": torch.cuda.get_rng_state_all() if torch.cuda.is_available() else None}}
@@ -129,7 +129,7 @@ def main():
                         executed_actions.append(act.copy())
                         obs, reward, done, info = env.step(act); steps += 1
                         if steps in steps_wanted:
-                            snaps[steps] = {"state": snapshot(env), "obs": obs,
+                            snaps[steps] = {"state": snapshot(env), "obs": copy.deepcopy(obs),
                                             "action": controller[k + 1:].copy(),
                                             "rng": {"torch": torch.get_rng_state(),
                                                     "numpy": np.random.get_state(),
@@ -139,7 +139,7 @@ def main():
             for snap_step, pack in sorted(snaps.items()):
                 snap = pack["state"]; first_obs = pack["obs"]; first_action = pack.get("action")
                 rng_state = pack.get("rng")
-                probs = []; restore_diffs = []
+                probs = []; restore_diffs = []; branch_details = []
                 for b in range(args.branches):
                     replay = executed_actions[snap_step:] if args.replay_all_actions else None
                     ok, n, adiff, rdiff = branch(snap, first_obs, first_action, rng_state, replay, env, policy, language,
@@ -148,10 +148,14 @@ def main():
                                           replay_first_action=args.replay_first_action,
                                           replay_all=args.replay_all_actions)
                     probs.append(ok); restore_diffs.append(rdiff)
+                    branch_details.append({"branch": b, "seed": args.seed if b == 0 else args.seed + 1000 * b,
+                                           "success": bool(ok), "steps": n,
+                                           "first_action_diff": adiff, "restore_diff": rdiff})
                 records.append({"state_id": state_id, "snapshot_step": snap_step,
                                 "branch_successes": int(sum(probs)), "branches": len(probs),
-                                "first_action_diff": adiff,
+                                "first_action_diff": branch_details[0]["first_action_diff"] if branch_details else None,
                                 "restore_diff": max(restore_diffs) if restore_diffs else None,
+                                "branch_details": branch_details,
                                 "final_success": bool(success), "final_steps": steps})
         finally:
             env.close()

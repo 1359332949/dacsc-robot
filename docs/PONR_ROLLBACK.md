@@ -97,3 +97,17 @@ Not validated:
 The failure is in sampled flow-matching action chunks, not in MuJoCo state.
 Next: save the sampled action chunk + generator state at each snapshot, or
 define PoNR using action-replay continuation rather than policy resampling.
+
+## Exact first-action branch (state 35, step 0)
+
+After full-state restore, deep-copied observation, controller state and exact
+RNG, branch 0 reproduces the original first action:
+
+- first_action_diff = 0.0;
+- restore_diff = 0.0;
+- branch 0 still fails (0/1).
+
+Full action replay from the same snapshot succeeds 1/1. Therefore the
+remaining mismatch appears after the first action chunk, in the resampled
+policy observation/action chunk path, not in MuJoCo state or the first action.
+PoNR remains unvalidated.
