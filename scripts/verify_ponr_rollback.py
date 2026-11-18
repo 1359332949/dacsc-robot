@@ -20,16 +20,13 @@ from dacsc.state_pairing import snapshot, restore, model_compatible  # noqa: E40
 from dacsc.tta_protocol import load_split, resolve_indices, validate_split_identity  # noqa: E402
 
 
-def branch(snap, env, policy, language, seed, max_steps, executed_k):
+def branch(snap, first_obs, env, policy, language, seed, max_steps, executed_k):
     np.random.seed(seed); torch.manual_seed(seed)
     if torch.cuda.is_available(): torch.cuda.manual_seed_all(seed)
-    env.seed(seed); env.reset()
-    compat = model_compatible(snapshot(env), snap)
-    if not all(compat.values()):
-        raise ValueError(f"rollback model incompatible: {compat}")
+    # Restore in the same simulator to preserve controller and renderer state.
     restore(env, snap)
     env.env.sim.forward()
-    obs = env.env._get_observations()
+    obs = first_obs if first_obs is not None else env.env._get_observations()
     success = False; done = False; steps = 0
     with torch.no_grad():
         while not success and not done and steps < max_steps:
@@ -87,6 +84,7 @@ def main():
             env.seed(args.seed); env.reset(); obs = env.set_init_state(states[state_id])
             for _ in range(SETTLING_STEPS): obs, _, _, _ = env.step(DUMMY_ACTION)
             snaps = {}; steps = 0; success = False; done = False
+            if 0 in steps_wanted: snaps[0] = {"state": snapshot(env), "obs": obs}
             with torch.no_grad():
                 while not success and not done and steps < args.max_steps:
                     po = policy_observation(obs, language, policy)
@@ -96,20 +94,16 @@ def main():
                     for k in range(args.executed_k):
                         obs, reward, done, info = env.step(np.clip(controller[k], -1.0, 1.0)); steps += 1
                         if steps in steps_wanted:
-                            snaps[steps] = snapshot(env)
+                            snaps[steps] = {"state": snapshot(env), "obs": obs}
                         success = is_success(env, info, reward, done)
                         if success or done or steps >= args.max_steps: break
-            for snap_step, snap in sorted(snaps.items()):
+            for snap_step, pack in sorted(snaps.items()):
+                snap = pack["state"]; first_obs = pack["obs"]
                 probs = []
                 for b in range(args.branches):
-                    benv = OffScreenRenderEnv(bddl_file_name=variant["env_bddl_name"], camera_heights=256,
-                                              camera_widths=256, render_gpu_device_id=args.render_gpu)
-                    try:
-                        ok, n = branch(snap, benv, policy, language, args.seed + 1000 * b,
-                                       args.max_steps - snap_step, args.executed_k)
-                        probs.append(ok)
-                    finally:
-                        benv.close()
+                    ok, n = branch(snap, first_obs, env, policy, language, args.seed + 1000 * b,
+                                   args.max_steps - snap_step, args.executed_k)
+                    probs.append(ok)
                 records.append({"state_id": state_id, "snapshot_step": snap_step,
                                 "branch_successes": int(sum(probs)), "branches": len(probs),
                                 "final_success": bool(success), "final_steps": steps})

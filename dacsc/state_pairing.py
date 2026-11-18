@@ -47,6 +47,7 @@ def snapshot(env) -> dict[str, Any]:
         eef_pos = _arr(sim.data.body_xpos[names.index(eef_name)]).tolist()
     out = {
         "body_names": names,
+        "controller": controller_snapshot(env),
         "camera_names": cam_names,
         "eef_name": eef_name,
         "qpos": _arr(sim.data.qpos).tolist(),
@@ -71,6 +72,57 @@ def snapshot(env) -> dict[str, Any]:
         value = getattr(sim.data, key, None)
         out[key] = _arr(value).tolist() if value is not None else []
     return out
+
+
+def _robot_controller(env):
+    inner = getattr(env, "env", env)
+    robots = getattr(inner, "robots", None)
+    if not robots:
+        return None
+    return getattr(robots[0], "controller", None)
+
+
+def controller_snapshot(env) -> dict[str, Any]:
+    """Capture OSC controller internals that MuJoCo state does not contain."""
+    ctrl = _robot_controller(env)
+    if ctrl is None:
+        return {}
+    out: dict[str, Any] = {}
+    for key in ("goal_pos", "goal_ori", "ori_ref", "relative_ori"):
+        value = getattr(ctrl, key, None)
+        if value is not None:
+            out[key] = _arr(value).tolist()
+    for key in ("interpolator_pos", "interpolator_ori"):
+        interp = getattr(ctrl, key, None)
+        if interp is None:
+            continue
+        out[key] = {
+            "start": _arr(interp.start).tolist(),
+            "goal": _arr(interp.goal).tolist(),
+            "step": int(getattr(interp, "step", 0)),
+            "total_steps": int(getattr(interp, "total_steps", 0)),
+        }
+    return out
+
+
+def restore_controller(env, state: dict[str, Any]) -> None:
+    ctrl = _robot_controller(env)
+    if ctrl is None or not state:
+        return
+    for key in ("goal_pos", "goal_ori", "ori_ref", "relative_ori"):
+        if key in state:
+            setattr(ctrl, key, np.asarray(state[key], dtype=np.float64).copy())
+    for key in ("interpolator_pos", "interpolator_ori"):
+        if key not in state:
+            continue
+        interp = getattr(ctrl, key, None)
+        if interp is None:
+            continue
+        interp.start = np.asarray(state[key]["start"], dtype=np.float64).copy()
+        interp.goal = np.asarray(state[key]["goal"], dtype=np.float64).copy()
+        interp.step = int(state[key]["step"])
+        if "total_steps" in state[key]:
+            interp.total_steps = int(state[key]["total_steps"])
 
 
 def model_signature(env) -> dict[str, Any]:
@@ -159,6 +211,7 @@ def restore(env, snap: dict[str, Any]) -> None:
         src = snap.get(key, [])
         if dst is not None and len(src):
             put(dst, src)
+    restore_controller(env, snap.get("controller", {}))
     if getattr(sim.data, "mocap_pos", None) is not None and len(snap.get("mocap_pos", [])):
         put(sim.data.mocap_pos, snap["mocap_pos"])
     if getattr(sim.data, "mocap_quat", None) is not None and len(snap.get("mocap_quat", [])):

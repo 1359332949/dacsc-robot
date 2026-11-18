@@ -270,3 +270,10 @@ warning lead.
 - defaults to shadow-only and requires `--allow-intervention` for monitor mode.
 
 No recovery rollout has been run.
+
+## PoNR harness status
+
+Added controller state and exact initial observation to snapshots. A
+successful state-35 branch at step 0 still failed (0/1), so the rollback branch
+is not reproducing the original rollout. The PoNR probe remains unvalidated;
+its branch success rates must not be used as effective warning lead time.

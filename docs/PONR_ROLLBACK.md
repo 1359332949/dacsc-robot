@@ -23,3 +23,21 @@ Snapshots at steps 20, 40, 80, 100, 120 all produced 0/1 or 0/2 successful
 branches. This cannot yet be interpreted as a PoNR: the rollback/render path
 needs validation (controller state and observation freshness), and failure may
 start before step 20. Do not report these numbers as effective warning lead.
+
+## Controller/observation consistency status
+
+Follow-up fixes attempted:
+
+- snapshot OSC controller `goal_pos`, `goal_ori`, `ori_ref`, `relative_ori`,
+  and interpolator `start/goal/step`;
+- restore controller state with the MuJoCo state;
+- save the exact observation at the snapshot and reuse it for the first
+  branch action;
+- restore in the same simulator instead of a fresh environment;
+- call `sim.forward()` after restore.
+
+Despite these, a successful state-35 branch at step 0 still returned 0/1
+success while the original rollout succeeded. The rollback harness is therefore
+**not yet validated**; do not use its branch success rates as PoNR evidence.
+Next check: compare the first post-restore action against the original action,
+and restore any remaining robot/controller buffers.
