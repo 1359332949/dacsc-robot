@@ -170,3 +170,24 @@ failures detected), not on target test. On target dev it yields zero false
 alarms and detects all five failures. This is a strong pilot result, but it is
 still one seed, one perturbation condition, and 10 target-dev states; do not
 run recovery or claim deployment yet.
+
+## Multi-seed validation
+
+Data: seed 7777 + 8888; source_fit/val and target_dev combined.
+
+Monitor: no visual + absolute state; trained on source_fit; source-val fixed
+threshold; K selected on source validation.
+
+At K=15:
+
+- source validation: 15/15 failures detected, 1 false alarm;
+- target dev: 13/13 failures detected, 1/27 success false alarm;
+- target median lead: 164 steps;
+- target AUC (window-level): 0.922.
+
+At K=30: target 10/13 failures, 0/27 false alarms. K=15 is the better
+source-selected operating point in this pilot.
+
+This is multi-seed evidence, but still one known perturbation condition
+(Lighting 2292), target test untouched, and only 10 target-dev states.
+Do not run recovery yet.

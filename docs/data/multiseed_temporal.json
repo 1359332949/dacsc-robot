@@ -1,0 +1,74 @@
+[
+  {
+    "k": 1,
+    "threshold": 0.9997186660766602,
+    "source_failure_detected": 16,
+    "source_false_alarm_episodes": 7,
+    "source_median_lead_steps": 192.0,
+    "target_failure_detected": 13,
+    "n_failure_episodes": 13,
+    "target_false_alarm_episodes": 9,
+    "n_success_episodes": 27,
+    "target_median_lead_steps": 194.0
+  },
+  {
+    "k": 5,
+    "threshold": 0.9997186660766602,
+    "source_failure_detected": 15,
+    "source_false_alarm_episodes": 1,
+    "source_median_lead_steps": 180.0,
+    "target_failure_detected": 13,
+    "n_failure_episodes": 13,
+    "target_false_alarm_episodes": 4,
+    "n_success_episodes": 27,
+    "target_median_lead_steps": 186.0
+  },
+  {
+    "k": 10,
+    "threshold": 0.9997186660766602,
+    "source_failure_detected": 15,
+    "source_false_alarm_episodes": 1,
+    "source_median_lead_steps": 154.0,
+    "target_failure_detected": 13,
+    "n_failure_episodes": 13,
+    "target_false_alarm_episodes": 2,
+    "n_success_episodes": 27,
+    "target_median_lead_steps": 174.0
+  },
+  {
+    "k": 15,
+    "threshold": 0.9997186660766602,
+    "source_failure_detected": 15,
+    "source_false_alarm_episodes": 1,
+    "source_median_lead_steps": 142.0,
+    "target_failure_detected": 13,
+    "n_failure_episodes": 13,
+    "target_false_alarm_episodes": 1,
+    "n_success_episodes": 27,
+    "target_median_lead_steps": 164.0
+  },
+  {
+    "k": 20,
+    "threshold": 0.9997186660766602,
+    "source_failure_detected": 14,
+    "source_false_alarm_episodes": 1,
+    "source_median_lead_steps": 132.0,
+    "target_failure_detected": 12,
+    "n_failure_episodes": 13,
+    "target_false_alarm_episodes": 1,
+    "n_success_episodes": 27,
+    "target_median_lead_steps": 147.0
+  },
+  {
+    "k": 30,
+    "threshold": 0.9997186660766602,
+    "source_failure_detected": 13,
+    "source_false_alarm_episodes": 1,
+    "source_median_lead_steps": 108.0,
+    "target_failure_detected": 10,
+    "n_failure_episodes": 13,
+    "target_false_alarm_episodes": 0,
+    "n_success_episodes": 27,
+    "target_median_lead_steps": 134.0
+  }
+]

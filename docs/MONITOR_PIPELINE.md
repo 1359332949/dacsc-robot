@@ -126,3 +126,11 @@ The monitor now supports K consecutive windows above threshold before an alarm.
 With K=20 selected on source validation, target dev has 0/15 false alarms and
 5/5 failures detected (median lead 154), but this is a single-seed pilot and
 must be validated across seeds/states before recovery.
+
+
+## Multi-seed persistence
+
+Combining seeds 7777/8888: K=15 gives source 15/15 detected with 1 false
+alarm, target 13/13 detected with 1/27 false alarms, median lead 164. K=30
+gives target 10/13 detected and 0 false alarms. Still one perturbation
+condition; no recovery.
