@@ -157,6 +157,8 @@ def main():
                     "clean_controller_actions": ctrl_c[0].float().cpu().numpy().tolist(),
                     "language_tokens": lang_s[0].float().cpu().numpy().tolist(),
                     "state_token": state_s_tok[0].float().cpu().numpy().tolist(),
+                    "shift_state_token": state_s_tok[0].float().cpu().numpy().tolist(),
+                    "clean_state_token": state_c_tok[0].float().cpu().numpy().tolist(),
                     "pooled_language": pooled_s[0].float().cpu().numpy().tolist(),
                     "z0": z0[0].float().cpu().numpy().tolist(),
                     "shift_success": bool(success),

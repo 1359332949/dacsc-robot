@@ -1,8 +1,9 @@
 """Train a zero-initialized action-consistent adapter on frozen CoRP pairs."""
 
 from __future__ import annotations
-import argparse, json, sys
+import argparse, hashlib, json, sys
 from pathlib import Path
+import numpy as np
 import torch
 from torch import nn
 
@@ -17,7 +18,7 @@ from dacsc.differentiable_policy import sample_from_z0  # noqa: E402
 def build_rep(adapter, rec, device):
     visual = torch.tensor(rec["shift_visual_tokens"], dtype=torch.float32, device=device).unsqueeze(0)
     lang = torch.tensor(rec["language_tokens"], dtype=torch.float32, device=device).unsqueeze(0)
-    state = torch.tensor(rec["state_token"], dtype=torch.float32, device=device).unsqueeze(0)
+    state = torch.tensor(rec.get("shift_state_token", rec["state_token"]), dtype=torch.float32, device=device).unsqueeze(0)
     pooled = torch.tensor(rec["pooled_language"], dtype=torch.float32, device=device).unsqueeze(0)
     adapted = adapter(visual)
     tokens = torch.cat([adapted, lang, state], dim=1)
@@ -27,7 +28,7 @@ def build_rep(adapter, rec, device):
 def clean_rep(adapter, rec, device):
     visual = torch.tensor(rec["clean_visual_tokens"], dtype=torch.float32, device=device).unsqueeze(0)
     lang = torch.tensor(rec["language_tokens"], dtype=torch.float32, device=device).unsqueeze(0)
-    state = torch.tensor(rec["state_token"], dtype=torch.float32, device=device).unsqueeze(0)
+    state = torch.tensor(rec.get("clean_state_token", rec["state_token"]), dtype=torch.float32, device=device).unsqueeze(0)
     pooled = torch.tensor(rec["pooled_language"], dtype=torch.float32, device=device).unsqueeze(0)
     adapted = adapter(visual)
     return Representation(tokens=torch.cat([adapted, lang, state], dim=1),
@@ -37,7 +38,7 @@ def clean_rep(adapter, rec, device):
 def clean_frozen_rep(rec, device):
     visual = torch.tensor(rec["clean_visual_tokens"], dtype=torch.float32, device=device).unsqueeze(0)
     lang = torch.tensor(rec["language_tokens"], dtype=torch.float32, device=device).unsqueeze(0)
-    state = torch.tensor(rec["state_token"], dtype=torch.float32, device=device).unsqueeze(0)
+    state = torch.tensor(rec.get("clean_state_token", rec["state_token"]), dtype=torch.float32, device=device).unsqueeze(0)
     pooled = torch.tensor(rec["pooled_language"], dtype=torch.float32, device=device).unsqueeze(0)
     return Representation(tokens=torch.cat([visual, lang, state], dim=1),
                           pooled_language=pooled, action_dtype=torch.float32)
@@ -74,6 +75,16 @@ def main():
         raise ValueError("empty split")
     policy = load_policy(args.checkpoint, device=device); policy.eval()
     for p in policy.parameters(): p.requires_grad_(False)
+    # Parity: recomputed clean frozen action must match the stored clean action.
+    parity_max = 0.0
+    for rec in data:
+        z0 = torch.tensor(rec["z0"], dtype=torch.float32, device=device).unsqueeze(0)
+        target = torch.tensor(rec["clean_normalized_actions"], dtype=torch.float32, device=device)
+        with torch.no_grad():
+            rec_action = sample_from_z0(policy, clean_frozen_rep(rec, device), z0)
+        parity_max = max(parity_max, float((rec_action - target).abs().max()))
+    if parity_max > 1e-4:
+        raise RuntimeError(f"clean-action parity failed: {parity_max}")
     adapter = ResidualVisualAdapter(768, args.rank).to(device)
     opt = torch.optim.AdamW(adapter.parameters(), lr=args.lr)
     lossf = nn.HuberLoss(reduction="none")
@@ -124,8 +135,9 @@ def main():
                 "id_weight": args.id_weight, "grip_weight": args.grip_weight,
                 "z0_augment": args.z0_augment, "res_weight": args.res_weight,
                 "training_seed": args.seed, "z0_epoch_resample": bool(args.z0_epoch_resample),
-                "pairs_sha256": __import__("hashlib").sha256(args.pairs.read_bytes()).hexdigest(),
-                "checkpoint_sha256": __import__("hashlib").sha256(args.checkpoint.read_bytes()).hexdigest()}, args.out)
+                "pairs_sha256": hashlib.sha256(args.pairs.read_bytes()).hexdigest(),
+                "checkpoint_sha256": hashlib.sha256(args.checkpoint.read_bytes()).hexdigest(),
+                "clean_action_parity_max": parity_max}, args.out)
     print(json.dumps({"out": str(args.out), "train_states": sorted(set(states) - val_states),
                       "val_states": sorted(val_states), "n_pairs": len(data)}))
 

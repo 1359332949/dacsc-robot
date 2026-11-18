@@ -89,7 +89,7 @@ def controller_snapshot(env) -> dict[str, Any]:
     ctrl = _robot_controller(env)
     if ctrl is None:
         return {}
-    out: dict[str, Any] = {}
+    out: dict[str, Any] = {"controller_type": type(ctrl).__name__}
     for key in ("goal_pos", "goal_ori", "ori_ref", "relative_ori"):
         value = getattr(ctrl, key, None)
         if value is not None:
@@ -275,10 +275,21 @@ def _controller_compare(a: dict[str, Any], b: dict[str, Any], tol: float = 1e-6)
     ca = a.get("controller", {}) or {}
     cb = b.get("controller", {}) or {}
     if not ca and not cb:
-        return {"present": False, "pass": True}
+        return {"present": False, "pass": False, "error": "controller state missing on both sides"}
+    if not ca or not cb:
+        return {"present": True, "pass": False, "error": "controller state missing on one side"}
     checks = {}
     ok = True
-    for key in ("goal_pos", "goal_ori", "ori_ref", "relative_ori"):
+    type_a = ca.get("controller_type"); type_b = cb.get("controller_type")
+    checks["controller_type"] = {"pass": bool(type_a and type_a == type_b), "a": type_a, "b": type_b}
+    ok = ok and checks["controller_type"]["pass"]
+    for key in ("goal_pos", "goal_ori"):
+        x = np.asarray(ca.get(key, []), dtype=np.float64)
+        y = np.asarray(cb.get(key, []), dtype=np.float64)
+        if x.size == 0 or y.size == 0 or x.shape != y.shape or not (np.isfinite(x).all() and np.isfinite(y).all()):
+            checks[key] = {"present": True, "pass": False, "error": float("inf")}
+            ok = False
+    for key in ("ori_ref", "relative_ori"):
         x = np.asarray(ca.get(key, []), dtype=np.float64)
         y = np.asarray(cb.get(key, []), dtype=np.float64)
         if x.size == 0 and y.size == 0:
@@ -304,7 +315,7 @@ def _controller_compare(a: dict[str, Any], b: dict[str, Any], tol: float = 1e-6)
         for field in ("start", "goal"):
             xa = np.asarray(x.get(field, []), dtype=np.float64)
             ya = np.asarray(y.get(field, []), dtype=np.float64)
-            if xa.size == 0 or ya.size == 0 or xa.shape != ya.shape:
+            if xa.size == 0 or ya.size == 0 or xa.shape != ya.shape or not (np.isfinite(xa).all() and np.isfinite(ya).all()):
                 ok_key = False; max_err = float("inf"); continue
             max_err = max(max_err, float(np.max(np.abs(xa - ya))))
         step_ok = int(x.get("step", -1)) == int(y.get("step", -2))

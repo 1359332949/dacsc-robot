@@ -252,3 +252,34 @@ Combined with the z0 sweep:
 Conclusion: a residual/action-delta threshold gate is not supported by these
 data. The next measurable question is adapter training variance (independent
 adapter seeds), not another heuristic gate.
+
+## Critical correction: clean proprio token bug and superseded results
+
+The collector previously saved only the Shift state token. Clean identity and
+the Clean Frozen target therefore used the Shift proprio token. This invalidated
+the earlier seed-7777 4/4 result and the earlier stochasticity numbers.
+
+Fixes:
+
+- collector saves `shift_state_token` and `clean_state_token`;
+- trainer uses the Clean token for Clean identity/target;
+- trainer adds a parity check: recomputed Clean Frozen action must match the
+  stored Clean action (`clean_action_parity_max = 0.0`);
+- NumPy import fixed;
+- controller audit is fail-closed for missing/mismatched controller state;
+- rollout logs separate env seed, z0 seed, all-z0 hashes, adapter apply counts,
+  clipping and normalized/controller deltas.
+
+Corrected strict adapter (train states 0,1,2,4,6; validation 8; z0 augment 4;
+grip weight 20; residual 0.01), target-dev shift, env seed 7777, z0 seed 7777:
+
+| state | frozen | corrected adapter |
+|---|---:|---:|
+| 36 | 1 | 0 |
+| 37 | 1 | 1 |
+| 43 | 0 | 1 |
+| 45 | 0 | 0 |
+
+Frozen 2/4, corrected adapter 2/4. The adapter breaks state 36 and rescues
+state 43, with no net gain. All earlier SPACA seed-7777 4/4 and stochasticity
+claims are superseded by this corrected checkpoint.
