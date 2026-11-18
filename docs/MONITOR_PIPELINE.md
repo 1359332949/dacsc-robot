@@ -118,3 +118,11 @@ recall 0.742, false alarms 4/15. Remaining false alarms are three early Shift
 successes (states 35,44,45) and one late Clean success (49), consistent with a
 residual domain shortcut. Within-horizon labels lose failure discrimination
 (AUC 0.648). No recovery.
+
+
+## Persistence gating
+
+The monitor now supports K consecutive windows above threshold before an alarm.
+With K=20 selected on source validation, target dev has 0/15 false alarms and
+5/5 failures detected (median lead 154), but this is a single-seed pilot and
+must be validated across seeds/states before recovery.

@@ -152,3 +152,21 @@ residual domain shortcut rather than a pure failure signal.
 Within-horizon labels reduce false alarms but lose too much failure
 discrimination (AUC 0.648, median lead 62). Domain-adversarial is not better
 than the no-visual baseline. No recovery run.
+
+## Temporal persistence (source-selected)
+
+Post-processing: require K consecutive windows above the source-fixed threshold.
+
+| K | source false alarms | source failures detected | target false alarms | target failures detected | target median lead |
+|---:|---:|---:|---:|---:|---:|
+| 1 | 6 | 6/6 | 4/15 | 5/5 | 192 |
+| 5 | 3 | 6/6 | 4/15 | 5/5 | 184 |
+| 10 | 0 | 6/6 | 2/15 | 5/5 | 174 |
+| 15 | 0 | 6/6 | 1/15 | 5/5 | 164 |
+| **20** | **0** | **6/6** | **0/15** | **5/5** | **154** |
+
+K=20 is selected on source validation (zero source false alarms, all source
+failures detected), not on target test. On target dev it yields zero false
+alarms and detects all five failures. This is a strong pilot result, but it is
+still one seed, one perturbation condition, and 10 target-dev states; do not
+run recovery or claim deployment yet.

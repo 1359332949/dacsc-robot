@@ -32,6 +32,8 @@ def main():
     ap.add_argument("--seeds", default="7777")
     ap.add_argument("--modes", default="frozen,monitor")
     ap.add_argument("--threshold", type=float, default=0.5)
+    ap.add_argument("--persistence", type=int, default=20,
+                    help="consecutive windows above threshold before intervention")
     ap.add_argument("--reflex", action="store_true")
     ap.add_argument("--max-steps", type=int, default=220)
     ap.add_argument("--executed-k", type=int, default=12)
@@ -73,6 +75,7 @@ def main():
                     env.seed(seed); env.reset(); obs = env.set_init_state(states[state_id])
                     for _ in range(SETTLING_STEPS): obs, _, _, _ = env.step(DUMMY_ACTION)
                     steps = 0; success = False; done = False; interventions = 0; alarms = 0
+                    alarm_run = 0
                     buf_s, buf_a, buf_v = [], [], []
                     prev_vis_raw = None
                     while not success and not done and steps < args.max_steps:
@@ -96,7 +99,8 @@ def main():
                                     prob = model(torch.tensor(np.stack(buf_s[-W:]), dtype=torch.float32).unsqueeze(0),
                                                  torch.tensor(np.stack(buf_a[-W:]), dtype=torch.float32).unsqueeze(0),
                                                  torch.tensor(np.stack(buf_v[-W:]), dtype=torch.float32).unsqueeze(0)).item()
-                                if prob >= args.threshold:
+                                alarm_run = alarm_run + 1 if prob >= args.threshold else 0
+                                if alarm_run >= args.persistence:
                                     alarms += 1; interventions += 1
                                     if args.reflex:
                                         reflex = np.array([0.0, 0.0, args.retreat_z, 0.0, 0.0, 0.0, -1.0], dtype=float)
@@ -106,9 +110,11 @@ def main():
                                             if success or done or steps >= args.max_steps: break
                                     buf_s, buf_a, buf_v = [], [], []
                                     prev_vis_raw = None
+                                    alarm_run = 0
                                     break
                     rec = {"state_id": state_id, "seed": seed, "mode": mode, "success": bool(success),
                            "steps": steps, "alarms": alarms, "interventions": interventions,
+                           "persistence": args.persistence,
                            "hit_max_steps": bool(steps >= args.max_steps and not success)}
                     records.append(rec); print(json.dumps(rec), flush=True)
                 finally:
