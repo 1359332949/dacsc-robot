@@ -40,13 +40,19 @@ def main():
     ap.add_argument("--label-mode", choices=["episode", "within_horizon"], default="episode")
     ap.add_argument("--horizon", type=int, default=10)
     ap.add_argument("--state-mode", choices=["absolute", "delta"], default="absolute")
+    ap.add_argument("--annotations", type=Path, default=None)
     args = ap.parse_args()
+    annotations = {}
+    if args.annotations:
+        annotations = json.loads(args.annotations.read_text())["episodes"]
     Xs, As, Vs, Ys, remaining, groups, domains, episodes, times = [], [], [], [], [], [], [], [], []
     event_steps, event_known = [], []
     n_ep = 0
     for d in args.trajectory_dir:
         for p in sorted(d.rglob("s*_d*_seed*.json")):
             e = load_episode(p); n_ep += 1
+            if p.stem in annotations:
+                e.update(annotations[p.stem])
             if args.state_mode == "delta":
                 sd = np.zeros_like(e["state"])
                 if len(sd) > 1: sd[1:] = e["state"][1:] - e["state"][:-1]

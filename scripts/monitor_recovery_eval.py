@@ -31,7 +31,7 @@ def main():
     ap.add_argument("--domain", choices=["shift", "clean"], default="shift")
     ap.add_argument("--lighting-id", type=int, default=2292)
 
-    ap.add_argument("--modes", default="frozen,monitor")
+    ap.add_argument("--modes", default="frozen,monitor,shadow")
 
     ap.add_argument("--reflex", action="store_true")
     ap.add_argument("--max-steps", type=int, default=220)
@@ -114,15 +114,19 @@ def main():
                             prev_vis_raw = vis
                             buf_s.append((st - mu["state"]) / sd["state"]); buf_a.append((clipped - mu["action"]) / sd["action"]); buf_v.append((delta - mu["visual_delta"]) / sd["visual_delta"])
                             if success or done or steps >= args.max_steps: break
-                            if (mode == "monitor" and interventions < args.max_interventions
-                                    and len(buf_s) >= W and steps % stride == 0):
+                            if (mode in ("monitor", "shadow") and len(buf_s) >= W and steps % stride == 0
+                                    and (mode == "shadow" or interventions < args.max_interventions)):
                                 with torch.no_grad():
                                     prob = model(torch.tensor(np.stack(buf_s[-W:]), dtype=torch.float32).unsqueeze(0),
                                                  torch.tensor(np.stack(buf_a[-W:]), dtype=torch.float32).unsqueeze(0),
                                                  torch.tensor(np.stack(buf_v[-W:]), dtype=torch.float32).unsqueeze(0)).item()
                                 alarm_run = alarm_run + 1 if prob >= threshold else 0
                                 if alarm_run >= persistence:
-                                    alarms += 1; interventions += 1
+                                    alarms += 1
+                                    if mode == "shadow":
+                                        alarm_run = 0
+                                        continue
+                                    interventions += 1
                                     if args.reflex:
                                         reflex = np.array([0.0, 0.0, args.retreat_z, 0.0, 0.0, 0.0, -1.0], dtype=float)
                                         for _ in range(args.reflex_steps):

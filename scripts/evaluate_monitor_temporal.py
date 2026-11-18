@@ -54,7 +54,7 @@ def main():
                     det += 1
                     ev = int(t["failure_event_step"][idx][alarm]) if "failure_event_step" in t else -1
                     if ev >= 0:
-                        lead.append(max(0, ev - int(t["time"][idx][alarm])))
+                        lead.append(max(0, ev - (int(t["time"][idx][alarm]) + 1)))
                     else:
                         lead.append(int(t["remaining"][idx][alarm]))
                 else:
