@@ -324,3 +324,23 @@ The adapter also harms the target Clean distribution, not only Shift.
 Combined shift result: Frozen 2/4, corrected adapter 2/4. No net gain, and
 Clean retention is not perfect. The always-on v1 adapter is not ready for
 full target-dev.
+
+## Full source-data adapter (10 train states, 10 validation states)
+
+Data: 20 source-fit records, 20 source-validation records; 37 pairing-pass
+records total. Training used fit-only, validation-only for checkpoint
+selection; best epoch = 6 by validation loss.
+
+Target-dev shift, env seed 7777, z0 seed 7777:
+
+| state | frozen | full-data adapter |
+|---|---:|---:|
+| 36 | 1 | 0 |
+| 37 | 1 | 1 |
+| 43 | 0 | 0 |
+| 45 | 0 | 1 |
+| total | 2/4 | 1/4 |
+
+Clean Frozen earlier: 4/4. The full-data adapter is worse than the small-data
+adapter and still damages state 36. Expanding data alone did not fix the
+always-on instability. No full target-dev run.

@@ -46,7 +46,7 @@ def clean_frozen_rep(rec, device):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--pairs", type=Path, required=True)
+    ap.add_argument("--pairs", type=Path, action="append", required=True)
     ap.add_argument("--checkpoint", type=Path, required=True)
     ap.add_argument("--out", type=Path, required=True)
     ap.add_argument("--epochs", type=int, default=30)
@@ -64,16 +64,28 @@ def main():
     device = torch.device(args.device)
     torch.manual_seed(args.seed); np.random.seed(args.seed)
     if torch.cuda.is_available(): torch.cuda.manual_seed_all(args.seed)
-    data = json.loads(args.pairs.read_text())["records"]
+    data = []
+    for path in args.pairs:
+        recs = json.loads(path.read_text())["records"]
+        data.extend(recs)
     data = [r for r in data if r.get("pairing_pass")]
-    states = sorted({int(r["state_id"]) for r in data})
-    if len(states) < 2:
-        raise ValueError("need at least two source states for grouped train/val")
-    val_states = {states[-1]}
-    train = [r for r in data if int(r["state_id"]) not in val_states]
-    val = [r for r in data if int(r["state_id"]) in val_states]
+    if not data:
+        raise ValueError("no pairing-pass records")
+    roles = {r.get("role") for r in data}
+    if "source_fit" in roles and "source_validation" in roles:
+        train = [r for r in data if r.get("role") == "source_fit"]
+        val = [r for r in data if r.get("role") == "source_validation"]
+    else:
+        states = sorted({int(r["state_id"]) for r in data})
+        if len(states) < 2:
+            raise ValueError("need at least two source states for grouped train/val")
+        val_states_fallback = {states[-1]}
+        train = [r for r in data if int(r["state_id"]) not in val_states_fallback]
+        val = [r for r in data if int(r["state_id"]) in val_states_fallback]
+    train_states = sorted({int(r["state_id"]) for r in train})
+    val_states = sorted({int(r["state_id"]) for r in val})
     if not train or not val:
-        raise ValueError("empty split")
+        raise ValueError("empty role split")
     policy = load_policy(args.checkpoint, device=device); policy.eval()
     for p in policy.parameters(): p.requires_grad_(False)
     # Parity: recomputed clean frozen action must match the stored clean action.
@@ -126,6 +138,7 @@ def main():
             res = (adapted_visual - visual).square().mean()
             loss = loss + args.res_weight * res
         return loss, pair, ident
+    best_val = float("inf"); best_state = None; best_epoch = -1
     for epoch in range(args.epochs):
         adapter.train(); tr = 0.0
         for rec in train:
@@ -135,19 +148,27 @@ def main():
         with torch.no_grad():
             for rec in val:
                 loss, _, _ = one(rec, epoch=0, resample=False); va += float(loss)
-        print(json.dumps({"epoch": epoch, "train": tr / len(train), "val": va / len(val)}))
+        va = va / len(val)
+        if va < best_val:
+            best_val = va; best_epoch = epoch
+            best_state = {k: v.detach().cpu().clone() for k, v in adapter.state_dict().items()}
+        print(json.dumps({"epoch": epoch, "train": tr / len(train), "val": va, "best_val": best_val}))
+    if best_state is not None:
+        adapter.load_state_dict(best_state)
     args.out.parent.mkdir(parents=True, exist_ok=True)
     torch.save({"adapter": adapter.state_dict(), "rank": args.rank, "dim": 768,
-                "val_states": sorted(val_states), "train_states": sorted(set(states) - val_states),
+                "val_states": val_states, "train_states": train_states,
+                "best_epoch": best_epoch, "best_val": best_val,
                 "id_weight": args.id_weight, "grip_weight": args.grip_weight,
                 "z0_augment": args.z0_augment, "res_weight": args.res_weight,
                 "clip_weight": args.clip_weight,
                 "training_seed": args.seed, "z0_epoch_resample": bool(args.z0_epoch_resample),
-                "pairs_sha256": hashlib.sha256(args.pairs.read_bytes()).hexdigest(),
+                "pairs_sha256": {str(path): hashlib.sha256(path.read_bytes()).hexdigest() for path in args.pairs},
                 "checkpoint_sha256": hashlib.sha256(args.checkpoint.read_bytes()).hexdigest(),
                 "clean_action_parity_max": parity_max}, args.out)
-    print(json.dumps({"out": str(args.out), "train_states": sorted(set(states) - val_states),
-                      "val_states": sorted(val_states), "n_pairs": len(data)}))
+    print(json.dumps({"out": str(args.out), "train_states": train_states,
+                      "val_states": val_states, "n_pairs": len(data),
+                      "best_epoch": best_epoch, "best_val": best_val}))
 
 
 if __name__ == "__main__":

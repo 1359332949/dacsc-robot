@@ -137,7 +137,7 @@ def main():
                 tok_s, norm_s, ctrl_s, lang_s, state_s_tok, pooled_s = encode_actions(policy, po_s, z0)
                 tok_c, norm_c, ctrl_c, lang_c, state_c_tok, pooled_c = encode_actions(policy, po_c, z0)
                 records.append({
-                    "state_id": int(state_id), "seed": args.seed, "chunk_index": chunk,
+                    "state_id": int(state_id), "role": args.role, "seed": args.seed, "chunk_index": chunk,
                     "step": int(steps),
                     "pairing_pass": bool(state8_max < 1e-3 and compat["pass"] and state_check["all_pass"] and cam_check["pass"]),
                     "model_compatibility_pass": bool(compat["pass"]),
