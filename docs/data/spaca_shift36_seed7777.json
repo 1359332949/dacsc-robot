@@ -1,0 +1,19 @@
+{
+  "schema": "adapter_policy_eval_v1",
+  "records": [
+    {
+      "state_id": 36,
+      "mode": "frozen",
+      "success": true,
+      "steps": 93,
+      "hit_max_steps": false
+    },
+    {
+      "state_id": 36,
+      "mode": "adapter",
+      "success": true,
+      "steps": 99,
+      "hit_max_steps": false
+    }
+  ]
+}

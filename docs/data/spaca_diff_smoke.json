@@ -1,0 +1,29 @@
+{
+  "zero_init": {
+    "max_abs_diff": 0.0,
+    "shapes": [
+      [
+        1,
+        12,
+        7
+      ],
+      [
+        1,
+        12,
+        7
+      ]
+    ]
+  },
+  "official_vs_ours_max_abs": 0.0,
+  "adapter_grad_params": 6,
+  "adapter_grad_norm": 0.026962113566696644,
+  "z0_shape": [
+    1,
+    12,
+    7
+  ],
+  "action_shape": [
+    12,
+    7
+  ]
+}
