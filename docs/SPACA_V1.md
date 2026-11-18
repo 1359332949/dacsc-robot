@@ -144,3 +144,35 @@ Gate diagnostics:
 - first-chunk adapter preserves 36/37 but does not rescue 43.
 
 No adapter retraining or full target-dev rollout was performed in Phase 0.
+
+## Strict multi-z0 adapter (v1c)
+
+Data: final strict pairs (11 pass; state 8 chunk 1 excluded).
+Training: pair + identity + z0 augmentation (4 z0) + residual 0.01;
+train states 0,1,2,4,6; validation state 8.
+
+Closed-loop target-dev shift, seed 7777:
+
+| state | frozen | adapter |
+|---|---:|---:|
+| 36 | 1 | 1 |
+| 37 | 1 | 1 |
+| 43 | 0 | 1 |
+| 45 | 0 | 1 |
+
+Clean target-dev:
+
+| state | frozen | adapter |
+|---|---:|---:|
+| 36 | 1 | 1 |
+| 37 | 1 | 1 |
+| 43 | 1 | 1 |
+
+But multi-seed is unstable:
+
+- state43: adapter 1/1 at seed7777, 0/1 at seed8888, 0/1 at seed9999;
+- state45: adapter 1/1 at seed8888; seed9999 pending/not robust.
+
+Conclusion: multi-z0 training removed the 36/37 breakage in this seed and
+gives a strong seed-7777 pilot, but the recovery is still seed-sensitive.
+Do not claim general SR improvement or start full target-dev confirmation.

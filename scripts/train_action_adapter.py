@@ -34,6 +34,15 @@ def clean_rep(adapter, rec, device):
                           pooled_language=pooled, action_dtype=torch.float32)
 
 
+def clean_frozen_rep(rec, device):
+    visual = torch.tensor(rec["clean_visual_tokens"], dtype=torch.float32, device=device).unsqueeze(0)
+    lang = torch.tensor(rec["language_tokens"], dtype=torch.float32, device=device).unsqueeze(0)
+    state = torch.tensor(rec["state_token"], dtype=torch.float32, device=device).unsqueeze(0)
+    pooled = torch.tensor(rec["pooled_language"], dtype=torch.float32, device=device).unsqueeze(0)
+    return Representation(tokens=torch.cat([visual, lang, state], dim=1),
+                          pooled_language=pooled, action_dtype=torch.float32)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--pairs", type=Path, required=True)
@@ -44,6 +53,8 @@ def main():
     ap.add_argument("--rank", type=int, default=8)
     ap.add_argument("--id-weight", type=float, default=1.0)
     ap.add_argument("--grip-weight", type=float, default=1.0)
+    ap.add_argument("--z0-augment", type=int, default=1)
+    ap.add_argument("--res-weight", type=float, default=0.0)
     ap.add_argument("--device", default="cuda:0")
     args = ap.parse_args()
     device = torch.device(args.device)
@@ -66,14 +77,32 @@ def main():
     weight[6] = args.grip_weight
     def one(rec):
         rep = build_rep(adapter, rec, device)
-        z0 = torch.tensor(rec["z0"], dtype=torch.float32, device=device).unsqueeze(0)
-        target = torch.tensor(rec["clean_normalized_actions"], dtype=torch.float32, device=device)
-        pred = sample_from_z0(policy, rep, z0)
-        pair = (lossf(pred, target) * weight).mean()
         c_rep = clean_rep(adapter, rec, device)
-        c_pred = sample_from_z0(policy, c_rep, z0)
-        ident = (lossf(c_pred, target) * weight).mean()
-        return pair + args.id_weight * ident, pair, ident
+        frozen_rep = clean_frozen_rep(rec, device)
+        base_z0 = torch.tensor(rec["z0"], dtype=torch.float32, device=device).unsqueeze(0)
+        pair_total = 0.0; ident_total = 0.0; n = 0
+        for aug in range(max(1, args.z0_augment)):
+            if aug == 0:
+                z0 = base_z0
+            else:
+                torch.manual_seed(900001 * int(rec["state_id"]) + 97 * int(rec["chunk_index"]) + aug)
+                z0 = torch.randn((1, policy.action_generator.action_horizon,
+                                  policy.action_generator.action_dim), device=device, dtype=torch.float32)
+            with torch.no_grad():
+                target = sample_from_z0(policy, frozen_rep, z0)
+            pred = sample_from_z0(policy, rep, z0)
+            pair_total = pair_total + (lossf(pred, target) * weight).mean()
+            c_pred = sample_from_z0(policy, c_rep, z0)
+            ident_total = ident_total + (lossf(c_pred, target) * weight).mean()
+            n += 1
+        pair = pair_total / n; ident = ident_total / n
+        loss = pair + args.id_weight * ident
+        if args.res_weight > 0:
+            visual = torch.tensor(rec["shift_visual_tokens"], dtype=torch.float32, device=device).unsqueeze(0)
+            adapted_visual = adapter(visual)
+            res = (adapted_visual - visual).square().mean()
+            loss = loss + args.res_weight * res
+        return loss, pair, ident
     for epoch in range(args.epochs):
         adapter.train(); tr = 0.0
         for rec in train:
@@ -87,7 +116,8 @@ def main():
     args.out.parent.mkdir(parents=True, exist_ok=True)
     torch.save({"adapter": adapter.state_dict(), "rank": args.rank, "dim": 768,
                 "val_states": sorted(val_states), "train_states": sorted(set(states) - val_states),
-                "id_weight": args.id_weight, "grip_weight": args.grip_weight}, args.out)
+                "id_weight": args.id_weight, "grip_weight": args.grip_weight,
+                "z0_augment": args.z0_augment, "res_weight": args.res_weight}, args.out)
     print(json.dumps({"out": str(args.out), "train_states": sorted(set(states) - val_states),
                       "val_states": sorted(val_states), "n_pairs": len(data)}))
 
