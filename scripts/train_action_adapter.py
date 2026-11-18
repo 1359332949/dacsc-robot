@@ -43,6 +43,7 @@ def main():
     ap.add_argument("--lr", type=float, default=1e-3)
     ap.add_argument("--rank", type=int, default=8)
     ap.add_argument("--id-weight", type=float, default=1.0)
+    ap.add_argument("--grip-weight", type=float, default=1.0)
     ap.add_argument("--device", default="cuda:0")
     args = ap.parse_args()
     device = torch.device(args.device)
@@ -60,16 +61,18 @@ def main():
     for p in policy.parameters(): p.requires_grad_(False)
     adapter = ResidualVisualAdapter(768, args.rank).to(device)
     opt = torch.optim.AdamW(adapter.parameters(), lr=args.lr)
-    lossf = nn.HuberLoss()
+    lossf = nn.HuberLoss(reduction="none")
+    weight = torch.ones(7, device=device)
+    weight[6] = args.grip_weight
     def one(rec):
         rep = build_rep(adapter, rec, device)
         z0 = torch.tensor(rec["z0"], dtype=torch.float32, device=device).unsqueeze(0)
         target = torch.tensor(rec["clean_normalized_actions"], dtype=torch.float32, device=device)
         pred = sample_from_z0(policy, rep, z0)
-        pair = lossf(pred, target)
+        pair = (lossf(pred, target) * weight).mean()
         c_rep = clean_rep(adapter, rec, device)
         c_pred = sample_from_z0(policy, c_rep, z0)
-        ident = lossf(c_pred, target)
+        ident = (lossf(c_pred, target) * weight).mean()
         return pair + args.id_weight * ident, pair, ident
     for epoch in range(args.epochs):
         adapter.train(); tr = 0.0
@@ -84,7 +87,7 @@ def main():
     args.out.parent.mkdir(parents=True, exist_ok=True)
     torch.save({"adapter": adapter.state_dict(), "rank": args.rank, "dim": 768,
                 "val_states": sorted(val_states), "train_states": sorted(set(states) - val_states),
-                "id_weight": args.id_weight}, args.out)
+                "id_weight": args.id_weight, "grip_weight": args.grip_weight}, args.out)
     print(json.dumps({"out": str(args.out), "train_states": sorted(set(states) - val_states),
                       "val_states": sorted(val_states), "n_pairs": len(data)}))
 

@@ -61,3 +61,17 @@ State 45 shift: frozen 0/1, adapter 0/1.
 
 Do not claim a general SR improvement. The gripper regression and state-45
 failure are the main remaining defects.
+
+## Gripper-weighted variant
+
+Training uses per-dimension Huber weights with gripper weight 20.
+
+Held-out state 8:
+
+- frozen RMSE 0.0721, XYZ 0.0964, gripper 0.00204;
+- adapter RMSE 0.0227, XYZ 0.0243, gripper 0.00143.
+
+Gripper RMSE improves without losing overall/XYZ. Closed-loop state 43 still
+0/1 -> 1/1; state 45 remains 0/1 -> 0/1.
+
+This is the current best v1 adapter, but still target-dev pilot only.
