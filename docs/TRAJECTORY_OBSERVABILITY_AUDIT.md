@@ -42,3 +42,13 @@ The existing first-chunk pairs are **known-perturbation paired calibration**,
 not target-only TTA data, and cover only chunk 0.
 
 Next step is data collection and schema validation, not verifier training.
+
+## Update: schema v2
+
+The original audit found per-chunk-only states. `trajectory_collector.py` now
+records per-step `state8`, 768-D visual feature, raw/clipped action, chunk and
+success. A schema probe (state 34, Lighting 2292, seed 7777, 60 steps) passed:
+60 rows, 8-D state, 768-D visual, 7-D action, all 60 pre/post states differ.
+
+The old chunk-level trajectory files remain invalid for per-step monitoring;
+new collection is required before training any monitor.
