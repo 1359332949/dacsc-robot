@@ -1,0 +1,172 @@
+{
+  "schema": "perturbation_audit_v1",
+  "suite": "libero_spatial",
+  "lighting_ids": [
+    2292,
+    2312
+  ],
+  "variants": {
+    "2292": {
+      "base_bddl": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate.bddl",
+      "env_bddl": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_light_1.bddl",
+      "base_sha256": "3d4ccf070c3d9883ae0676f2d888588f98c696ddad71b7694f47c379fc99ef36",
+      "env_sha256": "c7f7e12cae336d51a6bde78d6290d4e044080930e41c5d4dad651ae56886fde8",
+      "problem_name": "Libero_Tabletop_Manipulation_tabletop_light_sync_modified_437",
+      "bddl_diff_lines": [
+        "(define (problem Libero_Tabletop_Manipulation_tabletop_light_sync_modified_437)"
+      ],
+      "light_xml": "/hy-tmp/libero_plus/libero/libero/assets/scenes/lights/floor_light_sync_modified_437.xml",
+      "light_xml_sha256": "4beecadf564d2ad77fbd7f8b862ba25a4c49172d25d48783318787f789ee537d",
+      "lights": [
+        {
+          "tag": "light",
+          "name": "light1",
+          "diffuse": "0.7 0.7 0.7",
+          "dir": "0.5 0.5 -1",
+          "directional": "false",
+          "pos": "1 1 4.0",
+          "specular": "0.7 0.7 0.7",
+          "castshadow": "false"
+        },
+        {
+          "tag": "light",
+          "name": "light2",
+          "diffuse": "0.7 0.7 0.7",
+          "dir": "0.5 0.5 -1",
+          "directional": "false",
+          "pos": "-3. -3. 4.0",
+          "specular": "0.7 0.7 0.7",
+          "castshadow": "false"
+        }
+      ]
+    },
+    "2312": {
+      "base_bddl": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate.bddl",
+      "env_bddl": "/hy-tmp/libero_plus/libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_light_50.bddl",
+      "base_sha256": "3d4ccf070c3d9883ae0676f2d888588f98c696ddad71b7694f47c379fc99ef36",
+      "env_sha256": "7490e87c728dda0426e3bef4fda3f5b78711cc49ba4212c0a78d30b59448bf72",
+      "problem_name": "Libero_Tabletop_Manipulation_tabletop_light_sync_modified_481",
+      "bddl_diff_lines": [
+        "(define (problem Libero_Tabletop_Manipulation_tabletop_light_sync_modified_481)"
+      ],
+      "light_xml": "/hy-tmp/libero_plus/libero/libero/assets/scenes/lights/kitchen_light_sync_modified_481.xml",
+      "light_xml_sha256": "f3a6605da3d001c2082ea7af0ab6ec2d9f43b25b9d110f3c2f5faf16b7a10e0e",
+      "lights": [
+        {
+          "tag": "light",
+          "name": "light_kitchen",
+          "diffuse": "0.7 0.7 0.7",
+          "dir": "-0.5 0.5 1",
+          "directional": "true",
+          "pos": "-1.75 0 1.6",
+          "specular": "0.0 0.0 0.0",
+          "castshadow": "false"
+        },
+        {
+          "tag": "light",
+          "name": "light1",
+          "diffuse": "0.7 0.7 0.7",
+          "dir": "-0.5 0.5 1",
+          "directional": "false",
+          "pos": "1 1 4.0",
+          "specular": "0.0 0.0 0.0",
+          "castshadow": "false"
+        },
+        {
+          "tag": "light",
+          "name": "light2",
+          "diffuse": "0.7 0.7 0.7",
+          "dir": "-0.5 0.5 1",
+          "directional": "false",
+          "pos": "-3. -3. 4.0",
+          "specular": "0.0 0.0 0.0",
+          "castshadow": "false"
+        }
+      ]
+    }
+  },
+  "light_xml_changes": [
+    {
+      "index": 0,
+      "changes": {
+        "dir": [
+          "0.5 0.5 -1",
+          "-0.5 0.5 1"
+        ],
+        "directional": [
+          "false",
+          "true"
+        ],
+        "specular": [
+          "0.7 0.7 0.7",
+          "0.0 0.0 0.0"
+        ],
+        "pos": [
+          "1 1 4.0",
+          "-1.75 0 1.6"
+        ],
+        "name": [
+          "light1",
+          "light_kitchen"
+        ]
+      }
+    },
+    {
+      "index": 1,
+      "changes": {
+        "dir": [
+          "0.5 0.5 -1",
+          "-0.5 0.5 1"
+        ],
+        "specular": [
+          "0.7 0.7 0.7",
+          "0.0 0.0 0.0"
+        ],
+        "pos": [
+          "-3. -3. 4.0",
+          "1 1 4.0"
+        ],
+        "name": [
+          "light2",
+          "light1"
+        ]
+      }
+    }
+  ],
+  "bddl_only_problem_name_changed": true,
+  "conclusion": "2292 vs 2312 changes light direction and specular, not only intensity; treat as a compound lighting/scene-XML change, not pure illumination.",
+  "trace_action_clipping": {
+    "3": {
+      "n_steps": 220,
+      "success": false,
+      "step_clip_rate": 0.9045454545454545,
+      "dim_clip_rate": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.9045454545454545
+      ],
+      "max_abs_raw": 1.020648717880249,
+      "max_action_delta": 0.020648717880249023
+    },
+    "40": {
+      "n_steps": 132,
+      "success": true,
+      "step_clip_rate": 0.9318181818181818,
+      "dim_clip_rate": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.9318181818181818
+      ],
+      "max_abs_raw": 1.019479513168335,
+      "max_action_delta": 0.01947951316833496
+    }
+  }
+}
