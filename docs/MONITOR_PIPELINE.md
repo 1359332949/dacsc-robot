@@ -75,3 +75,11 @@ Source val AUROC 0.878, Recall@5%FPR 0.514; target dev AUROC 0.828,
 Recall@5%FPR 0.500, median first-alarm lead 180 steps, **7/15 false-alarm
 episodes**. The signal exists but is not deployment-ready; do not run recovery
 from this checkpoint.
+
+
+## Domain confound
+
+The full monitor's features identify Clean vs Shift with target AUC 0.982.
+No-visual monitor: target failure AUC 0.830, source-fixed false alarms 4/15
+(vs 10/15 full), but domain AUC on state+action remains 0.872. The monitor is
+still a domain-sensitive detector; do not deploy or run recovery yet.

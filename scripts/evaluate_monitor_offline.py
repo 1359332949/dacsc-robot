@@ -25,7 +25,8 @@ def main():
     ap.add_argument("--fpr", type=float, default=0.05)
     args = ap.parse_args()
     d = np.load(args.data, allow_pickle=True); ck = torch.load(args.checkpoint, map_location="cpu")
-    model = CausalFailureMonitor(window_size=ck["window"], hidden_dim=ck["hidden"]); model.load_state_dict(ck["model"]); model.eval()
+    model = CausalFailureMonitor(window_size=ck["window"], hidden_dim=ck["hidden"],
+                                 use_visual=ck.get("use_visual", True)); model.load_state_dict(ck["model"]); model.eval()
     mu = {k: np.asarray(v[0]) for k, v in ck["normalization"].items()}
     sd = {k: np.asarray(v[1]) for k, v in ck["normalization"].items()}
     s = ((d["state"] - mu["state"]) / sd["state"]).astype(np.float32)

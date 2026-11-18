@@ -38,12 +38,17 @@ def main():
     ap.add_argument("--stride", type=int, default=2)
     ap.add_argument("--label-mode", choices=["episode", "within_horizon"], default="episode")
     ap.add_argument("--horizon", type=int, default=10)
+    ap.add_argument("--state-mode", choices=["absolute", "delta"], default="absolute")
     args = ap.parse_args()
     Xs, As, Vs, Ys, remaining, groups, domains, episodes, times = [], [], [], [], [], [], [], [], []
     n_ep = 0
     for d in args.trajectory_dir:
         for p in sorted(d.rglob("s*_d*_seed*.json")):
             e = load_episode(p); n_ep += 1
+            if args.state_mode == "delta":
+                sd = np.zeros_like(e["state"])
+                if len(sd) > 1: sd[1:] = e["state"][1:] - e["state"][:-1]
+                e["state"] = sd
             n = len(e["state"])
             for t in range(args.window - 1, n, args.stride):
                 sl = slice(t - args.window + 1, t + 1)
@@ -71,7 +76,8 @@ def main():
                         episode=np.asarray(episodes), time=np.asarray(times, dtype=np.int32))
     print(json.dumps({"out": str(out), "episodes": n_ep, "windows": len(Xs),
                       "positive_fraction": float(y.mean()), "window": args.window,
-                      "stride": args.stride, "label_mode": args.label_mode}))
+                      "stride": args.stride, "label_mode": args.label_mode,
+                      "state_mode": args.state_mode}))
 
 
 if __name__ == "__main__":

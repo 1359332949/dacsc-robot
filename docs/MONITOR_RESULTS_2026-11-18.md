@@ -43,3 +43,23 @@ target dev as development data.
 - source shift trajectories are used for failure examples (known-perturbation
   calibration);
 - target test untouched but not confirmatory.
+
+## Domain-confound ablation (same data)
+
+The frozen monitor's input features classify Clean vs Shift almost perfectly:
+domain AUC 0.982 on target dev. This indicates a domain shortcut.
+
+Ablations:
+
+| monitor | target AUC | source-fixed-threshold recall | source-fixed false-alarm episodes |
+|---|---:|---:|---:|
+| full (state+action+visual) | 0.828 | 0.655 | 10/15 |
+| no visual, state+action | 0.830 | 0.670 | 4/15 |
+| no visual + domain-adversarial | 0.829 | 0.674 | 6/15 |
+
+Removing the visual feature cuts false alarms from 10/15 to 4/15, but the
+domain classifier on state+action still reaches 0.872 AUC. The monitor is not
+deployment-ready, and the target threshold must be fixed from source
+validation, not target test.
+
+Do not run recovery from these checkpoints.

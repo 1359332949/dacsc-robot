@@ -13,6 +13,17 @@ sys.path.insert(0, str(ROOT))
 from dacsc.failure_monitor import CausalFailureMonitor
 
 
+class _GradReverse(torch.autograd.Function):
+    @staticmethod
+    def forward(ctx, x, lam):
+        ctx.lam = lam
+        return x.view_as(x)
+
+    @staticmethod
+    def backward(ctx, grad):
+        return -ctx.lam * grad, None
+
+
 def auc(y, p):
     y = np.asarray(y); p = np.asarray(p)
     pos = p[y == 1]; neg = p[y == 0]
@@ -38,6 +49,9 @@ def main():
     ap.add_argument("--window", type=int, default=10)
     ap.add_argument("--hidden", type=int, default=64)
     ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--no-visual", action="store_true")
+    ap.add_argument("--domain-adversarial", action="store_true")
+    ap.add_argument("--domain-weight", type=float, default=0.1)
     args = ap.parse_args()
     d = np.load(args.data, allow_pickle=True)
     groups = d["group"]; y_all = d["y"]
@@ -69,30 +83,40 @@ def main():
         mu, sd = stats[key]; return ((d[key].astype(np.float32) - mu) / sd).astype(np.float32)
     def ds(mask):
         return TensorDataset(torch.from_numpy(norm("state")[mask]), torch.from_numpy(norm("action")[mask]),
-                             torch.from_numpy(norm("visual_delta")[mask]), torch.from_numpy(d["y"][mask]))
+                             torch.from_numpy(norm("visual_delta")[mask]), torch.from_numpy(d["y"][mask]),
+                             torch.from_numpy(domain[mask]))
+    domain = (d["domain"] == "shift").astype(np.int64)
     tr_y_check = d["y"][~val]
     if len(set(tr_y_check.tolist())) < 2:
         raise ValueError("training split has only one class; collect failure and success groups")
     tr = DataLoader(ds(~val), batch_size=args.batch_size, shuffle=True)
     va = DataLoader(ds(val), batch_size=args.batch_size, shuffle=False)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model = CausalFailureMonitor(window_size=args.window, hidden_dim=args.hidden).to(device)
+    model = CausalFailureMonitor(window_size=args.window, hidden_dim=args.hidden,
+                                 use_visual=not args.no_visual).to(device)
     opt = torch.optim.AdamW(model.parameters(), lr=args.lr)
     tr_y = d["y"][tr_mask]
     pos_weight = float((len(tr_y) - tr_y.sum()) / max(tr_y.sum(), 1.0))
     lossf = nn.BCELoss()
     for ep in range(args.epochs):
         model.train(); total = 0.0
-        for s, a, v, y in tr:
+        for s, a, v, y, domain_batch in tr:
             s, a, v, y = s.to(device), a.to(device), v.to(device), y.to(device)
+            domain_batch = domain_batch.to(device)
             opt.zero_grad(); p = model(s, a, v)
             w = torch.where(y > 0.5, torch.full_like(y, pos_weight), torch.ones_like(y))
-            loss = lossf(p, y) * w.mean(); loss.backward(); opt.step()
+            loss = lossf(p, y) * w.mean()
+            if args.domain_adversarial:
+                h = model.encode(s, a, v)
+                dlog = model.domain_head(_GradReverse.apply(h, args.domain_weight))
+                dloss = nn.functional.cross_entropy(dlog, domain_batch)
+                loss = loss + args.domain_weight * dloss
+            loss.backward(); opt.step()
             total += float(loss.detach()) * len(y)
         print(json.dumps({"epoch": ep, "train_loss": total / len(tr.dataset)}))
     model.eval(); ps, ys = [], []
     with torch.no_grad():
-        for s, a, v, y in va:
+        for s, a, v, y, _ in va:
             ps.append(model(s.to(device), a.to(device), v.to(device)).cpu().numpy()); ys.append(y.numpy())
     p = np.concatenate(ps); y = np.concatenate(ys)
     metrics = {"auc": auc(y, p), "recall_at_5pct_fpr": recall_at_fpr(y, p, 0.05),
@@ -101,7 +125,9 @@ def main():
     args.out.parent.mkdir(parents=True, exist_ok=True)
     torch.save({"model": model.state_dict(), "window": args.window, "hidden": args.hidden,
                 "metrics": metrics, "val_groups": sorted(val_groups),
-                "normalization": {k: (v[0].tolist(), v[1].tolist()) for k, v in stats.items()}}, args.out)
+                "normalization": {k: (v[0].tolist(), v[1].tolist()) for k, v in stats.items()},
+                "use_visual": not args.no_visual,
+                "domain_adversarial": bool(args.domain_adversarial)}, args.out)
     print(json.dumps(metrics))
 
 
