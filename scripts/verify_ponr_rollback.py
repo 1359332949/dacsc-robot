@@ -101,7 +101,7 @@ def main():
     ap.add_argument("--state-ids", default="")
     ap.add_argument("--seed", type=int, default=7777)
     ap.add_argument("--snapshot-steps", default="60,80,100,120,140")
-    ap.add_argument("--branches", type=int, default=3)
+    ap.add_argument("--branches", type=int, default=5)
     ap.add_argument("--replay-first-action", action="store_true")
     ap.add_argument("--replay-all-actions", action="store_true")
     ap.add_argument("--max-steps", type=int, default=220)
@@ -115,6 +115,8 @@ def main():
     if os.environ.get("MUJOCO_GL") != "osmesa":
         raise RuntimeError("deterministic rollback requires MUJOCO_GL=osmesa (and PYOPENGL_PLATFORM=osmesa)")
     if args.out.exists(): raise FileExistsError(args.out)
+    if args.branches < 2 and not args.replay_all_actions:
+        raise ValueError("PoNR requires at least 2 branches; branches=1 is exact replay only")
     configure(args)
     from libero.libero.envs import OffScreenRenderEnv
     import libero.libero.envs.bddl_utils as BDDLUtils

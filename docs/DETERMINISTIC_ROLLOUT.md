@@ -74,3 +74,27 @@ State 43 (failure):
 The monitor is safe on the tested success state and does not rescue this
 hopeless failure. Recovery is therefore validated as non-harmful here, but not
 as a success-rate improvement method.
+
+## Monte-Carlo PoNR (branches=5, OSMesa)
+
+The previous branches=1 result was exact replay, not a Monte-Carlo estimate.
+With branches=5:
+
+| state | step 0 | step 40 | step 80 | interpretation |
+|---|---:|---:|---:|---|
+| 43 | 0/5 | 0/5 | 0/5 | policy incompetence from start |
+| 45 | 0/5 | 0/5 | 0/5 | policy incompetence from start |
+| 34 | 0/5 | 0/5 | 0/5 | policy incompetence from start |
+| 48 | 1/5 | 0/5 | 0/5 | **true PoNR between 0 and 40** |
+
+State 48 is the first state with a real recoverability transition:
+`P(success|s_0)=0.2`, `P(success|s_40)=0`.
+
+## Effective lead check (state 48)
+
+- PoNR candidate: step 40;
+- monitor first alarm (seed 7777, shadow): step 112;
+- alarm occurs after PoNR.
+
+Therefore the monitor has **no effective lead time** on this true-PoNR state.
+Recovery state 48: frozen 0/3, monitor 0/3, 2 interventions per seed; no rescue.

@@ -31,6 +31,7 @@ def main():
     ap.add_argument("--suite", default="libero_spatial")
     ap.add_argument("--domain", choices=["shift", "clean"], default="shift")
     ap.add_argument("--state-ids", default="")
+    ap.add_argument("--seed", type=int, default=None)
     ap.add_argument("--allow-nondeterministic-renderer", action="store_true")
     ap.add_argument("--lighting-id", type=int, default=2292)
 
@@ -88,6 +89,9 @@ def main():
     language = BDDLUtils.get_problem_info(variant["base_bddl"])["language_instruction"]
     W = window
     seeds = seeds_for_role(split, args.role)
+    if args.seed is not None:
+        seeds = [s for s in seeds if int(s) == args.seed]
+        if not seeds: raise ValueError("seed not in split role seed pool")
     policy = load_policy(args.checkpoint, device=torch.device(args.device)); policy.eval()
     records = []
     for state_id in ids:
@@ -101,6 +105,7 @@ def main():
                     env.seed(seed); env.reset(); obs = env.set_init_state(states[state_id])
                     for _ in range(SETTLING_STEPS): obs, _, _, _ = env.step(DUMMY_ACTION)
                     steps = 0; success = False; done = False; interventions = 0; alarms = 0
+                    first_alarm_step = None
                     current_k = args.executed_k
                     alarm_run = 0
                     buf_s, buf_a, buf_v = [], [], []
@@ -130,6 +135,7 @@ def main():
                                     np.asarray(buf_v[-W:], dtype=np.float32)[None, ...])[0])
                                 alarm_run = alarm_run + 1 if prob >= threshold else 0
                                 if alarm_run >= persistence:
+                                    if first_alarm_step is None: first_alarm_step = steps
                                     alarms += 1
                                     if mode == "shadow":
                                         alarm_run = 0
@@ -149,6 +155,7 @@ def main():
                         current_k = args.executed_k
                     rec = {"state_id": state_id, "seed": seed, "mode": mode, "success": bool(success),
                            "steps": steps, "alarms": alarms, "interventions": interventions,
+                           "first_alarm_step": first_alarm_step,
                            "persistence": persistence, "monitor_stride": stride,
                            "artifact_sha256": sha256_file(args.artifact),
                            "ensemble_members": len(ensemble.members),

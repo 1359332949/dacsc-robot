@@ -340,3 +340,13 @@ Recovery pilot: success state 36 frozen 3/3 vs monitor 3/3, 0 alarms/0
 interventions; failure state 43 frozen 0/3 vs monitor 0/3, 2 alarms/2
 interventions, no rescue. Recovery is non-harmful but not a success-rate
 improvement on these states.
+
+## Monte-Carlo PoNR and effective lead
+
+branches=5: states 43/45/34 are 0/5 at steps 0/40/80 (policy incompetence);
+state 48 is 1/5 at step 0 and 0/5 at 40/80 → true PoNR around step 40.
+Monitor first alarm on state 48 (seed 7777) is step 112, after PoNR. Recovery:
+frozen 0/3, monitor 0/3, no rescue.
+
+So recovery remains a negative result even on the one true-PoNR state; the
+monitor detects too late to intervene.
