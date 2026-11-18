@@ -231,3 +231,24 @@ Fixed env seed 7777:
 Frozen 5/6, adapter 3/6. The adapter both breaks successes and rescues a
 frozen failure at a different z0. This confirms that the current adapter is
 not an always-on improvement and that z0 sensitivity is bidirectional.
+
+## Adapter support diagnostics (state-level, fixed env seed 7777)
+
+For states 36/37/43/45 and z0 seeds 7777/8888/9999:
+
+- residual ratio (mean over two views): 0.124-0.146 for all states;
+- action delta RMSE: 0.042-0.058;
+- action delta gripper: 0.0016-0.0037.
+
+There is no simple separation between successful and unsuccessful states or
+between z0 seeds. Residual magnitude alone is not an adapter-benefit signal.
+
+Combined with the z0 sweep:
+
+- state 43: adapter 4/5, frozen 0/5;
+- states 36/37: frozen 5/6, adapter 3/6;
+- adapter breaks successes and rescues one frozen failure.
+
+Conclusion: a residual/action-delta threshold gate is not supported by these
+data. The next measurable question is adapter training variance (independent
+adapter seeds), not another heuristic gate.
