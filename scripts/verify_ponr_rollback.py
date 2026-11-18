@@ -130,6 +130,7 @@ def main():
                         obs, reward, done, info = env.step(act); steps += 1
                         if steps in steps_wanted:
                             snaps[steps] = {"state": snapshot(env), "obs": obs,
+                                            "action": controller[k + 1:].copy(),
                                             "rng": {"torch": torch.get_rng_state(),
                                                     "numpy": np.random.get_state(),
                                                     "cuda": torch.cuda.get_rng_state_all() if torch.cuda.is_available() else None}}

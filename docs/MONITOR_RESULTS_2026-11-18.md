@@ -291,3 +291,10 @@ exploratory; no validated PoNR and no effective lead-time claim.
 replay from state-35 step 0 succeed 1/1. Policy resampling from the same
 snapshot still differs (first action ~0.14), so policy-branch PoNR is not yet
 valid. Environment replay is validated; policy sampling is the remaining gap.
+
+## PoNR: environment replay vs policy resampling
+
+Environment replay is now validated: full action replay from state-35 step 0
+succeeds 1/1. Policy resampling from the same snapshot still fails (replay
+first chunk 0/1), so policy-branch success is not yet a validated PoNR.
+No effective lead-time claim.

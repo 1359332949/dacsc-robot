@@ -79,3 +79,21 @@ state, not qpos/qvel or controller state.
 Do not use policy-branch rates as PoNR yet. Use full action replay for
 environment validation, and next save/restore the sampled action chunk or
 sample generator explicitly.
+
+## Current validated/unvalidated split
+
+Validated:
+
+- MuJoCo full-state restore (`sim.get_state/set_state`) in the same simulator;
+- full action replay from a step-0 snapshot reproduces success (state 35: 1/1);
+- controller state and episode flags are restored.
+
+Not validated:
+
+- policy resampling from the same snapshot does not reproduce the original
+  action chunk (first action diff ~0.14; replay-first-chunk still fails);
+- policy-branch success rates are therefore not a PoNR estimate yet.
+
+The failure is in sampled flow-matching action chunks, not in MuJoCo state.
+Next: save the sampled action chunk + generator state at each snapshot, or
+define PoNR using action-replay continuation rather than policy resampling.
