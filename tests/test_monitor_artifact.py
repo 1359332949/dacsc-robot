@@ -2,6 +2,7 @@ import json, unittest
 from pathlib import Path
 import torch
 from dacsc.failure_monitor import CausalFailureMonitor
+from dacsc.monitor_ensemble import MonitorEnsemble
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -18,6 +19,14 @@ class MonitorArtifactTest(unittest.TestCase):
         self.assertIsNone(model.visual_proj)
         self.assertGreater(artifact["persistence"], 0)
         self.assertGreater(artifact["stride"], 0)
+
+    def test_v2_ensemble_loads_and_has_calibration(self):
+        a = json.loads((ROOT / "docs/data/monitor_artifact_v2.json").read_text())
+        self.assertEqual(a["schema"], "monitor_artifact_v2")
+        self.assertGreaterEqual(len(a["members"]), 2)
+        self.assertIsNotNone(a["threshold"])
+        ens = MonitorEnsemble(ROOT / "docs/data/monitor_artifact_v2.json")
+        self.assertGreaterEqual(len(ens.members), 2)
 
     def test_artifact_roles_and_hash_fields(self):
         a = json.loads((ROOT / "docs/data/monitor_artifact_v1.json").read_text())

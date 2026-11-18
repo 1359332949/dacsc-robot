@@ -134,3 +134,11 @@ Combining seeds 7777/8888: K=15 gives source 15/15 detected with 1 false
 alarm, target 13/13 detected with 1/27 false alarms, median lead 164. K=30
 gives target 10/13 detected and 0 false alarms. Still one perturbation
 condition; no recovery.
+
+
+## Ensemble recovery
+
+The recovery harness requires a v2 ensemble artifact with at least two members,
+loads all member hashes, and defaults to shadow-only. `mode=monitor` requires
+explicit `--allow-intervention`. Three-seed ensemble: target AUC 0.925,
+13/13 detected, 1/27 false alarms at K=15.

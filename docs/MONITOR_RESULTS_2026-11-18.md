@@ -233,3 +233,20 @@ Raw `interrupt_dev_seed7777.json`:
 
 The earlier 7/10 Frozen reflex baseline was a documentation error. Do not call
 the hand-coded retreat a safe reflex.
+
+## Ensemble monitor (avoids single-model failure)
+
+Three no-visual absolute-state monitors trained with seeds 0/1/2; predictions
+averaged; source-validation threshold; K=15.
+
+- target AUC 0.925;
+- target failures 13/13 detected;
+- target false alarms 1/27;
+- median lead 164 steps.
+
+Artifact: `docs/data/monitor_artifact_v2.json` with three checkpoint hashes and
+a fail-closed minimum of two members. Recovery now requires this artifact and
+defaults to shadow-only; `mode=monitor` needs explicit `--allow-intervention`.
+
+This is still target-dev development evidence; it is not failure-event lead
+time and not confirmatory.
