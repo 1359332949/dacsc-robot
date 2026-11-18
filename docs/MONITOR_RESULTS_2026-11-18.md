@@ -284,3 +284,10 @@ Added controller state, episode flags, exact observation, and torch/numpy/cuda
 RNG state to snapshots. State-35 sanity: step-0 branch 1/2 success, step-20
 branch 0/2; exact-RNG first-action diff ~0.14. The harness is still
 exploratory; no validated PoNR and no effective lead-time claim.
+
+## Rollback environment now replay-exact
+
+`sim.get_state()/set_state()` plus same-simulator restore made a full action
+replay from state-35 step 0 succeed 1/1. Policy resampling from the same
+snapshot still differs (first action ~0.14), so policy-branch PoNR is not yet
+valid. Environment replay is validated; policy sampling is the remaining gap.

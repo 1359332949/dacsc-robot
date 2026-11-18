@@ -59,3 +59,23 @@ Sanity test (state 35, shift, success):
 The exact-RNG branch still differs from the original first action by about
 0.14, so the harness is not exact yet. Do not interpret the step-20 drop as a
 validated PoNR; it is exploratory.
+
+## MuJoCo full-state restore (validated path)
+
+Adding `sim.get_state()/set_state()` and restoring in the same simulator made
+**full action replay** from a step-0 snapshot reproduce success: 1/1 on state
+35. This validates the MuJoCo/environment restore path for replay.
+
+However, **policy resampling** from the same snapshot still differs:
+
+- exact-RNG first action diff ~0.14;
+- replay-first-action 0/1;
+- policy branches at steps 0/40/80: 0/2 for states 35 and 45.
+
+So the environment is now replay-exact, but the policy branch is not
+action-exact. The missing piece is the flow-matching sample / action chunk
+state, not qpos/qvel or controller state.
+
+Do not use policy-branch rates as PoNR yet. Use full action replay for
+environment validation, and next save/restore the sampled action chunk or
+sample generator explicitly.

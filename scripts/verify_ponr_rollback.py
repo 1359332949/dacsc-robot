@@ -20,8 +20,8 @@ from dacsc.state_pairing import snapshot, restore, model_compatible  # noqa: E40
 from dacsc.tta_protocol import load_split, resolve_indices, validate_split_identity  # noqa: E402
 
 
-def branch(snap, first_obs, first_action, rng_state, env, policy, language, seed, max_steps, executed_k,
-           exact_rng=False):
+def branch(snap, first_obs, first_action, rng_state, replay_actions, env, policy, language, seed,
+           max_steps, executed_k, exact_rng=False, replay_first_action=False, replay_all=False):
     if exact_rng and rng_state is not None:
         torch.set_rng_state(rng_state["torch"])
         np.random.set_state(rng_state["numpy"])
@@ -35,21 +35,36 @@ def branch(snap, first_obs, first_action, rng_state, env, policy, language, seed
     env.env.sim.forward()
     obs = first_obs if first_obs is not None else env.env._get_observations()
     success = False; done = False; steps = 0
+    restored = snapshot(env)
+    restore_diff = 0.0
+    for key in ("qpos", "qvel", "ctrl", "time", "mocap_pos", "mocap_quat", "userdata"):
+        a = np.asarray(restored.get(key, []), dtype=float); b = np.asarray(snap.get(key, []), dtype=float)
+        if a.size and b.size and a.shape == b.shape:
+            restore_diff = max(restore_diff, float(np.max(np.abs(a - b))))
     action_diff = None
+    replayed = False
     with torch.no_grad():
         while not success and not done and steps < max_steps:
-            po = policy_observation(obs, language, policy)
-            with torch.autocast(device_type=torch.device("cuda").type, dtype=torch.bfloat16,
-                                enabled=torch.cuda.is_available()):
-                controller = policy.predict(po)[0].float().cpu().numpy()
+            if replay_all and replay_actions is not None and steps < len(replay_actions):
+                controller = np.asarray(replay_actions[steps:steps + executed_k], dtype=np.float32)
+                if len(controller) == 0:
+                    break
+            elif replay_first_action and not replayed and first_action is not None:
+                controller = np.asarray(first_action, dtype=np.float32)
+                replayed = True
+            else:
+                po = policy_observation(obs, language, policy)
+                with torch.autocast(device_type=torch.device("cuda").type, dtype=torch.bfloat16,
+                                    enabled=torch.cuda.is_available()):
+                    controller = policy.predict(po)[0].float().cpu().numpy()
             if action_diff is None and first_action is not None:
                 action_diff = float(np.max(np.abs(controller - first_action)))
-            for k in range(executed_k):
+            for k in range(min(executed_k, len(controller))):
                 clipped = np.clip(controller[k], -1.0, 1.0)
                 obs, reward, done, info = env.step(clipped); steps += 1
                 success = is_success(env, info, reward, done)
                 if success or done or steps >= max_steps: break
-    return bool(success), steps, action_diff
+    return bool(success), steps, action_diff, restore_diff
 
 
 def main():
@@ -64,6 +79,8 @@ def main():
     ap.add_argument("--seed", type=int, default=7777)
     ap.add_argument("--snapshot-steps", default="60,80,100,120,140")
     ap.add_argument("--branches", type=int, default=3)
+    ap.add_argument("--replay-first-action", action="store_true")
+    ap.add_argument("--replay-all-actions", action="store_true")
     ap.add_argument("--max-steps", type=int, default=220)
     ap.add_argument("--executed-k", type=int, default=12)
     ap.add_argument("--device", default="cuda:0")
@@ -93,7 +110,7 @@ def main():
             if torch.cuda.is_available(): torch.cuda.manual_seed_all(args.seed)
             env.seed(args.seed); env.reset(); obs = env.set_init_state(states[state_id])
             for _ in range(SETTLING_STEPS): obs, _, _, _ = env.step(DUMMY_ACTION)
-            snaps = {}; steps = 0; success = False; done = False
+            snaps = {}; executed_actions = []; steps = 0; success = False; done = False
             if 0 in steps_wanted:
                 snaps[0] = {"state": snapshot(env), "obs": obs, "action": None,
                             "rng": {"torch": torch.get_rng_state(),
@@ -108,7 +125,9 @@ def main():
                     if steps == 0 and 0 in snaps and snaps[0]["action"] is None:
                         snaps[0]["action"] = controller.copy()
                     for k in range(args.executed_k):
-                        obs, reward, done, info = env.step(np.clip(controller[k], -1.0, 1.0)); steps += 1
+                        act = np.clip(controller[k], -1.0, 1.0)
+                        executed_actions.append(act.copy())
+                        obs, reward, done, info = env.step(act); steps += 1
                         if steps in steps_wanted:
                             snaps[steps] = {"state": snapshot(env), "obs": obs,
                                             "rng": {"torch": torch.get_rng_state(),
@@ -119,15 +138,19 @@ def main():
             for snap_step, pack in sorted(snaps.items()):
                 snap = pack["state"]; first_obs = pack["obs"]; first_action = pack.get("action")
                 rng_state = pack.get("rng")
-                probs = []
+                probs = []; restore_diffs = []
                 for b in range(args.branches):
-                    ok, n, adiff = branch(snap, first_obs, first_action, rng_state, env, policy, language,
+                    replay = executed_actions[snap_step:] if args.replay_all_actions else None
+                    ok, n, adiff, rdiff = branch(snap, first_obs, first_action, rng_state, replay, env, policy, language,
                                           args.seed if b == 0 else args.seed + 1000 * b,
-                                          args.max_steps - snap_step, args.executed_k, exact_rng=(b == 0))
-                    probs.append(ok)
+                                          args.max_steps - snap_step, args.executed_k, exact_rng=(b == 0),
+                                          replay_first_action=args.replay_first_action,
+                                          replay_all=args.replay_all_actions)
+                    probs.append(ok); restore_diffs.append(rdiff)
                 records.append({"state_id": state_id, "snapshot_step": snap_step,
                                 "branch_successes": int(sum(probs)), "branches": len(probs),
                                 "first_action_diff": adiff,
+                                "restore_diff": max(restore_diffs) if restore_diffs else None,
                                 "final_success": bool(success), "final_steps": steps})
         finally:
             env.close()

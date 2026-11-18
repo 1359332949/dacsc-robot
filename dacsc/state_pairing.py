@@ -19,7 +19,8 @@ import numpy as np
 REQUIRED_ARRAYS = ("qpos", "qvel", "time", "body_xpos", "body_xquat", "eef_pos")
 OPTIONAL_EMPTY_OK = ("act", "mocap_pos", "mocap_quat", "ctrl", "qacc_warmstart",
                     "qfrc_applied", "xfrc_applied", "eq_active")
-EXTRA_STATE_ARRAYS = ("ctrl", "qacc_warmstart", "qfrc_applied", "xfrc_applied", "eq_active")
+EXTRA_STATE_ARRAYS = ("ctrl", "qacc_warmstart", "qfrc_applied", "xfrc_applied",
+                      "eq_active", "userdata")
 DEFAULT_TOL = {"qpos": 1e-6, "qvel": 1e-6, "act": 1e-6, "time": 1e-9,
                "body_xpos": 1e-4, "eef_pos": 1e-4, "mocap": 1e-6,
                "body_xquat_rad": 1e-4, "ctrl": 1e-6, "qacc_warmstart": 1e-6,
@@ -48,6 +49,7 @@ def snapshot(env) -> dict[str, Any]:
     out = {
         "body_names": names,
         "controller": controller_snapshot(env),
+        "mj_state": sim.get_state(),
         "camera_names": cam_names,
         "eef_name": eef_name,
         "qpos": _arr(sim.data.qpos).tolist(),
@@ -213,8 +215,11 @@ def restore(env, snap: dict[str, Any]) -> None:
         if dst.shape != src.shape:
             raise ValueError(f"state shape mismatch: {dst.shape} vs {src.shape}")
         dst[...] = src
-    put(sim.data.qpos, snap["qpos"])
-    put(sim.data.qvel, snap["qvel"])
+    if snap.get("mj_state") is not None:
+        sim.set_state(snap["mj_state"])
+    else:
+        put(sim.data.qpos, snap["qpos"])
+        put(sim.data.qvel, snap["qvel"])
     for key in EXTRA_STATE_ARRAYS + ("act",):
         dst = getattr(sim.data, key, None)
         src = snap.get(key, [])
