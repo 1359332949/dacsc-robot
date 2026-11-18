@@ -75,3 +75,28 @@ Gripper RMSE improves without losing overall/XYZ. Closed-loop state 43 still
 0/1 -> 1/1; state 45 remains 0/1 -> 0/1.
 
 This is the current best v1 adapter, but still target-dev pilot only.
+
+## Full target-dev adapter-only failure and gate status
+
+Adapter-only closed loop on target-dev shift (seed 7777):
+
+| state | frozen | adapter |
+|---|---:|---:|
+| 34 | 0 | 0 |
+| 35 | 0 | 0 |
+| 36 | 1 | **0** |
+| 37 | 1 | **0** |
+| 39 | 0 | 0 |
+| 43 | 0 | **1** |
+| 45 | 0 | 0 |
+
+Adapter-only is therefore not deployable: it rescues state 43 but breaks
+states 36 and 37.
+
+A monitor-gated variant was implemented. On state 36 it correctly kept the
+frozen path (success), but on state 43 the monitor gate did not activate
+(gate_used=false), so state 43 remained failure. The monitor gate needs a
+separate calibration/debug pass before any full target-dev run.
+
+Do not start the full target-dev adapter evaluation until the gate fix is
+validated.
