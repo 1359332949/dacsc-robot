@@ -85,3 +85,17 @@ Frozen only, 20 heldout states, new perturbation config:
 
 This is an admission baseline, not a TTA result. The split status is
 `admission_accessed`; it is not confirmatory.
+
+## Provenance correction (2026-11-18)
+
+- The perturbation split is restored to the exact `0141c2e8...` content used by
+  the compliant target-dev run; access state moved to
+  `docs/data/tta_access_ledger.json`.
+- Source capture now records `source_role_fingerprint`; the runner rejects a
+  capture missing it or whose source roles do not match.
+- `git_commit`, full `run_config`, actual sampler, precision, base/env BDDL
+  hashes, `hit_max_steps`, and null `z0_schedule_sha256` for `policy.predict`
+  are recorded.
+- Admission baseline results before these fixes are marked legacy.
+- Protocol-compliant target-dev rerun: Frozen 11/30, First 7/30
+  (gain 4 / loss 8).

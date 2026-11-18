@@ -16,7 +16,8 @@ from corp import load_policy  # noqa: E402
 from evaluate_libero import DUMMY_ACTION, SETTLING_STEPS, policy_observation  # noqa: E402
 from target_only_action_validation import configure, visual_from_obs  # noqa: E402
 from dacsc.state_pairing import snapshot  # noqa: E402
-from dacsc.tta_protocol import load_split, role_ids, sha256_file as split_sha256_file, validate_split_identity  # noqa: E402
+from dacsc.tta_protocol import (load_split, role_ids, sha256_file as split_sha256_file,
+                                 source_role_fingerprint, validate_split_identity)  # noqa: E402
 
 
 def main():
@@ -107,6 +108,7 @@ def main():
         "matrix_sha256": split_sha256_file(args.matrix),
         "initial_state_file_sha256": split_sha256_file(Path(task["state_split"]["source_file"])),
         "split_sha256": split_sha256_file(args.split_json) if args.split_json else None,
+        "source_role_fingerprint": source_role_fingerprint(split) if split is not None else None,
         "capture_script_sha256": split_sha256_file(Path(__file__)),
     }
     (out / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")

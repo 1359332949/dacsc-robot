@@ -66,10 +66,8 @@
     47
   ],
   "confirmatory_test": false,
-  "target_test_status": "admission_accessed",
-  "target_test_used_for": [
-    "frozen_admission_2312"
-  ],
+  "target_test_status": "locked_unused",
+  "target_test_used_for": [],
   "screening_seeds": [
     7777,
     8888,

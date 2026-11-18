@@ -79,6 +79,18 @@ def resolve_execution_seeds(split: dict, role: str) -> list[int]:
     return seeds_for_role(split, role)
 
 
+def source_role_fingerprint(split: dict) -> str:
+    """Hash only the source-calibration roles, not target/seed metadata."""
+    payload = {
+        "suite": split.get("suite") or split.get("task_suite"),
+        "source_domain": split.get("source_domain"),
+        "source_train_state_ids": [int(x) for x in split["source_train_state_ids"]],
+        "source_val_state_ids": [int(x) for x in split["source_val_state_ids"]],
+    }
+    raw = json.dumps(payload, sort_keys=True, separators=(",", ":")).encode()
+    return hashlib.sha256(raw).hexdigest()
+
+
 def role_ids(split: dict, role: str) -> list[int]:
     if role not in ROLES:
         raise ValueError(f"unknown role: {role}")
@@ -113,3 +125,14 @@ def role_for_state(split: dict, state_id: int) -> str | None:
         if state_id in set(role_ids(split, role)):
             return role
     return None
+
+
+def load_access_ledger(path: Path, split_path: Path) -> dict:
+    ledger = json.loads(Path(path).read_text())
+    if ledger.get("schema") != "tta_access_ledger_v1":
+        raise ValueError(f"unsupported access ledger schema: {ledger.get('schema')}")
+    if ledger.get("target_test_status") not in TARGET_TEST_STATUSES:
+        raise ValueError("invalid access ledger target_test_status")
+    if ledger.get("split_sha256") != sha256_file(Path(split_path)):
+        raise ValueError("access ledger split hash does not match canonical split")
+    return ledger

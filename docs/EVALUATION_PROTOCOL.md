@@ -349,3 +349,15 @@ seed-2014 target-dev positive result is legacy and must not be cited.
 
 Target-test admission on Lighting 2312 (Frozen, seed 2014): Clean 18/20,
 Shift 1/20. Status is `admission_accessed`, not confirmatory.
+
+
+## 20. Provenance correction (2026-11-18)
+
+The perturbation split is immutable at `0141c2e8...`; target-test access is
+tracked in `tta_access_ledger.json`. Source capture binds a
+`source_role_fingerprint`, not the full target split hash. Compliant runs record
+`git_commit`, full `run_config`, actual sampler/precision, base/env BDDL hashes,
+per-record `hit_max_steps`, and null `z0_schedule_sha256` for `policy.predict`.
+
+Protocol-compliant target-dev rerun (screening seeds): Frozen 11/30, First
+7/30 (gain 4 / loss 8). Earlier admission result JSONs are legacy/pre-fix.

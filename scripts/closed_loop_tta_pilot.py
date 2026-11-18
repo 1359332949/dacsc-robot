@@ -34,8 +34,9 @@ from dacsc.pilot_validation import (  # noqa: E402
     validate_init_indices, validate_methods,
 )
 from dacsc.tta_protocol import (  # noqa: E402
-    assert_target_test_confirmatory, load_split, resolve_indices, role_for_state, role_ids,
-    seeds_for_role, sha256_file as split_sha256_file, validate_split_identity,
+    assert_target_test_confirmatory, load_access_ledger, load_split, resolve_indices, role_for_state, role_ids,
+    seeds_for_role, sha256_file as split_sha256_file, source_role_fingerprint,
+    validate_split_identity,
 )
 
 
@@ -434,6 +435,10 @@ def main():
                     help="explicit opt-in to the old no-split diagnostic path")
     ap.add_argument("--target-test-admission", action="store_true",
                     help="Frozen-only baseline admission for a locked target test")
+    ap.add_argument("--target-test-admission-repeat", action="store_true",
+                    help="explicit repeat of an already-accessed admission baseline")
+    ap.add_argument("--access-ledger", type=Path, default=None,
+                    help="immutable target-test access ledger")
     ap.add_argument("--lighting-id", type=int, default=2222)
     ap.add_argument("--methods", default="frozen,first_observation,online")
     ap.add_argument("--max-steps", type=int, default=280)
@@ -466,6 +471,7 @@ def main():
     task = next(b for b in matrix["base_tasks"] if b["suite"] == args.suite)
     methods = validate_methods(args.methods)
     split = load_split(args.split_json) if args.split_json else None
+    ledger = load_access_ledger(args.access_ledger, args.split_json) if (args.access_ledger and args.split_json) else None
     if split is not None:
         if args.role == "target_dev":
             args.lighting_id = int(split.get("target_dev_lighting_id", args.lighting_id))
@@ -476,6 +482,10 @@ def main():
             assert_target_test_confirmatory(split)
         if args.target_test_admission and methods != ["frozen_predict"]:
             raise ValueError("--target-test-admission is Frozen-only")
+        if args.target_test_admission:
+            current_status = ledger.get("target_test_status") if ledger else split.get("target_test_status")
+            if current_status == "admission_accessed" and not args.target_test_admission_repeat:
+                raise ValueError("target-test admission already accessed; use an explicit repeat flag")
     variant = next(v for v in task["variants"]["lighting"]
                    if v["classification_id"] == args.lighting_id)
     base_bddl, shift_bddl = variant["base_bddl"], variant["env_bddl_name"]
@@ -494,8 +504,12 @@ def main():
         manifest = json.loads((args.capture / "manifest.json").read_text())
         if manifest.get("checkpoint_sha256") and manifest["checkpoint_sha256"] != sha256_file(args.checkpoint):
             raise ValueError("capture checkpoint hash does not match runner checkpoint")
-        if args.split_json and manifest.get("split_sha256") and manifest["split_sha256"] != split_sha256_file(args.split_json):
-            raise ValueError("capture split hash does not match runner split")
+        expected_fp = source_role_fingerprint(split) if split is not None else None
+        if split is not None:
+            if not manifest.get("source_role_fingerprint"):
+                raise ValueError("capture is missing source_role_fingerprint; regenerate it with --split-json")
+            if manifest["source_role_fingerprint"] != expected_fp:
+                raise ValueError("capture source roles do not match runner split")
         z = np.load(args.capture / "features.npz")
         rows = [r for r in manifest["records"] if r.get("compare_pass")]
         by_state = {int(r["index"]): int(r["feature_row"]) for r in rows}
@@ -560,9 +574,15 @@ def main():
                     rec["seed"] = int(seed)
                     rec["seed_offset"] = seed_offset
                     rec["split_role"] = role_for_state(split, init_index) if split is not None else None
-                    rec["z0_schedule_sha256"] = hashlib.sha256(
-                        b"".join(x.cpu().numpy().tobytes() for x in z0_schedule)
-                    ).hexdigest()
+                    if method == "frozen_predict":
+                        rec["sampler"] = "policy.predict"
+                        rec["z0_schedule_sha256"] = None
+                    else:
+                        rec["sampler"] = "sample_z"
+                        rec["z0_schedule_sha256"] = hashlib.sha256(
+                            b"".join(x.cpu().numpy().tobytes() for x in z0_schedule)
+                        ).hexdigest()
+                    rec["hit_max_steps"] = bool(rec["steps"] >= args.max_steps and not rec["success"])
                     records.append(rec)
                     print(json.dumps(rec), flush=True)
                 finally:
@@ -572,6 +592,7 @@ def main():
     state_file = Path(task["state_split"]["source_file"])
     payload = {"schema": "closed_loop_tta_pilot_v2", "fit_ids": fit_ids, "domain": args.domain,
                "script_sha256": sha256_file(Path(__file__)),
+               "git_commit": _git_commit(),
                "checkpoint_sha256": sha256_file(args.checkpoint),
                "capture_manifest_sha256": sha256_file(args.capture / "manifest.json"),
                "capture_features_sha256": sha256_file(args.capture / "features.npz"),
@@ -583,6 +604,7 @@ def main():
                "seed_pool_role": "screening_seeds" if split is not None and args.role == "target_dev" else "evaluation_seeds" if split is not None else "legacy_offsets",
                "target_test_status": split.get("target_test_status") if split is not None else None,
                "target_test_admission": bool(args.target_test_admission),
+               "access_ledger_sha256": sha256_file(args.access_ledger) if args.access_ledger else None,
                "source_validation_state_ids": role_ids(split, "source_validation") if split is not None else None,
                "split_status": split.get("status") if split is not None else None,
                "input_files_exist": all([
@@ -594,9 +616,21 @@ def main():
                    "split_sha256": split_sha256_file(args.split_json) if args.split_json else None,
                    "capture_manifest_sha256": sha256_file(args.capture / "manifest.json"),
                    "capture_features_sha256": sha256_file(args.capture / "features.npz"),
-                   "bddl_sha256": sha256_file(Path(base_bddl)),
+                   "base_bddl_sha256": sha256_file(Path(base_bddl)),
+                   "env_bddl_sha256": sha256_file(Path(env_bddl)),
+                   "lighting_id": int(args.lighting_id),
                    "initial_state_file_sha256": sha256_file(state_file),
                    "training_data_provenance": "official CoRP LIBERO checkpoint; overlap not independently verified",
+               },
+               "run_config": {
+                   "args": {k: (str(v) if isinstance(v, Path) else v) for k, v in vars(args).items()},
+                   "precision": args.precision,
+                   "sampler": "policy.predict" if methods == ["frozen_predict"] else "sample_z",
+                   "action_horizon": int(policy.action_generator.action_horizon),
+                   "action_dim": int(policy.action_generator.action_dim),
+                   "num_sampling_steps": getattr(policy.action_generator, "num_sampling_steps", None),
+                   "base_bddl": str(base_bddl),
+                   "env_bddl": str(env_bddl),
                },
                "source_diagnostics": diag, "records": records,
                "methods": methods, "init_indices": init_indices,

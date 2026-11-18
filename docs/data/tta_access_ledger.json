@@ -1,0 +1,22 @@
+{
+  "schema": "tta_access_ledger_v1",
+  "split_file": "docs/data/tta_split_libero_spatial_perturbation.json",
+  "split_sha256": "0141c2e8e417f6686597930333e91782c62381a45f0bd9ebe9f38d08327a5fa1",
+  "confirmatory_test": false,
+  "target_test_status": "admission_accessed",
+  "events": [
+    {
+      "date": "2026-11-18",
+      "role": "target_test",
+      "access": "frozen_admission",
+      "perturbation_id": 2312,
+      "seed": 2014,
+      "methods": ["frozen_predict"],
+      "result_files": [
+        "docs/data/perturb_test_clean.json",
+        "docs/data/perturb_test_shift.json"
+      ]
+    }
+  ],
+  "note": "Admission baseline only. Not a confirmatory TTA evaluation."
+}
