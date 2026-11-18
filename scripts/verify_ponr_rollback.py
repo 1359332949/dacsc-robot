@@ -19,6 +19,13 @@ from target_only_action_validation import configure  # noqa: E402
 from dacsc.state_pairing import snapshot, restore, model_compatible  # noqa: E402
 from dacsc.tta_protocol import load_split, resolve_indices, validate_split_identity  # noqa: E402
 
+torch.backends.cudnn.deterministic = True
+torch.backends.cudnn.benchmark = False
+try:
+    torch.use_deterministic_algorithms(True, warn_only=True)
+except Exception:
+    pass
+
 
 def branch(snap, first_obs, first_action, rng_state, replay_actions, obs_history, state_history, env, policy, language, seed,
            max_steps, executed_k, exact_rng=False, replay_first_action=False, replay_all=False):

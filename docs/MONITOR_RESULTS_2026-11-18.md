@@ -311,3 +311,10 @@ Latest state-35 step-0 branch: first_action_diff 0.0, chunk-2 obs diff 0.0,
 chunk-2 qpos diff 0.0; branch failed, but the original rollout also failed in
 that run (previous identical run succeeded). The blocker is now original
 rollout determinism, not MuJoCo restore. No PoNR or recovery claim.
+
+## Determinism blocker
+
+Three identical state-35 runs produced original success true/false/false, with
+different chunk-2 observation diffs. This is larger than the restore issue and
+invalidates single-run PoNR and recovery comparisons. Evaluation must be made
+deterministic or explicitly repeated before rollout.

@@ -127,3 +127,16 @@ determinism** (env reset / policy sampling seed stability).
 
 Do not start PoNR or recovery until repeated original rollouts with a fixed
 seed produce a stable outcome.
+
+## Determinism check (blocker)
+
+Repeated identical state-35 runs with deterministic flags:
+
+| run | original success | branch | chunk-2 obs diff | chunk-2 qpos diff |
+|---|---|---|---:|---:|
+| 1 | true | 0/1 | 192.0 | 0.00124 |
+| 2 | false | 0/1 | 192.0 | 0.00124 |
+| 3 | false | 1/1 | 1.0 | 0.0 |
+
+The original rollout itself changes across identical runs. Until evaluation is
+deterministic or explicitly multi-repeat, PoNR and recovery cannot be started.
