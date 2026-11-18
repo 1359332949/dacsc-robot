@@ -57,3 +57,14 @@ and a median lead of 18 steps; this only exercises the code path.
 deployable window, and can interrupt a chunk or run a retreat/open reflex.
 It is implemented but must not be run until the monitor is trained and
 validated on target dev.
+
+## Orchestration
+
+`scripts/collect_monitor_data.py` plans/executes source-fit, source-val and
+target-dev trajectory collection (target test is never collected). It supports
+`--execute`; default is a dry-run plan.
+
+`scripts/run_monitor_pipeline.py` builds source windows, target-dev windows,
+trains on source only, and evaluates on target dev only. It supports
+`--execute`; default prints commands. The script refuses one-class training
+data and never reads target test.

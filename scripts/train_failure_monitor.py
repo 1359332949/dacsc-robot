@@ -70,6 +70,9 @@ def main():
     def ds(mask):
         return TensorDataset(torch.from_numpy(norm("state")[mask]), torch.from_numpy(norm("action")[mask]),
                              torch.from_numpy(norm("visual_delta")[mask]), torch.from_numpy(d["y"][mask]))
+    tr_y_check = d["y"][~val]
+    if len(set(tr_y_check.tolist())) < 2:
+        raise ValueError("training split has only one class; collect failure and success groups")
     tr = DataLoader(ds(~val), batch_size=args.batch_size, shuffle=True)
     va = DataLoader(ds(val), batch_size=args.batch_size, shuffle=False)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
