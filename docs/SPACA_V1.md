@@ -283,3 +283,24 @@ grip weight 20; residual 0.01), target-dev shift, env seed 7777, z0 seed 7777:
 Frozen 2/4, corrected adapter 2/4. The adapter breaks state 36 and rescues
 state 43, with no net gain. All earlier SPACA seed-7777 4/4 and stochasticity
 claims are superseded by this corrected checkpoint.
+
+## Clipping-aware variant and final current checkpoint
+
+After adding clean/shift proprio-token separation and parity (=0.0), the
+corrected adapter is:
+
+| state | frozen | corrected adapter | clip-aware adapter |
+|---|---:|---:|---:|
+| 36 | 1 | 0 | 1 |
+| 37 | 1 | 1 | 0 |
+| 43 | 0 | 1 | 0 |
+| 45 | 0 | 0 | 0 |
+| total | 2/4 | 2/4 | 1/4 |
+
+The clipping-aware loss did not improve the protocol. The current checkpoint
+has no net advantage over Frozen and must not be used for full target-dev.
+
+Rollout logs now include per-chunk z0 hashes, normalized/controller/clipped
+action deltas, clipping ratios, init state/model/controller digests and
+adapter application counts. This proves the adapter is actually applied but
+does not establish stable benefit.

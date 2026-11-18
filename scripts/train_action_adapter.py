@@ -56,6 +56,7 @@ def main():
     ap.add_argument("--grip-weight", type=float, default=1.0)
     ap.add_argument("--z0-augment", type=int, default=1)
     ap.add_argument("--res-weight", type=float, default=0.0)
+    ap.add_argument("--clip-weight", type=float, default=0.0)
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--z0-epoch-resample", action="store_true")
     ap.add_argument("--device", default="cuda:0")
@@ -95,7 +96,7 @@ def main():
         c_rep = clean_rep(adapter, rec, device)
         frozen_rep = clean_frozen_rep(rec, device)
         base_z0 = torch.tensor(rec["z0"], dtype=torch.float32, device=device).unsqueeze(0)
-        pair_total = 0.0; ident_total = 0.0; n = 0
+        pair_total = 0.0; ident_total = 0.0; clip_total = 0.0; n = 0
         for aug in range(max(1, args.z0_augment)):
             if aug == 0:
                 z0 = base_z0
@@ -110,9 +111,15 @@ def main():
             pair_total = pair_total + (lossf(pred, target) * weight).mean()
             c_pred = sample_from_z0(policy, c_rep, z0)
             ident_total = ident_total + (lossf(c_pred, target) * weight).mean()
+            if args.clip_weight > 0:
+                p_ctrl = policy.normalizer.unnormalize_action(pred).clamp(-1.0, 1.0)
+                t_ctrl = policy.normalizer.unnormalize_action(target).clamp(-1.0, 1.0)
+                clip_total = clip_total + (lossf(p_ctrl, t_ctrl) * weight).mean()
             n += 1
         pair = pair_total / n; ident = ident_total / n
         loss = pair + args.id_weight * ident
+        if args.clip_weight > 0:
+            loss = loss + args.clip_weight * (clip_total / n)
         if args.res_weight > 0:
             visual = torch.tensor(rec["shift_visual_tokens"], dtype=torch.float32, device=device).unsqueeze(0)
             adapted_visual = adapter(visual)
@@ -134,6 +141,7 @@ def main():
                 "val_states": sorted(val_states), "train_states": sorted(set(states) - val_states),
                 "id_weight": args.id_weight, "grip_weight": args.grip_weight,
                 "z0_augment": args.z0_augment, "res_weight": args.res_weight,
+                "clip_weight": args.clip_weight,
                 "training_seed": args.seed, "z0_epoch_resample": bool(args.z0_epoch_resample),
                 "pairs_sha256": hashlib.sha256(args.pairs.read_bytes()).hexdigest(),
                 "checkpoint_sha256": hashlib.sha256(args.checkpoint.read_bytes()).hexdigest(),

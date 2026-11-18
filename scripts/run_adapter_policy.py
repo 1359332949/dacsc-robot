@@ -14,6 +14,7 @@ from corp import load_policy  # noqa: E402
 from target_only_action_validation import configure  # noqa: E402
 from dacsc.action_adapter import ResidualVisualAdapter  # noqa: E402
 from dacsc.monitor_ensemble import MonitorEnsemble  # noqa: E402
+from dacsc.state_pairing import snapshot, digest, digest_model, digest_controller  # noqa: E402
 from dacsc.differentiable_policy import forward_with_adapter  # noqa: E402
 from dacsc.tta_protocol import load_split, resolve_indices, seeds_for_role, validate_split_identity  # noqa: E402
 
@@ -84,9 +85,16 @@ def main():
                     if torch.cuda.is_available(): torch.cuda.manual_seed_all(env_seed)
                     env.seed(env_seed); env.reset(); obs = env.set_init_state(states[state_id])
                     for _ in range(SETTLING_STEPS): obs, _, _, _ = env.step(DUMMY_ACTION)
+                    init_snap = snapshot(env)
+                    init_state_digest = digest(init_snap)
+                    init_model_digest = digest_model(init_snap)
+                    init_controller_digest = digest_controller(init_snap)
+                    init_obs_hash = __import__("hashlib").sha256(
+                        np.asarray(obs.get("agentview_image", []), dtype=np.uint8).tobytes()).hexdigest()
                     steps = 0; success = False; done = False; chunk = 0
                     adapter_forward_calls = 0; adapter_applied_chunks = 0
-                    adapter_first_applied_step = None; first_z0_hash = None
+                    adapter_first_applied_step = None; adapter_last_applied_step = None
+                    first_z0_hash = None; z0_hashes = []; chunk_log = []
                     gate_active = False; alarm_run = 0
                     monitor_probs = []; monitor_alarms = 0; gate_step = None
                     buf_s, buf_a, buf_v = [], [], []
@@ -97,24 +105,48 @@ def main():
                         z0 = torch.randn((1, policy.action_generator.action_horizon,
                                           policy.action_generator.action_dim), device=device, dtype=torch.float32)
                         z0_hash = __import__("hashlib").sha256(z0.detach().float().cpu().numpy().tobytes()).hexdigest()
+                        z0_hashes.append(z0_hash)
                         if first_z0_hash is None: first_z0_hash = z0_hash
+                        frozen_out = forward_with_adapter(policy, po, zero, z0)
+                        adapter_out = forward_with_adapter(policy, po, adapter, z0)
                         if mode == "frozen":
-                            out = forward_with_adapter(policy, po, zero, z0); used = False
+                            out = frozen_out; used = False
                         elif mode == "adapter":
-                            out = forward_with_adapter(policy, po, adapter, z0); used = True
+                            out = adapter_out; used = True
                             adapter_forward_calls += 1
                             if adapter_first_applied_step is None: adapter_first_applied_step = steps
+                            adapter_last_applied_step = steps
                         elif mode == "first":
                             used = chunk == 0
-                            out = forward_with_adapter(policy, po, adapter if used else zero, z0)
-                            if used: adapter_forward_calls += 1
+                            out = adapter_out if used else frozen_out
+                            if used:
+                                adapter_forward_calls += 1
+                                if adapter_first_applied_step is None: adapter_first_applied_step = steps
+                                adapter_last_applied_step = steps
                         else:
                             used = bool(gate_active)
                             if used and adapter_first_applied_step is None: adapter_first_applied_step = steps
-                            out = forward_with_adapter(policy, po, adapter if used else zero, z0)
+                            if used: adapter_last_applied_step = steps
+                            out = adapter_out if used else frozen_out
                             if used: adapter_forward_calls += 1
                         if used: adapter_applied_chunks += 1
                         actions = out["controller_actions"][0].detach().float().cpu().numpy()
+                        f_ctrl = frozen_out["controller_actions"][0].detach().float().cpu().numpy()
+                        a_ctrl = adapter_out["controller_actions"][0].detach().float().cpu().numpy()
+                        f_norm = frozen_out["normalized_actions"][0].detach().float().cpu().numpy()
+                        a_norm = adapter_out["normalized_actions"][0].detach().float().cpu().numpy()
+                        chosen_clip = np.clip(actions, -1.0, 1.0)
+                        clip_ratio = float(np.mean(np.abs(actions) > 1.0))
+                        chunk_log.append({
+                            "chunk": chunk, "steps_start": steps, "mode": mode, "adapter_used": bool(used),
+                            "z0_seed": z0_seed, "z0_sha256": z0_hash,
+                            "norm_delta_mae": float(np.mean(np.abs(a_norm - f_norm))),
+                            "controller_delta_rmse": float(np.sqrt(np.mean((a_ctrl - f_ctrl) ** 2))),
+                            "clipped_delta_rmse": float(np.sqrt(np.mean((chosen_clip - np.clip(f_ctrl, -1, 1)) ** 2))),
+                            "clip_ratio": clip_ratio,
+                            "clip_ratio_xyz": float(np.mean(np.abs(actions[:, :3]) > 1.0)),
+                            "clip_ratio_grip": float(np.mean(np.abs(actions[:, 6]) > 1.0)),
+                        })
                         for k in range(min(args.executed_k, len(actions))):
                             obs, reward, done, info = env.step(np.clip(actions[k], -1.0, 1.0)); steps += 1
                             success = is_success(env, info, reward, done)
@@ -144,6 +176,7 @@ def main():
                                     "adapter_forward_calls": adapter_forward_calls,
                                     "adapter_applied_chunks": adapter_applied_chunks,
                                     "adapter_first_applied_step": adapter_first_applied_step,
+                                    "adapter_last_applied_step": adapter_last_applied_step,
                                     "adapter_checkpoint_sha256": adapter_sha,
                                     "gate_used": bool(used) if mode == "gated" else None,
                                     "gate_active_final": bool(gate_active),
@@ -152,6 +185,12 @@ def main():
                                     "monitor_max_prob": max(monitor_probs) if monitor_probs else None,
                                     "monitor_n_evals": len(monitor_probs),
                                     "first_z0_sha256": first_z0_hash,
+                                    "z0_sha256s": z0_hashes,
+                                    "chunk_log": chunk_log,
+                                    "init_state_digest": init_state_digest,
+                                    "init_model_digest": init_model_digest,
+                                    "init_controller_digest": init_controller_digest,
+                                    "init_obs_sha256": init_obs_hash,
                                     "steps": steps, "hit_max_steps": bool(steps >= args.max_steps and not success)})
                     print(json.dumps(records[-1]), flush=True)
                 finally:
