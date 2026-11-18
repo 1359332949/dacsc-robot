@@ -19,6 +19,7 @@ on:
       - "tests/test_tta_protocol.py"
       - "dacsc/failure_monitor.py"
       - "tests/test_failure_monitor.py"
+      - "tests/test_monitor_artifact.py"
       - "scripts/build_monitor_dataset.py"
       - "scripts/train_failure_monitor.py"
       - "scripts/evaluate_monitor_offline.py"
@@ -46,6 +47,7 @@ on:
       - "tests/test_tta_protocol.py"
       - "dacsc/failure_monitor.py"
       - "tests/test_failure_monitor.py"
+      - "tests/test_monitor_artifact.py"
       - "scripts/build_monitor_dataset.py"
       - "scripts/train_failure_monitor.py"
       - "scripts/evaluate_monitor_offline.py"
@@ -93,6 +95,10 @@ jobs:
         env:
           PYTHONPATH: .
         run: python -m unittest tests.test_failure_monitor -v
+      - name: Monitor artifact tests
+        env:
+          PYTHONPATH: .
+        run: python -m unittest tests.test_monitor_artifact -v
       - name: View residual diagnostic test
         env:
           PYTHONPATH: .
