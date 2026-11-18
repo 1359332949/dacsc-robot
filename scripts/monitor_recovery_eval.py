@@ -30,6 +30,8 @@ def main():
     ap.add_argument("--role", default="target_dev")
     ap.add_argument("--suite", default="libero_spatial")
     ap.add_argument("--domain", choices=["shift", "clean"], default="shift")
+    ap.add_argument("--state-ids", default="")
+    ap.add_argument("--allow-nondeterministic-renderer", action="store_true")
     ap.add_argument("--lighting-id", type=int, default=2292)
 
     ap.add_argument("--modes", default="frozen,shadow")
@@ -51,6 +53,9 @@ def main():
     ap.add_argument("--libero-config", type=Path, default=Path("/hy-tmp/libero_config"))
     args = ap.parse_args()
     if args.out.exists(): raise FileExistsError(args.out)
+    import os
+    if not args.allow_nondeterministic_renderer and os.environ.get("MUJOCO_GL") != "osmesa":
+        raise RuntimeError("deterministic rollouts require MUJOCO_GL=osmesa and PYOPENGL_PLATFORM=osmesa")
     if "monitor" in args.modes.split(",") and not args.allow_intervention:
         raise ValueError("mode=monitor requires --allow-intervention; use shadow for passive runs")
     configure(args)
@@ -78,7 +83,7 @@ def main():
     window = int(artifact["window"])
     variant = next(v for v in task["variants"]["lighting"] if v["classification_id"] == args.lighting_id)
     env_bddl = variant["base_bddl"] if args.domain == "clean" else variant["env_bddl_name"]
-    ids = resolve_indices(split, args.role, "")
+    ids = resolve_indices(split, args.role, args.state_ids)
     states = torch.load(task["state_split"]["source_file"], weights_only=False)
     language = BDDLUtils.get_problem_info(variant["base_bddl"])["language_instruction"]
     W = window

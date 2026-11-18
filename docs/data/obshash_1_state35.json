@@ -1,0 +1,50 @@
+{
+  "records": [
+    {
+      "state_id": 35,
+      "snapshot_step": 0,
+      "branch_successes": 0,
+      "branches": 0,
+      "first_action_diff": null,
+      "restore_diff": null,
+      "branch_details": [],
+      "init_state_hash": "d35d4e5f206ba038",
+      "init_obs_hash": "305ce714646a90a9",
+      "first_action_hash": "e1e3be88dadb32eb",
+      "chunk_action_hashes": [
+        "e1e3be88dadb32eb",
+        "f23ffadec4818e8f",
+        "ed66d8b2b9d08c02",
+        "88ab1d5ef1b2deb0",
+        "d0506f8d3d24c128",
+        "c6011746028669b8",
+        "6f2b87a0d4c6a2b7",
+        "76a653f35b1f0e12"
+      ],
+      "chunk_obs_hashes": [
+        "305ce714646a90a9",
+        "5832f23d612a1df3",
+        "0c4eaa846fc55959",
+        "72b20a345e540b0b",
+        "c00c4581a124f81e",
+        "6a9095b65e084991",
+        "7effffe4a696775d",
+        "68aa2f387cd03b7c"
+      ],
+      "final_success": true,
+      "final_steps": 96
+    }
+  ],
+  "summary": {
+    "35": {
+      "branch_success_rates": [
+        0.0
+      ],
+      "snapshot_steps": [
+        0
+      ],
+      "ponr_step": null,
+      "final_success": true
+    }
+  }
+}

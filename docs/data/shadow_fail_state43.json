@@ -1,0 +1,89 @@
+{
+  "schema": "monitor_recovery_eval_v1",
+  "records": [
+    {
+      "state_id": 43,
+      "seed": 7777,
+      "mode": "frozen",
+      "success": false,
+      "steps": 220,
+      "alarms": 0,
+      "interventions": 0,
+      "persistence": 15,
+      "monitor_stride": 2,
+      "artifact_sha256": "271ebd61e19b26c1d5c90913fb72b2b8ddeb156b797d73c5c99cf97b70f73641",
+      "ensemble_members": 3,
+      "hit_max_steps": true
+    },
+    {
+      "state_id": 43,
+      "seed": 7777,
+      "mode": "shadow",
+      "success": false,
+      "steps": 220,
+      "alarms": 5,
+      "interventions": 0,
+      "persistence": 15,
+      "monitor_stride": 2,
+      "artifact_sha256": "271ebd61e19b26c1d5c90913fb72b2b8ddeb156b797d73c5c99cf97b70f73641",
+      "ensemble_members": 3,
+      "hit_max_steps": true
+    },
+    {
+      "state_id": 43,
+      "seed": 8888,
+      "mode": "frozen",
+      "success": false,
+      "steps": 220,
+      "alarms": 0,
+      "interventions": 0,
+      "persistence": 15,
+      "monitor_stride": 2,
+      "artifact_sha256": "271ebd61e19b26c1d5c90913fb72b2b8ddeb156b797d73c5c99cf97b70f73641",
+      "ensemble_members": 3,
+      "hit_max_steps": true
+    },
+    {
+      "state_id": 43,
+      "seed": 8888,
+      "mode": "shadow",
+      "success": false,
+      "steps": 220,
+      "alarms": 6,
+      "interventions": 0,
+      "persistence": 15,
+      "monitor_stride": 2,
+      "artifact_sha256": "271ebd61e19b26c1d5c90913fb72b2b8ddeb156b797d73c5c99cf97b70f73641",
+      "ensemble_members": 3,
+      "hit_max_steps": true
+    },
+    {
+      "state_id": 43,
+      "seed": 9999,
+      "mode": "frozen",
+      "success": false,
+      "steps": 220,
+      "alarms": 0,
+      "interventions": 0,
+      "persistence": 15,
+      "monitor_stride": 2,
+      "artifact_sha256": "271ebd61e19b26c1d5c90913fb72b2b8ddeb156b797d73c5c99cf97b70f73641",
+      "ensemble_members": 3,
+      "hit_max_steps": true
+    },
+    {
+      "state_id": 43,
+      "seed": 9999,
+      "mode": "shadow",
+      "success": false,
+      "steps": 220,
+      "alarms": 4,
+      "interventions": 0,
+      "persistence": 15,
+      "monitor_stride": 2,
+      "artifact_sha256": "271ebd61e19b26c1d5c90913fb72b2b8ddeb156b797d73c5c99cf97b70f73641",
+      "ensemble_members": 3,
+      "hit_max_steps": true
+    }
+  ]
+}

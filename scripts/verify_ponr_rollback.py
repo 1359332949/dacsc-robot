@@ -6,7 +6,7 @@ zero, that step is a candidate Point of No Return.
 """
 
 from __future__ import annotations
-import argparse, copy, json, sys
+import argparse, copy, hashlib, json, sys
 from pathlib import Path
 import numpy as np
 import torch
@@ -66,7 +66,7 @@ def branch(snap, first_obs, first_action, rng_state, replay_actions, obs_history
                 with torch.autocast(device_type=torch.device("cuda").type, dtype=torch.bfloat16,
                                     enabled=torch.cuda.is_available()):
                     controller = policy.predict(po)[0].float().cpu().numpy()
-            if action_diff is None and first_action is not None:
+            if action_diff is None and first_action is not None and np.asarray(controller).shape == np.asarray(first_action).shape:
                 action_diff = float(np.max(np.abs(controller - first_action)))
             for k in range(min(executed_k, len(controller))):
                 clipped = np.clip(controller[k], -1.0, 1.0)
@@ -111,6 +111,9 @@ def main():
     ap.add_argument("--libero-src", type=Path, default=Path("/hy-tmp/libero_plus"))
     ap.add_argument("--libero-config", type=Path, default=Path("/hy-tmp/libero_config"))
     args = ap.parse_args()
+    import os
+    if os.environ.get("MUJOCO_GL") != "osmesa":
+        raise RuntimeError("deterministic rollback requires MUJOCO_GL=osmesa (and PYOPENGL_PLATFORM=osmesa)")
     if args.out.exists(): raise FileExistsError(args.out)
     configure(args)
     from libero.libero.envs import OffScreenRenderEnv
@@ -133,7 +136,10 @@ def main():
             if torch.cuda.is_available(): torch.cuda.manual_seed_all(args.seed)
             env.seed(args.seed); env.reset(); obs = env.set_init_state(states[state_id])
             for _ in range(SETTLING_STEPS): obs, _, _, _ = env.step(DUMMY_ACTION)
+            init_state_hash = hashlib.sha256(np.asarray(env.env.sim.get_state().flatten(), dtype=np.float32).tobytes()).hexdigest()[:16]
+            init_obs_hash = hashlib.sha256(np.asarray(obs.get("agentview_image", []), dtype=np.uint8).tobytes()).hexdigest()[:16]
             snaps = {}; executed_actions = []; obs_history = [copy.deepcopy(obs)]
+            first_action_hash = None; chunk_action_hashes = []; chunk_obs_hashes = []
             state_history = [np.asarray(env.env.sim.data.qpos).copy()]
             steps = 0; success = False; done = False
             if 0 in steps_wanted:
@@ -147,8 +153,15 @@ def main():
                     with torch.autocast(device_type=torch.device(args.device).type, dtype=torch.bfloat16,
                                         enabled=args.device.startswith("cuda")):
                         controller = policy.predict(po)[0].float().cpu().numpy()
+                    chunk_action_hashes.append(hashlib.sha256(np.asarray(controller, dtype=np.float32).tobytes()).hexdigest()[:16])
+                    try:
+                        _im = np.asarray(obs.get("agentview_image", []), dtype=np.uint8)
+                        chunk_obs_hashes.append(hashlib.sha256(_im.tobytes()).hexdigest()[:16])
+                    except Exception:
+                        chunk_obs_hashes.append(None)
                     if steps == 0 and 0 in snaps and snaps[0]["action"] is None:
                         snaps[0]["action"] = controller.copy()
+                        first_action_hash = chunk_action_hashes[0]
                     for k in range(args.executed_k):
                         act = np.clip(controller[k], -1.0, 1.0)
                         executed_actions.append(act.copy())
@@ -185,6 +198,10 @@ def main():
                                 "first_action_diff": branch_details[0]["first_action_diff"] if branch_details else None,
                                 "restore_diff": max(restore_diffs) if restore_diffs else None,
                                 "branch_details": branch_details,
+                                "init_state_hash": init_state_hash, "init_obs_hash": init_obs_hash,
+                                "first_action_hash": first_action_hash,
+                                "chunk_action_hashes": chunk_action_hashes,
+                                "chunk_obs_hashes": chunk_obs_hashes,
                                 "final_success": bool(success), "final_steps": steps})
         finally:
             env.close()

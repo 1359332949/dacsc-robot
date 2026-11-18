@@ -318,3 +318,15 @@ Three identical state-35 runs produced original success true/false/false, with
 different chunk-2 observation diffs. This is larger than the restore issue and
 invalidates single-run PoNR and recovery comparisons. Evaluation must be made
 deterministic or explicitly repeated before rollout.
+
+## Deterministic OSMesa run and shadow smoke
+
+EGL was the source of rollout nondeterminism. OSMesa gives identical chunk
+hashes/steps. Rollback sanity under OSMesa: state-36 full replay 2/2 and policy
+branches 2/2; state-43 policy branches 0/3 from step 0.
+
+Shadow smoke:
+- state 36: frozen 3/3, shadow 3/3, 0 alarms;
+- state 43: frozen 0/3, shadow 0/3, 4-6 alarms, 0 interventions.
+
+Shadow mode is validated; recovery is not.
