@@ -113,3 +113,19 @@ ablations must be rerun with this role-correct pipeline before being cited.
 Data audit: source_fit/source_validation/target_dev each 20 episodes; state
 sets disjoint; no target-test state in target_dev; per-step dims valid
 (state8/action7/visual768). No audit errors.
+
+## Role-correct ablation (source_fit train, source_validation threshold)
+
+| monitor | source-val AUC | target AUC | source-fixed recall | false alarms |
+|---|---:|---:|---:|---:|
+| full, absolute state | 0.930 | 0.852 | 0.689 | 10/15 |
+| no visual, absolute state | **0.952** | **0.873** | **0.742** | **4/15** |
+| no visual, state-delta | 0.893 | 0.842 | 0.509 | 5/15 |
+| full, state-delta | 0.918 | 0.812 | 0.592 | 11/15 |
+
+Best role-correct variant: **no visual + absolute state** (AUC 0.873,
+recall 0.742, false alarms 4/15). It is still not deployment-ready; do not run
+recovery.
+
+This also shows state-delta is worse than absolute state in this pilot; the
+domain shortcut is not solved by relative state alone.

@@ -102,3 +102,10 @@ validates/thresholds on source_validation only, and evaluates on target_dev
 only. Role-correct full monitor: source-val AUROC 0.930, target-dev AUROC
 0.852, source-fixed false alarms 10/15. Prior no-visual/DA ablations must be
 rerun with this grouping before citation.
+
+
+## Role-correct ablations
+
+Best role-correct variant is no-visual + absolute state: source-val AUC 0.952,
+target AUC 0.873, source-fixed recall 0.742, false alarms 4/15. State-delta is
+worse (target 0.842). Still not deployment-ready; no recovery.
