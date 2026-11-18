@@ -142,6 +142,8 @@ def model_signature(env) -> dict[str, Any]:
         "nq": int(m.nq), "nv": int(m.nv), "nu": int(m.nu),
         "nbody": int(m.nbody), "njnt": int(m.njnt), "ngeom": int(m.ngeom),
         "body_names": [str(x) for x in m.body_names],
+        "body_pos": _arr(m.body_pos).round(12).tolist(),
+        "body_quat": _arr(m.body_quat).round(12).tolist(),
         "joint_names": [str(x) for x in m.joint_names],
         "joint_types": [int(x) for x in m.jnt_type],
         "jnt_qposadr": [int(x) for x in m.jnt_qposadr],
@@ -191,6 +193,8 @@ def model_compatible(a: dict[str, Any], b: dict[str, Any], strict_bodies: bool =
     if strict_bodies:
         checks["nbody"] = sa.get("nbody") == sb.get("nbody")
         checks["body_names"] = sa.get("body_names") == sb.get("body_names")
+        checks["body_pos"] = sa.get("body_pos") == sb.get("body_pos")
+        checks["body_quat"] = sa.get("body_quat") == sb.get("body_quat")
     if strict_geometry:
         checks["ngeom"] = sa.get("ngeom") == sb.get("ngeom")
         for key in ("geom_names", "geom_bodyid", "geom_type", "geom_size", "geom_pos", "geom_quat"):

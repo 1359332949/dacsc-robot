@@ -22,7 +22,9 @@ from corp.representation.extractor import Representation  # noqa: E402
 from target_only_action_validation import configure  # noqa: E402
 from dacsc.action_adapter import ResidualVisualAdapter  # noqa: E402
 from dacsc.differentiable_policy import _encode_frozen, sample_from_z0  # noqa: E402
-from dacsc.state_pairing import snapshot, restore, model_compatible  # noqa: E402
+from dacsc.state_pairing import (  # noqa: E402
+    snapshot, restore, model_compatible, compare, camera_compare, digest,
+)
 from dacsc.tta_protocol import load_split, resolve_indices, validate_split_identity  # noqa: E402
 
 
@@ -96,15 +98,32 @@ def main():
                 snap = snapshot(shift)
                 obs_clean = None
                 clean.seed(args.seed + 991 * chunk); clean.reset()
-                compat = model_compatible(snapshot(clean), snap)
-                if not all(compat.values()):
-                    raise ValueError(f"model pairing failed for state {state_id}")
-                restore(clean, snap); clean.env.sim.forward()
-                try:
-                    clean._update_observables(force=True)
-                except Exception:
-                    pass
+                # Robot base/body poses are randomized by env.reset() and are
+                # not part of MuJoCo qpos; copy them from the shift snapshot.
+                clean.env.sim.model.body_pos[:] = np.asarray(snap["model_signature"]["body_pos"], dtype=float)
+                clean.env.sim.model.body_quat[:] = np.asarray(snap["model_signature"]["body_quat"], dtype=float)
+                clean.env.sim.forward()
+                snap_clean_probe = snapshot(clean)
+                compat = model_compatible(snap_clean_probe, snap, strict_bodies=True,
+                                          strict_geometry=True, strict_physics=True)
+                if not compat["pass"]:
+                    raise RuntimeError(f"model compatibility failed for state {state_id}: {compat}")
+                restore(clean, snap)
+                clean._update_observables(force=True)
                 obs_clean = clean.env._get_observations()
+                snap_clean = snapshot(clean)
+                # qpos/qvel/act must be exact; derived body poses are allowed a
+                # sub-millimetre tolerance because model body/joint metadata can
+                # differ slightly across lighting BDDL variants.
+                state_check = compare(snap, snap_clean, tol={
+                    "body_xpos": 1e-3, "eef_pos": 1e-3,
+                    "body_xquat_rad": 2e-3,
+                })
+                cam_check = camera_compare(snap, snap_clean, expect_equal=True, tol=1e-3)
+                if not state_check["all_pass"]:
+                    raise RuntimeError(f"physical state pairing failed for state {state_id}: {state_check}")
+                if not cam_check["pass"]:
+                    raise RuntimeError(f"camera pairing failed for state {state_id}: {cam_check}")
                 po_s = policy_observation(obs_s, language, policy)
                 po_c = policy_observation(obs_clean, language, policy)
                 state_s = po_s["state"][0].detach().cpu().numpy().astype(float)
@@ -118,8 +137,13 @@ def main():
                 tok_c, norm_c, ctrl_c, lang_c, state_c_tok, pooled_c = encode_actions(policy, po_c, z0)
                 records.append({
                     "state_id": int(state_id), "seed": args.seed, "chunk_index": chunk,
-                    "step": int(steps), "pairing_pass": bool(state8_max < 1e-3 and all(compat.values())),
+                    "step": int(steps),
+                    "pairing_pass": bool(state8_max < 1e-3 and compat["pass"] and state_check["all_pass"] and cam_check["pass"]),
+                    "model_compatibility_pass": bool(compat["pass"]),
+                    "physical_state_compare_pass": bool(state_check["all_pass"]),
+                    "camera_compare_pass": bool(cam_check["pass"]),
                     "model_compatibility": compat["checks"], "state8_max_abs": state8_max,
+                    "shift_snapshot_digest": digest(snap), "clean_snapshot_digest": digest(snap_clean),
                     "z0_sha256": zhash,
                     "shift_visual_tokens": tok_s[0].float().cpu().numpy().tolist(),
                     "clean_visual_tokens": tok_c[0].float().cpu().numpy().tolist(),

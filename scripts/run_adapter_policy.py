@@ -62,9 +62,10 @@ def main():
     ck0 = torch.load(args.adapter, map_location="cpu")
     adapter = ResidualVisualAdapter(768, ck0["rank"]).to(device); adapter.load_state_dict(ck0["adapter"]); adapter.eval()
     zero = ResidualVisualAdapter(768, ck0["rank"]).to(device); zero.eval()
-    monitor = MonitorEnsemble(args.monitor_artifact) if "gated" in ("frozen", "adapter", "gated") else None
-    mthr = float(monitor.artifact["threshold"]); mpers = int(monitor.artifact["persistence"])
-    mstride = int(monitor.artifact["stride"]); mwin = int(monitor.artifact["window"])
+    monitor = MonitorEnsemble(args.monitor_artifact) if "gated" in args.modes.split(",") else None
+    if monitor is not None:
+        mthr = float(monitor.artifact["threshold"]); mpers = int(monitor.artifact["persistence"])
+        mstride = int(monitor.artifact["stride"]); mwin = int(monitor.artifact["window"])
     records = []
     seeds = ([int(x) for x in args.seeds.split(",")] if args.seeds else [args.seed])
     for state_id in ids:
@@ -80,6 +81,7 @@ def main():
                     steps = 0; success = False; done = False; chunk = 0
                     gate_active = False; alarm_run = 0
                     monitor_probs = []; monitor_alarms = 0; gate_step = None
+                    adapter_first_applied_step = None
                     buf_s, buf_a, buf_v = [], [], []
                     prev_vis = None
                     while not success and not done and steps < args.max_steps:
@@ -96,6 +98,7 @@ def main():
                             out = forward_with_adapter(policy, po, adapter if used else zero, z0)
                         else:
                             used = bool(gate_active)
+                            if used and adapter_first_applied_step is None: adapter_first_applied_step = steps
                             out = forward_with_adapter(policy, po, adapter if used else zero, z0)
                         actions = out["controller_actions"][0].detach().float().cpu().numpy()
                         for k in range(min(args.executed_k, len(actions))):
@@ -123,7 +126,8 @@ def main():
                         chunk += 1
                     records.append({"state_id": state_id, "seed": seed, "mode": mode, "success": bool(success),
                                     "gate_used": bool(used), "gate_active_final": bool(gate_active),
-                                    "gate_step": gate_step, "monitor_alarm_windows": monitor_alarms,
+                                    "gate_step": gate_step, "adapter_first_applied_step": adapter_first_applied_step,
+                                    "monitor_alarm_windows": monitor_alarms,
                                     "monitor_max_prob": max(monitor_probs) if monitor_probs else None,
                                     "monitor_n_evals": len(monitor_probs),
                                     "steps": steps, "hit_max_steps": bool(steps >= args.max_steps and not success)})

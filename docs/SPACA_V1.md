@@ -113,3 +113,34 @@ Adapter-only rescues state 43 but breaks states 36/37. Gate diagnostics:
 
 Therefore no current gate solves both success preservation and recovery.
 Adapter-only is not deployable. Do not start full target-dev / 20-episode.
+
+## Phase 0 strict pairing audit (completed)
+
+The pair collector is now fail-closed:
+
+- strict `model_compatible` with body/geometry/physics checks;
+- full `compare()` of qpos/qvel/act/ctrl/body/EEF (derived body/EEF
+  tolerance 1e-3);
+- camera geometry `camera_compare(expect_equal=True, tol=1e-3)`;
+- snapshot digests and model/state/camera pass flags in every record;
+- no swallowed observable exception.
+
+Final source-fit collection (states 0,1,2,4,6,8; 2 chunks each):
+
+```text
+12 records
+11 pairing PASS
+1 record excluded: state 8 chunk 1, state8_max=1.18e-3
+```
+
+The earlier 11 pairs are provisionally invalid for strict claims; they predate
+the full model/state/camera audit.
+
+Gate diagnostics:
+
+- `gate_step` is the monitor trigger time, not the adapter application time;
+- adapter actually applies at the next replan boundary;
+- monitor persistence 1 triggers at step 26; state 43 still fails;
+- first-chunk adapter preserves 36/37 but does not rescue 43.
+
+No adapter retraining or full target-dev rollout was performed in Phase 0.
