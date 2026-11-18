@@ -214,3 +214,20 @@ breaks state 36; state 37 also breaks at z0=8888. Thus the adapter is not a
 stable always-on method and cannot be released to full target-dev.
 
 Target test remains untouched.
+
+### Completed z0 sweep on successful states 36/37
+
+Fixed env seed 7777:
+
+| state | z0 | frozen | adapter |
+|---|---|---:|---:|
+| 36 | 7777 | 1 | 1 |
+| 36 | 8888 | 1 | 0 |
+| 36 | 9999 | 1 | 0 |
+| 37 | 7777 | 1 | 1 |
+| 37 | 8888 | 1 | 0 |
+| 37 | 9999 | 0 | 1 |
+
+Frozen 5/6, adapter 3/6. The adapter both breaks successes and rescues a
+frozen failure at a different z0. This confirms that the current adapter is
+not an always-on improvement and that z0 sensitivity is bidirectional.
