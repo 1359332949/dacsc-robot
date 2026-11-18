@@ -20,7 +20,7 @@ from dacsc.state_pairing import snapshot, restore, model_compatible  # noqa: E40
 from dacsc.tta_protocol import load_split, resolve_indices, validate_split_identity  # noqa: E402
 
 
-def branch(snap, first_obs, first_action, rng_state, replay_actions, env, policy, language, seed,
+def branch(snap, first_obs, first_action, rng_state, replay_actions, obs_history, state_history, env, policy, language, seed,
            max_steps, executed_k, exact_rng=False, replay_first_action=False, replay_all=False):
     if exact_rng and rng_state is not None:
         torch.set_rng_state(rng_state["torch"])
@@ -42,6 +42,8 @@ def branch(snap, first_obs, first_action, rng_state, replay_actions, env, policy
         if a.size and b.size and a.shape == b.shape:
             restore_diff = max(restore_diff, float(np.max(np.abs(a - b))))
     action_diff = None
+    obs_diff = None; state_diff = None
+    chunk_idx = 0
     replayed = False
     with torch.no_grad():
         while not success and not done and steps < max_steps:
@@ -64,7 +66,21 @@ def branch(snap, first_obs, first_action, rng_state, replay_actions, env, policy
                 obs, reward, done, info = env.step(clipped); steps += 1
                 success = is_success(env, info, reward, done)
                 if success or done or steps >= max_steps: break
-    return bool(success), steps, action_diff, restore_diff
+            chunk_idx += 1
+            if chunk_idx == 1 and obs_history is not None and steps < len(obs_history):
+                try:
+                    ref = obs_history[steps]
+                    diffs = []
+                    for key in ("agentview_image", "robot0_eye_in_hand_image"):
+                        if key in obs and key in ref:
+                            a = np.asarray(obs[key], dtype=np.float32); b = np.asarray(ref[key], dtype=np.float32)
+                            diffs.append(float(np.max(np.abs(a - b))))
+                    obs_diff = max(diffs) if diffs else None
+                    if state_history is not None and steps < len(state_history):
+                        state_diff = float(np.max(np.abs(np.asarray(env.env.sim.data.qpos) - np.asarray(state_history[steps]))))
+                except Exception:
+                    obs_diff = None
+    return bool(success), steps, action_diff, restore_diff, obs_diff, state_diff
 
 
 def main():
@@ -110,7 +126,9 @@ def main():
             if torch.cuda.is_available(): torch.cuda.manual_seed_all(args.seed)
             env.seed(args.seed); env.reset(); obs = env.set_init_state(states[state_id])
             for _ in range(SETTLING_STEPS): obs, _, _, _ = env.step(DUMMY_ACTION)
-            snaps = {}; executed_actions = []; steps = 0; success = False; done = False
+            snaps = {}; executed_actions = []; obs_history = [copy.deepcopy(obs)]
+            state_history = [np.asarray(env.env.sim.data.qpos).copy()]
+            steps = 0; success = False; done = False
             if 0 in steps_wanted:
                 snaps[0] = {"state": snapshot(env), "obs": copy.deepcopy(obs), "action": None,
                             "rng": {"torch": torch.get_rng_state(),
@@ -128,6 +146,8 @@ def main():
                         act = np.clip(controller[k], -1.0, 1.0)
                         executed_actions.append(act.copy())
                         obs, reward, done, info = env.step(act); steps += 1
+                        obs_history.append(copy.deepcopy(obs))
+                        state_history.append(np.asarray(env.env.sim.data.qpos).copy())
                         if steps in steps_wanted:
                             snaps[steps] = {"state": snapshot(env), "obs": copy.deepcopy(obs),
                                             "action": controller[k + 1:].copy(),
@@ -142,7 +162,8 @@ def main():
                 probs = []; restore_diffs = []; branch_details = []
                 for b in range(args.branches):
                     replay = executed_actions[snap_step:] if args.replay_all_actions else None
-                    ok, n, adiff, rdiff = branch(snap, first_obs, first_action, rng_state, replay, env, policy, language,
+                    ok, n, adiff, rdiff, odiff, sdiff = branch(snap, first_obs, first_action, rng_state, replay, obs_history,
+                                          state_history, env, policy, language,
                                           args.seed if b == 0 else args.seed + 1000 * b,
                                           args.max_steps - snap_step, args.executed_k, exact_rng=(b == 0),
                                           replay_first_action=args.replay_first_action,
@@ -150,7 +171,8 @@ def main():
                     probs.append(ok); restore_diffs.append(rdiff)
                     branch_details.append({"branch": b, "seed": args.seed if b == 0 else args.seed + 1000 * b,
                                            "success": bool(ok), "steps": n,
-                                           "first_action_diff": adiff, "restore_diff": rdiff})
+                                           "first_action_diff": adiff, "restore_diff": rdiff,
+                                           "chunk2_obs_diff": odiff, "chunk2_state_diff": sdiff})
                 records.append({"state_id": state_id, "snapshot_step": snap_step,
                                 "branch_successes": int(sum(probs)), "branches": len(probs),
                                 "first_action_diff": branch_details[0]["first_action_diff"] if branch_details else None,

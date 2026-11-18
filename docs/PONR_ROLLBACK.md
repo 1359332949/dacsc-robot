@@ -111,3 +111,19 @@ Full action replay from the same snapshot succeeds 1/1. Therefore the
 remaining mismatch appears after the first action chunk, in the resampled
 policy observation/action chunk path, not in MuJoCo state or the first action.
 PoNR remains unvalidated.
+
+## Chunk-level check and remaining blocker
+
+With full-state restore, exact first action and same RNG:
+
+- branch 0 first_action_diff = 0.0;
+- chunk-2 observation diff = 0.0;
+- chunk-2 qpos diff = 0.0.
+
+In the latest run, however, the original state-35 rollout itself ended in
+failure (220 steps), while an earlier identical run succeeded. That means the
+remaining blocker is not the restore path but **original rollout
+determinism** (env reset / policy sampling seed stability).
+
+Do not start PoNR or recovery until repeated original rollouts with a fixed
+seed produce a stable outcome.

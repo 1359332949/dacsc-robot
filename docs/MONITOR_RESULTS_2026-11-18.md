@@ -304,3 +304,10 @@ No effective lead-time claim.
 State-35 step-0 branch 0: first_action_diff 0.0, restore_diff 0.0, but branch
 still fails; full action replay succeeds 1/1. So restore is exact at the start,
 but policy resampling diverges after the first chunk. PoNR remains unvalidated.
+
+## Rollback chunk-level result
+
+Latest state-35 step-0 branch: first_action_diff 0.0, chunk-2 obs diff 0.0,
+chunk-2 qpos diff 0.0; branch failed, but the original rollout also failed in
+that run (previous identical run succeeded). The blocker is now original
+rollout determinism, not MuJoCo restore. No PoNR or recovery claim.
