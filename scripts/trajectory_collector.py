@@ -15,7 +15,8 @@ sys.path.insert(0, str(ROOT)); sys.path.insert(0, str(ROOT / "repos/CoRP")); sys
 from evaluate_libero import DUMMY_ACTION, SETTLING_STEPS, is_success, policy_observation  # noqa: E402
 from corp import load_policy  # noqa: E402
 from target_only_action_validation import configure, visual_from_obs  # noqa: E402
-from dacsc.tta_protocol import load_split, resolve_indices, role_ids, validate_split_identity  # noqa: E402
+from dacsc.tta_protocol import (load_split, resolve_indices, role_ids,
+                                 sha256_file, validate_split_identity)  # noqa: E402
 
 
 def main():
@@ -33,12 +34,15 @@ def main():
     ap.add_argument("--max-steps", type=int, default=220)
     ap.add_argument("--executed-k", type=int, default=12)
     ap.add_argument("--frame-every", type=int, default=20)
+    ap.add_argument("--git-commit", default="")
     ap.add_argument("--device", default="cuda:0")
     ap.add_argument("--render-gpu", type=int, default=0)
     ap.add_argument("--libero-src", type=Path, default=Path("/hy-tmp/libero_plus"))
     ap.add_argument("--libero-config", type=Path, default=Path("/hy-tmp/libero_config"))
     args = ap.parse_args()
     if args.out.exists(): raise FileExistsError(args.out)
+    if args.frame_every < 1:
+        raise ValueError("--frame-every must be >= 1")
     configure(args)
     from libero.libero.envs import OffScreenRenderEnv
     import libero.libero.envs.bddl_utils as BDDLUtils
@@ -109,16 +113,22 @@ def main():
                     rec = {"state_id": state_id, "seed": seed, "domain": domain,
                            "success": bool(success), "steps": steps,
                            "hit_max_steps": bool(steps >= args.max_steps and not success),
+                           "termination": "success" if success else ("timeout" if steps >= args.max_steps else "done"),
                            "final_state8": final_state.tolist(), "rows": rows}
                     (args.out / f"s{state_id}_d{domain}_seed{seed}.json").write_text(json.dumps(rec) + "\n")
                     manifests.append({k: rec[k] for k in ("state_id", "seed", "domain", "success", "steps", "hit_max_steps")})
                     print(json.dumps(manifests[-1]), flush=True)
                 finally:
                     env.close()
-    (args.out / "manifest.json").write_text(json.dumps({"schema": "trajectory_collector_v1",
-                                                         "split_sha256": __import__("dacsc.tta_protocol", fromlist=["sha256_file"]).sha256_file(args.split_json),
-                                                         "checkpoint_sha256": __import__("dacsc.tta_protocol", fromlist=["sha256_file"]).sha256_file(args.checkpoint),
-                                                         "records": manifests}, indent=2) + "\n")
+    manifest = {"schema": "trajectory_collector_v2",
+                "split_sha256": sha256_file(args.split_json),
+                "checkpoint_sha256": sha256_file(args.checkpoint),
+                "git_commit": args.git_commit or None,
+                "role": args.role, "suite": args.suite, "lighting_id": args.lighting_id,
+                "domains": args.domains.split(","), "seeds": args.seeds.split(","),
+                "run_config": {k: (str(v) if isinstance(v, Path) else v) for k, v in vars(args).items()},
+                "records": manifests}
+    (args.out / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
     print(json.dumps({"out": str(args.out), "n": len(manifests)}))
 
 

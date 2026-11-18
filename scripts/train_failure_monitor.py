@@ -57,20 +57,34 @@ def main():
     target = max(2, len(ug)//5)
     val_groups.update(rest[:max(0, target - len(val_groups))])
     val = np.array([g in val_groups for g in groups])
+    # Normalize with training statistics only; no target/val leakage.
+    tr_mask = ~val
+    stats = {}
+    for key in ("state", "action", "visual_delta"):
+        x = d[key].astype(np.float32)
+        mu = x[tr_mask].mean(axis=(0, 1), keepdims=True)
+        sd = x[tr_mask].std(axis=(0, 1), keepdims=True) + 1e-6
+        stats[key] = (mu.squeeze(0), sd.squeeze(0))
+    def norm(key):
+        mu, sd = stats[key]; return ((d[key].astype(np.float32) - mu) / sd).astype(np.float32)
     def ds(mask):
-        return TensorDataset(torch.from_numpy(d["state"][mask]), torch.from_numpy(d["action"][mask]),
-                             torch.from_numpy(d["visual_delta"][mask]), torch.from_numpy(d["y"][mask]))
+        return TensorDataset(torch.from_numpy(norm("state")[mask]), torch.from_numpy(norm("action")[mask]),
+                             torch.from_numpy(norm("visual_delta")[mask]), torch.from_numpy(d["y"][mask]))
     tr = DataLoader(ds(~val), batch_size=args.batch_size, shuffle=True)
     va = DataLoader(ds(val), batch_size=args.batch_size, shuffle=False)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = CausalFailureMonitor(window_size=args.window, hidden_dim=args.hidden).to(device)
     opt = torch.optim.AdamW(model.parameters(), lr=args.lr)
+    tr_y = d["y"][tr_mask]
+    pos_weight = float((len(tr_y) - tr_y.sum()) / max(tr_y.sum(), 1.0))
     lossf = nn.BCELoss()
     for ep in range(args.epochs):
         model.train(); total = 0.0
         for s, a, v, y in tr:
             s, a, v, y = s.to(device), a.to(device), v.to(device), y.to(device)
-            opt.zero_grad(); p = model(s, a, v); loss = lossf(p, y); loss.backward(); opt.step()
+            opt.zero_grad(); p = model(s, a, v)
+            w = torch.where(y > 0.5, torch.full_like(y, pos_weight), torch.ones_like(y))
+            loss = lossf(p, y) * w.mean(); loss.backward(); opt.step()
             total += float(loss.detach()) * len(y)
         print(json.dumps({"epoch": ep, "train_loss": total / len(tr.dataset)}))
     model.eval(); ps, ys = [], []
@@ -79,10 +93,12 @@ def main():
             ps.append(model(s.to(device), a.to(device), v.to(device)).cpu().numpy()); ys.append(y.numpy())
     p = np.concatenate(ps); y = np.concatenate(ys)
     metrics = {"auc": auc(y, p), "recall_at_5pct_fpr": recall_at_fpr(y, p, 0.05),
-               "n_val_windows": len(y), "val_positive_fraction": float(y.mean())}
+               "n_val_windows": len(y), "val_positive_fraction": float(y.mean()),
+               "val_has_both_classes": bool(len(set(y.tolist())) == 2)}
     args.out.parent.mkdir(parents=True, exist_ok=True)
     torch.save({"model": model.state_dict(), "window": args.window, "hidden": args.hidden,
-                "metrics": metrics, "val_groups": sorted(val_groups)}, args.out)
+                "metrics": metrics, "val_groups": sorted(val_groups),
+                "normalization": {k: (v[0].tolist(), v[1].tolist()) for k, v in stats.items()}}, args.out)
     print(json.dumps(metrics))
 
 

@@ -36,8 +36,10 @@ def main():
     ap.add_argument("--out", type=Path, required=True)
     ap.add_argument("--window", type=int, default=10)
     ap.add_argument("--stride", type=int, default=2)
+    ap.add_argument("--label-mode", choices=["episode", "within_horizon"], default="episode")
+    ap.add_argument("--horizon", type=int, default=10)
     args = ap.parse_args()
-    Xs, As, Vs, Ys, remaining, groups, domains = [], [], [], [], [], [], []
+    Xs, As, Vs, Ys, remaining, groups, domains, episodes, times = [], [], [], [], [], [], [], [], []
     n_ep = 0
     for d in args.trajectory_dir:
         for p in sorted(d.glob("s*_d*_seed*.json")):
@@ -46,9 +48,15 @@ def main():
             for t in range(args.window - 1, n, args.stride):
                 sl = slice(t - args.window + 1, t + 1)
                 Xs.append(e["state"][sl]); As.append(e["action"][sl]); Vs.append(e["visual_delta"][sl])
-                Ys.append(e["failure"]); remaining.append(n - 1 - t)
-                groups.append(str(e['state_id']))
+                rem = n - 1 - t
+                label = e["failure"]
+                if args.label_mode == "within_horizon":
+                    label = int(bool(e["failure"]) and rem <= args.horizon)
+                Ys.append(label); remaining.append(rem)
+                groups.append(str(e["state_id"]))
                 domains.append(e["domain"])
+                episodes.append(p.stem)
+                times.append(t)
     if not Xs:
         raise ValueError("no windows built")
     y = np.asarray(Ys, dtype=np.float32)
@@ -59,10 +67,11 @@ def main():
     np.savez_compressed(out, state=np.stack(Xs), action=np.stack(As),
                         visual_delta=np.stack(Vs), y=y,
                         remaining=np.asarray(remaining, dtype=np.int32),
-                        group=np.asarray(groups), domain=np.asarray(domains))
+                        group=np.asarray(groups), domain=np.asarray(domains),
+                        episode=np.asarray(episodes), time=np.asarray(times, dtype=np.int32))
     print(json.dumps({"out": str(out), "episodes": n_ep, "windows": len(Xs),
                       "positive_fraction": float(y.mean()), "window": args.window,
-                      "stride": args.stride}))
+                      "stride": args.stride, "label_mode": args.label_mode}))
 
 
 if __name__ == "__main__":

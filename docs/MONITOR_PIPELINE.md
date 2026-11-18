@@ -42,3 +42,18 @@ failure balance. Do not train or report monitor metrics until:
 2. target-dev failures and successes exist;
 3. state-grouped splits are frozen;
 4. no simulator truth enters deployment features.
+
+## Offline evaluation
+
+`scripts/evaluate_monitor_offline.py` reports AUROC, Recall@5%FPR, first-alarm
+remaining steps, median lead time, and false-alarm episodes per episode.
+
+Synthetic smoke test (4 states, 44 windows, 2 epochs) produced finite metrics
+and a median lead of 18 steps; this only exercises the code path.
+
+## Closed-loop harness
+
+`scripts/monitor_recovery_eval.py` loads a trained checkpoint, feeds the
+deployable window, and can interrupt a chunk or run a retreat/open reflex.
+It is implemented but must not be run until the monitor is trained and
+validated on target dev.

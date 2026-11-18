@@ -19,6 +19,10 @@ on:
       - "tests/test_tta_protocol.py"
       - "dacsc/failure_monitor.py"
       - "tests/test_failure_monitor.py"
+      - "scripts/build_monitor_dataset.py"
+      - "scripts/train_failure_monitor.py"
+      - "scripts/evaluate_monitor_offline.py"
+      - "scripts/monitor_recovery_eval.py"
       - "scripts/target_only_action_validation.py"
       - "scripts/view_residual_diagnostic.py"
       - "scripts/closed_loop_tta_pilot.py"
@@ -40,6 +44,10 @@ on:
       - "tests/test_tta_protocol.py"
       - "dacsc/failure_monitor.py"
       - "tests/test_failure_monitor.py"
+      - "scripts/build_monitor_dataset.py"
+      - "scripts/train_failure_monitor.py"
+      - "scripts/evaluate_monitor_offline.py"
+      - "scripts/monitor_recovery_eval.py"
       - "scripts/target_only_action_validation.py"
       - "scripts/view_residual_diagnostic.py"
       - "scripts/closed_loop_tta_pilot.py"
@@ -60,7 +68,7 @@ jobs:
           python -m pip install numpy scipy
           python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
       - name: Compile TTA modules and diagnostic script
-        run: python -m py_compile dacsc/target_only_mean.py dacsc/action_guard.py dacsc/state_pairing.py dacsc/observation_render.py dacsc/libero_noise.py dacsc/tta_protocol.py dacsc/failure_monitor.py scripts/target_only_action_validation.py scripts/view_residual_diagnostic.py scripts/closed_loop_tta_pilot.py
+        run: python -m py_compile dacsc/target_only_mean.py dacsc/action_guard.py dacsc/state_pairing.py dacsc/observation_render.py dacsc/libero_noise.py dacsc/tta_protocol.py dacsc/failure_monitor.py scripts/build_monitor_dataset.py scripts/train_failure_monitor.py scripts/evaluate_monitor_offline.py scripts/monitor_recovery_eval.py scripts/target_only_action_validation.py scripts/view_residual_diagnostic.py scripts/closed_loop_tta_pilot.py
       - name: Import smoke tests
         env:
           PYTHONPATH: .
