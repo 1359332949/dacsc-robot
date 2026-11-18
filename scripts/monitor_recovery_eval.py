@@ -36,7 +36,10 @@ def main():
     ap.add_argument("--allow-intervention", action="store_true",
                     help="required for mode=monitor; default is shadow only")
 
-    ap.add_argument("--reflex", action="store_true")
+    ap.add_argument("--reflex", action="store_true",
+                    help="deprecated unsafe blind retreat; requires explicit opt-in")
+    ap.add_argument("--interrupt-k", type=int, default=4,
+                    help="temporary executed_k after an alarm")
     ap.add_argument("--max-steps", type=int, default=220)
     ap.add_argument("--executed-k", type=int, default=12)
     ap.add_argument("--max-interventions", type=int, default=2)
@@ -93,22 +96,24 @@ def main():
                     env.seed(seed); env.reset(); obs = env.set_init_state(states[state_id])
                     for _ in range(SETTLING_STEPS): obs, _, _, _ = env.step(DUMMY_ACTION)
                     steps = 0; success = False; done = False; interventions = 0; alarms = 0
+                    current_k = args.executed_k
                     alarm_run = 0
                     buf_s, buf_a, buf_v = [], [], []
                     prev_vis_raw = None
                     while not success and not done and steps < args.max_steps:
+                        chunk_alarm = False
                         po = policy_observation(obs, language, policy)
                         with torch.autocast(device_type=torch.device(args.device).type, dtype=torch.bfloat16,
                                             enabled=args.device.startswith("cuda")):
                             controller = policy.predict(po)[0].float().cpu().numpy()
-                        for k in range(args.executed_k):
+                        for k in range(current_k):
                             raw = controller[k]; clipped = np.clip(raw, -1.0, 1.0)
                             obs, reward, done, info = env.step(clipped); steps += 1
                             success = is_success(env, info, reward, done)
                             po_after = policy_observation(obs, language, policy)
                             st = po_after["state"][0].detach().cpu().numpy().astype(float)
                             vis, _ = visual_from_obs(policy, po_after); vis = vis.mean(dim=1)[0].detach().float().cpu().numpy().astype(float)
-                            delta = vis if prev_vis_raw is None else vis - prev_vis_raw
+                            delta = np.zeros_like(vis) if prev_vis_raw is None else (vis - prev_vis_raw)
                             prev_vis_raw = vis
                             buf_s.append(st); buf_a.append(clipped); buf_v.append(delta)
                             if success or done or steps >= args.max_steps: break
@@ -125,16 +130,18 @@ def main():
                                         alarm_run = 0
                                         continue
                                     interventions += 1
+                                    chunk_alarm = True
                                     if args.reflex:
-                                        reflex = np.array([0.0, 0.0, args.retreat_z, 0.0, 0.0, 0.0, -1.0], dtype=float)
-                                        for _ in range(args.reflex_steps):
-                                            obs, reward, done, info = env.step(reflex); steps += 1
-                                            success = is_success(env, info, reward, done)
-                                            if success or done or steps >= args.max_steps: break
+                                        raise RuntimeError("blind reflex is disabled by design; use elastic interruption")
+                                    current_k = max(1, min(args.interrupt_k, args.executed_k))
                                     buf_s, buf_a, buf_v = [], [], []
                                     prev_vis_raw = None
                                     alarm_run = 0
                                     break
+                    # Keep the shortened horizon for the next chunk after an
+                    # alarm; restore it only after a subsequent quiet chunk.
+                    if current_k < args.executed_k and not chunk_alarm:
+                        current_k = args.executed_k
                     rec = {"state_id": state_id, "seed": seed, "mode": mode, "success": bool(success),
                            "steps": steps, "alarms": alarms, "interventions": interventions,
                            "persistence": persistence, "monitor_stride": stride,

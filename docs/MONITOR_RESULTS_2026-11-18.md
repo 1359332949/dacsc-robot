@@ -250,3 +250,23 @@ defaults to shadow-only; `mode=monitor` needs explicit `--allow-intervention`.
 
 This is still target-dev development evidence; it is not failure-event lead
 time and not confirmatory.
+
+## PoNR rollback probe (code + preliminary negative)
+
+`scripts/verify_ponr_rollback.py` now implements snapshot/restore branching
+with model-compatibility checks and target-dev guard. A preliminary state-34
+probe found 0 successful branches at snapshots 20/40/80/100/120, so it does
+not establish a PoNR. Treat this as a harness-validation result, not effective
+warning lead.
+
+## Elastic interruption / no blind reflex
+
+`monitor_recovery_eval.py` now:
+
+- fixes the first visual delta to zeros (matching offline);
+- discards the remainder of a stale chunk on alarm;
+- temporarily shortens `executed_k` (default 4) for the next chunk;
+- never executes the hand-coded blind retreat by default;
+- defaults to shadow-only and requires `--allow-intervention` for monitor mode.
+
+No recovery rollout has been run.
