@@ -44,3 +44,20 @@ Held-out state 2 improves in overall/XYZ error but not gripper RMSE.
 This is a pilot: 2 training states, 6 pair records, one adapter seed, and only
 target-dev evaluation. Do not claim general SR improvement or target-test
 generalization.
+
+## Expanded source pairs (v1b)
+
+Source fit states 0,1,2,4,6,8; two chunks each; 12 records, 11 usable.
+Train states 0,1,2,4,6; validation state 8.
+
+Offline held-out (state 8) summary:
+
+- frozen RMSE 0.0721, XYZ 0.0964, gripper 0.00204;
+- adapter RMSE 0.0223, XYZ 0.0227, gripper 0.00251.
+
+The adapter improves overall/XYZ but **hurts gripper RMSE** on held-out state 8.
+Closed-loop state 43 shift: frozen 0/1, adapter 1/1 (seed 7777).
+State 45 shift: frozen 0/1, adapter 0/1.
+
+Do not claim a general SR improvement. The gripper regression and state-45
+failure are the main remaining defects.
