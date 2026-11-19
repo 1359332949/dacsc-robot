@@ -837,3 +837,25 @@ divergence appears later (or, for state 45, at step 2). This is consistent with
 a visual->action->approach chain, not proof that the small early action change
 causes the eventual failure. Target geometry still uses the body origin, not a
 validated grasp point; no Adapter training.
+
+### Causal action intervention on State 37
+
+Injected the one-step Transform action delta into the Frozen trajectory at the
+first executed action, then continued Frozen policy.
+
+| domain | intervention | success | injected max | first EEF >1mm | final EEF separation |
+|---|---|---:|---:|---:|---:|
+| clean | baseline | 1 | — | — | — |
+| clean | full one-step | 1 | 0.048 | 25 | 0.046 |
+| clean | XYZ-only one-step | 1 | 0.048 | 19 | 0.026 |
+| shift | baseline | 1 | — | — | — |
+| shift | full one-step | 0 | 0.019 | 19 | 0.084 |
+| shift | XYZ-only one-step | 1 | 0.019 | 21 | 0.012 |
+
+A single injected action difference does **not** reproduce the early step 3-4
+EEF divergence seen under continuous Transform. In this one-state/one-seed
+probe, continuous transformed observations over replans are required for the
+early divergence. The full-delta Shift injection eventually failed while the
+XYZ-only injection succeeded, but this is not yet replicated and the EEF
+divergence appears late (step 19), not early. Do not treat this as causal proof
+or a method result. No Adapter.
