@@ -1,0 +1,332 @@
+{
+  "schema": "bowl_geometry_audit_v1",
+  "target_object": "akita_black_bowl_1",
+  "target_body": "akita_black_bowl_1_main",
+  "target_body_id": 23,
+  "body_origin": [
+    0.07756765084004887,
+    0.017312627957857957,
+    1.08
+  ],
+  "n_geoms_total": 41,
+  "n_collision_geoms": 40,
+  "n_visual_geoms": 1,
+  "collision_geoms": [
+    {
+      "name": "akita_black_bowl_1_g1",
+      "type": 6,
+      "dataid": -1,
+      "contype": 1,
+      "conaffinity": 1
+    },
+    {
+      "name": "akita_black_bowl_1_g2",
+      "type": 6,
+      "dataid": -1,
+      "contype": 1,
+      "conaffinity": 1
+    },
+    {
+      "name": "akita_black_bowl_1_g3",
+      "type": 6,
+      "dataid": -1,
+      "contype": 1,
+      "conaffinity": 1
+    },
+    {
+      "name": "akita_black_bowl_1_g4",
+      "type": 6,
+      "dataid": -1,
+      "contype": 1,
+      "conaffinity": 1
+    },
+    {
+      "name": "akita_black_bowl_1_g5",
+      "type": 6,
+      "dataid": -1,
+      "contype": 1,
+      "conaffinity": 1
+    },
+    {
+      "name": "akita_black_bowl_1_g6",
+      "type": 6,
+      "dataid": -1,
+      "contype": 1,
+      "conaffinity": 1
+    },
+    {
+      "name": "akita_black_bowl_1_g7",
+      "type": 6,
+      "dataid": -1,
+      "contype": 1,
+      "conaffinity": 1
+    },
+    {
+      "name": "akita_black_bowl_1_g8",
+      "type": 6,
+      "dataid": -1,
+      "contype": 1,
+      "conaffinity": 1
+    },
+    {
+      "name": "akita_black_bowl_1_g9",
+      "type": 6,
+      "dataid": -1,
+      "contype": 1,
+      "conaffinity": 1
+    },
+    {
+      "name": "akita_black_bowl_1_g10",
+      "type": 6,
+      "dataid": -1,
+      "contype": 1,
+      "conaffinity": 1
+    },
+    {
+      "name": "akita_black_bowl_1_g11",
+      "type": 6,
+      "dataid": -1,
+      "contype": 1,
+      "conaffinity": 1
+    },
+    {
+      "name": "akita_black_bowl_1_g12",
+      "type": 6,
+      "dataid": -1,
+      "contype": 1,
+      "conaffinity": 1
+    },
+    {
+      "name": "akita_black_bowl_1_g13",
+      "type": 6,
+      "dataid": -1,
+      "contype": 1,
+      "conaffinity": 1
+    },
+    {
+      "name": "akita_black_bowl_1_g14",
+      "type": 6,
+      "dataid": -1,
+      "contype": 1,
+      "conaffinity": 1
+    },
+    {
+      "name": "akita_black_bowl_1_g15",
+      "type": 6,
+      "dataid": -1,
+      "contype": 1,
+      "conaffinity": 1
+    },
+    {
+      "name": "akita_black_bowl_1_g16",
+      "type": 6,
+      "dataid": -1,
+      "contype": 1,
+      "conaffinity": 1
+    },
+    {
+      "name": "akita_black_bowl_1_g17",
+      "type": 6,
+      "dataid": -1,
+      "contype": 1,
+      "conaffinity": 1
+    },
+    {
+      "name": "akita_black_bowl_1_g18",
+      "type": 6,
+      "dataid": -1,
+      "contype": 1,
+      "conaffinity": 1
+    },
+    {
+      "name": "akita_black_bowl_1_g19",
+      "type": 6,
+      "dataid": -1,
+      "contype": 1,
+      "conaffinity": 1
+    },
+    {
+      "name": "akita_black_bowl_1_g20",
+      "type": 6,
+      "dataid": -1,
+      "contype": 1,
+      "conaffinity": 1
+    },
+    {
+      "name": "akita_black_bowl_1_g21",
+      "type": 6,
+      "dataid": -1,
+      "contype": 1,
+      "conaffinity": 1
+    },
+    {
+      "name": "akita_black_bowl_1_g22",
+      "type": 6,
+      "dataid": -1,
+      "contype": 1,
+      "conaffinity": 1
+    },
+    {
+      "name": "akita_black_bowl_1_g23",
+      "type": 6,
+      "dataid": -1,
+      "contype": 1,
+      "conaffinity": 1
+    },
+    {
+      "name": "akita_black_bowl_1_g24",
+      "type": 6,
+      "dataid": -1,
+      "contype": 1,
+      "conaffinity": 1
+    },
+    {
+      "name": "akita_black_bowl_1_g25",
+      "type": 6,
+      "dataid": -1,
+      "contype": 1,
+      "conaffinity": 1
+    },
+    {
+      "name": "akita_black_bowl_1_g26",
+      "type": 6,
+      "dataid": -1,
+      "contype": 1,
+      "conaffinity": 1
+    },
+    {
+      "name": "akita_black_bowl_1_g27",
+      "type": 6,
+      "dataid": -1,
+      "contype": 1,
+      "conaffinity": 1
+    },
+    {
+      "name": "akita_black_bowl_1_g28",
+      "type": 6,
+      "dataid": -1,
+      "contype": 1,
+      "conaffinity": 1
+    },
+    {
+      "name": "akita_black_bowl_1_g29",
+      "type": 6,
+      "dataid": -1,
+      "contype": 1,
+      "conaffinity": 1
+    },
+    {
+      "name": "akita_black_bowl_1_g30",
+      "type": 6,
+      "dataid": -1,
+      "contype": 1,
+      "conaffinity": 1
+    },
+    {
+      "name": "akita_black_bowl_1_g31",
+      "type": 6,
+      "dataid": -1,
+      "contype": 1,
+      "conaffinity": 1
+    },
+    {
+      "name": "akita_black_bowl_1_g32",
+      "type": 6,
+      "dataid": -1,
+      "contype": 1,
+      "conaffinity": 1
+    },
+    {
+      "name": "akita_black_bowl_1_g33",
+      "type": 6,
+      "dataid": -1,
+      "contype": 1,
+      "conaffinity": 1
+    },
+    {
+      "name": "akita_black_bowl_1_g34",
+      "type": 6,
+      "dataid": -1,
+      "contype": 1,
+      "conaffinity": 1
+    },
+    {
+      "name": "akita_black_bowl_1_g35",
+      "type": 6,
+      "dataid": -1,
+      "contype": 1,
+      "conaffinity": 1
+    },
+    {
+      "name": "akita_black_bowl_1_g36",
+      "type": 6,
+      "dataid": -1,
+      "contype": 1,
+      "conaffinity": 1
+    },
+    {
+      "name": "akita_black_bowl_1_g37",
+      "type": 6,
+      "dataid": -1,
+      "contype": 1,
+      "conaffinity": 1
+    },
+    {
+      "name": "akita_black_bowl_1_g38",
+      "type": 6,
+      "dataid": -1,
+      "contype": 1,
+      "conaffinity": 1
+    },
+    {
+      "name": "akita_black_bowl_1_g39",
+      "type": 6,
+      "dataid": -1,
+      "contype": 1,
+      "conaffinity": 1
+    },
+    {
+      "name": "akita_black_bowl_1_g40",
+      "type": 6,
+      "dataid": -1,
+      "contype": 1,
+      "conaffinity": 1
+    }
+  ],
+  "rim_vertex_stats": null,
+  "n_rim_vertices": 0,
+  "finger_bodies": [
+    "gripper0_leftfinger",
+    "gripper0_finger_joint1_tip",
+    "gripper0_rightfinger",
+    "gripper0_finger_joint2_tip"
+  ],
+  "finger_positions": [
+    [
+      -0.21591906659801252,
+      -0.019579704155976832,
+      1.216077535432515
+    ],
+    [
+      -0.2183547363448201,
+      -0.029765209754615087,
+      1.1604127082201308
+    ],
+    [
+      -0.21608380677359051,
+      0.02206718779241626,
+      1.2148266126877298
+    ],
+    [
+      -0.21858669158747498,
+      0.028873885983983036,
+      1.158651400829319
+    ]
+  ],
+  "closing_axis": [
+    -0.04300156124722708,
+    -0.17982431460910916,
+    -0.9827582248484319
+  ],
+  "note": "rim vertex stats are mesh geometry diagnostics, not a validated grasp-point distance; collision mesh may include non-rim vertices."
+}

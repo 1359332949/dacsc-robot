@@ -859,3 +859,37 @@ early divergence. The full-delta Shift injection eventually failed while the
 XYZ-only injection succeeded, but this is not yet replicated and the EEF
 divergence appears late (step 19), not early. Do not treat this as causal proof
 or a method result. No Adapter.
+
+### P0-A/P0-B continuous intervention pilot
+
+States 37/43/45, clean baseline vs shift baseline vs injecting the same-observation
+Shift-Clean action delta into Clean Frozen. All interventions were computed at
+each replan from the current Clean observation and a synchronized Shift rendering;
+`p0b_chunk1/2` inject for the first 1/2 chunks, `fixed_chunk2` reuses the first
+chunk's delta for 2 chunks.
+
+| state | Clean baseline | Shift baseline | P0-B 1 chunk | P0-B 2 chunks | fixed 2 chunks |
+|---|---:|---:|---:|---:|---:|
+| 37 | success 142 | success 114 | success 103 | success 97 | success 139 |
+| 43 | success 95 | **fail 220** | success 94 | success 94 | success 106 |
+| 45 | success 91 | **fail 220** | success 93 | **fail 220** | success 89 |
+
+Injection magnitudes were large (max 0.14-0.24), yet most Clean+injection runs
+succeeded. The one failure (45, 2-chunk P0-B) is a single seed/episode and is
+not replicated. This is evidence against the strong hypothesis that an
+action-delta sequence alone is sufficient to reproduce the Shift failures;
+continuous shifted observations / closed-loop state effects remain candidates.
+No multi-seed confirmation yet.
+
+### Bowl collision geometry audit
+
+Target `akita_black_bowl_1` maps uniquely to body 23. It has 41 geoms: 40
+collision geoms of MuJoCo type 6 with `dataid=-1` (primitive boxes) and one
+visual geom. There is no mesh vertex data, so a rim-circle fit is not supported
+by the collision representation. Finger bodies are left/right finger plus tip
+bodies; raw closing-axis vector is ~[-0.04,-0.18,-0.98].
+
+Consequence: the earlier "bowl rim circle" assumption is not established. The
+next geometry metric must use the actual primitive collision geometries and
+finger pads, not a fitted mesh rim. The body origin remains unsuitable as a
+grasp point.
