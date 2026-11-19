@@ -97,8 +97,10 @@ python scripts/analyze_patch_pairs.py \
 Per view and window, the script reports:
 
 - paired Clean/Shift channel-mean plus log-channel-std sensitivity (D_style);
+  each state first averages its paired chunks, then states are weighted equally;
 - Clean-Clean between-state variability at the same chunk index (D_content);
-- R_sep = D_style / D_content, using a source_fit-only feature scale;
+  cross-state pairs are averaged within chunk, then chunk indices are weighted equally;
+- R_sep = D_style / D_content, using a source_fit-only state-level feature scale;
 - source_fit Clean prototype-distance AUROC on source_validation states;
 - logistic-regression AUROC trained on source_fit paired states and tested on
   disjoint source_validation states;
@@ -137,8 +139,10 @@ Every branch uses the same source pair and explicit z0:
 
 The report measures Resampler-token RMS distance and normalized/controller
 action deltas (XYZ, SO(3) geodesic rotation, gripper, and clipping), with B0
-as the reference. B2 recovery must be compared against both B1 and the
-random-content negative control B3.
+as the reference. B0 is the Clean Frozen CoRP action under the same explicit
+z0, not an expert action. Thus B2/B3 action "recovery" means consistency with
+Clean Frozen behavior, not correctness or task-success improvement. Compare
+B2 against both B1 and the random-content negative control B3.
 
 **Causal interpretation guard:** B2 is a privileged offline mediator
 intervention under a known target lighting configuration. Strong B2 recovery
@@ -147,9 +151,9 @@ mediates downstream action change for this known perturbation. They do not
 establish unknown-target generalization, a deployable adaptation signal, or
 closed-loop success benefit.
 
-Aggregates are state-balanced: chunks are averaged within each initial state,
-then states are averaged equally. Do not treat multiple chunks from one state
-as independent samples.
+B0-B3 aggregates are state-balanced: chunks are averaged within each initial
+state, then states are averaged equally. Do not treat multiple chunks from one
+state as independent samples.
 
 ## Execution order and stop rules
 
