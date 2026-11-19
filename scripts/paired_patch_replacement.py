@@ -1,4 +1,8 @@
-"""Offline paired-patch replacement diagnostic (B0-B3).
+"""Offline B0-B3 intervention under known target lighting on source states.
+
+The pair set renders the known target lighting configuration on source_fit/
+source_validation initial states. Target-dev/Test initial states and outcomes
+are forbidden. This is not source-free or unknown-target TTA.
 
 B0: matched Clean patches + Clean context.
 B1: matched Shift patches + Shift context.
@@ -326,6 +330,9 @@ def main():
         "analysis_script_sha256": _sha256_file(Path(__file__)),
         "suite": manifest["suite"],
         "lighting_id": int(manifest["lighting_id"]),
+        "shift_domain_semantics": manifest.get("shift_domain_semantics"),
+        "target_dev_test_initial_states_used": False,
+        "target_success_labels_or_rewards_used": False,
         "records_total": len(records),
         "records_pairing_pass": len(valid),
         "views": views,
