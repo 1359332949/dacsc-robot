@@ -344,3 +344,30 @@ Target-dev shift, env seed 7777, z0 seed 7777:
 Clean Frozen earlier: 4/4. The full-data adapter is worse than the small-data
 adapter and still damages state 36. Expanding data alone did not fix the
 always-on instability. No full target-dev run.
+
+## Full-source validation and attribution
+
+Source-validation action error (20 held-out records):
+
+| mode | RMSE | XYZ | gripper |
+|---|---:|---:|---:|
+| frozen | 0.0803 | 0.1140 | 0.00175 |
+| full-data adapter | 0.0451 | 0.0574 | 0.00171 |
+
+Offline action error improves on held-out source-validation, but target-dev
+closed-loop is worse (frozen 2/4, adapter 1/4). This is direct evidence that
+source action consistency is not sufficient for closed-loop benefit.
+
+Residual support (env seed 7777, three z0 seeds):
+
+| domain | residual ratio range |
+|---|---:|
+| target Clean | 0.023-0.028 |
+| target Shift | 0.093-0.104 |
+
+Clean and Shift residual magnitudes are separable, but successful Shift state
+36 and failure state 43 both have residual ~0.10. A residual gate can protect
+Clean, but cannot distinguish beneficial Shift interventions.
+
+Adapter reduces multi-z0 dispersion slightly (ratio 0.84-0.97); this does not
+predict which Shift state benefits.

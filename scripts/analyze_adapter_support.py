@@ -56,6 +56,7 @@ def main():
     zero = ResidualVisualAdapter(768, ck["rank"]).to(device); zero.eval()
     zseeds = [int(x) for x in args.z0_seeds.split(",")]
     rows = []
+    state_actions = {}
     for state_id in ids:
         env = OffScreenRenderEnv(bddl_file_name=bddl, camera_heights=256, camera_widths=256,
                                  render_gpu_device_id=args.render_gpu)
@@ -81,6 +82,9 @@ def main():
                 af = forward_with_adapter(policy, po, zero, z0)["controller_actions"][0].detach().float().cpu().numpy()
                 aa = forward_with_adapter(policy, po, adapter, z0)["controller_actions"][0].detach().float().cpu().numpy()
                 d = aa - af
+                state_actions.setdefault(int(state_id), {"f": [], "a": []})
+                state_actions[int(state_id)]["f"].append(af)
+                state_actions[int(state_id)]["a"].append(aa)
                 rows.append({
                     "state_id": int(state_id), "env_seed": args.env_seed, "z0_seed": zs,
                     "residual_ratio_mean": float(per_view[0] + per_view[1]) / 2,
@@ -92,6 +96,12 @@ def main():
                 })
         finally:
             env.close()
+    for r in rows:
+        acts = state_actions[int(r["state_id"])]
+        f = np.stack(acts["f"]); a = np.stack(acts["a"])
+        r["frozen_z0_dispersion"] = float(np.sqrt(np.mean(np.var(f, axis=0))))
+        r["adapter_z0_dispersion"] = float(np.sqrt(np.mean(np.var(a, axis=0))))
+        r["dispersion_ratio"] = float(r["adapter_z0_dispersion"] / (r["frozen_z0_dispersion"] + 1e-9))
     args.out.parent.mkdir(parents=True, exist_ok=True); args.out.write_text(json.dumps({"rows": rows}, indent=2) + "\n")
     print(json.dumps({"out": str(args.out), "n": len(rows)}))
 
