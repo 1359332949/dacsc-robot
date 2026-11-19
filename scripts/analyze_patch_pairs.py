@@ -7,6 +7,7 @@ accepted by this script.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 from pathlib import Path
 
@@ -15,6 +16,14 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import roc_auc_score
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
+
+def _sha256_file(path):
+    digest = hashlib.sha256()
+    with Path(path).open("rb") as handle:
+        for block in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(block)
+    return digest.hexdigest()
+
 
 from dacsc.patch_diagnostics import (
     cosine_self_similarity,
@@ -222,6 +231,9 @@ def main():
     manifest = json.loads(manifest_path.read_text())
     if manifest.get("schema") != "corp_paired_dino_patches_v1":
         raise ValueError("unexpected patch-pair manifest schema")
+    expected_feature_hash = manifest.get("feature_file_sha256")
+    if expected_feature_hash and _sha256_file(args.pairs) != expected_feature_hash:
+        raise ValueError("NPZ feature hash does not match its manifest")
     records = manifest.get("records", [])
     roles = {r.get("role") for r in records}
     if roles - {"source_fit", "source_validation"}:
