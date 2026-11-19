@@ -48,8 +48,17 @@ def run_view(npz, records, view, window):
     fit_mu = np.stack([fit_clean[s][0] for s in fit_ids])
     fit_logsd = np.stack([fit_clean[s][1] for s in fit_ids])
     prior_mu = fit_mu.mean(axis=0)
-    prior_mu_scale = np.maximum(fit_mu.std(axis=0), 1e-3)
+    raw_scale = fit_mu.std(axis=0)
+    prior_mu_scale = np.maximum(raw_scale, 1e-3)
     prior_logsd = fit_logsd.mean(axis=0)
+    floor_mask = raw_scale < 1e-3
+    prior_audit = {
+        'mu_scale_min': float(raw_scale.min()), 'mu_scale_p1': float(np.quantile(raw_scale, .01)),
+        'mu_scale_p5': float(np.quantile(raw_scale, .05)), 'mu_scale_median': float(np.median(raw_scale)),
+        'mu_scale_p95': float(np.quantile(raw_scale, .95)), 'mu_scale_max': float(raw_scale.max()),
+        'floor_1e3_count': int(floor_mask.sum()), 'floor_1e3_fraction': float(floor_mask.mean()),
+        'logsd_mean': float(prior_logsd.mean()), 'logsd_std_across_states': float(fit_logsd.std(axis=0).mean()),
+    }
     def scores(mapping):
         return {s: score(d, prior_mu, prior_mu_scale, prior_logsd, alpha=args.alpha) for s, d in mapping.items()}
     fcs = scores(fit_clean); vcs = scores(val_clean)
@@ -72,7 +81,33 @@ def run_view(npz, records, view, window):
             'val_auroc_clean_vs_shift': float(roc_auc_score([0]*len(vcs)+[1]*len(vss), list(vcs.values())+list(vss.values()))),
             'n_fit_states': len(fcs), 'n_val_states': len(vcs),
         }
+    # Cross-fitted threshold: estimate prior on 9 fit states, score the held-out
+    # fit state.  This measures threshold optimism without touching validation.
+    crossfit_scores = []
+    for held in fit_ids:
+        train_ids = [s for s in fit_ids if s != held]
+        tm = np.stack([fit_clean[s][0] for s in train_ids]); tl = np.stack([fit_clean[s][1] for s in train_ids])
+        pm = tm.mean(axis=0); ps = np.maximum(tm.std(axis=0), 1e-3); pl = tl.mean(axis=0)
+        crossfit_scores.append(score(fit_clean[held], pm, ps, pl, alpha=args.alpha))
+    crossfit_scores = np.array(crossfit_scores)
+    tau_crossfit_max = float(crossfit_scores.max())
+    tau_crossfit_q95 = float(np.quantile(crossfit_scores, 0.95))
+    crossfit_report = {
+        'tau_crossfit_max': report(tau_crossfit_max) if False else {
+            'threshold': tau_crossfit_max,
+            'fit_crossfit_fpr': float(np.mean(crossfit_scores > tau_crossfit_max)),
+            'val_clean_fpr': float(np.mean(np.array(list(vcs.values())) > tau_crossfit_max)),
+            'fit_crossfit_mean': float(crossfit_scores.mean()),
+        },
+        'tau_crossfit_q95': {
+            'threshold': tau_crossfit_q95,
+            'fit_crossfit_fpr': float(np.mean(crossfit_scores > tau_crossfit_q95)),
+            'val_clean_fpr': float(np.mean(np.array(list(vcs.values())) > tau_crossfit_q95)),
+            'fit_crossfit_mean': float(crossfit_scores.mean()),
+        },
+    }
     return {'status':'ok','tau_quantile95':report(tau95),'tau_train_max':report(tau_max),
+            'crossfit_thresholds': crossfit_report, 'prior_audit': prior_audit,
             'alpha': float(args.alpha),
             'per_state': {'fit_clean':fcs,'fit_shift':fss,'val_clean':vcs,'val_shift':vss},
             'prior_mu_norm':float(np.linalg.norm(prior_mu)),

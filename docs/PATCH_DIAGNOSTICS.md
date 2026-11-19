@@ -455,3 +455,54 @@ monotone transforms, so they are not independent evidence.
 
 Conclusion: neither the corrected global prior nor the audited Resampler
 attention signal is a reliable policy-relevant gate. Do not train the Adapter.
+
+### Gate 1A calibration audit and Gate 1A-3 measurement audit
+
+Prior audit on the corrected Gate 1A:
+
+- no channel hit the 1e-3 floor for any view/window;
+- source-fit channel mean scales ranged 0.099-2.77 across views;
+- 10 calibration states are still too few for a 5% distribution-free
+  threshold; the reported threshold is therefore only `tau_quantile95` /
+  `tau_crossfit`, never a guaranteed 5% FPR.
+
+Cross-fitted threshold (prior on 9 fit states, threshold on the held-out fit
+state) changes the operational picture:
+
+| view/window | tau_crossfit_max val Clean FPR | val Shift activation | val AUROC |
+|---|---:|---:|---:|
+| agentview early | 0.0 | 0.0 | 0.81 |
+| agentview late | 0.0 | 0.3 | 0.79 |
+| eye-in-hand early | 0.1 | **1.0** | **0.93** |
+| eye-in-hand late | 0.1 | 0.1 | 0.61 |
+
+So the corrected conclusion is not "mean/log-std has no domain information".
+It is:
+
+- agentview scores do not activate on Shift under a clean-preserving threshold;
+- eye-in-hand **early** has a candidate gate (10% Clean FPR, 100% Shift
+  activation on 10 held-out states), but the calibration set is tiny;
+- eye-in-hand late has no usable activation.
+
+Gate 1A-3 fixed two measurement issues:
+
+1. action deviation now uses **clipped controller actions** and the first
+   executed K steps, split into XYZ/rotation/grip;
+2. attention differences use per-query/head JS divergence, entropy change and
+   max-probability change, not a mixed-dimension Euclidean distance.
+
+State-level correlations (20 fit+val states; source-fit/validation separately
+reported) reveal one strong candidate:
+
+| view/window | metric -> action dim | Pearson | 95% CI | fit / val Pearson |
+|---|---|---:|---:|---:|
+| eye-in-hand late | JS -> rotation | **0.787** | [0.613, 0.906] | 0.914 / 0.771 |
+| eye-in-hand late | JS -> XYZ | **0.690** | [0.489, 0.871] | 0.746 / 0.825 |
+| eye-in-hand late | entropy change -> XYZ | **0.687** | [0.380, 0.847] | 0.863 / 0.684 |
+| eye-in-hand late | max-prob change -> XYZ | **0.671** | [0.420, 0.880] | 0.793 / 0.717 |
+| eye-in-hand early | JS -> XYZ | 0.506 | [0.179, 0.771] | 0.350 / 0.696 |
+
+Agentview correlations are weak/inconsistent. This is a **policy-sensitivity
+signal**, not a validated gate: it is view- and phase-specific, the calibration
+set is small, and it has not been closed-loop tested. Do not train the Adapter
+from this diagnostic alone.
