@@ -11,6 +11,7 @@ They are not deployable TTA methods and must never be run on target-test data.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import sys
 from pathlib import Path
@@ -28,6 +29,14 @@ from corp.representation.extractor import Representation  # noqa: E402
 from target_only_action_validation import _one_action_metrics, configure  # noqa: E402
 from dacsc.differentiable_policy import sample_from_z0  # noqa: E402
 from dacsc.patch_diagnostics import random_clean_donor  # noqa: E402
+
+
+def _sha256_file(path):
+    digest = hashlib.sha256()
+    with Path(path).open("rb") as handle:
+        for block in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(block)
+    return digest.hexdigest()
 
 
 def _tensor(array, device, dtype=torch.float32):
@@ -158,6 +167,12 @@ def main():
         raise FileExistsError(f"refusing to overwrite {args.out}")
     configure(args)
     manifest = json.loads(manifest_path.read_text())
+    if manifest.get("feature_file_sha256") and _sha256_file(args.pairs) != manifest["feature_file_sha256"]:
+        raise ValueError("NPZ feature hash does not match its manifest")
+    if manifest.get("checkpoint_sha256") and _sha256_file(args.checkpoint) != manifest["checkpoint_sha256"]:
+        raise ValueError("checkpoint hash does not match the pair-capture manifest")
+    if manifest.get("matrix_sha256") and _sha256_file(args.matrix) != manifest["matrix_sha256"]:
+        raise ValueError("matrix hash does not match the pair-capture manifest")
     if manifest.get("schema") != "corp_paired_dino_patches_v1":
         raise ValueError("unexpected patch-pair manifest schema")
     records = manifest.get("records", [])
