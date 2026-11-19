@@ -724,3 +724,33 @@ Key observations:
 The failure is state-dependent: early approach divergence (37), missing close
 decision (43), and late grasp/contact timing (45). A single global input
 transform cannot address all three. No Adapter is trained.
+
+### Corrected contact attribution (target-specific)
+
+The earlier instrumentation used global `ncon > 0`; that is always nonzero due
+table/robot contacts. The corrected instrumentation resolves the BDDL goal
+object (`akita_black_bowl_1`), its body/geoms, and finger geoms, and records
+target-finger contact separately.
+
+| case | success | close cmd | first target-finger contact | target lift | EEF-target dist at close |
+|---|---:|---:|---:|---:|---:|
+| 36 clean frozen (ref) | 1 | 45 | 55 | 0.108 | 0.075 |
+| 37 clean frozen | 1 | 50 | 60 | 0.083 | 0.088 |
+| 37 clean transform | 0 | 49 | 59 | **0.027** | 0.074 |
+| 37 shift frozen | 1 | 55 | 59 | 0.052 | 0.086 |
+| 37 shift transform | 0 | 49 | **none** | 0.000 | **0.151** |
+| 43 shift frozen | 0 | **none** | none | 0.000 | — |
+| 43 shift transform | 0 | 47 | none | 0.000 | 0.156 |
+| 45 shift frozen | 0 | 43 | none | 0.000 | **0.162** |
+| 45 shift transform | 0 | 49 | none | 0.000 | 0.127 |
+
+Correction: no forced-close intervention was run. The earlier phrase
+"forced close still failed" was incorrect. State 43 only shows that the
+policy's own close command is absent under Frozen, while the affine transform
+emits close at step 47 but at 0.156 m from the target with no target contact.
+
+State 45 is not a late-contact failure: both modes close at 0.13-0.16 m from
+the target and never touch it. State 37 clean transform does touch the target
+but lifts only 0.027 m vs 0.083 m for Frozen; shift transform closes at
+0.151 m with no contact. The common pattern is **approach/close position**,
+not just gripper timing.
