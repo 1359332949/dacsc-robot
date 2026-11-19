@@ -371,3 +371,28 @@ Clean, but cannot distinguish beneficial Shift interventions.
 
 Adapter reduces multi-z0 dispersion slightly (ratio 0.84-0.97); this does not
 predict which Shift state benefits.
+
+## Gripper-pair audit and clean residual bypass
+
+Pair gripper audit (controller actions):
+
+| split | records | max abs diff | >0.05 | >0.1 |
+|---|---:|---:|---:|---:|
+| source_fit | 18 | 0.00857 | 0 | 0 |
+| source_validation | 19 | 0.00824 | 0 | 0 |
+
+The paired Clean/Shift gripper actions are almost identical. The adapter
+therefore has no training signal for the 84-96-step grasp-closure failure
+mode; it can only fit XYZ residuals.
+
+Clean residual bypass:
+
+- if `residual_ratio < 0.05`, execute Frozen instead of Adapter;
+- Clean target-dev: Frozen 4/4, Adapter 4/4;
+- Shift target-dev: Frozen 2/4, Adapter 1/4 (state 45 only).
+
+The bypass protects Clean but does not create Shift benefit.
+
+Version attribution: the earlier stochasticity tables were produced with the
+pre-clean-token `spaca_train_multi_z` checkpoint and are superseded. Current
+numbers use `spaca_train_full` (clean-token corrected, best epoch 6).

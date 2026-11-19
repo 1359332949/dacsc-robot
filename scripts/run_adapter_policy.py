@@ -37,6 +37,8 @@ def main():
     ap.add_argument("--monitor-artifact", type=Path, default=Path("docs/data/monitor_artifact_v2.json"))
     ap.add_argument("--modes", default="frozen,adapter,gated,first")
     ap.add_argument("--gate-persistence", type=int, default=1)
+    ap.add_argument("--clean-residual-threshold", type=float, default=0.05,
+                    help="bypass adapter when visual residual ratio is below this")
     ap.add_argument("--max-steps", type=int, default=220)
     ap.add_argument("--executed-k", type=int, default=12)
     ap.add_argument("--device", default="cuda:0")
@@ -109,13 +111,18 @@ def main():
                         if first_z0_hash is None: first_z0_hash = z0_hash
                         frozen_out = forward_with_adapter(policy, po, zero, z0)
                         adapter_out = forward_with_adapter(policy, po, adapter, z0)
+                        v_raw = adapter_out["visual_tokens"]
+                        v_ada = adapter_out["adapted_tokens"]
+                        residual_ratio = float((v_ada - v_raw).norm() / (v_raw.norm() + 1e-6))
                         if mode == "frozen":
                             out = frozen_out; used = False
                         elif mode == "adapter":
-                            out = adapter_out; used = True
-                            adapter_forward_calls += 1
-                            if adapter_first_applied_step is None: adapter_first_applied_step = steps
-                            adapter_last_applied_step = steps
+                            used = bool(residual_ratio >= args.clean_residual_threshold)
+                            out = adapter_out if used else frozen_out
+                            if used:
+                                adapter_forward_calls += 1
+                                if adapter_first_applied_step is None: adapter_first_applied_step = steps
+                                adapter_last_applied_step = steps
                         elif mode == "first":
                             used = chunk == 0
                             out = adapter_out if used else frozen_out
@@ -140,6 +147,7 @@ def main():
                         chunk_log.append({
                             "chunk": chunk, "steps_start": steps, "mode": mode, "adapter_used": bool(used),
                             "z0_seed": z0_seed, "z0_sha256": z0_hash,
+                            "residual_ratio": residual_ratio,
                             "norm_delta_mae": float(np.mean(np.abs(a_norm - f_norm))),
                             "controller_delta_rmse": float(np.sqrt(np.mean((a_ctrl - f_ctrl) ** 2))),
                             "clipped_delta_rmse": float(np.sqrt(np.mean((chosen_clip - np.clip(f_ctrl, -1, 1)) ** 2))),
