@@ -42,8 +42,10 @@ matches, and identity-path errors at four levels:
 - complete VLA representation tokens;
 - Flow-Matching action with a fixed explicit z0.
 
-**Gate:** all identity-path errors must be below 1e-6. The report describes
-runtime shape facts; it does not assume a fixed DINO architecture.
+**Gate:** all identity-path errors must be below 1e-6. This includes pinning
+the official policy.predict path to the same explicit z0 and comparing its
+controller-space action with the direct sampler. The report describes runtime
+shape facts; it does not assume a fixed DINO architecture.
 
 ## Pair capture: raw patch features at early and late windows
 
@@ -52,6 +54,7 @@ MUJOCO_GL=osmesa python scripts/collect_patch_pairs.py \
   --matrix /path/to/libero_matrix.json \
   --checkpoint repos/CoRP/checkpoints/corp_libero.pt \
   --split-json docs/data/tta_split_libero_spatial.json \
+  --phase0-report runs/patch_diag/phase0_interface.json \
   --suite libero_spatial --lighting-id 2292 \
   --roles source_fit,source_validation \
   --early-chunks 0,1 --late-chunks 6,7,8,9 \
@@ -110,6 +113,7 @@ pass/fail law.
 ~~~bash
 python scripts/paired_patch_replacement.py \
   --pairs runs/patch_diag/source_patch_pairs.npz \
+  --phase1-report runs/patch_diag/phase1_report.json \
   --matrix /path/to/libero_matrix.json \
   --checkpoint repos/CoRP/checkpoints/corp_libero.pt \
   --out runs/patch_diag/b0_b3_report.json
