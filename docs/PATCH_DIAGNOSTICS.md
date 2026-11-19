@@ -794,3 +794,46 @@ Observations:
 This supports a forward causal path visual change -> representation change ->
 action change at the same physical state. It does not yet show that this causes
 the closed-loop failure across states; one state is not enough. No Adapter.
+
+### Experiment A extension: four-state fixed-observation trace
+
+Four target-dev states (36, 37, 43, 45), 20 control steps each, same physical
+state, same z0/language/state, three inputs: Clean, Clean+Transform, Shift.
+All 20/20 state/camera parity checks passed per state. No target-finger contact
+occurred in these first 20 steps; EEF-target body-origin distance was still
+0.37->0.27 m, so all traces are in the approach phase.
+
+Mean over 20 steps:
+
+| state | branch | DINO rel | Resampler rel | action XYZ | rotation | gripper pre/post |
+|---|---|---:|---:|---:|---:|---:|
+| 36 | Transform | 0.277 | 0.181 | 0.036 | 0.0072 | 0.0011/0.0002 |
+| 36 | Shift | 0.754 | 0.421 | 0.290 | 0.0226 | 0.0039/0.0006 |
+| 37 | Transform | 0.269 | 0.172 | 0.035 | 0.0098 | 0.0006/0.0 |
+| 37 | Shift | 0.777 | 0.424 | 0.251 | 0.0294 | 0.0062/0.0 |
+| 43 | Transform | 0.242 | 0.168 | 0.020 | 0.0055 | 0.0004/0.0 |
+| 43 | Shift | 0.727 | 0.370 | 0.303 | 0.0160 | 0.0041/0.0004 |
+| 45 | Transform | 0.267 | 0.156 | 0.030 | 0.0050 | 0.0008/0.0001 |
+| 45 | Shift | 0.709 | 0.410 | 0.270 | 0.0213 | 0.0020/0.0 |
+
+The ordering is consistent across all four states: Shift DINO ~0.71-0.78,
+Resampler ~0.37-0.42, action XYZ ~0.25-0.30; Transform DINO ~0.24-0.28,
+Resampler ~0.16-0.18, action XYZ ~0.02-0.04. The Resampler attenuates both
+perturbations but does not eliminate them. Gripper post-clip differences are
+near zero; early action differences are XYZ/rotation.
+
+Closed-loop alignment (Frozen vs Transform trajectories):
+
+| case | first EEF >1mm | first action >0.01 | first action >0.05 | first action >0.1 |
+|---|---:|---:|---:|---:|
+| 37 clean | 3 | 1 | 9 | 13 |
+| 37 shift | 4 | 1 | 11 | 25 |
+| 43 shift | 3 | 1 | 1 | 29 |
+| 45 shift | 2 | 1 | 1 | 2 |
+
+Action differences at the 0.01 scale precede EEF divergence in all four
+paired cases, but the 0.01-scale difference is small; the larger 0.1-scale
+divergence appears later (or, for state 45, at step 2). This is consistent with
+a visual->action->approach chain, not proof that the small early action change
+causes the eventual failure. Target geometry still uses the body origin, not a
+validated grasp point; no Adapter training.
