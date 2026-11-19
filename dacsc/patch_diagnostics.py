@@ -121,3 +121,58 @@ def patch_distance_summary(a: Mapping[str, Any], b: Mapping[str, Any]) -> dict[s
             raise ValueError(f"{view}: patch shape mismatch {x.shape} vs {y.shape}")
         out[str(view)] = float(np.sqrt(np.mean((x.astype(np.float64) - y.astype(np.float64)) ** 2)))
     return out
+
+
+
+def state_balanced_mean(
+    records: Sequence[Mapping[str, Any]],
+    metric_key: str,
+    nested_key: str | None = None,
+) -> dict[str, Any] | None:
+    """Average numeric metric dictionaries within state, then states equally.
+
+    Each record must resolve to a mapping of scalar numeric metrics. This
+    deliberately prevents treating multiple chunks from one state as
+    independent statistical units.
+    """
+    by_state: dict[int, list[dict[str, float]]] = {}
+    for record in records:
+        value = record.get(metric_key)
+        if value is None:
+            continue
+        if nested_key is not None:
+            if not isinstance(value, Mapping):
+                raise TypeError(f"{metric_key} must be a mapping for nested lookup")
+            value = value.get(nested_key)
+        if value is None:
+            continue
+        if not isinstance(value, Mapping):
+            raise TypeError("state_balanced_mean expects a numeric metric mapping")
+        metrics = {str(k): float(v) for k, v in value.items()}
+        if not metrics or not all(np.isfinite(v) for v in metrics.values()):
+            raise ValueError("metric mappings must be non-empty and finite")
+        by_state.setdefault(int(record["state_id"]), []).append(metrics)
+
+    if not by_state:
+        return None
+    metric_names = tuple(next(iter(by_state.values()))[0].keys())
+    for items in by_state.values():
+        if any(tuple(item.keys()) != metric_names for item in items):
+            raise ValueError("metric keys/order differ across records")
+
+    state_means = {
+        state: {
+            key: float(np.mean([item[key] for item in items]))
+            for key in metric_names
+        }
+        for state, items in by_state.items()
+    }
+    return {
+        "n_states": len(state_means),
+        "n_records": sum(len(items) for items in by_state.values()),
+        "state_balanced_mean": {
+            key: float(np.mean([metrics[key] for metrics in state_means.values()]))
+            for key in metric_names
+        },
+        "per_state": state_means,
+    }
