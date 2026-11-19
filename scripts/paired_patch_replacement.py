@@ -17,6 +17,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import subprocess
 import sys
 from pathlib import Path
 
@@ -41,6 +42,16 @@ def _sha256_file(path):
         for block in iter(lambda: handle.read(1024 * 1024), b""):
             digest.update(block)
     return digest.hexdigest()
+
+
+def _git_rev(path):
+    try:
+        return subprocess.check_output(
+            ["git", "-C", str(path), "rev-parse", "HEAD"],
+            text=True, stderr=subprocess.DEVNULL,
+        ).strip()
+    except Exception:
+        return None
 
 
 def _tensor(array, device, dtype=torch.float32):
@@ -157,6 +168,15 @@ def main():
         raise ValueError("checkpoint hash does not match the pair-capture manifest")
     if manifest.get("matrix_sha256") and _sha256_file(args.matrix) != manifest["matrix_sha256"]:
         raise ValueError("matrix hash does not match the pair-capture manifest")
+    current_revisions = {
+        "repository_git_rev": _git_rev(ROOT),
+        "corp_git_rev": _git_rev(ROOT / "repos/CoRP"),
+        "libero_git_rev": _git_rev(args.libero_src),
+    }
+    for key, current in current_revisions.items():
+        recorded = manifest.get(key)
+        if recorded is not None and recorded != current:
+            raise ValueError(f"{key} changed after pair capture; rerun Phase 0 and pair capture")
     if manifest.get("schema") != "corp_paired_dino_patches_v1":
         raise ValueError("unexpected patch-pair manifest schema")
     phase1 = json.loads(args.phase1_report.read_text())
@@ -183,9 +203,6 @@ def main():
         v for v in task["variants"]["lighting"]
         if int(v["classification_id"]) == int(manifest["lighting_id"])
     )
-    import libero.libero.envs.bddl_utils as BDDLUtils
-    language = BDDLUtils.get_problem_info(variant["base_bddl"])["language_instruction"]
-
     device = torch.device(args.device)
     policy = load_policy(args.checkpoint, device=device)
     policy.eval()
