@@ -136,9 +136,9 @@ def _aggregate(records):
         b1_mae = None if action_b1 is None else action_b1["state_balanced_mean"]["normalized_mae"]
         b2_mae = None if action_b2 is None else action_b2["state_balanced_mean"]["normalized_mae"]
         b3_mae = None if action_b3 is None else action_b3["state_balanced_mean"]["normalized_mae"]
-        row["B2_action_recovery_fraction"] = _recovery(b1_mae, b2_mae)
-        row["B3_action_recovery_fraction"] = _recovery(b1_mae, b3_mae)
-        row["B2_beats_B3_on_normalized_mae"] = bool(
+        row["B2_clean_policy_action_consistency_recovery_fraction"] = _recovery(b1_mae, b2_mae)
+        row["B3_clean_policy_action_consistency_recovery_fraction"] = _recovery(b1_mae, b3_mae)
+        row["B2_beats_B3_on_clean_policy_action_consistency"] = bool(
             b2_mae is not None and b3_mae is not None and b2_mae < b3_mae
         )
 
@@ -333,6 +333,11 @@ def main():
         "shift_domain_semantics": manifest.get("shift_domain_semantics"),
         "target_dev_test_initial_states_used": False,
         "target_success_labels_or_rewards_used": False,
+        "action_reference_semantics": (
+            "B0 is the frozen CoRP action on the paired Clean observation with "
+            "the same z0. B2/B3 action metrics measure consistency with this "
+            "Clean Frozen behavior, not expert correctness or task success."
+        ),
         "records_total": len(records),
         "records_pairing_pass": len(valid),
         "views": views,
@@ -343,9 +348,11 @@ def main():
             "target lighting configuration rendered on source initial states. "
             "B2 recovery supports same-state patch mediation but is not a deployable "
             "TTA signal or unknown-target generalization result. B3 tests whether "
-            "different-state Clean content produces a similar change. Aggregates "
-            "are state-balanced; no target-dev/test states, success labels, or "
-            "rewards are used, and no closed-loop success claim is made."
+            "different-state Clean content produces a similar change. Action "
+            "recovery means consistency with B0 Clean Frozen actions, not expert "
+            "correctness. Aggregates are state-balanced; no target-dev/test "
+            "states, success labels, or rewards are used, and no closed-loop "
+            "success claim is made."
         ),
     }
     args.out.parent.mkdir(parents=True, exist_ok=True)
