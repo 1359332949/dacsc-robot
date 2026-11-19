@@ -260,7 +260,6 @@ def main():
         for item in metadata_candidates:
             if "num_prefix_tokens" in item:
                 prefix_token_counts.add(int(item["num_prefix_tokens"]))
-                continue
             inferred_count = 0
             has_prefix_metadata = False
             for key in ("cls_token_shape", "register_tokens_shape"):
