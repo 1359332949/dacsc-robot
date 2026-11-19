@@ -32,7 +32,7 @@ from corp import load_policy  # noqa: E402
 from corp.representation.extractor import Representation  # noqa: E402
 from target_only_action_validation import _one_action_metrics, configure  # noqa: E402
 from dacsc.differentiable_policy import sample_from_z0  # noqa: E402
-from dacsc.patch_diagnostics import random_clean_donor  # noqa: E402
+from dacsc.patch_diagnostics import random_clean_donor, state_balanced_mean  # noqa: E402
 
 
 def _sha256_file(path):
@@ -90,39 +90,6 @@ def _recovery(base_error, intervention_error):
     return float(1.0 - intervention_error / base_error)
 
 
-def _state_balanced_mean(values, metric_key, nested_key=None):
-    """Average chunks within each state, then average states equally."""
-    by_state = {}
-    for record in values:
-        obj = record.get(metric_key)
-        if obj is None:
-            continue
-        if nested_key is not None:
-            obj = obj.get(nested_key)
-        if obj is None:
-            continue
-        by_state.setdefault(int(record["state_id"]), []).append(obj)
-    if not by_state:
-        return None
-    metric_names = tuple(next(iter(by_state.values()))[0].keys())
-    state_means = {
-        state: {
-            key: float(np.mean([item[key] for item in items]))
-            for key in metric_names
-        }
-        for state, items in by_state.items()
-    }
-    return {
-        "n_states": len(state_means),
-        "n_records": sum(len(v) for v in by_state.values()),
-        "state_balanced_mean": {
-            key: float(np.mean([metrics[key] for metrics in state_means.values()]))
-            for key in metric_names
-        },
-        "per_state": state_means,
-    }
-
-
 def _aggregate(records):
     groups = {}
     for record in records:
@@ -135,9 +102,9 @@ def _aggregate(records):
             "aggregation_unit": "state-balanced: average chunks within each state, then states",
         }
         for name in ("B1_vs_B0", "B2_vs_B0", "B3_vs_B0"):
-            row[name] = _state_balanced_mean(values, name)
+            row[name] = state_balanced_mean(values, name)
         row["resampler"] = {
-            name: _state_balanced_mean(values, "resampler", name)
+            name: state_balanced_mean(values, "resampler", name)
             for name in ("B1_rms_to_B0", "B2_rms_to_B0", "B3_rms_to_B0")
         }
         action_b1, action_b2, action_b3 = (
@@ -304,21 +271,19 @@ def main():
         r2 = paired_replacement["visual"]
         r3 = None if random_replacement is None else random_replacement["visual"]
         resampler = {
-            "B1_rms_to_B0": _rms(r1, r0),
-            "B2_rms_to_B0": _rms(r2, r0),
-            "B3_rms_to_B0": None if r3 is None else _rms(r3, r0),
-            "B1_rms_to_B0_recovery": None,
-            "B2_rms_to_B0_recovery": None,
-            "B3_rms_to_B0_recovery": None,
+            "B1_rms_to_B0": {"value": _rms(r1, r0)},
+            "B2_rms_to_B0": {"value": _rms(r2, r0)},
+            "B3_rms_to_B0": None if r3 is None else {"value": _rms(r3, r0)},
         }
-        resampler["B2_rms_to_B0_recovery"] = _recovery(
-            resampler["B1_rms_to_B0"], resampler["B2_rms_to_B0"]
+        resampler["B2_rms_to_B0"]["recovery_fraction"] = _recovery(
+            resampler["B1_rms_to_B0"]["value"],
+            resampler["B2_rms_to_B0"]["value"],
         )
-        resampler["B3_rms_to_B0_recovery"] = (
-            None if r3 is None else _recovery(
-                resampler["B1_rms_to_B0"], resampler["B3_rms_to_B0"]
+        if resampler["B3_rms_to_B0"] is not None:
+            resampler["B3_rms_to_B0"]["recovery_fraction"] = _recovery(
+                resampler["B1_rms_to_B0"]["value"],
+                resampler["B3_rms_to_B0"]["value"],
             )
-        )
         results.append({
             "feature_row": row,
             "state_id": int(record["state_id"]),
