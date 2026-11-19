@@ -296,3 +296,28 @@ success -> fail:   1
 The oracle strongly raises the closed-loop ceiling, but is not perfect:
 six oracle failures remain and one Frozen success is broken (state 44,
 seed 9999). This is a positive Gate 1, not proof of a deployable method.
+
+### Gate 0 audit fixes and audited oracle pilot
+
+Controller fix: `_controller_compare()` now computes numeric errors for
+`goal_pos` and `goal_ori` instead of only checking shape/finiteness. New tests
+cover goal-pos mismatch, goal-ori mismatch, and NaN. `policy_eef_quat` uses
+quaternion sign-invariant angular distance; `eef_site_id` must be valid and
+non-negative.
+
+The oracle now refreshes the Shift derived state before snapshot, audits
+model/state/camera/controller pairing at every oracle replan, and records
+snapshot/model/controller digests, clean patch hash, z0 hash, action hash,
+state-token L2 and freshness delta. The audited 4-state pilot:
+
+| state | Frozen | audited oracle |
+|---|---:|---:|
+| 36 | 1 | 1 |
+| 37 | 1 | 1 |
+| 43 | 0 | 1 |
+| 45 | 0 | 1 |
+| total | 2/4 | 4/4 |
+
+Every oracle replan reports `pairing_pass=true`. The earlier full 10-state x
+3-seed oracle (6/30 -> 24/30) was collected before this audit and is not
+claimed as audited; only the 4-state audited pilot is reported here.

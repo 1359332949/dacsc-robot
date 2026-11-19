@@ -50,11 +50,13 @@ def snapshot(env) -> dict[str, Any]:
     inner = getattr(env, "env", env)
     robots = getattr(inner, "robots", None)
     eef_site_id = int(getattr(robots[0], "eef_site_id")) if robots and hasattr(robots[0], "eef_site_id") else None
-    eef_site_name = site_names[eef_site_id] if eef_site_id is not None and eef_site_id < len(site_names) else None
+    eef_site_id_valid = eef_site_id is not None and 0 <= eef_site_id < len(site_names)
+    eef_site_name = site_names[eef_site_id] if eef_site_id_valid else None
     out = {
         "body_names": names,
         "site_names": site_names,
         "eef_site_id": eef_site_id,
+        "eef_site_id_valid": bool(eef_site_id_valid),
         "eef_site_name": eef_site_name,
         "site_bodyid": [int(x) for x in sim.model.site_bodyid],
         "site_pos": _arr(sim.model.site_pos).tolist(),
@@ -74,7 +76,7 @@ def snapshot(env) -> dict[str, Any]:
         "body_xpos": _arr(sim.data.body_xpos).tolist(),
         "body_xquat": _arr(sim.data.body_xquat).tolist(),
         "eef_pos": eef_pos,
-        "policy_eef_pos": (_arr(sim.data.site_xpos[eef_site_id]).tolist() if eef_site_id is not None else None),
+        "policy_eef_pos": (_arr(sim.data.site_xpos[eef_site_id]).tolist() if eef_site_id_valid else None),
         "policy_eef_quat": (_arr(sim.data.body_xquat[names.index(eef_name)]).tolist() if eef_name is not None else None),
         "cam_pos": _arr(sim.model.cam_pos).tolist(),
         "cam_quat": _arr(sim.model.cam_quat).tolist(),
@@ -314,6 +316,10 @@ def _controller_compare(a: dict[str, Any], b: dict[str, Any], tol: float = 1e-6)
         if x.size == 0 or y.size == 0 or x.shape != y.shape or not (np.isfinite(x).all() and np.isfinite(y).all()):
             checks[key] = {"present": True, "pass": False, "error": float("inf")}
             ok = False
+        else:
+            err = float(np.max(np.abs(x - y)))
+            checks[key] = {"present": True, "pass": bool(err <= tol), "error": err}
+            ok = ok and err <= tol
     for key in ("ori_ref", "relative_ori"):
         x = np.asarray(ca.get(key, []), dtype=np.float64)
         y = np.asarray(cb.get(key, []), dtype=np.float64)
@@ -384,12 +390,22 @@ def compare(a: dict[str, Any], b: dict[str, Any], tol: dict[str, float] | None =
             checks["site_names"] = {"present": False, "pass": False}
         else:
             checks["site_names"] = {"present": True, "pass": a.get("site_names") == b.get("site_names")}
-        for key in ("site_xpos", "site_xmat", "policy_eef_pos", "policy_eef_quat"):
+        checks["eef_site_id_valid"] = {"pass": bool(a.get("eef_site_id_valid", False) and b.get("eef_site_id_valid", False))}
+        for key in ("site_xpos", "site_xmat", "policy_eef_pos"):
             xa = a.get(key); xb = b.get(key)
             if xa is None or xb is None:
                 checks[key] = {"present": False, "pass": False}
             else:
                 checks[key] = _array_check("body_xpos", xa, xb, {"body_xpos": 1e-3})
+        qa = a.get("policy_eef_quat"); qb = b.get("policy_eef_quat")
+        if qa is None or qb is None or np.asarray(qa).size == 0 or np.asarray(qb).size == 0:
+            checks["policy_eef_quat"] = {"present": False, "pass": False}
+        elif np.asarray(qa).shape != np.asarray(qb).shape:
+            checks["policy_eef_quat"] = {"present": True, "shape": False, "pass": False}
+        else:
+            ang = _quat_angle_rad(np.asarray(qa), np.asarray(qb))
+            checks["policy_eef_quat"] = {"present": True, "shape": True, "error_rad": ang,
+                                         "pass": bool(np.isfinite(ang) and ang <= 1e-3)}
     names_ok = a.get("body_names") == b.get("body_names")
     cam_names_ok = a.get("camera_names") == b.get("camera_names")
     eef_ok = bool(a.get("eef_name")) and a.get("eef_name") == b.get("eef_name")

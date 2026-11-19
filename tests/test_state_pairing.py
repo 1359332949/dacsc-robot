@@ -10,6 +10,14 @@ def make_snap(delta=0.0, act=None, eef_name="gripper0_eef"):
         "body_names": ["world", "table", "gripper0_eef"],
         "camera_names": ["agentview", "eye_in_hand"],
         "eef_name": eef_name,
+        "site_names": ["gripper0_eef_site"],
+        "eef_site_id": 0,
+        "eef_site_id_valid": True,
+        "site_bodyid": [2],
+        "site_xpos": [[0.5, 0.2 + delta, 0.3]],
+        "site_xmat": [[1, 0, 0, 0, 1, 0, 0, 0, 1]],
+        "policy_eef_pos": [0.5, 0.2 + delta, 0.3],
+        "policy_eef_quat": [1.0, 0.0, 0.0, 0.0],
         "controller": {
             "controller_type": "MockOSCController",
             "goal_pos": [0.5, 0.2 + delta, 0.3],
@@ -52,6 +60,30 @@ class TestStatePairing(unittest.TestCase):
 
     def test_body_quaternion_mismatch_fails(self):
         b = make_snap(); b["body_xquat"] = [[0.9, 0.1, 0, 0]] * 3
+        self.assertFalse(compare(make_snap(), b)["all_pass"])
+
+    def test_controller_goal_pos_mismatch_fails(self):
+        b = make_snap(); b["controller"]["goal_pos"][0] += 1e-2
+        out = compare(make_snap(), b)
+        self.assertFalse(out["all_pass"])
+        self.assertFalse(out["checks"]["controller"]["checks"]["goal_pos"]["pass"])
+
+    def test_controller_goal_ori_mismatch_fails(self):
+        b = make_snap(); b["controller"]["goal_ori"][1] += 1e-2
+        out = compare(make_snap(), b)
+        self.assertFalse(out["all_pass"])
+        self.assertFalse(out["checks"]["controller"]["checks"]["goal_ori"]["pass"])
+
+    def test_controller_nan_fails(self):
+        b = make_snap(); b["controller"]["goal_pos"][0] = float("nan")
+        self.assertFalse(compare(make_snap(), b)["all_pass"])
+
+    def test_policy_eef_quaternion_sign_equivalence_passes(self):
+        b = make_snap(); b["policy_eef_quat"] = [-1.0, 0.0, 0.0, 0.0]
+        self.assertTrue(compare(make_snap(), b)["all_pass"])
+
+    def test_invalid_eef_site_fails(self):
+        b = make_snap(); b["eef_site_id_valid"] = False
         self.assertFalse(compare(make_snap(), b)["all_pass"])
 
     def test_eef_missing_fails(self):

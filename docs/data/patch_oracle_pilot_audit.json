@@ -1,0 +1,1092 @@
+{
+  "schema": "patch_closed_loop_oracle_v1",
+  "records": [
+    {
+      "state_id": 36,
+      "mode": "frozen",
+      "success": true,
+      "steps": 93,
+      "hit_max_steps": false,
+      "chunks": [
+        {
+          "chunk": 0,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 1,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 2,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 3,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 4,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 5,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 6,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 7,
+          "mode": "frozen",
+          "patch_source": "shift"
+        }
+      ]
+    },
+    {
+      "state_id": 36,
+      "mode": "oracle",
+      "success": true,
+      "steps": 96,
+      "hit_max_steps": false,
+      "chunks": [
+        {
+          "chunk": 0,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "pairing_pass": true,
+          "model_compat_pass": true,
+          "state_compare_pass": true,
+          "camera_compare_pass": true,
+          "shift_snapshot_digest": "30e4bc944e01869ad206e2dbaede7a5ebf29525bbfbbf54a378126645489e633",
+          "clean_snapshot_digest": "30e4bc944e01869ad206e2dbaede7a5ebf29525bbfbbf54a378126645489e633",
+          "shift_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "clean_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "shift_controller_digest": "0214885a5605f4a3b74bc82f1e1a36daa234d06d7ec13ff830ab39439c2eae52",
+          "clean_controller_digest": "0214885a5605f4a3b74bc82f1e1a36daa234d06d7ec13ff830ab39439c2eae52",
+          "clean_patch_sha256": "fff3a2b688f1cbd266cf81fb407d80fef1eff64778e99700188960f38f9edf09",
+          "z0_sha256": "11fab9581cd73b842f495b3b906379139c6ddcbd8293d11604cd40b2565aca9e",
+          "action_sha256": "5525ee833cd53a455b0b892755959d47c05cf2d80a9b2609920e416c5255e34b",
+          "clean_state_input_max": 0.0,
+          "state_token_l2": 0.0,
+          "shift_refreshed_state_max": 0.0004525184631347656
+        },
+        {
+          "chunk": 1,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "pairing_pass": true,
+          "model_compat_pass": true,
+          "state_compare_pass": true,
+          "camera_compare_pass": true,
+          "shift_snapshot_digest": "1bc28f93fd2326ec345924c4b6e8a8c752fffd4b161e5341b6ce4c2458cc5241",
+          "clean_snapshot_digest": "1bc28f93fd2326ec345924c4b6e8a8c752fffd4b161e5341b6ce4c2458cc5241",
+          "shift_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "clean_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "shift_controller_digest": "6e0e8be8a59d5ff155a2493b37d1be6244cbe822fce0b150731d66e113d7e174",
+          "clean_controller_digest": "6e0e8be8a59d5ff155a2493b37d1be6244cbe822fce0b150731d66e113d7e174",
+          "clean_patch_sha256": "f36b72576d2ec48f554d191ed81ab286c1bbb869fe81ee2cfd54e35b929a32c3",
+          "z0_sha256": "93dd84d9662e74a9eb6b39c6b84b0dd749f9df49a219530dd9d41896b9350f7f",
+          "action_sha256": "4c3bfe6f8b0cdecf78139c25547cf554e434275a8296a5cc568443a14f5a11f6",
+          "clean_state_input_max": 0.0,
+          "state_token_l2": 0.0,
+          "shift_refreshed_state_max": 0.012520372867584229
+        },
+        {
+          "chunk": 2,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "pairing_pass": true,
+          "model_compat_pass": true,
+          "state_compare_pass": true,
+          "camera_compare_pass": true,
+          "shift_snapshot_digest": "ee4812d41294d775b524fa9b40975fd36fed718f30d86e106f680c944988fcdc",
+          "clean_snapshot_digest": "ee4812d41294d775b524fa9b40975fd36fed718f30d86e106f680c944988fcdc",
+          "shift_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "clean_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "shift_controller_digest": "be32208563a3f54f1c4e85824c1d4dd474ba80c95bb90fcbd7e1fda1d82fb560",
+          "clean_controller_digest": "be32208563a3f54f1c4e85824c1d4dd474ba80c95bb90fcbd7e1fda1d82fb560",
+          "clean_patch_sha256": "4dcc2c90cb9447e2889b8cd300cd126ffe0f245b55d80db7aa6b76a77ef08762",
+          "z0_sha256": "558eb859bc243cbabfd1e8fcbc8d770ab5c7dfd8305a4e0278634741a6dbdd00",
+          "action_sha256": "ff587219ebe75270a06b779542410654bc411fe50e1eeaee43c64aa84f925ee5",
+          "clean_state_input_max": 0.0,
+          "state_token_l2": 0.0,
+          "shift_refreshed_state_max": 0.017119109630584717
+        },
+        {
+          "chunk": 3,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "pairing_pass": true,
+          "model_compat_pass": true,
+          "state_compare_pass": true,
+          "camera_compare_pass": true,
+          "shift_snapshot_digest": "3e203a909f11efe20c47837d00dba18d2cdfd4cb1373e0ec610ce79e4c675696",
+          "clean_snapshot_digest": "3e203a909f11efe20c47837d00dba18d2cdfd4cb1373e0ec610ce79e4c675696",
+          "shift_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "clean_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "shift_controller_digest": "2b15a71534aea66497e93886ca8fa10c40ee61513aa48310af7419223d1a1a57",
+          "clean_controller_digest": "2b15a71534aea66497e93886ca8fa10c40ee61513aa48310af7419223d1a1a57",
+          "clean_patch_sha256": "bb4516179ec2c490e5d007013dbec7caf7035a47d37c8660474f6216a6cdaddd",
+          "z0_sha256": "6aa44ab1b5fbb083554efd653bb99699fe82fcea2a10ff0638c4cf99590d064b",
+          "action_sha256": "e28b39853f96eca70237458cd3d42ff3f0a01ea46f79733f205d7ab8f3f180f3",
+          "clean_state_input_max": 0.0,
+          "state_token_l2": 0.0,
+          "shift_refreshed_state_max": 0.004849731922149658
+        },
+        {
+          "chunk": 4,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "pairing_pass": true,
+          "model_compat_pass": true,
+          "state_compare_pass": true,
+          "camera_compare_pass": true,
+          "shift_snapshot_digest": "58f37495d4101d7a0e17c367fc421a2cb0a691cc965dabe0f9b110d0c4d9c399",
+          "clean_snapshot_digest": "58f37495d4101d7a0e17c367fc421a2cb0a691cc965dabe0f9b110d0c4d9c399",
+          "shift_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "clean_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "shift_controller_digest": "238077fe1284435ebf34a155fb6959db16ecc67bd7fad191983a01fb696d4aac",
+          "clean_controller_digest": "238077fe1284435ebf34a155fb6959db16ecc67bd7fad191983a01fb696d4aac",
+          "clean_patch_sha256": "83fe6c52789ead9a73521d94ab2ea9384b61da3fb756a723bfcf199b4b402f2e",
+          "z0_sha256": "9add420f4099e5640d958281b8e66f4a2e2f4e6935f4437c3ae8fe40c50f0e64",
+          "action_sha256": "d77a8f5570c8dab656145e51d680bf026a8c6e0135697b4dbc919e42b7c8453f",
+          "clean_state_input_max": 0.0,
+          "state_token_l2": 0.0,
+          "shift_refreshed_state_max": 0.013599932193756104
+        },
+        {
+          "chunk": 5,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "pairing_pass": true,
+          "model_compat_pass": true,
+          "state_compare_pass": true,
+          "camera_compare_pass": true,
+          "shift_snapshot_digest": "025d55d2390b52dfc467db7560082302a7c920a296bb33a9f32d9640fa5c8ff7",
+          "clean_snapshot_digest": "025d55d2390b52dfc467db7560082302a7c920a296bb33a9f32d9640fa5c8ff7",
+          "shift_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "clean_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "shift_controller_digest": "7d5f12f8afb1fcae9d86ed74c0c373a3782582a2c5501b870f5ff83b0b9603ce",
+          "clean_controller_digest": "7d5f12f8afb1fcae9d86ed74c0c373a3782582a2c5501b870f5ff83b0b9603ce",
+          "clean_patch_sha256": "0cec45ecaa7fd6e807bd2cfe26cd68962c95c090f8bfcd2db9aadf9dc2a0261e",
+          "z0_sha256": "76550cce198f3f46576954c238d8f57d5b59622ee9d0cca01d95189797383960",
+          "action_sha256": "7c0f58acc3435667fd9bca111818aae990416fb425a50e619dfaa5f13092aa34",
+          "clean_state_input_max": 0.0,
+          "state_token_l2": 0.0,
+          "shift_refreshed_state_max": 0.0068607330322265625
+        },
+        {
+          "chunk": 6,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "pairing_pass": true,
+          "model_compat_pass": true,
+          "state_compare_pass": true,
+          "camera_compare_pass": true,
+          "shift_snapshot_digest": "8e4924e8bc643f2860afe5cddc7adbc88b0022558ca6fbb7d22b6e35c23717a0",
+          "clean_snapshot_digest": "8e4924e8bc643f2860afe5cddc7adbc88b0022558ca6fbb7d22b6e35c23717a0",
+          "shift_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "clean_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "shift_controller_digest": "ba0c06dd4de41f7bce9dccf1a653ee77b6f227edc975618b2f24b101ccf646d3",
+          "clean_controller_digest": "ba0c06dd4de41f7bce9dccf1a653ee77b6f227edc975618b2f24b101ccf646d3",
+          "clean_patch_sha256": "c091e30067078d0699925057c73dbbcb74867e31faff6013a29574430d398a84",
+          "z0_sha256": "f77c5145d22e82768e7f71a6b886d85b303ef73c3fa9a5a1ea51351f30c583e3",
+          "action_sha256": "47b4f412f939294213fddb00c4b7dae3f54e77bb90bee508655ce11ea2114fb7",
+          "clean_state_input_max": 0.0,
+          "state_token_l2": 0.0,
+          "shift_refreshed_state_max": 0.01860678195953369
+        },
+        {
+          "chunk": 7,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "pairing_pass": true,
+          "model_compat_pass": true,
+          "state_compare_pass": true,
+          "camera_compare_pass": true,
+          "shift_snapshot_digest": "0fe1bfd3e129c4ef67ad748f0f03233c511d0580858f0b9f317938d00ee6d9ac",
+          "clean_snapshot_digest": "0fe1bfd3e129c4ef67ad748f0f03233c511d0580858f0b9f317938d00ee6d9ac",
+          "shift_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "clean_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "shift_controller_digest": "89cc1567f2000f75aed0161a5f56b86b01ee8e1546d1c417814732264ddd39cb",
+          "clean_controller_digest": "89cc1567f2000f75aed0161a5f56b86b01ee8e1546d1c417814732264ddd39cb",
+          "clean_patch_sha256": "04c9ca7c181a5dd7c2d844bb9d3b03c6e37cb2a8c93ca5746a1000799735f7d7",
+          "z0_sha256": "efc78807ebe5cbb91393916f69608808d974024cb682ea045cf4b3684b7770b9",
+          "action_sha256": "d69dabe975455aa77baff0f207d85333e49a268bff5756ab227743b62b7ad58d",
+          "clean_state_input_max": 0.0,
+          "state_token_l2": 0.0,
+          "shift_refreshed_state_max": 0.013649582862854004
+        }
+      ]
+    },
+    {
+      "state_id": 37,
+      "mode": "frozen",
+      "success": true,
+      "steps": 114,
+      "hit_max_steps": false,
+      "chunks": [
+        {
+          "chunk": 0,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 1,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 2,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 3,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 4,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 5,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 6,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 7,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 8,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 9,
+          "mode": "frozen",
+          "patch_source": "shift"
+        }
+      ]
+    },
+    {
+      "state_id": 37,
+      "mode": "oracle",
+      "success": true,
+      "steps": 114,
+      "hit_max_steps": false,
+      "chunks": [
+        {
+          "chunk": 0,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "pairing_pass": true,
+          "model_compat_pass": true,
+          "state_compare_pass": true,
+          "camera_compare_pass": true,
+          "shift_snapshot_digest": "3c2f7570fb053ca8b1520249e5dc3da15c2169fe5a1d76280120d6c64c7679df",
+          "clean_snapshot_digest": "3c2f7570fb053ca8b1520249e5dc3da15c2169fe5a1d76280120d6c64c7679df",
+          "shift_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "clean_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "shift_controller_digest": "8bb6d2cced0e0cf58ed2893b07593415fac5419c5cdeb405c0bdd751cafcbfe2",
+          "clean_controller_digest": "8bb6d2cced0e0cf58ed2893b07593415fac5419c5cdeb405c0bdd751cafcbfe2",
+          "clean_patch_sha256": "bd14d2e25366656d9700e794868a0ca1cd714992eb63fd87d0b5bc75a5118b84",
+          "z0_sha256": "cd487620822780b87b41f029b7d50fd6634071d1da4dc90504f7e1d1844c7753",
+          "action_sha256": "35343ef1de31dac3a95efd4a3f2cffea6b5d0523fd272ce8c2b7f2065b8520bb",
+          "clean_state_input_max": 0.0,
+          "state_token_l2": 0.0,
+          "shift_refreshed_state_max": 0.0004532933235168457
+        },
+        {
+          "chunk": 1,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "pairing_pass": true,
+          "model_compat_pass": true,
+          "state_compare_pass": true,
+          "camera_compare_pass": true,
+          "shift_snapshot_digest": "7ba7351886288a325c75a64d0f868ade290ffe975e44b4212870873410882471",
+          "clean_snapshot_digest": "7ba7351886288a325c75a64d0f868ade290ffe975e44b4212870873410882471",
+          "shift_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "clean_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "shift_controller_digest": "810b16231ac63adf89624b52915647df91539d2913c6fed2f498843b5fdd18b0",
+          "clean_controller_digest": "810b16231ac63adf89624b52915647df91539d2913c6fed2f498843b5fdd18b0",
+          "clean_patch_sha256": "5e1af6328af0dc2f478dc93a68fd0ba1cff165e52f149cf0d093aaeb0f2c21ad",
+          "z0_sha256": "138e3ee2d3779dba77ba05ba89c1477a10095a39485bff9ad02a2127b54b692c",
+          "action_sha256": "9622c9272b2b866caad65443be1ec9e35e5de50a861b573ebafbbbf69b27e7d3",
+          "clean_state_input_max": 0.0,
+          "state_token_l2": 0.0,
+          "shift_refreshed_state_max": 0.01238316297531128
+        },
+        {
+          "chunk": 2,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "pairing_pass": true,
+          "model_compat_pass": true,
+          "state_compare_pass": true,
+          "camera_compare_pass": true,
+          "shift_snapshot_digest": "d2e9938b5484620b9bbed2ba67e7bc0c5de0f65b247e319f7b07e1327a65fbab",
+          "clean_snapshot_digest": "d2e9938b5484620b9bbed2ba67e7bc0c5de0f65b247e319f7b07e1327a65fbab",
+          "shift_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "clean_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "shift_controller_digest": "cdff9eb8a005e0c99aef616cb89f0da2eee0515ed3cac64320468b49f08f58e3",
+          "clean_controller_digest": "cdff9eb8a005e0c99aef616cb89f0da2eee0515ed3cac64320468b49f08f58e3",
+          "clean_patch_sha256": "94d19560092877be76b39bda81a73368e31795d8986bb68bce5652b869b9fea2",
+          "z0_sha256": "f35a9dd130a939d9601e941a23271821bca9f58876bc33d6bca19ce6bf1e9693",
+          "action_sha256": "4f3667057c70a3d796eba47293556567ab5cd9798f95fd5f6c98c726dccb4b68",
+          "clean_state_input_max": 0.0,
+          "state_token_l2": 0.0,
+          "shift_refreshed_state_max": 0.017321527004241943
+        },
+        {
+          "chunk": 3,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "pairing_pass": true,
+          "model_compat_pass": true,
+          "state_compare_pass": true,
+          "camera_compare_pass": true,
+          "shift_snapshot_digest": "e0a47d981997f442f903b499a3ddeaee60227180dfd32db47baa5a439d3506ff",
+          "clean_snapshot_digest": "e0a47d981997f442f903b499a3ddeaee60227180dfd32db47baa5a439d3506ff",
+          "shift_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "clean_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "shift_controller_digest": "f6063c3cb39b368d0c56a5709bc0438fd1e3600156d6938ae969369927cae14b",
+          "clean_controller_digest": "f6063c3cb39b368d0c56a5709bc0438fd1e3600156d6938ae969369927cae14b",
+          "clean_patch_sha256": "076ad6f8363d424224811ea361002276ce4f7d9f05044facb09c19ecb7365ff5",
+          "z0_sha256": "ea1b3cc8feb1573f5b30ad43236064a2ba5c2555abff3c9e84dad3fe891fd7a7",
+          "action_sha256": "c33b29f569cd637f2a4a9e451e0e2ceff8299f93f72529a54bc0bdcbb21f8d3c",
+          "clean_state_input_max": 0.0,
+          "state_token_l2": 0.0,
+          "shift_refreshed_state_max": 0.008466958999633789
+        },
+        {
+          "chunk": 4,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "pairing_pass": true,
+          "model_compat_pass": true,
+          "state_compare_pass": true,
+          "camera_compare_pass": true,
+          "shift_snapshot_digest": "86baced980593ad2cab5363ffdb417a9b8e2ca677bd2e434fcba094ea67cae3b",
+          "clean_snapshot_digest": "86baced980593ad2cab5363ffdb417a9b8e2ca677bd2e434fcba094ea67cae3b",
+          "shift_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "clean_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "shift_controller_digest": "f7c68c9b33e80978e71d5b55b1af954dab8686fe544e5ba4a4ef5e5eb6f30c96",
+          "clean_controller_digest": "f7c68c9b33e80978e71d5b55b1af954dab8686fe544e5ba4a4ef5e5eb6f30c96",
+          "clean_patch_sha256": "f22587b8dac3ff488b909c7d46bcfe4abee0c6fc8dae382ec3017cf58cc11e16",
+          "z0_sha256": "ed409b15a8dc522868e004e2752c34938311b4c9f6248bf6d13820bf0d0ce1b0",
+          "action_sha256": "f7755d759ff3dd55da131fe8b7faceb6216ae69e3f5a9792af2ad791c509e961",
+          "clean_state_input_max": 0.0,
+          "state_token_l2": 0.0,
+          "shift_refreshed_state_max": 0.007537364959716797
+        },
+        {
+          "chunk": 5,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "pairing_pass": true,
+          "model_compat_pass": true,
+          "state_compare_pass": true,
+          "camera_compare_pass": true,
+          "shift_snapshot_digest": "85976dcac456472880c87ae618d39a920d73487caa3dedce07b83567c3297cd8",
+          "clean_snapshot_digest": "85976dcac456472880c87ae618d39a920d73487caa3dedce07b83567c3297cd8",
+          "shift_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "clean_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "shift_controller_digest": "45aa36da7159a994c9634714391a21cc30af738ac153ef7ddb1b731011131a20",
+          "clean_controller_digest": "45aa36da7159a994c9634714391a21cc30af738ac153ef7ddb1b731011131a20",
+          "clean_patch_sha256": "489855a43fa63acc720b4c0156d3e005ae43171a2a08c8684588b1cfc57a452a",
+          "z0_sha256": "b141c176688bde17f5962510fd017d6e882c08ec0b1f054256ae381230f473ad",
+          "action_sha256": "d6321445f781bf4e9ea837fe3c7e0dc28615d4ca06c608844dd6584ca1618126",
+          "clean_state_input_max": 0.0,
+          "state_token_l2": 0.0,
+          "shift_refreshed_state_max": 0.061333686113357544
+        },
+        {
+          "chunk": 6,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "pairing_pass": true,
+          "model_compat_pass": true,
+          "state_compare_pass": true,
+          "camera_compare_pass": true,
+          "shift_snapshot_digest": "d0ee89922bbbf311373851b8486d236aeb9c5e0c4cf393a14b6a9cea2748ca5f",
+          "clean_snapshot_digest": "d0ee89922bbbf311373851b8486d236aeb9c5e0c4cf393a14b6a9cea2748ca5f",
+          "shift_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "clean_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "shift_controller_digest": "5d582b940dcbc05b5f160da601dfe80c4b936f3b22d02d9f38cf99289e4be5c3",
+          "clean_controller_digest": "5d582b940dcbc05b5f160da601dfe80c4b936f3b22d02d9f38cf99289e4be5c3",
+          "clean_patch_sha256": "d3c20b10bbe5b66eac0fda28b4ae552717e57fc6607c79ce608d085571dca6f5",
+          "z0_sha256": "d2a007cb2153f025f3d39adade7e6ac552e1599c56ff9e41b7da4f7ec2829861",
+          "action_sha256": "46eb286ff6bffa678a7bb5039b48506279f567d776f8fa54a8435a73647ae4bc",
+          "clean_state_input_max": 0.0,
+          "state_token_l2": 0.0,
+          "shift_refreshed_state_max": 0.01607722043991089
+        },
+        {
+          "chunk": 7,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "pairing_pass": true,
+          "model_compat_pass": true,
+          "state_compare_pass": true,
+          "camera_compare_pass": true,
+          "shift_snapshot_digest": "28150fd808f2679c23f9cc706b80715822b2724dafc3782b4a0b48ec8485d829",
+          "clean_snapshot_digest": "28150fd808f2679c23f9cc706b80715822b2724dafc3782b4a0b48ec8485d829",
+          "shift_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "clean_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "shift_controller_digest": "f07714060dc16420e167e7893b7a982fb619b9c87fe46c498e185e8fa4f13fb9",
+          "clean_controller_digest": "f07714060dc16420e167e7893b7a982fb619b9c87fe46c498e185e8fa4f13fb9",
+          "clean_patch_sha256": "47107aaf7cb40c9d3b5818717f3e8825eb21738aa1908ab5b51092dcbcd0c0bb",
+          "z0_sha256": "8093c15dff7795681f469204fcb28f2f426e24df54a3f9399330801a24852d43",
+          "action_sha256": "535ccf6d4f73f7afe23b02a1f2d71f11dd1aa7283d74c04c4e3f0853e9f71d84",
+          "clean_state_input_max": 0.0,
+          "state_token_l2": 0.0,
+          "shift_refreshed_state_max": 0.01996326446533203
+        },
+        {
+          "chunk": 8,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "pairing_pass": true,
+          "model_compat_pass": true,
+          "state_compare_pass": true,
+          "camera_compare_pass": true,
+          "shift_snapshot_digest": "c36b56d27058d46c06960030ad7846a05fb63a4888991b2f3022378025b9fb0b",
+          "clean_snapshot_digest": "c36b56d27058d46c06960030ad7846a05fb63a4888991b2f3022378025b9fb0b",
+          "shift_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "clean_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "shift_controller_digest": "582ebb3db391f12b52588615982322f6ba7daa2211209289d45d138ecbf3e22d",
+          "clean_controller_digest": "582ebb3db391f12b52588615982322f6ba7daa2211209289d45d138ecbf3e22d",
+          "clean_patch_sha256": "d7cefe1620b859e084ccbf3ac04367692239d949f43fbbfde9579c48a92aaf58",
+          "z0_sha256": "979b9107228d2946f898926c8f8cc87283e887a6cdc091e8a16e5d3a0157d3f9",
+          "action_sha256": "c3346b5c752d6bdd28fd3d5c0bc97df82cd45e058bbae68e6605aa38a4477dee",
+          "clean_state_input_max": 0.0,
+          "state_token_l2": 0.0,
+          "shift_refreshed_state_max": 0.015752553939819336
+        },
+        {
+          "chunk": 9,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "pairing_pass": true,
+          "model_compat_pass": true,
+          "state_compare_pass": true,
+          "camera_compare_pass": true,
+          "shift_snapshot_digest": "b093086a1e294abe14c80b9f3c0599054214e967d059ebf9ea54355dd70a49a3",
+          "clean_snapshot_digest": "b093086a1e294abe14c80b9f3c0599054214e967d059ebf9ea54355dd70a49a3",
+          "shift_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "clean_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "shift_controller_digest": "28d71e9b0c970d33dc049ae94fbccff8e32c0541744d235bea9aa1841cf4a4f3",
+          "clean_controller_digest": "28d71e9b0c970d33dc049ae94fbccff8e32c0541744d235bea9aa1841cf4a4f3",
+          "clean_patch_sha256": "a0694a500da59929a1fe6e747abba77a3748fffbd14707cac3b612445c0efcda",
+          "z0_sha256": "fb8f8f5348b4b8e5a2006af6807aa4f4c68c12fb88c3c9a2154d8ab3d25eff4f",
+          "action_sha256": "a28259ff3118e5e12a0e03ff4f2727bade01a2edb3003a0ae2169767d6207b09",
+          "clean_state_input_max": 0.0,
+          "state_token_l2": 0.0,
+          "shift_refreshed_state_max": 0.005702078342437744
+        }
+      ]
+    },
+    {
+      "state_id": 43,
+      "mode": "frozen",
+      "success": false,
+      "steps": 220,
+      "hit_max_steps": true,
+      "chunks": [
+        {
+          "chunk": 0,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 1,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 2,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 3,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 4,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 5,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 6,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 7,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 8,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 9,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 10,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 11,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 12,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 13,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 14,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 15,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 16,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 17,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 18,
+          "mode": "frozen",
+          "patch_source": "shift"
+        }
+      ]
+    },
+    {
+      "state_id": 43,
+      "mode": "oracle",
+      "success": true,
+      "steps": 95,
+      "hit_max_steps": false,
+      "chunks": [
+        {
+          "chunk": 0,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "pairing_pass": true,
+          "model_compat_pass": true,
+          "state_compare_pass": true,
+          "camera_compare_pass": true,
+          "shift_snapshot_digest": "7eb44c6555c908ee297fce5c456683c1002aae5fb9e174dce6a60abda21674b8",
+          "clean_snapshot_digest": "7eb44c6555c908ee297fce5c456683c1002aae5fb9e174dce6a60abda21674b8",
+          "shift_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "clean_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "shift_controller_digest": "9777cb3516a32f37d2112d354bc84067e8e2841494f1cecc4ccc49ae0163ff59",
+          "clean_controller_digest": "9777cb3516a32f37d2112d354bc84067e8e2841494f1cecc4ccc49ae0163ff59",
+          "clean_patch_sha256": "5a94ed47d1d31f3fcac8af70b6fb3a1ad43e9c384915aa8981414f2dc995fa79",
+          "z0_sha256": "0d1fef08c7f7d1b03f57d6e9a01a4420c03ed0278c3b1b908c6148698cf0008f",
+          "action_sha256": "5cc4bb42f1dedb70010910e464f59bdd99b66d45181452e37681cd611c9346c1",
+          "clean_state_input_max": 0.0,
+          "state_token_l2": 0.0,
+          "shift_refreshed_state_max": 0.0004547238349914551
+        },
+        {
+          "chunk": 1,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "pairing_pass": true,
+          "model_compat_pass": true,
+          "state_compare_pass": true,
+          "camera_compare_pass": true,
+          "shift_snapshot_digest": "74652cd670cbbb75168a2928bfe9b571db7ba6c45b6f890dc47052f22ad78bfb",
+          "clean_snapshot_digest": "74652cd670cbbb75168a2928bfe9b571db7ba6c45b6f890dc47052f22ad78bfb",
+          "shift_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "clean_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "shift_controller_digest": "27e3b9ac902d99da742e980660c852ce836e3dc52c0235509825aaed16a7ef9c",
+          "clean_controller_digest": "27e3b9ac902d99da742e980660c852ce836e3dc52c0235509825aaed16a7ef9c",
+          "clean_patch_sha256": "0391db2bbbaa163f6368c364762995cf6c0e17747cd5ab39c6649c3234ea95cf",
+          "z0_sha256": "7d9882bbb0e83759751d826dc4b3be1c14825addfc09b4ec24ec0a0efa48a0be",
+          "action_sha256": "f36ac4583ef718d6a1525a57b7372b87fef4e8c638c83e23007ee54363b52af5",
+          "clean_state_input_max": 0.0,
+          "state_token_l2": 0.0,
+          "shift_refreshed_state_max": 0.01190263032913208
+        },
+        {
+          "chunk": 2,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "pairing_pass": true,
+          "model_compat_pass": true,
+          "state_compare_pass": true,
+          "camera_compare_pass": true,
+          "shift_snapshot_digest": "5b1bc96eca85ecf34f0165644764b5987655264c1e59e1374037983a80b71a86",
+          "clean_snapshot_digest": "5b1bc96eca85ecf34f0165644764b5987655264c1e59e1374037983a80b71a86",
+          "shift_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "clean_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "shift_controller_digest": "e35449fed883b4c49cffced8e34560374dcbfc478551b6a5b0038ff055ef93de",
+          "clean_controller_digest": "e35449fed883b4c49cffced8e34560374dcbfc478551b6a5b0038ff055ef93de",
+          "clean_patch_sha256": "42d7e560a3a635a48128440245f6b66e89ad4fb5fabe2f1c5e6e856058134da8",
+          "z0_sha256": "a5b7f8fa6119c90bd77020e9b096d439f992c7d939f8649ab3e7764006106b52",
+          "action_sha256": "7d22242492988c2fa9c2d60d9c414d5d66c30643bbacf425d08fee9515ee1ea5",
+          "clean_state_input_max": 0.0,
+          "state_token_l2": 0.0,
+          "shift_refreshed_state_max": 0.016475677490234375
+        },
+        {
+          "chunk": 3,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "pairing_pass": true,
+          "model_compat_pass": true,
+          "state_compare_pass": true,
+          "camera_compare_pass": true,
+          "shift_snapshot_digest": "c9ab8402e6359ea90cef89f912e60d09b172e4bf3e6b7541051a547c5d6f281e",
+          "clean_snapshot_digest": "c9ab8402e6359ea90cef89f912e60d09b172e4bf3e6b7541051a547c5d6f281e",
+          "shift_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "clean_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "shift_controller_digest": "97102e101672b331ce7c91a11752b23cc4574af0e2686bd3d98732ed1484c3a6",
+          "clean_controller_digest": "97102e101672b331ce7c91a11752b23cc4574af0e2686bd3d98732ed1484c3a6",
+          "clean_patch_sha256": "6a9ff41dbb5d9d3e6a02389b4beab5689ef2f6fa4160ba9c4f8a958cd19abdd3",
+          "z0_sha256": "68b43e08f9e88d190f2ee2b0acc9db75797de00933c1ec4e1ef92706d0e9a026",
+          "action_sha256": "81f481ea7621b9424f7fe0e5e1c0b9828743fd0e61bd0befc2070ca867e4e25b",
+          "clean_state_input_max": 0.0,
+          "state_token_l2": 0.0,
+          "shift_refreshed_state_max": 0.007317900657653809
+        },
+        {
+          "chunk": 4,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "pairing_pass": true,
+          "model_compat_pass": true,
+          "state_compare_pass": true,
+          "camera_compare_pass": true,
+          "shift_snapshot_digest": "61693fc98c57b1e13a83009e33e19889accda3d5b93026070add3f8a8d1f32d0",
+          "clean_snapshot_digest": "61693fc98c57b1e13a83009e33e19889accda3d5b93026070add3f8a8d1f32d0",
+          "shift_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "clean_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "shift_controller_digest": "7c3129980725bf24e4744bd571c25bf0afaad70342378ace09cb44054a1f84c9",
+          "clean_controller_digest": "7c3129980725bf24e4744bd571c25bf0afaad70342378ace09cb44054a1f84c9",
+          "clean_patch_sha256": "02cc979298d88c3e31e8ef1756d58f6e65cc0394da8ddc132f372487c1b12ec6",
+          "z0_sha256": "458e26eca12847faef29597fdf341e5aee3ef434398d3b7431a643d588c3cb97",
+          "action_sha256": "cf3f90ffc5326bda5bda88eb42f859bd6dd4256a328fe7838d09426f5ff1890a",
+          "clean_state_input_max": 0.0,
+          "state_token_l2": 0.0,
+          "shift_refreshed_state_max": 0.012694597244262695
+        },
+        {
+          "chunk": 5,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "pairing_pass": true,
+          "model_compat_pass": true,
+          "state_compare_pass": true,
+          "camera_compare_pass": true,
+          "shift_snapshot_digest": "ea46d3affe5c0f7067596d08f9ca63d7ad9d7fa83a260ae4bbc21f148533a070",
+          "clean_snapshot_digest": "ea46d3affe5c0f7067596d08f9ca63d7ad9d7fa83a260ae4bbc21f148533a070",
+          "shift_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "clean_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "shift_controller_digest": "3042e615e7fca71a663b700bfa0ea5a56ef226b016dc50cce202f006050c9012",
+          "clean_controller_digest": "3042e615e7fca71a663b700bfa0ea5a56ef226b016dc50cce202f006050c9012",
+          "clean_patch_sha256": "0e2c1e23f5dcecc646285bac08b635419a066435081d7116667b4668894b880b",
+          "z0_sha256": "6d2539a6f18f36bfe9311c5e7f2fca931854eb3c1bfa92dbcf7cc3f46639f80d",
+          "action_sha256": "03e9e6874ad6caf7042e0b7100bceb544bb8a3956d624a0217b45319277c7890",
+          "clean_state_input_max": 0.0,
+          "state_token_l2": 0.0,
+          "shift_refreshed_state_max": 0.007871031761169434
+        },
+        {
+          "chunk": 6,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "pairing_pass": true,
+          "model_compat_pass": true,
+          "state_compare_pass": true,
+          "camera_compare_pass": true,
+          "shift_snapshot_digest": "e32d585a4b5abb4657686ddc3516f0607a717000a7c11d3192c14652e130b063",
+          "clean_snapshot_digest": "e32d585a4b5abb4657686ddc3516f0607a717000a7c11d3192c14652e130b063",
+          "shift_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "clean_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "shift_controller_digest": "9820aafae32f2fcd22f0773fa40a7bf21c261d5c5ae668e2fc57497b4cf41088",
+          "clean_controller_digest": "9820aafae32f2fcd22f0773fa40a7bf21c261d5c5ae668e2fc57497b4cf41088",
+          "clean_patch_sha256": "4466ddf47df7cb67c8d3e45d84fbcb8d9457a2e03c877e9c3034d52eff139f51",
+          "z0_sha256": "625906e7b504e0e34e7327fdab955bf453c956914b594e47adaaa96316bd5095",
+          "action_sha256": "a083fafe75317d5f41e80851004806adca7570ab7704c26d85dbbf933ce73c77",
+          "clean_state_input_max": 0.0,
+          "state_token_l2": 0.0,
+          "shift_refreshed_state_max": 0.016732096672058105
+        },
+        {
+          "chunk": 7,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "pairing_pass": true,
+          "model_compat_pass": true,
+          "state_compare_pass": true,
+          "camera_compare_pass": true,
+          "shift_snapshot_digest": "042acfc0923e34c08ecf143bb2983ef0d34dba68e9f852fb631a08ce118bfd62",
+          "clean_snapshot_digest": "042acfc0923e34c08ecf143bb2983ef0d34dba68e9f852fb631a08ce118bfd62",
+          "shift_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "clean_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "shift_controller_digest": "2d8c85a38327b50ce7ab17d2621511e8a0da3d7b358adb0855a8e5d51d8f62bd",
+          "clean_controller_digest": "2d8c85a38327b50ce7ab17d2621511e8a0da3d7b358adb0855a8e5d51d8f62bd",
+          "clean_patch_sha256": "49f0167250b7af23a376c8b39eb23fee82b9ff3f3546710b7f36918c08921d38",
+          "z0_sha256": "c9d644a1e89cffb69e66f35c838f6345b23173e59794bbb9bc09dd003664b4f0",
+          "action_sha256": "19f297f983e398352ab653d29c0d704e1a0a8d991ab4810fecb9327b85d0f29d",
+          "clean_state_input_max": 0.0,
+          "state_token_l2": 0.0,
+          "shift_refreshed_state_max": 0.013976216316223145
+        }
+      ]
+    },
+    {
+      "state_id": 45,
+      "mode": "frozen",
+      "success": false,
+      "steps": 220,
+      "hit_max_steps": true,
+      "chunks": [
+        {
+          "chunk": 0,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 1,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 2,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 3,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 4,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 5,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 6,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 7,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 8,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 9,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 10,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 11,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 12,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 13,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 14,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 15,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 16,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 17,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 18,
+          "mode": "frozen",
+          "patch_source": "shift"
+        }
+      ]
+    },
+    {
+      "state_id": 45,
+      "mode": "oracle",
+      "success": true,
+      "steps": 108,
+      "hit_max_steps": false,
+      "chunks": [
+        {
+          "chunk": 0,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "pairing_pass": true,
+          "model_compat_pass": true,
+          "state_compare_pass": true,
+          "camera_compare_pass": true,
+          "shift_snapshot_digest": "ec40191c67722406bdadecd24d822ac5fd714c06817271521a2780563fb599eb",
+          "clean_snapshot_digest": "ec40191c67722406bdadecd24d822ac5fd714c06817271521a2780563fb599eb",
+          "shift_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "clean_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "shift_controller_digest": "1c611cd836fa294d9343826113f7a7288304186b01239b0e79c9ed9ae543a967",
+          "clean_controller_digest": "1c611cd836fa294d9343826113f7a7288304186b01239b0e79c9ed9ae543a967",
+          "clean_patch_sha256": "0ffe38cc178c1f703d5cef3e9c3bc04525971ea61fbceea7244070e3cab78156",
+          "z0_sha256": "c7b9a0e6d67490b6dac2203219e60d25f0c6f41163b2edae6275d3d31a820e0d",
+          "action_sha256": "7f5f49205c3535ba8190924fd6f125343adac48f7b5368a58cd12b8088506e8f",
+          "clean_state_input_max": 0.0,
+          "state_token_l2": 0.0,
+          "shift_refreshed_state_max": 0.0004551410675048828
+        },
+        {
+          "chunk": 1,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "pairing_pass": true,
+          "model_compat_pass": true,
+          "state_compare_pass": true,
+          "camera_compare_pass": true,
+          "shift_snapshot_digest": "2215e6d2c145f1051e0e2024cc269f775745cd133eb172455fe605d8d1bf85dc",
+          "clean_snapshot_digest": "2215e6d2c145f1051e0e2024cc269f775745cd133eb172455fe605d8d1bf85dc",
+          "shift_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "clean_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "shift_controller_digest": "21a7dd5c40e4be7e7f28975b9df6c862bb5dbb3a733d1604dc20ec7579c8166f",
+          "clean_controller_digest": "21a7dd5c40e4be7e7f28975b9df6c862bb5dbb3a733d1604dc20ec7579c8166f",
+          "clean_patch_sha256": "9c71fd0d1f080b7dc765bdef2545f9097005318527f24e027759290376e05b1a",
+          "z0_sha256": "d19c6217b5e2aa41a59269bc5b924f750b882888e6d49806a3733fc4ae1a5d7a",
+          "action_sha256": "c29c1da2675d416f6de08d448305ab0e1ec0e578756f074eb48f97ccc3128183",
+          "clean_state_input_max": 0.0,
+          "state_token_l2": 0.0,
+          "shift_refreshed_state_max": 0.012619435787200928
+        },
+        {
+          "chunk": 2,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "pairing_pass": true,
+          "model_compat_pass": true,
+          "state_compare_pass": true,
+          "camera_compare_pass": true,
+          "shift_snapshot_digest": "8f2f7c486a56b3f9d43ac85b69bbcf37f6230d8a2213adca791d352c1b74afdd",
+          "clean_snapshot_digest": "8f2f7c486a56b3f9d43ac85b69bbcf37f6230d8a2213adca791d352c1b74afdd",
+          "shift_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "clean_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "shift_controller_digest": "3bb69442d23701f9bcd91e89f6a336be1555eba284a98a9150214f2770fd9b2f",
+          "clean_controller_digest": "3bb69442d23701f9bcd91e89f6a336be1555eba284a98a9150214f2770fd9b2f",
+          "clean_patch_sha256": "429403d5118310ef204fb55b827e5e445b039798eb363aaba813b26ee4c01640",
+          "z0_sha256": "65a974e9ff7e99b3990dc934be010484caf0a4ace1c59e28055d0fba3a53872d",
+          "action_sha256": "5f1a655963db08dea48554d6734f6d49655ee8c149d332aece519d17c5860e8c",
+          "clean_state_input_max": 0.0,
+          "state_token_l2": 0.0,
+          "shift_refreshed_state_max": 0.012966036796569824
+        },
+        {
+          "chunk": 3,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "pairing_pass": true,
+          "model_compat_pass": true,
+          "state_compare_pass": true,
+          "camera_compare_pass": true,
+          "shift_snapshot_digest": "3ad1e459f000c3515ae93c0ba8222e6a1be6a220fdd0f686f180939fa6eb2c2b",
+          "clean_snapshot_digest": "3ad1e459f000c3515ae93c0ba8222e6a1be6a220fdd0f686f180939fa6eb2c2b",
+          "shift_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "clean_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "shift_controller_digest": "8179c765281cda67ec7f52dfa94c90b3a5bb2e4f6aa53dd414f4fb63d1fd0c30",
+          "clean_controller_digest": "8179c765281cda67ec7f52dfa94c90b3a5bb2e4f6aa53dd414f4fb63d1fd0c30",
+          "clean_patch_sha256": "3a9ddcf1eaaf3e2ad246bf0ecab2003ecd044fef82b759c8f9bff6ff3bccfb43",
+          "z0_sha256": "93b621e4a4941b4689d86731c6eb729f1dbcf258bbb2da180f0672dddb8a7392",
+          "action_sha256": "278ffebd25e2895bb4153896b2a2c49591639c9499107f76a995dc24bb86ccad",
+          "clean_state_input_max": 0.0,
+          "state_token_l2": 0.0,
+          "shift_refreshed_state_max": 0.004863739013671875
+        },
+        {
+          "chunk": 4,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "pairing_pass": true,
+          "model_compat_pass": true,
+          "state_compare_pass": true,
+          "camera_compare_pass": true,
+          "shift_snapshot_digest": "2dfb30593b0ade579722ab927aa98d32043bf235615e1bc6977fab4fa1475c91",
+          "clean_snapshot_digest": "2dfb30593b0ade579722ab927aa98d32043bf235615e1bc6977fab4fa1475c91",
+          "shift_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "clean_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "shift_controller_digest": "d00f42fc8c941108a92b5f5960d93669248948437f68a4a699d924098f7757f9",
+          "clean_controller_digest": "d00f42fc8c941108a92b5f5960d93669248948437f68a4a699d924098f7757f9",
+          "clean_patch_sha256": "d40bd3e06579398f4c1a3964e0d8bdb0e44ded0f0212576ed5ba278b1d23f8b5",
+          "z0_sha256": "cd948ade2b8582a66d33d2e5e6f2f9f25020bcb0c3eeed21b2de03967a9ac6be",
+          "action_sha256": "235194d7cc70cafa23bc1a668f9974eebcce8bd7b89b831de8f3d2ea91dcaec3",
+          "clean_state_input_max": 0.0,
+          "state_token_l2": 0.0,
+          "shift_refreshed_state_max": 0.06794759631156921
+        },
+        {
+          "chunk": 5,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "pairing_pass": true,
+          "model_compat_pass": true,
+          "state_compare_pass": true,
+          "camera_compare_pass": true,
+          "shift_snapshot_digest": "22bb56273a425e7321abe3d694c46b6caddac6f594c71af57fe3b494adf24730",
+          "clean_snapshot_digest": "22bb56273a425e7321abe3d694c46b6caddac6f594c71af57fe3b494adf24730",
+          "shift_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "clean_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "shift_controller_digest": "b240424c06948adff6c90a724ae22c7482dd89cb8832b8c40caa9a1880360d50",
+          "clean_controller_digest": "b240424c06948adff6c90a724ae22c7482dd89cb8832b8c40caa9a1880360d50",
+          "clean_patch_sha256": "61aea89bd8239dd9af3cc238266015eb728877ca1a20d142d624928462caee9f",
+          "z0_sha256": "d7d90c5153e975f882684565673cf67060a96f6124be79a70b8ae825f28c00ed",
+          "action_sha256": "6f5efb249f4aff54c1fabce2220bbc5f3b584eacd93dbbecd56f77eb14c626c9",
+          "clean_state_input_max": 0.0,
+          "state_token_l2": 0.0,
+          "shift_refreshed_state_max": 0.017654716968536377
+        },
+        {
+          "chunk": 6,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "pairing_pass": true,
+          "model_compat_pass": true,
+          "state_compare_pass": true,
+          "camera_compare_pass": true,
+          "shift_snapshot_digest": "946e82767f478e91ffd519be2f98fd24f9710aa5939a1cabe53c4e38032b1cb4",
+          "clean_snapshot_digest": "946e82767f478e91ffd519be2f98fd24f9710aa5939a1cabe53c4e38032b1cb4",
+          "shift_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "clean_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "shift_controller_digest": "e802f4478fbaa56750363acace6855b8105cad2982476f320a3b92ac4251c43f",
+          "clean_controller_digest": "e802f4478fbaa56750363acace6855b8105cad2982476f320a3b92ac4251c43f",
+          "clean_patch_sha256": "04ebde8b908b213627acc54cfdcf5023c619f8d9512744591764b617a365dfe7",
+          "z0_sha256": "94a2fade5488a2a3f4575ac68ce6044ecb981ad4b3f28bf1597a7ed0a9dbf150",
+          "action_sha256": "b214607ddf64add502a049e0c08db96c37442ec498c726c5ef3b8e3ec128dc10",
+          "clean_state_input_max": 0.0,
+          "state_token_l2": 0.0,
+          "shift_refreshed_state_max": 0.015087366104125977
+        },
+        {
+          "chunk": 7,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "pairing_pass": true,
+          "model_compat_pass": true,
+          "state_compare_pass": true,
+          "camera_compare_pass": true,
+          "shift_snapshot_digest": "e9f1f2efac5bc1211269c268911cb16407762d5adb2b24ba693eabacd94d8432",
+          "clean_snapshot_digest": "e9f1f2efac5bc1211269c268911cb16407762d5adb2b24ba693eabacd94d8432",
+          "shift_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "clean_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "shift_controller_digest": "da901940c12d1eb462dccb6209779fd5094a23680dd71b0cfe28efd88c6c0528",
+          "clean_controller_digest": "da901940c12d1eb462dccb6209779fd5094a23680dd71b0cfe28efd88c6c0528",
+          "clean_patch_sha256": "09d885ba671c8f87708f9c24a6947e4d4475c679bbfe0cd495b99b7954cca114",
+          "z0_sha256": "b600e2f9d1f9f36fe53bdb4bdf7defa23cee4c1806b992011b6efe2815812951",
+          "action_sha256": "b7e3d465fe39098d86971c3b451f690cc863c93b5aa38c83660b81ff68854d9a",
+          "clean_state_input_max": 0.0,
+          "state_token_l2": 0.0,
+          "shift_refreshed_state_max": 0.07818251848220825
+        },
+        {
+          "chunk": 8,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "pairing_pass": true,
+          "model_compat_pass": true,
+          "state_compare_pass": true,
+          "camera_compare_pass": true,
+          "shift_snapshot_digest": "d3272725f7a22928087cc56648d8ee7e34c1f7e2bc6bf57358ca4e89d1b06b1b",
+          "clean_snapshot_digest": "d3272725f7a22928087cc56648d8ee7e34c1f7e2bc6bf57358ca4e89d1b06b1b",
+          "shift_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "clean_model_digest": "2496cddb078247b2bab984cf4010eb2145872682111c9a1a04c20a8a7478304d",
+          "shift_controller_digest": "076899faad85346af95b5d3eb15f926e95a5907c181d021383a0a9d9d83f1a08",
+          "clean_controller_digest": "076899faad85346af95b5d3eb15f926e95a5907c181d021383a0a9d9d83f1a08",
+          "clean_patch_sha256": "c4f96052c602cde4a0684ff5ffde4945896d4bd7d575fd7a3ddac0abb39d8bd4",
+          "z0_sha256": "ff173a64d0fd3dd5384504f27bd408d8f14cfcc2337ce58dc72a846d02850f91",
+          "action_sha256": "41493d86d30d5126de7dd35862a384bdda74a0bae65b6812e6247725a2ae7e2a",
+          "clean_state_input_max": 0.0,
+          "state_token_l2": 0.0,
+          "shift_refreshed_state_max": 0.014804959297180176
+        }
+      ]
+    }
+  ]
+}
