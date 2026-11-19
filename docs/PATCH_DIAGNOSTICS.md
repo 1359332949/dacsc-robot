@@ -506,3 +506,27 @@ Agentview correlations are weak/inconsistent. This is a **policy-sensitivity
 signal**, not a validated gate: it is view- and phase-specific, the calibration
 set is small, and it has not been closed-loop tested. Do not train the Adapter
 from this diagnostic alone.
+
+### Gate 1A-4: deployable shift-only attention proxy
+
+The strong eye-in-hand late correlations in Gate 1A-3 use paired Clean/Shift
+JS/entropy changes, which are privileged and unavailable at deployment. A
+deployable proxy was therefore tested: the Shift observation's attention
+descriptor distance to the source-fit Clean prior, using no Clean patch.
+
+Gate result (threshold from source-fit Clean only):
+
+| view/window | val Clean FPR | val Shift activation | val AUROC |
+|---|---:|---:|---:|
+| agentview early | 0.2 | 0.0 | 0.27 |
+| agentview late | 0.2 | 0.3 | 0.46 |
+| eye-in-hand early | 0.1 | 0.3 | 0.55 |
+| eye-in-hand late | 0.0 | 0.0 | 0.39 |
+
+Correlation with executed-action deviation is weak/inconsistent; the strongest
+magnitude is a negative relation for eye-in-hand early XYZ (r=-0.45, CI
+[-0.68,-0.13]), not the privileged positive wrist-late JS relation.
+
+Conclusion: the policy-sensitivity captured by paired attention changes is not
+recovered by a simple shift-vs-source-prior descriptor. It is diagnostic
+evidence, not a deployable gate. Gate 1A-4 does not pass; no Adapter training.
