@@ -339,10 +339,13 @@ def main():
         "per_record": results,
         "aggregates": _aggregate(results),
         "claim_boundary": (
-            "B2/B3 are privileged offline mediator interventions. B2 recovery "
-            "supports visual patch mediation but is not a deployable TTA signal. "
-            "B3 tests whether same-phase random Clean content produces a similar "
-            "change. No closed-loop success claim is made."
+            "B2/B3 are privileged offline mediator interventions under the known "
+            "target lighting configuration rendered on source initial states. "
+            "B2 recovery supports same-state patch mediation but is not a deployable "
+            "TTA signal or unknown-target generalization result. B3 tests whether "
+            "different-state Clean content produces a similar change. Aggregates "
+            "are state-balanced; no target-dev/test states, success labels, or "
+            "rewards are used, and no closed-loop success claim is made."
         ),
     }
     args.out.parent.mkdir(parents=True, exist_ok=True)
