@@ -374,7 +374,10 @@ def main():
         args.out.write_text(json.dumps(report, indent=2) + "\n")
         print(json.dumps(report, indent=2))
         if not report["identity_pass"]:
-            raise RuntimeError("identity transform failed the 1e-6 equivalence check")
+            raise RuntimeError(
+                "Phase 0 failed: identity equivalence must be <1e-6 and "
+                "DINO patch/prefix token layout must be uniquely verified"
+            )
     finally:
         env.close()
 
