@@ -84,7 +84,8 @@ Failed pairs remain in the artifact for audit but are excluded downstream.
 
 Outputs:
 
-- source_patch_pairs.npz: per-view Clean/Shift patch tensors, state inputs,
+- source_patch_pairs.npz: per-view Clean/Shift pre-Resampler visual-token
+  tensors, state inputs,
   state/language tokens, pooled language, explicit z0, and paired actions;
 - source_patch_pairs.manifest.json: split role, state/chunk/step, pair checks,
   digests, verified patch grid/prefix-token layout, shapes, and file hashes.
@@ -112,8 +113,12 @@ Per view and window, the script reports:
 - logistic-regression AUROC trained on source_fit paired states and tested on
   disjoint source_validation states;
 - state-cluster bootstrap confidence intervals for held-out AUROC;
-- average N-by-N patch self-similarity matrices, where N is the observed token
-  count for that view.
+- average N-by-N pre-Resampler visual-token self-similarity matrices, where N
+  is the observed visual-encoder sequence length. If prefix tokens are present,
+  they are included and identified separately in the report.
+
+Self-similarity matrices are averaged within initial state first, then across
+states equally.
 
 The classifier is trained and tested at initial-state granularity: all
 observations from a state stay in one split role. Early and late windows are
