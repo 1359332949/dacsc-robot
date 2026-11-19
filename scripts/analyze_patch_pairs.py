@@ -29,7 +29,8 @@ def _aggregate_by_state(records, descriptors, role, window, domain):
         if record["role"] != role or record["window"] != window:
             continue
         key = int(record["state_id"])
-        grouped.setdefault(key, []).append(descriptors[int(record["feature_row"])][domain])
+        row = int(record["feature_row"])
+        grouped.setdefault(key, []).append(descriptors[row][domain])
     return {state: np.mean(values, axis=0) for state, values in grouped.items()}
 
 
@@ -77,13 +78,15 @@ def _mean_self_similarity(npz, records, views, window, role):
 
 
 def analyze_view_window(npz, records, view, window, seed):
-    descriptors = []
+    # feature_row is an index into the original NPZ. Pairing-failed rows are
+    # excluded from records, so never assume list position == feature_row.
+    descriptors = {}
     for record in records:
         row = int(record["feature_row"])
-        descriptors.append({
+        descriptors[row] = {
             "clean": token_descriptor(npz[f"clean_{view}"][row]),
             "shift": token_descriptor(npz[f"shift_{view}"][row]),
-        })
+        }
 
     fit = _aggregate_by_state(records, descriptors, "source_fit", window, "clean")
     fit_shift = _aggregate_by_state(records, descriptors, "source_fit", window, "shift")
@@ -97,6 +100,7 @@ def analyze_view_window(npz, records, view, window, seed):
         return {"status": "insufficient_source_validation", "source_fit_states": len(fit_ids)}
 
     fit_clean = np.stack([fit[s] for s in fit_ids])
+    # The scale is fitted exclusively on source_fit Clean samples.
     scale = np.maximum(fit_clean.std(axis=0, ddof=0), 1e-3)
 
     pair_dists_fit = [
@@ -117,7 +121,7 @@ def analyze_view_window(npz, records, view, window, seed):
             int(record["state_id"])
         ] = descriptors[row]["clean"]
     content_dists = []
-    for chunk, state_map in clean_by_chunk.items():
+    for state_map in clean_by_chunk.values():
         states = sorted(state_map)
         for i, state_a in enumerate(states):
             for state_b in states[i + 1:]:
