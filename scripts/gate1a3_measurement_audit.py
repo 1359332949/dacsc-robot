@@ -68,6 +68,7 @@ def main():
                             'attention_clean':attention_descriptor(acw,sc[j]),
                             'attention_shift':attention_descriptor(asw,ss[j])}
             rows.append({'feature_row':i,'state_id':int(r['state_id']),'role':r['role'],'window':r['window'],'chunk_index':int(r['chunk_index']),
+                         'pairing_pass':bool(r.get('pairing_pass', False)),
                          'attention_metrics':metrics,
                          'action_exec':{'norm':float(np.sqrt(np.mean(d**2))),
                                         'xyz':float(np.sqrt(np.mean(d[:,:3]**2))),

@@ -530,3 +530,25 @@ magnitude is a negative relation for eye-in-hand early XYZ (r=-0.45, CI
 Conclusion: the policy-sensitivity captured by paired attention changes is not
 recovered by a simple shift-vs-source-prior descriptor. It is diagnostic
 evidence, not a deployable gate. Gate 1A-4 does not pass; no Adapter training.
+
+### Eye-in-hand early candidate gate vs executed action relevance
+
+Validation-only state-level audit (10 source_validation states):
+
+| action dimension | Pearson | 95% state bootstrap CI | Spearman |
+|---|---:|---:|---:|
+| norm | 0.469 | [-0.628, 0.875] | 0.236 |
+| XYZ | 0.464 | [-0.631, 0.869] | 0.224 |
+| rotation | 0.176 | [-0.836, 0.948] | 0.091 |
+| gripper | -0.303 | [-0.727, 0.222] | -0.375 |
+
+High-score vs low-score states have nearly identical XYZ action deviation
+(0.1030 vs 0.1025). Thus the eye-in-hand early domain score is a candidate
+lighting detector, but **not** demonstrated to be a task-risk detector. Do not
+promote it to a gate on this evidence.
+
+Gate 1A-4 and Gate 1A-3 now reject failed pairs and unexpected roles at the
+statistical entry. Gate 1A-3 reruns identically on the all-pass data. The
+cross-fitted Gate 1A threshold remains non-deployable: 10 source states are not
+an independent calibration set, and the prior/threshold models are not nested
+per validation score. Treat eye early as a hypothesis, not a pass.

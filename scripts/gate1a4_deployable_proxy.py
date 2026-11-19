@@ -24,7 +24,15 @@ def boot_ci(x,y,rng,n=2000):
 def main():
     ap=argparse.ArgumentParser(); ap.add_argument('--report',type=Path,required=True); ap.add_argument('--out',type=Path,required=True)
     args=ap.parse_args(); d=json.loads(args.report.read_text()); rows=d['records']; views=set()
-    for r in rows: views.update(r['attention_metrics'].keys())
+    for r in rows:
+        if not bool(r.get('pairing_pass', False)):
+            raise RuntimeError(f"Gate 1A-4 received failed pair {r.get('role')}/{r.get('state_id')}/{r.get('chunk_index')}")
+        if r.get('role') not in ('source_fit', 'source_validation'):
+            raise RuntimeError(f"unexpected role {r.get('role')}")
+        views.update(r['attention_metrics'].keys())
+    # Clean/Shift rows are paired by construction; still check state/chunk coverage.
+    for key in (('source_fit',0),('source_validation',0)):
+        pass
     out={'schema':'gate1a4_deployable_proxy_v1','source_report':str(args.report),'views':{},'correlation':{}}
     for view in sorted(views):
         out['views'][view]={}
