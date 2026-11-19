@@ -67,41 +67,79 @@ def _recovery(base_error, intervention_error):
     return float(1.0 - intervention_error / base_error)
 
 
+def _state_balanced_mean(values, metric_key, nested_key=None):
+    """Average chunks within each state, then average states equally."""
+    by_state = {}
+    for record in values:
+        obj = record.get(metric_key)
+        if obj is None:
+            continue
+        if nested_key is not None:
+            obj = obj.get(nested_key)
+        if obj is None:
+            continue
+        by_state.setdefault(int(record["state_id"]), []).append(obj)
+    if not by_state:
+        return None
+    metric_names = tuple(next(iter(by_state.values()))[0].keys())
+    state_means = {
+        state: {
+            key: float(np.mean([item[key] for item in items]))
+            for key in metric_names
+        }
+        for state, items in by_state.items()
+    }
+    return {
+        "n_states": len(state_means),
+        "n_records": sum(len(v) for v in by_state.values()),
+        "state_balanced_mean": {
+            key: float(np.mean([metrics[key] for metrics in state_means.values()]))
+            for key in metric_names
+        },
+        "per_state": state_means,
+    }
+
+
 def _aggregate(records):
     groups = {}
-    for r in records:
-        key = (r["role"], r["window"])
-        groups.setdefault(key, []).append(r)
+    for record in records:
+        groups.setdefault((record["role"], record["window"]), []).append(record)
     out = {}
     for (role, window), values in groups.items():
-        row = {}
-        metric_names = (
-            "B1_vs_B0", "B2_vs_B0", "B3_vs_B0",
+        row = {
+            "n_records": len(values),
+            "n_states": len({int(v["state_id"]) for v in values}),
+            "aggregation_unit": "state-balanced: average chunks within each state, then states",
+        }
+        for name in ("B1_vs_B0", "B2_vs_B0", "B3_vs_B0"):
+            row[name] = _state_balanced_mean(values, name)
+        row["resampler"] = {
+            name: _state_balanced_mean(values, "resampler", name)
+            for name in ("B1_rms_to_B0", "B2_rms_to_B0", "B3_rms_to_B0")
+        }
+        action_b1, action_b2, action_b3 = (
+            row["B1_vs_B0"], row["B2_vs_B0"], row["B3_vs_B0"]
         )
-        for name in metric_names:
-            items = [v[name] for v in values if v.get(name) is not None]
-            if not items:
-                row[name] = None
-                continue
-            row[name] = {
-                key: float(np.mean([x[key] for x in items]))
-                for key in items[0]
-            }
-        row["B2_action_recovery_fraction"] = _recovery(
-            row["B1_vs_B0"]["normalized_mae"] if row["B1_vs_B0"] else None,
-            row["B2_vs_B0"]["normalized_mae"] if row["B2_vs_B0"] else None,
-        )
-        row["B3_action_recovery_fraction"] = _recovery(
-            row["B1_vs_B0"]["normalized_mae"] if row["B1_vs_B0"] else None,
-            row["B3_vs_B0"]["normalized_mae"] if row["B3_vs_B0"] else None,
-        )
+        b1_mae = None if action_b1 is None else action_b1["state_balanced_mean"]["normalized_mae"]
+        b2_mae = None if action_b2 is None else action_b2["state_balanced_mean"]["normalized_mae"]
+        b3_mae = None if action_b3 is None else action_b3["state_balanced_mean"]["normalized_mae"]
+        row["B2_action_recovery_fraction"] = _recovery(b1_mae, b2_mae)
+        row["B3_action_recovery_fraction"] = _recovery(b1_mae, b3_mae)
         row["B2_beats_B3_on_normalized_mae"] = bool(
-            row["B2_vs_B0"] is not None and row["B3_vs_B0"] is not None
-            and row["B2_vs_B0"]["normalized_mae"] < row["B3_vs_B0"]["normalized_mae"]
+            b2_mae is not None and b3_mae is not None and b2_mae < b3_mae
         )
+
+        def resampler_mean(name):
+            item = row["resampler"][name]
+            return None if item is None else item["state_balanced_mean"]["value"]
+
+        b1_res = resampler_mean("B1_rms_to_B0")
+        b2_res = resampler_mean("B2_rms_to_B0")
+        b3_res = resampler_mean("B3_rms_to_B0")
+        row["B2_resampler_recovery_fraction"] = _recovery(b1_res, b2_res)
+        row["B3_resampler_recovery_fraction"] = _recovery(b1_res, b3_res)
         out[f"{role}/{window}"] = row
     return out
-
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
