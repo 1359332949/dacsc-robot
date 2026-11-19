@@ -19,11 +19,13 @@ def fit_params(path, view):
     d=json.loads(Path(path).read_text()); rs=[r for r in d['records'] if r['role']=='source_fit' and r['view']==view and r.get('pairing_pass')]
     by={}
     for r in rs: by.setdefault(int(r['state_id']),[]).append(r)
+    if not rs: raise RuntimeError(f'no source-fit photometric records for {view}')
     cm=[]; cs=[]; sm=[]; ss=[]
     for sid,rows in by.items():
         cm.append(np.mean([r['clean']['lum_mean'] for r in rows])); cs.append(np.mean([r['clean']['lum_std'] for r in rows]))
         sm.append(np.mean([r['shift']['lum_mean'] for r in rows])); ss.append(np.mean([r['shift']['lum_std'] for r in rows]))
     cm,cs,sm,ss=map(np.mean,(cm,cs,sm,ss))
+    if not np.isfinite([cm,cs,sm,ss]).all(): raise RuntimeError(f'non-finite fit params for {view}')
     a=float(np.clip(cs/(ss+1e-6),0.7,1.6)); b=float(np.clip(cm-a*sm,-0.3,0.3))
     return {'a':a,'b':b,'clean_lum_mean':float(cm),'shift_lum_mean':float(sm),'clean_lum_std':float(cs),'shift_lum_std':float(ss)}
 
@@ -50,8 +52,8 @@ def main():
     args=ap.parse_args()
     domains=[x.strip() for x in args.domains.split(',') if x.strip()]
     modes=[x.strip() for x in args.modes.split(',') if x.strip()]
-    if not set(domains) <= {'clean','shift'}: raise ValueError(f'invalid domains {domains}')
-    if not set(modes) <= {'frozen','transform'}: raise ValueError(f'invalid modes {modes}')
+    if not domains or not set(domains) <= {'clean','shift'}: raise ValueError(f'invalid domains {domains}')
+    if not modes or not set(modes) <= {'frozen','transform'}: raise ValueError(f'invalid modes {modes}')
     if args.executed_k <= 0 or args.max_steps <= 0: raise ValueError('executed_k/max_steps must be positive')
     configure(args)
     from libero.libero.envs import OffScreenRenderEnv

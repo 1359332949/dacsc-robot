@@ -27,11 +27,19 @@ def main():
     if any(r['role']!='source_fit' for r in fit_rows): raise RuntimeError('fit file contains non-source_fit rows')
     if any(r['role']!='source_validation' for r in val_rows): raise RuntimeError('val file contains non-source_validation rows')
     if {int(r['state_id']) for r in fit_rows} & {int(r['state_id']) for r in val_rows}: raise RuntimeError('fit/val state ids overlap')
-    unique=set()
+    unique=set(); coverage={}
     for r in rows:
         key=(r['role'],int(r['state_id']),int(r['chunk']),r['view'])
         if key in unique: raise RuntimeError(f'duplicate photometric record {key}')
         unique.add(key)
+        if r['view'] not in ('agentview','eye_in_hand') or r['window'] not in ('early','late'):
+            raise RuntimeError(f'bad view/window {r["view"]}/{r["window"]}')
+        coverage.setdefault((r['role'],int(r['state_id'])),set()).add((r['view'],r['window']))
+    for (role,sid),cov in coverage.items():
+        if {v for v,w in cov} != {'agentview','eye_in_hand'}:
+            raise RuntimeError(f'missing view coverage for {role}/{sid}')
+        if {w for v,w in cov} != {'early','late'}:
+            raise RuntimeError(f'missing window coverage for {role}/{sid}')
     out={'schema':'photometric_analysis_v1','views':{}}
     for view in ('agentview','eye_in_hand'):
         out['views'][view]={}
