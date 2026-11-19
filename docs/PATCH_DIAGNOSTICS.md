@@ -754,3 +754,43 @@ the target and never touch it. State 37 clean transform does touch the target
 but lifts only 0.027 m vs 0.083 m for Frozen; shift transform closes at
 0.151 m with no contact. The common pattern is **approach/close position**,
 not just gripper timing.
+
+### Experiment A: State 37 fixed-physical-state three-input trace
+
+Frozen state-37 Clean rollout, first 24 control steps. At every step the same
+physical state was re-rendered under Shift lighting and four encodings were
+compared with the same language/state/z0: Clean, Clean+affine Transform, and
+Shift. Shift/Clean camera parity was 24/24.
+
+Target geometry audit:
+
+- BDDL target `akita_black_bowl_1` maps uniquely to body 23
+  `akita_black_bowl_1_main`;
+- target has 41 geoms; finger set has 6 geoms;
+- EEF-to-target distances below use the target body origin, which is not
+  necessarily the grasp point; this is a limitation, not a grasp-pose metric;
+- no target-finger contact occurred in the first 24 steps.
+
+Mean over 24 steps:
+
+| comparison | DINO rel L2 | DINO cosine | Resampler rel L2 | action XYZ pre | action XYZ post | rotation pre | gripper pre/post |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Clean vs Clean+Transform | 0.268 | 0.961 | 0.179 | 0.035 | 0.035 | 0.0105 | 0.0006 / 0.0 |
+| Clean vs Shift 2292 | 0.797 | 0.667 | 0.441 | 0.243 | 0.243 | 0.0270 | 0.0053 / 0.0 |
+
+Observations:
+
+- Shift produces a much larger DINO/Resampler/action change than the affine
+  transform;
+- the Resampler attenuates both perturbations (0.268->0.179 relative for
+  Transform; 0.797->0.441 for Shift);
+- the affine transform already changes the same-observation action (XYZ
+  ~0.035), but the Shift action change is ~7x larger;
+- gripper post-clip difference is exactly zero in this window, so early action
+  differences are dominated by XYZ/rotation, not gripper clipping;
+- `theta_rel` from EEF quaternion to target body quaternion is ~1.57->1.44 rad;
+  this is body-origin orientation, not a validated grasp-point orientation.
+
+This supports a forward causal path visual change -> representation change ->
+action change at the same physical state. It does not yet show that this causes
+the closed-loop failure across states; one state is not enough. No Adapter.
