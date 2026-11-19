@@ -695,3 +695,32 @@ P3:
 - existing full P3 result is unchanged: Clean 4/4 -> 3/4, Shift 2/4 -> 1/4.
 
 Renaming/clipping did not change the P3 conclusion. No Adapter, no target-test.
+
+### Failure-stage instrumentation (P3 follow-up)
+
+Instrumented trajectories for state 37 clean/shift (frozen vs transform),
+state 43/45 shift (frozen vs transform), and state 36 clean frozen reference.
+Per step recorded raw/clipped commands, post-controller `sim.data.ctrl`, EEF
+pose, gripper qpos, object body poses and contact count.
+
+Paired frozen-vs-transform first divergence:
+
+| case | frozen | transform | first EEF >1mm | first action >0.1 | first gripper >0.1 | frozen/transform close command |
+|---|---|---:|---:|---:|---:|---:|
+| 37 clean | success | fail | 3 | 13 | 49 | 50 / 49 |
+| 37 shift | success | fail | 4 | 25 | 49 | 55 / 49 |
+| 43 shift | fail | fail | 3 | 29 | 47 | **never / 47** |
+| 45 shift | fail | fail | 2 | 2 | 43 | 43 / 49 |
+
+Key observations:
+
+- state 37 transform diverges in EEF at steps 3-4, long before gripper close;
+  the affine transform changes the approach trajectory, not just grasp timing;
+- state 43 Frozen never sends a close command; transform sends close at step
+  47 but still fails, so closing alone is insufficient;
+- state 45 Frozen and transform both close, but at different steps (43 vs 49)
+  and both fail; this is a late contact/grasp-phase failure.
+
+The failure is state-dependent: early approach divergence (37), missing close
+decision (43), and late grasp/contact timing (45). A single global input
+transform cannot address all three. No Adapter is trained.
