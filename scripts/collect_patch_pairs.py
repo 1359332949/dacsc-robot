@@ -35,6 +35,14 @@ from dacsc.tta_protocol import load_split, role_ids, validate_split_identity  # 
 from dacsc.patch_diagnostics import validate_patch_dict  # noqa: E402
 
 
+def _sha256_file(path: Path) -> str:
+    digest = hashlib.sha256()
+    with Path(path).open("rb") as handle:
+        for block in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(block)
+    return digest.hexdigest()
+
+
 def encode_observation(policy, observation, z0):
     """Return pre-Resampler patches and the same frozen action path used downstream."""
     device = next(policy.parameters()).device
@@ -356,10 +364,10 @@ def main():
             for view in views
         },
         "feature_file": str(args.out),
-        "feature_file_sha256": hashlib.sha256(args.out.read_bytes()).hexdigest(),
-        "checkpoint_sha256": hashlib.sha256(args.checkpoint.read_bytes()).hexdigest(),
-        "matrix_sha256": hashlib.sha256(args.matrix.read_bytes()).hexdigest(),
-        "split_sha256": hashlib.sha256(args.split_json.read_bytes()).hexdigest(),
+        "feature_file_sha256": _sha256_file(args.out),
+        "checkpoint_sha256": _sha256_file(args.checkpoint),
+        "matrix_sha256": _sha256_file(args.matrix),
+        "split_sha256": _sha256_file(args.split_json),
         "records": records,
         "data_policy": (
             "source_fit/source_validation only; paired Clean patches are offline "
