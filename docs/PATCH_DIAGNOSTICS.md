@@ -2,13 +2,18 @@
 
 ## Claim boundary
 
-This work is an **offline source-paired diagnostic**, not a deployable TTA
-method. Only source_fit and source_validation roles are accepted. Target-dev
-must not be used to select the encoder, feature normalization, thresholds, or
-intervention. Target-test is not accepted by these entry points.
+This work is an **offline known-perturbation paired-simulator diagnostic**, not
+a deployable TTA method. The state IDs come only from source_fit and
+source_validation, but the Shift branch explicitly renders the known target
+lighting configuration 2292 on those source initial states. Therefore this is
+not source-free adaptation and does not establish generalization to an unseen
+visual style.
 
-The Clean patches used by B2/B3 are privileged counterfactual inputs. They are
-offline mediator interventions, not deployment signals.
+Target-dev and target-test initial-state IDs, success labels, rewards, and
+Clean twins are not used. Target-dev/Test outcomes are not used for model or
+threshold selection. The Clean patches used by B2/B3 are privileged
+counterfactual inputs for offline mediator interventions, never deployment
+signals.
 
 ## Why a new collector is required
 
@@ -62,11 +67,13 @@ MUJOCO_GL=osmesa python scripts/collect_patch_pairs.py \
   --out runs/patch_diag/source_patch_pairs.npz
 ~~~
 
-The collector advances only the Shift source episode using Frozen CoRP actions.
-At selected replan boundaries it snapshots the Shift simulator state, restores
-that state in a Clean twin, and checks model, physical state, controller,
-camera, and policy-state equivalence. Failed pairs remain in the artifact for
-audit but are excluded by downstream analysis.
+The collector advances a source initial-state episode under the known target
+lighting configuration using Frozen CoRP actions. At selected replan boundaries
+it snapshots the shifted simulator state, restores that state in a Clean twin,
+and checks model, physical state, controller, camera, policy-state, and patch
+shape equivalence. It does not inspect task success or reward to select or stop
+records; it runs to the requested chunk horizon or environment termination.
+Failed pairs remain in the artifact for audit but are excluded downstream.
 
 Outputs:
 
@@ -103,10 +110,11 @@ The classifier is trained and tested at initial-state granularity: all
 observations from a state stay in one split role. Early and late windows are
 analyzed separately to avoid mixing manipulation phases.
 
-**Interpretation:** high AUROC establishes generalizable domain information,
-not causal responsibility or action benefit. Low AUROC does not prove that the
-Resampler or DiT is the bottleneck. R_sep is descriptive, not a universal
-pass/fail law.
+**Interpretation:** high AUROC establishes that the known lighting-2292 signal
+is separable across held-out source initial states. It does not establish
+unknown-target generalization, causal responsibility, or action benefit. Low
+AUROC does not prove that the Resampler or DiT is the bottleneck. R_sep is
+descriptive, not a universal pass/fail law.
 
 ## Paired Patch Replacement: B0-B3
 
@@ -133,10 +141,11 @@ as the reference. B2 recovery must be compared against both B1 and the
 random-content negative control B3.
 
 **Causal interpretation guard:** B2 is a privileged offline mediator
-intervention. Strong B2 recovery and weaker B3 recovery support the claim
-that same-state visual patch content mediates downstream action change. They
-do not establish a deployable adaptation signal and do not replace closed-loop
-evaluation.
+intervention under a known target lighting configuration. Strong B2 recovery
+and weaker B3 recovery support the claim that same-state visual patch content
+mediates downstream action change for this known perturbation. They do not
+establish unknown-target generalization, a deployable adaptation signal, or
+closed-loop success benefit.
 
 Aggregates are state-balanced: chunks are averaged within each initial state,
 then states are averaged equally. Do not treat multiple chunks from one state
@@ -150,7 +159,10 @@ as independent samples.
 4. Run B0-B3 on the same pairing-pass rows and explicit z0 values.
 5. Consider Phase 2 visual alignment only if B2 restores Resampler/action
    outputs materially better than B1 and B3, while Clean identity remains
-   acceptable.
+   acceptable. Any resulting method is still calibrated on a known perturbation
+   and needs a separate fresh perturbation/task/suite for an unknown-domain claim.
 
 No training, adapter update, OT, AdaIN, target-dev rollout, or target-test
-access is part of these steps.
+access is part of these steps. These diagnostics consume the known target
+lighting appearance on source initial states, so they must not be described as
+fully source-free or unknown-target evaluation.
