@@ -345,3 +345,28 @@ freshness artifact, though it is still a privileged oracle.
 Every oracle replan passes context parity: state input, state token, language
 tokens, and pooled language differences are 0.0; only patches differ. Both
 Frozen and oracle branches now record patch/z0/state/action hashes.
+
+### Gate 1A: source-prior domain score is not yet a usable gate
+
+Tested the actual TP-TVA per-view score
+
+D_v = state-balanced prior mean / log-std distance, calibrated on source_fit
+Clean only; evaluated on disjoint source_validation states, early vs late.
+
+| view/window | tau policy | fit Clean FPR | val Clean FPR | fit Shift act | val Shift act | val AUROC |
+|---|---:|---:|---:|---:|---:|---:|
+| agentview early | train max | 0.00 | 0.70 | 1.00 | 0.90 | 0.80 |
+| agentview late | train max | 0.00 | 0.80 | 1.00 | 1.00 | 0.82 |
+| eye-in-hand early | train max | 0.00 | 0.50 | 1.00 | 1.00 | 0.94 |
+| eye-in-hand late | train max | 0.00 | 0.70 | 0.20 | 0.70 | 0.61 |
+
+The threshold calibrated on 10 source_fit Clean states does not transfer:
+held-out Clean FPR is 50-80%, and eye-in-hand late has weak Shift activation.
+Therefore this mean/log-std domain score cannot currently implement the Clean
+bypass or the TP-TVA gate. Gate 1A does **not** pass.
+
+Implication: do not train the Adapter with this gate. Next candidate signals
+must be calibrated on disjoint Clean states and evaluated by a direct
+Clean-FPR/Shift-activation tradeoff; possible alternatives are cross-attention
+energy consistency or differential-feature statistics, not another global
+mean/std distance.
