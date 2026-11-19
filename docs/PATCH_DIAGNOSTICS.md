@@ -321,3 +321,27 @@ state-token L2 and freshness delta. The audited 4-state pilot:
 Every oracle replan reports `pairing_pass=true`. The earlier full 10-state x
 3-seed oracle (6/30 -> 24/30) was collected before this audit and is not
 claimed as audited; only the 4-state audited pilot is reported here.
+
+### Oracle freshness control: Frozen-native vs Frozen-refreshed vs Oracle
+
+The previous oracle used refreshed Shift context while Frozen used the
+returned observation, so the comparison mixed visual replacement with
+observation freshness. The control adds `frozen_refreshed` (same refreshed
+Shift observation, Shift patches) and uses identical state/env/z0 rules.
+
+| state | Frozen-native | Frozen-refreshed | Clean-patch oracle |
+|---|---:|---:|---:|
+| 36 | 1 | 1 | 1 |
+| 37 | 1 | 0 | 1 |
+| 43 | 0 | 0 | 1 |
+| 45 | 0 | 0 | 1 |
+| total | 2/4 | 1/4 | 4/4 |
+
+Observation freshness alone does **not** produce the oracle gain: it changes
+2/4 to 1/4 (loses state 37). The oracle recovers state 37 and rescues 43/45
+under the same refreshed context. Thus the audited patch-only gain is not a
+freshness artifact, though it is still a privileged oracle.
+
+Every oracle replan passes context parity: state input, state token, language
+tokens, and pooled language differences are 0.0; only patches differ. Both
+Frozen and oracle branches now record patch/z0/state/action hashes.

@@ -72,66 +72,105 @@ def main():
                     shift_enc = encode_observation(policy, po_shift, z0)
                     chosen = shift_enc
                     shift_enc_pair = shift_enc
-                    if mode == 'oracle':
-                        # Refresh only derived data for the privileged pair; execution
-                        # still uses the original returned observation.
+                    if mode in ('oracle', 'frozen_refreshed'):
+                        # Refresh only derived data for the diagnostic branch.
                         shift.sim.forward(); shift._update_observables(force=True)
                         obs_shift_fresh = shift.env._get_observations()
                         po_shift_fresh = policy_observation(obs_shift_fresh, language, policy)
                         shift_enc_pair = encode_observation(policy, po_shift_fresh, z0)
-                        snap = snapshot(shift)
-                        clean.seed(args.env_seed + 991 * chunk); clean.reset()
-                        clean.env.sim.model.body_pos[:] = np.asarray(snap['model_signature']['body_pos'], float)
-                        clean.env.sim.model.body_quat[:] = np.asarray(snap['model_signature']['body_quat'], float)
-                        clean.env.sim.forward()
-                        restore(clean, snap); clean._update_observables(force=True)
-                        obs_clean = clean.env._get_observations()
-                        snap_clean = snapshot(clean)
-                        compat = model_compatible(snap_clean, snap, strict_bodies=True,
-                                                  strict_geometry=True, strict_physics=True)
-                        state_check = compare(snap, snap_clean, tol={"body_xpos": 1e-3, "eef_pos": 1e-3, "body_xquat_rad": 2e-3})
-                        camera_check = camera_compare(snap, snap_clean, expect_equal=True, tol=1e-3)
-                        pairing_pass = bool(compat["pass"] and state_check["all_pass"] and camera_check["pass"])
-                        po_clean = policy_observation(obs_clean, language, policy)
-                        clean_enc = encode_observation(policy, po_clean, z0)
-                        # B2: clean patches + Shift language/proprio context
-                        visual = ext.cross_attention_resampler(clean_enc['patches'], shift_enc_pair['pooled_language'])
-                        rep = Representation(tokens=torch.cat([visual, shift_enc_pair['language_tokens'].to(visual.dtype), shift_enc_pair['state_token']], dim=1),
-                                             pooled_language=shift_enc_pair['pooled_language'], action_dtype=visual.dtype)
-                        from dacsc.differentiable_policy import sample_from_z0
-                        with torch.no_grad():
-                            norm = sample_from_z0(policy, rep, z0)
-                            ctrl = policy.normalizer.unnormalize_action(norm)
-                        chosen = {'controller_actions': ctrl}
-                        patch_hash = __import__('hashlib').sha256(
-                            b''.join(clean_enc['patches'][v].detach().float().cpu().numpy().tobytes()
-                                     for v in sorted(clean_enc['patches']))).hexdigest()
-                        action_hash = __import__('hashlib').sha256(ctrl.detach().float().cpu().numpy().tobytes()).hexdigest()
-                        z0_hash = __import__('hashlib').sha256(z0.detach().float().cpu().numpy().tobytes()).hexdigest()
-                        chunk_log.append({'chunk': chunk, 'mode': mode, 'patch_source': 'same_state_clean',
-                                          'pairing_pass': pairing_pass,
-                                          'model_compat_pass': bool(compat['pass']),
-                                          'state_compare_pass': bool(state_check['all_pass']),
-                                          'camera_compare_pass': bool(camera_check['pass']),
-                                          'shift_snapshot_digest': digest(snap),
-                                          'clean_snapshot_digest': digest(snap_clean),
-                                          'shift_model_digest': digest_model(snap),
-                                          'clean_model_digest': digest_model(snap_clean),
-                                          'shift_controller_digest': digest_controller(snap),
-                                          'clean_controller_digest': digest_controller(snap_clean),
-                                          'clean_patch_sha256': patch_hash,
-                                          'z0_sha256': z0_hash,
-                                          'action_sha256': action_hash,
-                                          'clean_state_input_max': float((clean_enc['state_input'] - shift_enc_pair['state_input']).abs().max().item()),
-                                          'state_token_l2': float((clean_enc['state_token'] - shift_enc_pair['state_token']).norm().item())})
-                        chunk_log[-1]['shift_refreshed_state_max'] = float((shift_enc_pair['state_input'] - shift_enc['state_input']).abs().max().item())
-                        if not pairing_pass:
-                            print(json.dumps({'oracle_audit_fail': True, 'state': int(state_id), 'chunk': chunk,
-                                              'model': compat['checks'], 'state_checks': {k: v for k, v in state_check['checks'].items() if not v.get('pass')},
-                                              'camera': camera_check['checks']}, default=str), flush=True)
-                            raise RuntimeError(f'oracle pairing audit failed state={state_id} chunk={chunk}')
+                        shift_refresh_max = float((shift_enc_pair['state_input'] - shift_enc['state_input']).abs().max().item())
+                        if mode == 'frozen_refreshed':
+                            chosen = shift_enc_pair
+                            shift_patch_hash = __import__('hashlib').sha256(
+                                b''.join(shift_enc_pair['patches'][v].detach().float().cpu().numpy().tobytes()
+                                         for v in sorted(shift_enc_pair['patches']))).hexdigest()
+                            z0_hash = __import__('hashlib').sha256(z0.detach().float().cpu().numpy().tobytes()).hexdigest()
+                            action_hash = __import__('hashlib').sha256(chosen['controller_actions'].detach().float().cpu().numpy().tobytes()).hexdigest()
+                            state_hash = __import__('hashlib').sha256(chosen['state_token'].detach().float().cpu().numpy().tobytes()).hexdigest()
+                            chunk_log.append({'chunk': chunk, 'mode': mode, 'patch_source': 'shift',
+                                              'shift_patch_sha256': shift_patch_hash,
+                                              'z0_sha256': z0_hash, 'action_sha256': action_hash,
+                                              'state_token_sha256': state_hash,
+                                              'shift_refreshed_state_max': shift_refresh_max})
+                        else:
+                            snap = snapshot(shift)
+                            clean.seed(args.env_seed + 991 * chunk); clean.reset()
+                            clean.env.sim.model.body_pos[:] = np.asarray(snap['model_signature']['body_pos'], float)
+                            clean.env.sim.model.body_quat[:] = np.asarray(snap['model_signature']['body_quat'], float)
+                            clean.env.sim.forward()
+                            restore(clean, snap); clean._update_observables(force=True)
+                            obs_clean = clean.env._get_observations()
+                            snap_clean = snapshot(clean)
+                            compat = model_compatible(snap_clean, snap, strict_bodies=True,
+                                                      strict_geometry=True, strict_physics=True)
+                            state_check = compare(snap, snap_clean, tol={"body_xpos": 1e-3, "eef_pos": 1e-3, "body_xquat_rad": 2e-3})
+                            camera_check = camera_compare(snap, snap_clean, expect_equal=True, tol=1e-3)
+                            po_clean = policy_observation(obs_clean, language, policy)
+                            clean_enc = encode_observation(policy, po_clean, z0)
+                            context_state_max = float((clean_enc['state_input'] - shift_enc_pair['state_input']).abs().max().item())
+                            context_token_l2 = float((clean_enc['state_token'] - shift_enc_pair['state_token']).norm().item())
+                            context_lang_max = float((clean_enc['language_tokens'] - shift_enc_pair['language_tokens']).abs().max().item())
+                            context_pooled_max = float((clean_enc['pooled_language'] - shift_enc_pair['pooled_language']).abs().max().item())
+                            pairing_pass = bool(compat["pass"] and state_check["all_pass"] and camera_check["pass"]
+                                                and context_state_max <= 1e-6 and context_token_l2 <= 1e-5
+                                                and context_lang_max <= 1e-6 and context_pooled_max <= 1e-6)
+                            visual = ext.cross_attention_resampler(clean_enc['patches'], shift_enc_pair['pooled_language'])
+                            rep = Representation(tokens=torch.cat([visual, shift_enc_pair['language_tokens'].to(visual.dtype), shift_enc_pair['state_token']], dim=1),
+                                                 pooled_language=shift_enc_pair['pooled_language'], action_dtype=visual.dtype)
+                            from dacsc.differentiable_policy import sample_from_z0
+                            with torch.no_grad():
+                                norm = sample_from_z0(policy, rep, z0)
+                                ctrl = policy.normalizer.unnormalize_action(norm)
+                            chosen = {'controller_actions': ctrl}
+                            shift_patch_hash = __import__('hashlib').sha256(
+                                b''.join(shift_enc_pair['patches'][v].detach().float().cpu().numpy().tobytes()
+                                         for v in sorted(shift_enc_pair['patches']))).hexdigest()
+                            clean_patch_hash = __import__('hashlib').sha256(
+                                b''.join(clean_enc['patches'][v].detach().float().cpu().numpy().tobytes()
+                                         for v in sorted(clean_enc['patches']))).hexdigest()
+                            z0_hash = __import__('hashlib').sha256(z0.detach().float().cpu().numpy().tobytes()).hexdigest()
+                            action_hash = __import__('hashlib').sha256(ctrl.detach().float().cpu().numpy().tobytes()).hexdigest()
+                            state_hash = __import__('hashlib').sha256(shift_enc_pair['state_token'].detach().float().cpu().numpy().tobytes()).hexdigest()
+                            chunk_log.append({'chunk': chunk, 'mode': mode, 'patch_source': 'same_state_clean',
+                                              'pairing_pass': pairing_pass,
+                                              'model_compat_pass': bool(compat['pass']),
+                                              'state_compare_pass': bool(state_check['all_pass']),
+                                              'camera_compare_pass': bool(camera_check['pass']),
+                                              'context_state_max': context_state_max,
+                                              'context_token_l2': context_token_l2,
+                                              'context_language_max': context_lang_max,
+                                              'context_pooled_max': context_pooled_max,
+                                              'shift_snapshot_digest': digest(snap),
+                                              'clean_snapshot_digest': digest(snap_clean),
+                                              'shift_model_digest': digest_model(snap),
+                                              'clean_model_digest': digest_model(snap_clean),
+                                              'shift_controller_digest': digest_controller(snap),
+                                              'clean_controller_digest': digest_controller(snap_clean),
+                                              'shift_patch_sha256': shift_patch_hash,
+                                              'clean_patch_sha256': clean_patch_hash,
+                                              'z0_sha256': z0_hash,
+                                              'action_sha256': action_hash,
+                                              'state_token_sha256': state_hash,
+                                              'clean_state_input_max': context_state_max,
+                                              'state_token_l2': context_token_l2,
+                                              'shift_refreshed_state_max': shift_refresh_max})
+                            if not pairing_pass:
+                                print(json.dumps({'oracle_audit_fail': True, 'state': int(state_id), 'chunk': chunk,
+                                                  'model': compat['checks'], 'state_checks': {k: v for k, v in state_check['checks'].items() if not v.get('pass')},
+                                                  'camera': camera_check['checks'], 'context': {'state': context_state_max, 'token': context_token_l2,
+                                                                                                'language': context_lang_max, 'pooled': context_pooled_max}}, default=str), flush=True)
+                                raise RuntimeError(f'oracle pairing audit failed state={state_id} chunk={chunk}')
                     else:
-                        chunk_log.append({'chunk': chunk, 'mode': mode, 'patch_source': 'shift'})
+                        shift_patch_hash = __import__('hashlib').sha256(
+                            b''.join(shift_enc['patches'][v].detach().float().cpu().numpy().tobytes()
+                                     for v in sorted(shift_enc['patches']))).hexdigest()
+                        z0_hash = __import__('hashlib').sha256(z0.detach().float().cpu().numpy().tobytes()).hexdigest()
+                        action_hash = __import__('hashlib').sha256(shift_enc['controller_actions'].detach().float().cpu().numpy().tobytes()).hexdigest()
+                        state_hash = __import__('hashlib').sha256(shift_enc['state_token'].detach().float().cpu().numpy().tobytes()).hexdigest()
+                        chunk_log.append({'chunk': chunk, 'mode': mode, 'patch_source': 'shift',
+                                          'shift_patch_sha256': shift_patch_hash,
+                                          'z0_sha256': z0_hash, 'action_sha256': action_hash,
+                                          'state_token_sha256': state_hash})
                     ctrl = chosen['controller_actions']
                     for k in range(min(args.executed_k, ctrl.shape[1])):
                         obs, reward, done, info = shift.step(np.clip(ctrl[0, k].detach().cpu().numpy(), -1, 1))
