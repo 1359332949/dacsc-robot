@@ -10,6 +10,11 @@ def make_snap(delta=0.0, act=None, eef_name="gripper0_eef"):
         "body_names": ["world", "table", "gripper0_eef"],
         "camera_names": ["agentview", "eye_in_hand"],
         "eef_name": eef_name,
+        "controller": {
+            "controller_type": "MockOSCController",
+            "goal_pos": [0.5, 0.2 + delta, 0.3],
+            "goal_ori": [1.0, 0.0, 0.0, 0.0],
+        },
         "qpos": [0.0, 1.0, 2.0], "qvel": [0.0, 0.0, 0.0],
         "act": [] if act is None else act, "time": 1.0,
         "body_xpos": [[0, 0, 0], [1, 0, 0], [0.5, 0.2 + delta, 0.3]],
@@ -20,7 +25,7 @@ def make_snap(delta=0.0, act=None, eef_name="gripper0_eef"):
         "cam_xpos": [[1, 0, 1], [0, 1, 1]], "cam_xmat": [[1, 0, 0]] * 2,
         "mocap_pos": [], "mocap_quat": [],
         "ctrl": [], "qacc_warmstart": [], "qfrc_applied": [],
-        "xfrc_applied": [], "eq_active": [],
+        "xfrc_applied": [], "eq_active": [], "userdata": [],
         "model_signature": {"nq": 3},
     }
 
