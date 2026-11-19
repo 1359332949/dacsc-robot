@@ -154,6 +154,8 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--pairs", type=Path, required=True)
     ap.add_argument("--manifest", type=Path, default=None)
+    ap.add_argument("--phase1-report", type=Path, required=True,
+                    help="Phase 1 report for this exact pair manifest and NPZ")
     ap.add_argument("--matrix", type=Path, required=True)
     ap.add_argument("--checkpoint", type=Path, required=True)
     ap.add_argument("--out", type=Path, required=True)
@@ -175,6 +177,15 @@ def main():
         raise ValueError("matrix hash does not match the pair-capture manifest")
     if manifest.get("schema") != "corp_paired_dino_patches_v1":
         raise ValueError("unexpected patch-pair manifest schema")
+    phase1 = json.loads(args.phase1_report.read_text())
+    if phase1.get("schema") != "corp_patch_phase1_report_v1":
+        raise ValueError("unexpected Phase 1 report schema")
+    if phase1.get("pair_manifest_sha256") != _sha256_file(manifest_path):
+        raise ValueError("Phase 1 report does not describe this pair manifest")
+    if phase1.get("pair_feature_sha256") != _sha256_file(args.pairs):
+        raise ValueError("Phase 1 report does not describe this NPZ feature file")
+    if phase1.get("views") != manifest.get("view_names"):
+        raise ValueError("Phase 1 report view list differs from pair manifest")
     records = manifest.get("records", [])
     if any(r.get("role") not in ("source_fit", "source_validation") for r in records):
         raise ValueError("B0-B3 accepts source_fit/source_validation only")
@@ -305,6 +316,8 @@ def main():
         "schema": "corp_paired_patch_replacement_v1",
         "pair_manifest": str(manifest_path),
         "pair_manifest_sha256": _sha256_file(manifest_path),
+        "phase1_report": str(args.phase1_report),
+        "phase1_report_sha256": _sha256_file(args.phase1_report),
         "pair_feature_file": str(args.pairs),
         "pair_feature_sha256": _sha256_file(args.pairs),
         "checkpoint": str(args.checkpoint),
