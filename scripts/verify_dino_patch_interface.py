@@ -6,8 +6,10 @@ adaptation, target evaluation, or rollout beyond environment settling.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
+import subprocess
 import sys
 from pathlib import Path
 
@@ -27,6 +29,24 @@ from target_only_action_validation import configure  # noqa: E402
 from dacsc.differentiable_policy import sample_from_z0  # noqa: E402
 from dacsc.patch_diagnostics import validate_patch_dict  # noqa: E402
 from dacsc.tta_protocol import load_split, role_ids, validate_split_identity  # noqa: E402
+
+
+def _sha256_file(path):
+    digest = hashlib.sha256()
+    with Path(path).open("rb") as handle:
+        for block in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(block)
+    return digest.hexdigest()
+
+
+def _git_rev(path):
+    try:
+        return subprocess.check_output(
+            ["git", "-C", str(path), "rev-parse", "HEAD"],
+            text=True, stderr=subprocess.DEVNULL,
+        ).strip()
+    except Exception:
+        return None
 
 
 def _shape(value):
@@ -261,6 +281,14 @@ def main():
             "suite": args.suite,
             "lighting_id": args.lighting_id,
             "checkpoint": str(args.checkpoint),
+            "checkpoint_sha256": _sha256_file(args.checkpoint),
+            "matrix_sha256": _sha256_file(args.matrix),
+            "split_sha256": _sha256_file(args.split_json),
+            "initial_state_file_sha256": _sha256_file(Path(task["state_split"]["source_file"])),
+            "script_sha256": _sha256_file(Path(__file__)),
+            "repository_git_rev": _git_rev(ROOT),
+            "corp_git_rev": _git_rev(ROOT / "repos/CoRP"),
+            "libero_git_rev": _git_rev(args.libero_src),
             "view_names": list(views),
             "prepared_image_shapes": image_shapes,
             "visual_encoder_class": type(extractor.visual_encoder).__name__,
