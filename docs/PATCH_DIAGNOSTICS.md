@@ -182,3 +182,66 @@ No training, adapter update, OT, AdaIN, target-dev rollout, or target-test
 access is part of these steps. These diagnostics consume the known target
 lighting appearance on source initial states, so they must not be described as
 fully source-free or unknown-target evaluation.
+
+## Observation-freshness fix and re-run (2026-11-19)
+
+Root cause of the previous 22/110 pairing pass rate was not `restore()`:
+the Shift branch encoded the observation returned by the last `step()`, while
+the Clean branch restored, called `sim.forward()`, and force-refreshed
+observables. That stale-vs-fresh comparison is a different observation time.
+
+The collector now keeps two tracks:
+
+- execution uses the original returned Shift observation and the original
+  frozen action chunk (rollout semantics preserved);
+- captured pairs use a refreshed Shift observation after `sim.forward()` and
+  force-updated observables, exactly matching the Clean twin refresh.
+
+Every capture records `observation_freshness` (qpos/qvel/time deltas, raw and
+normalized state deltas, state-token L2). `snapshot()` now also records MuJoCo
+site definitions and dynamic site poses, and `policy_eef_pos` uses
+`site_xpos[eef_site_id]` while `policy_eef_quat` uses the body quaternion,
+matching the robot observables.
+
+Freshness pilot (before re-collection):
+
+| state | chunk | returned-vs-refreshed normalized state | state token L2 |
+|---|---:|---:|---:|
+| 0 | 0 | 0.000454 | 0.00420 |
+| 0 | 1 | 0.010641 | 0.06299 |
+| 4 | 0 | 0.000894 | 0.00614 |
+| 4 | 1 | 0.011391 | 0.06978 |
+
+This exactly matches the old pass/fail split at 1e-3.
+
+After the fix, re-collected source pairs:
+
+```text
+records_total: 111
+records_pairing_pass: 111
+source_fit early 20/20, late 37/37
+source_validation early 20/20, late 34/34
+```
+
+Fresh Phase 1 (state-balanced, source state splits):
+
+| view/window | D_style | D_content | R_sep | held-out AUROC |
+|---|---:|---:|---:|---:|
+| agentview early | 1.610 | 1.622 | 0.993 | 1.000 |
+| agentview late | 1.898 | 1.904 | 0.997 | 1.000 |
+| eye-in-hand early | 2.391 | 2.227 | 1.073 | 1.000 |
+| eye-in-hand late | 1.282 | 2.229 | 0.575 | 0.950 |
+
+Fresh B0-B3 (same explicit z0, state-balanced):
+
+| split | B1 action MAE | B2 action MAE | B3 action MAE | B2 recovery | B3 recovery |
+|---|---:|---:|---:|---:|---:|
+| fit early | 0.0522 | 0.0 | 0.0502 | 1.000 | 0.039 |
+| fit late | 0.1246 | 0.0 | 0.3323 | 1.000 | -1.666 |
+| val early | 0.0552 | 0.0 | 0.0494 | 1.000 | 0.105 |
+| val late | 0.1355 | 0.0 | 0.3631 | 1.000 | -1.680 |
+
+B2 is an exact same-state Clean-patch replacement and is privileged; its zero
+action error is an implementation/mediation sanity check, not a deployable
+method. B3 is the different-state negative control. No target-dev/test states,
+success labels, rewards, or closed-loop outcomes are used.

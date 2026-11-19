@@ -46,8 +46,23 @@ def snapshot(env) -> dict[str, Any]:
     eef_pos = None
     if eef_name is not None:
         eef_pos = _arr(sim.data.body_xpos[names.index(eef_name)]).tolist()
+    site_names = [str(n) for n in sim.model.site_names]
+    inner = getattr(env, "env", env)
+    robots = getattr(inner, "robots", None)
+    eef_site_id = int(getattr(robots[0], "eef_site_id")) if robots and hasattr(robots[0], "eef_site_id") else None
+    eef_site_name = site_names[eef_site_id] if eef_site_id is not None and eef_site_id < len(site_names) else None
     out = {
         "body_names": names,
+        "site_names": site_names,
+        "eef_site_id": eef_site_id,
+        "eef_site_name": eef_site_name,
+        "site_bodyid": [int(x) for x in sim.model.site_bodyid],
+        "site_pos": _arr(sim.model.site_pos).tolist(),
+        "site_quat": _arr(sim.model.site_quat).tolist(),
+        "site_size": _arr(sim.model.site_size).tolist(),
+        "site_type": [int(x) for x in sim.model.site_type],
+        "site_xpos": _arr(sim.data.site_xpos).tolist(),
+        "site_xmat": _arr(sim.data.site_xmat).tolist(),
         "controller": controller_snapshot(env),
         "mj_state": sim.get_state(),
         "camera_names": cam_names,
@@ -59,6 +74,8 @@ def snapshot(env) -> dict[str, Any]:
         "body_xpos": _arr(sim.data.body_xpos).tolist(),
         "body_xquat": _arr(sim.data.body_xquat).tolist(),
         "eef_pos": eef_pos,
+        "policy_eef_pos": (_arr(sim.data.site_xpos[eef_site_id]).tolist() if eef_site_id is not None else None),
+        "policy_eef_quat": (_arr(sim.data.body_xquat[names.index(eef_name)]).tolist() if eef_name is not None else None),
         "cam_pos": _arr(sim.model.cam_pos).tolist(),
         "cam_quat": _arr(sim.model.cam_quat).tolist(),
         "cam_fovy": _arr(sim.model.cam_fovy).tolist(),
@@ -142,6 +159,12 @@ def model_signature(env) -> dict[str, Any]:
         "nq": int(m.nq), "nv": int(m.nv), "nu": int(m.nu),
         "nbody": int(m.nbody), "njnt": int(m.njnt), "ngeom": int(m.ngeom),
         "body_names": [str(x) for x in m.body_names],
+        "site_names": [str(x) for x in m.site_names],
+        "site_bodyid": [int(x) for x in m.site_bodyid],
+        "site_pos": _arr(m.site_pos).round(12).tolist(),
+        "site_quat": _arr(m.site_quat).round(12).tolist(),
+        "site_size": _arr(m.site_size).round(12).tolist(),
+        "site_type": [int(x) for x in m.site_type],
         "body_pos": _arr(m.body_pos).round(12).tolist(),
         "body_quat": _arr(m.body_quat).round(12).tolist(),
         "joint_names": [str(x) for x in m.joint_names],
@@ -195,6 +218,8 @@ def model_compatible(a: dict[str, Any], b: dict[str, Any], strict_bodies: bool =
         checks["body_names"] = sa.get("body_names") == sb.get("body_names")
         checks["body_pos"] = sa.get("body_pos") == sb.get("body_pos")
         checks["body_quat"] = sa.get("body_quat") == sb.get("body_quat")
+        for key in ("site_names", "site_bodyid", "site_pos", "site_quat", "site_size", "site_type"):
+            checks[key] = sa.get(key) == sb.get(key)
     if strict_geometry:
         checks["ngeom"] = sa.get("ngeom") == sb.get("ngeom")
         for key in ("geom_names", "geom_bodyid", "geom_type", "geom_size", "geom_pos", "geom_quat"):
@@ -354,6 +379,17 @@ def compare(a: dict[str, Any], b: dict[str, Any], tol: dict[str, float] | None =
             ang = _quat_angle_rad(qa, qb)
             checks["body_xquat"] = {"present": True, "shape": True, "finite": bool(np.isfinite(ang)),
                                     "error_rad": ang, "pass": bool(np.isfinite(ang) and ang <= tol["body_xquat_rad"])}
+    if a.get("site_names") is not None or b.get("site_names") is not None:
+        if a.get("site_names") is None or b.get("site_names") is None:
+            checks["site_names"] = {"present": False, "pass": False}
+        else:
+            checks["site_names"] = {"present": True, "pass": a.get("site_names") == b.get("site_names")}
+        for key in ("site_xpos", "site_xmat", "policy_eef_pos", "policy_eef_quat"):
+            xa = a.get(key); xb = b.get(key)
+            if xa is None or xb is None:
+                checks[key] = {"present": False, "pass": False}
+            else:
+                checks[key] = _array_check("body_xpos", xa, xb, {"body_xpos": 1e-3})
     names_ok = a.get("body_names") == b.get("body_names")
     cam_names_ok = a.get("camera_names") == b.get("camera_names")
     eef_ok = bool(a.get("eef_name")) and a.get("eef_name") == b.get("eef_name")

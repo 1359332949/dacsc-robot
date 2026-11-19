@@ -26,7 +26,7 @@ sys.path.insert(0, str(ROOT / "repos/CoRP/scripts"))
 from corp import load_policy  # noqa: E402
 from corp.preprocessing import prepare_observation  # noqa: E402
 from corp.representation.extractor import Representation  # noqa: E402
-from evaluate_libero import DUMMY_ACTION, SETTLING_STEPS, policy_observation  # noqa: E402
+from evaluate_libero import DUMMY_ACTION, SETTLING_STEPS, policy_observation, state_from_observation  # noqa: E402
 from target_only_action_validation import configure  # noqa: E402
 from dacsc.differentiable_policy import sample_from_z0  # noqa: E402
 from dacsc.state_pairing import (  # noqa: E402
@@ -244,13 +244,38 @@ def main():
                          policy.action_generator.action_dim),
                         device=device, dtype=next(policy.parameters()).dtype,
                     )
-                    shift_encoded = encode_observation(policy, po_shift, z0)
+                    shift_encoded_exec = encode_observation(policy, po_shift, z0)
                     capture_window = (
                         "early" if chunk in early_chunks
                         else "late" if chunk in late_chunks
                         else None
                     )
                     if capture_window is not None:
+                        q_before = np.array(shift.sim.data.qpos, copy=True)
+                        v_before = np.array(shift.sim.data.qvel, copy=True)
+                        t_before = float(shift.sim.data.time)
+                        shift.sim.forward()
+                        shift._update_observables(force=True)
+                        obs_shift_refreshed = shift.env._get_observations()
+                        po_shift_refreshed = policy_observation(obs_shift_refreshed, language, policy)
+                        shift_encoded = encode_observation(policy, po_shift_refreshed, z0)
+                        q_after = np.array(shift.sim.data.qpos, copy=True)
+                        v_after = np.array(shift.sim.data.qvel, copy=True)
+                        t_after = float(shift.sim.data.time)
+                        raw_returned = state_from_observation(obs_shift, policy.normalizer)
+                        raw_refreshed = state_from_observation(obs_shift_refreshed, policy.normalizer)
+                        norm_returned = shift_encoded_exec["state_input"].detach().float().cpu().numpy()[0]
+                        norm_refreshed = shift_encoded["state_input"].detach().float().cpu().numpy()[0]
+                        tok_returned = shift_encoded_exec["state_token"].detach().float().cpu().numpy()[0]
+                        tok_refreshed = shift_encoded["state_token"].detach().float().cpu().numpy()[0]
+                        freshness = {
+                            "qpos_delta": float(np.max(np.abs(q_before - q_after))),
+                            "qvel_delta": float(np.max(np.abs(v_before - v_after))),
+                            "time_delta": float(t_after - t_before),
+                            "raw_state_max": float(np.max(np.abs(raw_returned - raw_refreshed))),
+                            "normalized_state_max": float(np.max(np.abs(norm_returned - norm_refreshed))),
+                            "state_token_l2": float(np.linalg.norm(tok_returned - tok_refreshed)),
+                        }
                         snap_shift = snapshot(shift)
                         clean.seed(env_seed + 991 * chunk)
                         clean.reset()
@@ -360,6 +385,7 @@ def main():
                             "controller_compare_pass": controller_check,
                             "patch_shape_pass": patch_shape_pass,
                             "state_input_max_abs": state_delta,
+                        "observation_freshness": freshness,
                             "shift_snapshot_digest": digest(snap_shift),
                             "clean_snapshot_digest": digest(snap_clean),
                             "shift_model_digest": digest_model(snap_shift),
@@ -372,7 +398,7 @@ def main():
                             "shift_visual_token_shape": list(shift_encoded["visual_tokens"].shape),
                         })
 
-                    controller = shift_encoded["controller_actions"]
+                    controller = shift_encoded_exec["controller_actions"]
                     for action_index in range(min(args.executed_k, controller.shape[1])):
                         action = np.clip(
                             controller[0, action_index].detach().cpu().numpy(), -1.0, 1.0
