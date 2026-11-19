@@ -245,3 +245,29 @@ B2 is an exact same-state Clean-patch replacement and is privileged; its zero
 action error is an implementation/mediation sanity check, not a deployable
 method. B3 is the different-state negative control. No target-dev/test states,
 success labels, rewards, or closed-loop outcomes are used.
+
+## Closed-loop same-state Clean-patch oracle (ceiling check)
+
+Purpose: determine whether restoring the correct same-state Clean visual
+patches at every replan can change closed-loop task success, before designing
+any deployable adapter.
+
+Protocol: target-dev pilot states 36/37/43/45, Shift environment, Frozen CoRP
+rollout. At each replan boundary the Shift simulator snapshot is restored into
+a Clean twin with the same model body alignment and refreshed observables; the
+Clean twin's pre-Resampler patches replace the Shift patches while Shift
+language/proprio and the explicit z0 are retained. This is privileged and is
+not a deployment method.
+
+| state | Frozen | Same-state Clean-patch oracle |
+|---|---:|---:|
+| 36 | 1 | 1 |
+| 37 | 1 | 1 |
+| 43 | 0 | 1 |
+| 45 | 0 | 1 |
+| total | 2/4 | 4/4 |
+
+The oracle preserves both Frozen successes and rescues both Frozen failures.
+This establishes a positive closed-loop ceiling for visual-patch restoration
+on this pilot. It does not establish an unlabeled deployable signal, target-test
+generalization, or that the exact B2 token substitution is implementable.
