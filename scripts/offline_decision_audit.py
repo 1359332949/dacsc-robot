@@ -88,7 +88,7 @@ def compute_spread(records, npz):
             for k in DIMS: vals[k].append(v[k])
             bystate.setdefault(int(r['state_id']),[]).append(v)
         res={'n_records':len(rs),'n_states':len(bystate),
-             'action_input_semantics':'controller_actions clipped to [-1,1], first 12 steps; stored pre-env controller command'}
+             'action_input_semantics':'delta_controller_command: controller_actions clipped to [-1,1], first 12 steps (NOT post-controller executed motion)'}
         for k in DIMS:
             a=np.array(vals[k]); means=[]; within=[]
             for s,vs in bystate.items():
@@ -114,12 +114,27 @@ def main():
     # Attach clean action norm by unique feature row and validate alignment.
     by_row={int(r['feature_row']):r for r in recs}
     if len(by_row)!=len(recs): raise RuntimeError('feature_row not unique in manifest')
-    # Attention report rows must map to manifest and be passed pairs.
+    att_rows=[int(r['feature_row']) for r in rows]
+    if len(att_rows)!=len(set(att_rows)): raise RuntimeError('feature_row not unique in attention report')
+    if set(att_rows)!=set(by_row): raise RuntimeError('attention report and manifest feature rows differ')
     for r in rows:
-        if int(r['feature_row']) not in by_row: raise RuntimeError('attention row missing from manifest')
+        i=int(r['feature_row']); mr=by_row[i]
+        for key in ('role','state_id','chunk_index'):
+            if r.get(key)!=mr.get(key): raise RuntimeError(f'attention/manifest mismatch at row {i}: {key}')
         if not bool(r.get('pairing_pass',False)): raise RuntimeError('attention report contains failed pair')
+    # structural NPZ checks before any statistics
+    required=('clean_controller_actions','shift_controller_actions','clean_visual_tokens','shift_visual_tokens')
+    for key in ('clean_controller_actions','shift_controller_actions'):
+        arr=np.asarray(npz[key],dtype=float)
+        if arr.shape[0]!=len(recs): raise RuntimeError(f'{key} row count mismatch')
+        if arr.ndim!=3 or arr.shape[1]<12 or arr.shape[2]!=7: raise RuntimeError(f'{key} shape {arr.shape} incompatible with 12x7')
+        if not np.isfinite(arr).all():
+            # keep explicit check; hidden NaNs must stop the audit
+            raise RuntimeError(f'{key} contains non-finite values')
     for r in rows:
-        r['_clean_action_norm']=float(np.sqrt(np.mean(np.clip(np.asarray(npz['clean_controller_actions'][int(r['feature_row'])],dtype=float)[:12],-1,1)**2)))
+        i=int(r['feature_row']); ac=np.asarray(npz['clean_controller_actions'][i],dtype=float)
+        if ac.shape[0]<12: raise RuntimeError('fewer than 12 action steps')
+        r['_clean_action_norm']=float(np.sqrt(np.mean(np.clip(ac[:12],-1,1)**2)))
     result={'schema':'offline_decision_audit_v1',
             'wrist_late_confounding':compute_wrist_late(rows),
             'source_paired_action_spread':compute_spread(recs,npz)}

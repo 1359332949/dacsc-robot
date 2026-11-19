@@ -623,3 +623,33 @@ future collector should persist the executed action hash per step.
 
 Even after correction, the wrist-late association is largely between-state.
 No Adapter training.
+
+### P1 completion and P2 photometric diagnosis
+
+P1: offline audit now checks attention-report/manifest bidirectional uniqueness,
+role/state/chunk consistency, NPZ row counts/shapes/finiteness/index bounds,
+and at least 12 action steps. The measured quantity is renamed
+`delta_controller_command` (clipped controller command, not post-controller
+physical motion).
+
+P2 collected paired raw images at source states, both views, early/late. The
+dominant photometric change of Lighting 2292 is global darkening plus contrast
+loss:
+
+| view/window | mean lum delta | lum std delta | contrast delta | shadow frac delta | edge mean delta |
+|---|---:|---:|---:|---:|---:|
+| agentview early | -0.071 | -0.035 | -0.092 | +0.0058 | -0.0018 |
+| agentview late | -0.072 | -0.039 | -0.097 | +0.0039 | -0.0031 |
+| eye-in-hand early | -0.044 | -0.027 | -0.058 | -0.0009 | -0.0017 |
+| eye-in-hand late | -0.101 | -0.047 | -0.134 | +0.0073 | -0.0026 |
+
+RGB mean vector shift norm is 0.12 (agentview) and 0.08-0.18 (eye-in-hand);
+saturation change is small. Local luminance-contrast variation also drops in
+late wrist (local std max delta -0.06), and edge density declines, so this is
+not a pure global offset. A single fixed brightness/contrast transform is a
+plausible but not guaranteed candidate; P2 does not select transform parameters
+and does not use success rates.
+
+No Adapter, no target-test. Next: freeze one input transform and run a paired
+Clean/Shift pilot only after the transform and evaluation thresholds are
+pre-registered.
