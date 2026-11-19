@@ -6,6 +6,7 @@ from dacsc.patch_diagnostics import (
     cosine_self_similarity,
     normalized_distance,
     random_clean_donor,
+    state_balanced_mean,
     token_descriptor,
     validate_patch_dict,
 )
@@ -84,6 +85,28 @@ class TestPatchDiagnostics(unittest.TestCase):
             report["heldout_state_domain_separation"]["logistic_regression_AUROC"],
             0.5,
         )
+
+    def test_state_balanced_mean_weights_states_not_chunk_counts(self):
+        records = [
+            {"state_id": 1, "metric": {"value": 1.0}},
+            {"state_id": 1, "metric": {"value": 3.0}},
+            {"state_id": 1, "metric": {"value": 5.0}},
+            {"state_id": 2, "metric": {"value": 9.0}},
+        ]
+        out = state_balanced_mean(records, "metric")
+        self.assertEqual(out["n_states"], 2)
+        self.assertEqual(out["n_records"], 4)
+        self.assertAlmostEqual(out["state_balanced_mean"]["value"], 6.0)
+        self.assertAlmostEqual(out["per_state"][1]["value"], 3.0)
+        self.assertAlmostEqual(out["per_state"][2]["value"], 9.0)
+
+    def test_state_balanced_mean_supports_nested_metrics(self):
+        records = [
+            {"state_id": 1, "metrics": {"distance": {"value": 2.0}}},
+            {"state_id": 2, "metrics": {"distance": {"value": 4.0}}},
+        ]
+        out = state_balanced_mean(records, "metrics", "distance")
+        self.assertAlmostEqual(out["state_balanced_mean"]["value"], 3.0)
 
     def test_random_donor_is_different_state_and_matched_window(self):
         records = [
