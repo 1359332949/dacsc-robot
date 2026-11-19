@@ -396,3 +396,21 @@ The bypass protects Clean but does not create Shift benefit.
 Version attribution: the earlier stochasticity tables were produced with the
 pre-clean-token `spaca_train_multi_z` checkpoint and are superseded. Current
 numbers use `spaca_train_full` (clean-token corrected, best epoch 6).
+
+## Grasp-closure boundary probe (decisive)
+
+State 43 shift failure trajectory, env seed 7777, Frozen, probe chunks 7 and 8:
+
+| chunk | step | clean last gripper | shift last gripper | max abs diff |
+|---:|---:|---:|---:|---:|
+| 7 | 84 | -1.012 | -1.017 | 0.010 |
+| 8 | 96 | **+0.971** | -1.006 | **1.977** |
+
+At step 84 Clean and Shift still agree. At step 96 the Clean twin commands
+gripper close (+0.971) while Shift keeps it open (-1.006). This is exactly the
+missing grasp-closure signal: the failure is a late-stage single-chunk
+divergence, and the earlier 2-chunk training collection never reached it.
+
+Implication: route A is worth one targeted late-window collection, but the
+adapter must be restricted to the pre-grasp/grasp-closure window and keep the
+Clean residual bypass. Always-on early adapter remains invalid.
