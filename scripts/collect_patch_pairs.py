@@ -10,6 +10,7 @@ import argparse
 import hashlib
 import json
 import os
+import subprocess
 import sys
 from pathlib import Path
 
@@ -41,6 +42,16 @@ def _sha256_file(path: Path) -> str:
         for block in iter(lambda: handle.read(1024 * 1024), b""):
             digest.update(block)
     return digest.hexdigest()
+
+
+def _git_rev(path: Path):
+    try:
+        return subprocess.check_output(
+            ["git", "-C", str(path), "rev-parse", "HEAD"],
+            text=True, stderr=subprocess.DEVNULL,
+        ).strip()
+    except Exception:
+        return None
 
 
 def encode_observation(policy, observation, z0):
@@ -368,6 +379,11 @@ def main():
         "checkpoint_sha256": _sha256_file(args.checkpoint),
         "matrix_sha256": _sha256_file(args.matrix),
         "split_sha256": _sha256_file(args.split_json),
+        "initial_state_file_sha256": _sha256_file(Path(task["state_split"]["source_file"])),
+        "collector_script_sha256": _sha256_file(Path(__file__)),
+        "repository_git_rev": _git_rev(ROOT),
+        "corp_git_rev": _git_rev(ROOT / "repos/CoRP"),
+        "libero_git_rev": _git_rev(args.libero_src),
         "records": records,
         "data_policy": (
             "source_fit/source_validation only; paired Clean patches are offline "
