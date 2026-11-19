@@ -23,6 +23,7 @@ from corp import load_policy  # noqa: E402
 from corp.preprocessing import prepare_observation  # noqa: E402
 from corp.representation.extractor import Representation  # noqa: E402
 from evaluate_libero import DUMMY_ACTION, SETTLING_STEPS, policy_observation  # noqa: E402
+import libero.libero.envs.bddl_utils as BDDLUtils  # noqa: E402
 from target_only_action_validation import configure  # noqa: E402
 from dacsc.differentiable_policy import sample_from_z0  # noqa: E402
 from dacsc.patch_diagnostics import validate_patch_dict  # noqa: E402
@@ -101,6 +102,7 @@ def main():
         if int(v["classification_id"]) == int(args.lighting_id)
     )
     states = torch.load(task["state_split"]["source_file"], map_location="cpu", weights_only=False)
+    language = BDDLUtils.get_problem_info(variant["base_bddl"])["language_instruction"]
     device = torch.device(args.device)
     policy = load_policy(args.checkpoint, device=device)
     policy.eval()
@@ -126,8 +128,9 @@ def main():
             if done:
                 raise RuntimeError(f"episode ended during settling for state {state_id}")
 
+        policy_obs = policy_observation(obs, language, policy)
         prepared = prepare_observation(
-            obs,
+            policy_obs,
             config=policy.config,
             normalizer=policy.normalizer,
             device=device,
