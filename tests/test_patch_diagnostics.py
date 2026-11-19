@@ -6,6 +6,7 @@ from dacsc.patch_diagnostics import (
     cosine_self_similarity,
     normalized_distance,
     random_clean_donor,
+    resolve_token_layout,
     state_balanced_mean,
     token_descriptor,
     validate_patch_dict,
@@ -85,6 +86,66 @@ class TestPatchDiagnostics(unittest.TestCase):
             report["heldout_state_domain_separation"]["logistic_regression_AUROC"],
             0.5,
         )
+
+    def test_token_layout_resolver_patch_only_and_prefix(self):
+        grid = [{
+            "module": "patch_embed.proj",
+            "expected_grid_hw": [16, 16],
+            "expected_grid_tokens": 256,
+            "actual_tokens_per_view": 256,
+        }]
+        patch_only = resolve_token_layout(grid, [])
+        self.assertTrue(patch_only["patch_layout_verified"])
+        self.assertEqual(patch_only["token_layout"], "patch_tokens_only")
+        self.assertEqual(patch_only["patch_token_count_per_view"], 256)
+        self.assertEqual(patch_only["prefix_token_count"], 0)
+
+        with_prefix = [{
+            **grid[0],
+            "actual_tokens_per_view": 261,
+        }]
+        prefix = resolve_token_layout(with_prefix, [{"num_prefix_tokens": 5}])
+        self.assertTrue(prefix["patch_layout_verified"])
+        self.assertEqual(prefix["token_layout"], "patch_tokens_plus_prefix")
+        self.assertEqual(prefix["prefix_token_count"], 5)
+
+    def test_token_layout_resolver_fails_on_unexplained_or_ambiguous_count(self):
+        unexplained = resolve_token_layout([{
+            "module": "patch_embed.proj",
+            "expected_grid_hw": [16, 16],
+            "expected_grid_tokens": 256,
+            "actual_tokens_per_view": 257,
+        }], [])
+        self.assertFalse(unexplained["patch_layout_verified"])
+
+        ambiguous = resolve_token_layout([
+            {
+                "module": "patch_embed_a",
+                "expected_grid_hw": [16, 16],
+                "expected_grid_tokens": 256,
+                "actual_tokens_per_view": 256,
+            },
+            {
+                "module": "patch_embed_b",
+                "expected_grid_hw": [8, 32],
+                "expected_grid_tokens": 256,
+                "actual_tokens_per_view": 256,
+            },
+        ], [])
+        self.assertFalse(ambiguous["patch_layout_verified"])
+
+    def test_token_layout_resolver_infers_cls_and_register_prefix(self):
+        layout = resolve_token_layout([{
+            "module": "patch_embed.proj",
+            "expected_grid_hw": [16, 16],
+            "expected_grid_tokens": 256,
+            "actual_tokens_per_view": 261,
+        }], [{
+            "cls_token_shape": [1, 1, 384],
+            "register_tokens_shape": [1, 4, 384],
+        }])
+        self.assertTrue(layout["patch_layout_verified"])
+        self.assertEqual(layout["prefix_token_count"], 5)
 
     def test_state_balanced_mean_weights_states_not_chunk_counts(self):
         records = [
