@@ -552,3 +552,39 @@ statistical entry. Gate 1A-3 reruns identically on the all-pass data. The
 cross-fitted Gate 1A threshold remains non-deployable: 10 source states are not
 an independent calibration set, and the prior/threshold models are not nested
 per validation score. Treat eye early as a hypothesis, not a pass.
+
+### Offline decision audit: wrist-late confounding and source action spread
+
+Wrist-late paired attention JS vs executed action deviation was decomposed
+without any new training.
+
+State-level raw vs within-state (chunk-centered) vs partial (state fixed
+effects + clean action norm):
+
+| action dim | state-level r | within-state r | partial r |
+|---|---:|---:|---:|
+| norm | 0.378 | -0.012 | -0.053 |
+| XYZ | 0.690 | 0.246 | 0.341 |
+| rotation | 0.787 | 0.214 | 0.221 |
+| gripper | 0.242 | -0.059 | -0.123 |
+
+The strong state-level wrist-late correlation is largely between-state. Within
+a state, the association is much weaker (XYZ r~0.25; rotation r~0.21), so
+wrist-late attention is not yet evidence for a deployable per-observation
+predictor; it is at least partly a state-difficulty indicator.
+
+Source-fit paired executed-action deviation distribution:
+
+| window | dim | mean | std | p50 | max | ICC(state) |
+|---|---|---:|---:|---:|---:|---:|
+| early | XYZ | 0.097 | 0.025 | 0.094 | 0.147 | 0.683 |
+| late | XYZ | 0.179 | 0.069 | 0.162 | 0.352 | 0.328 |
+| early | rotation | 0.014 | 0.003 | 0.015 | 0.023 | 0.614 |
+| late | rotation | 0.032 | 0.015 | 0.028 | 0.068 | 0.525 |
+| late | gripper | 0.349 | 0.513 | 0.002 | 1.819 | 0.276 |
+
+There is usable within-state action variation, especially late XYZ/gripper, so
+a source-supervised predictor is not impossible. But a large fraction of the
+signal is state-level (ICC 0.23-0.68), and any predictor must be validated on
+new states, not the consumed 10 validation states. Gate 1A remains frozen; no
+Adapter is trained.
