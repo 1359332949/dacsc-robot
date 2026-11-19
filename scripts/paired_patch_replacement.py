@@ -304,8 +304,13 @@ def main():
     report = {
         "schema": "corp_paired_patch_replacement_v1",
         "pair_manifest": str(manifest_path),
+        "pair_manifest_sha256": _sha256_file(manifest_path),
         "pair_feature_file": str(args.pairs),
+        "pair_feature_sha256": _sha256_file(args.pairs),
         "checkpoint": str(args.checkpoint),
+        "checkpoint_sha256": _sha256_file(args.checkpoint),
+        "matrix_sha256": _sha256_file(args.matrix),
+        "analysis_script_sha256": _sha256_file(Path(__file__)),
         "suite": manifest["suite"],
         "lighting_id": int(manifest["lighting_id"]),
         "records_total": len(records),
