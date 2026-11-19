@@ -1,8 +1,9 @@
-"""Collect strict source-only Clean/Shift DINO patch pairs for offline diagnostics.
+"""Collect source-state Clean/known-target-lighting DINO pairs for offline diagnosis.
 
-The collector records raw per-view visual_encoder outputs (before the
-CrossAttentionResampler), matched physical states, state inputs, and one
-explicit shared z0. It does not collect target-dev or target-test data.
+The Shift image is rendered with the target lighting configuration on
+source_fit/source_validation initial states. This is known-perturbation paired
+simulator calibration, not source-free or unknown-target TTA. No target-dev/
+target-test initial states, success labels, or rewards are consumed.
 """
 from __future__ import annotations
 
@@ -25,7 +26,7 @@ sys.path.insert(0, str(ROOT / "repos/CoRP/scripts"))
 from corp import load_policy  # noqa: E402
 from corp.preprocessing import prepare_observation  # noqa: E402
 from corp.representation.extractor import Representation  # noqa: E402
-from evaluate_libero import DUMMY_ACTION, SETTLING_STEPS, is_success, policy_observation  # noqa: E402
+from evaluate_libero import DUMMY_ACTION, SETTLING_STEPS, policy_observation  # noqa: E402
 from target_only_action_validation import configure  # noqa: E402
 from dacsc.differentiable_policy import sample_from_z0  # noqa: E402
 from dacsc.state_pairing import (  # noqa: E402
@@ -224,9 +225,8 @@ def main():
 
                 step_count = 0
                 chunk = 0
-                success = False
                 done = False
-                while (not success and not done and step_count < args.max_steps
+                while (not done and step_count < args.max_steps
                        and chunk <= max_chunk):
                     po_shift = policy_observation(obs_shift, language, policy)
                     torch.manual_seed(env_seed + 100003 * int(state_id) + int(chunk))
@@ -368,15 +368,14 @@ def main():
                         action = np.clip(
                             controller[0, action_index].detach().cpu().numpy(), -1.0, 1.0
                         )
-                        obs_shift, reward, done, info = shift.step(action)
+                        obs_shift, _, done, _ = shift.step(action)
                         step_count += 1
-                        success = is_success(shift, info, reward, done)
-                        if success or done or step_count >= args.max_steps:
+                        if done or step_count >= args.max_steps:
                             break
                     chunk += 1
                 print(json.dumps({
                     "role": role, "state_id": int(state_id), "chunks": int(chunk),
-                    "success": bool(success), "steps": int(step_count),
+                    "done": bool(done), "steps": int(step_count),
                     "captured": sum(r["state_id"] == int(state_id) and r["role"] == role
                                     for r in records),
                 }), flush=True)
@@ -424,9 +423,18 @@ def main():
         "corp_git_rev": _git_rev(ROOT / "repos/CoRP"),
         "libero_git_rev": _git_rev(args.libero_src),
         "records": records,
+        "state_role_semantics": (
+            "source_fit/source_validation refer to initial-state partitions only"
+        ),
+        "shift_domain_semantics": (
+            "known target lighting configuration rendered on source initial states; "
+            "this is known-perturbation paired simulator calibration, not source-free "
+            "or unknown-target generalization"
+        ),
         "data_policy": (
-            "source_fit/source_validation only; paired Clean patches are offline "
-            "diagnostic interventions and are never a deployment input"
+            "No target-dev/target-test initial states, success labels, or rewards are "
+            "consumed. Clean/Shift paired patches are privileged offline diagnostics "
+            "and are never deployment inputs."
         ),
     }
     manifest_path.write_text(json.dumps(manifest, indent=2) + "\n")
