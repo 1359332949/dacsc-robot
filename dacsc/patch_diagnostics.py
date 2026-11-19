@@ -176,3 +176,73 @@ def state_balanced_mean(
         },
         "per_state": state_means,
     }
+
+
+def resolve_token_layout(
+    grid_candidates: Sequence[Mapping[str, Any]],
+    metadata_candidates: Sequence[Mapping[str, Any]],
+) -> dict[str, Any]:
+    """Resolve whether visual-encoder output is patch-only or patch+prefix.
+
+    A layout is verified only when exactly one (grid_hw, prefix_count) pair
+    explains the runtime output token count. This prevents silently treating
+    CLS/register tokens as image patches or guessing a fixed patch count.
+    """
+    prefix_counts: set[int] = set()
+    for item in metadata_candidates:
+        if "num_prefix_tokens" in item:
+            count = int(item["num_prefix_tokens"])
+            if count >= 0:
+                prefix_counts.add(count)
+        inferred = 0
+        found_shape = False
+        for key in ("cls_token_shape", "register_tokens_shape"):
+            shape = item.get(key)
+            if shape is not None and len(shape) >= 2:
+                inferred += int(shape[1])
+                found_shape = True
+        if found_shape and inferred >= 0:
+            prefix_counts.add(inferred)
+
+    layouts: dict[tuple[tuple[int, int], int], dict[str, Any]] = {}
+    for candidate in grid_candidates:
+        grid_hw = tuple(int(x) for x in candidate["expected_grid_hw"])
+        grid_tokens = int(candidate["expected_grid_tokens"])
+        actual_tokens = int(candidate["actual_tokens_per_view"])
+        if actual_tokens == grid_tokens:
+            key = (grid_hw, 0)
+            layouts.setdefault(key, {
+                "patch_grid_hw": list(grid_hw),
+                "patch_token_count": grid_tokens,
+                "prefix_token_count": 0,
+                "layout": "patch_tokens_only",
+                "matched_conv_modules": [],
+            })
+        for prefix_count in prefix_counts:
+            if prefix_count > 0 and actual_tokens == grid_tokens + prefix_count:
+                key = (grid_hw, prefix_count)
+                layouts.setdefault(key, {
+                    "patch_grid_hw": list(grid_hw),
+                    "patch_token_count": grid_tokens,
+                    "prefix_token_count": prefix_count,
+                    "layout": "patch_tokens_plus_prefix",
+                    "matched_conv_modules": [],
+                })
+        for key, layout in layouts.items():
+            if key[0] == grid_hw and candidate.get("module") is not None:
+                module_name = str(candidate["module"])
+                if module_name not in layout["matched_conv_modules"]:
+                    layout["matched_conv_modules"].append(module_name)
+
+    unique = list(layouts.values())
+    verified = len(unique) == 1
+    resolved = unique[0] if verified else None
+    return {
+        "patch_layout_verified": bool(verified),
+        "token_layout_candidates": unique,
+        "token_layout": None if resolved is None else resolved["layout"],
+        "patch_grid_hw": None if resolved is None else resolved["patch_grid_hw"],
+        "patch_token_count_per_view": None if resolved is None else resolved["patch_token_count"],
+        "prefix_token_count": None if resolved is None else resolved["prefix_token_count"],
+        "prefix_token_count_candidates": sorted(prefix_counts),
+    }
