@@ -15,6 +15,12 @@ on:
       - "tests/test_view_residual_diagnostic.py"
       - "tests/test_pilot_validation.py"
       - "dacsc/pilot_validation.py"
+      - "dacsc/patch_diagnostics.py"
+      - "scripts/verify_dino_patch_interface.py"
+      - "scripts/collect_patch_pairs.py"
+      - "scripts/analyze_patch_pairs.py"
+      - "scripts/paired_patch_replacement.py"
+      - "tests/test_patch_diagnostics.py"
       - "dacsc/tta_protocol.py"
       - "tests/test_tta_protocol.py"
       - "dacsc/failure_monitor.py"
@@ -71,10 +77,16 @@ jobs:
       - name: Install test dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install numpy scipy
+          python -m pip install numpy scipy scikit-learn
           python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
       - name: Compile TTA modules and diagnostic script
         run: python -m py_compile dacsc/target_only_mean.py dacsc/action_guard.py dacsc/state_pairing.py dacsc/observation_render.py dacsc/libero_noise.py dacsc/tta_protocol.py dacsc/failure_monitor.py scripts/build_monitor_dataset.py scripts/train_failure_monitor.py scripts/evaluate_monitor_offline.py scripts/monitor_recovery_eval.py scripts/target_only_action_validation.py scripts/view_residual_diagnostic.py scripts/closed_loop_tta_pilot.py
+      - name: Compile patch diagnostic scripts
+        run: python -m py_compile dacsc/patch_diagnostics.py scripts/verify_dino_patch_interface.py scripts/collect_patch_pairs.py scripts/analyze_patch_pairs.py scripts/paired_patch_replacement.py tests/test_patch_diagnostics.py
+      - name: Patch diagnostics unit tests
+        env:
+          PYTHONPATH: .
+        run: python -m unittest tests.test_patch_diagnostics -v
       - name: Import smoke tests
         env:
           PYTHONPATH: .
