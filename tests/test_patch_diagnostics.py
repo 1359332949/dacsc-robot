@@ -1,6 +1,7 @@
 import unittest
 import numpy as np
 
+from scripts.analyze_patch_pairs import analyze_view_window
 from dacsc.patch_diagnostics import (
     cosine_self_similarity,
     normalized_distance,
@@ -41,6 +42,48 @@ class TestPatchDiagnostics(unittest.TestCase):
         b = np.array([1.0, 4.0, 3.0])
         self.assertAlmostEqual(normalized_distance(a, b), np.sqrt(4.0 / 3.0))
         self.assertAlmostEqual(normalized_distance(a, b, np.ones(3)), np.sqrt(4.0 / 3.0))
+
+    def test_phase1_analyzer_uses_disjoint_state_roles_and_returns_metrics(self):
+        rng = np.random.default_rng(17)
+        records = []
+        clean, shift = [], []
+        row = 0
+        for role, state_ids in (
+            ("source_fit", range(4)),
+            ("source_validation", range(10, 14)),
+        ):
+            for state_id in state_ids:
+                base = rng.normal(size=(5, 8)).astype(np.float32)
+                shifted = base + np.linspace(0.15, 0.45, 8, dtype=np.float32)[None, :]
+                clean.append(base)
+                shift.append(shifted)
+                records.append({
+                    "feature_row": row,
+                    "state_id": state_id,
+                    "role": role,
+                    "window": "early",
+                    "chunk_index": 0,
+                    "pairing_pass": True,
+                })
+                row += 1
+        arrays = {
+            "clean_agentview": np.stack(clean),
+            "shift_agentview": np.stack(shift),
+        }
+        report = analyze_view_window(
+            arrays, records, view="agentview", window="early", seed=3
+        )
+        self.assertEqual(report["status"], "ok")
+        self.assertEqual(report["source_fit_states"], 4)
+        self.assertEqual(report["source_validation_states"], 4)
+        self.assertFalse(
+            report["heldout_state_domain_separation"]["source_fit_validation_state_overlap"]
+        )
+        self.assertGreater(report["R_sep"], 0.0)
+        self.assertGreaterEqual(
+            report["heldout_state_domain_separation"]["logistic_regression_AUROC"],
+            0.5,
+        )
 
     def test_random_donor_is_different_state_and_matched_window(self):
         records = [
