@@ -1,6 +1,6 @@
 import random
 import unittest
-from scripts.offline_decision_audit import compute_wrist_late
+from scripts.offline_decision_audit import compute_wrist_late, validate_alignment
 
 
 def make_rows():
@@ -20,6 +20,19 @@ class TestOfflineDecisionAudit(unittest.TestCase):
         rows=make_rows(); a=compute_wrist_late(rows)
         shuffled=list(rows); random.Random(7).shuffle(shuffled); b=compute_wrist_late(shuffled)
         self.assertEqual(a, b)
+
+    def test_negative_feature_row_rejected(self):
+        rows=make_rows(); records=[{'feature_row':0,'role':'source_validation','state_id':18,'chunk_index':0,'pairing_pass':True}]
+        rows[0]['feature_row']=-1
+        with self.assertRaises(RuntimeError):
+            validate_alignment(rows, records)
+
+    def test_duplicate_attention_row_rejected(self):
+        rows=make_rows(); records=[{'feature_row':i,'role':'source_validation','state_id':18,'chunk_index':i,'pairing_pass':True} for i in range(len(rows))]
+        for i,r in enumerate(rows): r['feature_row']=i
+        rows[1]['feature_row']=rows[0]['feature_row']
+        with self.assertRaises(RuntimeError):
+            validate_alignment(rows, records)
 
     def test_failed_pair_rejected(self):
         rows=make_rows(); rows[0]['pairing_pass']=False

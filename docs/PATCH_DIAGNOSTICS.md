@@ -673,3 +673,25 @@ The transform broke Clean state 37 and did not rescue Shift 43/45. Therefore a
 simple global brightness/contrast correction is not sufficient for this
 Lighting-2292 setting. This is a probe result, not a method; no further affine
 parameter tuning was performed. Do not train an Adapter on this signal.
+
+### P1/P2/P3 audit corrections
+
+P1:
+- feature_row must be an integer in [0, N) on both sides; negative indexing is rejected;
+- tests cover negative, duplicate, and out-of-range rows.
+
+P2:
+- `edge_mean` renamed `mean_gradient_magnitude`; it is not edge density and scales
+  with global contrast;
+- duplicate `local_edge_mean_mean` removed from the reported feature list;
+- analysis enforces fit/validation role purity, disjoint state IDs, unique
+  (role,state,chunk,view) and reports state-level paired bootstrap CI.
+
+P3:
+- domains/modes/executed_k/max_steps/action-horizon validation added;
+- transform and action clipping fractions recorded;
+- smoke state 36: Clean transform agentview clipping ~6.1%, eye ~1.9%;
+  Shift transform agentview ~6.0%, eye ~0.01%.
+- existing full P3 result is unchanged: Clean 4/4 -> 3/4, Shift 2/4 -> 1/4.
+
+Renaming/clipping did not change the P3 conclusion. No Adapter, no target-test.

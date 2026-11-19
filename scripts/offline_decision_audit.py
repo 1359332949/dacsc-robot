@@ -30,6 +30,40 @@ def partial_state_norm(x,y,states,clean_norm):
     return pearson(resid(x),resid(y))
 
 
+def validate_alignment(rows, records):
+    """Fail closed on feature-row identity/range and metadata mismatch."""
+    n=len(records)
+    by_row={}
+    for r in records:
+        raw=r.get('feature_row')
+        if isinstance(raw,bool) or not isinstance(raw,int):
+            raise RuntimeError(f'invalid manifest feature_row {raw!r}')
+        if not (0 <= raw < n):
+            raise RuntimeError(f'manifest feature_row out of range: {raw}')
+        if raw in by_row:
+            raise RuntimeError(f'duplicate manifest feature_row {raw}')
+        by_row[raw]=r
+    att_rows=[]
+    for r in rows:
+        raw=r.get('feature_row')
+        if isinstance(raw,bool) or not isinstance(raw,int):
+            raise RuntimeError(f'invalid attention feature_row {raw!r}')
+        if not (0 <= raw < n):
+            raise RuntimeError(f'attention feature_row out of range: {raw}')
+        if raw in att_rows:
+            raise RuntimeError(f'duplicate attention feature_row {raw}')
+        att_rows.append(raw)
+        mr=by_row[raw]
+        for key in ('role','state_id','chunk_index'):
+            if r.get(key)!=mr.get(key):
+                raise RuntimeError(f'attention/manifest mismatch at row {raw}: {key}')
+        if not bool(r.get('pairing_pass',False)):
+            raise RuntimeError('attention report contains failed pair')
+    if set(att_rows)!=set(by_row):
+        raise RuntimeError('attention report and manifest feature rows differ')
+    return by_row
+
+
 def compute_wrist_late(rows):
     """Pure chunk-level function; returns dict. Rows need pairing_pass, role, window."""
     selected=[r for r in rows if r['window']=='late']
@@ -112,18 +146,8 @@ def main():
     args=ap.parse_args(); rep=json.loads(args.attention_report.read_text()); rows=rep['records']
     npz=np.load(args.pairs,allow_pickle=False); man=json.loads(args.pairs.with_suffix('.manifest.json').read_text()); recs=man['records']
     # Attach clean action norm by unique feature row and validate alignment.
-    by_row={int(r['feature_row']):r for r in recs}
-    if len(by_row)!=len(recs): raise RuntimeError('feature_row not unique in manifest')
-    att_rows=[int(r['feature_row']) for r in rows]
-    if len(att_rows)!=len(set(att_rows)): raise RuntimeError('feature_row not unique in attention report')
-    if set(att_rows)!=set(by_row): raise RuntimeError('attention report and manifest feature rows differ')
-    for r in rows:
-        i=int(r['feature_row']); mr=by_row[i]
-        for key in ('role','state_id','chunk_index'):
-            if r.get(key)!=mr.get(key): raise RuntimeError(f'attention/manifest mismatch at row {i}: {key}')
-        if not bool(r.get('pairing_pass',False)): raise RuntimeError('attention report contains failed pair')
+    by_row=validate_alignment(rows,recs)
     # structural NPZ checks before any statistics
-    required=('clean_controller_actions','shift_controller_actions','clean_visual_tokens','shift_visual_tokens')
     for key in ('clean_controller_actions','shift_controller_actions'):
         arr=np.asarray(npz[key],dtype=float)
         if arr.shape[0]!=len(recs): raise RuntimeError(f'{key} row count mismatch')

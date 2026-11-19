@@ -29,12 +29,13 @@ def fit_params(path, view):
 
 
 def apply_transform(obs, params):
-    out=dict(obs)
+    out=dict(obs); clip_stats={}
     for view,key in (('agentview','agentview_image'),('eye_in_hand','robot0_eye_in_hand_image')):
         p=params[view]; img=np.asarray(obs[key],dtype=np.float32)/255.0
-        img=np.clip(p['a']*img+p['b'],0,1)
+        raw=p['a']*img+p['b']; img=np.clip(raw,0,1)
+        clip_stats[view]=float(((raw<0)|(raw>1)).mean())
         out[key]=(img*255.0).round().astype(np.uint8)
-    return out
+    return out, clip_stats
 
 def main():
     ap=argparse.ArgumentParser()
@@ -46,7 +47,13 @@ def main():
     ap.add_argument('--suite',default='libero_spatial'); ap.add_argument('--lighting-id',type=int,default=2292)
     ap.add_argument('--device',default='cuda:0'); ap.add_argument('--render-gpu',type=int,default=0)
     ap.add_argument('--libero-src',type=Path,default=Path('/hy-tmp/libero_plus')); ap.add_argument('--libero-config',type=Path,default=Path('/hy-tmp/libero_config'))
-    args=ap.parse_args(); configure(args)
+    args=ap.parse_args()
+    domains=[x.strip() for x in args.domains.split(',') if x.strip()]
+    modes=[x.strip() for x in args.modes.split(',') if x.strip()]
+    if not set(domains) <= {'clean','shift'}: raise ValueError(f'invalid domains {domains}')
+    if not set(modes) <= {'frozen','transform'}: raise ValueError(f'invalid modes {modes}')
+    if args.executed_k <= 0 or args.max_steps <= 0: raise ValueError('executed_k/max_steps must be positive')
+    configure(args)
     from libero.libero.envs import OffScreenRenderEnv
     import libero.libero.envs.bddl_utils as BDDLUtils
     matrix=json.loads(args.matrix.read_text()); task=next(b for b in matrix['base_tasks'] if b['suite']==args.suite)
@@ -57,17 +64,21 @@ def main():
     for p in policy.parameters(): p.requires_grad_(False)
     params={v:fit_params(args.photometric_fit,v) for v in ('agentview','eye_in_hand')}
     records=[]
-    for domain in [x.strip() for x in args.domains.split(',') if x.strip()]:
+    for domain in domains:
         bddl=variant['env_bddl_name'] if domain=='shift' else variant['base_bddl']
-        for mode in [x.strip() for x in args.modes.split(',') if x.strip()]:
+        for mode in modes:
             for state_id in ids:
                 env=OffScreenRenderEnv(bddl_file_name=bddl,camera_heights=256,camera_widths=256,render_gpu_device_id=args.render_gpu)
                 try:
                     np.random.seed(args.env_seed); torch.manual_seed(args.env_seed); env.seed(args.env_seed); env.reset(); obs=env.set_init_state(states[state_id])
                     for _ in range(SETTLING_STEPS): obs,_,_,_=env.step(DUMMY_ACTION)
                     steps=0; chunk=0; success=False; done=False
+                    transform_clip=[]; action_clip=[]
                     while not success and not done and steps<args.max_steps:
-                        use=obs if mode=='frozen' else apply_transform(obs,params)
+                        if mode=='frozen':
+                            use=obs
+                        else:
+                            use,clip_stats=apply_transform(obs,params); transform_clip.append(clip_stats)
                         po=policy_observation(use,language,policy)
                         torch.manual_seed(args.z0_seed+100003*int(state_id)+chunk)
                         z0=torch.randn((1,policy.action_generator.action_horizon,policy.action_generator.action_dim),device=device,dtype=next(policy.parameters()).dtype)
@@ -75,12 +86,18 @@ def main():
                         rep=Representation(tokens=torch.cat([pieces['visual_tokens'],pieces['language_tokens'].to(pieces['visual_tokens'].dtype),pieces['state_token']],dim=1),pooled_language=pieces['pooled_language'],action_dtype=pieces['visual_tokens'].dtype)
                         with torch.no_grad():
                             ctrl=policy.normalizer.unnormalize_action(sample_from_z0(policy,rep,z0))
+                        if ctrl.shape[1] < args.executed_k:
+                            raise RuntimeError(f'action horizon {ctrl.shape[1]} < executed_k {args.executed_k}')
+                        action_clip.append(float((ctrl.abs()>1).float().mean()))
                         for k in range(min(args.executed_k,ctrl.shape[1])):
                             obs,reward,done,info=env.step(np.clip(ctrl[0,k].detach().cpu().numpy(),-1,1)); steps+=1
                             success=is_success(env,info,reward,done)
                             if success or done or steps>=args.max_steps: break
                         chunk+=1
-                    records.append({'state_id':int(state_id),'domain':domain,'mode':mode,'success':bool(success),'steps':int(steps),'hit_max_steps':bool(steps>=args.max_steps and not success),'transform':params})
+                    records.append({'state_id':int(state_id),'domain':domain,'mode':mode,'success':bool(success),'steps':int(steps),
+                                    'hit_max_steps':bool(steps>=args.max_steps and not success),'transform':params,
+                                    'transform_clip_fraction_mean':{v:float(np.mean([c[v] for c in transform_clip])) if transform_clip else None for v in ('agentview','eye_in_hand')},
+                                    'action_clip_fraction_mean':float(np.mean(action_clip)) if action_clip else None})
                     print(json.dumps(records[-1]),flush=True)
                 finally: env.close()
     args.out.parent.mkdir(parents=True,exist_ok=True); args.out.write_text(json.dumps({'schema':'photometric_policy_pilot_v1','params':params,'records':records},indent=2)+'\n')
