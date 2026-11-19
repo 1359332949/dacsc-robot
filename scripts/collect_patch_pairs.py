@@ -110,6 +110,8 @@ def main():
     ap.add_argument("--matrix", type=Path, required=True)
     ap.add_argument("--checkpoint", type=Path, required=True)
     ap.add_argument("--split-json", type=Path, required=True)
+    ap.add_argument("--phase0-report", type=Path, required=True,
+                    help="passing Phase 0 report for these exact checkpoint/matrix/split inputs")
     ap.add_argument("--out", type=Path, required=True,
                     help="output .npz; a sibling .manifest.json is also written")
     ap.add_argument("--suite", default="libero_spatial")
@@ -126,6 +128,28 @@ def main():
     ap.add_argument("--libero-src", type=Path, default=Path("/hy-tmp/libero_plus"))
     ap.add_argument("--libero-config", type=Path, default=Path("/hy-tmp/libero_config"))
     args = ap.parse_args()
+
+    phase0_report = json.loads(args.phase0_report.read_text())
+    if phase0_report.get("schema") != "corp_dino_patch_interface_v1":
+        raise ValueError("unexpected Phase 0 report schema")
+    if not phase0_report.get("identity_pass", False):
+        raise RuntimeError("Phase 0 identity gate did not pass; refusing pair collection")
+    if phase0_report.get("suite") != args.suite or int(phase0_report.get("lighting_id", -1)) != int(args.lighting_id):
+        raise ValueError("Phase 0 suite/lighting does not match pair collection")
+    expected_hashes = {
+        "checkpoint_sha256": _sha256_file(args.checkpoint),
+        "matrix_sha256": _sha256_file(args.matrix),
+        "split_sha256": _sha256_file(args.split_json),
+    }
+    for key, value in expected_hashes.items():
+        if phase0_report.get(key) != value:
+            raise ValueError(f"Phase 0 {key} does not match pair collection input")
+    current_repo_rev = _git_rev(ROOT)
+    current_corp_rev = _git_rev(ROOT / "repos/CoRP")
+    if phase0_report.get("repository_git_rev") and phase0_report["repository_git_rev"] != current_repo_rev:
+        raise ValueError("repository revision changed after Phase 0; rerun Phase 0")
+    if phase0_report.get("corp_git_rev") and phase0_report["corp_git_rev"] != current_corp_rev:
+        raise ValueError("CoRP revision changed after Phase 0; rerun Phase 0")
 
     if args.out.suffix != ".npz":
         raise ValueError("--out must end in .npz")
@@ -393,6 +417,8 @@ def main():
         "matrix_sha256": _sha256_file(args.matrix),
         "split_sha256": _sha256_file(args.split_json),
         "initial_state_file_sha256": _sha256_file(Path(task["state_split"]["source_file"])),
+        "phase0_report": str(args.phase0_report),
+        "phase0_report_sha256": _sha256_file(args.phase0_report),
         "collector_script_sha256": _sha256_file(Path(__file__)),
         "repository_git_rev": _git_rev(ROOT),
         "corp_git_rev": _git_rev(ROOT / "repos/CoRP"),
