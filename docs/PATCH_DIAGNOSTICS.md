@@ -370,3 +370,37 @@ must be calibrated on disjoint Clean states and evaluated by a direct
 Clean-FPR/Shift-activation tradeoff; possible alternatives are cross-attention
 energy consistency or differential-feature statistics, not another global
 mean/std distance.
+
+### Gate 1A-2: Resampler attention response also fails as a gate
+
+Instrumentation was verified: manual attention-aware Resampler forward matched the
+original Resampler to `5.2e-6` max token error; actions were still generated
+with the original Resampler.
+
+Candidate descriptors per view (attention entropy, effective support, max
+probability, LogSumExp response) were calibrated on source_fit Clean states and
+tested on disjoint source_validation states.
+
+| view/window | val Clean FPR | val Shift activation | val AUROC |
+|---|---:|---:|---:|
+| agentview early | 0.40 | 0.40 | 0.39 |
+| agentview late | 0.10 | 0.30 | 0.55 |
+| eye-in-hand early | 0.10 | 0.50 | 0.70 |
+| eye-in-hand late | 0.00 | 0.00 | 0.52 |
+
+Action-deviation association was weak and inconsistent:
+
+| view/window | Pearson(attention distance, action delta) |
+|---|---:|
+| agentview early | -0.23 |
+| agentview late | -0.17 |
+| eye-in-hand early | +0.26 |
+| eye-in-hand late | -0.07 |
+
+Neither the global mean/log-std gate nor the Resampler attention-response gate
+separates held-out Clean from Shift reliably, and neither predicts action
+deviation. Gate 1A-2 does not pass. Do not train the Adapter with either gate.
+
+The correct next step is not to add differential features, cross-view cycles,
+and temporal transport simultaneously; that would replace one unvalidated gate
+with three. The research question must be re-examined at the signal level.
