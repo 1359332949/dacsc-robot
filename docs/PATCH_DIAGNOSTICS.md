@@ -588,3 +588,38 @@ a source-supervised predictor is not impossible. But a large fraction of the
 signal is state-level (ICC 0.23-0.68), and any predictor must be validated on
 new states, not the consumed 10 validation states. Gate 1A remains frozen; no
 Adapter is trained.
+
+### Correction: deterministic offline decision audit
+
+The first offline audit reconstructed group indices in a different order from
+the aligned arrays. The script is now index-safe: groups are built from
+explicit aligned positions, input record order is irrelevant, all rows must
+have unique `feature_row`, `pairing_pass=True`, and an allowed role. Added a
+shuffle-invariance regression test and a failed-pair rejection test.
+
+The corrected numbers are unchanged from the provisional report:
+
+| action dim | state-level r | within-state r | partial r |
+|---|---:|---:|---:|
+| norm | 0.378 | -0.012 | -0.053 |
+| XYZ | 0.690 | 0.246 | 0.341 |
+| rotation | 0.787 | 0.214 | 0.221 |
+| gripper | 0.242 | -0.059 | -0.123 |
+
+`ICC(state)` is renamed to `between_state_variance_share`; it is a descriptive
+variance share, not a mixed-model ICC estimate.
+
+Source paired action spread now includes zero inflation and tails:
+
+| window | dim | mean | p50 | p75 | p90 | max | P(>0.1) | between-state share |
+|---|---|---:|---:|---:|---:|---:|---:|---:|
+| early | XYZ | 0.097 | 0.094 | 0.115 | 0.121 | 0.147 | 0.45 | 0.684 |
+| late | XYZ | 0.179 | 0.162 | 0.206 | 0.292 | 0.352 | 0.865 | 0.328 |
+| late | gripper | 0.349 | 0.002 | 0.808 | 1.194 | 1.819 | 0.378 | 0.276 |
+
+The stored `controller_actions` are the clipped controller-space commands used
+by the collector (first 12 steps); this is recorded in the audit output, but a
+future collector should persist the executed action hash per step.
+
+Even after correction, the wrist-late association is largely between-state.
+No Adapter training.
