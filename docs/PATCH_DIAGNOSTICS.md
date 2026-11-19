@@ -271,3 +271,28 @@ The oracle preserves both Frozen successes and rescues both Frozen failures.
 This establishes a positive closed-loop ceiling for visual-patch restoration
 on this pilot. It does not establish an unlabeled deployable signal, target-test
 generalization, or that the exact B2 token substitution is implementable.
+
+### Full Gate-1 oracle (10 target-dev states x 3 seeds)
+
+Target-dev pilot states 34/35/36/37/39/43/44/45/48/49, env/z0 seeds
+7777/8888/9999, Frozen vs privileged same-state Clean-patch oracle.
+
+| seed | Frozen | Oracle |
+|---|---:|---:|
+| 7777 | 2/10 | 7/10 |
+| 8888 | 0/10 | 9/10 |
+| 9999 | 4/10 | 8/10 |
+| total | **6/30** | **24/30** |
+
+Paired transitions across 30 episodes:
+
+```text
+fail -> success: 19
+fail -> fail:     5
+success -> success: 5
+success -> fail:   1
+```
+
+The oracle strongly raises the closed-loop ceiling, but is not perfect:
+six oracle failures remain and one Frozen success is broken (state 44,
+seed 9999). This is a positive Gate 1, not proof of a deployable method.
