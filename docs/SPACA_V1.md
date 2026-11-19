@@ -414,3 +414,31 @@ divergence, and the earlier 2-chunk training collection never reached it.
 Implication: route A is worth one targeted late-window collection, but the
 adapter must be restricted to the pre-grasp/grasp-closure window and keep the
 Clean residual bypass. Always-on early adapter remains invalid.
+
+## Late-window pairs and late-only adapter
+
+Late-window collection (chunks 6-9, steps 72-120):
+
+| split | pass | |Δgripper|>0.3 | max Δgripper |
+|---|---:|---:|---:|
+| source_fit | 20 | 7 | 2.03 |
+| source_validation | 22 | 8 | 2.03 |
+
+This is the missing signal: 15/42 late pairs have real gripper
+disagreement, unlike 0/37 early pairs.
+
+Late-only adapter (train fit, val source_validation, best epoch 3), applied
+only from step 72, no clean residual bypass:
+
+| state | Frozen | late adapter |
+|---|---:|---:|
+| 36 | 1 | 1 |
+| 37 | 1 | 1 |
+| 43 | 0 | 0 |
+| 45 | 0 | 0 |
+| total | 2/4 | 2/4 |
+
+The late adapter preserves both successful states but does not rescue either
+failure. With the clean residual threshold 0.05 it is bypassed entirely in the
+late window (residual ~0.02), giving the same 2/4. Route A is safe but not
+effective with this adapter; the kill criterion is not met.

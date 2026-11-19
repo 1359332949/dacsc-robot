@@ -37,6 +37,7 @@ def main():
     ap.add_argument("--monitor-artifact", type=Path, default=Path("docs/data/monitor_artifact_v2.json"))
     ap.add_argument("--modes", default="frozen,adapter,gated,first")
     ap.add_argument("--gate-persistence", type=int, default=1)
+    ap.add_argument("--adapter-start-step", type=int, default=0)
     ap.add_argument("--clean-residual-threshold", type=float, default=0.05,
                     help="bypass adapter when visual residual ratio is below this")
     ap.add_argument("--max-steps", type=int, default=220)
@@ -117,7 +118,7 @@ def main():
                         if mode == "frozen":
                             out = frozen_out; used = False
                         elif mode == "adapter":
-                            used = bool(residual_ratio >= args.clean_residual_threshold)
+                            used = bool(steps >= args.adapter_start_step and residual_ratio >= args.clean_residual_threshold)
                             out = adapter_out if used else frozen_out
                             if used:
                                 adapter_forward_calls += 1
