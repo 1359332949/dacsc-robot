@@ -25,7 +25,7 @@ sys.path.insert(0, str(ROOT / "repos/CoRP/scripts"))
 
 from corp import load_policy  # noqa: E402
 from corp.representation.extractor import Representation  # noqa: E402
-from target_only_action_validation import _one_action_metrics  # noqa: E402
+from target_only_action_validation import _one_action_metrics, configure  # noqa: E402
 from dacsc.differentiable_policy import sample_from_z0  # noqa: E402
 from dacsc.patch_diagnostics import random_clean_donor  # noqa: E402
 
@@ -150,10 +150,13 @@ def main():
     ap.add_argument("--out", type=Path, required=True)
     ap.add_argument("--device", default="cuda:0")
     ap.add_argument("--random-seed", type=int, default=20261119)
+    ap.add_argument("--libero-src", type=Path, default=Path("/hy-tmp/libero_plus"))
+    ap.add_argument("--libero-config", type=Path, default=Path("/hy-tmp/libero_config"))
     args = ap.parse_args()
     manifest_path = args.manifest or args.pairs.with_suffix(".manifest.json")
     if args.out.exists():
         raise FileExistsError(f"refusing to overwrite {args.out}")
+    configure(args)
     manifest = json.loads(manifest_path.read_text())
     if manifest.get("schema") != "corp_paired_dino_patches_v1":
         raise ValueError("unexpected patch-pair manifest schema")
