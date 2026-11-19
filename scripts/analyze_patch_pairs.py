@@ -270,7 +270,10 @@ def main():
     report = {
         "schema": "corp_patch_phase1_report_v1",
         "pair_manifest": str(manifest_path),
+        "pair_manifest_sha256": _sha256_file(manifest_path),
         "pair_feature_file": str(args.pairs),
+        "pair_feature_sha256": _sha256_file(args.pairs),
+        "analyzer_script_sha256": _sha256_file(Path(__file__)),
         "records_total": len(records),
         "records_pairing_pass": len(valid_records),
         "source_fit_state_ids": sorted(fit_states),
