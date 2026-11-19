@@ -118,27 +118,69 @@ def _aggregate(records):
             name: state_balanced_mean(values, "resampler", name)
             for name in ("B1_rms_to_B0", "B2_rms_to_B0", "B3_rms_to_B0")
         }
-        action_b1, action_b2, action_b3 = (
-            row["B1_vs_B0"], row["B2_vs_B0"], row["B3_vs_B0"]
+        action_state_maps = {
+            name: {} if row[name] is None else row[name]["per_state"]
+            for name in ("B1_vs_B0", "B2_vs_B0", "B3_vs_B0")
+        }
+        common_action_states = sorted(
+            set(action_state_maps["B1_vs_B0"])
+            & set(action_state_maps["B2_vs_B0"])
+            & set(action_state_maps["B3_vs_B0"])
         )
-        b1_mae = None if action_b1 is None else action_b1["state_balanced_mean"]["normalized_mae"]
-        b2_mae = None if action_b2 is None else action_b2["state_balanced_mean"]["normalized_mae"]
-        b3_mae = None if action_b3 is None else action_b3["state_balanced_mean"]["normalized_mae"]
-        row["B2_clean_policy_action_consistency_recovery_fraction"] = _recovery(b1_mae, b2_mae)
-        row["B3_clean_policy_action_consistency_recovery_fraction"] = _recovery(b1_mae, b3_mae)
-        row["B2_beats_B3_on_clean_policy_action_consistency"] = bool(
-            b2_mae is not None and b3_mae is not None and b2_mae < b3_mae
+        row["action_comparison_common_state_ids"] = common_action_states
+        row["action_comparison_common_state_count"] = len(common_action_states)
+        if common_action_states:
+            common_action_mae = {
+                name: float(np.mean([
+                    action_state_maps[name][state]["normalized_mae"]
+                    for state in common_action_states
+                ]))
+                for name in ("B1_vs_B0", "B2_vs_B0", "B3_vs_B0")
+            }
+            b1_mae = common_action_mae["B1_vs_B0"]
+            b2_mae = common_action_mae["B2_vs_B0"]
+            b3_mae = common_action_mae["B3_vs_B0"]
+            row["B2_clean_policy_action_consistency_recovery_fraction"] = _recovery(b1_mae, b2_mae)
+            row["B3_clean_policy_action_consistency_recovery_fraction"] = _recovery(b1_mae, b3_mae)
+            row["B2_beats_B3_on_clean_policy_action_consistency"] = bool(b2_mae < b3_mae)
+            row["common_state_action_mae"] = common_action_mae
+        else:
+            row["B2_clean_policy_action_consistency_recovery_fraction"] = None
+            row["B3_clean_policy_action_consistency_recovery_fraction"] = None
+            row["B2_beats_B3_on_clean_policy_action_consistency"] = None
+            row["common_state_action_mae"] = None
+
+        resampler_state_maps = {
+            name: {} if row["resampler"][name] is None else row["resampler"][name]["per_state"]
+            for name in ("B1_rms_to_B0", "B2_rms_to_B0", "B3_rms_to_B0")
+        }
+        common_resampler_states = sorted(
+            set(resampler_state_maps["B1_rms_to_B0"])
+            & set(resampler_state_maps["B2_rms_to_B0"])
+            & set(resampler_state_maps["B3_rms_to_B0"])
         )
-
-        def resampler_mean(name):
-            item = row["resampler"][name]
-            return None if item is None else item["state_balanced_mean"]["value"]
-
-        b1_res = resampler_mean("B1_rms_to_B0")
-        b2_res = resampler_mean("B2_rms_to_B0")
-        b3_res = resampler_mean("B3_rms_to_B0")
-        row["B2_resampler_recovery_fraction"] = _recovery(b1_res, b2_res)
-        row["B3_resampler_recovery_fraction"] = _recovery(b1_res, b3_res)
+        row["resampler_comparison_common_state_ids"] = common_resampler_states
+        if common_resampler_states:
+            common_resampler_rms = {
+                name: float(np.mean([
+                    resampler_state_maps[name][state]["value"]
+                    for state in common_resampler_states
+                ]))
+                for name in ("B1_rms_to_B0", "B2_rms_to_B0", "B3_rms_to_B0")
+            }
+            row["B2_resampler_recovery_fraction"] = _recovery(
+                common_resampler_rms["B1_rms_to_B0"],
+                common_resampler_rms["B2_rms_to_B0"],
+            )
+            row["B3_resampler_recovery_fraction"] = _recovery(
+                common_resampler_rms["B1_rms_to_B0"],
+                common_resampler_rms["B3_rms_to_B0"],
+            )
+            row["common_state_resampler_rms"] = common_resampler_rms
+        else:
+            row["B2_resampler_recovery_fraction"] = None
+            row["B3_resampler_recovery_fraction"] = None
+            row["common_state_resampler_rms"] = None
         out[f"{role}/{window}"] = row
     return out
 
