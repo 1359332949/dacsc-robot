@@ -1,8 +1,9 @@
 """Phase 1 analysis of paired DINO patches (Source Fit -> Source Validation).
 
 Reports paired Clean/Shift sensitivity, Clean cross-state content variability,
-self-similarity matrices, and held-out-state domain AUROC. No Target data is
-accepted by this script.
+self-similarity matrices, and held-out-state domain AUROC. The Shift samples
+are from the known target lighting configuration rendered on source Fit/Val
+initial states; Target-dev/Test initial states and outcomes are not accepted.
 """
 from __future__ import annotations
 
@@ -282,10 +283,21 @@ def main():
         "windows": windows,
         "per_view": summaries,
         "self_similarity_file": str(ss_path) if self_similarity else None,
+        "state_role_semantics": (
+            "source_fit/source_validation identify disjoint initial-state partitions"
+        ),
+        "shift_domain_semantics": manifest.get(
+            "shift_domain_semantics",
+            "known target lighting rendered on source initial states",
+        ),
+        "target_dev_test_initial_states_used": False,
+        "target_success_labels_or_rewards_used": False,
         "decision_boundary": (
-            "Exploratory screening only. High AUROC supports separable domain "
-            "information; it does not establish that patch alignment improves "
-            "actions or closed-loop success. Low AUROC does not prove a downstream bottleneck."
+            "Known-perturbation offline diagnosis only. High AUROC supports "
+            "separable lighting information that generalizes across held-out "
+            "source initial states; it does not establish unknown-target "
+            "generalization, causal responsibility, or closed-loop benefit. "
+            "Low AUROC does not prove a downstream bottleneck."
         ),
     }
     args.out.parent.mkdir(parents=True, exist_ok=True)
