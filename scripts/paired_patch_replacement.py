@@ -47,13 +47,23 @@ def _tensor(array, device, dtype=torch.float32):
     return torch.as_tensor(np.asarray(array), device=device, dtype=dtype).unsqueeze(0)
 
 
+def _max_abs_diff(a, b):
+    x = torch.as_tensor(np.asarray(a), dtype=torch.float32)
+    y = torch.as_tensor(np.asarray(b), dtype=torch.float32)
+    if x.shape != y.shape:
+        return float("inf")
+    return float((x - y).abs().max().item())
+
+
 def _run_case(policy, patches, language_tokens, pooled_language, state_token, z0, device):
     extractor = policy.representation_extractor
+    resampler_param = next(extractor.cross_attention_resampler.parameters())
+    visual_input_dtype = resampler_param.dtype
     patch_dict = {
-        view: _tensor(value, device=device)
+        view: _tensor(value, device=device, dtype=visual_input_dtype)
         for view, value in patches.items()
     }
-    pooled = _tensor(pooled_language, device=device)
+    pooled = _tensor(pooled_language, device=device, dtype=visual_input_dtype)
     lang = _tensor(language_tokens, device=device)
     state = _tensor(state_token, device=device)
     visual = extractor.cross_attention_resampler(patch_dict, pooled)
@@ -165,6 +175,7 @@ def main():
     ap.add_argument("--out", type=Path, required=True)
     ap.add_argument("--device", default="cuda:0")
     ap.add_argument("--random-seed", type=int, default=20261119)
+    ap.add_argument("--action-parity-tol", type=float, default=1e-5)
     ap.add_argument("--libero-src", type=Path, default=Path("/hy-tmp/libero_plus"))
     ap.add_argument("--libero-config", type=Path, default=Path("/hy-tmp/libero_config"))
     args = ap.parse_args()
@@ -267,6 +278,20 @@ def main():
 
         a0 = clean_case["action_norm"]
         a1 = shift_case["action_norm"]
+        clean_collection_parity = _max_abs_diff(
+            a0[0].detach().cpu().numpy(), npz["clean_normalized_actions"][row]
+        )
+        shift_collection_parity = _max_abs_diff(
+            a1[0].detach().cpu().numpy(), npz["shift_normalized_actions"][row]
+        )
+        if max(clean_collection_parity, shift_collection_parity) > args.action_parity_tol:
+            raise RuntimeError(
+                "B0/B1 do not reproduce collector actions: "
+                f"state={record['state_id']} chunk={record['chunk_index']} "
+                f"clean_max_abs={clean_collection_parity:.8g} "
+                f"shift_max_abs={shift_collection_parity:.8g} "
+                f"tol={args.action_parity_tol:.8g}"
+            )
         a2 = paired_replacement["action_norm"]
         a3 = None if random_replacement is None else random_replacement["action_norm"]
         horizon = int(a0.shape[1])
@@ -304,6 +329,12 @@ def main():
             "pairing_pass": True,
             "random_donor_state_id": None if donor is None else int(donor["state_id"]),
             "random_donor_role": None if donor is None else donor["role"],
+            "collector_action_parity": {
+                "clean_b0_max_abs": clean_collection_parity,
+                "shift_b1_max_abs": shift_collection_parity,
+                "tolerance": args.action_parity_tol,
+                "pass": True,
+            },
             "B1_vs_B0": metrics_b1,
             "B2_vs_B0": metrics_b2,
             "B3_vs_B0": metrics_b3,
@@ -340,6 +371,8 @@ def main():
         ),
         "records_total": len(records),
         "records_pairing_pass": len(valid),
+        "action_parity_tolerance": args.action_parity_tol,
+        "collector_action_parity_all_pass": True,
         "views": views,
         "per_record": results,
         "aggregates": _aggregate(results),
