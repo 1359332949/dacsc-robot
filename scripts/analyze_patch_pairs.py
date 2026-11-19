@@ -224,7 +224,7 @@ def analyze_view_window(npz, records, view, window, seed):
             r["role"] == "source_validation" and r["window"] == window for r in records
         ),
         "paired_shift_sensitivity": {
-            "D_style_fit_record_level_whitened_rms": d_style,
+            "D_style_fit_state_balanced_whitened_rms": d_style,
             "D_style_validation_state_balanced_whitened_rms": d_style_val,
             "source_fit_states": len(pair_dists_fit),
             "source_validation_states": len(pair_dists_val),
