@@ -893,3 +893,32 @@ Consequence: the earlier "bowl rim circle" assumption is not established. The
 next geometry metric must use the actual primitive collision geometries and
 finger pads, not a fitted mesh rim. The body origin remains unsuitable as a
 grasp point.
+
+### Phase-swap pilot and exact OBB geometry
+
+Fixed switch at step 24 (2 chunks), same state/env seed, synchronized at switch
+with state/camera parity passed:
+
+| state | Shift -> Clean | Clean -> Shift |
+|---|---:|---:|
+| 37 | success 105 | success 101 |
+| 43 | success 96 | success 105 |
+| 45 | success 113 | **fail 220** |
+
+This is not a clean phase-effect result yet: state 43's earlier Shift baseline
+failed, but here both phase-swap directions succeed. That indicates a
+single-seed instability in the 43 Shift failure (or a setup difference); it
+must be replicated before attributing 43 to early vs late phase. State 45 is
+consistent with a late-Shift sensitivity, but one seed is not enough.
+
+OBB geometry audit (initial settled state; 40 boxes, two pad collision geoms):
+
+| state | left pad min distance | right pad min distance | closing-to-normal angle (L/R) |
+|---|---:|---:|---:|
+| 37 | 0.321 | 0.317 | 81.1 / 87.1 deg |
+| 43 | 0.300 | 0.296 | 80.5 / 87.1 deg |
+| 45 | 0.313 | 0.310 | 81.5 / 86.4 deg |
+
+These are initial-state distances, not close-time distances. The exact
+point-to-OBB tool is now available for replay instrumentation; close-time OBB
+must be recorded in the next rollout. No Adapter, target-test untouched.
