@@ -109,23 +109,43 @@ def analyze_view_window(npz, records, view, window, seed):
     if not val_ids:
         return {"status": "insufficient_source_validation", "source_fit_states": len(fit_ids)}
 
-    fit_clean = np.stack([fit[s] for s in fit_ids])
-    # The scale is fitted exclusively on source_fit Clean samples.
-    scale = np.maximum(fit_clean.std(axis=0, ddof=0), 1e-3)
+    fit_records = [
+        r for r in records
+        if r["role"] == "source_fit" and r["window"] == window
+    ]
+    val_records = [
+        r for r in records
+        if r["role"] == "source_validation" and r["window"] == window
+    ]
+    fit_clean_records = np.stack([
+        descriptors[int(r["feature_row"])]["clean"] for r in fit_records
+    ])
+    # Fit the descriptor scale on Source Fit Clean records only. D_style and
+    # D_content are both record-level distances, matched at the same chunk.
+    scale = np.maximum(fit_clean_records.std(axis=0, ddof=0), 1e-3)
 
     pair_dists_fit = [
-        normalized_distance(fit[s], fit_shift[s], scale) for s in fit_ids
+        normalized_distance(
+            descriptors[int(r["feature_row"])]["clean"],
+            descriptors[int(r["feature_row"])]["shift"],
+            scale,
+        )
+        for r in fit_records
     ]
     pair_dists_val = [
-        normalized_distance(val[s], val_shift[s], scale) for s in val_ids
+        normalized_distance(
+            descriptors[int(r["feature_row"])]["clean"],
+            descriptors[int(r["feature_row"])]["shift"],
+            scale,
+        )
+        for r in val_records
     ]
 
-    # Clean-Clean content distance is computed only between different states
-    # observed at the same chunk index, avoiding early/late phase mixing.
+    # Clean-Clean content distance is computed between different initial
+    # states at the same chunk index, so both distances share the same
+    # record/chunk-level analysis unit and manipulation phase.
     clean_by_chunk = {}
-    for record in records:
-        if record["role"] != "source_fit" or record["window"] != window:
-            continue
+    for record in fit_records:
         row = int(record["feature_row"])
         clean_by_chunk.setdefault(int(record["chunk_index"]), {})[
             int(record["state_id"])
@@ -138,6 +158,7 @@ def analyze_view_window(npz, records, view, window, seed):
                 content_dists.append(
                     normalized_distance(state_map[state_a], state_map[state_b], scale)
                 )
+
 
     x_train, y_train = [], []
     x_val, y_val = [], []
@@ -189,12 +210,14 @@ def analyze_view_window(npz, records, view, window, seed):
             r["role"] == "source_validation" and r["window"] == window for r in records
         ),
         "paired_shift_sensitivity": {
-            "D_style_fit_whitened_rms": d_style,
-            "D_style_validation_whitened_rms": float(np.mean(pair_dists_val)),
+            "D_style_fit_record_level_whitened_rms": d_style,
+            "D_style_validation_record_level_whitened_rms": float(np.mean(pair_dists_val)),
+            "analysis_unit": "one paired state x chunk record",
         },
         "clean_content_variability": {
-            "D_content_fit_whitened_rms": d_content,
+            "D_content_fit_record_level_whitened_rms": d_content,
             "matched_chunk_state_pairs": len(content_dists),
+            "analysis_unit": "different initial states at the same chunk index",
         },
         "R_sep": r_sep,
         "heldout_state_domain_separation": {
