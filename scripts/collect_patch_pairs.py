@@ -260,10 +260,23 @@ def main():
                         controller_check = bool(
                             state_check["checks"].get("controller", {}).get("pass", False)
                         )
+                        clean_patch_shapes = {
+                            view: list(clean_encoded["patches"][view].shape)
+                            for view in views
+                        }
+                        shift_patch_shapes = {
+                            view: list(shift_encoded["patches"][view].shape)
+                            for view in views
+                        }
+                        patch_shape_pass = bool(
+                            all(clean_patch_shapes[v] == shift_patch_shapes[v] for v in views)
+                            and clean_encoded["visual_tokens"].shape
+                                == shift_encoded["visual_tokens"].shape
+                        )
                         pairing_pass = bool(
                             compatibility["pass"] and state_check["all_pass"]
                             and camera_check["pass"] and state_delta < 1e-3
-                            and controller_check
+                            and controller_check and patch_shape_pass
                         )
                         if not pairing_pass:
                             # Retain the record for audit, but downstream scripts
@@ -312,6 +325,7 @@ def main():
                             "physical_state_compare_pass": bool(state_check["all_pass"]),
                             "camera_compare_pass": bool(camera_check["pass"]),
                             "controller_compare_pass": controller_check,
+                            "patch_shape_pass": patch_shape_pass,
                             "state_input_max_abs": state_delta,
                             "shift_snapshot_digest": digest(snap_shift),
                             "clean_snapshot_digest": digest(snap_clean),
@@ -319,11 +333,10 @@ def main():
                             "clean_model_digest": digest_model(snap_clean),
                             "shift_controller_digest": digest_controller(snap_shift),
                             "clean_controller_digest": digest_controller(snap_clean),
-                            "patch_shapes": {
-                                view: list(shift_encoded["patches"][view].shape)
-                                for view in views
-                            },
-                            "visual_token_shape": list(shift_encoded["visual_tokens"].shape),
+                            "clean_patch_shapes": clean_patch_shapes,
+                            "shift_patch_shapes": shift_patch_shapes,
+                            "clean_visual_token_shape": list(clean_encoded["visual_tokens"].shape),
+                            "shift_visual_token_shape": list(shift_encoded["visual_tokens"].shape),
                         })
 
                     controller = shift_encoded["controller_actions"]
