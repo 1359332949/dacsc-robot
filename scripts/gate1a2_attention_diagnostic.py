@@ -18,7 +18,7 @@ def resampler_tokens_attention(resampler, patches, pooled):
     """Replicate Resampler forward and return output + per-view attention [H,Q,N]."""
     gamma, beta = resampler.film(pooled).unsqueeze(1).chunk(2, dim=-1)
     batch_size = pooled.shape[0]
-    outs = []; attns = []; score_stats = []
+    outs = []; attns = []; score_stats = []; attn_errors = []
     for index, name in enumerate(resampler.view_names):
         p = resampler.input_projection(patches[name]) + resampler.view_embedding[index].unsqueeze(0)
         q = resampler.queries[index].unsqueeze(0).expand(batch_size, -1, -1)
@@ -41,8 +41,11 @@ def resampler_tokens_attention(resampler, patches, pooled):
         attn = torch.softmax(scores, dim=-1)
         ctx = torch.matmul(attn, vv).transpose(1, 2).reshape(batch_size, -1, E)
         ctx = resampler.cross_attention.out_proj(ctx)
+        # Reference attention from the unmodified MHA implementation.
+        _, ref_w = resampler.cross_attention(q, p, p, need_weights=True, average_attn_weights=False)
+        attn_errors.append(float((attn - ref_w).abs().max()))
         outs.append(resampler.norm(ctx)); attns.append(attn.detach()); score_stats.append(scores.detach())
-    return torch.cat(outs, dim=1), attns, score_stats
+    return torch.cat(outs, dim=1), attns, score_stats, attn_errors
 
 
 def attention_descriptor(attn, scores):
@@ -82,7 +85,7 @@ def main():
     shift_pooled=torch.tensor(npz['shift_pooled_language'],dtype=torch.float32,device=device)
     shift_state=torch.tensor(npz['shift_state_token'],dtype=torch.float32,device=device)
     view_names=list(man['view_names'])
-    rows=[]; verify=[]
+    rows=[]; verify=[]; attention_parity=[]
     with torch.no_grad():
         for r in records:
             i=int(r['feature_row'])
@@ -90,11 +93,12 @@ def main():
             shift={v:torch.tensor(npz[f'shift_{v}'][i],dtype=torch.float32,device=device)[None] for v in view_names}
             pool_c=torch.tensor(npz['clean_pooled_language'][i],dtype=torch.float32,device=device)[None]
             pool_s=shift_pooled[i:i+1]
-            tok_c, att_c, score_c = resampler_tokens_attention(resampler, clean, pool_c)
-            tok_s, att_s, score_s = resampler_tokens_attention(resampler, shift, pool_s)
+            tok_c, att_c, score_c, attn_err_c = resampler_tokens_attention(resampler, clean, pool_c)
+            tok_s, att_s, score_s, attn_err_s = resampler_tokens_attention(resampler, shift, pool_s)
             orig_c=resampler(clean,pool_c); orig_s=resampler(shift,pool_s)
             err=max(float((tok_c-orig_c).abs().max()), float((tok_s-orig_s).abs().max()))
             verify.append(err)
+            attention_parity.append(max(attn_err_c + attn_err_s))
             desc={v:{'clean':attention_descriptor(att_c[j], score_c[j]),'shift':attention_descriptor(att_s[j], score_s[j])} for j,v in enumerate(view_names)}
             # B1 shift vs B2 clean patches, same Shift context/z0
             z0=z0s[i:i+1]
@@ -155,12 +159,46 @@ def main():
                                       'x_mean':float(x.mean()),'y_mean':float(y.mean()),
                                       'x_high_action':float(x[y>np.median(y)].mean()) if len(x) else None,
                                       'x_low_action':float(x[y<=np.median(y)].mean()) if len(x) else None}
+    # State-level aggregation to avoid pseudo-replication across chunks.
+    state_corr = {}
+    for view in view_names:
+        for window in ('early', 'late'):
+            groups = {}
+            for r in rows:
+                if r['window'] != window:
+                    continue
+                key = (r['role'], int(r['state_id']))
+                a = r['attention'][view]['clean']; b = r['attention'][view]['shift']
+                groups.setdefault(key, []).append((float(np.linalg.norm(descriptor_vec(a) - descriptor_vec(b))), r['action_delta_norm']))
+            keys = sorted(groups)
+            xs = np.array([np.mean([v[0] for v in groups[k]]) for k in keys])
+            ys = np.array([np.mean([v[1] for v in groups[k]]) for k in keys])
+            if len(xs) > 2 and xs.std() > 0 and ys.std() > 0:
+                rho = float(np.corrcoef(xs, ys)[0, 1])
+                # rank correlation
+                xr = np.argsort(np.argsort(xs)).astype(float)
+                yr = np.argsort(np.argsort(ys)).astype(float)
+                spear = float(np.corrcoef(xr, yr)[0, 1])
+                rng = np.random.default_rng(20261119)
+                boots = []
+                for _ in range(2000):
+                    idx = rng.integers(0, len(xs), len(xs))
+                    if xs[idx].std() > 0 and ys[idx].std() > 0:
+                        boots.append(float(np.corrcoef(xs[idx], ys[idx])[0, 1]))
+                state_corr[f'{view}/{window}'] = {'n_states': len(keys), 'pearson': rho, 'spearman': spear,
+                                                  'pearson_ci95': [float(np.quantile(boots, .025)), float(np.quantile(boots, .975))] if boots else None}
+            else:
+                state_corr[f'{view}/{window}'] = {'n_states': len(keys), 'pearson': None, 'spearman': None, 'pearson_ci95': None}
     report={'schema':'gate1a2_attention_diagnostic_v1','pairs':str(args.pairs),'manifest':str(man_path),
-            'n_records':len(rows),'instrumentation_max_error':max(verify) if verify else None,
-            'instrumentation_pass':bool(max(verify)<1e-5) if verify else False,
-            'attention_gate':gate,'attention_action_correlation':corr,'records':rows}
+            'n_records':len(rows),
+            'instrumentation_token_max_error':max(verify) if verify else None,
+            'instrumentation_attention_max_error':max(attention_parity) if attention_parity else None,
+            'instrumentation_pass':bool(verify and attention_parity and max(verify)<1e-5 and max(attention_parity)<1e-5),
+            'attention_gate':gate,'attention_action_correlation':corr,
+            'attention_action_state_level':state_corr,'records':rows}
     args.out.parent.mkdir(parents=True,exist_ok=True); args.out.write_text(json.dumps(report,indent=2)+'\n')
-    print(json.dumps({'n':len(rows),'instrumentation_max_error':report['instrumentation_max_error'],
-                      'gate':gate,'corr':corr},indent=2)[:5000])
+    print(json.dumps({'n':len(rows),'instrumentation_token_max_error':report['instrumentation_token_max_error'],
+                      'instrumentation_attention_max_error':report['instrumentation_attention_max_error'],
+                      'gate':gate,'corr':corr,'state_corr':state_corr},indent=2)[:5000])
 
 if __name__=='__main__': main()

@@ -404,3 +404,54 @@ deviation. Gate 1A-2 does not pass. Do not train the Adapter with either gate.
 The correct next step is not to add differential features, cross-view cycles,
 and temporal transport simultaneously; that would replace one unvalidated gate
 with three. The research question must be re-examined at the signal level.
+
+### Correction: Gate 1A prior-statistics bug and re-run
+
+The first Gate 1A implementation mixed two different statistics: it used the
+cross-state std of patch channel means as the reference for the within-sample
+channel log-std. The corrected implementation estimates three separate
+source-fit prior quantities:
+
+- `prior_mu = mean_state(mu)`
+- `prior_mu_scale = std_state(mu)`
+- `prior_logsd = mean_state(log_std)`
+
+and scores
+
+D_v = mean((mu - prior_mu)^2 / (prior_mu_scale^2 + eps))
+      + alpha * mean((log_std - prior_logsd)^2)
+
+with a fixed alpha=1.0. Failed pairs are now rejected at the statistical
+entry, and the threshold is reported as `tau_quantile95` rather than a 5% FPR
+threshold (10 calibration states cannot guarantee 5% FPR).
+
+Re-run on the same fresh NPZ:
+
+| view/window | val Clean FPR | val Shift activation | val AUROC |
+|---|---:|---:|---:|
+| agentview early | 0.90 | 1.00 | 0.81 |
+| agentview late | 0.80 | 1.00 | 0.79 |
+| eye-in-hand early | 0.50 | 1.00 | 0.93 |
+| eye-in-hand late | 0.70 | 0.70 | 0.61 |
+
+The corrected statistics do not rescue the gate: held-out Clean FPR remains
+50-90%. Gate 1A still does not pass.
+
+### Gate 1A-2 attention parity and corrected statistics
+
+The attention-aware Resampler matches the original on both outputs:
+
+```text
+token max error:     5.25e-6
+attention max error: 4.68e-6
+```
+
+The attention gate still fails (held-out AUROC 0.39-0.70; eye-in-hand late
+activation zero). State-level aggregation (20 state-role groups per window)
+gives Pearson correlations in [-0.27, +0.25] with 95% bootstrap CIs crossing
+zero for all view/windows. Attention descriptors are entropy, effective
+support, max probability and LogSumExp; entropy/effective support are
+monotone transforms, so they are not independent evidence.
+
+Conclusion: neither the corrected global prior nor the audited Resampler
+attention signal is a reliable policy-relevant gate. Do not train the Adapter.
