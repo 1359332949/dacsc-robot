@@ -179,6 +179,8 @@ def main():
             raise ValueError(f"{key} changed after pair capture; rerun Phase 0 and pair capture")
     if manifest.get("schema") != "corp_paired_dino_patches_v1":
         raise ValueError("unexpected patch-pair manifest schema")
+    if not manifest.get("token_layout"):
+        raise ValueError("pair manifest has no verified DINO token-layout metadata")
     phase1 = json.loads(args.phase1_report.read_text())
     if phase1.get("schema") != "corp_patch_phase1_report_v1":
         raise ValueError("unexpected Phase 1 report schema")
@@ -356,6 +358,11 @@ def main():
         "action_parity_tolerance": args.action_parity_tol,
         "collector_action_parity_all_pass": True,
         "views": views,
+        "token_layout": manifest.get("token_layout"),
+        "patch_grid_hw": manifest.get("patch_grid_hw"),
+        "patch_token_count_per_view": manifest.get("patch_token_count_per_view"),
+        "prefix_token_count": manifest.get("prefix_token_count"),
+        "visual_encoder_token_count_per_view": manifest.get("visual_encoder_token_count_per_view"),
         "per_record": results,
         "aggregates": _aggregate(results),
         "claim_boundary": (
