@@ -265,7 +265,7 @@ def analyze_view_window(npz, records, view, window, seed):
             "AUROC measures domain information/generalization, not causal "
             "responsibility or action benefit."
         ),
-        "patch_tokens_per_sample": int(npz[f"clean_{view}"].shape[1]),
+        "visual_encoder_tokens_per_sample": int(npz[f"clean_{view}"].shape[1]),
         "embedding_dim": int(npz[f"clean_{view}"].shape[2]),
     }
 
@@ -287,6 +287,8 @@ def main():
     manifest = json.loads(manifest_path.read_text())
     if manifest.get("schema") != "corp_paired_dino_patches_v1":
         raise ValueError("unexpected patch-pair manifest schema")
+    if not manifest.get("token_layout") or manifest.get("patch_token_count_per_view") is None:
+        raise ValueError("pair manifest lacks verified patch/prefix token layout")
     expected_feature_hash = manifest.get("feature_file_sha256")
     if expected_feature_hash and _sha256_file(args.pairs) != expected_feature_hash:
         raise ValueError("NPZ feature hash does not match its manifest")
