@@ -135,6 +135,8 @@ def main():
         raise ValueError("unexpected Phase 0 report schema")
     if not phase0_report.get("identity_pass", False):
         raise RuntimeError("Phase 0 identity gate did not pass; refusing pair collection")
+    if not phase0_report.get("patch_layout_verified", False):
+        raise RuntimeError("Phase 0 could not verify DINO patch/prefix token layout")
     if phase0_report.get("suite") != args.suite or int(phase0_report.get("lighting_id", -1)) != int(args.lighting_id):
         raise ValueError("Phase 0 suite/lighting does not match pair collection")
     expected_hashes = {
@@ -413,6 +415,11 @@ def main():
         "records_total": len(records),
         "records_pairing_pass": sum(bool(r["pairing_pass"]) for r in records),
         "view_names": list(views),
+        "token_layout": phase0_report.get("token_layout"),
+        "patch_grid_hw": phase0_report.get("patch_grid_hw"),
+        "patch_token_count_per_view": phase0_report.get("patch_token_count_per_view"),
+        "prefix_token_count": phase0_report.get("prefix_token_count"),
+        "visual_encoder_token_count_per_view": phase0_report.get("tokens_per_view"),
         "patch_shapes": {
             view: list(output_arrays[f"shift_{view}"].shape[1:])
             for view in views
