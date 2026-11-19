@@ -200,6 +200,22 @@ def main():
             )
             action_clean = sample_from_z0(policy, rep_clean, z0)
             action_identity = sample_from_z0(policy, rep_identity, z0)
+            explicit_controller = policy.normalizer.unnormalize_action(action_clean).float()
+
+        # Compare the explicit-z0 path with the official policy.predict path.
+        # The temporary patch is restored immediately and is used only to pin
+        # policy.predict to the exact same initial flow noise.
+        import corp.action_generator as action_generator_module
+        original_randn = action_generator_module.torch.randn
+        action_generator_module.torch.randn = lambda *args, **kwargs: z0
+        try:
+            with torch.no_grad():
+                official_controller = policy.predict(policy_obs)[0].float()
+        finally:
+            action_generator_module.torch.randn = original_randn
+        official_path_error = float(
+            (official_controller - explicit_controller).abs().max().item()
+        )
 
         patch_error = max(
             float((patch_dict[k] - identity_patch_dict[k]).abs().max().item())
@@ -260,10 +276,12 @@ def main():
                 "resampler_max_abs": resampler_error,
                 "representation_max_abs": representation_error,
                 "action_max_abs": action_error,
+                "official_predict_vs_explicit_z0_controller_max_abs": official_path_error,
             },
             "identity_threshold": 1e-6,
             "identity_pass": bool(max(
-                patch_error, resampler_error, representation_error, action_error
+                patch_error, resampler_error, representation_error,
+                action_error, official_path_error
             ) < 1e-6),
             "z0_shape": _shape(z0),
             "action_shape": _shape(action_clean),
