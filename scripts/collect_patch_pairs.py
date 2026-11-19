@@ -147,10 +147,13 @@ def main():
             raise ValueError(f"Phase 0 {key} does not match pair collection input")
     current_repo_rev = _git_rev(ROOT)
     current_corp_rev = _git_rev(ROOT / "repos/CoRP")
+    current_libero_rev = _git_rev(args.libero_src)
     if phase0_report.get("repository_git_rev") and phase0_report["repository_git_rev"] != current_repo_rev:
         raise ValueError("repository revision changed after Phase 0; rerun Phase 0")
     if phase0_report.get("corp_git_rev") and phase0_report["corp_git_rev"] != current_corp_rev:
         raise ValueError("CoRP revision changed after Phase 0; rerun Phase 0")
+    if phase0_report.get("libero_git_rev") and phase0_report["libero_git_rev"] != current_libero_rev:
+        raise ValueError("LIBERO revision changed after Phase 0; rerun Phase 0")
 
     if args.out.suffix != ".npz":
         raise ValueError("--out must end in .npz")
@@ -179,6 +182,10 @@ def main():
 
     matrix = json.loads(args.matrix.read_text())
     task = next(x for x in matrix["base_tasks"] if x["suite"] == args.suite)
+    initial_state_path = Path(task["state_split"]["source_file"])
+    initial_state_sha256 = _sha256_file(initial_state_path)
+    if phase0_report.get("initial_state_file_sha256") != initial_state_sha256:
+        raise ValueError("initial-state file changed after Phase 0; rerun Phase 0")
     split = load_split(args.split_json)
     validate_split_identity(split, args.suite, task.get("base_task") or "", args.lighting_id)
     variant = next(
