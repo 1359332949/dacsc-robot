@@ -653,3 +653,23 @@ and does not use success rates.
 No Adapter, no target-test. Next: freeze one input transform and run a paired
 Clean/Shift pilot only after the transform and evaluation thresholds are
 pre-registered.
+
+### P3: fixed photometric-transform pilot (negative probe)
+
+A single fixed per-view affine luminance transform was fit only on source-fit
+Clean/Shift image statistics and frozen before the pilot:
+
+- agentview: a=1.238, b=-0.0215
+- eye-in-hand: a=1.160, b=+0.0063
+
+It was applied to both Clean and Shift images; same state/env/z0/controller.
+
+| domain | Frozen | Transform |
+|---|---:|---:|
+| Clean | 4/4 | **3/4** |
+| Shift | 2/4 | **1/4** |
+
+The transform broke Clean state 37 and did not rescue Shift 43/45. Therefore a
+simple global brightness/contrast correction is not sufficient for this
+Lighting-2292 setting. This is a probe result, not a method; no further affine
+parameter tuning was performed. Do not train an Adapter on this signal.
