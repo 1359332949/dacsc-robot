@@ -20,8 +20,11 @@ signals.
 The existing early/late collectors save post-Resampler visual tokens. Those
 files cannot establish whether DINO patch tokens changed; substituting them
 would intervene at the wrong representation layer. The new collector records
-the raw per-view visual_encoder outputs before CrossAttentionResampler, with
-the paired state inputs and explicit shared z0.
+the per-view visual_encoder output sequence before CrossAttentionResampler,
+with the paired state inputs and explicit shared z0. If Phase 0 finds prefix
+tokens, the collector preserves them because that is the exact sequence the
+frozen Resampler consumes; in that case B0-B3 are full visual-token-sequence
+replacement interventions, not patch-only interventions.
 
 Patch token count and embedding width are discovered at runtime. There is no
 assumption of 256 tokens, 384 channels, or a fixed number of views.
@@ -49,8 +52,12 @@ matches, and identity-path errors at four levels:
 
 **Gate:** all identity-path errors must be below 1e-6. This includes pinning
 the official policy.predict path to the same explicit z0 and comparing its
-controller-space action with the direct sampler. The report describes runtime
-shape facts; it does not assume a fixed DINO architecture.
+controller-space action with the direct sampler. It also requires a unique
+token-layout match from the runtime patch grid and model metadata: either
+patch tokens only, or patch tokens plus an explicitly counted CLS/register
+prefix. If the output token count cannot be explained uniquely, Phase 0 fails
+closed. The report records the verified grid and prefix count; no fixed DINO
+token count is assumed.
 
 ## Pair capture: raw patch features at early and late windows
 
@@ -80,7 +87,7 @@ Outputs:
 - source_patch_pairs.npz: per-view Clean/Shift patch tensors, state inputs,
   state/language tokens, pooled language, explicit z0, and paired actions;
 - source_patch_pairs.manifest.json: split role, state/chunk/step, pair checks,
-  digests, shapes, and file hashes.
+  digests, verified patch grid/prefix-token layout, shapes, and file hashes.
 
 The historical 37 early / 42 late records are a reference point, not a quota.
 A different revision or collection run must report its actual count and
