@@ -118,8 +118,17 @@ def _aggregate(records):
             name: state_balanced_mean(values, "resampler", name)
             for name in ("B1_rms_to_B0", "B2_rms_to_B0", "B3_rms_to_B0")
         }
+        # B2/B3 comparisons use exactly the same records: drop any row for
+        # which a matched random Clean donor (B3) was unavailable.
+        comparison_records = [
+            record for record in values if record.get("B3_vs_B0") is not None
+        ]
+        row["B2_B3_comparison_records"] = len(comparison_records)
         action_state_maps = {
-            name: {} if row[name] is None else row[name]["per_state"]
+            name: (
+                {} if state_balanced_mean(comparison_records, name) is None
+                else state_balanced_mean(comparison_records, name)["per_state"]
+            )
             for name in ("B1_vs_B0", "B2_vs_B0", "B3_vs_B0")
         }
         common_action_states = sorted(
@@ -151,7 +160,10 @@ def _aggregate(records):
             row["common_state_action_mae"] = None
 
         resampler_state_maps = {
-            name: {} if row["resampler"][name] is None else row["resampler"][name]["per_state"]
+            name: (
+                {} if state_balanced_mean(comparison_records, "resampler", name) is None
+                else state_balanced_mean(comparison_records, "resampler", name)["per_state"]
+            )
             for name in ("B1_rms_to_B0", "B2_rms_to_B0", "B3_rms_to_B0")
         }
         common_resampler_states = sorted(
