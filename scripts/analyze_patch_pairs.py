@@ -73,17 +73,27 @@ def _mean_self_similarity(npz, records, views, window, role):
     result = {}
     for view in views:
         for domain in ("clean", "shift"):
-            matrices = []
+            by_state = {}
             for record in records:
                 if record["role"] != role or record["window"] != window:
                     continue
                 row = int(record["feature_row"])
-                matrices.append(cosine_self_similarity(npz[f"{domain}_{view}"][row]))
-            if matrices:
-                shapes = {m.shape for m in matrices}
+                state_id = int(record["state_id"])
+                by_state.setdefault(state_id, []).append(
+                    cosine_self_similarity(npz[f"{domain}_{view}"][row])
+                )
+            if by_state:
+                state_matrices = [
+                    np.mean(matrices, axis=0) for matrices in by_state.values()
+                ]
+                shapes = {m.shape for m in state_matrices}
                 if len(shapes) != 1:
-                    raise ValueError(f"self-similarity shape changes for {view}/{window}/{domain}")
-                result[f"selfsim_{domain}_{view}_{window}"] = np.mean(matrices, axis=0).astype(np.float32)
+                    raise ValueError(
+                        f"self-similarity shape changes for {view}/{window}/{domain}"
+                    )
+                result[f"selfsim_{domain}_{view}_{window}"] = np.mean(
+                    state_matrices, axis=0
+                ).astype(np.float32)
     return result
 
 
