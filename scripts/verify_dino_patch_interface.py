@@ -250,11 +250,26 @@ def main():
         action_error = float((action_clean - action_identity).abs().max().item())
 
         input_hw = list(visual_input.shape[-2:])
+        metadata_candidates = _metadata_candidates(extractor.visual_encoder)
         conv_candidates = [
-            item for item in _metadata_candidates(extractor.visual_encoder)
+            item for item in metadata_candidates
             if "kernel_size" in item and item["kernel_size"][0] == item["kernel_size"][1]
             and item["stride"][0] == item["stride"][1]
         ]
+        prefix_token_counts = set()
+        for item in metadata_candidates:
+            if "num_prefix_tokens" in item:
+                prefix_token_counts.add(int(item["num_prefix_tokens"]))
+                continue
+            inferred_count = 0
+            has_prefix_metadata = False
+            for key in ("cls_token_shape", "register_tokens_shape"):
+                shape = item.get(key)
+                if shape is not None and len(shape) >= 2:
+                    inferred_count += int(shape[1])
+                    has_prefix_metadata = True
+            if has_prefix_metadata:
+                prefix_token_counts.add(inferred_count)
         grid_candidates = []
         for item in conv_candidates:
             kh, kw = item["kernel_size"]
@@ -273,6 +288,38 @@ def main():
                 "actual_tokens_per_view": n_out,
                 "actual_minus_grid": int(n_out - gh * gw),
             })
+
+        token_layout_candidates = {}
+        for candidate in grid_candidates:
+            grid_tokens = int(candidate["expected_grid_tokens"])
+            actual_tokens = int(candidate["actual_tokens_per_view"])
+            if actual_tokens == grid_tokens:
+                key = (tuple(candidate["expected_grid_hw"]), 0)
+                token_layout_candidates[key] = {
+                    "patch_grid_hw": list(candidate["expected_grid_hw"]),
+                    "patch_token_count": grid_tokens,
+                    "prefix_token_count": 0,
+                    "layout": "patch_tokens_only",
+                    "matched_conv_modules": [],
+                }
+            for prefix_count in prefix_token_counts:
+                if prefix_count > 0 and actual_tokens == grid_tokens + prefix_count:
+                    key = (tuple(candidate["expected_grid_hw"]), int(prefix_count))
+                    token_layout_candidates.setdefault(key, {
+                        "patch_grid_hw": list(candidate["expected_grid_hw"]),
+                        "patch_token_count": grid_tokens,
+                        "prefix_token_count": int(prefix_count),
+                        "layout": "patch_tokens_plus_prefix",
+                        "matched_conv_modules": [],
+                    })
+            for key, layout in token_layout_candidates.items():
+                if key[0] == tuple(candidate["expected_grid_hw"]):
+                    if candidate["module"] not in layout["matched_conv_modules"]:
+                        layout["matched_conv_modules"].append(candidate["module"])
+
+        unique_layouts = list(token_layout_candidates.values())
+        patch_layout_verified = len(unique_layouts) == 1
+        verified_layout = unique_layouts[0] if patch_layout_verified else None
 
         report = {
             "schema": "corp_dino_patch_interface_v1",
@@ -297,8 +344,15 @@ def main():
             "tokens_per_view": int(raw_tokens.shape[1]),
             "embedding_dim": int(raw_tokens.shape[2]),
             "input_hw": input_hw,
-            "patch_metadata_candidates": _metadata_candidates(extractor.visual_encoder),
+            "patch_metadata_candidates": metadata_candidates,
             "patch_grid_candidates": grid_candidates,
+            "prefix_token_count_candidates": sorted(prefix_token_counts),
+            "token_layout_candidates": unique_layouts,
+            "patch_layout_verified": patch_layout_verified,
+            "token_layout": None if verified_layout is None else verified_layout["layout"],
+            "patch_grid_hw": None if verified_layout is None else verified_layout["patch_grid_hw"],
+            "patch_token_count_per_view": None if verified_layout is None else verified_layout["patch_token_count"],
+            "prefix_token_count": None if verified_layout is None else verified_layout["prefix_token_count"],
             "identity_errors": {
                 "patch_max_abs": patch_error,
                 "resampler_max_abs": resampler_error,
@@ -307,10 +361,13 @@ def main():
                 "official_predict_vs_explicit_z0_controller_max_abs": official_path_error,
             },
             "identity_threshold": 1e-6,
-            "identity_pass": bool(max(
-                patch_error, resampler_error, representation_error,
-                action_error, official_path_error
-            ) < 1e-6),
+            "identity_pass": bool(
+                max(
+                    patch_error, resampler_error, representation_error,
+                    action_error, official_path_error
+                ) < 1e-6
+                and patch_layout_verified
+            ),
             "z0_shape": _shape(z0),
             "action_shape": _shape(action_clean),
         }
