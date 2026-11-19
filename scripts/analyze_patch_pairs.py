@@ -117,47 +117,60 @@ def analyze_view_window(npz, records, view, window, seed):
         r for r in records
         if r["role"] == "source_validation" and r["window"] == window
     ]
-    fit_clean_records = np.stack([
-        descriptors[int(r["feature_row"])]["clean"] for r in fit_records
-    ])
-    # Fit the descriptor scale on Source Fit Clean records only. D_style and
-    # D_content are both record-level distances, matched at the same chunk.
-    scale = np.maximum(fit_clean_records.std(axis=0, ddof=0), 1e-3)
+    # The scale/prototype is estimated from one aggregated Clean descriptor
+    # per Source Fit initial state, so states with more chunks do not dominate.
+    fit_clean = np.stack([fit[s] for s in fit_ids])
+    scale = np.maximum(fit_clean.std(axis=0, ddof=0), 1e-3)
 
-    pair_dists_fit = [
-        normalized_distance(
-            descriptors[int(r["feature_row"])]["clean"],
-            descriptors[int(r["feature_row"])]["shift"],
-            scale,
+    fit_pair_by_state = {state: [] for state in fit_ids}
+    for record in fit_records:
+        row = int(record["feature_row"])
+        fit_pair_by_state[int(record["state_id"])].append(
+            normalized_distance(
+                descriptors[row]["clean"], descriptors[row]["shift"], scale
+            )
         )
-        for r in fit_records
-    ]
-    pair_dists_val = [
-        normalized_distance(
-            descriptors[int(r["feature_row"])]["clean"],
-            descriptors[int(r["feature_row"])]["shift"],
-            scale,
+    val_pair_by_state = {state: [] for state in val_ids}
+    for record in val_records:
+        row = int(record["feature_row"])
+        val_pair_by_state[int(record["state_id"])].append(
+            normalized_distance(
+                descriptors[row]["clean"], descriptors[row]["shift"], scale
+            )
         )
-        for r in val_records
-    ]
+
+    # Equal weight per initial state; chunks are repeated measures within a
+    # state and are averaged before the state-level mean.
+    pair_dists_fit = {
+        state: float(np.mean(values))
+        for state, values in fit_pair_by_state.items() if values
+    }
+    pair_dists_val = {
+        state: float(np.mean(values))
+        for state, values in val_pair_by_state.items() if values
+    }
 
     # Clean-Clean content distance is computed between different initial
     # states at the same chunk index, so both distances share the same
-    # record/chunk-level analysis unit and manipulation phase.
+    # record/chunk-level manipulation phase.
     clean_by_chunk = {}
     for record in fit_records:
         row = int(record["feature_row"])
         clean_by_chunk.setdefault(int(record["chunk_index"]), {})[
             int(record["state_id"])
         ] = descriptors[row]["clean"]
-    content_dists = []
-    for state_map in clean_by_chunk.values():
+    content_by_chunk = {}
+    for chunk, state_map in clean_by_chunk.items():
         states = sorted(state_map)
+        chunk_dists = []
         for i, state_a in enumerate(states):
             for state_b in states[i + 1:]:
-                content_dists.append(
+                chunk_dists.append(
                     normalized_distance(state_map[state_a], state_map[state_b], scale)
                 )
+        if chunk_dists:
+            content_by_chunk[chunk] = float(np.mean(chunk_dists))
+    content_dists = list(content_by_chunk.values())
 
 
     x_train, y_train = [], []
@@ -196,7 +209,8 @@ def analyze_view_window(npz, records, view, window, seed):
         proto_labels.extend([0, 1])
     prototype_auc = float(roc_auc_score(proto_labels, proto_scores))
 
-    d_style = float(np.mean(pair_dists_fit))
+    d_style = float(np.mean(list(pair_dists_fit.values())))
+    d_style_val = float(np.mean(list(pair_dists_val.values())))
     d_content = float(np.mean(content_dists)) if content_dists else None
     r_sep = float(d_style / d_content) if d_content is not None and d_content > 1e-12 else None
     return {
@@ -211,13 +225,21 @@ def analyze_view_window(npz, records, view, window, seed):
         ),
         "paired_shift_sensitivity": {
             "D_style_fit_record_level_whitened_rms": d_style,
-            "D_style_validation_record_level_whitened_rms": float(np.mean(pair_dists_val)),
-            "analysis_unit": "one paired state x chunk record",
+            "D_style_validation_state_balanced_whitened_rms": d_style_val,
+            "source_fit_states": len(pair_dists_fit),
+            "source_validation_states": len(pair_dists_val),
+            "source_fit_records": len(fit_records),
+            "source_validation_records": len(val_records),
+            "aggregation": "average chunks within initial state, then average states",
         },
         "clean_content_variability": {
-            "D_content_fit_record_level_whitened_rms": d_content,
-            "matched_chunk_state_pairs": len(content_dists),
-            "analysis_unit": "different initial states at the same chunk index",
+            "D_content_fit_chunk_balanced_whitened_rms": d_content,
+            "matched_chunk_state_pairs_total": int(sum(
+                len(state_map) * (len(state_map) - 1) // 2
+                for state_map in clean_by_chunk.values()
+            )),
+            "matched_chunk_indices": len(content_dists),
+            "aggregation": "average cross-state pairs within chunk, then average chunks",
         },
         "R_sep": r_sep,
         "heldout_state_domain_separation": {
