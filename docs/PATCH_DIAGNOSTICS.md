@@ -1399,3 +1399,28 @@ normalization/gradient clipping, so those runs are invalid optimization; they
 do not establish that learned retrieval is impossible. Single-frame frozen
 token retrieval does not show useful conditional information under this
 protocol.
+
+### Gate 0: chunk overlap audit
+
+Actual CoRP checkpoint and official evaluator:
+
+```text
+H = 12
+E = 12 (for action in chunk:)
+L = H - E = 0
+num_sample_steps = 10
+Euler: x_{n+1} = x_n + v_theta(x_n, tau_n) / N
+```
+
+So the current protocol has **no action-chunk leftover**. SALT-style
+leftover supervision cannot be applied without changing E and re-running all
+controls under the same E. The released inference repo does not define the
+training target velocity sign; only the sampler sign is verified positive.
+
+### B4 archive correction
+
+B4 relative error had mixed Clean zero labels into the denominator, producing
+huge pseudo-errors. The evaluation is now restricted to Shift samples; Clean
+is reported separately as predicted residual norm. The old jointly trained B4
+numbers remain invalid and are archived, not used as evidence. B4fa/B4fb are
+random-projection cosine-pooling controls, not learned retrieval.
