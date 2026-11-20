@@ -1080,3 +1080,33 @@ seed-specific success was not from reducing Shift-Clean action error.
 
 Decision: stop LPE. Do not run the 3-seed matrix and do not stack temporal
 residual on it. Return to representation-level questions; no Adapter training.
+
+### r=6 rolling-horizon baseline and Oracle-gradient capacity probe
+
+r=6 Frozen target_dev (same 10 states, clean/shift):
+
+| horizon | Clean | Shift |
+|---|---:|---:|
+| r=12 (original) | 8/10 | 2/10 |
+| r=6 (rolling) | 8/10 | **1/10** |
+
+r=6 does not help: Shift success drops, and Clean state 43 regresses (state 39
+is rescued). Therefore shortening replan interval is not a free improvement;
+do not adopt r=6 solely to create overlap.
+
+Oracle-gradient capacity probe at the pre-Resampler token interface (proxy for
+a small LayerNorm at DINO->Resampler, because raw images are not stored in the
+patch-pair NPZ). Zero-init residual LayerNorm, trained only on source_fit
+Lighting pairs:
+
+| metric | before | after |
+|---|---:|---:|
+| fit Oracle loss | 0.04815 | 0.04354 |
+| held-out Oracle loss | 0.06261 | 0.06169 |
+| held-out Clean action drift | — | 0.000538 |
+
+Fit improves ~9.6%, held-out only ~1.5%, with non-zero Clean drift. This proxy
+does not establish useful held-out capacity for a DINO LayerNorm; the exact
+DINO-image path still needs raw images. Do not train DINO params from this.
+Background/noise domains exist in the matrix but have not been paired/collected
+for target_dev yet.
