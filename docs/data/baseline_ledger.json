@@ -497,5 +497,7 @@
     "r=6 (8/10 clean,1/10 shift)",
     "older phase/fork runs"
   ],
-  "claim_scope": "paired screening-seed baseline; 10 initial states, 3 repeats each; not confirmatory"
+  "claim_scope": "paired screening-seed baseline; 10 initial states, 3 repeats each; not confirmatory",
+  "access_ledger_status": "admission_accessed",
+  "provenance_overlay": "docs/data/perturb_dev_clean_v2_provenance_overlay.json"
 }

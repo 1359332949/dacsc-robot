@@ -29,17 +29,41 @@ def rotation_geodesic(a,b):
     return float(np.arccos(c))
 
 
-def action_error(pred,ref,executed=True,horizon=12):
+DEFAULT_OSC_POSE_OUTPUT_MIN = np.array([-0.05, -0.05, -0.05, -0.5, -0.5, -0.5], dtype=np.float64)
+DEFAULT_OSC_POSE_OUTPUT_MAX = np.array([0.05, 0.05, 0.05, 0.5, 0.5, 0.5], dtype=np.float64)
+
+
+def controller_physical(action, output_min=None, output_max=None):
+    """Map executed [-1,1] controller input to physical OSC_POSE units.
+
+    XYZ becomes metres; rotation becomes a scaled axis-angle rotation vector in
+    radians. The gripper dimension is not part of OSC_POSE and is unchanged.
+    """
+    a=execution_clip(action)
+    if output_min is None: output_min=DEFAULT_OSC_POSE_OUTPUT_MIN
+    if output_max is None: output_max=DEFAULT_OSC_POSE_OUTPUT_MAX
+    out=np.array(a,copy=True)
+    out[...,:6]=0.5*(a[...,:6]+1.0)*(np.asarray(output_max)-np.asarray(output_min))+np.asarray(output_min)
+    return out
+
+
+def action_error(pred,ref,executed=True,horizon=12,physical=True):
     """Per-step component metrics; returns means over the execution window."""
     p=np.asarray(pred,dtype=np.float64); r=np.asarray(ref,dtype=np.float64)
     if p.shape!=r.shape: raise ValueError(f'shape mismatch {p.shape} vs {r.shape}')
     p=p[:horizon]; r=r[:horizon]
     if executed: p=execution_clip(p); r=execution_clip(r)
-    xyz=np.linalg.norm(p[:,:3]-r[:,:3],axis=-1)
-    rot=np.array([rotation_geodesic(p[i,3:6],r[i,3:6]) for i in range(len(p))])
-    grip=np.abs(p[:,6]-r[:,6])
-    return {'xyz_mean':float(xyz.mean()),'rotation_geodesic_mean':float(rot.mean()),
-            'gripper_abs_mean':float(grip.mean()),'executed':bool(executed),'horizon':int(len(p))}
+    norm_xyz=np.linalg.norm(p[:,:3]-r[:,:3],axis=-1)
+    norm_rot=np.array([rotation_geodesic(p[i,3:6],r[i,3:6]) for i in range(len(p))])
+    gripper=np.abs(p[:,6]-r[:,6])
+    out={'xyz_norm_mean':float(norm_xyz.mean()),'rotation_norm_geodesic_mean':float(norm_rot.mean()),
+         'gripper_abs_mean':float(gripper.mean()),'executed':bool(executed),'horizon':int(len(p))}
+    if physical:
+        pp=controller_physical(p); rr=controller_physical(r)
+        xyz_m=np.linalg.norm(pp[:,:3]-rr[:,:3],axis=-1)
+        rot_rad=np.array([rotation_geodesic(pp[i,3:6],rr[i,3:6]) for i in range(len(pp))])
+        out.update({'xyz_m_mean':float(xyz_m.mean()),'rotation_rad_geodesic_mean':float(rot_rad.mean())})
+    return out
 
 
 def state_balanced_mean(records,key):

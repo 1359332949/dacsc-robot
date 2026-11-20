@@ -1134,3 +1134,21 @@ P1 action metric module added: execution clip, XYZ error, SO(3) geodesic for
 controller rotation-vector commands, separate gripper error, and state-balanced
 aggregation. Tests cover identity, clip masking, rotation geodesic, and
 all-dimension clipping. No proxy retraining was run.
+
+### P1.1 controller scaling parity
+
+`dacsc/action_metrics.py` now maps executed OSC_POSE controller commands to
+physical units using the actual robosuite config:
+
+- input [-1,1] -> XYZ output [-0.05,0.05] m;
+- input [-1,1] -> rotation axis-angle output [-0.5,0.5] rad;
+- gripper unchanged.
+
+Parity check against the loaded LIBERO controller: max absolute difference
+2.78e-17 on a random clipped action. Unit tests now cover physical scaling,
+clip masking, SO(3) geodesic, identity, and all-dimension clipping (5/5 OK).
+
+Provenance overlay added for `perturb_dev_clean_v2.json`: its captured
+`target_test_status=locked_unused` predates the 2312 admission event; the
+global access ledger (`admission_accessed`) supersedes it. Rollout records are
+unchanged. P2 real RGB DINO collection remains the next step; no Adapter.
