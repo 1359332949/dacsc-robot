@@ -1252,3 +1252,33 @@ versus uncorrected Shift error = 0.00873 m.
 This proves the velocity interface and integration parity, but only under a
 privileged unbounded hidden correction; it does not provide a deployable
 visual readout. The strict per-token 0.1 bound is not met for all tokens.
+
+### Fresh RGB re-collection and B-Flow-2
+
+Freshness smoke on states 0/1 showed the old Clean images/state8 differed from
+the unified-refresh path; Shift hashes matched. Full 20-pair set was therefore
+re-collected with both sides using sim.forward -> _update_observables ->
+_get_observations.
+
+P2 on fresh RGB remains weak: held-out loss 0.005326 -> 0.005313 (~0.245%),
+clean drift 1.69e-7; physical shift gap 8.998 mm / 0.01178 rad.
+
+B-Flow-2 on fresh RGB, true 10-step Euler, per-token trace and bounded
+correction:
+
+| rho | physical XYZ | SO(3) | gripper |
+|---:|---:|---:|---:|
+| 0 Shift | 8.642 mm | 0.011883 rad | 2.38e-4 |
+| 0.05 | 1.965 mm | 0.002872 rad | 3.80e-5 |
+| 0.10 | 0.151 mm | 0.000237 rad | 1.02e-6 |
+| 0.15 | 4.66e-6 m | 8.58e-6 rad | 9.9e-10 |
+| 0.20 | 1.92e-9 m | 3.59e-9 rad | 9.9e-10 |
+
+Per-token ratio: mean 0.0397, P95 0.0864, max 0.1631. By flow step it rises
+from ~0.024 at step 2 to ~0.072 at step 9; by action position it is U-shaped
+(~0.047 at ends, ~0.033 in the middle). Thus the strict per-token max does not
+mean bounded correction is unusable: truncating at rho=0.10 still reduces
+physical XYZ error from 8.64 mm to 0.151 mm in the 10-step integrated action.
+
+This is a privileged Clean/Shift velocity oracle, not a deployable readout.
+No Adapter, no target-test.
