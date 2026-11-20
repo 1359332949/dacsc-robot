@@ -1304,3 +1304,26 @@ The first-decision action chunk has ample bounded hidden headroom, including
 the 13 core Clean-success/Shift-fail episodes. This is still a privileged
 Clean/Shift Oracle; it does not provide a deployable readout. No Adapter, no
 target-test.
+
+### R0 minimal source readout: first attempt fails validation
+
+Dataset: 4 z0 trajectories per source state, 10 Euler steps, 12 action tokens;
+deployable features are Shift Resampler mean, action hidden h, state8, tau, k.
+Teacher is r* = v_C - v_S at the uncorrected Shift trajectory state. Clean
+samples use zero residual (No-Op).
+
+Ridge R0 (h + state8 + tau + k; Clean No-Op weight 1; alpha selected by
+state-grouped CV on source_fit only):
+
+| metric | value |
+|---|---:|
+| source_fit velocity relative error | 0.284 |
+| source_validation velocity relative error | **0.710** |
+| Clean predicted-correction norm (val) | 0.175 |
+
+The linear readout overfits the fit states and fails to generalize to held-out
+source states; the Clean No-Op constraint is also not satisfied. This is a
+negative R0 result: a simple source-trained single-frame linear readout does
+not explain the Clean/Shift velocity residual across states. Do not add an
+Adapter or deploy; first analyze state-conditioned label variance and feature
+generalization.
