@@ -1424,3 +1424,18 @@ huge pseudo-errors. The evaluation is now restricted to Shift samples; Clean
 is reported separately as predicted residual norm. The old jointly trained B4
 numbers remain invalid and are archived, not used as evidence. B4fa/B4fb are
 random-projection cosine-pooling controls, not learned retrieval.
+
+### B0 bounded Euler integration
+
+B0 h-only ridge (r0_ridge2 coefficients) inside the full 10-step bounded
+Euler sampler, fresh RGB, 20 source pairs, rho=0.10:
+
+| branch | XYZ command | SO(3) |
+|---|---:|---:|
+| uncorrected Shift | 8.642 mm | 0.011883 rad |
+| B0 bounded correction | 7.156 mm | 0.011302 rad |
+
+B0 only marginally improves the integrated action; it is far below the
+privileged Oracle (0.151 mm) and does not establish Clean safety. The Gate 1
+first-chunk recoverability experiment was not run in this turn; it remains the
+top priority before any temporal adaptation.
