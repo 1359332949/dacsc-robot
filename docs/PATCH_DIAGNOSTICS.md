@@ -1056,3 +1056,27 @@ established. Conclusion: local patch-energy calibration is Clean-safe in the
 single-seed gate, but its Shift gain is not stable across seeds. It is not a
 method-level result and must not be treated as a validated prototype. No
 Adapter training; target-test untouched.
+
+### LPE protocol fix and decisive offline action-error test
+
+Protocol fixes:
+- LPE source anchor now reads only `source_fit` manifest rows and records NPZ/manifest SHA256;
+- records include env_seed, z0_seed, commit, `max_scale_delta` and explicit
+  `scale_range = [1-delta, 1+delta]`;
+- per-episode flush added (a hung episode no longer loses completed records).
+
+Decisive offline test on 57 source_fit paired records: compute Clean, Shift,
+and Shift+LPE actions from the same stored patches/tokens/z0 and compare to
+Clean action.
+
+| metric | Shift | Shift+LPE |
+|---|---:|---:|
+| mean action L2 vs Clean | 0.16214 | **0.16208** |
+| mean XYZ vs Clean | 0.14129 | **0.14146** |
+
+LPE reduces the action deviation by ~0.03% in L2, and slightly worsens XYZ.
+This means LPE does not act through the intended mechanism: its occasional
+seed-specific success was not from reducing Shift-Clean action error.
+
+Decision: stop LPE. Do not run the 3-seed matrix and do not stack temporal
+residual on it. Return to representation-level questions; no Adapter training.
