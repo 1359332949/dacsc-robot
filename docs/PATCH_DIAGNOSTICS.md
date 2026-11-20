@@ -1226,3 +1226,29 @@ projected through W, alpha bounded by 1):
 So the simple visual direction leaves ~60% of the velocity residual
 unexplained. B2 fails as a structured velocity oracle. No flow-integration
 success/failure claim yet; no Adapter training.
+
+### B-Flow: exact Euler trajectory, per-token B1, Oracle integration parity
+
+Real sampler: N=10 Euler steps, x0=z0, dt=1/10. At each real flow state we
+evaluated Clean and Shift velocity on the same x, not on z0 at tau=0.5.
+
+B1 per-token reachability (rho=0.1 predeclared):
+
+| metric | value |
+|---|---:|
+| mean token ratio | 0.0397 |
+| mean P95 token ratio | 0.0805 |
+| mean max token ratio | 0.1118 |
+| states with max token ratio <= 0.1 | 3/20 |
+
+So the mean/P95 token correction is within 10%, but the worst token exceeds
+the predeclared bound in 17/20 pairs. Do not relabel rho post hoc.
+
+Step 4 Oracle integration parity: adding W*W^dagger*(v_C-v_S) to the Shift
+velocity at every real Euler step reproduces the Clean final action to
+max |diff| = 2.38e-7 (float32). Corrected physical XYZ error = 2.2e-9 m,
+versus uncorrected Shift error = 0.00873 m.
+
+This proves the velocity interface and integration parity, but only under a
+privileged unbounded hidden correction; it does not provide a deployable
+visual readout. The strict per-token 0.1 bound is not met for all tokens.
