@@ -1,0 +1,276 @@
+{
+  "schema": "bf3_target_pairs_v1",
+  "language": "pick the akita black bowl on the cookies box and place it on the plate",
+  "records": [
+    {
+      "state_id": 34,
+      "seed": 7777,
+      "clean_success": true,
+      "shift_success": false,
+      "z0_schedule_sha256": "664692a55fa8593378c44971067ffd792c43513c1f062f3c942d7748ecd1e6f6",
+      "pairing_pass": true,
+      "state8_max_abs_diff": 0.0
+    },
+    {
+      "state_id": 34,
+      "seed": 8888,
+      "clean_success": true,
+      "shift_success": false,
+      "z0_schedule_sha256": "1195fae774807697205889957cc48191649db180a857425ae9582355c8c449ad",
+      "pairing_pass": true,
+      "state8_max_abs_diff": 0.0
+    },
+    {
+      "state_id": 34,
+      "seed": 9999,
+      "clean_success": false,
+      "shift_success": false,
+      "z0_schedule_sha256": "53129a08f80549af86f1cdedd774cd61c118768e667d86746e266674110f621a",
+      "pairing_pass": true,
+      "state8_max_abs_diff": 0.0
+    },
+    {
+      "state_id": 35,
+      "seed": 7777,
+      "clean_success": false,
+      "shift_success": false,
+      "z0_schedule_sha256": "664692a55fa8593378c44971067ffd792c43513c1f062f3c942d7748ecd1e6f6",
+      "pairing_pass": true,
+      "state8_max_abs_diff": 0.0
+    },
+    {
+      "state_id": 35,
+      "seed": 8888,
+      "clean_success": true,
+      "shift_success": false,
+      "z0_schedule_sha256": "1195fae774807697205889957cc48191649db180a857425ae9582355c8c449ad",
+      "pairing_pass": true,
+      "state8_max_abs_diff": 0.0
+    },
+    {
+      "state_id": 35,
+      "seed": 9999,
+      "clean_success": true,
+      "shift_success": false,
+      "z0_schedule_sha256": "53129a08f80549af86f1cdedd774cd61c118768e667d86746e266674110f621a",
+      "pairing_pass": true,
+      "state8_max_abs_diff": 0.0
+    },
+    {
+      "state_id": 36,
+      "seed": 7777,
+      "clean_success": true,
+      "shift_success": true,
+      "z0_schedule_sha256": "664692a55fa8593378c44971067ffd792c43513c1f062f3c942d7748ecd1e6f6",
+      "pairing_pass": true,
+      "state8_max_abs_diff": 1.4551915228366852e-11
+    },
+    {
+      "state_id": 36,
+      "seed": 8888,
+      "clean_success": true,
+      "shift_success": true,
+      "z0_schedule_sha256": "1195fae774807697205889957cc48191649db180a857425ae9582355c8c449ad",
+      "pairing_pass": true,
+      "state8_max_abs_diff": 1.4551915228366852e-11
+    },
+    {
+      "state_id": 36,
+      "seed": 9999,
+      "clean_success": true,
+      "shift_success": true,
+      "z0_schedule_sha256": "53129a08f80549af86f1cdedd774cd61c118768e667d86746e266674110f621a",
+      "pairing_pass": true,
+      "state8_max_abs_diff": 1.4551915228366852e-11
+    },
+    {
+      "state_id": 37,
+      "seed": 7777,
+      "clean_success": true,
+      "shift_success": true,
+      "z0_schedule_sha256": "664692a55fa8593378c44971067ffd792c43513c1f062f3c942d7748ecd1e6f6",
+      "pairing_pass": true,
+      "state8_max_abs_diff": 0.0
+    },
+    {
+      "state_id": 37,
+      "seed": 8888,
+      "clean_success": false,
+      "shift_success": false,
+      "z0_schedule_sha256": "1195fae774807697205889957cc48191649db180a857425ae9582355c8c449ad",
+      "pairing_pass": true,
+      "state8_max_abs_diff": 0.0
+    },
+    {
+      "state_id": 37,
+      "seed": 9999,
+      "clean_success": true,
+      "shift_success": false,
+      "z0_schedule_sha256": "53129a08f80549af86f1cdedd774cd61c118768e667d86746e266674110f621a",
+      "pairing_pass": true,
+      "state8_max_abs_diff": 0.0
+    },
+    {
+      "state_id": 39,
+      "seed": 7777,
+      "clean_success": true,
+      "shift_success": true,
+      "z0_schedule_sha256": "664692a55fa8593378c44971067ffd792c43513c1f062f3c942d7748ecd1e6f6",
+      "pairing_pass": true,
+      "state8_max_abs_diff": 0.0
+    },
+    {
+      "state_id": 39,
+      "seed": 8888,
+      "clean_success": false,
+      "shift_success": true,
+      "z0_schedule_sha256": "1195fae774807697205889957cc48191649db180a857425ae9582355c8c449ad",
+      "pairing_pass": true,
+      "state8_max_abs_diff": 0.0
+    },
+    {
+      "state_id": 39,
+      "seed": 9999,
+      "clean_success": true,
+      "shift_success": true,
+      "z0_schedule_sha256": "53129a08f80549af86f1cdedd774cd61c118768e667d86746e266674110f621a",
+      "pairing_pass": true,
+      "state8_max_abs_diff": 0.0
+    },
+    {
+      "state_id": 43,
+      "seed": 7777,
+      "clean_success": true,
+      "shift_success": false,
+      "z0_schedule_sha256": "664692a55fa8593378c44971067ffd792c43513c1f062f3c942d7748ecd1e6f6",
+      "pairing_pass": true,
+      "state8_max_abs_diff": 0.0
+    },
+    {
+      "state_id": 43,
+      "seed": 8888,
+      "clean_success": true,
+      "shift_success": false,
+      "z0_schedule_sha256": "1195fae774807697205889957cc48191649db180a857425ae9582355c8c449ad",
+      "pairing_pass": true,
+      "state8_max_abs_diff": 0.0
+    },
+    {
+      "state_id": 43,
+      "seed": 9999,
+      "clean_success": true,
+      "shift_success": false,
+      "z0_schedule_sha256": "53129a08f80549af86f1cdedd774cd61c118768e667d86746e266674110f621a",
+      "pairing_pass": true,
+      "state8_max_abs_diff": 0.0
+    },
+    {
+      "state_id": 44,
+      "seed": 7777,
+      "clean_success": true,
+      "shift_success": true,
+      "z0_schedule_sha256": "664692a55fa8593378c44971067ffd792c43513c1f062f3c942d7748ecd1e6f6",
+      "pairing_pass": true,
+      "state8_max_abs_diff": 0.0
+    },
+    {
+      "state_id": 44,
+      "seed": 8888,
+      "clean_success": false,
+      "shift_success": false,
+      "z0_schedule_sha256": "1195fae774807697205889957cc48191649db180a857425ae9582355c8c449ad",
+      "pairing_pass": true,
+      "state8_max_abs_diff": 0.0
+    },
+    {
+      "state_id": 44,
+      "seed": 9999,
+      "clean_success": true,
+      "shift_success": false,
+      "z0_schedule_sha256": "53129a08f80549af86f1cdedd774cd61c118768e667d86746e266674110f621a",
+      "pairing_pass": true,
+      "state8_max_abs_diff": 0.0
+    },
+    {
+      "state_id": 45,
+      "seed": 7777,
+      "clean_success": true,
+      "shift_success": false,
+      "z0_schedule_sha256": "664692a55fa8593378c44971067ffd792c43513c1f062f3c942d7748ecd1e6f6",
+      "pairing_pass": true,
+      "state8_max_abs_diff": 0.0
+    },
+    {
+      "state_id": 45,
+      "seed": 8888,
+      "clean_success": true,
+      "shift_success": false,
+      "z0_schedule_sha256": "1195fae774807697205889957cc48191649db180a857425ae9582355c8c449ad",
+      "pairing_pass": true,
+      "state8_max_abs_diff": 0.0
+    },
+    {
+      "state_id": 45,
+      "seed": 9999,
+      "clean_success": true,
+      "shift_success": false,
+      "z0_schedule_sha256": "53129a08f80549af86f1cdedd774cd61c118768e667d86746e266674110f621a",
+      "pairing_pass": true,
+      "state8_max_abs_diff": 0.0
+    },
+    {
+      "state_id": 48,
+      "seed": 7777,
+      "clean_success": false,
+      "shift_success": false,
+      "z0_schedule_sha256": "664692a55fa8593378c44971067ffd792c43513c1f062f3c942d7748ecd1e6f6",
+      "pairing_pass": true,
+      "state8_max_abs_diff": 0.0
+    },
+    {
+      "state_id": 48,
+      "seed": 8888,
+      "clean_success": true,
+      "shift_success": false,
+      "z0_schedule_sha256": "1195fae774807697205889957cc48191649db180a857425ae9582355c8c449ad",
+      "pairing_pass": true,
+      "state8_max_abs_diff": 0.0
+    },
+    {
+      "state_id": 48,
+      "seed": 9999,
+      "clean_success": false,
+      "shift_success": false,
+      "z0_schedule_sha256": "53129a08f80549af86f1cdedd774cd61c118768e667d86746e266674110f621a",
+      "pairing_pass": true,
+      "state8_max_abs_diff": 0.0
+    },
+    {
+      "state_id": 49,
+      "seed": 7777,
+      "clean_success": false,
+      "shift_success": true,
+      "z0_schedule_sha256": "664692a55fa8593378c44971067ffd792c43513c1f062f3c942d7748ecd1e6f6",
+      "pairing_pass": true,
+      "state8_max_abs_diff": 0.0
+    },
+    {
+      "state_id": 49,
+      "seed": 8888,
+      "clean_success": false,
+      "shift_success": true,
+      "z0_schedule_sha256": "1195fae774807697205889957cc48191649db180a857425ae9582355c8c449ad",
+      "pairing_pass": true,
+      "state8_max_abs_diff": 0.0
+    },
+    {
+      "state_id": 49,
+      "seed": 9999,
+      "clean_success": true,
+      "shift_success": true,
+      "z0_schedule_sha256": "53129a08f80549af86f1cdedd774cd61c118768e667d86746e266674110f621a",
+      "pairing_pass": true,
+      "state8_max_abs_diff": 0.0
+    }
+  ]
+}

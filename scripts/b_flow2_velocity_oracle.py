@@ -46,14 +46,19 @@ def main():
                 xb=xb+(vsb+(torch.tensor(dhb,device=dev,dtype=vsb.dtype)[None]@Wt.T))*dt
             bounded[str(rho)]=action_error(policy.normalizer.unnormalize_action(xb)[0].detach().cpu().numpy(),policy.normalizer.unnormalize_action(xc)[0].detach().cpu().numpy(),executed=True,horizon=12)
         ac=policy.normalizer.unnormalize_action(xc)[0].detach().cpu().numpy(); ash=policy.normalizer.unnormalize_action(xs)[0].detach().cpu().numpy(); acorr=policy.normalizer.unnormalize_action(xcorr)[0].detach().cpu().numpy()
-        out.append({'role':rec['role'],'state_id':rec['state_id'],'traces':traces,'shift':action_error(ash,ac,executed=True,horizon=12),'bounded':bounded,'unbounded_parity':float(np.max(np.abs(acorr-ac)))})
-        print(json.dumps({'state':rec['state_id'],'role':rec['role'],'max_ratio':float(max(t['ratio'] for t in traces))}),flush=True)
+        out.append({'role':rec.get('role','target_dev'),'state_id':rec['state_id'],'seed':rec.get('seed'),'clean_success':rec.get('clean_success'),'shift_success':rec.get('shift_success'),'traces':traces,'shift':action_error(ash,ac,executed=True,horizon=12),'bounded':bounded,'unbounded_parity':float(np.max(np.abs(acorr-ac)))})
+        print(json.dumps({'state':rec['state_id'],'role':rec.get('role','target_dev'),'max_ratio':float(max(t['ratio'] for t in traces))}),flush=True)
     args.out.parent.mkdir(parents=True,exist_ok=True); args.out.write_text(json.dumps({'schema':'b_flow2_velocity_oracle_v1','steps':args.steps,'rhos':rhos,'records':out},indent=2)+'\n')
     # summary by rho
     summ={}
     for rho in rhos:
         summ[str(rho)]={k:float(np.mean([r['bounded'][str(rho)][k] for r in out])) for k in ('xyz_norm_mean','xyz_m_mean','rotation_rad_geodesic_mean','gripper_abs_mean')}
     alltr=[t for r in out for t in r['traces']]; byflow={str(n):float(np.mean([t['ratio'] for t in alltr if t['flow_step']==n])) for n in range(args.steps)}; byk={str(k):float(np.mean([t['ratio'] for t in alltr if t['k']==k])) for k in range(12)}
-    print(json.dumps({'n':len(out),'rhos':summ,'by_flow':byflow,'by_action_position':byk,'parity':max(r['unbounded_parity'] for r in out)},indent=2))
+    groups={}
+    for rho in rhos:
+        for key,grp in (('clean_ok_shift_fail',lambda r:r.get('clean_success') and not r.get('shift_success')),('both_ok',lambda r:r.get('clean_success') and r.get('shift_success')),('both_fail',lambda r:not r.get('clean_success') and not r.get('shift_success')),('clean_fail_shift_ok',lambda r:not r.get('clean_success') and r.get('shift_success'))):
+            rows=[r for r in out if grp(r)]
+            if rows: groups.setdefault(key,{})[str(rho)]={'n':len(rows),'xyz_m':float(np.mean([r['bounded'][str(rho)]['xyz_m_mean'] for r in rows])),'rot_rad':float(np.mean([r['bounded'][str(rho)]['rotation_rad_geodesic_mean'] for r in rows]))}
+    print(json.dumps({'n':len(out),'rhos':summ,'by_flow':byflow,'by_action_position':byk,'parity':max(r['unbounded_parity'] for r in out),'groups':groups},indent=2))
 
 if __name__=='__main__': main()

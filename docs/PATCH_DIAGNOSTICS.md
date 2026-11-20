@@ -1282,3 +1282,25 @@ physical XYZ error from 8.64 mm to 0.151 mm in the 10-step integrated action.
 
 This is a privileged Clean/Shift velocity oracle, not a deployable readout.
 No Adapter, no target-test.
+
+### B-Flow-3: target-dev first-decision headroom
+
+30 target-dev pairs (10 states x 3 P0 seeds). The P0 CUDA z0 schedule was
+regenerated and its SHA256 matched the ledger for all records; Clean/Shift
+state8 max absolute difference was 0.0; pairing all passed. B-Flow-3 uses
+z0_schedule[0] and the same 10-step Euler bounded oracle.
+
+Bounded physical controller-command error at rho=0.10:
+
+| group | n | Shift baseline XYZ | rho=0.10 XYZ |
+|---|---:|---:|---:|
+| Clean success / Shift fail | 13 | 5.94 mm | **0.020 mm** |
+| both success | 8 | 4.71 mm | 0.122 mm |
+| both fail | 6 | 5.25 mm | 0.025 mm |
+| Clean fail / Shift success | 3 | 6.57 mm | 0.123 mm |
+| all | 30 | — | mean 0.0586 mm, median ~0, P90 0.139 mm, max 0.519 mm |
+
+The first-decision action chunk has ample bounded hidden headroom, including
+the 13 core Clean-success/Shift-fail episodes. This is still a privileged
+Clean/Shift Oracle; it does not provide a deployable readout. No Adapter, no
+target-test.
