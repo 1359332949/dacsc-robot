@@ -1006,3 +1006,29 @@ negative result reinforces that a Clean-preserving constraint is mandatory and
 simple global feature normalization is not acceptable.
 
 No Adapter training; target-test untouched.
+
+### Prototype 2: local patch-energy calibration
+
+Source clean patch L2 norm is used as a per-view anchor; each target patch
+vector is scaled by 1 + 0.2*tanh(log(anchor_norm / patch_norm)), with a hard
+20% cap. No global channel mean/std, no attention mask, no training.
+
+Clean gate (8 states that Frozen Clean solves):
+
+| condition | success |
+|---|---:|
+| Clean Frozen baseline | 8/8 |
+| Clean + local patch energy | **8/8** |
+
+Shift gate (all 10 target_dev states, 2292):
+
+| condition | success | states |
+|---|---:|---|
+| Shift Frozen baseline | **2/10** | 36,37 |
+| Shift + local patch energy | **4/10** | 36,37,39,49 |
+
+This is the first prototype that passes the Clean gate and improves Shift
+without any target labels. It is still modest and not a method-level result:
+43/45/44/48 remain failures, and only one epsilon was tested. Next: small
+epsilon robustness check and failure-mode analysis on the new successes
+(39/49) before any training.
