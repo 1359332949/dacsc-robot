@@ -1032,3 +1032,27 @@ without any target labels. It is still modest and not a method-level result:
 43/45/44/48 remain failures, and only one epsilon was tested. Next: small
 epsilon robustness check and failure-mode analysis on the new successes
 (39/49) before any training.
+
+### Epsilon sweep and multi-seed check: prototype 2 not robust
+
+Clean/Shift target_dev, single seed 7777:
+
+| eps | Clean | Shift |
+|---:|---:|---:|
+| 0.1 | 8/10 | 2/10 |
+| 0.2 | 8/8 (8-state gate) | 4/10 |
+| 0.3 | 8/10 | 1/10 |
+
+The 0.2 result was seed-specific. Shift multi-seed at eps=0.2:
+
+| seed | Shift success |
+|---:|---:|
+| 7777 | 4/10 (36,37,39,49) |
+| 9999 | 4/10 (35,37,39,44) |
+| 8888 | 0/9 observed before hang |
+
+Clean was only run for seed 7777; multi-seed Clean retention is not yet
+established. Conclusion: local patch-energy calibration is Clean-safe in the
+single-seed gate, but its Shift gain is not stable across seeds. It is not a
+method-level result and must not be treated as a validated prototype. No
+Adapter training; target-test untouched.
