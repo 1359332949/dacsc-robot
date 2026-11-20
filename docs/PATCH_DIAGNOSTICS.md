@@ -979,3 +979,30 @@ S-prefix effect is not perfectly deterministic; S->S remains robustly failed.
 Per the research-scope decision, stop expanding this micro-diagnostic. The next
 gate is P1 attention-mask audit, then a minimal target_dev-wide prototype; no
 Adapter training before that.
+
+### Target-dev baseline and P1 attention audit; first prototype negative
+
+Full target_dev (10 states) Frozen:
+- Clean: 8/10 success (34,35,36,37,43,44,45,49; failures 39,48)
+- Shift 2292: 2/10 success (36,37 only)
+
+P1 attention-mask audit, eye-in-hand, 20 steps, states 43/45:
+
+| state | target mass clean/shift | finger mass clean/shift | background mass clean/shift | top64 Jaccard |
+|---|---|---|---|---|
+| 43 | 0.084 / 0.102 | 0.032 / 0.027 | 0.884 / 0.871 | 0.607 |
+| 45 | 0.088 / 0.109 | 0.035 / 0.028 | 0.876 / 0.863 | 0.603 |
+
+The attention is dominated by background; target/finger mass is low. Under the
+audit's projected mask this means attention cannot be trusted as a foreground
+mask for adaptation; if confirmed on more states, adaptation must be at the
+DINO shallow/input side rather than DINO->Resampler attention weighting.
+
+First minimal prototype: source-anchored pre-Resampler patch-token
+normalization (per-view source mean/std, per-image target mean/std). It was
+stopped after Clean 0/8: the global channel normalization destroys Clean
+retention immediately. This prototype is rejected; no Shift run needed. The
+negative result reinforces that a Clean-preserving constraint is mandatory and
+simple global feature normalization is not acceptable.
+
+No Adapter training; target-test untouched.
