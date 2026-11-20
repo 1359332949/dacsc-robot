@@ -1205,3 +1205,24 @@ through this linear head; an unbounded velocity-oracle is not evidence of
 visual repair capability. B1 must impose ||delta h|| <= rho ||h||, and B2 must
 restrict delta h to a sourced visual readout (FAVR-like), with flow integration
 and physical action evaluation.
+
+### B1/B2 bounded velocity oracle
+
+Fixed flow step tau=0.5, same z0 action input, same Clean/Shift state and
+Resampler path. W = actual 7x768 velocity_projection; rank 7, cond 1.50.
+
+B1 (unconstrained minimum-norm hidden delta):
+- 20/20 records satisfy ||delta h|| <= 0.1 ||h||;
+- mean ratio = 0.0373.
+
+This is expected from the full-row-rank 7D head and does not establish visual
+repair capability: any 7D velocity residual is representable.
+
+B2 (single bounded scalar along the Clean-Shift visual-token difference,
+projected through W, alpha bounded by 1):
+- mean relative residual = 0.601;
+- mean alpha = -0.542.
+
+So the simple visual direction leaves ~60% of the velocity residual
+unexplained. B2 fails as a structured velocity oracle. No flow-integration
+success/failure claim yet; no Adapter training.
