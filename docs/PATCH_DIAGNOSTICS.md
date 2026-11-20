@@ -1152,3 +1152,25 @@ Provenance overlay added for `perturb_dev_clean_v2.json`: its captured
 `target_test_status=locked_unused` predates the 2312 admission event; the
 global access ledger (`admission_accessed`) supersedes it. Rollout records are
 unchanged. P2 real RGB DINO collection remains the next step; no Adapter.
+
+### P2 real RGB DINO LayerNorm oracle feasibility
+
+Collected 20 real paired RGB observations (10 source_fit, 10 source_validation),
+one fresh Clean/Shift rendering per physical state; pairing checks pass.
+
+Predeclared theta: DINO block 0 norm1 only (768 parameters: 384 weight + 384
+bias). Everything else in DINO, Resampler and DiT frozen. Oracle reference is
+Clean Frozen theta0, fixed; action loss is unnormalized action MSE on z0.
+
+| metric | init | final |
+|---|---:|---:|
+| fit Oracle loss | 0.004695 | 0.004636 |
+| held-out Oracle loss | 0.005370 | 0.005357 |
+| held-out Clean drift | — | 1.71e-7 |
+| nonzero grad | — | yes (~0.003) |
+
+Under this predeclared single LayerNorm group, 20 steps, lr=1e-4, held-out
+improvement is ~0.24%, with negligible Clean drift. This is not evidence of
+useful Oracle capacity; it only rejects this single parameterization/setting.
+No second parameter group was selected on validation. P2 does not proceed to
+deployment TTA from this result.
