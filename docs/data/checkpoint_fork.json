@@ -1,0 +1,221 @@
+{
+  "schema": "checkpoint_fork_v1",
+  "records": [
+    {
+      "state_id": 43,
+      "seed": 7777,
+      "prefix": "clean",
+      "suffix": "clean",
+      "success": true,
+      "steps": 93,
+      "prefix_steps": 24
+    },
+    {
+      "state_id": 43,
+      "seed": 7777,
+      "prefix": "clean",
+      "suffix": "shift",
+      "success": true,
+      "steps": 105,
+      "prefix_steps": 24
+    },
+    {
+      "state_id": 43,
+      "seed": 7777,
+      "prefix": "shift",
+      "suffix": "clean",
+      "success": true,
+      "steps": 99,
+      "prefix_steps": 24
+    },
+    {
+      "state_id": 43,
+      "seed": 7777,
+      "prefix": "shift",
+      "suffix": "shift",
+      "success": false,
+      "steps": 220,
+      "prefix_steps": 24
+    },
+    {
+      "state_id": 43,
+      "seed": 8888,
+      "prefix": "clean",
+      "suffix": "clean",
+      "success": true,
+      "steps": 95,
+      "prefix_steps": 24
+    },
+    {
+      "state_id": 43,
+      "seed": 8888,
+      "prefix": "clean",
+      "suffix": "shift",
+      "success": true,
+      "steps": 150,
+      "prefix_steps": 24
+    },
+    {
+      "state_id": 43,
+      "seed": 8888,
+      "prefix": "shift",
+      "suffix": "clean",
+      "success": true,
+      "steps": 101,
+      "prefix_steps": 24
+    },
+    {
+      "state_id": 43,
+      "seed": 8888,
+      "prefix": "shift",
+      "suffix": "shift",
+      "success": false,
+      "steps": 220,
+      "prefix_steps": 24
+    },
+    {
+      "state_id": 43,
+      "seed": 9999,
+      "prefix": "clean",
+      "suffix": "clean",
+      "success": true,
+      "steps": 93,
+      "prefix_steps": 24
+    },
+    {
+      "state_id": 43,
+      "seed": 9999,
+      "prefix": "clean",
+      "suffix": "shift",
+      "success": true,
+      "steps": 93,
+      "prefix_steps": 24
+    },
+    {
+      "state_id": 43,
+      "seed": 9999,
+      "prefix": "shift",
+      "suffix": "clean",
+      "success": true,
+      "steps": 114,
+      "prefix_steps": 24
+    },
+    {
+      "state_id": 43,
+      "seed": 9999,
+      "prefix": "shift",
+      "suffix": "shift",
+      "success": false,
+      "steps": 220,
+      "prefix_steps": 24
+    },
+    {
+      "state_id": 45,
+      "seed": 7777,
+      "prefix": "clean",
+      "suffix": "clean",
+      "success": true,
+      "steps": 103,
+      "prefix_steps": 24
+    },
+    {
+      "state_id": 45,
+      "seed": 7777,
+      "prefix": "clean",
+      "suffix": "shift",
+      "success": true,
+      "steps": 101,
+      "prefix_steps": 24
+    },
+    {
+      "state_id": 45,
+      "seed": 7777,
+      "prefix": "shift",
+      "suffix": "clean",
+      "success": true,
+      "steps": 89,
+      "prefix_steps": 24
+    },
+    {
+      "state_id": 45,
+      "seed": 7777,
+      "prefix": "shift",
+      "suffix": "shift",
+      "success": false,
+      "steps": 220,
+      "prefix_steps": 24
+    },
+    {
+      "state_id": 45,
+      "seed": 8888,
+      "prefix": "clean",
+      "suffix": "clean",
+      "success": true,
+      "steps": 112,
+      "prefix_steps": 24
+    },
+    {
+      "state_id": 45,
+      "seed": 8888,
+      "prefix": "clean",
+      "suffix": "shift",
+      "success": false,
+      "steps": 220,
+      "prefix_steps": 24
+    },
+    {
+      "state_id": 45,
+      "seed": 8888,
+      "prefix": "shift",
+      "suffix": "clean",
+      "success": false,
+      "steps": 220,
+      "prefix_steps": 24
+    },
+    {
+      "state_id": 45,
+      "seed": 8888,
+      "prefix": "shift",
+      "suffix": "shift",
+      "success": false,
+      "steps": 220,
+      "prefix_steps": 24
+    },
+    {
+      "state_id": 45,
+      "seed": 9999,
+      "prefix": "clean",
+      "suffix": "clean",
+      "success": true,
+      "steps": 93,
+      "prefix_steps": 24
+    },
+    {
+      "state_id": 45,
+      "seed": 9999,
+      "prefix": "clean",
+      "suffix": "shift",
+      "success": true,
+      "steps": 90,
+      "prefix_steps": 24
+    },
+    {
+      "state_id": 45,
+      "seed": 9999,
+      "prefix": "shift",
+      "suffix": "clean",
+      "success": true,
+      "steps": 92,
+      "prefix_steps": 24
+    },
+    {
+      "state_id": 45,
+      "seed": 9999,
+      "prefix": "shift",
+      "suffix": "shift",
+      "success": false,
+      "steps": 220,
+      "prefix_steps": 24
+    }
+  ]
+}

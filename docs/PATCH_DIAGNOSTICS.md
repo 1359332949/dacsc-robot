@@ -950,3 +950,32 @@ observations, not a simple "late Shift" or "early Shift" mechanism.
 
 The single clean->shift failures (one seed in each state) need more seeds; the
 full-Shift failure is currently the robust effect (6/6 across both states).
+
+### True 2x2 checkpoint fork (final micro-diagnostic)
+
+Two independent prefix snapshots per seed: Clean step24 and Shift step24. `C->C`
+and `C->S` share the Clean snapshot; `S->C` and `S->S` share the Shift snapshot.
+Switch point is a replan boundary (24 = 2 x 12).
+
+| state | prefix -> suffix | success |
+|---|---|---:|
+| 43 | C -> C | 3/3 |
+| 43 | C -> S | 3/3 |
+| 43 | S -> C | 3/3 |
+| 43 | S -> S | 0/3 |
+| 45 | C -> C | 3/3 |
+| 45 | C -> S | 2/3 |
+| 45 | S -> C | 2/3 |
+| 45 | S -> S | 0/3 |
+
+Across states: C->C 6/6, C->S 5/6, S->C 5/6, S->S 0/6.
+
+This closes the phase question: after a Clean prefix, switching to Shift
+usually still succeeds; after a Shift prefix, continuing Shift always fails.
+The key variable is the **prefix physical state / early Shift exposure**, not
+late Shift alone. State 45 has one seed where all suffix branches fail, so the
+S-prefix effect is not perfectly deterministic; S->S remains robustly failed.
+
+Per the research-scope decision, stop expanding this micro-diagnostic. The next
+gate is P1 attention-mask audit, then a minimal target_dev-wide prototype; no
+Adapter training before that.
