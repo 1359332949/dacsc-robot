@@ -1327,3 +1327,24 @@ negative R0 result: a simple source-trained single-frame linear readout does
 not explain the Clean/Shift velocity residual across states. Do not add an
 Adapter or deploy; first analyze state-conditioned label variance and feature
 generalization.
+
+### R0-2 feature ablations and identifiability
+
+R0 dataset: source 20 states, 4 z0 trajectories, 10 flow steps, 12 action
+positions; ridge with state-grouped CV, per-fold normalization (B0/B1/B2),
+Clean No-Op samples, intercept unpenalized.
+
+| feature set | CV relative | val relative | val aggregate | val cosine | Clean residual norm |
+|---|---:|---:|---:|---:|---:|
+| B0 h + state8 + tau/k | 0.621 | 0.675 | 0.684 | 0.764 | 0.124 |
+| B1 visual mean + state8 + tau/k | 0.884 | 0.758 | 0.730 | 0.687 | 0.159 |
+| B2 visual + h + state8 + tau/k | 0.758 | 0.692 | 0.657 | 0.696 | 0.200 |
+
+kNN teacher retrieval on B2 features: relative 0.861, aggregate 0.847,
+cosine 0.620. Teacher residual variance decomposition: between-state share
+0.264, within-state 0.736.
+
+So explicit global visual mean does not improve cross-state prediction; h-only
+is better but still weak; nearest observable features are worse than ridge.
+The teacher residual is mostly trajectory/state-specific rather than a simple
+function of current mean visual features. Do not add a large MLP yet.
