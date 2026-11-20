@@ -1,0 +1,989 @@
+{
+  "schema": "multi_seed_phase_swap_v1",
+  "records": [
+    {
+      "state_id": 43,
+      "condition": "baseline_clean",
+      "seed": 7777,
+      "success": true,
+      "steps": 95,
+      "switch": null,
+      "close_obb": {
+        "pads": [
+          {
+            "pad": "gripper0_finger1_pad_collision",
+            "distance": 0.0477596541990149,
+            "normal": [
+              -4.974876264586455e-06,
+              3.7163096256397496e-05,
+              0.9999999992761397
+            ]
+          },
+          {
+            "pad": "gripper0_finger2_pad_collision",
+            "distance": 0.03279394658524422,
+            "normal": [
+              -0.0009834406975796268,
+              0.974873557548973,
+              -0.22275677223199494
+            ]
+          }
+        ],
+        "closing_axis": [
+          0.08249810140436672,
+          0.9893082587934833,
+          -0.12026317942082626
+        ],
+        "angles_rad": [
+          1.4502779662646736,
+          0.13307359815894426
+        ]
+      },
+      "min_left_pad_distance": 0.004914632246086523,
+      "min_right_pad_distance": 0.003923970283719562
+    },
+    {
+      "state_id": 43,
+      "condition": "baseline_clean",
+      "seed": 8888,
+      "success": true,
+      "steps": 95,
+      "switch": null,
+      "close_obb": {
+        "pads": [
+          {
+            "pad": "gripper0_finger1_pad_collision",
+            "distance": 0.03079449452075696,
+            "normal": [
+              0.03596147334829102,
+              -0.9666343991895925,
+              0.25362316667262286
+            ]
+          },
+          {
+            "pad": "gripper0_finger2_pad_collision",
+            "distance": 0.05145195736812559,
+            "normal": [
+              -0.035961473348759876,
+              0.9666343992021952,
+              -0.2536231666759295
+            ]
+          }
+        ],
+        "closing_axis": [
+          0.04044521295008352,
+          0.9925197460011844,
+          -0.1151900105212519
+        ],
+        "angles_rad": [
+          0.16039601134184747,
+          0.16039601126126116
+        ]
+      },
+      "min_left_pad_distance": 0.00731175285254124,
+      "min_right_pad_distance": 0.005629586057667142
+    },
+    {
+      "state_id": 43,
+      "condition": "baseline_clean",
+      "seed": 9999,
+      "success": true,
+      "steps": 92,
+      "switch": null,
+      "close_obb": {
+        "pads": [
+          {
+            "pad": "gripper0_finger1_pad_collision",
+            "distance": 0.029568267945171096,
+            "normal": [
+              -0.4897470290458027,
+              -0.5896204882947953,
+              0.6422581468974743
+            ]
+          },
+          {
+            "pad": "gripper0_finger2_pad_collision",
+            "distance": 0.056192350682755916,
+            "normal": [
+              0.30293446772774196,
+              0.9435600187772827,
+              0.13388502228379467
+            ]
+          }
+        ],
+        "closing_axis": [
+          0.08252410397667086,
+          0.9865560577304573,
+          -0.14105643266049067
+        ],
+        "angles_rad": [
+          0.777450491751681,
+          0.35688703600527655
+        ]
+      },
+      "min_left_pad_distance": 0.004260059580709771,
+      "min_right_pad_distance": 0.0041789504602273726
+    },
+    {
+      "state_id": 43,
+      "condition": "baseline_shift",
+      "seed": 7777,
+      "success": false,
+      "steps": 220,
+      "switch": null,
+      "close_obb": null,
+      "min_left_pad_distance": 0.033359724248782335,
+      "min_right_pad_distance": 0.1198475033494004
+    },
+    {
+      "state_id": 43,
+      "condition": "baseline_shift",
+      "seed": 8888,
+      "success": false,
+      "steps": 220,
+      "switch": null,
+      "close_obb": null,
+      "min_left_pad_distance": 0.01521305286133001,
+      "min_right_pad_distance": 0.09702842234057299
+    },
+    {
+      "state_id": 43,
+      "condition": "baseline_shift",
+      "seed": 9999,
+      "success": false,
+      "steps": 220,
+      "switch": null,
+      "close_obb": {
+        "pads": [
+          {
+            "pad": "gripper0_finger1_pad_collision",
+            "distance": 0.18517059666474986,
+            "normal": [
+              -0.33200368494230653,
+              0.9134634842442277,
+              -0.23528284282183656
+            ]
+          },
+          {
+            "pad": "gripper0_finger2_pad_collision",
+            "distance": 0.26350812486815894,
+            "normal": [
+              -0.23513103112830241,
+              0.9645094780401603,
+              -0.1201451828566143
+            ]
+          }
+        ],
+        "closing_axis": [
+          0.0016142822731623455,
+          0.9903679891618715,
+          0.13845085811565191
+        ],
+        "angles_rad": [
+          0.5124335212415927,
+          0.35338813064683117
+        ]
+      },
+      "min_left_pad_distance": 0.018338684166512555,
+      "min_right_pad_distance": 0.10051612654118075
+    },
+    {
+      "state_id": 43,
+      "condition": "shift_to_clean",
+      "seed": 7777,
+      "success": true,
+      "steps": 96,
+      "switch": {
+        "to": "clean",
+        "step": 24,
+        "state_compare": true,
+        "camera_compare": true
+      },
+      "close_obb": {
+        "pads": [
+          {
+            "pad": "gripper0_finger1_pad_collision",
+            "distance": 0.02341807026618908,
+            "normal": [
+              -4.97487626317367e-06,
+              3.716309624554116e-05,
+              0.9999999992543759
+            ]
+          },
+          {
+            "pad": "gripper0_finger2_pad_collision",
+            "distance": 0.026373933026710487,
+            "normal": [
+              -0.035961473348095296,
+              0.9666343991843311,
+              -0.2536231666712424
+            ]
+          }
+        ],
+        "closing_axis": [
+          0.10746062991566735,
+          0.9929866738243326,
+          -0.04929177012379903
+        ],
+        "angles_rad": [
+          1.5215209864108696,
+          0.251693037482297
+        ]
+      },
+      "min_left_pad_distance": 0.004192499568278594,
+      "min_right_pad_distance": 0.004199238037240372
+    },
+    {
+      "state_id": 43,
+      "condition": "shift_to_clean",
+      "seed": 8888,
+      "success": true,
+      "steps": 99,
+      "switch": {
+        "to": "clean",
+        "step": 24,
+        "state_compare": true,
+        "camera_compare": true
+      },
+      "close_obb": {
+        "pads": [
+          {
+            "pad": "gripper0_finger1_pad_collision",
+            "distance": 0.01907054685988833,
+            "normal": [
+              -0.0041664171522928966,
+              -0.003619236374789403,
+              0.9999847708796887
+            ]
+          },
+          {
+            "pad": "gripper0_finger2_pad_collision",
+            "distance": 0.042622902014186385,
+            "normal": [
+              -0.034988520529277665,
+              0.9675527495915616,
+              -0.2502348499750941
+            ]
+          }
+        ],
+        "closing_axis": [
+          0.0760992333993753,
+          0.9953073095980206,
+          -0.05976843743397183
+        ],
+        "angles_rad": [
+          1.50706635479184,
+          0.22269457779365312
+        ]
+      },
+      "min_left_pad_distance": 0.005956847827650114,
+      "min_right_pad_distance": 0.004115715646574118
+    },
+    {
+      "state_id": 43,
+      "condition": "shift_to_clean",
+      "seed": 9999,
+      "success": true,
+      "steps": 99,
+      "switch": {
+        "to": "clean",
+        "step": 24,
+        "state_compare": true,
+        "camera_compare": true
+      },
+      "close_obb": {
+        "pads": [
+          {
+            "pad": "gripper0_finger1_pad_collision",
+            "distance": 0.01805657673938162,
+            "normal": [
+              -0.014512773785606262,
+              0.005934387142074198,
+              0.9998770736123184
+            ]
+          },
+          {
+            "pad": "gripper0_finger2_pad_collision",
+            "distance": 0.03593610368410608,
+            "normal": [
+              -0.050742062137578356,
+              0.9685954311846011,
+              -0.2434093953870484
+            ]
+          }
+        ],
+        "closing_axis": [
+          0.10960580095387311,
+          0.9928677744331783,
+          -0.04690576580618041
+        ],
+        "angles_rad": [
+          1.5281848104267344,
+          0.2554769791405928
+        ]
+      },
+      "min_left_pad_distance": 0.004349404083272751,
+      "min_right_pad_distance": 0.00444030077771514
+    },
+    {
+      "state_id": 43,
+      "condition": "clean_to_shift",
+      "seed": 7777,
+      "success": true,
+      "steps": 105,
+      "switch": {
+        "to": "shift",
+        "step": 24,
+        "state_compare": true,
+        "camera_compare": true
+      },
+      "close_obb": {
+        "pads": [
+          {
+            "pad": "gripper0_finger1_pad_collision",
+            "distance": 0.025976469009231343,
+            "normal": [
+              -4.97487626277826e-06,
+              3.7163096240257364e-05,
+              0.9999999992585815
+            ]
+          },
+          {
+            "pad": "gripper0_finger2_pad_collision",
+            "distance": 0.02968509764853255,
+            "normal": [
+              -0.0359614733489079,
+              0.9666343991883962,
+              -0.25362316667230983
+            ]
+          }
+        ],
+        "closing_axis": [
+          0.0306396967680666,
+          0.9967046603902583,
+          -0.07510678341408711
+        ],
+        "angles_rad": [
+          1.4956557429641255,
+          0.1931941543679687
+        ]
+      },
+      "min_left_pad_distance": 0.00529640158805315,
+      "min_right_pad_distance": 0.004172267448671159
+    },
+    {
+      "state_id": 43,
+      "condition": "clean_to_shift",
+      "seed": 8888,
+      "success": false,
+      "steps": 220,
+      "switch": {
+        "to": "shift",
+        "step": 24,
+        "state_compare": true,
+        "camera_compare": true
+      },
+      "close_obb": {
+        "pads": [
+          {
+            "pad": "gripper0_finger1_pad_collision",
+            "distance": 0.02393454005201571,
+            "normal": [
+              -4.97487626320601e-06,
+              3.716309624557541e-05,
+              0.9999999992552974
+            ]
+          },
+          {
+            "pad": "gripper0_finger2_pad_collision",
+            "distance": 0.04616729948574317,
+            "normal": [
+              -0.03596147334867988,
+              0.9666343992000447,
+              -0.2536231666753653
+            ]
+          }
+        ],
+        "closing_axis": [
+          -0.014863430910837572,
+          0.9983744168305396,
+          -0.05502365142699828
+        ],
+        "angles_rad": [
+          1.5157821055544498,
+          0.20256961937377682
+        ]
+      },
+      "min_left_pad_distance": 0.004156072392385046,
+      "min_right_pad_distance": 0.004348152850300157
+    },
+    {
+      "state_id": 43,
+      "condition": "clean_to_shift",
+      "seed": 9999,
+      "success": true,
+      "steps": 116,
+      "switch": {
+        "to": "shift",
+        "step": 24,
+        "state_compare": true,
+        "camera_compare": true
+      },
+      "close_obb": {
+        "pads": [
+          {
+            "pad": "gripper0_finger1_pad_collision",
+            "distance": 0.0341672755460792,
+            "normal": [
+              -4.9748762623800816e-06,
+              3.716309623565984e-05,
+              0.9999999992678102
+            ]
+          },
+          {
+            "pad": "gripper0_finger2_pad_collision",
+            "distance": 0.03877079309658746,
+            "normal": [
+              -0.03596147334985212,
+              0.9666343991960039,
+              -0.25362316667430723
+            ]
+          }
+        ],
+        "closing_axis": [
+          0.00333658408237962,
+          0.9976979058059988,
+          -0.06773297522981835
+        ],
+        "angles_rad": [
+          1.5030486002122527,
+          0.19281984424075876
+        ]
+      },
+      "min_left_pad_distance": 0.004183849068050841,
+      "min_right_pad_distance": 0.004173874935138509
+    },
+    {
+      "state_id": 45,
+      "condition": "baseline_clean",
+      "seed": 7777,
+      "success": true,
+      "steps": 91,
+      "switch": null,
+      "close_obb": {
+        "pads": [
+          {
+            "pad": "gripper0_finger1_pad_collision",
+            "distance": 0.015802127526570384,
+            "normal": [
+              0.8944238811003079,
+              0.3538173471154491,
+              0.2735309958141554
+            ]
+          },
+          {
+            "pad": "gripper0_finger2_pad_collision",
+            "distance": 0.03257108130585097,
+            "normal": [
+              -0.1788242283749041,
+              0.9502275851219087,
+              -0.255126305500045
+            ]
+          }
+        ],
+        "closing_axis": [
+          0.1445032837867182,
+          0.9826901873720219,
+          -0.11592582367320449
+        ],
+        "angles_rad": [
+          1.1093644177688156,
+          0.3553799259402351
+        ]
+      },
+      "min_left_pad_distance": 0.009487180868050695,
+      "min_right_pad_distance": 0.008191597345955525
+    },
+    {
+      "state_id": 45,
+      "condition": "baseline_clean",
+      "seed": 8888,
+      "success": true,
+      "steps": 117,
+      "switch": null,
+      "close_obb": {
+        "pads": [
+          {
+            "pad": "gripper0_finger1_pad_collision",
+            "distance": 0.040698670144799956,
+            "normal": [
+              -0.8423533684078988,
+              -0.4755264478215773,
+              0.25360481088677794
+            ]
+          },
+          {
+            "pad": "gripper0_finger2_pad_collision",
+            "distance": 0.03816869133190636,
+            "normal": [
+              0.08700137480934521,
+              0.9650209569384904,
+              -0.24731622146233237
+            ]
+          }
+        ],
+        "closing_axis": [
+          0.04685505928986869,
+          0.9876273377719444,
+          -0.14965575525572616
+        ],
+        "angles_rad": [
+          0.991942487720134,
+          0.10803559499365273
+        ]
+      },
+      "min_left_pad_distance": 0.0064311735946698725,
+      "min_right_pad_distance": 0.00440925894387965
+    },
+    {
+      "state_id": 45,
+      "condition": "baseline_clean",
+      "seed": 9999,
+      "success": true,
+      "steps": 94,
+      "switch": null,
+      "close_obb": {
+        "pads": [
+          {
+            "pad": "gripper0_finger1_pad_collision",
+            "distance": 0.038153648731426626,
+            "normal": [
+              0.9673025819057707,
+              9.417728532581792e-06,
+              0.2536251464214786
+            ]
+          },
+          {
+            "pad": "gripper0_finger2_pad_collision",
+            "distance": 0.03327353403452363,
+            "normal": [
+              -0.03596147334926122,
+              0.9666343991900952,
+              -0.25362316668010876
+            ]
+          }
+        ],
+        "closing_axis": [
+          0.08132416943271277,
+          0.9872624134200622,
+          -0.136745407567452
+        ],
+        "angles_rad": [
+          1.5267898217227314,
+          0.16705294336064344
+        ]
+      },
+      "min_left_pad_distance": 0.008568354328857091,
+      "min_right_pad_distance": 0.008087510678929564
+    },
+    {
+      "state_id": 45,
+      "condition": "baseline_shift",
+      "seed": 7777,
+      "success": false,
+      "steps": 220,
+      "switch": null,
+      "close_obb": {
+        "pads": [
+          {
+            "pad": "gripper0_finger1_pad_collision",
+            "distance": 0.06250391571964042,
+            "normal": [
+              -0.020262200557333715,
+              0.5443862636224018,
+              0.8385899112056001
+            ]
+          },
+          {
+            "pad": "gripper0_finger2_pad_collision",
+            "distance": 0.1271728757210703,
+            "normal": [
+              0.038489817172678284,
+              0.9302444592987824,
+              0.36491612721583316
+            ]
+          }
+        ],
+        "closing_axis": [
+          0.15849237032777463,
+          0.9848772974536593,
+          -0.06997769276679248
+        ],
+        "angles_rad": [
+          1.0766733897239489,
+          0.4584466957182686
+        ]
+      },
+      "min_left_pad_distance": 0.03349201163885388,
+      "min_right_pad_distance": 0.10342403552472715
+    },
+    {
+      "state_id": 45,
+      "condition": "baseline_shift",
+      "seed": 8888,
+      "success": false,
+      "steps": 220,
+      "switch": null,
+      "close_obb": {
+        "pads": [
+          {
+            "pad": "gripper0_finger1_pad_collision",
+            "distance": 0.0331849291228285,
+            "normal": [
+              -0.38093573839982914,
+              0.9077484454384024,
+              0.17572911811556172
+            ]
+          },
+          {
+            "pad": "gripper0_finger2_pad_collision",
+            "distance": 0.10788075075500443,
+            "normal": [
+              -0.08424025292821306,
+              0.9896673035766617,
+              0.11602675553229594
+            ]
+          }
+        ],
+        "closing_axis": [
+          0.23183720159231122,
+          0.969646704209162,
+          0.07769672419679272
+        ],
+        "angles_rad": [
+          0.6342205744129288,
+          0.3203904808490577
+        ]
+      },
+      "min_left_pad_distance": 0.02885738207524033,
+      "min_right_pad_distance": 0.10673412993988916
+    },
+    {
+      "state_id": 45,
+      "condition": "baseline_shift",
+      "seed": 9999,
+      "success": false,
+      "steps": 220,
+      "switch": null,
+      "close_obb": {
+        "pads": [
+          {
+            "pad": "gripper0_finger1_pad_collision",
+            "distance": 0.042306754558516915,
+            "normal": [
+              -0.08622777572183049,
+              0.8199103526707352,
+              0.5659609387847734
+            ]
+          },
+          {
+            "pad": "gripper0_finger2_pad_collision",
+            "distance": 0.1218337925476933,
+            "normal": [
+              -0.05157224010321472,
+              0.9877630767927122,
+              0.14718834247084386
+            ]
+          }
+        ],
+        "closing_axis": [
+          -0.03067556719864981,
+          0.9970768487099857,
+          -0.06997690562124168
+        ],
+        "angles_rad": [
+          0.6752438905002863,
+          0.2188032402177687
+        ]
+      },
+      "min_left_pad_distance": 0.041954755979686675,
+      "min_right_pad_distance": 0.1188776205185574
+    },
+    {
+      "state_id": 45,
+      "condition": "shift_to_clean",
+      "seed": 7777,
+      "success": true,
+      "steps": 113,
+      "switch": {
+        "to": "clean",
+        "step": 24,
+        "state_compare": true,
+        "camera_compare": true
+      },
+      "close_obb": {
+        "pads": [
+          {
+            "pad": "gripper0_finger1_pad_collision",
+            "distance": 0.01546458485625647,
+            "normal": [
+              0.4403920686414716,
+              -0.16657954170119485,
+              0.8822165732035291
+            ]
+          },
+          {
+            "pad": "gripper0_finger2_pad_collision",
+            "distance": 0.043548903871610714,
+            "normal": [
+              -0.02066116237444808,
+              0.9658874581843616,
+              -0.2581366584690446
+            ]
+          }
+        ],
+        "closing_axis": [
+          0.1386748988128924,
+          0.9888205160870126,
+          -0.05480200161644833
+        ],
+        "angles_rad": [
+          1.4182117584760985,
+          0.2600755386603534
+        ]
+      },
+      "min_left_pad_distance": 0.006989715593385022,
+      "min_right_pad_distance": 0.004341676168595123
+    },
+    {
+      "state_id": 45,
+      "condition": "shift_to_clean",
+      "seed": 8888,
+      "success": true,
+      "steps": 94,
+      "switch": {
+        "to": "clean",
+        "step": 24,
+        "state_compare": true,
+        "camera_compare": true
+      },
+      "close_obb": {
+        "pads": [
+          {
+            "pad": "gripper0_finger1_pad_collision",
+            "distance": 0.01590335479271749,
+            "normal": [
+              -0.03255295253415974,
+              0.07009921121032785,
+              0.997008729020584
+            ]
+          },
+          {
+            "pad": "gripper0_finger2_pad_collision",
+            "distance": 0.03570460460604244,
+            "normal": [
+              -0.02583974703578322,
+              0.9464761260511393,
+              -0.3217378594948682
+            ]
+          }
+        ],
+        "closing_axis": [
+          0.0512409101030224,
+          0.995075189891748,
+          -0.08485125556075492
+        ],
+        "angles_rad": [
+          1.5542840769784403,
+          0.25449434930109177
+        ]
+      },
+      "min_left_pad_distance": 0.004855107076886307,
+      "min_right_pad_distance": 0.004215872482936475
+    },
+    {
+      "state_id": 45,
+      "condition": "shift_to_clean",
+      "seed": 9999,
+      "success": true,
+      "steps": 93,
+      "switch": {
+        "to": "clean",
+        "step": 24,
+        "state_compare": true,
+        "camera_compare": true
+      },
+      "close_obb": {
+        "pads": [
+          {
+            "pad": "gripper0_finger1_pad_collision",
+            "distance": 0.021911734306888118,
+            "normal": [
+              -0.0020052591747187157,
+              0.0005013636162154896,
+              0.999997863737164
+            ]
+          },
+          {
+            "pad": "gripper0_finger2_pad_collision",
+            "distance": 0.03298335720156746,
+            "normal": [
+              -0.03569536874373543,
+              0.966507522522131,
+              -0.2541437575423495
+            ]
+          }
+        ],
+        "closing_axis": [
+          0.00979958562076863,
+          0.9983354777479178,
+          -0.05683521767349678
+        ],
+        "angles_rad": [
+          1.5144122379365568,
+          0.20533239758006874
+        ]
+      },
+      "min_left_pad_distance": 0.004832230195061946,
+      "min_right_pad_distance": 0.0042856306076552355
+    },
+    {
+      "state_id": 45,
+      "condition": "clean_to_shift",
+      "seed": 7777,
+      "success": false,
+      "steps": 220,
+      "switch": {
+        "to": "shift",
+        "step": 24,
+        "state_compare": true,
+        "camera_compare": true
+      },
+      "close_obb": {
+        "pads": [
+          {
+            "pad": "gripper0_finger1_pad_collision",
+            "distance": 0.025582670392148087,
+            "normal": [
+              0.9422496636957904,
+              -0.21873991403369805,
+              0.2536107671127586
+            ]
+          },
+          {
+            "pad": "gripper0_finger2_pad_collision",
+            "distance": 0.03907108996441141,
+            "normal": [
+              -0.031112916799581405,
+              0.970798553532385,
+              -0.23787003766019532
+            ]
+          }
+        ],
+        "closing_axis": [
+          0.08658422374083115,
+          0.9947883569049422,
+          -0.05384512180320973
+        ],
+        "angles_rad": [
+          1.4205601363178486,
+          0.22020198022616203
+        ]
+      },
+      "min_left_pad_distance": 0.009460352112103722,
+      "min_right_pad_distance": 0.008525469565919631
+    },
+    {
+      "state_id": 45,
+      "condition": "clean_to_shift",
+      "seed": 8888,
+      "success": true,
+      "steps": 99,
+      "switch": {
+        "to": "shift",
+        "step": 24,
+        "state_compare": true,
+        "camera_compare": true
+      },
+      "close_obb": {
+        "pads": [
+          {
+            "pad": "gripper0_finger1_pad_collision",
+            "distance": 0.019845643284001485,
+            "normal": [
+              -0.053363556529926866,
+              0.0209332866903262,
+              0.9983557122799673
+            ]
+          },
+          {
+            "pad": "gripper0_finger2_pad_collision",
+            "distance": 0.03695383265159415,
+            "normal": [
+              0.05080590579785244,
+              0.967458652757758,
+              -0.24787600748374755
+            ]
+          }
+        ],
+        "closing_axis": [
+          0.022895823782924103,
+          0.9965754690981955,
+          -0.0794551170254217
+        ],
+        "angles_rad": [
+          1.5110761619465816,
+          0.17340017621415843
+        ]
+      },
+      "min_left_pad_distance": 0.005088702339059141,
+      "min_right_pad_distance": 0.003958966171994291
+    },
+    {
+      "state_id": 45,
+      "condition": "clean_to_shift",
+      "seed": 9999,
+      "success": true,
+      "steps": 98,
+      "switch": {
+        "to": "shift",
+        "step": 24,
+        "state_compare": true,
+        "camera_compare": true
+      },
+      "close_obb": {
+        "pads": [
+          {
+            "pad": "gripper0_finger1_pad_collision",
+            "distance": 0.023002004280973782,
+            "normal": [
+              0.9009623961302148,
+              0.3520844298422124,
+              0.25358098299170145
+            ]
+          },
+          {
+            "pad": "gripper0_finger2_pad_collision",
+            "distance": 0.032396962616179296,
+            "normal": [
+              -0.17776072451170502,
+              0.9522427509728687,
+              -0.24826370652788324
+            ]
+          }
+        ],
+        "closing_axis": [
+          0.06354709718110174,
+          0.9961449162464805,
+          -0.06047373192247092
+        ],
+        "angles_rad": [
+          1.1672897948048326,
+          0.3101459703853413
+        ]
+      },
+      "min_left_pad_distance": 0.004216335955062931,
+      "min_right_pad_distance": 0.004243539914354357
+    }
+  ]
+}

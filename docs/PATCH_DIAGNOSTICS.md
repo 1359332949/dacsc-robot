@@ -922,3 +922,31 @@ OBB geometry audit (initial settled state; 40 boxes, two pad collision geoms):
 These are initial-state distances, not close-time distances. The exact
 point-to-OBB tool is now available for replay instrumentation; close-time OBB
 must be recorded in the next rollout. No Adapter, target-test untouched.
+
+### Multi-seed phase-swap + close-time OBB
+
+State 43/45, seeds 7777/8888/9999, switch step 24, same-state/camera parity.
+Close OBB is measured on the first close command using exact point-to-OBB
+distances between the two pad collision geoms and 40 bowl boxes.
+
+| state | condition | success | close pad distances (representative) |
+|---|---|---:|---|
+| 43 | Clean baseline | 3/3 | 0.03-0.05 m |
+| 43 | Shift baseline | **0/3** | 0.185-0.264 m when close occurred; 2/3 no close |
+| 43 | Shift -> Clean | 3/3 | 0.02-0.04 m |
+| 43 | Clean -> Shift | **2/3** | 0.02-0.05 m |
+| 45 | Clean baseline | 3/3 | 0.02-0.04 m |
+| 45 | Shift baseline | **0/3** | 0.06-0.13 m |
+| 45 | Shift -> Clean | 3/3 | 0.02-0.04 m |
+| 45 | Clean -> Shift | **2/3** | 0.02-0.04 m |
+
+Corrected conclusion: the failure is not consistently attributable to early
+or late Shift alone. Early Shift + late Clean always recovered; late Shift
+alone usually recovered. Sustained Shift across both phases failed 6/6. The
+close-time OBB distances show the Shift baseline is far from the bowl at the
+close command, while successful phase-swap runs get within ~0.02-0.05 m.
+This supports an approach/close-position failure under sustained shifted
+observations, not a simple "late Shift" or "early Shift" mechanism.
+
+The single clean->shift failures (one seed in each state) need more seeds; the
+full-Shift failure is currently the robust effect (6/6 across both states).
