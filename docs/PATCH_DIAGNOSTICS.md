@@ -1439,3 +1439,23 @@ B0 only marginally improves the integrated action; it is far below the
 privileged Oracle (0.151 mm) and does not establish Clean safety. The Gate 1
 first-chunk recoverability experiment was not run in this turn; it remains the
 top priority before any temporal adaptation.
+
+### Gate 1: first-chunk recoverability (E=12)
+
+All 30 P0 Shift episodes; first 12 actions executed, then from the same
+physical snapshot branch into Frozen-Shift or Frozen-Clean continuation.
+P0 z0 schedule hashes were asserted.
+
+| group | n | Shift recovery | Clean continuation |
+|---|---:|---:|---:|
+| Clean success / Shift fail (core) | 13 | 3 | **7** |
+| both success | 8 | 6 | 6 |
+| both fail | 6 | 1 | 4 |
+| Clean fail / Shift success | 3 | 3 | 2 |
+| all | 30 | 13 | 19 |
+
+The first chunk leaves the core-13 episodes recoverable under Clean vision in
+7/13 cases but only 3/13 under Shift. Thus roughly half of the core failures
+are already irrecoverable after the first chunk even with Clean vision, while
+the rest retain later-interaction headroom. This is a mixed result, not a
+green light for either pure cold-start correction or pure later TTA.
