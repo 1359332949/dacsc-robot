@@ -1110,3 +1110,27 @@ does not establish useful held-out capacity for a DINO LayerNorm; the exact
 DINO-image path still needs raw images. Do not train DINO params from this.
 Background/noise domains exist in the matrix but have not been paired/collected
 for target_dev yet.
+
+### P0 baseline ledger and P1 action metric
+
+Formal paired baseline ledger (screening seeds 7777/8888/9999, 10 target_dev
+states, fp32, sample_z, executed_k=12, same z0 schedule per seed):
+
+| domain | seed 7777 | seed 8888 | seed 9999 | total |
+|---|---:|---:|---:|---:|
+| Clean Frozen | 7/10 | 6/10 | 8/10 | **21/30** |
+| Shift Lighting 2292 | 5/10 | 3/10 | 3/10 | **11/30** |
+
+The old Clean 8/10 / Shift 2/10 and r=6 8/10 / 1/10 are retained only as
+legacy exploratory diagnostics and are not mixed into this ledger. The 10
+initial states are the physical cluster; seeds are repeats on the same states.
+
+Access-ledger fact: target-test status is `admission_accessed` (Lighting 2312
+Frozen admission, seed 2014), not locked_unused. The split file still records
+`locked_unused`; the access ledger supersedes it. This test is exploratory
+admission only, not confirmatory.
+
+P1 action metric module added: execution clip, XYZ error, SO(3) geodesic for
+controller rotation-vector commands, separate gripper error, and state-balanced
+aggregation. Tests cover identity, clip masking, rotation geodesic, and
+all-dimension clipping. No proxy retraining was run.
