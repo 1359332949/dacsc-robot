@@ -16,6 +16,18 @@ def main():
     Wq=rng.normal(0,1/np.sqrt(dim),(dim,qdim)); Wk=rng.normal(0,1/np.sqrt(dim),(dim,qdim)); Wv=rng.normal(0,1/np.sqrt(dim),(dim,vdim)); Wo=rng.normal(0,1/np.sqrt(vdim),(vdim,dim))
     q=H@Wq; K=(T@Wk).reshape(len(T),-1,qdim); V=(T@Wv).reshape(len(T),-1,vdim); scores=np.einsum('bd,bnd->bn',q,K)/np.sqrt(qdim); scores-=scores.max(axis=-1,keepdims=True); A=np.exp(scores); A/=A.sum(-1,keepdims=True); X=np.einsum('bn,bnd->bd',A,V)@Wo
     viewmean=T.mean(axis=2)  # [N,2,768]
+    # B4f: fixed normalized-query retrieval controls (no gradient training)
+    rng2=np.random.default_rng(12345)
+    def retrieval(kind):
+        qdim=768 if kind=='a' else 32; vdim=768 if kind=='a' else 32
+        Wq=rng2.normal(0,1/np.sqrt(768),(768,qdim)); Wk=rng2.normal(0,1/np.sqrt(768),(768,qdim)); Wv=rng2.normal(0,1/np.sqrt(768),(768,vdim))
+        q=H@Wq; q=q/(np.linalg.norm(q,axis=1,keepdims=True)+1e-8)
+        outs=[]
+        for v in range(2):
+            Z=T[:,v]; K=Z@Wk if kind=='b' else Z; K=K/(np.linalg.norm(K,axis=-1,keepdims=True)+1e-8); V=Z@Wv if kind=='b' else Z
+            sc=np.einsum('bd,bnd->bn',q,K)/np.sqrt(qdim); sc-=sc.max(-1,keepdims=True); a=np.exp(sc); a/=a.sum(-1,keepdims=True); outs.append(np.einsum('bn,bnd->bd',a,V))
+        return np.concatenate(outs,axis=1)
+    B4fa=retrieval('a'); B4fb=retrieval('b')
     def ridge_cv(Xf):
         tr=(roles=='source_fit'); va=(roles=='source_validation'); tr_shift=tr&~clean; va_shift=va&~clean; uniq=sorted(set(states[tr])); best=None
         def fit(idx,a):
@@ -30,8 +42,8 @@ def main():
         mu,sd,beta=fit(tr,best[1]); p=pred(va_shift,mu,sd,beta); y=Y[va_shift]; rel=float(np.mean(np.linalg.norm(p-y,axis=1)/(np.linalg.norm(y,axis=1)+1e-12))); agg=float(np.sqrt(np.sum((p-y)**2)/(np.sum(y**2)+1e-12))); cos=float(np.mean(np.sum(p*y,axis=1)/(np.linalg.norm(p,axis=1)*np.linalg.norm(y,axis=1)+1e-12)))
         pc=pred(va&clean,mu,sd,beta); # hidden ratio requires W; skip here
         return {'alpha':best[1],'cv_rel':best[0],'val_rel':rel,'val_agg':agg,'val_cos':cos,'clean_pred_norm':float(np.mean(np.linalg.norm(pc,axis=1)))}
-    Xb0=np.c_[H,S,tau[:,None],k[:,None]]; Xb3a=np.c_[viewmean.reshape(len(T),-1),H,S,tau[:,None],k[:,None]]; Xb3b=np.c_[H,X,S,tau[:,None],k[:,None]]
-    out={'B0':ridge_cv(Xb0),'B3a':ridge_cv(Xb3a),'B3b':ridge_cv(Xb3b),'n':int(len(T)),'feature_dims':{'B0':Xb0.shape[1],'B3a':Xb3a.shape[1],'B3b':Xb3b.shape[1]}}
+    Xb0=np.c_[H,S,tau[:,None],k[:,None]]; Xb3a=np.c_[viewmean.reshape(len(T),-1),H,S,tau[:,None],k[:,None]]; Xb3b=np.c_[H,X,S,tau[:,None],k[:,None]]; Xb4fa=np.c_[B4fa,H,S,tau[:,None],k[:,None]]; Xb4fb=np.c_[B4fb,H,S,tau[:,None],k[:,None]]
+    out={'B0':ridge_cv(Xb0),'B3a':ridge_cv(Xb3a),'B3b':ridge_cv(Xb3b),'B4fa_frozen':ridge_cv(Xb4fa),'B4fb_frozen':ridge_cv(Xb4fb),'n':int(len(T)),'feature_dims':{'B0':Xb0.shape[1],'B3a':Xb3a.shape[1],'B3b':Xb3b.shape[1]}}
     args.out.write_text(json.dumps(out,indent=2)+'\n'); print(json.dumps(out,indent=2))
 
 if __name__=='__main__': main()

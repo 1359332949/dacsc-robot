@@ -1379,3 +1379,23 @@ head was not stably optimized on 10 source states. These numbers are invalid
 and must not be interpreted as evidence for or against retrieval. The next
 fix is a closed-form ridge head on frozen retrieval features and fold-local
 regularization, not a larger network.
+
+### R0-2B4 stable fallback: normalized frozen retrieval + ridge
+
+L2-normalized query/key attention with closed-form ridge head (no joint
+retrieval/head optimization):
+
+| model | CV rel | val rel | val agg | val cos | Clean residual |
+|---|---:|---:|---:|---:|---:|
+| B0 h | 0.632 | 0.669 | 0.653 | 0.761 | 0.148 |
+| B3a per-view | 0.657 | 0.669 | 0.652 | 0.738 | 0.166 |
+| B3b fixed random | 0.696 | 0.690 | 0.737 | 0.769 | 0.113 |
+| B4fa normalized query, raw K/V | 0.657 | 0.669 | 0.652 | 0.738 | 0.166 |
+| B4fb normalized low-rank QKV | 0.674 | 0.689 | 0.691 | 0.760 | 0.119 |
+
+The L2-normalized retrieval variants do not improve cross-state residual
+prediction over B0. The jointly learned B4a/B4b still diverged even with L2
+normalization/gradient clipping, so those runs are invalid optimization; they
+do not establish that learned retrieval is impossible. Single-frame frozen
+token retrieval does not show useful conditional information under this
+protocol.
