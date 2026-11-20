@@ -1367,3 +1367,15 @@ Per-view pooling does not improve over B0. Fixed random low-rank token
 retrieval gives slightly better cosine and lower Clean residual, but worse
 relative and aggregate error. This does not support adding a learned MLP or
 temporal memory; a learned retrieval module is still untested.
+
+### R0-2B4: learned retrieval attempt (invalid optimization)
+
+Implemented fold-internal B4a (learnable query, raw keys/values) and B4b
+(learnable low-rank Q/K/V), with separate agentview/eye attention.
+
+The first run diverged: B4a/B4b validation relative errors were enormous and
+Clean predicted residual norms 0.2-0.4; the joint learned retrieval + linear
+head was not stably optimized on 10 source states. These numbers are invalid
+and must not be interpreted as evidence for or against retrieval. The next
+fix is a closed-form ridge head on frozen retrieval features and fold-local
+regularization, not a larger network.
