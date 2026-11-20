@@ -1174,3 +1174,34 @@ improvement is ~0.24%, with negligible Clean drift. This is not evidence of
 useful Oracle capacity; it only rejects this single parameterization/setting.
 No second parameter group was selected on validation. P2 does not proceed to
 deployment TTA from this result.
+
+### A-closeout physical metrics and B0 velocity-head rank
+
+P2 physical action metrics (real RGB, block0.norm1, 20 steps, lr=1e-4):
+
+| metric | Shift vs Clean ref | Clean drift |
+|---|---:|---:|
+| normalized XYZ | 0.18134 | 0.000898 |
+| physical XYZ | 0.009067 m | 0.0000449 m |
+| normalized rotation | 0.023267 | 0.000220 |
+| physical SO(3) | 0.011634 rad | 0.000110 rad |
+| gripper | 0.000240 | 0.00000086 |
+
+So the raw action gap is 9.1 mm / 0.0116 rad; the block0.norm1 Oracle update
+only reduced raw loss from 0.005370 to 0.005357 at held-out, with negligible
+but nonzero Clean drift.
+
+B0 velocity-head audit on the actual checkpoint:
+
+```text
+velocity_projection.weight shape = [7, 768]
+rank = 7 (full row rank)
+sigma = [0.5149, 0.4287, 0.4194, 0.4070, 0.3671, 0.3541, 0.3431]
+condition number = 1.50
+```
+
+Therefore an unconstrained hidden delta can realize any 7D velocity residual
+through this linear head; an unbounded velocity-oracle is not evidence of
+visual repair capability. B1 must impose ||delta h|| <= rho ||h||, and B2 must
+restrict delta h to a sourced visual readout (FAVR-like), with flow integration
+and physical action evaluation.
