@@ -41,11 +41,12 @@ def main():
     for i in range(len(B)):
         d2=np.sum((A2-B[i])**2,axis=1); preds.append(Yfit[int(np.argmin(d2))])
     out['knn']=metrics(np.array(preds),Y[va_shift])
-    # variance decomposition by state (shift labels)
-    ys=Y[tr_shift]; ss=states[tr_shift]; means=[]
-    for s in sorted(set(ss)): means.append(ys[ss==s].mean(0))
-    means=np.array(means); between=float(np.mean(np.sum((means-ys.mean(0))**2,axis=1))); within=float(np.mean(np.sum((ys-ys.mean(0))**2,axis=1)))
-    out['variance']={'between_state_mean_sq':between,'within_mean_sq':within,'between_share':between/(between+within+1e-12)}
+    # variance decomposition by state (balanced sample count assumed)
+    ys=Y[tr_shift]; ss=states[tr_shift]; means=[]; wv=[]
+    for s in sorted(set(ss)):
+        g=ys[ss==s]; means.append(g.mean(0)); wv.append(np.mean(np.sum((g-g.mean(0))**2,axis=1)))
+    means=np.array(means); total=float(np.mean(np.sum((ys-ys.mean(0))**2,axis=1))); within=float(np.mean(wv)); between=float(np.mean(np.sum((means-ys.mean(0))**2,axis=1)))
+    out['variance']={'between_state_mean_sq':between,'within_mean_sq':within,'total_mean_sq':total,'between_share':between/(total+1e-12),'within_share':within/(total+1e-12)}
     args.out.write_text(json.dumps(out,indent=2)+'\n'); print(json.dumps(out,indent=2))
 
 if __name__=='__main__': main()

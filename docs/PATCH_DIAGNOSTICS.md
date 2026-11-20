@@ -1348,3 +1348,22 @@ So explicit global visual mean does not improve cross-state prediction; h-only
 is better but still weak; nearest observable features are worse than ridge.
 The teacher residual is mostly trajectory/state-specific rather than a simple
 function of current mean visual features. Do not add a large MLP yet.
+
+### R0-2B3 and corrected variance
+
+Variance decomposition corrected: between-state share 0.359, within-state
+0.641 (prior 0.264/0.736 used total variance as within, which was wrong).
+
+Token-level R0 ablation (B0 h; B3a per-view pooled; B3b fixed low-rank
+action-conditioned retrieval over 2x48 Resampler tokens):
+
+| model | CV rel | val rel | val agg | val cos | Clean residual norm |
+|---|---:|---:|---:|---:|---:|
+| B0 | 0.632 | 0.669 | 0.653 | 0.761 | 0.148 |
+| B3a | 0.657 | 0.669 | 0.652 | 0.738 | 0.166 |
+| B3b | 0.696 | 0.690 | 0.737 | 0.769 | 0.113 |
+
+Per-view pooling does not improve over B0. Fixed random low-rank token
+retrieval gives slightly better cosine and lower Clean residual, but worse
+relative and aggregate error. This does not support adding a learned MLP or
+temporal memory; a learned retrieval module is still untested.
