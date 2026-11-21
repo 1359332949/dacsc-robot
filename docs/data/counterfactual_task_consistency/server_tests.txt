@@ -1,0 +1,33 @@
+test_each_protocol_field_mismatch_rejected (tests.test_source_provenance.ProvenanceTests.test_each_protocol_field_mismatch_rejected) ... ok
+test_missing_is_not_consistent (tests.test_source_provenance.ProvenanceTests.test_missing_is_not_consistent) ... ok
+test_shard_names_and_state_ids_are_not_protocol (tests.test_source_provenance.ProvenanceTests.test_shard_names_and_state_ids_are_not_protocol) ... ok
+test_clip_all_dimensions (tests.test_counterfactual_diagnostic.CounterfactualTests.test_clip_all_dimensions) ... ok
+test_constant_representation_not_perfect_separation (tests.test_counterfactual_diagnostic.CounterfactualTests.test_constant_representation_not_perfect_separation) ... ok
+test_current_proprio_not_initial_anchor (tests.test_counterfactual_diagnostic.CounterfactualTests.test_current_proprio_not_initial_anchor) ... ok
+test_nonadditivity_zero_only_for_additive_response (tests.test_counterfactual_diagnostic.CounterfactualTests.test_nonadditivity_zero_only_for_additive_response) ... ok
+test_reject_pair_state_mismatch (tests.test_counterfactual_diagnostic.CounterfactualTests.test_reject_pair_state_mismatch) ... ok
+test_shared_z0_does_not_imply_shared_later_x (tests.test_counterfactual_diagnostic.CounterfactualTests.test_shared_z0_does_not_imply_shared_later_x) ... ok
+test_fit_loader_does_not_open_validation_or_partial_endpoint (tests.test_source_observer.ObserverIsolation.test_fit_loader_does_not_open_validation_or_partial_endpoint) ... ok
+test_fit_refuses_validation (tests.test_source_observer.ObserverIsolation.test_fit_refuses_validation) ... ok
+test_gate_checks_both_references_and_subsets (tests.test_source_observer.ObserverIsolation.test_gate_checks_both_references_and_subsets) ... ok
+test_predictions_cannot_mutate_frozen_arrays (tests.test_source_observer.ObserverIsolation.test_predictions_cannot_mutate_frozen_arrays) ... ok
+test_state_total_weights_equal (tests.test_source_observer.ObserverIsolation.test_state_total_weights_equal) ... ok
+test_time_success_metadata_not_model_inputs (tests.test_source_observer.ObserverIsolation.test_time_success_metadata_not_model_inputs) ... ok
+test_weighted_pca_matches_equal_weight_reference (tests.test_source_observer.ObserverIsolation.test_weighted_pca_matches_equal_weight_reference) ... ok
+test_weighted_ridge_matches_declared_objective (tests.test_source_observer.ObserverIsolation.test_weighted_ridge_matches_declared_objective) ... ok
+test_independent_source_without_fake_probe (tests.test_source_interactions.SourceContracts.test_independent_source_without_fake_probe) ... ok
+test_no_anticipatory_observer_boundary (tests.test_source_interactions.SourceContracts.test_no_anticipatory_observer_boundary) ... ok
+test_role_separation (tests.test_source_interactions.SourceContracts.test_role_separation) ... ok
+test_partial_chunk_kept_but_not_fixed_horizon (tests.test_interaction_records.Contracts.test_partial_chunk_kept_but_not_fixed_horizon) ... ok
+test_reject_action_swap_between_domains (tests.test_interaction_records.Contracts.test_reject_action_swap_between_domains) ... ok
+test_reject_temporal_mask_feature_and_probe_corruption (tests.test_interaction_records.Contracts.test_reject_temporal_mask_feature_and_probe_corruption) ... ok
+test_success_independent_of_done (tests.test_interaction_records.Contracts.test_success_independent_of_done) ... ok
+test_terminal_chunk_cannot_continue (tests.test_interaction_records.Contracts.test_terminal_chunk_cannot_continue) ... ok
+test_timeout_is_not_success (tests.test_interaction_records.Contracts.test_timeout_is_not_success) ... ok
+test_matches_legacy_unpenalized_intercept (tests.test_b3_fold_isolation.FoldIsolation.test_matches_legacy_unpenalized_intercept) ... ok
+test_test_labels_cannot_change_predictions_constant_or_beta (tests.test_b3_fold_isolation.FoldIsolation.test_test_labels_cannot_change_predictions_constant_or_beta) ... ok
+
+----------------------------------------------------------------------
+Ran 28 tests in 1.164s
+
+OK

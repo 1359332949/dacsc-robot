@@ -68,7 +68,8 @@ def main():
             q=require_current_pair(c,s,i);row={'state_id':sid,'boundary_index':i,'step':int(step),
                 'current_state8':q.tolist(),'current_minus_initial_anchor_l2':float(np.linalg.norm(q-c['probe_anchor_state8'][i])),
                 'subsequent_recorded_executed_steps':int(c['executed_steps'][i]) if i<len(c['executed_steps']) else 0,
-                'current_is_terminal_boundary':i==len(c['boundary_step'])-1,
+                'current_is_recording_end':i==len(c['boundary_step'])-1,
+                'preceding_step_flags':({key:bool(c[key][i-1,int(c['executed_steps'][i-1])-1]) for key in ('success','terminated','truncated','done')} if i else None),
                 'variants':{},'checks':{}}
             per={}
             for variant in config['variant_order']:

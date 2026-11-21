@@ -78,7 +78,7 @@ def main():
     args=ap.parse_args();config=json.loads(args.config.read_text())
     if args.out.exists():raise FileExistsError(args.out)
     args.out.mkdir(parents=True)
-    code={p:sha(ROOT/p) for p in ['dacsc/source_observer.py','scripts/source_observer_v1.py','dacsc/source_interactions.py','dacsc/interaction_records.py']}
+    code={p:sha(ROOT/p) for p in ['dacsc/source_observer.py','scripts/source_observer_v1.py','dacsc/source_interactions.py','dacsc/interaction_records.py','dacsc/source_provenance.py']}
     if args.command=='fit':
         data=load_role(args.source_root,args.split,'source_fit',config['views'])
         arrays,stats=fit(data,config)
@@ -90,7 +90,7 @@ def main():
         meta={'schema':'source_observer_v1_frozen_model','config':config,'config_sha256':sha(args.config),
               'split_sha256':sha(args.split),'model_sha256':sha(model_path),'code_sha256':code,
               'fit_states':sorted(set(data.states.tolist())),'fit_rows':len(data.states),'excluded_partial':data.excluded_partial,
-              'fit_boundaries':len(data.boundary_states),'inputs':data.provenance,'fit_statistics':stats,
+              'fit_boundaries':len(data.boundary_states),'collection_signature':data.provenance[0]['collection_signature'],'inputs':data.provenance,'fit_statistics':stats,
               'versions':{'numpy':np.__version__,'sklearn':sklearn.__version__,'scipy':scipy.__version__},
               'validation_opened_in_fit':False,'target_data_opened':False,'hyperparameter_search':False,
               'frozen_design_commit':'bbbaa85'}
@@ -106,6 +106,7 @@ def main():
         with np.load(model_path,allow_pickle=False) as z:arrays={k:z[k] for k in z.files}
         data=load_role(args.source_root,args.split,'source_validation',config['views'])
         if set(meta['fit_states'])&set(data.states.tolist()):raise ValueError('fit/validation overlap')
+        if not meta.get('collection_signature') or any(p['collection_signature']!=meta['collection_signature'] for p in data.provenance):raise ValueError('fit/validation collection provenance mismatch')
         reports,rows=evaluate(data,arrays,config)
         for v in config['views']:reports[v]['gate']=gate(reports[v],config)
         overall=all(r['gate']['pass'] for r in reports.values())
