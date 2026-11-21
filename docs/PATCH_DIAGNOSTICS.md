@@ -1509,3 +1509,21 @@ at deployment.
 | source_validation | 10 | 9.013 mm | 7.843 mm | 2.974 mm |
 
 B0 improves validation XYZ by ~13% but Clean drift ~3 mm is unsafe.
+
+### B2-0 parity audit
+
+Rerun with per-step full snapshot comparison (qpos/qvel/body_pos/body_quat/eef_pos):
+
+| state | policy_state8 maxdiff | full physics maxdiff | model_compatible |
+|---|---:|---:|---:|
+| 34 | 0.0 | 0.0 | false |
+| 43 | 0.0 | 0.0 | false |
+| 45 | 0.0 | 0.0 | false |
+
+The full physics trajectory is identical under identical clipped actions, so
+the earlier "physics identical" claim is now supported. `model_compatible`
+returns false because the Clean and Lighting environments intentionally use
+different scene BDDL/model files; therefore it should not be used as a
+correctness gate for this pair, but it is logged.
+
+B3-1/B3-2 were not run in this turn; only B3-0 instrumentation was completed.
