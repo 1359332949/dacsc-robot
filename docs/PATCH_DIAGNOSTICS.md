@@ -1527,3 +1527,19 @@ different scene BDDL/model files; therefore it should not be used as a
 correctness gate for this pair, but it is logged.
 
 B3-1/B3-2 were not run in this turn; only B3-0 instrumentation was completed.
+
+### B2-0 final parity (field mapping fixed)
+
+Snapshot keys corrected to qpos/qvel/act/body_xpos/body_xquat/eef_pos;
+model compatibility uses the real "pass" key and separates state mapping from
+scene model:
+
+| state | policy_state8 maxdiff | full physics maxdiff | state mapping | scene model |
+|---|---:|---:|---:|---:|
+| 34 | 0.0 | 0.0 | true | true |
+| 43 | 0.0 | 0.0 | true | true |
+| 45 | 0.0 | 0.0 | true | true |
+
+So under identical clipped actions the measured physics trajectory is
+identical; visual agentview tokens still shift (cos .824-.947). This is the
+final B2-0 evidence. B3-1/B3-2 have not been run yet.
