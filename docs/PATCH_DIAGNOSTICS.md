@@ -1557,3 +1557,17 @@ P1 overfits the 9 Clean rows and is worse on Shift. With 3 states and 9
 samples per domain this is not evidence for or against visual history; it is
 only a protocol/instrumentation pilot. B3-2 (Clean-reference velocity
 residual) was not run.
+
+### B3 data admission: all 10 target-dev states
+
+Controlled replay: same initial state + same 12 clipped actions in Clean and
+Shift. All 10 target-dev states pass the measured physics parity:
+
+- policy_state8 maxdiff = 0.0;
+- measured physics (qpos/qvel/body_xpos/body_xquat/eef_pos) maxdiff = 0.0;
+- state mapping pass;
+- body/site structure pass.
+
+Visual shift is present in all 10 but view-dependent: agentview cosine
+0.824-0.947, eye-in-hand 0.961-0.989. Thus all 10 states are admissible for
+B3-2 Oracle pairing. B3-1/B3-2 full runs are not yet executed.
