@@ -1,0 +1,16 @@
+test_matches_legacy_unpenalized_intercept (tests.test_b3_fold_isolation.FoldIsolation.test_matches_legacy_unpenalized_intercept) ... ok
+test_test_labels_cannot_change_predictions_constant_or_beta (tests.test_b3_fold_isolation.FoldIsolation.test_test_labels_cannot_change_predictions_constant_or_beta) ... ok
+test_partial_chunk_kept_but_not_fixed_horizon (tests.test_interaction_records.Contracts.test_partial_chunk_kept_but_not_fixed_horizon) ... ok
+test_reject_action_swap_between_domains (tests.test_interaction_records.Contracts.test_reject_action_swap_between_domains) ... ok
+test_reject_temporal_mask_feature_and_probe_corruption (tests.test_interaction_records.Contracts.test_reject_temporal_mask_feature_and_probe_corruption) ... ok
+test_success_independent_of_done (tests.test_interaction_records.Contracts.test_success_independent_of_done) ... ok
+test_terminal_chunk_cannot_continue (tests.test_interaction_records.Contracts.test_terminal_chunk_cannot_continue) ... ok
+test_timeout_is_not_success (tests.test_interaction_records.Contracts.test_timeout_is_not_success) ... ok
+test_independent_source_without_fake_probe (tests.test_source_interactions.SourceContracts.test_independent_source_without_fake_probe) ... ok
+test_no_anticipatory_observer_boundary (tests.test_source_interactions.SourceContracts.test_no_anticipatory_observer_boundary) ... ok
+test_role_separation (tests.test_source_interactions.SourceContracts.test_role_separation) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 0.047s
+
+OK

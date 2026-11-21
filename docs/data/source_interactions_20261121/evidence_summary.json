@@ -1,0 +1,16 @@
+{
+  "pass": true,
+  "server_local_identical": true,
+  "code_hashes_match": true,
+  "episodes": 20,
+  "full_chunks": 175,
+  "partial_chunks": 18,
+  "steps": 2192,
+  "max_sampler_error": 0.0,
+  "raw_bytes": 85027816,
+  "data_origin": "independent source rollouts; no target replay reuse",
+  "fit_non_success_states": [
+    4,
+    17
+  ]
+}

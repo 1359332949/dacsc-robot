@@ -36,7 +36,7 @@ def step_flags(result, env):
                      truncated=bool(truncated), done=bool(done), flags_source=source)
 
 
-def validate_episode(a, metadata):
+def validate_episode(a, metadata, *, require_probe=True):
     """Raise on misaligned times/actions/features, including truncated tail chunks."""
     count = len(a['executed_steps'])
     if count == 0: raise ValueError('no transitions')
@@ -55,18 +55,19 @@ def validate_episode(a, metadata):
     if a['boundary_sim_time'].shape != (count+1,): raise ValueError('simulation time length')
     if not np.allclose(np.diff(a['boundary_sim_time']), n * metadata['control_dt'], atol=1e-8, rtol=0):
         raise ValueError('simulation elapsed time mismatch')
-    for key in ('state8','probe_anchor_state8'):
+    for key in (('state8','probe_anchor_state8') if require_probe else ('state8',)):
         if a[key].shape != (count+1,8): raise ValueError(key+' shape')
-    if not np.array_equal(a['probe_anchor_state8'], np.repeat(a['probe_anchor_state8'][:1],count+1,axis=0)):
+    if require_probe and not np.array_equal(a['probe_anchor_state8'], np.repeat(a['probe_anchor_state8'][:1],count+1,axis=0)):
         raise ValueError('probe state anchor changed')
     if not np.array_equal(a['full_chunk'], n == HORIZON): raise ValueError('full_chunk flag')
     if not np.array_equal(a['fixed_horizon_eligible'], n == HORIZON): raise ValueError('partial chunk eligibility')
     for view in VIEWS:
         if a['tokens_'+view].shape != (count+1,48,768): raise ValueError(view+' token shape')
-    if a['probe_hidden'].shape != (count+1,768): raise ValueError('hidden shape')
-    if a['probe_velocity'].shape != (count+1,HORIZON,ACTION_DIM): raise ValueError('velocity shape')
-    if a['x_probe'].shape != (1,HORIZON,ACTION_DIM): raise ValueError('x_probe shape')
-    if metadata['x_probe_sha256'] != array_hash(a['x_probe']): raise ValueError('probe hash mismatch')
+    if require_probe:
+        if a['probe_hidden'].shape != (count+1,768): raise ValueError('hidden shape')
+        if a['probe_velocity'].shape != (count+1,HORIZON,ACTION_DIM): raise ValueError('velocity shape')
+        if a['x_probe'].shape != (1,HORIZON,ACTION_DIM): raise ValueError('x_probe shape')
+        if metadata['x_probe_sha256'] != array_hash(a['x_probe']): raise ValueError('probe hash mismatch')
     for key in ('success','terminated','truncated','done'):
         if a[key].shape != (count,HORIZON): raise ValueError(key+' shape')
         if a[key][~expected].any(): raise ValueError(key+' on unexecuted step')
