@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 import numpy as np
 from .source_interactions import role_ids, validate_source_episode
+from .source_provenance import require_same_collection
 
 MODELS=('M0','M1','M2')
 CONTROLS=('zero_delta','fit_mean_next_minus_current')
@@ -38,10 +39,11 @@ def load_role(root, split_path, role, views):
     if role not in ('source_fit','source_validation'):raise ValueError('source-only data role')
     root=Path(root);split=json.loads(Path(split_path).read_text());expected=sorted(role_ids(split,role))
     state=[];q=[];act=[];cur={v:[] for v in views};nxt={v:[] for v in views};bounds={v:[] for v in views}
-    bs=[];timing=[];prov=[];seen=[];partial=0
+    bs=[];timing=[];prov=[];seen=[];partial=0;collection=None
     # Deliberately do not open the other role's metadata or arrays.
     for mp in sorted(root.glob(f'*/{role}_state*_seed*/metadata.json')):
         m=json.loads(mp.read_text());npz=mp.parent/'episode.npz'
+        collection=require_same_collection(m,collection)
         if m['role']!=role or m['split_sha256']!=sha(split_path):raise ValueError('role/split mismatch')
         if m['checkpoint_sha256']!=split['policy']['checkpoint_sha256']:raise ValueError('checkpoint mismatch')
         if sha(npz)!=m['npz_sha256']:raise ValueError('data hash mismatch')
@@ -63,7 +65,7 @@ def load_role(root, split_path, role, views):
                 'end_step':int(a['boundary_step'][j+1]),'remaining_steps':int(m['steps']-a['boundary_step'][j+1]),
                 'episode_steps':m['steps'],'episode_success':m['success'],'chunk':int(j)})
         prov.append({'state_id':m['state_id'],'metadata_path':str(mp),'metadata_sha256':sha(mp),'npz_sha256':sha(npz),
-                     'full_chunks':len(ii),'selected_boundaries':len(bb)})
+                     'full_chunks':len(ii),'selected_boundaries':len(bb),'collection_signature':collection})
     if sorted(seen)!=expected:raise ValueError(f'incomplete role {role}: {sorted(seen)}')
     return Data(role,np.asarray(state),np.concatenate(q),np.concatenate(act),
                 {v:np.concatenate(cur[v]) for v in views},{v:np.concatenate(nxt[v]) for v in views},

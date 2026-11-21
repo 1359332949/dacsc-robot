@@ -80,6 +80,10 @@ class ObserverIsolation(unittest.TestCase):
             np.savez(folder/'episode.npz',**a)
             m.update(role='source_fit',domain='clean',data_origin='independent_source_policy_rollout',seed=2014,
                 split_sha256=sha(sp),checkpoint_sha256='checkpoint',npz_sha256=sha(folder/'episode.npz'),steps=15,success=False)
+            from dacsc.source_provenance import FIELDS
+            for key in FIELDS:m.setdefault(key,'synthetic-test')
+            for key in ('target_environment_accessed','weights_updated','chunk_risk_labels_assigned'):m[key]=False
+            m['upstream_sha256']={'synthetic.py':'test-hash'}
             (folder/'metadata.json').write_text(json.dumps(m))
             d=load_role(root,sp,'source_fit',CONFIG['views'])
             self.assertEqual(len(d.states),1);self.assertEqual(d.excluded_partial,1)
