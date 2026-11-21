@@ -3,7 +3,7 @@ import json,numpy as np
 from pathlib import Path
 rows=json.loads(Path('/hy-tmp/patch-diag/runs/patch_diag/b3_boundary.json').read_text())['rows']
 def feats(r,visual):
-    acts=np.zeros((12,7),np.float64); a=np.array(r['actions_planned']); acts[:len(a)]=a; A=acts.reshape(-1)
+    acts=np.zeros((12,7),np.float64); mask=np.zeros(12,np.float64); a=np.array(r['actions_executed']); acts[:len(a)]=a; mask[:len(a)]=1; A=np.r_[acts.reshape(-1),mask]
     base=np.r_[r['state8_start'],A]
     if not visual: return base
     va=np.array(r['view_agent_start']).mean(0); ve=np.array(r['view_eye_start']).mean(0); return np.r_[base,va,ve]

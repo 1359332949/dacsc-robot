@@ -1606,3 +1606,13 @@ Sampler parity: independent differentiable Euler vs sample_z max abs 0.0
 normalized action (same formula); official policy.predict is not used here.
 
 B3-1 analysis still uses planned actions; documented as not fixed.
+
+### B3 view-token ownership test
+
+Changing only agentview changes Resampler tokens [0:48] (mean L2 43.35) and
+leaves [48:96] exactly unchanged. Changing only eye-in-hand changes [48:96]
+(26.59) and leaves [0:48] unchanged. So per-view split is valid for this
+checkpoint.
+
+B3-1 analysis now uses actions_executed + executed mask, not planned actions.
+Pilot remains overfit (3 states, 9 Clean rows): P0 shift .347, P1 shift .608.
