@@ -1587,3 +1587,22 @@ M0/M1 have some direction signal (cos ~0.69) but overpredict magnitude
 (~1.8x) and are worse than zero on relative/aggregate error. Adding global
 visual mean gives no gain. This is a 3-state pilot, not a conclusion about
 action-conditioned or history-conditioned signals; no deployable correction.
+
+### B3-2 corrected visual-feature rerun
+
+Variable overwrite fixed: z_clean/z_shift visual tokens named separately from
+v_clean/v_shift. Re-collected 3 states x 4 z0 x 10 steps x 12 positions.
+
+Leave-one-state-out:
+- M0 (h,state8,tau,k): rel 1.712, agg 1.358, cos 0.688, mag 1.785, G -0.712
+- M1a (+agentview): rel 1.780, agg 1.386, cos 0.543, G -0.780
+- M1w (+wrist): rel 1.380, agg 1.055, cos 0.635, mag 1.255, G -0.380
+- M1both: rel 1.384, agg 1.064, cos 0.589, G -0.384
+- zero: rel 1.000, G 0.0
+
+True wrist visual features improve over M0 but still do not beat zero (G<0);
+agentview features hurt. This is a 3-state pilot, not deployable.
+Sampler parity: independent differentiable Euler vs sample_z max abs 0.0
+normalized action (same formula); official policy.predict is not used here.
+
+B3-1 analysis still uses planned actions; documented as not fixed.

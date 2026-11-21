@@ -18,7 +18,7 @@ def main():
         try:
             np.random.seed(args.seed); torch.manual_seed(args.seed); clean.seed(args.seed); clean.reset(); oc=clean.set_init_state(states[sid]); shift.seed(args.seed); shift.reset(); os_=shift.set_init_state(states[sid])
             for _ in range(SETTLING_STEPS): oc,_,_,_=clean.step(DUMMY_ACTION); os_,_,_,_=shift.step(DUMMY_ACTION)
-            poc=policy_observation(oc,lang,policy); pos=policy_observation(os_,lang,policy); vc,rc=visual_from_obs(policy,poc); vs,rs=visual_from_obs(policy,pos); pc=policy.representation_extractor(**{}) if False else None
+            poc=policy_observation(oc,lang,policy); pos=policy_observation(os_,lang,policy); zc,rc=visual_from_obs(policy,poc); zs,rs=visual_from_obs(policy,pos)
             # use policy predict path components
             P=policy.representation_extractor; batchc=__import__('corp.preprocessing',fromlist=['prepare_observation']).prepare_observation(poc,config=policy.config,normalizer=policy.normalizer,device='cuda:0'); batchs=__import__('corp.preprocessing',fromlist=['prepare_observation']).prepare_observation(pos,config=policy.config,normalizer=policy.normalizer,device='cuda:0'); Rc=P(**batchc); Rs=P(**batchs); prc=policy.action_generator.prepare_prefix(Rc); prs=policy.action_generator.prepare_prefix(Rs); ag=policy.action_generator
             def hv(prefix,x,tau):
@@ -28,9 +28,9 @@ def main():
             for zi in range(args.z0_count):
                 g=torch.Generator(device='cuda:0'); g.manual_seed(500000+zi*1009+sid); x=torch.randn((1,12,7),device='cuda:0',dtype=torch.float32,generator=g)
                 for n in range(args.steps):
-                    tau=n*dt; hs,vs=hv(prs,x,tau); hc,vc=hv(prc,x,tau); rec=vc-vs
-                    for k in range(12): rows.append({'state_id':sid,'z0_idx':zi,'flow_step':n,'tau':tau,'k':k,'h':hs[0,k].detach().cpu().numpy().tolist(),'visual':vs.mean(dim=1)[0].detach().cpu().numpy().tolist(),'state8':batchs['state'][0].detach().cpu().numpy().tolist(),'r':rec[0,k].detach().cpu().numpy().tolist()})
-                    x=x+vs*dt
+                    tau=n*dt; h_s,v_s=hv(prs,x,tau); h_c,v_c=hv(prc,x,tau); rec=v_c-v_s
+                    for k in range(12): rows.append({'state_id':sid,'z0_idx':zi,'flow_step':n,'tau':tau,'k':k,'h':h_s[0,k].detach().cpu().numpy().tolist(),'z_agent':zs[0,:48].mean(0).detach().cpu().numpy().tolist(),'z_eye':zs[0,48:].mean(0).detach().cpu().numpy().tolist(),'z_clean_agent':zc[0,:48].mean(0).detach().cpu().numpy().tolist(),'z_clean_eye':zc[0,48:].mean(0).detach().cpu().numpy().tolist(),'state8':batchs['state'][0].detach().cpu().numpy().tolist(),'r':rec[0,k].detach().cpu().numpy().tolist()})
+                    x=x+v_s*dt
             print(json.dumps({'state':sid,'n':sum(1 for r in rows if r['state_id']==sid)}),flush=True)
         finally: clean.close(); shift.close()
     args.out.write_text(json.dumps({'schema':'b3_flow_pairs_v1','rows':rows},indent=2)+'\n')
