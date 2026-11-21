@@ -1184,5 +1184,19 @@
     34,
     43,
     45
-  ]
+  ],
+  "_validity": {
+    "status": "partially_retracted",
+    "date": "2026-11-21",
+    "original_report_sha256": "39c05c220596f86685d93e31a76af95a904dce13a65381167b0257a409098152",
+    "invalid_fields": [
+      "M*.constant",
+      "M*.const_all",
+      "M*.calibrated",
+      "M*.cal_all"
+    ],
+    "reason": "Constant used held-out labels; scalar beta used held-out predictions and labels. Do not cite their numeric conclusions.",
+    "raw_learned_metrics": "reproduced within 2.9e-12; privileged target-dev diagnostic only",
+    "superseded_by": "docs/data/b3_oracle10_leakage_fixed.json"
+  }
 }

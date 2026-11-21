@@ -1617,27 +1617,41 @@ checkpoint.
 B3-1 analysis now uses actions_executed + executed mask, not planned actions.
 Pilot remains overfit (3 states, 9 Clean rows): P0 shift .347, P1 shift .608.
 
-### B3-2 10-state graduation: direct residual regression fails
+### B3-2 10-state report: statistical correction (2026-11-21)
 
-10 target-dev states x 4 z0 x 10 steps x 12 positions = 4800 rows.
-Leave-one-state-out; all reported metrics are on held-out states.
+The former constant and scalar-calibration results are **retracted**. The
+6fba252 analysis used `Y[test].mean(0)` for its purported train-fold constant
+and test labels to estimate beta. The archived `docs/data/b3_oracle10.json`
+is retained as an invalid legacy report for those two comparisons.
+Do not cite its constant G_row=0.233/G_agg=0.309 or calibrated gains.
 
-| model | G_row(all) | G_agg(all) | G_row(unseen7) |
+Reanalysis of the original 4800 rows uses outer-train labels only for the
+constant, all preprocessing and scalar beta. Beta uses outer-train fitted
+predictions (in-sample calibration, not nested validation). Policy weights
+were not changed and data were not recollected. See
+`docs/data/b3_oracle10_leakage_fixed.json` and fold-audit entries.
+
+| model | G_row(all) | G_agg(all) | G_row(non-pilot 7) |
 |---|---:|---:|---:|
 | zero | 0.000 | 0.000 | 0.000 |
-| constant train residual | **0.233** | **0.309** | — |
+| true train-fold constant | -0.090 | 0.058 | -0.208 |
 | M0 | -0.047 | 0.127 | -0.162 |
 | M1a | 0.016 | 0.158 | -0.065 |
 | M1w | -0.330 | -0.002 | -0.474 |
 | M1both | 0.001 | 0.150 | -0.090 |
 
-A train-fold constant residual predictor beats every learned model, including
-the oracle-scalar-calibrated versions (best calibrated G_row ~0.195). Thus the
-current features do not beat a trivial mean baseline on held-out states.
-This is the pre-registered stop condition for direct 7D flow-residual
-regression. No Adapter; no target-test.
+The original learned-model metrics reproduce within numerical roundoff.
+The claim that a constant beats every model is FALSE after correction.
+The train-only beta clips to 1 for every fold, so calibrated results equal
+the raw results and no longer support the earlier claimed calibration gain.
 
-Protocol correction: B3/B3-2 use target-dev states (34,35,36,37,39,43,44,45,
-48,49), so they are privileged target-dev oracle diagnostics, not source-only.
-The 34/43/45 pilot states are part of this set; the unseen-7 subset is reported
-separately to avoid overstating independent confirmation.
+The direct residual branch remains frozen: all raw learned models have
+negative mean G_row on the seven states not used for the 3-state pilot;
+there is no validated Clean No-Op or closed-loop benefit. Some aggregate
+metrics are positive, so this is insufficient reliable evidence for deployment,
+not proof that every residual predictor or all TTA is impossible.
+
+These 10 states are target-dev (34,35,36,37,39,43,44,45,48,49), so the experiment
+is a **privileged target-dev oracle diagnostic**, not source-only. The 34/43/45
+pilot subset and the other seven states remain separately reported. Rows,
+flow steps and action positions are correlated; the unit is initial state.

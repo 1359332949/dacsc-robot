@@ -1,0 +1,107 @@
+{
+  "schema": "interaction_replay_reopened_validation_v1",
+  "pass": true,
+  "summary_sha256": "0c3e67d75b907026a89db39316e183eb451c5df15878371cd8815a5e80e28e9b",
+  "root": "/Users/wentiliangkaihua/Documents/ChatGPT/\u4e13\u5229\u8bba\u6587/remote_artifacts/interaction_replay_20261121/20261121_terminal",
+  "reports": [
+    {
+      "pair_id": "state36_seed7777",
+      "contract": {
+        "pass": true,
+        "clean": {
+          "pass": true,
+          "transitions": 9,
+          "full_chunks": 8,
+          "partial_chunks": 1,
+          "executed_steps": 106
+        },
+        "shift": {
+          "pass": true,
+          "transitions": 9,
+          "full_chunks": 8,
+          "partial_chunks": 1,
+          "executed_steps": 106
+        },
+        "state8_max_abs": 0.0
+      },
+      "chunk_end_flags": [
+        {
+          "chunk": 0,
+          "executed_steps": 12,
+          "success": false,
+          "terminated": false,
+          "truncated": false,
+          "done": false
+        },
+        {
+          "chunk": 1,
+          "executed_steps": 12,
+          "success": false,
+          "terminated": false,
+          "truncated": false,
+          "done": false
+        },
+        {
+          "chunk": 2,
+          "executed_steps": 12,
+          "success": false,
+          "terminated": false,
+          "truncated": false,
+          "done": false
+        },
+        {
+          "chunk": 3,
+          "executed_steps": 12,
+          "success": false,
+          "terminated": false,
+          "truncated": false,
+          "done": false
+        },
+        {
+          "chunk": 4,
+          "executed_steps": 12,
+          "success": false,
+          "terminated": false,
+          "truncated": false,
+          "done": false
+        },
+        {
+          "chunk": 5,
+          "executed_steps": 12,
+          "success": false,
+          "terminated": false,
+          "truncated": false,
+          "done": false
+        },
+        {
+          "chunk": 6,
+          "executed_steps": 12,
+          "success": false,
+          "terminated": false,
+          "truncated": false,
+          "done": false
+        },
+        {
+          "chunk": 7,
+          "executed_steps": 12,
+          "success": false,
+          "terminated": false,
+          "truncated": false,
+          "done": false
+        },
+        {
+          "chunk": 8,
+          "executed_steps": 10,
+          "success": true,
+          "terminated": true,
+          "truncated": false,
+          "done": true
+        }
+      ],
+      "npz_sha256": {
+        "clean": "565e71d475156656ed8956a093831dd6c9186a12c3f62bac8085c42f644df55b",
+        "shift": "32f42072e3aede4008b2f647c1733528ace2670ea70c7542b74ef3e873ecb4e1"
+      }
+    }
+  ]
+}
