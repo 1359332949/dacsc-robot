@@ -1543,3 +1543,17 @@ scene model:
 So under identical clipped actions the measured physics trajectory is
 identical; visual agentview tokens still shift (cos .824-.947). This is the
 final B2-0 evidence. B3-1/B3-2 have not been run yet.
+
+### B3-1 pilot (instrumentation only)
+
+3 states x Clean/Shift x 3 chunks = 18 boundary rows, H=E=12, clipped
+actions and actual executed steps saved, per-view tokens saved separately.
+
+P0/P1 ridge (train Clean, test Shift):
+- P0 clean 0.143, shift 0.337
+- P1 clean 0.0084, shift 0.609
+
+P1 overfits the 9 Clean rows and is worse on Shift. With 3 states and 9
+samples per domain this is not evidence for or against visual history; it is
+only a protocol/instrumentation pilot. B3-2 (Clean-reference velocity
+residual) was not run.
