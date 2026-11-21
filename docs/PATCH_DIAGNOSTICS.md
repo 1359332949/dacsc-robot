@@ -1571,3 +1571,19 @@ Shift. All 10 target-dev states pass the measured physics parity:
 Visual shift is present in all 10 but view-dependent: agentview cosine
 0.824-0.947, eye-in-hand 0.961-0.989. Thus all 10 states are admissible for
 B3-2 Oracle pairing. B3-1/B3-2 full runs are not yet executed.
+
+### B3-2 pilot: same-x Clean/Shift flow residual (3 states)
+
+3 target states x 4 z0 trajectories x 10 Euler steps x 12 action positions.
+At each real Shift Euler state x, Clean and Shift velocities were evaluated on
+the same x; r* = v_C - v_S. 1440 token samples.
+
+Leave-one-state-out ridge:
+- M0 (h,state8,tau,k): rel 1.712, agg 1.358, cos 0.688, mag 1.785
+- M1 (+visual mean): rel 1.727, agg 1.367, cos 0.685, mag 1.797
+- zero predictor: rel 1.000, cos 0.0
+
+M0/M1 have some direction signal (cos ~0.69) but overpredict magnitude
+(~1.8x) and are worse than zero on relative/aggregate error. Adding global
+visual mean gives no gain. This is a 3-state pilot, not a conclusion about
+action-conditioned or history-conditioned signals; no deployable correction.
