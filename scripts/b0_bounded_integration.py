@@ -21,14 +21,16 @@ def main():
     out=[]
     for idx,rec in enumerate(man['records']):
         if not rec['pairing_pass']: continue
-        Rc,S=enc(idx,'clean'); Rs,_=enc(idx,'shift'); pc=ag.prepare_prefix(Rc); ps=ag.prepare_prefix(Rs); z0=torch.tensor(z['z0'][idx],device=dev,dtype=torch.float32)[None]; xc=z0.clone(); xs=z0.clone(); xb=z0.clone(); ratios=[]
+        Rc,S=enc(idx,'clean'); Rs,_=enc(idx,'shift'); pc=ag.prepare_prefix(Rc); ps=ag.prepare_prefix(Rs); z0=torch.tensor(z['z0'][idx],device=dev,dtype=torch.float32)[None]; xc=z0.clone(); xs=z0.clone(); xb=z0.clone(); xcb=z0.clone(); ratios=[]
         for n in range(args.steps):
-            tau=n*dt; hc,vc=hv(pc,xc,tau); hs,vs=hv(ps,xs,tau); hb,vb=hv(ps,xb,tau); feat=np.r_[hb[0,0].detach().cpu().numpy(), S.detach().cpu().numpy(), tau, 0.0]; r=(torch.tensor(((feat-mu)/sd),device=dev,dtype=vb.dtype,requires_grad=False)[None]@torch.tensor(beta[:-1],device=dev,dtype=vb.dtype)); # beta linear incl? 
+            tau=n*dt; hc,vc=hv(pc,xc,tau); hs,vs=hv(ps,xs,tau); hb,vb=hv(ps,xb,tau); hcb,vcb=hv(pc,xcb,tau); feat=np.r_[hb[0,0].detach().cpu().numpy(), S.detach().cpu().numpy(), tau, 0.0]; r=(torch.tensor(((feat-mu)/sd),device=dev,dtype=vb.dtype,requires_grad=False)[None]@torch.tensor(beta[:-1],device=dev,dtype=vb.dtype)); # beta linear incl? 
             # use full affine: beta has intercept last
             r=(torch.tensor(((feat-mu)/sd),device=dev,dtype=vb.dtype)[None]@torch.tensor(beta[:-1],device=dev,dtype=vb.dtype))+torch.tensor(beta[-1],device=dev,dtype=vb.dtype)
             dh=(Wp@r[0].detach().cpu().numpy().reshape(7,1)).reshape(-1); dh=dh*np.minimum(1.0,(args.rho*np.linalg.norm(hb[0,0].detach().cpu().numpy()))/(np.linalg.norm(dh)+1e-12)); corr=torch.tensor(dh,device=dev,dtype=vb.dtype)
             xb=xb+(vb+(torch.tensor(W,device=dev,dtype=vb.dtype)@corr)[None,None,:])*dt; xs=xs+vs*dt; xc=xc+vc*dt
-        ac=policy.normalizer.unnormalize_action(xc)[0].detach().cpu().numpy(); ash=policy.normalizer.unnormalize_action(xs)[0].detach().cpu().numpy(); ab=policy.normalizer.unnormalize_action(xb)[0].detach().cpu().numpy(); out.append({'role':rec['role'],'state_id':rec['state_id'],'shift':action_error(ash,ac,executed=True,horizon=12),'b0':action_error(ab,ac,executed=True,horizon=12)}); print(json.dumps({'state':rec['state_id'],'shift_xyz':out[-1]['shift']['xyz_m_mean'],'b0_xyz':out[-1]['b0']['xyz_m_mean']}),flush=True)
+            # clean branch uses clean h, predicts correction, bounded
+            fc=np.r_[hcb[0,0].detach().cpu().numpy(), S.detach().cpu().numpy(), tau, 0.0]; rc=(torch.tensor(((fc-mu)/sd),device=dev,dtype=vcb.dtype)[None]@torch.tensor(beta[:-1],device=dev,dtype=vcb.dtype))+torch.tensor(beta[-1],device=dev,dtype=vcb.dtype); dhc=(Wp@rc[0].detach().cpu().numpy().reshape(7,1)).reshape(-1); dhc=dhc*np.minimum(1.0,(args.rho*np.linalg.norm(hcb[0,0].detach().cpu().numpy()))/(np.linalg.norm(dhc)+1e-12)); cc=torch.tensor(dhc,device=dev,dtype=vcb.dtype); xcb=xcb+(vcb+(torch.tensor(W,device=dev,dtype=vcb.dtype)@cc)[None,None,:])*dt
+        ac=policy.normalizer.unnormalize_action(xc)[0].detach().cpu().numpy(); ash=policy.normalizer.unnormalize_action(xs)[0].detach().cpu().numpy(); ab=policy.normalizer.unnormalize_action(xb)[0].detach().cpu().numpy(); acb=policy.normalizer.unnormalize_action(xcb)[0].detach().cpu().numpy(); out.append({'role':rec['role'],'state_id':rec['state_id'],'shift':action_error(ash,ac,executed=True,horizon=12),'b0':action_error(ab,ac,executed=True,horizon=12),'clean_drift':action_error(acb,ac,executed=True,horizon=12)}); print(json.dumps({'state':rec['state_id'],'shift_xyz':out[-1]['shift']['xyz_m_mean'],'b0_xyz':out[-1]['b0']['xyz_m_mean'],'clean_xyz':out[-1]['clean_drift']['xyz_m_mean']}),flush=True)
     args.out.parent.mkdir(parents=True,exist_ok=True); args.out.write_text(json.dumps({'schema':'b0_bounded_integration_v1','rho':args.rho,'records':out},indent=2)+'\n')
 
 if __name__=='__main__': main()

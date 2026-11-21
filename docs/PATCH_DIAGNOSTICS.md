@@ -1459,3 +1459,27 @@ The first chunk leaves the core-13 episodes recoverable under Clean vision in
 are already irrecoverable after the first chunk even with Clean vision, while
 the rest retain later-interaction headroom. This is a mixed result, not a
 green light for either pure cold-start correction or pure later TTA.
+
+### Gate 1 state clustering and Experiment B
+
+Core-13 clustering:
+- Clean-only recovery: states 34(2), 35(1), 37(1), 43(1), 45(2) = 7.
+- Shift-only recovery: 35(9999), 43(7777), 45(9999) = 3.
+- both fail: 43(8888), 44(9999), 48(8888) = 3.
+No core episode was recovered by both. Boundary caveats: the first chunk was forced to
+12 actions with no early exit, and Clean switching used reset_episode_flags(env,0);
+no model_compatible/compare audit was logged. These are protocol boundaries, not proof
+of physical irrecoverability.
+
+B0 clean drift under full bounded Euler:
+- Shift XYZ 8.642 mm -> 7.156 mm;
+- Clean XYZ drift = 1.317–5.227 mm across states, not safe.
+
+Experiment B (3 target states x Clean/Shift x 3 chunks, 18 boundary rows):
+- mean ||dz||: Clean 13.94, Shift 12.05;
+- mean ||dstate8||: Clean 0.150, Shift 0.140;
+- corr(||dz||, ||dstate||) = -0.027;
+- corr(||dz||, ||action_sum||) = -0.222;
+- clean-fit action->state8 prediction error: Clean 0.064, Shift 1.224 (relative).
+The simple chunk-boundary visual delta is not a clean domain discriminator; the
+action-to-state consistency residual is more promising but the sample is tiny.
