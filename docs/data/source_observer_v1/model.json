@@ -1,0 +1,271 @@
+{
+  "schema": "source_observer_v1_frozen_model",
+  "config": {
+    "experiment": "SOURCE_OBSERVER_V1",
+    "version": 1,
+    "scope": "gate_A_only",
+    "seed": 2014,
+    "horizon": 12,
+    "views": [
+      "agentview",
+      "eye_in_hand"
+    ],
+    "pooling": "mean_48_tokens_within_each_view",
+    "pca_rank": 8,
+    "pca_fit_rows": "unique_boundaries_of_full_fit_chunks",
+    "pca_weighting": "equal_state_then_equal_selected_boundary",
+    "action_representation": "three_consecutive_4_step_means_21_dimensions",
+    "ridge_alpha": 1.0,
+    "ridge_objective": "sum_i w_i ||y_i - X_i B - b||^2 + alpha ||B||^2; sum(w)=1",
+    "row_weighting": "equal_state_then_equal_full_chunk",
+    "feature_scale_floor": 1e-06,
+    "target_scale_floor_absolute": 1e-06,
+    "target_scale_floor_median_fraction": 0.1,
+    "models": {
+      "M0": "state8+actions21",
+      "M1": "pca8+state8+actions21",
+      "M2": "pca8"
+    },
+    "untrained_controls": [
+      "zero_delta",
+      "fit_mean_next_minus_current"
+    ],
+    "bootstrap_seed": 20261121,
+    "bootstrap_resamples": 10000,
+    "bootstrap_ci": 0.95,
+    "cosine_min_true_scaled_norm": 0.1,
+    "cosine_min_pred_norm": 1e-12,
+    "confound_bins_end_step": [
+      24,
+      72
+    ],
+    "nonterminal_min_remaining_steps": 24,
+    "fixed_model_action_probe": "within_state_circular_shift_one_full_chunk",
+    "continue_gate_each_view": {
+      "comparisons": [
+        "M0",
+        "M2"
+      ],
+      "minimum_median_relative_rmse_gain": 0.05,
+      "minimum_state_wins": 8,
+      "bootstrap_mean_gain_lower_bound_positive": true,
+      "M1_median_gain_vs_each_untrained_control_positive": true,
+      "early_common_horizon_end_at_most_72_median_gain_vs_M0_and_M2_positive": true,
+      "remaining_more_than_24_median_gain_vs_M0_and_M2_positive": true
+    },
+    "overall_continue": "both_views_pass_all_conditions",
+    "interpretation": "exploratory engineering gate; ten states, one seed, one task; no target-risk or safety claim",
+    "forbidden_features": [
+      "elapsed_steps",
+      "remaining_steps",
+      "episode_success",
+      "episode_length",
+      "state_id",
+      "seed"
+    ],
+    "target_data_allowed": false,
+    "validation_refit_allowed": false,
+    "hyperparameter_search_allowed": false
+  },
+  "config_sha256": "d446eafa1e59c033205c5e9648722424a4553010f2154e004c9551eab9afc6a9",
+  "split_sha256": "0141c2e8e417f6686597930333e91782c62381a45f0bd9ebe9f38d08327a5fa1",
+  "model_sha256": "8d79ebfb0ae25bc03297e35d42cd427361d2bbd9fd94284fa4b62097af5db04b",
+  "code_sha256": {
+    "dacsc/source_observer.py": "b7ae0b465d39b146e13c3d63edf2db9388ff5d29ce9de069df2ff72168d82de5",
+    "scripts/source_observer_v1.py": "0741b7bb8b3ccf6be57f70a6d3aea753436b2d5fcfc835a002e8e1aeb04be18c",
+    "dacsc/source_interactions.py": "261c2ce7333352ee59cb94063ff1ddf3512292595af4bc9aad071323c9184ce0",
+    "dacsc/interaction_records.py": "02c18388623da37db0d1ddff68eceb18d1cc942d5d737647dcf167b0d2f8daa8"
+  },
+  "fit_states": [
+    0,
+    1,
+    2,
+    4,
+    6,
+    8,
+    10,
+    13,
+    14,
+    17
+  ],
+  "fit_rows": 101,
+  "excluded_partial": 8,
+  "fit_boundaries": 111,
+  "inputs": [
+    {
+      "state_id": 1,
+      "metadata_path": "runs/source_interactions/20261121/fit_a/source_fit_state1_seed2014/metadata.json",
+      "metadata_sha256": "b29a6b45cd09e42843d890db6ba462e347be559abae42593689528105ac90c33",
+      "npz_sha256": "82a57562a83843869ef626096e463803ce14c638ce90486aa3520c1c4485a843",
+      "full_chunks": 7,
+      "selected_boundaries": 8
+    },
+    {
+      "state_id": 2,
+      "metadata_path": "runs/source_interactions/20261121/fit_a/source_fit_state2_seed2014/metadata.json",
+      "metadata_sha256": "d8c2d4543060dc141ce6a4b832bf0d7c570afe6c804b3809eb236d46ed7eb924",
+      "npz_sha256": "b0d5385318e6c3227b970d710ea8bc756f468592d3c1c4de2cb93546031bdf00",
+      "full_chunks": 8,
+      "selected_boundaries": 9
+    },
+    {
+      "state_id": 4,
+      "metadata_path": "runs/source_interactions/20261121/fit_a/source_fit_state4_seed2014/metadata.json",
+      "metadata_sha256": "467df3f7b0961a7263bebc165bd35b16a332e7b2562e6900a628f65c55512689",
+      "npz_sha256": "de6ffe873bfc5650fda5293e73b15ce4c6023d082c043b29a02442359a95f3b6",
+      "full_chunks": 18,
+      "selected_boundaries": 19
+    },
+    {
+      "state_id": 10,
+      "metadata_path": "runs/source_interactions/20261121/fit_b/source_fit_state10_seed2014/metadata.json",
+      "metadata_sha256": "cec09925f610902134ea40fc7a0d6a696fd47cc198dc1706013c49049bad67c0",
+      "npz_sha256": "dbe65472fb06e3144c75300e3c15294bf576fc15918faea74dc05630adf8b3dd",
+      "full_chunks": 6,
+      "selected_boundaries": 7
+    },
+    {
+      "state_id": 6,
+      "metadata_path": "runs/source_interactions/20261121/fit_b/source_fit_state6_seed2014/metadata.json",
+      "metadata_sha256": "072a35d0ad78477bdd8dabe28ea2b32ffe1219bca0776b44cb6880e665c2ae56",
+      "npz_sha256": "b6ab6e09b503333cd87a63fa30638a3dc37e19af4b59f9959dea3cead2dd8613",
+      "full_chunks": 7,
+      "selected_boundaries": 8
+    },
+    {
+      "state_id": 8,
+      "metadata_path": "runs/source_interactions/20261121/fit_b/source_fit_state8_seed2014/metadata.json",
+      "metadata_sha256": "518c7659424bad108d6bfc2aa194fdba93dfe70a04d3a50fd3b02c8c5934685a",
+      "npz_sha256": "f91fe95e74dade73a1c78a34bf6b4fa8819267c64f9acc8f7ad55c990411a4b0",
+      "full_chunks": 8,
+      "selected_boundaries": 9
+    },
+    {
+      "state_id": 13,
+      "metadata_path": "runs/source_interactions/20261121/fit_c/source_fit_state13_seed2014/metadata.json",
+      "metadata_sha256": "0041e155fedcd0e5d7830c5e13553061be5fadf8c99a80cb1ac4c45888ed1d66",
+      "npz_sha256": "9e98784de35f4c129df31af3246e2e7118fa2c060572cc196b89812f247eda41",
+      "full_chunks": 14,
+      "selected_boundaries": 15
+    },
+    {
+      "state_id": 14,
+      "metadata_path": "runs/source_interactions/20261121/fit_c/source_fit_state14_seed2014/metadata.json",
+      "metadata_sha256": "db688a8b6103e4a303da61e988e0b01d934d85c62feeaf27fd33f285bba94f17",
+      "npz_sha256": "cf53101c648cef0195d900cff72e6ebdfaa8ab1152d65153e44630c1858c5b68",
+      "full_chunks": 8,
+      "selected_boundaries": 9
+    },
+    {
+      "state_id": 17,
+      "metadata_path": "runs/source_interactions/20261121/fit_c/source_fit_state17_seed2014/metadata.json",
+      "metadata_sha256": "d4b0b0debb570c17faee3823626dcc3e604b3ea05a52a9e6266479df95ffca88",
+      "npz_sha256": "74df53f1a18085622c270dc8e77680fb755bd8366f1524a501ff3be1d78d9a80",
+      "full_chunks": 18,
+      "selected_boundaries": 19
+    },
+    {
+      "state_id": 0,
+      "metadata_path": "runs/source_interactions/20261121/fit_smoke/source_fit_state0_seed2014/metadata.json",
+      "metadata_sha256": "0881656a8016616b047672a09edc89911e04d5eb3d7fd81a73beca87bc8db228",
+      "npz_sha256": "ae7d900a15666c8d930c33b4cd36415a4706fb91390d707ad3856cf40dff1193",
+      "full_chunks": 7,
+      "selected_boundaries": 8
+    }
+  ],
+  "fit_statistics": {
+    "agentview": {
+      "pca_boundary_variance_capture": 0.7329690493152633,
+      "fit_delta_energy_capture": 0.5408688767530179,
+      "target_raw_scale": [
+        4.652587891106073,
+        3.72309634898037,
+        3.156080569244877,
+        3.6617688231635896,
+        2.538469119362154,
+        2.7447820190766454,
+        2.734411492598424,
+        1.9513624547278594
+      ],
+      "target_scale": [
+        4.652587891106073,
+        3.72309634898037,
+        3.156080569244877,
+        3.6617688231635896,
+        2.538469119362154,
+        2.7447820190766454,
+        2.734411492598424,
+        1.9513624547278594
+      ],
+      "target_scale_floor": 0.29504312941607613,
+      "models": {
+        "M0": {
+          "input_dim": 29,
+          "output_dim": 8,
+          "parameter_count": 240
+        },
+        "M1": {
+          "input_dim": 37,
+          "output_dim": 8,
+          "parameter_count": 304
+        },
+        "M2": {
+          "input_dim": 8,
+          "output_dim": 8,
+          "parameter_count": 72
+        }
+      }
+    },
+    "eye_in_hand": {
+      "pca_boundary_variance_capture": 0.8701482113948474,
+      "fit_delta_energy_capture": 0.8177082525913099,
+      "target_raw_scale": [
+        8.984864936374942,
+        13.134488299746954,
+        9.374147671576438,
+        8.771215757367573,
+        6.410200825311857,
+        4.795893914576221,
+        5.540876975096563,
+        5.362773732672629
+      ],
+      "target_scale": [
+        8.984864936374942,
+        13.134488299746954,
+        9.374147671576438,
+        8.771215757367573,
+        6.410200825311857,
+        4.795893914576221,
+        5.540876975096563,
+        5.362773732672629
+      ],
+      "target_scale_floor": 0.7590708291339715,
+      "models": {
+        "M0": {
+          "input_dim": 29,
+          "output_dim": 8,
+          "parameter_count": 240
+        },
+        "M1": {
+          "input_dim": 37,
+          "output_dim": 8,
+          "parameter_count": 304
+        },
+        "M2": {
+          "input_dim": 8,
+          "output_dim": 8,
+          "parameter_count": 72
+        }
+      }
+    }
+  },
+  "versions": {
+    "numpy": "2.2.5",
+    "sklearn": "1.9.1",
+    "scipy": "1.17.1"
+  },
+  "validation_opened_in_fit": false,
+  "target_data_opened": false,
+  "hyperparameter_search": false,
+  "frozen_design_commit": "bbbaa85"
+}
