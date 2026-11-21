@@ -1616,3 +1616,28 @@ checkpoint.
 
 B3-1 analysis now uses actions_executed + executed mask, not planned actions.
 Pilot remains overfit (3 states, 9 Clean rows): P0 shift .347, P1 shift .608.
+
+### B3-2 10-state graduation: direct residual regression fails
+
+10 target-dev states x 4 z0 x 10 steps x 12 positions = 4800 rows.
+Leave-one-state-out; all reported metrics are on held-out states.
+
+| model | G_row(all) | G_agg(all) | G_row(unseen7) |
+|---|---:|---:|---:|
+| zero | 0.000 | 0.000 | 0.000 |
+| constant train residual | **0.233** | **0.309** | — |
+| M0 | -0.047 | 0.127 | -0.162 |
+| M1a | 0.016 | 0.158 | -0.065 |
+| M1w | -0.330 | -0.002 | -0.474 |
+| M1both | 0.001 | 0.150 | -0.090 |
+
+A train-fold constant residual predictor beats every learned model, including
+the oracle-scalar-calibrated versions (best calibrated G_row ~0.195). Thus the
+current features do not beat a trivial mean baseline on held-out states.
+This is the pre-registered stop condition for direct 7D flow-residual
+regression. No Adapter; no target-test.
+
+Protocol correction: B3/B3-2 use target-dev states (34,35,36,37,39,43,44,45,
+48,49), so they are privileged target-dev oracle diagnostics, not source-only.
+The 34/43/45 pilot states are part of this set; the unseen-7 subset is reported
+separately to avoid overstating independent confirmation.
