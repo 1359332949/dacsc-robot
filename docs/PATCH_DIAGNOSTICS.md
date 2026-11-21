@@ -1483,3 +1483,29 @@ Experiment B (3 target states x Clean/Shift x 3 chunks, 18 boundary rows):
 - clean-fit action->state8 prediction error: Clean 0.064, Shift 1.224 (relative).
 The simple chunk-boundary visual delta is not a clean domain discriminator; the
 action-to-state consistency residual is more promising but the sample is tiny.
+
+### B2: paired action-replay control
+
+3 target states (34,43,45), same initial state, same 12 clipped actions in
+Clean and Shift. Physics trajectory max difference = 0.0 for all three.
+Visual Resampler tokens still differ substantially:
+
+| state | agentview cosine | agentview RMS | eye cosine | eye RMS |
+|---|---:|---:|---:|---:|
+| 34 | 0.824 | 0.621 | 0.989 | 0.149 |
+| 43 | 0.947 | 0.342 | 0.987 | 0.165 |
+| 45 | 0.939 | 0.370 | 0.983 | 0.190 |
+
+This cleanly localizes the Lighting 2292 shift to visual representation:
+physics is identical under identical commands, while agentview tokens shift
+much more than eye-in-hand. This is diagnostic only; no Clean action is used
+at deployment.
+
+### B0 split metrics
+
+| split | n | Shift XYZ | B0 XYZ | Clean drift |
+|---|---:|---:|---:|---:|
+| source_fit | 10 | 8.272 mm | 6.468 mm | 1.515 mm |
+| source_validation | 10 | 9.013 mm | 7.843 mm | 2.974 mm |
+
+B0 improves validation XYZ by ~13% but Clean drift ~3 mm is unsafe.
