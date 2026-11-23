@@ -1,0 +1,189 @@
+{
+  "physical_pair": {
+    "raw_state_equal": true,
+    "model_physics_compatible": true,
+    "physical_init_hash": "648de30251a5b3e31ecfaf0906afe3578d94c488457683ad2748af6a364ca326",
+    "scope": "listed simulator fields and static physics; not all hidden state"
+  },
+  "initial_observation": {
+    "agentview": {
+      "mean": 119.64989725748698,
+      "std": 44.24548997200709,
+      "sha256": "17ff3bdceb1113fc88cd01b80f83009307287ade980dda0e9705cc086d8cc4b8"
+    },
+    "eye_in_hand": {
+      "mean": 128.1338857014974,
+      "std": 63.79146874634471,
+      "sha256": "e6ea15047dce077005e79134e0d496b6f01febfcd7ced157a04bde7e63f1b0a2"
+    }
+  },
+  "status": "completed",
+  "success": false,
+  "steps": 220,
+  "chunks": [
+    {
+      "start": 0,
+      "end": 12,
+      "z0_hash": "d4d99c015c5563edf151992d1c8aeb3b28aa1888ee80f8895aed10ef101bda9e",
+      "official_parity": {
+        "x_max_abs": 0.0,
+        "velocity_max_abs": 0.0,
+        "controller_max_abs": 0.0,
+        "clipped_max_abs": 0.0,
+        "official_predict_calls": 1,
+        "steps": 10
+      }
+    },
+    {
+      "start": 12,
+      "end": 24,
+      "z0_hash": "bc4066d3eb57181dac66bc087c2244df0b761b9d0e7f63fc1066bfa1186920c1",
+      "official_parity": {}
+    },
+    {
+      "start": 24,
+      "end": 36,
+      "z0_hash": "5e467ae2ea9537dfb7159133f4a55cf508cbcd32083bd9d5f0e4d39f338147fa",
+      "official_parity": {}
+    },
+    {
+      "start": 36,
+      "end": 48,
+      "z0_hash": "9d90a542861a0508a75fcfb38d8a2778c63c7d9c89818e956077f6730d1f2f55",
+      "official_parity": {}
+    },
+    {
+      "start": 48,
+      "end": 60,
+      "z0_hash": "643f3cf4b21b9f8b26fa43956a8622a38229cb0c2313124dd3e08e4cabf6452b",
+      "official_parity": {}
+    },
+    {
+      "start": 60,
+      "end": 72,
+      "z0_hash": "b53ba606f37315d50b468ec7b17fea69a9d7528baf89c58a130f571c61a48d78",
+      "official_parity": {}
+    },
+    {
+      "start": 72,
+      "end": 84,
+      "z0_hash": "4aec386a463be64b26557c4774677df2541bff2f7c3369d87ed027aceab43c82",
+      "official_parity": {}
+    },
+    {
+      "start": 84,
+      "end": 96,
+      "z0_hash": "cb8e94933d2cf57a0b745dae03b9dc5ee55d8a0fe72549991bb9c8b5c236928a",
+      "official_parity": {}
+    },
+    {
+      "start": 96,
+      "end": 108,
+      "z0_hash": "434da4d6f17f0f0f5fc3752e0fc822468306f85f75c6c5228b5831b9488c1a88",
+      "official_parity": {}
+    },
+    {
+      "start": 108,
+      "end": 120,
+      "z0_hash": "93394003ecb258df66180402aa0f156ee3df06f5847bf1eaf8f17df7f6087f23",
+      "official_parity": {}
+    },
+    {
+      "start": 120,
+      "end": 132,
+      "z0_hash": "1611266c968c17fa9477655feb2c56997ec9fe715a6c3315d0e516564f12aaaa",
+      "official_parity": {}
+    },
+    {
+      "start": 132,
+      "end": 144,
+      "z0_hash": "98d2febe9dbb19932f94226358478cb5984354b6b58f02d637b44a622aba2714",
+      "official_parity": {}
+    },
+    {
+      "start": 144,
+      "end": 156,
+      "z0_hash": "7cdcaf9f9acc3cb1d98fccebe993514b0b5ae4a49d356e351ce16ce8aa849b92",
+      "official_parity": {}
+    },
+    {
+      "start": 156,
+      "end": 168,
+      "z0_hash": "8454523c032f73f03c728a69b40d0729e1d22419d5bd4a5a90e398363277c04c",
+      "official_parity": {}
+    },
+    {
+      "start": 168,
+      "end": 180,
+      "z0_hash": "f80bd10d89116027e112bc38de8ae4511e672afa9a2c9c4ae99bc8b12f72d84d",
+      "official_parity": {}
+    },
+    {
+      "start": 180,
+      "end": 192,
+      "z0_hash": "5ed39dc35eda2fbde7a4d88d5193703be48f24de807dea89fcf631fc619f2d45",
+      "official_parity": {}
+    },
+    {
+      "start": 192,
+      "end": 204,
+      "z0_hash": "6ea97fcd1799871de6a66e3d8a5e5c68426e3d68c828a4de4b4b0bf1ee7187e1",
+      "official_parity": {}
+    },
+    {
+      "start": 204,
+      "end": 216,
+      "z0_hash": "5d5a65607d7608e80a38a2b3508bb3384b1e3b2ea9096811637b99343cbf97af",
+      "official_parity": {}
+    },
+    {
+      "start": 216,
+      "end": 220,
+      "z0_hash": "731bc0ceddc1ea18d3fbe7afa20c158de42ddbff95b012c93e0e813a99fa92ea",
+      "official_parity": {}
+    }
+  ],
+  "action_sha256": "dba9c6948b7d5707f54d4c97de6bd9c35d5c90d0d4414b40a4a5785e342e4653",
+  "terminal_flags": {
+    "reward": 0.0,
+    "success": false,
+    "terminated": false,
+    "truncated": false,
+    "done": false,
+    "flags_source": "legacy_done_minus_explicit_time_limit"
+  },
+  "collector_truncated": true,
+  "case_id": "8515f621f7ce09addd6043fc",
+  "base_task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+  "factor": "sensor_noise",
+  "pair_group_id": "85c3af5bb68bc8ec5351f439f0bf892c4507168a2e265d1748e58de432264180",
+  "role": "target_dev",
+  "seeds": {
+    "environment_seed": 1149401255,
+    "sensor_noise_seed": 1977584229,
+    "policy_flow_seed": 3461044983,
+    "method_augmentation_seed": 2378364339
+  },
+  "init_state_index": 0,
+  "audit_sha256": "d60f3211d73b8f1362d2286c1c0831897697457ff01d281b36106116a71aa355",
+  "manifest_sha256": "d3e0d8c642cd215c879d2f0174663ff5ec585cd5c6d6b531a213c26e9fb982c0",
+  "checkpoint_sha256": "f933ab03c1a4664f7a11690645cdd5fa81788a5b98db81913024f7a23326dfe6",
+  "code_sha256": {
+    "scripts/static_visual_v2.py": "f5234358fe24edab30e1cbce3656a81fc8a37d35392019e0194c1e0259c442e4",
+    "dacsc/static_visual_v2.py": "cfd502ea2804c8c1440e564850acb12d8bf3bfba3eafb66442af33997c16960e"
+  },
+  "wall_seconds": 135.09417440800462,
+  "method": "frozen",
+  "new_model_training": false,
+  "blind_accessed": false,
+  "language_instruction": "pick up the black bowl next to the cookie box and place it on the plate",
+  "language_source": "official benchmark.grab_language_from_filename(clean_base_task)",
+  "bddl_language_diagnostic": "pick the akita black bowl next to the cookies box and place it on the plate",
+  "runtime_versions": {
+    "python": "3.10.12",
+    "torch": "2.5.1+cu121",
+    "numpy": "1.26.4",
+    "mujoco": "3.3.0",
+    "robosuite": "1.4.1"
+  }
+}

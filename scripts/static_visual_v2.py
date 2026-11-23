@@ -309,8 +309,9 @@ def summarize(args):
         for k,v in c.items():f[k]+=v
     factor_complete=bool(factors) and all(c['paired']==c['expected_n'] for c in factors.values())
     suite_macro=float(np.mean([(c['clean_fail_shift_success']-c['clean_success_shift_fail'])/c['paired'] for c in factors.values()])) if factor_complete else None
-    write(args.out,{'factors':factors,'suite_factor_macro_shift_minus_clean':suite_macro,'cells':cells,'role':'dev_only','complete':complete,'frozen_shift_minus_clean_macro':macro,'method_vs_frozen_macro':None,
-        'note':'no TTA method evaluated; exceptions/missing pairs retained, no complete macro when incomplete; n=3/cell exploratory'})
+    write(args.out,{'factors':factors,'suite_factor_macro_shift_minus_clean':suite_macro,'cells':cells,'role':'dev_only','complete':complete,'descriptive_task_factor_macro_shift_minus_clean':macro,'method_vs_frozen_macro':None,
+        'primary_estimand':'equal-weight factor mean; task-factor mean is descriptive only',
+        'note':'no TTA method evaluated; exceptions/missing pairs retained; historical official pool reused for development'})
 
 
 def freeze_suite(args):

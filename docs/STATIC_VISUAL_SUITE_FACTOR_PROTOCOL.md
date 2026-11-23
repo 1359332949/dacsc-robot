@@ -22,7 +22,7 @@
 
 ## 环境故障处理
 
-迁移前16条Clean结束结果全部失败后，暂停原批处理。原16条与未完成case保留为环境诊断，不参与修复后正式Smoke汇总。若发现具体依赖/资产问题，使用原定状态/seed、修复后的独立环境重跑，保留两个版本。禁止将环境错误归为策略对视觉域失败，也禁止将不喜欢的有效结果作废。
+迁移前首批Clean结束结果全部失败后，暂停原批处理。原始失败记录与未完成case保留为环境诊断，不参与修复后正式Smoke汇总。若发现具体依赖/资产问题，使用原定状态/seed、修复后的独立环境重跑，保留两个版本。禁止将环境错误归为策略对视觉域失败，也禁止将不喜欢的有效结果作废。
 
 CoRP仓库固定robosuite1.4.1、MuJoCo3.3.0；新主机原为1.4.0/3.3.2。使用独立dependency_overlay核验，不改基础venv。动作同输入核对与渲染核对分开，只有相同渲染与动作条件才可追究闭环行为差。
 
@@ -39,3 +39,7 @@ CoRP仓库固定robosuite1.4.1、MuJoCo3.3.0；新主机原为1.4.0/3.3.2。使�
 渲染上下文回归纠错：原runner先创建主环境，再创建并关闭对照环境。在本机OSMesa下，对照关闭会破坏主环境渲染，虽然state8完全相同，图像已错误。因此先创建Clean对照、保存其数值snapshot并关闭，之后才创建实际主环境；主环境存活期间不再关闭另一个renderer。50条错误渲染结果全部归档为无效环境批次，不据其0成功作能力判断。相同50条状态/seed需重新执行。
 
 Sensor仅在策略实际使用的观测边界施加官方噪声核；每帧噪声由environment-step派生，随机流隔离，所以丢弃的中间图像是否计算噪声不会改变边界图像或环境动力学。额外回归测试确认该等价性；不改变扰动强度、作用相机或策略可见内容。时间成本报告会注明这一点，不与每帧都加工的参考脚本直接比较延迟。
+
+## Clarification after baseline completion
+
+Frozen baseline visibility does not by itself prove instance-specific TTA development. The all-official historical quarantine remains the conservative executable default, but is not a claim that official assets can never support evaluation. A future method-held-out protocol requires a separate historical method-access audit, explicit exclusions and disclosure of prior Frozen visibility. It cannot be called zero-contact Blind. Current manifests and locks are unchanged. See STATIC_VISUAL_SUITE_FACTOR_RESULTS.md for completed results and statistical limitations.

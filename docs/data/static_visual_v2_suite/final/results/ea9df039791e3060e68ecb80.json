@@ -1,0 +1,153 @@
+{
+  "physical_pair": {
+    "raw_state_equal": true,
+    "model_physics_compatible": true,
+    "physical_init_hash": "648de30251a5b3e31ecfaf0906afe3578d94c488457683ad2748af6a364ca326",
+    "scope": "listed simulator fields and static physics; not all hidden state"
+  },
+  "initial_observation": {
+    "agentview": {
+      "mean": 73.09282938639323,
+      "std": 42.584034063569206,
+      "sha256": "8a3aa4b8beeb5c876ec61a0cea2828f5414c44a00904b8fbbc4f52f378854969"
+    },
+    "eye_in_hand": {
+      "mean": 65.57961527506511,
+      "std": 47.43515298509296,
+      "sha256": "4301e309ca16fbf36c7863dc4204f8ea99ae2e57e71fd98970b78d29ffb0faab"
+    }
+  },
+  "status": "completed",
+  "success": true,
+  "steps": 155,
+  "chunks": [
+    {
+      "start": 0,
+      "end": 12,
+      "z0_hash": "d4d99c015c5563edf151992d1c8aeb3b28aa1888ee80f8895aed10ef101bda9e",
+      "official_parity": {
+        "x_max_abs": 0.0,
+        "velocity_max_abs": 0.0,
+        "controller_max_abs": 0.0,
+        "clipped_max_abs": 0.0,
+        "official_predict_calls": 1,
+        "steps": 10
+      }
+    },
+    {
+      "start": 12,
+      "end": 24,
+      "z0_hash": "bc4066d3eb57181dac66bc087c2244df0b761b9d0e7f63fc1066bfa1186920c1",
+      "official_parity": {}
+    },
+    {
+      "start": 24,
+      "end": 36,
+      "z0_hash": "5e467ae2ea9537dfb7159133f4a55cf508cbcd32083bd9d5f0e4d39f338147fa",
+      "official_parity": {}
+    },
+    {
+      "start": 36,
+      "end": 48,
+      "z0_hash": "9d90a542861a0508a75fcfb38d8a2778c63c7d9c89818e956077f6730d1f2f55",
+      "official_parity": {}
+    },
+    {
+      "start": 48,
+      "end": 60,
+      "z0_hash": "643f3cf4b21b9f8b26fa43956a8622a38229cb0c2313124dd3e08e4cabf6452b",
+      "official_parity": {}
+    },
+    {
+      "start": 60,
+      "end": 72,
+      "z0_hash": "b53ba606f37315d50b468ec7b17fea69a9d7528baf89c58a130f571c61a48d78",
+      "official_parity": {}
+    },
+    {
+      "start": 72,
+      "end": 84,
+      "z0_hash": "4aec386a463be64b26557c4774677df2541bff2f7c3369d87ed027aceab43c82",
+      "official_parity": {}
+    },
+    {
+      "start": 84,
+      "end": 96,
+      "z0_hash": "cb8e94933d2cf57a0b745dae03b9dc5ee55d8a0fe72549991bb9c8b5c236928a",
+      "official_parity": {}
+    },
+    {
+      "start": 96,
+      "end": 108,
+      "z0_hash": "434da4d6f17f0f0f5fc3752e0fc822468306f85f75c6c5228b5831b9488c1a88",
+      "official_parity": {}
+    },
+    {
+      "start": 108,
+      "end": 120,
+      "z0_hash": "93394003ecb258df66180402aa0f156ee3df06f5847bf1eaf8f17df7f6087f23",
+      "official_parity": {}
+    },
+    {
+      "start": 120,
+      "end": 132,
+      "z0_hash": "1611266c968c17fa9477655feb2c56997ec9fe715a6c3315d0e516564f12aaaa",
+      "official_parity": {}
+    },
+    {
+      "start": 132,
+      "end": 144,
+      "z0_hash": "98d2febe9dbb19932f94226358478cb5984354b6b58f02d637b44a622aba2714",
+      "official_parity": {}
+    },
+    {
+      "start": 144,
+      "end": 155,
+      "z0_hash": "7cdcaf9f9acc3cb1d98fccebe993514b0b5ae4a49d356e351ce16ce8aa849b92",
+      "official_parity": {}
+    }
+  ],
+  "action_sha256": "d53bd6c64b1821e099759617bbd366d339fb949ab640d13110e82769a75af992",
+  "terminal_flags": {
+    "reward": 1.0,
+    "success": true,
+    "terminated": true,
+    "truncated": false,
+    "done": true,
+    "flags_source": "legacy_done_minus_explicit_time_limit"
+  },
+  "collector_truncated": false,
+  "case_id": "ea9df039791e3060e68ecb80",
+  "base_task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+  "factor": "background",
+  "pair_group_id": "85c3af5bb68bc8ec5351f439f0bf892c4507168a2e265d1748e58de432264180",
+  "role": "target_dev",
+  "seeds": {
+    "environment_seed": 1149401255,
+    "sensor_noise_seed": 1977584229,
+    "policy_flow_seed": 3461044983,
+    "method_augmentation_seed": 2378364339
+  },
+  "init_state_index": 0,
+  "audit_sha256": "d60f3211d73b8f1362d2286c1c0831897697457ff01d281b36106116a71aa355",
+  "manifest_sha256": "d3e0d8c642cd215c879d2f0174663ff5ec585cd5c6d6b531a213c26e9fb982c0",
+  "checkpoint_sha256": "f933ab03c1a4664f7a11690645cdd5fa81788a5b98db81913024f7a23326dfe6",
+  "code_sha256": {
+    "scripts/static_visual_v2.py": "f5234358fe24edab30e1cbce3656a81fc8a37d35392019e0194c1e0259c442e4",
+    "dacsc/static_visual_v2.py": "cfd502ea2804c8c1440e564850acb12d8bf3bfba3eafb66442af33997c16960e"
+  },
+  "wall_seconds": 97.07052461600688,
+  "method": "frozen",
+  "new_model_training": false,
+  "blind_accessed": false,
+  "language_instruction": "pick up the black bowl next to the cookie box and place it on the plate",
+  "language_source": "official benchmark.grab_language_from_filename(clean_base_task)",
+  "bddl_language_diagnostic": "pick the akita black bowl next to the cookies box and place it on the plate",
+  "runtime_versions": {
+    "python": "3.10.12",
+    "torch": "2.5.1+cu121",
+    "numpy": "1.26.4",
+    "mujoco": "3.3.0",
+    "robosuite": "1.4.1"
+  }
+}

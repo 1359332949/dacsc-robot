@@ -1,0 +1,14 @@
+{
+  "schema": "static_visual_v2_manifest",
+  "kind": "blind",
+  "status": "NO_UNACCESSED_OFFICIAL_POOL",
+  "cases": [],
+  "requested_per_factor": 100,
+  "requested_factors": [
+    "lighting",
+    "background",
+    "sensor_noise"
+  ],
+  "reason": "historical full10030 benchmark access; cannot reserve fresh300 by resampling",
+  "Blind_access": false
+}

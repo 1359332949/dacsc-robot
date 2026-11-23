@@ -18,11 +18,13 @@ test_summary_keeps_missing_instances (tests.test_static_visual_v2.StaticV2Tests.
 test_wrapper_parameters_distinguish_same_bddl (tests.test_static_visual_v2.StaticV2Tests.test_wrapper_parameters_distinguish_same_bddl) ... ok
 test_dev_reuse_explicitly_not_a_blind_pool (tests.test_static_visual_v2_suite.SuiteFactorTests.test_dev_reuse_explicitly_not_a_blind_pool) ... ok
 test_no_unresolved_clean_zeros (tests.test_static_visual_v2_suite.SuiteFactorTests.test_no_unresolved_clean_zeros) ... ok
+test_step_keyed_sensor_discarded_frames_do_not_affect_query (tests.test_static_visual_v2_suite.SuiteFactorTests.test_step_keyed_sensor_discarded_frames_do_not_affect_query) ... ok
 test_suite_freeze_never_manufactures_fresh_blind (tests.test_static_visual_v2_suite.SuiteFactorTests.test_suite_freeze_never_manufactures_fresh_blind) ... ok
 test_suite_quota_ignores_sparse_base_task (tests.test_static_visual_v2_suite.SuiteFactorTests.test_suite_quota_ignores_sparse_base_task) ... ok
+test_zero_of_five_stops_before_target_sampling (tests.test_static_visual_v2_suite.SuiteFactorTests.test_zero_of_five_stops_before_target_sampling) ... ok
 
 ----------------------------------------------------------------------
-Ran 22 tests in 0.059s
+Ran 24 tests in 0.053s
 
 OK
 {"dev_shift": 30, "dev_clean": 10, "blind_reserved": 0, "status": "development-only official pool"}

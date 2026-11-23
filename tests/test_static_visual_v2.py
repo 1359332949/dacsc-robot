@@ -91,7 +91,7 @@ class StaticV2Tests(unittest.TestCase):
             root=Path(tmp);mp=root/'m.json';mp.write_text(json.dumps({'kind':'dev','cases':[{'role':'target_dev','case_id':'x','base_task':'t','factor':'camera'}]}))
             results=root/'results';results.mkdir();out=root/'report.json'
             summarize(Namespace(manifest=mp,results=results,out=out))
-            d=json.loads(out.read_text());self.assertFalse(d['complete']);self.assertIsNone(d['frozen_shift_minus_clean_macro']);self.assertEqual(d['cells']['t|camera']['missing'],1)
+            d=json.loads(out.read_text());self.assertFalse(d['complete']);self.assertIsNone(d['suite_factor_macro_shift_minus_clean']);self.assertEqual(d['cells']['t|camera']['missing'],1)
 
     def test_freeze_keeps_independent_clean_holdout_separate(self):
         from argparse import Namespace

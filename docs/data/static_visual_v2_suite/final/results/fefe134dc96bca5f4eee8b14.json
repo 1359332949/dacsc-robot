@@ -1,0 +1,165 @@
+{
+  "physical_pair": {
+    "raw_state_equal": true,
+    "model_physics_compatible": true,
+    "physical_init_hash": "c5b2fa9a33ef9c8eab0dcc6e00d370ac2ccb5389096bedced82361111cd174bf",
+    "scope": "listed simulator fields and static physics; not all hidden state"
+  },
+  "initial_observation": {
+    "agentview": {
+      "mean": 118.89306131998698,
+      "std": 45.85015094219187,
+      "sha256": "78c4f766b1da99dd32a3c22622fc47487917577ee28db0924bbc4a647ff8da4e"
+    },
+    "eye_in_hand": {
+      "mean": 124.04252624511719,
+      "std": 64.27862550148842,
+      "sha256": "b1bbd0113c22100a3f4e467d8eab63cb6fddfe0c064aefd9cee040bfcbbb4981"
+    }
+  },
+  "status": "completed",
+  "success": true,
+  "steps": 178,
+  "chunks": [
+    {
+      "start": 0,
+      "end": 12,
+      "z0_hash": "c8f0fa382669c2ea129b35ac6185712364e805b273ff7028fc37920ecd9c2f5c",
+      "official_parity": {
+        "x_max_abs": 0.0,
+        "velocity_max_abs": 0.0,
+        "controller_max_abs": 0.0,
+        "clipped_max_abs": 0.0,
+        "official_predict_calls": 1,
+        "steps": 10
+      }
+    },
+    {
+      "start": 12,
+      "end": 24,
+      "z0_hash": "f681ecb35713a9d84c573a2fa1b3d98770fb497c8a0e1d47125aa6eebb96b5ab",
+      "official_parity": {}
+    },
+    {
+      "start": 24,
+      "end": 36,
+      "z0_hash": "66ecb8c4d7cb7e22c27a8b55c67e4e1a694386b2e48ab2c8ee90e82e7ba484a1",
+      "official_parity": {}
+    },
+    {
+      "start": 36,
+      "end": 48,
+      "z0_hash": "c8234998847bb82baa475ab576fe960d303379c112c65b4b4c9e5be8e28da895",
+      "official_parity": {}
+    },
+    {
+      "start": 48,
+      "end": 60,
+      "z0_hash": "65888227fd96367ff9338a8884ff4e46817640de6f2b62f7c5fddf880430f1d3",
+      "official_parity": {}
+    },
+    {
+      "start": 60,
+      "end": 72,
+      "z0_hash": "9dd58887e9c93a3c14a6d319895ef552722608c4f2b2f784a634086c3398d627",
+      "official_parity": {}
+    },
+    {
+      "start": 72,
+      "end": 84,
+      "z0_hash": "d87c58bb564cee7b76be55aa89c9ded5798581f7334d50e5732ce3d9b8a2d33f",
+      "official_parity": {}
+    },
+    {
+      "start": 84,
+      "end": 96,
+      "z0_hash": "e3a57c7a7ee8cb1c80353769f5bb38da926b39a6dbb13c1dedf2285bc2ba63f1",
+      "official_parity": {}
+    },
+    {
+      "start": 96,
+      "end": 108,
+      "z0_hash": "fbd975057a5cea71b0a6ea73946e9e89aa1623fc5384b77124929aa2c364ef00",
+      "official_parity": {}
+    },
+    {
+      "start": 108,
+      "end": 120,
+      "z0_hash": "a16f9306051aa9e4b0bbcd36fa5bcb4b12ccd6ec9922fc79e44272da765572b3",
+      "official_parity": {}
+    },
+    {
+      "start": 120,
+      "end": 132,
+      "z0_hash": "701a2dcfab081935e838cbe570bd2acb3f432d37491d27b99c6cca444089d0f3",
+      "official_parity": {}
+    },
+    {
+      "start": 132,
+      "end": 144,
+      "z0_hash": "6f7e17e3e53859562c9a632bd49cceeb59ed354c960bdfbd8dc6b9667016f023",
+      "official_parity": {}
+    },
+    {
+      "start": 144,
+      "end": 156,
+      "z0_hash": "2fc57d7a6ae2408078c5e2ed939ad2af808555b7e0d927e79cb7b6ac9e46c883",
+      "official_parity": {}
+    },
+    {
+      "start": 156,
+      "end": 168,
+      "z0_hash": "e827b2c1cbf17149348291527958264fea44ca0a9e374b65131ab45ff4923a98",
+      "official_parity": {}
+    },
+    {
+      "start": 168,
+      "end": 178,
+      "z0_hash": "594c5adad8281b89a94041d005a0b82ce5876fce0800dd24302231d67b34747c",
+      "official_parity": {}
+    }
+  ],
+  "action_sha256": "092c2d7e949bfe3ce3063a612c472026f023b62c0aaa2033550e9a29b4cde4ed",
+  "terminal_flags": {
+    "reward": 1.0,
+    "success": true,
+    "terminated": true,
+    "truncated": false,
+    "done": true,
+    "flags_source": "legacy_done_minus_explicit_time_limit"
+  },
+  "collector_truncated": false,
+  "case_id": "fefe134dc96bca5f4eee8b14",
+  "base_task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+  "factor": "sensor_noise",
+  "pair_group_id": "716b94a92dcadeb19bb4aef6d03c1f01b68045276cd20dd1a940fa489f8f47e9",
+  "role": "target_dev",
+  "seeds": {
+    "environment_seed": 3184724665,
+    "sensor_noise_seed": 4282769793,
+    "policy_flow_seed": 330965775,
+    "method_augmentation_seed": 649004861
+  },
+  "init_state_index": 0,
+  "audit_sha256": "d60f3211d73b8f1362d2286c1c0831897697457ff01d281b36106116a71aa355",
+  "manifest_sha256": "d3e0d8c642cd215c879d2f0174663ff5ec585cd5c6d6b531a213c26e9fb982c0",
+  "checkpoint_sha256": "f933ab03c1a4664f7a11690645cdd5fa81788a5b98db81913024f7a23326dfe6",
+  "code_sha256": {
+    "scripts/static_visual_v2.py": "f5234358fe24edab30e1cbce3656a81fc8a37d35392019e0194c1e0259c442e4",
+    "dacsc/static_visual_v2.py": "cfd502ea2804c8c1440e564850acb12d8bf3bfba3eafb66442af33997c16960e"
+  },
+  "wall_seconds": 111.82671355700586,
+  "method": "frozen",
+  "new_model_training": false,
+  "blind_accessed": false,
+  "language_instruction": "pick up the black bowl from table center and place it on the plate",
+  "language_source": "official benchmark.grab_language_from_filename(clean_base_task)",
+  "bddl_language_diagnostic": "pick the akita black bowl from table center and place it on the plate",
+  "runtime_versions": {
+    "python": "3.10.12",
+    "torch": "2.5.1+cu121",
+    "numpy": "1.26.4",
+    "mujoco": "3.3.0",
+    "robosuite": "1.4.1"
+  }
+}

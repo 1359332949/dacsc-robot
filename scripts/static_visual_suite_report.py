@@ -3,7 +3,7 @@ from pathlib import Path
 import argparse,collections,csv,json
 
 if __name__=='__main__':
-    ap=argparse.ArgumentParser();ap.add_argument('--root',type=Path,required=True);ap.add_argument('--out',type=Path,required=True);ap.add_argument('--audit-dir',default='p0_suite_official_language');ap.add_argument('--result-dir',default='source_smoke_official_language');a=ap.parse_args()
+    ap=argparse.ArgumentParser();ap.add_argument('--root',type=Path,required=True);ap.add_argument('--out',type=Path,required=True);ap.add_argument('--audit-dir',default='p0_suite_context_fixed');ap.add_argument('--result-dir',default='source_smoke_context_fixed');a=ap.parse_args()
     audit=json.loads((a.root/a.audit_dir/'p0_audit.json').read_text());manifest=json.loads((a.root/a.audit_dir/'dev_manifest.json').read_text())
     rows=[json.loads(p.read_text()) for p in sorted((a.root/a.result_dir).glob('*.json'))]
     if any(r['role']!='source_fit' for r in rows):raise ValueError('P0 report cannot mix roles')
