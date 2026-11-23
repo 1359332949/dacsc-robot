@@ -215,33 +215,38 @@ def run(args):
     seeds={stream:seed_for(s['sampling_seed'],case['pair_group_id'],0,stream) for stream in ('environment_seed','sensor_noise_seed','policy_flow_seed','method_augmentation_seed')}
     envrng=EnvironmentRNG(seeds['environment_seed']);gen=torch.Generator(device='cuda:0');gen.manual_seed(seeds['policy_flow_seed'])
     logical=src/'libero/libero/bddl_files'/case['suite']/(case['logical_task_name']+'.bddl')
-    language=bddl.get_problem_info(str(src/case['clean_bddl']))['language_instruction']
+    from libero.libero.benchmark import grab_language_from_filename
+    language=grab_language_from_filename(case['suite'],case['base_task']+'.bddl')
+    bddl_language=bddl.get_problem_info(str(src/case['clean_bddl']))['language_instruction']
     args.out.mkdir(parents=True,exist_ok=True);output=args.out/(case['case_id']+'.json')
     if output.exists():raise FileExistsError(output)
     ledger=args.manifest.parent/'access_ledger.jsonl';append_event(ledger,{'case_id':case['case_id'],'role':case['role'],'action':'rollout_start','manifest_sha256':file_hash(args.manifest),'checkpoint':a['checkpoint_sha256']})
     env=None;clean=None;result={};began=time.monotonic()
     try:
+        def state_record(e):
+            return {k:np.asarray(getattr(e.sim.data,k)).tolist() for k in ('qpos','qvel','act','time')}
+        # OSMesa may retain the last active context: never close a second renderer
+        # after the policy renderer is created. Snapshot/close Clean FIRST.
+        with EnvironmentRNG(seeds['environment_seed']).use():
+            clean=OffScreenRenderEnv(bddl_file_name=str(src/case['clean_bddl']),camera_heights=256,camera_widths=256,render_gpu_device_id=0)
+            clean.seed(seeds['environment_seed']);clean.reset();clean.set_init_state(initial)
+            reference_state=state_record(clean);reference_snapshot=snapshot(clean)
+        clean.close();clean=None
         with envrng.use():
             env=OffScreenRenderEnv(bddl_file_name=str(logical),camera_heights=256,camera_widths=256,render_gpu_device_id=0)
             noise=int(env.noise)
             if noise!=case['runtime_params']['noise']:raise ValueError('sensor parser parity failed')
-            env.noise=0 # Disable native corruption BEFORE reset so it cannot consume environment RNG.
+            env.noise=0
             env.seed(seeds['environment_seed']);env.reset();obs=env.set_init_state(initial)
-        # Verify post-reset physical pairing using a Clean twin; twin never drives policy.
-        with EnvironmentRNG(seeds['environment_seed']).use():
-            clean=OffScreenRenderEnv(bddl_file_name=str(src/case['clean_bddl']),camera_heights=256,camera_widths=256,render_gpu_device_id=0)
-            clean.seed(seeds['environment_seed']);clean.reset();clean.set_init_state(initial)
-        def state_record(e):
-            return {k:np.asarray(getattr(e.sim.data,k)).tolist() for k in ('qpos','qvel','act','time')}
-        rawpair=state_record(env)==state_record(clean)
-        compatible=model_compatible(snapshot(env),snapshot(clean),strict_bodies=True,strict_geometry=True,strict_physics=True)['pass']
+        rawpair=state_record(env)==reference_state
+        compatible=model_compatible(snapshot(env),reference_snapshot,strict_bodies=True,strict_geometry=True,strict_physics=True)['pass']
         result['physical_pair']={'raw_state_equal':rawpair,'model_physics_compatible':compatible,'physical_init_hash':digest(state_record(env)),'scope':'listed simulator fields and static physics; not all hidden state'}
         if not rawpair or not compatible:raise ValueError('unpaired Clean/Shift; retained as exception, never replaced')
-        clean.close();clean=None
         for step in range(s['settling_steps']):
             with envrng.use():obs,flags=step_flags(env.step(DUMMY_ACTION),env)
             if any(flags[k] for k in ('success','done','terminated','truncated')):raise ValueError('ended during settling')
         obs=sensor_transform(obs,noise,seeds['sensor_noise_seed'],0,wrapper)
+        result['initial_observation']={view:{'mean':float(np.asarray(obs[key]).mean()),'std':float(np.asarray(obs[key]).std()),'sha256':array_hash(np.asarray(obs[key]))} for view,key in [('agentview','agentview_image'),('eye_in_hand','robot0_eye_in_hand_image')]}
         executed=[];chunks=[];steps=0;success=False
         while steps<s['max_steps']:
             z0=torch.randn((1,12,7),device='cuda:0',dtype=torch.float32,generator=gen)
@@ -249,9 +254,12 @@ def run(args):
             begin=steps
             for action in np.clip(plan,-1,1):
                 with envrng.use():obs,flags=step_flags(env.step(action),env)
-                steps+=1;executed.append(action.copy());obs=sensor_transform(obs,noise,seeds['sensor_noise_seed'],steps,wrapper)
+                steps+=1;executed.append(action.copy())
                 success=flags['success']
                 if any(flags[k] for k in ('success','done','terminated','truncated')) or steps>=s['max_steps']:break
+            # Noise is observation-only with a step-keyed isolated RNG; discarded
+            # frames never feed control. Apply the identical kernel at query boundaries.
+            obs=sensor_transform(obs,noise,seeds['sensor_noise_seed'],steps,wrapper)
             chunks.append({'start':begin,'end':steps,'z0_hash':array_hash(z0.cpu().numpy()),'official_parity':parity})
             if any(flags[k] for k in ('success','done','terminated','truncated')):break
         result.update(status='completed',success=success,steps=steps,chunks=chunks,action_sha256=array_hash(np.asarray(executed)),
@@ -263,7 +271,7 @@ def run(args):
     result.update(case_id=case['case_id'],base_task=case['base_task'],factor=case['factor'],pair_group_id=case['pair_group_id'],role=case['role'],seeds=seeds,
         init_state_index=case['init_state_index'],audit_sha256=file_hash(audit_path),manifest_sha256=file_hash(args.manifest),checkpoint_sha256=a['checkpoint_sha256'],
         code_sha256={p:file_hash(ROOT/p) for p in ('scripts/static_visual_v2.py','dacsc/static_visual_v2.py')},wall_seconds=time.monotonic()-began,
-        method='frozen',new_model_training=False,blind_accessed=False,
+        method='frozen',new_model_training=False,blind_accessed=False,language_instruction=language,language_source='official benchmark.grab_language_from_filename(clean_base_task)',bddl_language_diagnostic=bddl_language,
         runtime_versions={'python':platform.python_version(),'torch':torch.__version__,'numpy':np.__version__,'mujoco':__import__('mujoco').__version__,'robosuite':__import__('robosuite').__version__})
     write(output,result);append_event(ledger,{'case_id':case['case_id'],'role':case['role'],'action':'rollout_end','status':result['status'],'result_sha256':file_hash(output)})
     print(json.dumps(result,ensure_ascii=False))

@@ -33,3 +33,9 @@ CoRP仓库固定robosuite1.4.1、MuJoCo3.3.0；新主机原为1.4.0/3.3.2。使�
 - 两个指定旧Source状态（0、18，seed2014）各用默认显示与collision+visual显示做对照；没有新状态/seed择优。保持正式runner默认显示不变。
 - 不论诊断渲染有何结果，正式Clean Smoke采用原定默认显示、Pinned robosuite1.4.1/MuJoCo3.3.0，按同一50个计划状态重跑一次；迁移前16条仍单独保存。
 - 任何任务0/5则不自动删任务、降配额或运行Shift；把未通过的兼容性关口明确报告。调显示参数直到成功不是允许的修复。
+
+补充接口纠错：CoRP正式evaluate_libero.py使用Task.language；旧V2 runner使用BDDL的language_instruction，两者在Spatial有不同措辞。新任务范围比较必须按官方`benchmark.grab_language_from_filename(suite, clean_base_task+'.bddl')`生成语言，不通过选择更高成功率的措辞调参。改动后对相同50条Source计划和相同派生随机种子重新运行，所有旧措辞结果只留作接口诊断。历史单任务实验的语言与此不同，不能无说明混表。
+
+渲染上下文回归纠错：原runner先创建主环境，再创建并关闭对照环境。在本机OSMesa下，对照关闭会破坏主环境渲染，虽然state8完全相同，图像已错误。因此先创建Clean对照、保存其数值snapshot并关闭，之后才创建实际主环境；主环境存活期间不再关闭另一个renderer。50条错误渲染结果全部归档为无效环境批次，不据其0成功作能力判断。相同50条状态/seed需重新执行。
+
+Sensor仅在策略实际使用的观测边界施加官方噪声核；每帧噪声由environment-step派生，随机流隔离，所以丢弃的中间图像是否计算噪声不会改变边界图像或环境动力学。额外回归测试确认该等价性；不改变扰动强度、作用相机或策略可见内容。时间成本报告会注明这一点，不与每帧都加工的参考脚本直接比较延迟。

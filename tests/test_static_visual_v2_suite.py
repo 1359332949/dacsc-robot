@@ -30,6 +30,27 @@ class SuiteFactorTests(unittest.TestCase):
             self.assertEqual(b['cases'],[]);self.assertEqual(b['status'],'NO_UNACCESSED_OFFICIAL_POOL')
             self.assertEqual(len([r for r in d['cases'] if r['role']=='target_dev']),30)
             self.assertTrue(all(r['freshness']=='historically_accessed_development_reuse' for r in d['cases']))
+    def test_zero_of_five_stops_before_target_sampling(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);audit=root/'a';audit.mkdir();results=root/'r';results.mkdir()
+            a={'settings':{'sampling_unit':'suite_factor'},'parse_errors':[],'assets_present':True,
+               'source_plan':[{'case_id':str(i),'base_task':'t','planned_smoke':True} for i in range(5)],'candidate_tasks':['t']}
+            p=audit/'p0_audit.json';p.write_text(json.dumps(a))
+            for i in range(5):(results/(str(i)+'.json')).write_text(json.dumps({'role':'source_fit','case_id':str(i),'base_task':'t','status':'completed','success':False,'audit_sha256':file_hash(p)}))
+            with self.assertRaisesRegex(PermissionError,'0/5'):freeze_suite(Namespace(audit=audit,results=results,out=root/'out'))
+            self.assertFalse((root/'out').exists())
+
+    def test_step_keyed_sensor_discarded_frames_do_not_affect_query(self):
+        import numpy as np
+        from dacsc.static_visual_v2 import sensor_transform
+        class W:
+            @staticmethod
+            def motion_blur(image,severity):return np.asarray(image)+np.random.randint(0,10,size=np.asarray(image).shape)
+        w=W();w.gaussian_blur=w.zoom_blur=w.fog=w.glass_blur=w.motion_blur
+        obs={'agentview_image':np.zeros((8,8,3),np.uint8),'robot0_eye_in_hand_image':np.ones((8,8,3),np.uint8)}
+        full={i:sensor_transform(obs,1,123,i,w)['agentview_image'] for i in range(25)}
+        for i in (0,12,24):np.testing.assert_array_equal(full[i],sensor_transform(obs,1,123,i,w)['agentview_image'])
+
     def test_no_unresolved_clean_zeros(self):
         with tempfile.TemporaryDirectory() as tmp:
             root=Path(tmp);(root/'p0_audit.json').write_text(json.dumps({'settings':{'sampling_unit':'suite_factor'},'parse_errors':[],'assets_present':True,'source_plan':[{'planned_smoke':True,'case_id':'x'}]}))
