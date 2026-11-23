@@ -129,6 +129,22 @@ Clean fail/Shift success: 3
 both fail:                6
 ```
 
+### 逐 state 的双峰结构（baseline_ledger）
+
+| 分组 | states | Clean 成功 | Shift 2292 成功 |
+|---|---|---:|---:|
+| 完全免疫组 | 36, 39, 49 | 6/9 | **9/9 (100%)** |
+| 完全团灭组 | 34, 35, 43, 45 | **10/12** | **0/12 (0%)** |
+| 边缘组 | 37, 44, 48 | 5/9 | 2/9 |
+
+> Lighting 2292 不是均匀拉低所有状态，而是双峰分化；全局修正会扰动免疫组和 Clean。
+
+其他负结论：
+
+- `p3_pilot.json`：固定光度仿射闭环后 Clean 4/4→3/4、Shift 2/4→1/4，破坏 state 37；
+- `local_energy_*.json`：Clean 8/8，Shift 4/10，未救回核心失败且丢 state 44；
+- Source Observer V1：agentview 768D 动力学可预测增益约 1.66%。
+
 重要旧结果：
 
 - 旧探索 `8/10 Clean / 2/10 Shift`、`r=6 8/10 / 1/10` 不能混入正式账本。
@@ -381,6 +397,16 @@ docs/data/gate0_chunk_audit.json
 | both fail | 6 | 1 | 4 |
 | Clean失败 / Shift成功 | 3 | 3 | 2 |
 | 全部 | 30 | 13 | 19 |
+
+**Gate 1 复现审计（2026-11-21）：**
+
+- P0 ledger `max_steps=220`，Gate1 原脚本硬编码 `max_steps=300`；
+- 即使 z0 schedule hash 相同，Gate1 `shift_recovery` 与 P0 `shift_success` 在 30 条里翻转 6 条（20%）：
+  - P0 fail → Gate1 success: 35(9999), 43(7777), 44(8888), 45(9999)；
+  - P0 success → Gate1 fail: 36(7777), 39(9999)。
+- 说明 Gate1 的 renderer/snapshot 链路没有严格复现 P0 原生 Shift rollout；
+- 在消除这 6/30 漂移前，7/3/3 只能当粗略定性信号，不能当精确可恢复率上限。
+- 修复方向：Gate1 使用 max_steps=220、固定 renderer、逐步记录 action/state hash 并先做同轨迹复现。
 
 核心 13 的具体 state：
 
@@ -636,29 +662,30 @@ r* = v_C(x) - v_S(x)
 
 10-state 毕业考（10 target-dev × 4 z0 × 10 × 12 = 4800 rows，leave-one-state-out）：
 
+> **重要更正：`docs/data/b3_oracle10.json` 的 Constant 和 scalar-calibrated 字段已标记 `partially_retracted`。**
+> 旧 Constant 使用了 held-out state 标签，旧 beta 使用了 held-out predictions/labels；
+> 不能引用旧的 `0.233 / 0.309` 或 `0.195 / 0.252`。
+> 正确账本：`docs/data/b3_oracle10_leakage_fixed.json`。
+
+无泄漏账本（equal state mean；G_agg 为每 state G_agg 的均值）：
+
 | 模型 | G_row(all) | G_agg(all) | G_row(unseen7) |
 |---|---:|---:|---:|
 | Zero | 0 | 0 | 0 |
-| **Constant train residual** | **0.233** | **0.309** | — |
+| Constant（outer-train state mean，无 held-out 标签） | -0.090 | 0.058 | -0.208 |
 | M0 | -0.047 | 0.127 | -0.162 |
 | M1a | 0.016 | 0.158 | -0.065 |
 | M1w | -0.330 | -0.002 | -0.474 |
 | M1both | 0.001 | 0.150 | -0.090 |
 
-训练折标量校准后：
-
-| 模型 | G_row | G_agg |
-|---|---:|---:|
-| M0 | 0.170 | 0.241 |
-| M1a | 0.185 | 0.251 |
-| M1w | 0.107 | 0.203 |
-| M1both | 0.195 | 0.252 |
+无泄漏账本中 `cal_all == raw_all`：Ridge 在训练折内已贴合，`beta_train_in_sample` 被 clip 到 1.0；
+不能再报告 0.195/0.252 的校准增益。
 
 结论：
 
-> **Constant baseline 超过所有 learned 模型，包括 oracle-scalar-calibrated 版本。**
+> **无泄漏 Constant 的 G_agg(all)=0.058 仍优于所有 learned 模型（M1a 0.158、M1both 0.150）。**
 >
-> **unseen-7 上所有 learned G_row ≤ 0。**
+> **unseen-7 上所有 learned G_row ≤ 0；Constant G_agg 仅 0.003，仍不劣于 learned。**
 >
 > **直接回归 7 维 flow residual 触发停止条件，正式封存。**
 
