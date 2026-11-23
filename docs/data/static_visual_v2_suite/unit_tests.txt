@@ -1,0 +1,28 @@
+test_blind_denied_even_if_status_changed (tests.test_static_visual_v2.StaticV2Tests.test_blind_denied_even_if_status_changed) ... ok
+test_empty_blind_cli_rejects_before_assets (tests.test_static_visual_v2.StaticV2Tests.test_empty_blind_cli_rejects_before_assets) ... ok
+test_equivalent_alias_order_does_not_change_manifest (tests.test_static_visual_v2.StaticV2Tests.test_equivalent_alias_order_does_not_change_manifest) ... ok
+test_exact_asset_alias_dedup (tests.test_static_visual_v2.StaticV2Tests.test_exact_asset_alias_dedup) ... ok
+test_freeze_keeps_independent_clean_holdout_separate (tests.test_static_visual_v2.StaticV2Tests.test_freeze_keeps_independent_clean_holdout_separate) ... ok
+test_history_incomplete_cannot_freeze (tests.test_static_visual_v2.StaticV2Tests.test_history_incomplete_cannot_freeze) ... ok
+test_initial_pose_is_not_episode_index (tests.test_static_visual_v2.StaticV2Tests.test_initial_pose_is_not_episode_index) ... ok
+test_manifest_tamper (tests.test_static_visual_v2.StaticV2Tests.test_manifest_tamper) ... ok
+test_mixed_shift_rejected (tests.test_static_visual_v2.StaticV2Tests.test_mixed_shift_rejected) ... ok
+test_no_seed_based_quota_filling (tests.test_static_visual_v2.StaticV2Tests.test_no_seed_based_quota_filling) ... ok
+test_p0_only_source (tests.test_static_visual_v2.StaticV2Tests.test_p0_only_source) ... ok
+test_partition_deterministic_no_group_overlap (tests.test_static_visual_v2.StaticV2Tests.test_partition_deterministic_no_group_overlap) ... ok
+test_rng_restores_even_on_failure (tests.test_static_visual_v2.StaticV2Tests.test_rng_restores_even_on_failure) ... ok
+test_rng_stream_separation (tests.test_static_visual_v2.StaticV2Tests.test_rng_stream_separation) ... ok
+test_sensor_only_agentview_and_same_realization (tests.test_static_visual_v2.StaticV2Tests.test_sensor_only_agentview_and_same_realization) ... ok
+test_static_asset_resolution (tests.test_static_visual_v2.StaticV2Tests.test_static_asset_resolution) ... ok
+test_summary_keeps_missing_instances (tests.test_static_visual_v2.StaticV2Tests.test_summary_keeps_missing_instances) ... ok
+test_wrapper_parameters_distinguish_same_bddl (tests.test_static_visual_v2.StaticV2Tests.test_wrapper_parameters_distinguish_same_bddl) ... ok
+test_dev_reuse_explicitly_not_a_blind_pool (tests.test_static_visual_v2_suite.SuiteFactorTests.test_dev_reuse_explicitly_not_a_blind_pool) ... ok
+test_no_unresolved_clean_zeros (tests.test_static_visual_v2_suite.SuiteFactorTests.test_no_unresolved_clean_zeros) ... ok
+test_suite_freeze_never_manufactures_fresh_blind (tests.test_static_visual_v2_suite.SuiteFactorTests.test_suite_freeze_never_manufactures_fresh_blind) ... ok
+test_suite_quota_ignores_sparse_base_task (tests.test_static_visual_v2_suite.SuiteFactorTests.test_suite_quota_ignores_sparse_base_task) ... ok
+
+----------------------------------------------------------------------
+Ran 22 tests in 0.059s
+
+OK
+{"dev_shift": 30, "dev_clean": 10, "blind_reserved": 0, "status": "development-only official pool"}

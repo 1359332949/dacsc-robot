@@ -93,12 +93,12 @@ def append_event(path,record):
         fcntl.flock(f,fcntl.LOCK_EX);f.write(canonical(dict(timestamp_unix=time.time(),**record))+'\n');f.flush();os.fsync(f.fileno());fcntl.flock(f,fcntl.LOCK_UN)
 
 
-def deterministic_partition(rows,dev,blind,seed):
+def deterministic_partition(rows,dev,blind,seed,cell_fields=('base_task','factor')):
     if min(dev,blind)<=0:raise ValueError('positive quotas required')
     cells={}
     for r in rows:
         if r.get('history_status')!='candidate':continue
-        groups=cells.setdefault((r['base_task'],r['factor']),{})
+        groups=cells.setdefault(tuple(r[k] for k in cell_fields),{})
         previous=groups.get(r['equivalence_group'])
         if previous is None or r['logical_task_name']<previous['logical_task_name']:groups[r['equivalence_group']]=r
     result={'dev':[],'blind':[]};shortfalls=[]
@@ -107,4 +107,18 @@ def deterministic_partition(rows,dev,blind,seed):
         if len(ordered)<dev+blind:shortfalls.append({'cell':cell,'available':len(ordered),'required':dev+blind});continue
         result['blind']+=ordered[:blind];result['dev']+=ordered[blind:blind+dev]
     if shortfalls:raise ValueError('insufficient independent groups: '+canonical(shortfalls))
+    return result
+
+
+def deterministic_dev_sample(rows,per_factor,seed,factors):
+    result=[]
+    for factor in factors:
+        groups={}
+        for r in rows:
+            if r['factor']!=factor:continue
+            prev=groups.get(r['equivalence_group'])
+            if prev is None or r['logical_task_name']<prev['logical_task_name']:groups[r['equivalence_group']]=r
+        ordered=sorted(groups.values(),key=lambda r:(digest([seed,r['suite'],factor,r['equivalence_group']]),r['logical_task_name']))
+        if len(ordered)<per_factor:raise ValueError('insufficient suite/factor development groups: '+factor)
+        result+=ordered[:per_factor]
     return result
