@@ -1,0 +1,400 @@
+{
+  "schema": "sensor_signal_diagnostic_v1",
+  "rows": [
+    {
+      "case_id": "8515f621f7ce09addd6043fc",
+      "factor": "sensor_noise",
+      "success": false,
+      "s1_xyz_std": 0.030056945979595184,
+      "s1_grip_flip": 0.0,
+      "s2_pert_std": 0.010470015928149223,
+      "s4_denoise_action_diff": 0.03917338326573372
+    },
+    {
+      "case_id": "28379ab819940b2bae111202",
+      "factor": "sensor_noise",
+      "success": true,
+      "s1_xyz_std": 0.033484406769275665,
+      "s1_grip_flip": 0.0,
+      "s2_pert_std": 0.016362393274903297,
+      "s4_denoise_action_diff": 0.035273611545562744
+    },
+    {
+      "case_id": "d11a5908570c39a0bc352a5a",
+      "factor": "sensor_noise",
+      "success": true,
+      "s1_xyz_std": 0.038460467010736465,
+      "s1_grip_flip": 0.0,
+      "s2_pert_std": 0.01440575160086155,
+      "s4_denoise_action_diff": 0.04344857856631279
+    },
+    {
+      "case_id": "d10a1668e6e30258ca64ba89",
+      "factor": "sensor_noise",
+      "success": true,
+      "s1_xyz_std": 0.04882856830954552,
+      "s1_grip_flip": 0.0,
+      "s2_pert_std": 0.03148192539811134,
+      "s4_denoise_action_diff": 0.04490336403250694
+    },
+    {
+      "case_id": "3d16d19504b303a732927434",
+      "factor": "sensor_noise",
+      "success": false,
+      "s1_xyz_std": 0.039811406284570694,
+      "s1_grip_flip": 0.0,
+      "s2_pert_std": 0.01440575160086155,
+      "s4_denoise_action_diff": 0.04344857856631279
+    },
+    {
+      "case_id": "bbd1bcb9649b33876a03fcd4",
+      "factor": "sensor_noise",
+      "success": false,
+      "s1_xyz_std": 0.036720965057611465,
+      "s1_grip_flip": 0.0,
+      "s2_pert_std": 0.03148192539811134,
+      "s4_denoise_action_diff": 0.04490336403250694
+    },
+    {
+      "case_id": "d5bb1b7dd92c8a2af097198f",
+      "factor": "sensor_noise",
+      "success": true,
+      "s1_xyz_std": 0.04554223641753197,
+      "s1_grip_flip": 0.0,
+      "s2_pert_std": 0.03148192539811134,
+      "s4_denoise_action_diff": 0.04490336403250694
+    },
+    {
+      "case_id": "aa96bf31685d038f1ccca0b4",
+      "factor": "sensor_noise",
+      "success": false,
+      "s1_xyz_std": 0.040102940052747726,
+      "s1_grip_flip": 0.0,
+      "s2_pert_std": 0.013119233772158623,
+      "s4_denoise_action_diff": 0.02966928668320179
+    },
+    {
+      "case_id": "537c44cf53786dc807cc4fb8",
+      "factor": "sensor_noise",
+      "success": false,
+      "s1_xyz_std": 0.024233883246779442,
+      "s1_grip_flip": 0.0,
+      "s2_pert_std": 0.01678045280277729,
+      "s4_denoise_action_diff": 0.03363073244690895
+    },
+    {
+      "case_id": "18686c3762693988cb814119",
+      "factor": "sensor_noise",
+      "success": true,
+      "s1_xyz_std": 0.042445793747901917,
+      "s1_grip_flip": 0.0,
+      "s2_pert_std": 0.020012136548757553,
+      "s4_denoise_action_diff": 0.02628299593925476
+    },
+    {
+      "case_id": "7bcd821113099b91165fea6d",
+      "factor": "sensor_noise",
+      "success": false,
+      "s1_xyz_std": 0.031232289969921112,
+      "s1_grip_flip": 0.0,
+      "s2_pert_std": 0.01528679858893156,
+      "s4_denoise_action_diff": 0.03699294105172157
+    },
+    {
+      "case_id": "1ac40af63b5cb206fa1a87ff",
+      "factor": "sensor_noise",
+      "success": true,
+      "s1_xyz_std": 0.03626689687371254,
+      "s1_grip_flip": 0.0,
+      "s2_pert_std": 0.014300324954092503,
+      "s4_denoise_action_diff": 0.016238464042544365
+    },
+    {
+      "case_id": "c799396aefd5984dc17e0980",
+      "factor": "sensor_noise",
+      "success": false,
+      "s1_xyz_std": 0.026946090161800385,
+      "s1_grip_flip": 0.0,
+      "s2_pert_std": 0.014300324954092503,
+      "s4_denoise_action_diff": 0.016238464042544365
+    },
+    {
+      "case_id": "c1b468cf01e901553e96299c",
+      "factor": "sensor_noise",
+      "success": true,
+      "s1_xyz_std": 0.044651616364717484,
+      "s1_grip_flip": 0.0,
+      "s2_pert_std": 0.03148192539811134,
+      "s4_denoise_action_diff": 0.04490336403250694
+    },
+    {
+      "case_id": "c31dbfc54953ebb8ad93b276",
+      "factor": "sensor_noise",
+      "success": true,
+      "s1_xyz_std": 0.03113013505935669,
+      "s1_grip_flip": 0.0,
+      "s2_pert_std": 0.010470015928149223,
+      "s4_denoise_action_diff": 0.03917338326573372
+    },
+    {
+      "case_id": "b0aa244cf3afa8d4827c8f53",
+      "factor": "sensor_noise",
+      "success": true,
+      "s1_xyz_std": 0.022913027554750443,
+      "s1_grip_flip": 0.0,
+      "s2_pert_std": 0.01678045280277729,
+      "s4_denoise_action_diff": 0.03363073244690895
+    },
+    {
+      "case_id": "a18e0e8cf110044fac201569",
+      "factor": "sensor_noise",
+      "success": true,
+      "s1_xyz_std": 0.025480739772319794,
+      "s1_grip_flip": 0.0,
+      "s2_pert_std": 0.01678045280277729,
+      "s4_denoise_action_diff": 0.03363073244690895
+    },
+    {
+      "case_id": "94221db7af991abeed5ea8f6",
+      "factor": "sensor_noise",
+      "success": false,
+      "s1_xyz_std": 0.035556547343730927,
+      "s1_grip_flip": 0.0,
+      "s2_pert_std": 0.014300324954092503,
+      "s4_denoise_action_diff": 0.016238464042544365
+    },
+    {
+      "case_id": "05a2e087b49114ba4a11204b",
+      "factor": "sensor_noise",
+      "success": true,
+      "s1_xyz_std": 0.029483381658792496,
+      "s1_grip_flip": 0.0,
+      "s2_pert_std": 0.014300324954092503,
+      "s4_denoise_action_diff": 0.016238464042544365
+    },
+    {
+      "case_id": "9a2827472fab45e6e0abc9a7",
+      "factor": "sensor_noise",
+      "success": true,
+      "s1_xyz_std": 0.03681817650794983,
+      "s1_grip_flip": 0.0,
+      "s2_pert_std": 0.010470015928149223,
+      "s4_denoise_action_diff": 0.03917338326573372
+    },
+    {
+      "case_id": "f26adf752cc7294f4d63ddd0",
+      "factor": "sensor_noise",
+      "success": false,
+      "s1_xyz_std": 0.029453091323375702,
+      "s1_grip_flip": 0.0,
+      "s2_pert_std": 0.016362393274903297,
+      "s4_denoise_action_diff": 0.035273611545562744
+    },
+    {
+      "case_id": "fa87a1d88283b9c2853efbdd",
+      "factor": "sensor_noise",
+      "success": true,
+      "s1_xyz_std": 0.039534881711006165,
+      "s1_grip_flip": 0.0,
+      "s2_pert_std": 0.01440575160086155,
+      "s4_denoise_action_diff": 0.04344857856631279
+    },
+    {
+      "case_id": "4832622edb4a76f005547b05",
+      "factor": "sensor_noise",
+      "success": true,
+      "s1_xyz_std": 0.022129341959953308,
+      "s1_grip_flip": 0.0,
+      "s2_pert_std": 0.01678045280277729,
+      "s4_denoise_action_diff": 0.03363073244690895
+    },
+    {
+      "case_id": "31ee3c9ef1bf8221f99a7bb4",
+      "factor": "sensor_noise",
+      "success": false,
+      "s1_xyz_std": 0.034843042492866516,
+      "s1_grip_flip": 0.0,
+      "s2_pert_std": 0.013119233772158623,
+      "s4_denoise_action_diff": 0.02966928668320179
+    },
+    {
+      "case_id": "adbef345ee9c87c18c78f860",
+      "factor": "sensor_noise",
+      "success": false,
+      "s1_xyz_std": 0.032422300428152084,
+      "s1_grip_flip": 0.0,
+      "s2_pert_std": 0.016362393274903297,
+      "s4_denoise_action_diff": 0.035273611545562744
+    },
+    {
+      "case_id": "7a456242c9d69220ee747328",
+      "factor": "sensor_noise",
+      "success": true,
+      "s1_xyz_std": 0.0356755293905735,
+      "s1_grip_flip": 0.0,
+      "s2_pert_std": 0.01528679858893156,
+      "s4_denoise_action_diff": 0.03699294105172157
+    },
+    {
+      "case_id": "4d8c976994c211cbd47334cc",
+      "factor": "sensor_noise",
+      "success": false,
+      "s1_xyz_std": 0.031983062624931335,
+      "s1_grip_flip": 0.0,
+      "s2_pert_std": 0.013119233772158623,
+      "s4_denoise_action_diff": 0.02966928668320179
+    },
+    {
+      "case_id": "a63ae211ace3f870deb4457c",
+      "factor": "sensor_noise",
+      "success": false,
+      "s1_xyz_std": 0.04481302201747894,
+      "s1_grip_flip": 0.0,
+      "s2_pert_std": 0.03148192539811134,
+      "s4_denoise_action_diff": 0.04490336403250694
+    },
+    {
+      "case_id": "3334a1f1c3a0672b17618b90",
+      "factor": "sensor_noise",
+      "success": true,
+      "s1_xyz_std": 0.03917849063873291,
+      "s1_grip_flip": 0.0,
+      "s2_pert_std": 0.013119233772158623,
+      "s4_denoise_action_diff": 0.02966928668320179
+    },
+    {
+      "case_id": "fefe134dc96bca5f4eee8b14",
+      "factor": "sensor_noise",
+      "success": true,
+      "s1_xyz_std": 0.038120195269584656,
+      "s1_grip_flip": 0.0,
+      "s2_pert_std": 0.01993451453745365,
+      "s4_denoise_action_diff": 0.024529675021767616
+    },
+    {
+      "case_id": "clean_25eefa3907243c5956889cfa",
+      "factor": "clean",
+      "success": true,
+      "s1_xyz_std": 0.0365227535367012,
+      "s1_grip_flip": 0.0,
+      "s2_pert_std": 0.013119233772158623,
+      "s4_denoise_action_diff": 0.02966928668320179
+    },
+    {
+      "case_id": "clean_3adf13803680f268479750e9",
+      "factor": "clean",
+      "success": true,
+      "s1_xyz_std": 0.03924969211220741,
+      "s1_grip_flip": 0.0,
+      "s2_pert_std": 0.01440575160086155,
+      "s4_denoise_action_diff": 0.04344857856631279
+    },
+    {
+      "case_id": "clean_461aa99ff7ae2e71a74745fe",
+      "factor": "clean",
+      "success": true,
+      "s1_xyz_std": 0.037624336779117584,
+      "s1_grip_flip": 0.0,
+      "s2_pert_std": 0.016362393274903297,
+      "s4_denoise_action_diff": 0.035273611545562744
+    },
+    {
+      "case_id": "clean_716b94a92dcadeb19bb4aef6",
+      "factor": "clean",
+      "success": true,
+      "s1_xyz_std": 0.030319958925247192,
+      "s1_grip_flip": 0.0,
+      "s2_pert_std": 0.01993451453745365,
+      "s4_denoise_action_diff": 0.024529675021767616
+    },
+    {
+      "case_id": "clean_74da4077f0571b787e7da5a7",
+      "factor": "clean",
+      "success": true,
+      "s1_xyz_std": 0.037411611527204514,
+      "s1_grip_flip": 0.0,
+      "s2_pert_std": 0.014300324954092503,
+      "s4_denoise_action_diff": 0.016238464042544365
+    },
+    {
+      "case_id": "clean_7b3a2104f946feffbf23f05a",
+      "factor": "clean",
+      "success": true,
+      "s1_xyz_std": 0.04185165464878082,
+      "s1_grip_flip": 0.0,
+      "s2_pert_std": 0.03148192539811134,
+      "s4_denoise_action_diff": 0.04490336403250694
+    },
+    {
+      "case_id": "clean_85c3af5bb68bc8ec5351f439",
+      "factor": "clean",
+      "success": true,
+      "s1_xyz_std": 0.02797980047762394,
+      "s1_grip_flip": 0.0,
+      "s2_pert_std": 0.010470015928149223,
+      "s4_denoise_action_diff": 0.03917338326573372
+    },
+    {
+      "case_id": "clean_9570527652e7369e8e55140d",
+      "factor": "clean",
+      "success": true,
+      "s1_xyz_std": 0.02146025560796261,
+      "s1_grip_flip": 0.0,
+      "s2_pert_std": 0.01678045280277729,
+      "s4_denoise_action_diff": 0.03363073244690895
+    },
+    {
+      "case_id": "clean_9bd7f4f1a5c801ca5cf925b0",
+      "factor": "clean",
+      "success": true,
+      "s1_xyz_std": 0.033241238445043564,
+      "s1_grip_flip": 0.0,
+      "s2_pert_std": 0.020012136548757553,
+      "s4_denoise_action_diff": 0.02628299593925476
+    },
+    {
+      "case_id": "clean_9f0d3717f1f17095d5da34e7",
+      "factor": "clean",
+      "success": true,
+      "s1_xyz_std": 0.03387586399912834,
+      "s1_grip_flip": 0.0,
+      "s2_pert_std": 0.01528679858893156,
+      "s4_denoise_action_diff": 0.03699294105172157
+    }
+  ],
+  "summary": {
+    "s1_xyz_std": {
+      "auc_fail_vs_success": 0.39819004524886875,
+      "threshold_gt_max_clean": 0.04185165464878082,
+      "recall": 0.07692307692307693,
+      "clean_fpr": 0.0,
+      "sensor_success_n": 17,
+      "sensor_fail_n": 13
+    },
+    "s1_grip_flip": {
+      "auc_fail_vs_success": 0.5,
+      "threshold_gt_max_clean": 0.0,
+      "recall": 0.0,
+      "clean_fpr": 0.0,
+      "sensor_success_n": 17,
+      "sensor_fail_n": 13
+    },
+    "s2_pert_std": {
+      "auc_fail_vs_success": 0.4004524886877828,
+      "threshold_gt_max_clean": 0.03148192539811134,
+      "recall": 0.0,
+      "clean_fpr": 0.0,
+      "sensor_success_n": 17,
+      "sensor_fail_n": 13
+    },
+    "s4_denoise_action_diff": {
+      "auc_fail_vs_success": 0.4683257918552036,
+      "threshold_gt_max_clean": 0.04490336403250694,
+      "recall": 0.0,
+      "clean_fpr": 0.0,
+      "sensor_success_n": 17,
+      "sensor_fail_n": 13
+    }
+  },
+  "note": "recovered from run log; output dir was missing"
+}

@@ -1655,3 +1655,21 @@ These 10 states are target-dev (34,35,36,37,39,43,44,45,48,49), so the experimen
 is a **privileged target-dev oracle diagnostic**, not source-only. The 34/43/45
 pilot subset and the other seven states remain separately reported. Rows,
 flow steps and action positions are correlated; the unit is initial state.
+
+### Sensor zero-training signal diagnostic (40 cases, t=0)
+
+Sensor 30 + Clean 10, frozen dev manifest. Signals at t=0:
+S1 multi-z0 XYZ std; S1 gripper flip; S2 mild agentview translation sensitivity;
+S4 agentview denoise action difference.
+
+| signal | AUROC fail vs success | recall at clean FPR<=10% |
+|---|---:|---:|
+| S1 xyz std | 0.398 | 7.7% |
+| S1 gripper flip | 0.500 | 0.0% |
+| S2 perturb std | 0.400 | 0.0% |
+| S4 denoise diff | 0.468 | 0.0% |
+
+All AUCs are at or below chance in the risk direction; no signal separates
+Sensor failures from Sensor successes while keeping Clean false positives low.
+This rejects t=0 action-dispersion / local sensitivity / denoise-response as
+standalone Sensor failure-risk signals. Do not train an Adapter from this.
