@@ -1715,3 +1715,36 @@ for Sensor failure, contrary to the buggy run. It is not deployable yet:
 recall at strict Clean FPR is low, and gripper flip is unusable.
 
 Visual quality gate (Laplacian/HF) remains Clean-vs-Sensor AUC 1.0, Clean FPR 0.
+
+### t=0 all-factor scan (exact baseline pixels)
+
+Environment pinned to robosuite 1.4.1 / MuJoCo 3.3.0. For one case, the raw
+agentview image SHA-256 after settling + official sensor kernel exactly matches
+the baseline result JSON (`e52c291f...`). The scan uses the baseline
+environment_seed/sensor_noise_seed and asserts this hash for every case.
+
+100 dev cases (10 Clean, 30 each Lighting/Background/Sensor).
+
+Within-factor failure-vs-success AUC (t=0):
+| signal | Lighting (6 fail) | Background (13 fail) | Sensor (13 fail) |
+|---|---:|---:|---:|
+| multi-z0 XYZ std | .750 | .769 | .643 |
+| multi-z0 rot std | .806 | .783 | .715 |
+| multi-z0 grip flip | .500 | .593 | .654 |
+| mild translation std | .424 | .724 | .611 |
+| denoise action diff | .750 | .756 | .475 |
+
+Clean-vs-factor AUC:
+- pixel Laplacian: Lighting .033, Background .390, Sensor .000 (direction flips;
+  it is not a universal domain gate).
+- multi-z0 XYZ std: Lighting .440, Background .660, Sensor .820.
+- multi-z0 rot std: Lighting .460, Background .550, Sensor .753.
+
+Recall at strict Clean-max threshold (0 Clean false positives):
+- Sensor: XYZ .462, rot .077, denoise .385.
+- Background: XYZ .231, rot .231, denoise .538.
+- Lighting: all 0.
+
+Conclusion: t=0 intrinsic flow dispersion is a real but factor-dependent
+failure signal; pixel Laplacian/HF is a Sensor/Blur detector, not universal.
+No single threshold transfers across factors. No Adapter; no target-test.
