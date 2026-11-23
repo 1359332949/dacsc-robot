@@ -1673,3 +1673,23 @@ All AUCs are at or below chance in the risk direction; no signal separates
 Sensor failures from Sensor successes while keeping Clean false positives low.
 This rejects t=0 action-dispersion / local sensitivity / denoise-response as
 standalone Sensor failure-risk signals. Do not train an Adapter from this.
+
+### Visual quality gate at t=0 (Sensor vs Clean)
+
+Correctly applies the official agentview sensor kernel (`sensor_transform`,
+`runtime_params.noise`) before measuring image quality. 30 Sensor + 10 Clean
+dev cases:
+
+| signal | Clean vs Sensor AUC | detection at Clean max | Clean FPR |
+|---|---:|---:|---:|
+| agentview Laplacian variance | 1.000 | 100% | 0% |
+| agentview HF ratio | 1.000 | 100% | 0% |
+
+Sensor subtypes are blur/fog: glass 13, gaussian 7, motion 6, zoom 3, fog 1.
+
+So a Clean No-Op / OOD gate from raw visual quality is easy and near-perfect
+on Sensor. But the earlier t=0 risk signals (multi-z0 dispersion, local
+perturbation, denoise response) failed to separate Sensor success vs failure
+(AUC .398-.500). This confirms the split:
+- Domain detection (Clean vs Sensor): easy, usable for No-Op.
+- Failure prediction inside Sensor: not available from t=0 scalar signals.
