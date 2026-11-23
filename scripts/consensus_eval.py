@@ -15,7 +15,7 @@ import libero.libero.envs.env_wrapper as noise_wrapper  # noqa
 
 def pair_dist(A,B):
     # A,B [12,7] normalized controller actions; physical-ish weights
-    w=np.array([.05,.05,.05,.5,.5,.5,1.0]); d=(A-B)*w; return float(np.sqrt(np.mean(d*d)))
+    scale=np.array([.05,.05,.05,.5,.5,.5,2.0]); d=(A-B)/scale; return float(np.sqrt(np.mean(d*d)))
 def consensus(cands,kind):
     C=np.stack(cands); M=len(C)
     if kind=='medoid':
