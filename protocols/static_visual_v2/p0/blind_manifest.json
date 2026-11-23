@@ -1,0 +1,14 @@
+{
+  "schema": "static_visual_v2_manifest",
+  "kind": "blind",
+  "status": "NOT_FROZEN_BLOCKED",
+  "cases": [],
+  "blockers": [
+    "historical coverage not certified; original server logs unresolved",
+    "some task/factor cells have fewer than 13 independent candidate groups",
+    "simulator assets absent locally",
+    "Clean compatibility smoke not yet run",
+    "independent Clean Holdout historical freshness unresolved"
+  ],
+  "note": "empty is not a 400-instance frozen Blind manifest"
+}
