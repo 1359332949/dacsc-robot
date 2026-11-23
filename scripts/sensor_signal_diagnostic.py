@@ -11,6 +11,8 @@ from evaluate_libero import DUMMY_ACTION,SETTLING_STEPS,policy_observation  # no
 from corp import load_policy  # noqa
 from target_only_action_validation import sample_z, visual_from_obs  # noqa
 from libero.libero.envs import OffScreenRenderEnv  # noqa
+from dacsc.static_visual_v2 import sensor_transform, seed_for  # noqa
+import libero.libero.envs.env_wrapper as noise_wrapper  # noqa
 from robosuite.utils.binding_utils import MjSimState  # noqa
 
 
@@ -50,7 +52,8 @@ def main():
             env.seed(7777); env.reset(); sim=env.env.sim; st=np.asarray(st).reshape(-1); nq=int(sim.model.nq); nv=int(sim.model.nv); sim.data.time=float(st[0]); sim.data.qpos[:]=st[1:1+nq]; sim.data.qvel[:]=st[1+nq:1+nq+nv]; sim.forward();
             for _ in range(SETTLING_STEPS): obs,_,_,_=env.step(DUMMY_ACTION)
             obs=env._get_observations()
-            po=policy_observation(obs,'',policy) if False else None
+            if c['factor']=='sensor_noise':
+                noise=int(c['runtime_params']['noise']); sid=seed_for(2026112301,c['pair_group_id'],0,'sensor_noise_seed'); obs=sensor_transform(obs,noise,sid,0,noise_wrapper)
             # language from bddl problem info
             import libero.libero.envs.bddl_utils as BDDLUtils
             lang=BDDLUtils.get_problem_info(bddl)['language_instruction']

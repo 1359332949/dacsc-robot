@@ -1693,3 +1693,25 @@ perturbation, denoise response) failed to separate Sensor success vs failure
 (AUC .398-.500). This confirms the split:
 - Domain detection (Clean vs Sensor): easy, usable for No-Op.
 - Failure prediction inside Sensor: not available from t=0 scalar signals.
+
+### CORRECTION: Sensor t=0 signals previously missed sensor_transform
+
+The earlier `3dccdf9` run used raw observations and did not apply the official
+agentview sensor kernel. Those AUC .40-.50 numbers are invalid for Sensor.
+
+Corrected run (official `sensor_transform`, runtime noise code, sensor seed):
+30 Sensor + 10 Clean, t=0.
+
+| signal | AUC fail vs success | recall at Clean FPR<=10% | Clean FPR |
+|---|---:|---:|---:|
+| S1 multi-z0 XYZ std | 0.715 | 46.2% | 10% |
+| S1 multi-z0 rotation std | 0.756 | 23.1% | 10% |
+| S1 gripper flip | 0.654 | 100% | 100% (unusable) |
+| S2 mild translation sensitivity | 0.751 | 15.4% | 10% |
+| S4 denoise action diff | 0.389 | 38.5% | 10% |
+
+So t=0 action dispersion/sensitivity does contain a weak above-chance signal
+for Sensor failure, contrary to the buggy run. It is not deployable yet:
+recall at strict Clean FPR is low, and gripper flip is unusable.
+
+Visual quality gate (Laplacian/HF) remains Clean-vs-Sensor AUC 1.0, Clean FPR 0.
