@@ -1748,3 +1748,10 @@ Recall at strict Clean-max threshold (0 Clean false positives):
 Conclusion: t=0 intrinsic flow dispersion is a real but factor-dependent
 failure signal; pixel Laplacian/HF is a Sensor/Blur detector, not universal.
 No single threshold transfers across factors. No Adapter; no target-test.
+
+### Flow consensus on Clean 10 (parallel shards)
+
+Methods: Frozen, Medoid (M=8), Trimmed-Mean (drop 25%), z0=0.
+Clean 10 result: all four methods 10/10 success. So the consensus operators
+do not by themselves damage Clean in this small validation. Sensor/Background
+closed-loop net-benefit is still running; not yet a claim.

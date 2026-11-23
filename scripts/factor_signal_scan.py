@@ -28,7 +28,8 @@ def main():
         try:
             d=json.loads(p.read_text(errors='ignore')); res[d['case_id']]=d
         except Exception:
-            pass; policy=load_policy(args.checkpoint,device='cuda:0'); policy.eval(); rows=[]
+            pass
+    policy=load_policy(args.checkpoint,device='cuda:0'); policy.eval(); rows=[]
     for c in cases:
         bddl=str(Path('/hy-tmp/LIBERO-plus')/c['bddl']); init=str(Path('/hy-tmp/LIBERO-plus')/c['init_state_file']); states=torch.load(init,map_location='cpu',weights_only=False); st=states[int(c.get('init_state_index',0))]; cr=res[c['case_id']]; seeds=cr['seeds']
         env=OffScreenRenderEnv(bddl_file_name=bddl,camera_heights=256,camera_widths=256,render_gpu_device_id=args.render_gpu)
