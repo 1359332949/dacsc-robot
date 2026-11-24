@@ -109,3 +109,32 @@ Conclusion: multi-prototype max-cosine + ReLU does NOT improve over the
 single-prototype sigmoid beta4 (+5). It trades Background gain for Sensor and
 Lighting losses. The original single-prototype beta4 remains the best result;
 this negative ablation is retained and must be disclosed.
+
+## Addendum 2: 10-task source calibration, channel mean shrink, Space×Channel
+
+10-task source calibration: 50 source_fit Clean frames (10 tasks × 5 states)
+rendered from protocols/static_visual_v2/p0/dev_manifest.json; perturbations
+brightness/contrast/gaussian/motion/texture; s_dom relative to clean; channel
+means saved to docs/data/v2_channel_sensitivity_source_v2.json. No Dev Shift
+images or labels used.
+
+Clean gates with new calibration:
+- channel mean shrink p10/g0.3: 9/10 (just at gate)
+- Space×Channel (beta4 + p10/g0.3): 10/10
+
+90-case shift (12 shards, merge: 90 unique, 0 dup):
+
+| Method | Sensor | Background | Lighting | Total | Net |
+|---|---:|---:|---:|---:|---:|
+| Frozen | 17 | 17 | 24 | 58 | — |
+| single spatial beta4 | 19 | 18 | 26 | 63 | +5 |
+| 10-task channel mean p10/g0.3 | 16 | 22 | 20 | 58 | 0 |
+| Space×Channel beta4+p10/g0.3 | 18 | 17 | 24 | 59 | +1 |
+
+Paired net: channel Sensor -1, Background +5, Lighting -4.
+Space×Channel Sensor +1, Background 0, Lighting 0.
+
+Interpretation: the 10-task channel mean shrink strongly helps Background
+(+5) but harms Lighting (-4) and does not fix Sensor; combined with spatial
+beta4 cancels the gains (net +1). Single-prototype spatial beta4 remains the
+best overall zero-training method (+5). No target-test, no Adapter.
