@@ -6,7 +6,7 @@ Raw results are compressed to avoid committing roughly 175 MB of pretty-printed 
 - `repair_value_raw.tar.gz`: corrected post-LayerNorm Value-placement grid (`repair_kv_raw/`) and fixed Value controls (`value_control_raw/`).
 - `repair_archive_hashes.json`: archive SHA-256 and bytes.
 
-From repository root, unpack with:
+The older `repair_token_raw.tar.gz` is now archived outside the current tree. For the original token-placement comparison, restore it first as described in [the restoration guide](../../IMPORT_AND_LEGACY_DATA.md). The corrected value archive is still included. From repository root, unpack the archives you need with:
 
 ```sh
 tar -xzf docs/data/flow_geometry_v1/repair_token_raw.tar.gz -C docs/data/flow_geometry_v1
