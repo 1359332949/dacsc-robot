@@ -27,14 +27,15 @@ def main():
         initial=torch.load('/hy-tmp/LIBERO-plus/'+c['init_state_file'],map_location='cpu',weights_only=False)[c['init_state_index']]; cr=res[c['case_id']]; seeds=cr['seeds']
         env=OffScreenRenderEnv(bddl_file_name='/hy-tmp/LIBERO-plus/'+c['bddl'],camera_heights=256,camera_widths=256,render_gpu_device_id=a.render_gpu)
         try:
+            native_noise=int(env.noise)
+            env.noise=0  # manual step-keyed sensor_transform owns corruption
+            if int(env.noise)!=0:raise RuntimeError('wrapper noise disable failed')
             env.seed(seeds['environment_seed'])
             env.reset(); obs=env.set_init_state(initial)
             noise=int(c['runtime_params']['noise'])
             for _ in range(SETTLING_STEPS): obs,_,_,_=env.step(DUMMY_ACTION)
             raw0=obs
-            if c['factor']=='sensor_noise': obs_q=sensor_transform(raw0,noise,seeds['sensor_noise_seed'],0,noise_wrapper)
-            else: obs_q=raw0
-            init_sha=array_hash(np.asarray(obs_q['agentview_image']))
+            init_sha=None
             lang=grab_language_from_filename(c['suite'],c['base_task']+'.bddl')
             gen=torch.Generator(device='cuda:0')
             if a.seed_index==0: gen.manual_seed(int(seeds['policy_flow_seed']))
@@ -44,6 +45,7 @@ def main():
                 obs_raw=raw0
                 if c['factor']=='sensor_noise': obs_q=sensor_transform(obs_raw,noise,seeds['sensor_noise_seed'],steps,noise_wrapper)
                 else: obs_q=obs_raw
+                if init_sha is None:init_sha=array_hash(np.asarray(obs_q['agentview_image']))
                 po=policy_observation(obs_q,lang,policy); _,rep=visual_from_obs(policy,po)
                 z0=torch.randn((1,12,7),device='cuda:0',dtype=torch.float32,generator=gen)
                 plan=policy.normalizer.unnormalize_action(sample_z(policy,rep,z0))[0].float().cpu().numpy(); plan=np.clip(plan,-1,1)
@@ -53,7 +55,7 @@ def main():
                     if success or done or steps>=a.max_steps: break
                 chunks.append({'start':begin,'end':steps})
                 if success or done or steps>=a.max_steps: break
-            out.append({'case_id':c['case_id'],'factor':c['factor'],'base_task':c['base_task'],'success':success,'steps':steps,'init_agentview_sha256':init_sha,'seed_index':a.seed_index,'chunks':chunks})
+            out.append({'case_id':c['case_id'],'factor':c['factor'],'base_task':c['base_task'],'success':success,'steps':steps,'init_agentview_sha256':init_sha,'seed_index':a.seed_index,'chunks':chunks,'native_noise_before_reset':native_noise})
             print(json.dumps(out[-1]),flush=True)
         except Exception as e:
             out.append({'case_id':c['case_id'],'factor':c['factor'],'base_task':c['base_task'],'success':False,'error':type(e).__name__+': '+str(e),'seed_index':a.seed_index}); print(json.dumps(out[-1]),flush=True)

@@ -40,11 +40,23 @@ class FSFCTest(unittest.TestCase):
         self.assertTrue((fit_priors(c,d*0,i)['jacobian'].rho==0).all())
 
     def test_identity_dead_zone_and_accepted_coordinate(self):
-        g,i=propose(self.p,self.prior,self.train,self.val,self.curve);self.assertTrue(i['accepted']);self.assertGreater(float(g[0,0]),0.)
+        g,i=propose(self.p,self.prior,self.train,self.val,self.curve,Config(hard_mask=True));self.assertTrue(i['accepted']);self.assertGreater(float(g[0,0]),0.)
         self.assertTrue(((g>=0)&(g<=1)).all());q=transform(self.p,g,self.prior)
         self.assertTrue(torch.equal(q[1],self.p[1]));self.assertTrue(torch.equal(q[:,:,1],self.p[:,:,1]))
-        untouched,info=propose(self.p*0,self.prior,self.train,self.val,lambda *a:self.fail('forward inside dead zone'))
+        untouched,info=propose(self.p*0,self.prior,self.train,self.val,lambda *a:self.fail('forward inside dead zone'),Config(hard_mask=True))
         self.assertEqual(info['reason'],'dead_zone');self.assertFalse(untouched.any())
+
+    def test_patch_vs_image_scales(self):
+        grid=torch.tensor([-100.,100.]).reshape(1,1,2,1)
+        c=(grid+torch.arange(9.).reshape(9,1,1,1)).expand(-1,2,-1,3)
+        d=torch.ones(9,2,3); prior=fit_priors(c,d,d)['jacobian']
+        self.assertTrue(torch.all(prior.patch_scale>99))
+        self.assertTrue(torch.allclose(prior.mean_scale,torch.full((2,3), (60/9)**.5+1e-6)))
+
+    def test_soft_allows_flow_at_zero_mean_deviation(self):
+        p=torch.tensor([[[2.,1.],[-2.,-1.]],[[3.,2.],[-3.,-2.]]]);g,info=propose(p,self.prior,self.train,self.val,self.curve)
+        self.assertTrue(info['accepted']);self.assertTrue(g.any())
+        h,_=propose(p,self.prior,self.train,self.val,self.curve,Config(hard_mask=True));self.assertFalse(h.any())
 
     def test_rejection_restores_exact_frozen(self):
         def opposite(q,z):return q.square().mean() if float(z.min())<10 else 100.-q.square().mean()
@@ -55,7 +67,7 @@ class FSFCTest(unittest.TestCase):
 
     def test_episode_reset_and_refresh(self):
         e=EpisodeGate();g,_=e.step(0,self.p,self.prior,self.train,self.val,self.curve);self.assertTrue(g.any())
-        g,_=e.step(1,self.p*0,self.prior,self.train,self.val,self.curve);self.assertFalse(g.any())
+        g,_=e.step(1,self.p*0,self.prior,self.train,self.val,self.curve,Config(hard_mask=True));self.assertFalse(g.any())
         g,_=e.step(2,self.p,self.prior,self.train,self.val,self.curve);self.assertTrue(g.any())
         with self.assertRaises(ValueError): e.step(0,self.p,self.prior,self.train,self.val,self.curve)
         self.assertIsNone(EpisodeGate().g)

@@ -5,7 +5,7 @@ import math
 import torch
 
 VIEWS = ('agentview', 'eye_in_hand')
-ARMS = ('jacobian', 'base_std', 'uniform')
+ARMS = ('jacobian', 'base_std', 'uniform', 'jacobian_hard_mask')
 
 
 def source_ids(cases, task):
@@ -38,8 +38,9 @@ def frobenius(action_fn, patches, noises):
 @dataclass(frozen=True)
 class Prior:
     mean: torch.Tensor
-    scale: torch.Tensor
+    mean_scale: torch.Tensor
     rho: torch.Tensor
+    patch_scale: torch.Tensor | None = None
 
 
 def fit_priors(clean, drift, importance, eps=1e-6):
@@ -49,17 +50,20 @@ def fit_priors(clean, drift, importance, eps=1e-6):
         raise ValueError('invalid prior shapes')
     if not all(torch.isfinite(t).all() for t in (clean, drift, importance)) or (drift<0).any() or (importance<0).any():
         raise ValueError('invalid source evidence')
-    mu = clean.mean((0, 2)); scale = clean.std((0, 2), unbiased=False) + eps
-    nuisance = drift.mean(0) / scale
+    mu = clean.mean((0, 2)); patch_scale = clean.std((0, 2), unbiased=False) + eps
+    var = clean.mean(2).var(0, unbiased=False)
+    mean_scale = (.9*var + .1*var.mean()).sqrt() + eps
+    nuisance = drift.mean(0) / patch_scale
     old = clean.std(0, unbiased=False).mean(1)
     weights = {'jacobian': nuisance/(importance.mean(0)+eps),
                'base_std': nuisance/(old+eps), 'uniform': torch.ones_like(mu)}
-    return {k: Prior(mu.detach(), scale.detach(), (v/v.mean() if v.mean()>0 else v).detach())
+    return {k: Prior(mu.detach(), mean_scale.detach(), (v/v.mean() if v.mean()>0 else v).detach(), patch_scale.detach())
             for k,v in weights.items()}
 
 
 @dataclass(frozen=True)
 class Config:
+    hard_mask: bool = False
     tau: float = 2.
     lam: float = 1.
     eta: float = .01
@@ -68,7 +72,10 @@ class Config:
 
 
 def eligible(p, prior, cfg):
-    return ((p.mean(1)-prior.mean).abs()/prior.scale > cfg.tau) & (prior.rho > 0)
+    mask = prior.rho > 0
+    if cfg.hard_mask:
+        mask = mask & ((p.mean(1)-prior.mean).abs()/prior.mean_scale > cfg.tau)
+    return mask
 
 
 def transform(p, g, prior):
@@ -78,7 +85,7 @@ def transform(p, g, prior):
 def loss(p, g, prior, z, curvature, cfg):
     q = transform(p, g, prior)
     c = curvature(q, z)
-    d = (((q.mean(1)-prior.mean)/prior.scale).abs()-cfg.tau).relu()
+    d = (((q.mean(1)-prior.mean)/prior.mean_scale).abs()-cfg.tau).relu()
     l = c + cfg.lam*(prior.rho*d.square()).mean() + cfg.eta*(g.square()/(prior.rho+cfg.delta)).mean()
     return l,c
 
@@ -129,7 +136,7 @@ class EpisodeGate:
         if chunk==0:
             self.g,info=propose(p,prior,train_z,validation_z,curvature,cfg)
         else:
-            self.g=self.g*eligible(p,prior,cfg)  # never edit a now-normal channel
+            self.g=self.g*eligible(p,prior,cfg)  # apply the selected arm’s eligibility rule
             info={'reason':'reuse'}
             if chunk%2==0:
                 with torch.no_grad():

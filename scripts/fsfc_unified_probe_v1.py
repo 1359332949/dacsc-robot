@@ -77,8 +77,7 @@ def execute(a):
     for c in cases:authorize(m,c,'fsfc offline t0',expected,manifest)
     with tarfile.open(SKETCHES) as t:
         index={cid:json.load(t.extractfile('features/'+cid+'.json')) for cid in by}
-    selected=[cid for cid,r in index.items() if r['factor']=='clean' or not r['baseline_success']]
-    if len(selected)!=42:raise ValueError('selection drift: expected 10 Clean + 32 historical failures')
+    selected=sorted(by)  # All 100, independent of any success labels.
     if file_hash(a.checkpoint)!=CHECKPOINT:raise ValueError('checkpoint drift')
     sys.path.insert(0,str(a.corp_src));from corp import load_policy
     policy=load_policy(a.checkpoint,device='cuda:0').eval().requires_grad_(False)
@@ -109,11 +108,12 @@ def execute(a):
                 drift=torch.stack([(enc(y)-p).abs().mean(1) for _,y in perturbed_images(rgb)]).mean(0)
                 imp=frobenius(lambda x,n:forward(x,n)[0],p,z)
                 per_source[cid]=(p,drift,imp)
+                print('source Jacobian ready',cid,flush=True)
             priors=fit_priors(*(torch.stack(xs) for xs in zip(*(per_source[i] for i in ids))))
             folds[task]=(ids,priors)
             # Retain the numeric denominator and every ablation weight for review.
             record={'held_task':task,'source_ids':ids,'mean':priors['uniform'].mean.tolist(),
-                    'scale':priors['uniform'].scale.tolist(),'rho':{k:v.rho.tolist() for k,v in priors.items()},
+                    'patch_scale':priors['uniform'].patch_scale.tolist(),'mean_scale':priors['uniform'].mean_scale.tolist(),'rho':{k:v.rho.tolist() for k,v in priors.items()},
                     'mean_action_jacobian':torch.stack([per_source[i][2] for i in ids]).mean(0).tolist(),
                     'mean_abs_perturbation':torch.stack([per_source[i][1] for i in ids]).mean(0).tolist()}
             directory=a.out/'priors'; directory.mkdir(exist_ok=True)
@@ -127,9 +127,10 @@ def execute(a):
         def curvature(q,n):return energy(forward(q,n)[1])[0]
         arms={}
         for arm in ARMS:
-            g,info=propose(p,priors[arm],fit,valid,curvature)
-            with torch.no_grad():actions=forward(transform(p,g,priors[arm]),z)[0]
-            arms[arm]={'decision':info,'gate':g.cpu().tolist(),'actions':actions.cpu().tolist()}
+            cfg=Config(hard_mask=arm=='jacobian_hard_mask');prior=priors['jacobian' if cfg.hard_mask else arm]
+            g,info=propose(p,prior,fit,valid,curvature,cfg)
+            with torch.no_grad():actions=forward(transform(p,g,prior),z)[0]
+            arms[arm]={'settings':asdict(cfg),'decision':info,'gate':g.cpu().tolist(),'actions':actions.cpu().tolist()}
         # Privileged reference opened for scoring only AFTER all arms have finished.
         ref_id=clean[c['pair_group_id']];ref=load(ref_id)[2]
         if index[cid]['z0_hashes']!=index[ref_id]['z0_hashes']:raise ValueError('unmatched oracle noise')
@@ -137,8 +138,9 @@ def execute(a):
             diff=torch.tensor(record['actions'],device=p.device).clamp(-1,1)-ref.clamp(-1,1)
             record['reference_L2']={name:float(diff[...,sl].flatten(1).norm(dim=1).mean()) for name,sl in [('xyz',slice(0,3)),('rot',slice(3,6)),('all',slice(None))]}
         out={'case_id':cid,'source_case_ids':ids,'frozen_actions':base.cpu().tolist(),'paired_clean_reference':ref.cpu().tolist(),
-             'arms':arms,'settings':asdict(Config()),'manifest_sha256':mh,'checkpoint_sha256':CHECKPOINT,'selection':'retrospective Dev diagnostic'}
+             'arms':arms,'settings':asdict(Config()),'manifest_sha256':mh,'checkpoint_sha256':CHECKPOINT,'selection':'all frozen Dev cases','fit_z_sha256':[array_hash(x.cpu().numpy()) for x in fit.split(1)],'validation_z_sha256':[array_hash(x.cpu().numpy()) for x in valid.split(1)],'eval_z_sha256':index[cid]['z0_hashes'],'renderer_of_cache':'osmesa'}
         (a.out/(cid+'.json')).write_text(json.dumps(out,allow_nan=False)+'\n')
+        print('finished',cid,flush=True)
 
 
 if __name__=='__main__':

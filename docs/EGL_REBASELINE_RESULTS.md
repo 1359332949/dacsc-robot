@@ -47,3 +47,7 @@ methods unless a new pre-registered evaluation reverses this result.
 
 Evidence: docs/data/egl_baseline_seed{0,1,2}.json and
 docs/data/egl_consensus_s{0,1,2}.json. No Adapter, no target-test.
+
+### Sensor noise audit (V2 Dev)
+
+The baseline and consensus constructors here pass the **resolved** `case['bddl']`, not the logical task name containing the `_noise_` suffix. The [constructor audit](data/fsfc_v1/egl_noise_audit.json) instantiated all 30 Sensor cases under the legacy EGL setup: `env.noise == 0` before reset in all 30, while all 30 manifest noise codes were nonzero. This directly checks the current deployment's legacy constructor; no historical double-corruption evidence and no three-seed baseline replacement on this basis. Both runners now explicitly record and disable native noise before reset. The previous Frozen first-frame hash and inference each applied the deterministic manual transform **separately to the same raw input** (not in series); now the hash is taken from the one policy input. The above z0=0 and Trimmed results describe these seeds, not an impossibility result.

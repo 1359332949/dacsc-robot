@@ -37,6 +37,9 @@ def main():
         for method in methods:
             env=OffScreenRenderEnv(bddl_file_name='/hy-tmp/LIBERO-plus/'+c['bddl'],camera_heights=256,camera_widths=256,render_gpu_device_id=0)
             try:
+                native_noise=int(env.noise)
+                env.noise=0  # manual step-keyed sensor_transform owns corruption
+                if int(env.noise)!=0:raise RuntimeError('wrapper noise disable failed')
                 env.seed(seeds['environment_seed']); env.reset(); obs=env.set_init_state(initial)
                 for _ in range(SETTLING_STEPS): obs,_,_,_=env.step(DUMMY_ACTION)
                 raw0=obs; steps=0; success=False; chunks=[]; init_sha=None
@@ -60,7 +63,7 @@ def main():
                         if success or done or steps>=a.max_steps: break
                     chunks.append({'start':begin,'end':steps})
                     if success or done or steps>=a.max_steps: break
-                out.append({'case_id':c['case_id'],'factor':c['factor'],'base_task':c['base_task'],'method':method,'seed_index':a.seed_index,'success':success,'steps':steps,'init_agentview_sha256':init_sha,'chunks':chunks})
+                out.append({'case_id':c['case_id'],'factor':c['factor'],'base_task':c['base_task'],'method':method,'seed_index':a.seed_index,'success':success,'steps':steps,'init_agentview_sha256':init_sha,'chunks':chunks,'native_noise_before_reset':native_noise})
                 print(json.dumps(out[-1]),flush=True)
             except Exception as e:
                 out.append({'case_id':c['case_id'],'factor':c['factor'],'base_task':c['base_task'],'method':method,'seed_index':a.seed_index,'success':False,'error':type(e).__name__+': '+str(e)}); print(json.dumps(out[-1]),flush=True)
