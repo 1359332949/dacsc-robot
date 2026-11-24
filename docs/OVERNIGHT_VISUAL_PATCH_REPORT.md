@@ -1,30 +1,27 @@
-# Overnight visual patch/channel report (in progress)
+# Overnight visual patch/channel report (morning)
 
-Status: 2026-11-24 06:37 Asia/Shanghai. Server SSH became unreachable
-(connection closed after Clash TUN fake-IP 198.18.1.130); experiments on the
-server may still be running, but results after the last successful poll could
-not be retrieved.
+Date: 2026-11-24 08:00 Asia/Shanghai. Frozen CoRP, V2 100-case Dev only.
+No Adapter/LoRA/MLP/risk classifier, no CoRP weight change, no Blind/target-test.
+Runs use dev_verified environment/sensor/policy seeds; official sensor_transform
+once; H=12 E=12 FP32 OSMesa; initial agentview SHA check.
 
-## Protocol
+## Headline
 
-Frozen CoRP, V2 100-case Dev only. No Adapter, no target-test, no Blind.
-All runs use dev_verified environment/sensor/policy seeds, official
-sensor_transform once, H=12 E=12 FP32 OSMesa, initial agentview SHA check.
-Channel sensitivity uses only source_fit Clean frames from
-rgb_oracle_pairs_fresh.npz (20 images, one source task; limitation).
+Spatial patch suppression (T3R-style, agentview only) is the first zero-training
+intervention with positive paired net gain on **all three** hard factors while
+keeping Clean 10/10. LPE is weakly positive. Channel suppression code and
+source-only calibration are complete, but its closed-loop result is NOT
+confirmed because of a CUDA device-side assert and a later SSH/network outage.
 
-## Phase 0 (done, commit 481dd73)
+## Frozen reference (dev_verified)
 
-- consensus pair_dist equal weights scale=ones(7); unit test.
-- K=3 same-task Clean ratio<0.80 gate:
-  Sensor 6/13 recall, 2/17 shift-success FPR; Background 7/13, 2/17;
-  Lighting 1/6, 0/24; Clean FPR 0/10.
+Clean 10/10; Sensor 17/30; Background 17/30; Lighting 24/30; total 58/90.
 
-## Phase 1 Local Patch Energy (done; raw JSON on server)
+## Phase 1: Local Patch Energy (complete)
 
 Clean gate: eps 0.1 = 10/10, eps 0.2 = 10/10.
 
-| Factor | Frozen | LPE eps .1 | LPE eps .2 |
+| Factor | Frozen | LPE .1 | LPE .2 |
 |---|---:|---:|---:|
 | Sensor 30 | 17 | 19 | 18 |
 | Background 30 | 17 | 18 | 18 |
@@ -35,29 +32,59 @@ Paired vs Frozen (rescued/harmed/net):
 - Background .1: 3/2/+1; .2: 2/1/+1
 - Lighting .1: 1/0/+1; .2: 1/0/+1
 
-LPE is a weak positive, not a breakthrough. K=3 displacement/command
-recovery was not recorded in this run; limitation.
+Weak positive only. K=3 displacement/command recovery was not logged in these
+runs (limitation).
 
-## Phase 2 T3R spatial patch bias
+## Phase 2: T3R spatial patch suppression (complete closed loop)
 
-Implementation: boundary-prototype background weights on agentview only;
-manual cross-attention with additive logit bias; parity to original resampler
-at beta=0 max abs 2.26e-6. Clean gate beta 1/2/4 all 10/10. Shift run launched
-(3 betas x 90 cases); results not retrieved.
+Boundary-prototype background weights on agentview; eye-in-hand unchanged;
+manual cross-attention with additive negative logit bias. Parity to original
+resampler at beta=0: max abs 2.26e-6.
 
-## Phase 3 channel suppression
+Clean gate: beta 1.0 = 10/10, beta 2.0 = 10/10, beta 4.0 = 10/10.
 
-Source-only calibration saved: docs/data/v2_channel_sensitivity_source.json,
-20 source_fit Clean frames, synthetic brightness/contrast/blur perturbations;
-top R channels [130,164,134,327,...]. No target Shift images/labels used.
-Channel Clean runs failed early with CUDA device-side assert (attribute to
-CPU index tensor/indexing); code fixed (index to device, clamp) but rerun not
-confirmed due server SSH loss. No channel result claim.
+| Factor | Frozen | beta 1 | beta 2 | beta 4 |
+|---|---:|---:|---:|---:|
+| Sensor 30 | 17 | 17 | 18 | 19 |
+| Background 30 | 17 | 15 | 19 | 18 |
+| Lighting 30 | 24 | 24 | 25 | 26 |
+| Total /90 | 58 | 56 | 62 | 63 |
 
-## Honest status
+Paired vs Frozen (rescued/harmed/net):
+- beta1: Sensor 2/2/0; Background 1/3/-2; Lighting 1/1/0; total -2
+- beta2: Sensor 3/2/+1; Background 2/0/+2; Lighting 1/0/+1; total +4
+- beta4: Sensor 4/2/+2; Background 2/1/+1; Lighting 3/1/+2; total +5
 
-- Phase 0 complete.
-- Phase 1 complete (weak positive).
-- Phase 2 Clean gate complete; Shift pending.
-- Phase 3 code/calibration complete; closed-loop result pending.
-- No target-test, no Adapter, no z0=0 candidate.
+beta4 is the best zero-training intervention so far. Single seed, 10 tasks,
+development reuse; not a confirmatory claim.
+
+## Phase 3: source-only channel sensitivity (calibration complete, closed loop unconfirmed)
+
+Calibration used only 20 source_fit Clean agentview frames from
+rgb_oracle_pairs_fresh.npz and synthetic brightness/contrast/blur perturbations.
+No Dev Shift images or success labels were read. Output:
+docs/data/v2_channel_sensitivity_source.json. Top R channels include
+130, 164, 134, 327, 382, 254, 274, 242, 316, 138.
+
+Channel closed-loop Clean runs failed with `CUDA error: device-side assert
+triggered` because the channel index tensor was CPU while patch tokens were CUDA.
+The script was fixed (index to device, clamp) but a clean rerun could not be
+confirmed before the SSH/TUN link closed at roughly 05:00-08:00. Therefore:
+**no channel suppression success claim, positive or negative.**
+
+## Server/network blocker
+
+The server host resolved through Clash TUN fake-IP 198.18.1.130. SSH handshake
+succeeded but shell commands/scp repeatedly hung or were closed by remote.
+Spatial/LPE results above were retrieved before/around the outage; later channel
+runs and raw JSON retrieval were not possible. The server may still be running;
+the 30-minute scheduled task will keep trying.
+
+## Honest conclusion
+
+1. LPE: Clean-safe, weak positive (+1 to +2).
+2. Spatial beta4: Clean-safe, +5 total, positive on Sensor/Background/Lighting;
+   best current candidate.
+3. Channel: calibration complete; closed-loop unconfirmed; do not cite.
+4. No Blind, no target-test, no Adapter, no z0=0 candidate.
+5. These are single-seed development results, not statistical significance.
