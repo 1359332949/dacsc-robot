@@ -1,0 +1,10 @@
+{
+  "dacsc/flow_geometry.py": "dd750369ad115d2f71866178ad55db4607408722dd74287e90eded389f13f063",
+  "scripts/flow_straightness_diagnostic.py": "40e78092b6825c88ac7be1fb3cde44318a4751c386946b955e55ed3f01a97637",
+  "scripts/analyze_flow_straightness.py": "92fcf1d6ccdfb5dd6184b1133c0372af3be384c2917ee2b3da66b5688464d348",
+  "scripts/verify_flow_straightness.py": "adfcdd4149e7c327fd03cc763d26151ffcd61f680c64fa512d7b1bd079dc4912",
+  "scripts/render_flow_gradient_maps.py": "a716fc146cb24566e1f70a5ac674a071b6d0633b57c4f77ef6d240555bb08ebf",
+  "scripts/plot_flow_straightness.py": "4a110f8f7a669ec2d94aae32e85a855163067d9c0d82cb297995b3e9f5124890",
+  "docs/FLOW_STRAIGHTNESS_PROTOCOL.md": "44d91c5f853473b5ac5538fd9edf569888b6b86e5f2ad8794560804b8ce33615",
+  "scripts/analyze_flow_controls.py": "43ff1cb56636a9e191fd1ac7238c80aad48ad391c1b7d624ee476896e242edc4"
+}
