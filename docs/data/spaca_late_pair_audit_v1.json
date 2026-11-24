@@ -1,0 +1,19 @@
+{
+  "schema": "spaca_late_pair_audit_v1",
+  "records_total": 71,
+  "records_pass": 42,
+  "source_fit": {
+    "pass": 20,
+    "gripper_gt_0_1": 7,
+    "gripper_gt_0_3": 7,
+    "max_gripper_diff": 2.0302138328552246
+  },
+  "source_validation": {
+    "pass": 22,
+    "gripper_gt_0_1": 8,
+    "gripper_gt_0_3": 8,
+    "max_gripper_diff": 2.026972532272339
+  },
+  "window": "chunks 6-9 (steps 72-120)",
+  "note": "15/42 late pairs contain gripper disagreement >0.3, unlike the early 37-pair set."
+}

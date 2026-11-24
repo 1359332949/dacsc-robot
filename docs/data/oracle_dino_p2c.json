@@ -1,0 +1,28 @@
+{
+  "schema": "oracle_dino_p2_v1",
+  "block": 0,
+  "norm": "norm1",
+  "steps": 20,
+  "lr": 0.0001,
+  "init_fit": 0.004695074167102575,
+  "init_val": 0.005370473954826593,
+  "final_fit": 0.0046363892033696175,
+  "final_val": 0.00535744009539485,
+  "clean_drift_val": 1.708429095970132e-07,
+  "shift_error_val": 0.00535744009539485,
+  "physical_shift": {
+    "xyz_norm_mean": 0.18133556865722772,
+    "rotation_norm_geodesic_mean": 0.023267232241618457,
+    "xyz_m_mean": 0.009066778432861387,
+    "rotation_rad_geodesic_mean": 0.01163399146137446,
+    "gripper_abs_mean": 0.00023987442255020143
+  },
+  "physical_clean_drift": {
+    "xyz_norm_mean": 0.000898041805062866,
+    "rotation_norm_geodesic_mean": 0.0002200596295272572,
+    "xyz_m_mean": 4.490209025314271e-05,
+    "rotation_rad_geodesic_mean": 0.00011003373412391115,
+    "gripper_abs_mean": 8.568167686462402e-07
+  },
+  "trainable_params": 768
+}

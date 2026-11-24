@@ -1,0 +1,12 @@
+{
+  "source": "user-referenced DeepSeek session-72603ae9-4cd6-420f-a92c-2917ff9a1a6b",
+  "compressed_source_sha256": "58e1474d635a2632660e6482767503dbd3c76e5a135cdca265f7e371f74d0e92",
+  "record_type": "compaction/summary",
+  "record_seq": 14168,
+  "excerpts": [
+    "- Data: `/hy-tmp/validation/interface_stats_{spatial,object,goal,10}_k32.json`; `spectrum_big_{spatial,object,goal,10}.json` (matched protocol, 1008–1200 tokens); `spectrum_cam_{suite}.json`; `spectrum_match_{clean,L3,L4,L5}.json`; `camera_full.json` (counts spatial 376, object 396, goal 408, 10 419 = 1,599).",
+    "- Full Camera dimension runs in flight: `full_cam_{spatial,object,goal,10}` (~995/1,599 at last check; spatial 256/376, object 324/396, goal 236/408, 10 179/419).",
+    "- Interim (corrected protocol) numbers: re-validation variants ≈0 (topk 0.0 n=55; affine −1.9 n=54; affine start5 −3.9 n=51; affine α0.5 +1.8 n=55); full-dimension debias spatial n=258: 55.0%→56.2%, Δ+1.2pp, 95% CI [−5.0,+7.4], p=0.80; earlier subset result +13.3 collapsed."
+  ],
+  "interpretation": "positive evidence of historical camera access; exact episode list incomplete; quarantine all four suite Camera pools until raw logs resolve IDs; not a claim all1599 completed"
+}

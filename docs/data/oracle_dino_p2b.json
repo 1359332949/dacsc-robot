@@ -1,0 +1,14 @@
+{
+  "schema": "oracle_dino_p2_v1",
+  "block": 0,
+  "norm": "norm1",
+  "steps": 20,
+  "lr": 0.0001,
+  "init_fit": 0.004695074167102575,
+  "init_val": 0.005370473954826593,
+  "final_fit": 0.004636391066014767,
+  "final_val": 0.005357442889362574,
+  "clean_drift_val": 1.7084984449411422e-07,
+  "shift_error_val": 0.005357442889362574,
+  "trainable_params": 768
+}

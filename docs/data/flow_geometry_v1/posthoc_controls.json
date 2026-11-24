@@ -1,0 +1,23 @@
+{
+  "status": "posthoc explanatory controls; not used to choose primary score or gate",
+  "factors": {
+    "sensor_noise": {
+      "primary_curvature_auc": 0.8733031674208145,
+      "posthoc_lower_xyz_rms_auc": 0.6289592760180995,
+      "posthoc_initial_velocity_energy_auc": 0.2850678733031674,
+      "posthoc_final_velocity_energy_auc": 0.7194570135746606
+    },
+    "background": {
+      "primary_curvature_auc": 0.7873303167420814,
+      "posthoc_lower_xyz_rms_auc": 0.7963800904977375,
+      "posthoc_initial_velocity_energy_auc": 0.6244343891402715,
+      "posthoc_final_velocity_energy_auc": 0.497737556561086
+    },
+    "lighting": {
+      "primary_curvature_auc": 0.6319444444444444,
+      "posthoc_lower_xyz_rms_auc": 0.2569444444444444,
+      "posthoc_initial_velocity_energy_auc": 0.7013888888888888,
+      "posthoc_final_velocity_energy_auc": 0.3888888888888889
+    }
+  }
+}

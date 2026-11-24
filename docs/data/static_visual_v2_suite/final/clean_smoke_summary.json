@@ -1,0 +1,106 @@
+{
+  "status": "COMPATIBILITY_PASSED",
+  "complete": true,
+  "planned": 50,
+  "recorded": 50,
+  "successful": 50,
+  "tasks": [
+    {
+      "base_task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "planned": 5,
+      "completed": 5,
+      "exceptions": 0,
+      "missing": 0,
+      "success": 5,
+      "steps": 419
+    },
+    {
+      "base_task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "planned": 5,
+      "completed": 5,
+      "exceptions": 0,
+      "missing": 0,
+      "success": 5,
+      "steps": 485
+    },
+    {
+      "base_task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+      "planned": 5,
+      "completed": 5,
+      "exceptions": 0,
+      "missing": 0,
+      "success": 5,
+      "steps": 641
+    },
+    {
+      "base_task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "planned": 5,
+      "completed": 5,
+      "exceptions": 0,
+      "missing": 0,
+      "success": 5,
+      "steps": 538
+    },
+    {
+      "base_task": "pick_up_the_black_bowl_next_to_the_plate_and_place_it_on_the_plate",
+      "planned": 5,
+      "completed": 5,
+      "exceptions": 0,
+      "missing": 0,
+      "success": 5,
+      "steps": 465
+    },
+    {
+      "base_task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "planned": 5,
+      "completed": 5,
+      "exceptions": 0,
+      "missing": 0,
+      "success": 5,
+      "steps": 534
+    },
+    {
+      "base_task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "planned": 5,
+      "completed": 5,
+      "exceptions": 0,
+      "missing": 0,
+      "success": 5,
+      "steps": 399
+    },
+    {
+      "base_task": "pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate",
+      "planned": 5,
+      "completed": 5,
+      "exceptions": 0,
+      "missing": 0,
+      "success": 5,
+      "steps": 462
+    },
+    {
+      "base_task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "planned": 5,
+      "completed": 5,
+      "exceptions": 0,
+      "missing": 0,
+      "success": 5,
+      "steps": 640
+    },
+    {
+      "base_task": "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate",
+      "planned": 5,
+      "completed": 5,
+      "exceptions": 0,
+      "missing": 0,
+      "success": 5,
+      "steps": 584
+    }
+  ],
+  "zero_of_five_tasks": [],
+  "all_initial_physics_pair_checks_pass": true,
+  "max_official_sampler_parity_error": 0.0,
+  "target_dev_runs": 0,
+  "blind_runs": 0,
+  "training_coverage": "unknown",
+  "note": "empirical five-state compatibility only; no statistical certification or task deletion"
+}

@@ -1,0 +1,72 @@
+{
+  "records": [
+    {
+      "state_id": 35,
+      "snapshot_step": 0,
+      "branch_successes": 0,
+      "branches": 0,
+      "first_action_diff": null,
+      "restore_diff": null,
+      "branch_details": [],
+      "init_state_hash": "d35d4e5f206ba038",
+      "init_obs_hash": "f4900570882ab8a2",
+      "first_action_hash": "f48a6875e3df40e7",
+      "chunk_action_hashes": [
+        "f48a6875e3df40e7",
+        "aca52b14fb148329",
+        "2047b822d3949dd3",
+        "68fa263c05ccf675",
+        "f301e126b2e8b164",
+        "34d09e25594a6853",
+        "684469b65ff15d03",
+        "58a1fbc664bb3c77",
+        "a292deef0618fc28",
+        "0140bb6d831917d6",
+        "27d654806818ab86",
+        "4b8eaf557c5b845f",
+        "d7051730239e868a",
+        "42c1ad2552f01783",
+        "35ea98823795c3de",
+        "df460f3c6d06eb9a",
+        "0b5d67193007ffe5",
+        "c67d9a84aef0836d",
+        "c6528fb170fd06e8"
+      ],
+      "chunk_obs_hashes": [
+        "f4900570882ab8a2",
+        "f1bd144eecb350ad",
+        "a67a32271b13b34d",
+        "90f241487bf596be",
+        "10e8f813e837d544",
+        "81177f8a2ae3d007",
+        "ec8f2e223b2797fa",
+        "403859408c0d8e99",
+        "7fb6dbc90488bace",
+        "d0cc6953c7eb75d8",
+        "dd07bb3f156d0407",
+        "2c267262981440c4",
+        "c75fe31eb4a1bc54",
+        "375e306a138ceef3",
+        "3f107c940547cfba",
+        "aa380ec6caa82f59",
+        "8cf5202ee417e923",
+        "e6c19ef947c6976f",
+        "5bba481aa2437012"
+      ],
+      "final_success": false,
+      "final_steps": 220
+    }
+  ],
+  "summary": {
+    "35": {
+      "branch_success_rates": [
+        0.0
+      ],
+      "snapshot_steps": [
+        0
+      ],
+      "ponr_step": null,
+      "final_success": false
+    }
+  }
+}

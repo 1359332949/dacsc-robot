@@ -1,0 +1,18 @@
+{
+  "schema": "monitor_artifact_v1",
+  "checkpoint": "docs/data/multiseed_monitor.pt",
+  "checkpoint_sha256": "fadb24a688985cc3f71ed62ba5dee6fdc401ad2d43362b93604cd97004dbf938",
+  "split_json": "docs/data/tta_split_libero_spatial_perturbation.json",
+  "split_sha256": "0141c2e8e417f6686597930333e91782c62381a45f0bd9ebe9f38d08327a5fa1",
+  "role": "target_dev",
+  "domain": "shift",
+  "lighting_id": 2292,
+  "window": 10,
+  "stride": 2,
+  "use_visual": false,
+  "state_mode": "absolute",
+  "threshold": 0.9997186660766602,
+  "persistence": 15,
+  "selection_note": "K=15 and threshold were selected during target-dev development; target dev is not independent confirmation.",
+  "created": "2026-11-18"
+}

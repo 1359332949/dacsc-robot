@@ -1,0 +1,12 @@
+{
+  "schema": "oracle_gradient_probe_v1",
+  "init_fit": 0.048147886991500854,
+  "final_fit": 0.04354286566376686,
+  "init_val": 0.06260707974433899,
+  "final_val": 0.06168656051158905,
+  "clean_drift_val": 0.0005378189962357283,
+  "shift_error_val": 0.06168656051158905,
+  "steps": 30,
+  "lr": 0.01,
+  "params": 1538
+}

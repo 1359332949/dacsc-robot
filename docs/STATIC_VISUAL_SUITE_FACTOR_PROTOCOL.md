@@ -1,0 +1,45 @@
+# Suite × factor 抽样与新服务器核验
+
+日期：2026-11-23。先固定以下规则，不根据新Shift结果调整。
+
+1. 候选范围保持Spatial十个基础任务；逐任务五个预定Clean初始状态完成后，任何任务0/5都先查接口/环境，不按Shift结果删任务。
+2. 开发配额改为每suite×factor 30条；主因素为Lighting、Background、Sensor Noise。采用固定seed 2026112301，按精确等价组确定性等概率抽样；不保证基础任务均匀覆盖，逐任务仅报告实际计数。
+3. Camera暂不进入主抽样。如以后恢复，只作为另行预先声明的开发诊断，不自动纳入新Blind。
+4. **本轮找到历史工具输出证明全10,030实例Frozen基线已完成。** 所有官方实例都已参与本项目开发。不是只剔除2292/2312就有新Blind。新抽90条仍是旧基准池的开发重用，不是90个此前未访问实例。
+5. Blind文件继续锁定并为空，状态NO_UNACCESSED_OFFICIAL_POOL；不声称预留300个未访问样本，不用换seed或新状态索引恢复独立性。历史证据含原工具输出、记录序号和压缩源文件hash。
+6. Clean paired对照默认初始化索引0；每任务相同seed条件可去重。Source Fit及最终Holdout预留索引与0不重合，但历史新鲜度另算，不能因为索引不同就叫独立新Holdout。
+7. runtime wrapper的12行兼容修改保存diff；环境变化必须重新验收。不把PyTorch版本不同直接认定为错误原因。
+8. environment/sensor/flow/method增强使用独立随机流，Sensor仅agentview。只有已核验环境执行Frozen，无Adapter、风险模型或TTA更新。
+9. 主开发统计按suite×factor汇总、各factor等权；base-task表作为异质性描述，不再按稀缺task格等权制造同等证据。相同Clean对照的重复引用必须注明，不能当作独立Clean样本。
+10. Source smoke或环境迁移检查不通过就停在P0，不能为得到“掉分地形”继续跑Shift。
+
+## 能执行什么
+
+- 新服务器环境检查：保存依赖版本、原wrapper diff、原始输入/旧执行动作迁移对照。
+- 50条指定Clean smoke：预定Source Fit初始状态，不换seed追求通过。
+- 全部任务通过Clean兼容性后，可冻结90条**开发重用**实例和去重Clean对照，运行Frozen。结果只作方法开发，不用于确认性效果声明。
+- 本轮不可能从已完成全基准访问的同一官方池构造全新Blind。需要另行预注册未使用资产/新外部数据，或将今后官方池结果诚实地定位为开放基准开发；不在本轮自行生成新扰动冒充官方实例。
+
+## 环境故障处理
+
+迁移前首批Clean结束结果全部失败后，暂停原批处理。原始失败记录与未完成case保留为环境诊断，不参与修复后正式Smoke汇总。若发现具体依赖/资产问题，使用原定状态/seed、修复后的独立环境重跑，保留两个版本。禁止将环境错误归为策略对视觉域失败，也禁止将不喜欢的有效结果作废。
+
+CoRP仓库固定robosuite1.4.1、MuJoCo3.3.0；新主机原为1.4.0/3.3.2。使用独立dependency_overlay核验，不改基础venv。动作同输入核对与渲染核对分开，只有相同渲染与动作条件才可追究闭环行为差。
+
+补充的迁移判据（仍在新Shift运行前）：
+
+- 旧保存的RGB/state/z0下控制命令应数值一致；回放旧执行动作另行检查物理轨迹，不把回放成功当成新策略成功。
+- 当前新渲染和旧图存在明显像素差；按原定依赖版本重建后仍有差。仅切换collision/visual显示标记的图像控制用于定位旧渲染语义，不把更好的控制结果当成默认正式Clean设置。
+- 两个指定旧Source状态（0、18，seed2014）各用默认显示与collision+visual显示做对照；没有新状态/seed择优。保持正式runner默认显示不变。
+- 不论诊断渲染有何结果，正式Clean Smoke采用原定默认显示、Pinned robosuite1.4.1/MuJoCo3.3.0，按同一50个计划状态重跑一次；迁移前16条仍单独保存。
+- 任何任务0/5则不自动删任务、降配额或运行Shift；把未通过的兼容性关口明确报告。调显示参数直到成功不是允许的修复。
+
+补充接口纠错：CoRP正式evaluate_libero.py使用Task.language；旧V2 runner使用BDDL的language_instruction，两者在Spatial有不同措辞。新任务范围比较必须按官方`benchmark.grab_language_from_filename(suite, clean_base_task+'.bddl')`生成语言，不通过选择更高成功率的措辞调参。改动后对相同50条Source计划和相同派生随机种子重新运行，所有旧措辞结果只留作接口诊断。历史单任务实验的语言与此不同，不能无说明混表。
+
+渲染上下文回归纠错：原runner先创建主环境，再创建并关闭对照环境。在本机OSMesa下，对照关闭会破坏主环境渲染，虽然state8完全相同，图像已错误。因此先创建Clean对照、保存其数值snapshot并关闭，之后才创建实际主环境；主环境存活期间不再关闭另一个renderer。50条错误渲染结果全部归档为无效环境批次，不据其0成功作能力判断。相同50条状态/seed需重新执行。
+
+Sensor仅在策略实际使用的观测边界施加官方噪声核；每帧噪声由environment-step派生，随机流隔离，所以丢弃的中间图像是否计算噪声不会改变边界图像或环境动力学。额外回归测试确认该等价性；不改变扰动强度、作用相机或策略可见内容。时间成本报告会注明这一点，不与每帧都加工的参考脚本直接比较延迟。
+
+## Clarification after baseline completion
+
+Frozen baseline visibility does not by itself prove instance-specific TTA development. The all-official historical quarantine remains the conservative executable default, but is not a claim that official assets can never support evaluation. A future method-held-out protocol requires a separate historical method-access audit, explicit exclusions and disclosure of prior Frozen visibility. It cannot be called zero-contact Blind. Current manifests and locks are unchanged. See STATIC_VISUAL_SUITE_FACTOR_RESULTS.md for completed results and statistical limitations.

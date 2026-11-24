@@ -1,0 +1,36 @@
+{
+  "schema": "monitor_artifact_v2",
+  "members": [
+    {
+      "name": "seed0",
+      "checkpoint": "docs/data/monitor_seed0.pt",
+      "sha256": "70a00b6358ae7dc441b89987b3f142f26c9b2971beb1684a5f5b36e4b5b34514",
+      "use_visual": false
+    },
+    {
+      "name": "seed1",
+      "checkpoint": "docs/data/monitor_seed1.pt",
+      "sha256": "4eb681c0c5d789c65a1751bd45fff696af874187cc65315b8ca0cd0741fc4d46",
+      "use_visual": false
+    },
+    {
+      "name": "seed2",
+      "checkpoint": "docs/data/monitor_seed2.pt",
+      "sha256": "7cdabbcaaf60d0faa8b9bdfc443dc5dce46819623bc9693a21d0d33299027279",
+      "use_visual": false
+    }
+  ],
+  "aggregation": "mean",
+  "min_members": 2,
+  "split_json": "docs/data/tta_split_libero_spatial_perturbation.json",
+  "split_sha256": "0141c2e8e417f6686597930333e91782c62381a45f0bd9ebe9f38d08327a5fa1",
+  "role": "target_dev",
+  "window": 10,
+  "stride": 2,
+  "threshold": 0.998068630695343,
+  "persistence": 15,
+  "threshold_source": "source_validation (multiseed val.npz)",
+  "selection_note": "K=15 development-selected on target dev; threshold must be fit on source validation in evaluator.",
+  "created": "2026-11-18",
+  "calibration_note": "threshold = 95th percentile of source-validation negative window scores; K=15 development-selected."
+}

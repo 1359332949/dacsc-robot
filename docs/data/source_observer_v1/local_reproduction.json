@@ -1,0 +1,22 @@
+{
+  "pass": true,
+  "scope": "cross-runtime frozen-artifact inference reproduction; not a new validation selection",
+  "local_numpy": "2.4.6",
+  "max_metric_abs_diff": 5.551115123125783e-16,
+  "model_sha256_before": "8d79ebfb0ae25bc03297e35d42cd427361d2bbd9fd94284fa4b62097af5db04b",
+  "model_sha256_after": "8d79ebfb0ae25bc03297e35d42cd427361d2bbd9fd94284fa4b62097af5db04b",
+  "state_metrics_compared": 200,
+  "validation_rows": 74,
+  "states": [
+    18,
+    20,
+    21,
+    22,
+    25,
+    27,
+    29,
+    31,
+    32,
+    33
+  ]
+}

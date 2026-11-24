@@ -1,0 +1,220 @@
+{
+  "schema": "gate1a4_deployable_proxy_v1",
+  "source_report": "runs/patch_diag/gate1a3_fixed_filter.json",
+  "views": {
+    "agentview": {
+      "early": {
+        "tau": 2.679310040059257,
+        "fit_clean_fpr": 0.0,
+        "val_clean_fpr": 0.2,
+        "fit_shift_activation": 0.3,
+        "val_shift_activation": 0.0,
+        "val_auroc": 0.27
+      },
+      "late": {
+        "tau": 2.1588739364715797,
+        "fit_clean_fpr": 0.0,
+        "val_clean_fpr": 0.2,
+        "fit_shift_activation": 0.2,
+        "val_shift_activation": 0.3,
+        "val_auroc": 0.46
+      }
+    },
+    "eye_in_hand": {
+      "early": {
+        "tau": 3.2365967321785605,
+        "fit_clean_fpr": 0.0,
+        "val_clean_fpr": 0.1,
+        "fit_shift_activation": 0.1,
+        "val_shift_activation": 0.3,
+        "val_auroc": 0.5499999999999999
+      },
+      "late": {
+        "tau": 4.610490836591194,
+        "fit_clean_fpr": 0.0,
+        "val_clean_fpr": 0.0,
+        "fit_shift_activation": 0.0,
+        "val_shift_activation": 0.0,
+        "val_auroc": 0.38999999999999996
+      }
+    }
+  },
+  "correlation": {
+    "agentview/early/shift_prior/norm": {
+      "n_states": 20,
+      "pearson": 0.05523940697934844,
+      "spearman": -0.1263157894736842,
+      "pearson_ci95": [
+        -0.4346881957106641,
+        0.41816378735648363
+      ],
+      "fit_pearson": 0.11328516831460497,
+      "val_pearson": 0.08752610715335878
+    },
+    "agentview/early/shift_prior/xyz": {
+      "n_states": 20,
+      "pearson": 0.05052144735204767,
+      "spearman": -0.13383458646616542,
+      "pearson_ci95": [
+        -0.44110665481913053,
+        0.41418727155501556
+      ],
+      "fit_pearson": 0.10784792132721588,
+      "val_pearson": 0.07845716349648917
+    },
+    "agentview/early/shift_prior/rot": {
+      "n_states": 20,
+      "pearson": 0.18088075113076413,
+      "spearman": 0.2571428571428572,
+      "pearson_ci95": [
+        -0.18663516217053608,
+        0.5789215319860256
+      ],
+      "fit_pearson": 0.38696167227734973,
+      "val_pearson": 0.06765782339403871
+    },
+    "agentview/early/shift_prior/grip": {
+      "n_states": 20,
+      "pearson": -0.010462100919317324,
+      "spearman": -0.017866644426629774,
+      "pearson_ci95": [
+        -0.3558459385234097,
+        0.3851158301538816
+      ],
+      "fit_pearson": -0.11177535845225892,
+      "val_pearson": 0.18614331339165588
+    },
+    "agentview/late/shift_prior/norm": {
+      "n_states": 20,
+      "pearson": -0.43859099868363544,
+      "spearman": -0.30075187969924805,
+      "pearson_ci95": [
+        -0.7139940726832925,
+        -0.06576021572971937
+      ],
+      "fit_pearson": -0.4202294777919568,
+      "val_pearson": -0.45254425649104596
+    },
+    "agentview/late/shift_prior/xyz": {
+      "n_states": 20,
+      "pearson": -0.16680986195097483,
+      "spearman": -0.07669172932330826,
+      "pearson_ci95": [
+        -0.431886802307016,
+        0.2316874319892915
+      ],
+      "fit_pearson": 0.10137349498917682,
+      "val_pearson": -0.2889580146101601
+    },
+    "agentview/late/shift_prior/rot": {
+      "n_states": 20,
+      "pearson": -0.28543637083973794,
+      "spearman": -0.11729323308270674,
+      "pearson_ci95": [
+        -0.5772472406397493,
+        0.2442781829353147
+      ],
+      "fit_pearson": 0.005720790287131986,
+      "val_pearson": -0.41850952362571825
+    },
+    "agentview/late/shift_prior/grip": {
+      "n_states": 20,
+      "pearson": -0.4680749658407872,
+      "spearman": -0.3654135338345864,
+      "pearson_ci95": [
+        -0.7461298368377395,
+        -0.08009520618581126
+      ],
+      "fit_pearson": -0.4417404040853325,
+      "val_pearson": -0.49455066637521966
+    },
+    "eye_in_hand/early/shift_prior/norm": {
+      "n_states": 20,
+      "pearson": -0.45530439751822105,
+      "spearman": -0.4466165413533834,
+      "pearson_ci95": [
+        -0.6776724400453754,
+        -0.138891250319397
+      ],
+      "fit_pearson": -0.26622367681882025,
+      "val_pearson": -0.5603652435876064
+    },
+    "eye_in_hand/early/shift_prior/xyz": {
+      "n_states": 20,
+      "pearson": -0.4544621989191502,
+      "spearman": -0.4270676691729323,
+      "pearson_ci95": [
+        -0.680654402463293,
+        -0.13385564688089174
+      ],
+      "fit_pearson": -0.27313323734159123,
+      "val_pearson": -0.554966775162382
+    },
+    "eye_in_hand/early/shift_prior/rot": {
+      "n_states": 20,
+      "pearson": -0.16078958769942986,
+      "spearman": -0.1263157894736842,
+      "pearson_ci95": [
+        -0.45123321656961246,
+        0.18613459299480883
+      ],
+      "fit_pearson": 0.12387215810317435,
+      "val_pearson": -0.29191644087926844
+    },
+    "eye_in_hand/early/shift_prior/grip": {
+      "n_states": 20,
+      "pearson": 0.29182964853171817,
+      "spearman": 0.2167301650012916,
+      "pearson_ci95": [
+        -0.18962506226872924,
+        0.8115946720482364
+      ],
+      "fit_pearson": 0.27334238404266087,
+      "val_pearson": 0.5143067583482556
+    },
+    "eye_in_hand/late/shift_prior/norm": {
+      "n_states": 20,
+      "pearson": -0.1760177598703395,
+      "spearman": -0.1413533834586466,
+      "pearson_ci95": [
+        -0.5088159689931206,
+        0.23106398210352427
+      ],
+      "fit_pearson": -0.3026202592511989,
+      "val_pearson": -0.12705989897944978
+    },
+    "eye_in_hand/late/shift_prior/xyz": {
+      "n_states": 20,
+      "pearson": -0.13085924175095098,
+      "spearman": -0.18345864661654135,
+      "pearson_ci95": [
+        -0.41206499320825857,
+        0.2921739583669221
+      ],
+      "fit_pearson": -0.18602215416236245,
+      "val_pearson": -0.12033349649053604
+    },
+    "eye_in_hand/late/shift_prior/rot": {
+      "n_states": 20,
+      "pearson": -0.11372040482396037,
+      "spearman": -0.007518796992481202,
+      "pearson_ci95": [
+        -0.446264322006128,
+        0.34542286227266494
+      ],
+      "fit_pearson": 0.09333614755154408,
+      "val_pearson": -0.2246041242967535
+    },
+    "eye_in_hand/late/shift_prior/grip": {
+      "n_states": 20,
+      "pearson": -0.16939124716561021,
+      "spearman": -0.16992481203007515,
+      "pearson_ci95": [
+        -0.5026772194040935,
+        0.22617682873923492
+      ],
+      "fit_pearson": -0.24482361252896895,
+      "val_pearson": -0.13260190793437737
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "verified_cases": 100,
+  "frozen_v1_controller_max_abs": 3.7848949432373047e-06,
+  "source_folds": 10,
+  "sha256": {
+    "dacsc/fsfc.py": "efe91e843dd93c6773596b28c5b316c78542455e01216fe2e2c12b30c03a6619",
+    "scripts/fsfc_unified_probe_v1.py": "ddf65478b9fa591e03ce26406edcff0b6921f0872dcb030d156c945b2b781c2e",
+    "dacsc/flow_repair.py": "2c4bfb24d63fff81ce60f6df08aa55022ab491122abba1ac972cb7e9e28c31b0",
+    "docs/data/fsfc_v1/probe_evidence.tar.gz": "3a9654df3ec34d4809cb50ae453789c191582869abc65c85f2ac99a4ab6ee654",
+    "docs/data/fsfc_v1/egl_noise_audit.json": "7f1fb981a70d132f23b171f0c4331caba5cf13e401d57c65bdaaffd1b0863cd9"
+  }
+}

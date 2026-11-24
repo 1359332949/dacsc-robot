@@ -1,0 +1,106 @@
+{
+  "schema": "rgb_oracle_pairs_v2",
+  "language": "pick the akita black bowl on the cookies box and place it on the plate",
+  "records": [
+    {
+      "role": "source_fit",
+      "state_id": 0,
+      "pairing_pass": true
+    },
+    {
+      "role": "source_fit",
+      "state_id": 1,
+      "pairing_pass": true
+    },
+    {
+      "role": "source_fit",
+      "state_id": 2,
+      "pairing_pass": true
+    },
+    {
+      "role": "source_fit",
+      "state_id": 4,
+      "pairing_pass": true
+    },
+    {
+      "role": "source_fit",
+      "state_id": 6,
+      "pairing_pass": true
+    },
+    {
+      "role": "source_fit",
+      "state_id": 8,
+      "pairing_pass": true
+    },
+    {
+      "role": "source_fit",
+      "state_id": 10,
+      "pairing_pass": true
+    },
+    {
+      "role": "source_fit",
+      "state_id": 13,
+      "pairing_pass": true
+    },
+    {
+      "role": "source_fit",
+      "state_id": 14,
+      "pairing_pass": true
+    },
+    {
+      "role": "source_fit",
+      "state_id": 17,
+      "pairing_pass": true
+    },
+    {
+      "role": "source_validation",
+      "state_id": 18,
+      "pairing_pass": true
+    },
+    {
+      "role": "source_validation",
+      "state_id": 20,
+      "pairing_pass": true
+    },
+    {
+      "role": "source_validation",
+      "state_id": 21,
+      "pairing_pass": true
+    },
+    {
+      "role": "source_validation",
+      "state_id": 22,
+      "pairing_pass": true
+    },
+    {
+      "role": "source_validation",
+      "state_id": 25,
+      "pairing_pass": true
+    },
+    {
+      "role": "source_validation",
+      "state_id": 27,
+      "pairing_pass": true
+    },
+    {
+      "role": "source_validation",
+      "state_id": 29,
+      "pairing_pass": true
+    },
+    {
+      "role": "source_validation",
+      "state_id": 31,
+      "pairing_pass": true
+    },
+    {
+      "role": "source_validation",
+      "state_id": 32,
+      "pairing_pass": true
+    },
+    {
+      "role": "source_validation",
+      "state_id": 33,
+      "pairing_pass": true
+    }
+  ]
+}

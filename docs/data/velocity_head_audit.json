@@ -1,0 +1,20 @@
+{
+  "schema": "velocity_head_audit_v1",
+  "module": "action_generator.velocity_projection",
+  "weight_shape": [
+    7,
+    768
+  ],
+  "rank": 7,
+  "singular_values": [
+    0.5148711204528809,
+    0.4286951720714569,
+    0.41935187578201294,
+    0.40701085329055786,
+    0.3671109974384308,
+    0.3540708124637604,
+    0.34308817982673645
+  ],
+  "condition_number": 1.5006961822509766,
+  "implication": "full row rank; arbitrary 7D velocity residual is linearly representable with an unconstrained hidden delta"
+}

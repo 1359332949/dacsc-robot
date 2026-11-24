@@ -1,0 +1,6191 @@
+{
+  "schema": "frozen_egl_baseline_v1",
+  "render": "egl",
+  "seed_index": 1,
+  "rows": [
+    {
+      "case_id": "260f480dfa38ae5a1cfe6ab4",
+      "factor": "lighting",
+      "base_task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 100,
+      "init_agentview_sha256": "f9b6270a6c20546feb1f4c36f8e968e126db3983e32c6cd325674ef07b03a540",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 100
+        }
+      ]
+    },
+    {
+      "case_id": "6c5e826a4b500e66715842b0",
+      "factor": "lighting",
+      "base_task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 127,
+      "init_agentview_sha256": "a4c71be2db4f5f11c0a762ad87caff4b4be5392f12db6369e92d8babc10de666",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 120
+        },
+        {
+          "start": 120,
+          "end": 127
+        }
+      ]
+    },
+    {
+      "case_id": "44b86cc69b604627bf02d513",
+      "factor": "lighting",
+      "base_task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 94,
+      "init_agentview_sha256": "f6923a146eb80ba68b177117249098644cc54e72ec6c66dc92d405fc683aeafb",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 94
+        }
+      ]
+    },
+    {
+      "case_id": "800d8909fb4bc3cdd0ac8651",
+      "factor": "background",
+      "base_task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 116,
+      "init_agentview_sha256": "92418a691d18655f86fb0c122b6da194f97c79c53b64de580cf680e21cfdb9f0",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 116
+        }
+      ]
+    },
+    {
+      "case_id": "2394dfc73bd22efc84b9df52",
+      "factor": "background",
+      "base_task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+      "success": false,
+      "steps": 220,
+      "init_agentview_sha256": "257a4693547374a7d5624c5625006634d80575982825e02cd281248d241b18ea",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 120
+        },
+        {
+          "start": 120,
+          "end": 132
+        },
+        {
+          "start": 132,
+          "end": 144
+        },
+        {
+          "start": 144,
+          "end": 156
+        },
+        {
+          "start": 156,
+          "end": 168
+        },
+        {
+          "start": 168,
+          "end": 180
+        },
+        {
+          "start": 180,
+          "end": 192
+        },
+        {
+          "start": 192,
+          "end": 204
+        },
+        {
+          "start": 204,
+          "end": 216
+        },
+        {
+          "start": 216,
+          "end": 220
+        }
+      ]
+    },
+    {
+      "case_id": "451d4d5283da4bf94b611a95",
+      "factor": "background",
+      "base_task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 110,
+      "init_agentview_sha256": "7bac4877834c56a0b6a861e1425bcc479c7a3c7a0d0ae23c8c25812e9478e863",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 110
+        }
+      ]
+    },
+    {
+      "case_id": "c71fb60309bb3abd27edef73",
+      "factor": "background",
+      "base_task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+      "success": false,
+      "steps": 220,
+      "init_agentview_sha256": "5018ab76ffec1a77347fb6c825b53d9c801b527406bfd67909d723cded55446a",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 120
+        },
+        {
+          "start": 120,
+          "end": 132
+        },
+        {
+          "start": 132,
+          "end": 144
+        },
+        {
+          "start": 144,
+          "end": 156
+        },
+        {
+          "start": 156,
+          "end": 168
+        },
+        {
+          "start": 168,
+          "end": 180
+        },
+        {
+          "start": 180,
+          "end": 192
+        },
+        {
+          "start": 192,
+          "end": 204
+        },
+        {
+          "start": 204,
+          "end": 216
+        },
+        {
+          "start": 216,
+          "end": 220
+        }
+      ]
+    },
+    {
+      "case_id": "d10a1668e6e30258ca64ba89",
+      "factor": "sensor_noise",
+      "base_task": "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 216,
+      "init_agentview_sha256": "d1ec4275477c2ddff9c0f09941e0214d8cc7a0702ecab9dfb7522354c139c959",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 120
+        },
+        {
+          "start": 120,
+          "end": 132
+        },
+        {
+          "start": 132,
+          "end": 144
+        },
+        {
+          "start": 144,
+          "end": 156
+        },
+        {
+          "start": 156,
+          "end": 168
+        },
+        {
+          "start": 168,
+          "end": 180
+        },
+        {
+          "start": 180,
+          "end": 192
+        },
+        {
+          "start": 192,
+          "end": 204
+        },
+        {
+          "start": 204,
+          "end": 216
+        }
+      ]
+    },
+    {
+      "case_id": "1ac40af63b5cb206fa1a87ff",
+      "factor": "sensor_noise",
+      "base_task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 120,
+      "init_agentview_sha256": "c5af0199d72e1e5c93f947203e7d781dcc2eff48bf1ca53c56e4486a553a0c72",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 120
+        }
+      ]
+    },
+    {
+      "case_id": "9a2827472fab45e6e0abc9a7",
+      "factor": "sensor_noise",
+      "base_task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 99,
+      "init_agentview_sha256": "08ed04e924b12cf1a570a7f6019b795f7390173547453ff783b1346d58ef578f",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 99
+        }
+      ]
+    },
+    {
+      "case_id": "a63ae211ace3f870deb4457c",
+      "factor": "sensor_noise",
+      "base_task": "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate",
+      "success": false,
+      "steps": 220,
+      "init_agentview_sha256": "51373f7e6779ca0946b0fd109bf09eba7fabd992708d9d644207e2593f7dc58a",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 120
+        },
+        {
+          "start": 120,
+          "end": 132
+        },
+        {
+          "start": 132,
+          "end": 144
+        },
+        {
+          "start": 144,
+          "end": 156
+        },
+        {
+          "start": 156,
+          "end": 168
+        },
+        {
+          "start": 168,
+          "end": 180
+        },
+        {
+          "start": 180,
+          "end": 192
+        },
+        {
+          "start": 192,
+          "end": 204
+        },
+        {
+          "start": 204,
+          "end": 216
+        },
+        {
+          "start": 216,
+          "end": 220
+        }
+      ]
+    },
+    {
+      "case_id": "clean_7b3a2104f946feffbf23f05a",
+      "factor": "clean",
+      "base_task": "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 116,
+      "init_agentview_sha256": "6ec46b2c7492a9dadf887f3ccb4775d3f3d78d93aa73d42b436cccf96440b731",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 116
+        }
+      ]
+    },
+    {
+      "case_id": "9483c62e9ccc44ccf351379b",
+      "factor": "lighting",
+      "base_task": "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate",
+      "success": false,
+      "steps": 220,
+      "init_agentview_sha256": "9fcac2413c0bdaba47179d043237ebb4bed8c216ed32f8da81e621c6c8d7860f",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 120
+        },
+        {
+          "start": 120,
+          "end": 132
+        },
+        {
+          "start": 132,
+          "end": 144
+        },
+        {
+          "start": 144,
+          "end": 156
+        },
+        {
+          "start": 156,
+          "end": 168
+        },
+        {
+          "start": 168,
+          "end": 180
+        },
+        {
+          "start": 180,
+          "end": 192
+        },
+        {
+          "start": 192,
+          "end": 204
+        },
+        {
+          "start": 204,
+          "end": 216
+        },
+        {
+          "start": 216,
+          "end": 220
+        }
+      ]
+    },
+    {
+      "case_id": "ab9c5902be6e729c218ff1a8",
+      "factor": "lighting",
+      "base_task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 123,
+      "init_agentview_sha256": "6bd1cbea4426a656884f198c34b2049c909ca94056b08cba166ae3b42a61077c",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 120
+        },
+        {
+          "start": 120,
+          "end": 123
+        }
+      ]
+    },
+    {
+      "case_id": "eeefdf07e36e0b4cbea8ec39",
+      "factor": "lighting",
+      "base_task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 110,
+      "init_agentview_sha256": "593cf5c81687a7dad0b8767445d6063346e2c1f8a18ec0a4418d7f8741741374",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 110
+        }
+      ]
+    },
+    {
+      "case_id": "812b5e0de96c5d3d3af052b6",
+      "factor": "background",
+      "base_task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 98,
+      "init_agentview_sha256": "4232d2984dec6c3d0c828917aaeac47b12107c8af535b492e172b04d09861c91",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 98
+        }
+      ]
+    },
+    {
+      "case_id": "34e41085eb40929c9e32189e",
+      "factor": "background",
+      "base_task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 108,
+      "init_agentview_sha256": "5211a6863112ebf69211212edfc785b35103df0acbb52b03ab7240bc1c1a54a9",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        }
+      ]
+    },
+    {
+      "case_id": "fb2c93fc2cd4b6eca8912ca8",
+      "factor": "background",
+      "base_task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 118,
+      "init_agentview_sha256": "00b00817f270fbf01d272b4b6c1b6ca442c24c2630e616d0b2ea3024fa7d2cf5",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 118
+        }
+      ]
+    },
+    {
+      "case_id": "34f60c2ad49319e81d18c70b",
+      "factor": "background",
+      "base_task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "success": false,
+      "steps": 220,
+      "init_agentview_sha256": "55760befa2a3011ac02f5dd99b1ec3d737c4ad8f50d6f4406bb6dab2260c076e",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 120
+        },
+        {
+          "start": 120,
+          "end": 132
+        },
+        {
+          "start": 132,
+          "end": 144
+        },
+        {
+          "start": 144,
+          "end": 156
+        },
+        {
+          "start": 156,
+          "end": 168
+        },
+        {
+          "start": 168,
+          "end": 180
+        },
+        {
+          "start": 180,
+          "end": 192
+        },
+        {
+          "start": 192,
+          "end": 204
+        },
+        {
+          "start": 204,
+          "end": 216
+        },
+        {
+          "start": 216,
+          "end": 220
+        }
+      ]
+    },
+    {
+      "case_id": "d11a5908570c39a0bc352a5a",
+      "factor": "sensor_noise",
+      "base_task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 119,
+      "init_agentview_sha256": "8afacebee4ceb48a17b840ce6854aeeec43d68609227d0a7a19e3f6f5a7ee133",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 119
+        }
+      ]
+    },
+    {
+      "case_id": "7bcd821113099b91165fea6d",
+      "factor": "sensor_noise",
+      "base_task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 166,
+      "init_agentview_sha256": "05ae29183221bd8cc6861b886d070cc51e3384b4012d66569924c2a808e56bf6",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 120
+        },
+        {
+          "start": 120,
+          "end": 132
+        },
+        {
+          "start": 132,
+          "end": 144
+        },
+        {
+          "start": 144,
+          "end": 156
+        },
+        {
+          "start": 156,
+          "end": 166
+        }
+      ]
+    },
+    {
+      "case_id": "05a2e087b49114ba4a11204b",
+      "factor": "sensor_noise",
+      "base_task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 128,
+      "init_agentview_sha256": "ee19d4f447c7aa0cfa9f8d957cd1010c400ba60984c13adc5bba72b8e8eb88e7",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 120
+        },
+        {
+          "start": 120,
+          "end": 128
+        }
+      ]
+    },
+    {
+      "case_id": "4d8c976994c211cbd47334cc",
+      "factor": "sensor_noise",
+      "base_task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+      "success": false,
+      "steps": 220,
+      "init_agentview_sha256": "096ace58d80e37b5f3e3ba53cea41ee36c18acb4ea7cf35814b474791ce2e6fa",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 120
+        },
+        {
+          "start": 120,
+          "end": 132
+        },
+        {
+          "start": 132,
+          "end": 144
+        },
+        {
+          "start": 144,
+          "end": 156
+        },
+        {
+          "start": 156,
+          "end": 168
+        },
+        {
+          "start": 168,
+          "end": 180
+        },
+        {
+          "start": 180,
+          "end": 192
+        },
+        {
+          "start": 192,
+          "end": 204
+        },
+        {
+          "start": 204,
+          "end": 216
+        },
+        {
+          "start": 216,
+          "end": 220
+        }
+      ]
+    },
+    {
+      "case_id": "clean_74da4077f0571b787e7da5a7",
+      "factor": "clean",
+      "base_task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 83,
+      "init_agentview_sha256": "d7030f197a6a1ade6c25c193cb869f4f7bfce283cb7442ca6758d7491b1c472f",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 83
+        }
+      ]
+    },
+    {
+      "case_id": "a861b524a7c5075bb405dcec",
+      "factor": "lighting",
+      "base_task": "pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 121,
+      "init_agentview_sha256": "e7e76ad7a83b63279b88773f1df785d3ae348124df7c19d3c98b3dedc1c023f5",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 120
+        },
+        {
+          "start": 120,
+          "end": 121
+        }
+      ]
+    },
+    {
+      "case_id": "9b4fc8a339c2979d31daba94",
+      "factor": "lighting",
+      "base_task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 219,
+      "init_agentview_sha256": "645a4a8a62c801d19a8c91c244aa57c1bc524c667baa7b449a9c005f1e764efe",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 120
+        },
+        {
+          "start": 120,
+          "end": 132
+        },
+        {
+          "start": 132,
+          "end": 144
+        },
+        {
+          "start": 144,
+          "end": 156
+        },
+        {
+          "start": 156,
+          "end": 168
+        },
+        {
+          "start": 168,
+          "end": 180
+        },
+        {
+          "start": 180,
+          "end": 192
+        },
+        {
+          "start": 192,
+          "end": 204
+        },
+        {
+          "start": 204,
+          "end": 216
+        },
+        {
+          "start": 216,
+          "end": 219
+        }
+      ]
+    },
+    {
+      "case_id": "c2b40c2441dbfc7d229e74dc",
+      "factor": "lighting",
+      "base_task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+      "success": false,
+      "steps": 220,
+      "init_agentview_sha256": "3111caff6f32d6abf3a4ccfac8d7a7f026445d9ccf4090288ab65f10ae2cd3a3",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 120
+        },
+        {
+          "start": 120,
+          "end": 132
+        },
+        {
+          "start": 132,
+          "end": 144
+        },
+        {
+          "start": 144,
+          "end": 156
+        },
+        {
+          "start": 156,
+          "end": 168
+        },
+        {
+          "start": 168,
+          "end": 180
+        },
+        {
+          "start": 180,
+          "end": 192
+        },
+        {
+          "start": 192,
+          "end": 204
+        },
+        {
+          "start": 204,
+          "end": 216
+        },
+        {
+          "start": 216,
+          "end": 220
+        }
+      ]
+    },
+    {
+      "case_id": "a6a44da460e4d03dcdc9c351",
+      "factor": "lighting",
+      "base_task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 106,
+      "init_agentview_sha256": "19dcd33af11ccb31fe0c05bede562acaab8c76c0e503b57eb6af9e8198b66d36",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 106
+        }
+      ]
+    },
+    {
+      "case_id": "c2ec56926e653213cfd2e324",
+      "factor": "background",
+      "base_task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 96,
+      "init_agentview_sha256": "5533d3f2aa31364973d339d9e5fff8fd6ed34be0e684eb194c924f207b821331",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        }
+      ]
+    },
+    {
+      "case_id": "63bf3b8d60bbb2fdd492cb75",
+      "factor": "background",
+      "base_task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 95,
+      "init_agentview_sha256": "0978d04e117e2c8ec7e095328f2e34600beb153954dbafe12fec631fc905b092",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 95
+        }
+      ]
+    },
+    {
+      "case_id": "1f80bb87b8b30a1a90c033fb",
+      "factor": "background",
+      "base_task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 84,
+      "init_agentview_sha256": "27c551760dfb19a416e770f9b3cde8524f6bfef032d74d4cd75c11830fae14f9",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        }
+      ]
+    },
+    {
+      "case_id": "d4009212e035c43e3f7076db",
+      "factor": "background",
+      "base_task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "success": false,
+      "steps": 220,
+      "init_agentview_sha256": "8f04fc5c01c0737994dab264395ee62d1c8167d5210aa0a4eaea330ee5194318",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 120
+        },
+        {
+          "start": 120,
+          "end": 132
+        },
+        {
+          "start": 132,
+          "end": 144
+        },
+        {
+          "start": 144,
+          "end": 156
+        },
+        {
+          "start": 156,
+          "end": 168
+        },
+        {
+          "start": 168,
+          "end": 180
+        },
+        {
+          "start": 180,
+          "end": 192
+        },
+        {
+          "start": 192,
+          "end": 204
+        },
+        {
+          "start": 204,
+          "end": 216
+        },
+        {
+          "start": 216,
+          "end": 220
+        }
+      ]
+    },
+    {
+      "case_id": "d5bb1b7dd92c8a2af097198f",
+      "factor": "sensor_noise",
+      "base_task": "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 138,
+      "init_agentview_sha256": "d8dba8da290865c57284720d71367a5ee7045732f2eb4c534e46dc816d144c77",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 120
+        },
+        {
+          "start": 120,
+          "end": 132
+        },
+        {
+          "start": 132,
+          "end": 138
+        }
+      ]
+    },
+    {
+      "case_id": "c31dbfc54953ebb8ad93b276",
+      "factor": "sensor_noise",
+      "base_task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 131,
+      "init_agentview_sha256": "8a24d707e3404017cb31c30c00e8519f9676cd95c0beadef714cc140c583ff74",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 120
+        },
+        {
+          "start": 120,
+          "end": 131
+        }
+      ]
+    },
+    {
+      "case_id": "4832622edb4a76f005547b05",
+      "factor": "sensor_noise",
+      "base_task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 101,
+      "init_agentview_sha256": "0874ac0f6d6f1adff38cd7814a5c7b79f401a6237913b1ab9f0704d5207ffe1c",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 101
+        }
+      ]
+    },
+    {
+      "case_id": "clean_25eefa3907243c5956889cfa",
+      "factor": "clean",
+      "base_task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+      "success": false,
+      "steps": 220,
+      "init_agentview_sha256": "5195ca8837c8a868a08286408fe02a55f07f8bcb27c0425b7c122639635729f4",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 120
+        },
+        {
+          "start": 120,
+          "end": 132
+        },
+        {
+          "start": 132,
+          "end": 144
+        },
+        {
+          "start": 144,
+          "end": 156
+        },
+        {
+          "start": 156,
+          "end": 168
+        },
+        {
+          "start": 168,
+          "end": 180
+        },
+        {
+          "start": 180,
+          "end": 192
+        },
+        {
+          "start": 192,
+          "end": 204
+        },
+        {
+          "start": 204,
+          "end": 216
+        },
+        {
+          "start": 216,
+          "end": 220
+        }
+      ]
+    },
+    {
+      "case_id": "clean_9bd7f4f1a5c801ca5cf925b0",
+      "factor": "clean",
+      "base_task": "pick_up_the_black_bowl_next_to_the_plate_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 98,
+      "init_agentview_sha256": "6b383e7b237bf2108fff006df579a863d6f9fe83184c9b56438784610c19814c",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 98
+        }
+      ]
+    },
+    {
+      "case_id": "48c5f5e426f8006a5c08d586",
+      "factor": "lighting",
+      "base_task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 219,
+      "init_agentview_sha256": "645a4a8a62c801d19a8c91c244aa57c1bc524c667baa7b449a9c005f1e764efe",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 120
+        },
+        {
+          "start": 120,
+          "end": 132
+        },
+        {
+          "start": 132,
+          "end": 144
+        },
+        {
+          "start": 144,
+          "end": 156
+        },
+        {
+          "start": 156,
+          "end": 168
+        },
+        {
+          "start": 168,
+          "end": 180
+        },
+        {
+          "start": 180,
+          "end": 192
+        },
+        {
+          "start": 192,
+          "end": 204
+        },
+        {
+          "start": 204,
+          "end": 216
+        },
+        {
+          "start": 216,
+          "end": 219
+        }
+      ]
+    },
+    {
+      "case_id": "7bb89a9650ff3abfe48cb96a",
+      "factor": "lighting",
+      "base_task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 219,
+      "init_agentview_sha256": "645a4a8a62c801d19a8c91c244aa57c1bc524c667baa7b449a9c005f1e764efe",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 120
+        },
+        {
+          "start": 120,
+          "end": 132
+        },
+        {
+          "start": 132,
+          "end": 144
+        },
+        {
+          "start": 144,
+          "end": 156
+        },
+        {
+          "start": 156,
+          "end": 168
+        },
+        {
+          "start": 168,
+          "end": 180
+        },
+        {
+          "start": 180,
+          "end": 192
+        },
+        {
+          "start": 192,
+          "end": 204
+        },
+        {
+          "start": 204,
+          "end": 216
+        },
+        {
+          "start": 216,
+          "end": 219
+        }
+      ]
+    },
+    {
+      "case_id": "ff1eb7e58555351a29bc38ef",
+      "factor": "lighting",
+      "base_task": "pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate",
+      "success": false,
+      "steps": 220,
+      "init_agentview_sha256": "b219836246328a925c946bcfb1d23f42b75cb3a569c824e1b6ac8bdc516674e9",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 120
+        },
+        {
+          "start": 120,
+          "end": 132
+        },
+        {
+          "start": 132,
+          "end": 144
+        },
+        {
+          "start": 144,
+          "end": 156
+        },
+        {
+          "start": 156,
+          "end": 168
+        },
+        {
+          "start": 168,
+          "end": 180
+        },
+        {
+          "start": 180,
+          "end": 192
+        },
+        {
+          "start": 192,
+          "end": 204
+        },
+        {
+          "start": 204,
+          "end": 216
+        },
+        {
+          "start": 216,
+          "end": 220
+        }
+      ]
+    },
+    {
+      "case_id": "b2590175d0f2a15c297828a5",
+      "factor": "lighting",
+      "base_task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 100,
+      "init_agentview_sha256": "b0b2a6d9b62fc153306cbf5587a81a2cdc14d5f44022efc79b1a4ce87a70a745",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 100
+        }
+      ]
+    },
+    {
+      "case_id": "6a3b246ac12849cbf06ba83c",
+      "factor": "background",
+      "base_task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 116,
+      "init_agentview_sha256": "9e5fbbf3af45fd1e4c7f9aeacbdade69a8ad849ce530f175300a84f762abb2c2",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 116
+        }
+      ]
+    },
+    {
+      "case_id": "f769d77490544e345ff5b8f2",
+      "factor": "background",
+      "base_task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "success": false,
+      "steps": 220,
+      "init_agentview_sha256": "eef2945c8ebcb7524a9a9d23da2a641e20950b8eb2c37f5e40fb362774d71ee2",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 120
+        },
+        {
+          "start": 120,
+          "end": 132
+        },
+        {
+          "start": 132,
+          "end": 144
+        },
+        {
+          "start": 144,
+          "end": 156
+        },
+        {
+          "start": 156,
+          "end": 168
+        },
+        {
+          "start": 168,
+          "end": 180
+        },
+        {
+          "start": 180,
+          "end": 192
+        },
+        {
+          "start": 192,
+          "end": 204
+        },
+        {
+          "start": 204,
+          "end": 216
+        },
+        {
+          "start": 216,
+          "end": 220
+        }
+      ]
+    },
+    {
+      "case_id": "95599a32b2a06ea8e3c757ca",
+      "factor": "background",
+      "base_task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 135,
+      "init_agentview_sha256": "1de5d641133438121142e4054d0b5d7c0c82d2c91c4f308c0e3053b45c788f25",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 120
+        },
+        {
+          "start": 120,
+          "end": 132
+        },
+        {
+          "start": 132,
+          "end": 135
+        }
+      ]
+    },
+    {
+      "case_id": "ea9df039791e3060e68ecb80",
+      "factor": "background",
+      "base_task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 158,
+      "init_agentview_sha256": "44c3f538efbb07db5fbf89113b2738e28bf5429267ed5e188bf24214609b83d7",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 120
+        },
+        {
+          "start": 120,
+          "end": 132
+        },
+        {
+          "start": 132,
+          "end": 144
+        },
+        {
+          "start": 144,
+          "end": 156
+        },
+        {
+          "start": 156,
+          "end": 158
+        }
+      ]
+    },
+    {
+      "case_id": "aa96bf31685d038f1ccca0b4",
+      "factor": "sensor_noise",
+      "base_task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+      "success": false,
+      "steps": 220,
+      "init_agentview_sha256": "84f53fdea27c6e822d9e5adf254a9f0a09b9bec063d3fa424cfa47a34fd10b72",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 120
+        },
+        {
+          "start": 120,
+          "end": 132
+        },
+        {
+          "start": 132,
+          "end": 144
+        },
+        {
+          "start": 144,
+          "end": 156
+        },
+        {
+          "start": 156,
+          "end": 168
+        },
+        {
+          "start": 168,
+          "end": 180
+        },
+        {
+          "start": 180,
+          "end": 192
+        },
+        {
+          "start": 192,
+          "end": 204
+        },
+        {
+          "start": 204,
+          "end": 216
+        },
+        {
+          "start": 216,
+          "end": 220
+        }
+      ]
+    },
+    {
+      "case_id": "b0aa244cf3afa8d4827c8f53",
+      "factor": "sensor_noise",
+      "base_task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 104,
+      "init_agentview_sha256": "8a39b2247fdb3e634ef2caa3e56f19eb450cc9ded94cf9ac73bc9fb2312ca1bd",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 104
+        }
+      ]
+    },
+    {
+      "case_id": "31ee3c9ef1bf8221f99a7bb4",
+      "factor": "sensor_noise",
+      "base_task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+      "success": false,
+      "steps": 220,
+      "init_agentview_sha256": "98bb1596df922eba223a3af1acdde727582da65e448fa1a2aee86a3bcd3bafea",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 120
+        },
+        {
+          "start": 120,
+          "end": 132
+        },
+        {
+          "start": 132,
+          "end": 144
+        },
+        {
+          "start": 144,
+          "end": 156
+        },
+        {
+          "start": 156,
+          "end": 168
+        },
+        {
+          "start": 168,
+          "end": 180
+        },
+        {
+          "start": 180,
+          "end": 192
+        },
+        {
+          "start": 192,
+          "end": 204
+        },
+        {
+          "start": 204,
+          "end": 216
+        },
+        {
+          "start": 216,
+          "end": 220
+        }
+      ]
+    },
+    {
+      "case_id": "clean_3adf13803680f268479750e9",
+      "factor": "clean",
+      "base_task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 119,
+      "init_agentview_sha256": "c84ea2849bf6c388b9288465b79f128ee50cabdd5387da41927a3685bb213264",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 119
+        }
+      ]
+    },
+    {
+      "case_id": "clean_9f0d3717f1f17095d5da34e7",
+      "factor": "clean",
+      "base_task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 77,
+      "init_agentview_sha256": "df4fff492f05a5bd3ee54820aded360e3355ec32af5fd38ce10be01495ef5104",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 77
+        }
+      ]
+    },
+    {
+      "case_id": "734d3d4af8d6b04b33187f95",
+      "factor": "lighting",
+      "base_task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+      "success": false,
+      "steps": 220,
+      "init_agentview_sha256": "496cdffd894b2737e0a8edc4a7e09091adfbad3ed5f81af3d3ebab4538f97398",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 120
+        },
+        {
+          "start": 120,
+          "end": 132
+        },
+        {
+          "start": 132,
+          "end": 144
+        },
+        {
+          "start": 144,
+          "end": 156
+        },
+        {
+          "start": 156,
+          "end": 168
+        },
+        {
+          "start": 168,
+          "end": 180
+        },
+        {
+          "start": 180,
+          "end": 192
+        },
+        {
+          "start": 192,
+          "end": 204
+        },
+        {
+          "start": 204,
+          "end": 216
+        },
+        {
+          "start": 216,
+          "end": 220
+        }
+      ]
+    },
+    {
+      "case_id": "a7cce4f24d150da551883e11",
+      "factor": "lighting",
+      "base_task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 91,
+      "init_agentview_sha256": "b116117aaa59cbc443d34ecf43e38bd4e4293c09b428384e3b43dd5687af3f71",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 91
+        }
+      ]
+    },
+    {
+      "case_id": "6b142b87741e2537ff1f11b4",
+      "factor": "lighting",
+      "base_task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 85,
+      "init_agentview_sha256": "ceb152c3298ce6508dbdbe0e8882abaf58a380742d752fa1d9140704c96c5dee",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 85
+        }
+      ]
+    },
+    {
+      "case_id": "58374a4e57b5316b75daa5a8",
+      "factor": "lighting",
+      "base_task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 108,
+      "init_agentview_sha256": "1b83ef7c1cf7fca0eddfa99820b799a11887e3ad0e1cb4c5d365cad48c62a44b",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        }
+      ]
+    },
+    {
+      "case_id": "e67548ff2cbebe1ca8a7b35e",
+      "factor": "background",
+      "base_task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 109,
+      "init_agentview_sha256": "8918f97653a8366062ca535762304748f9f488c6ff75f3dbf101e26e49f045f7",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 109
+        }
+      ]
+    },
+    {
+      "case_id": "752ca42ecf1bafb47444baaf",
+      "factor": "background",
+      "base_task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 120,
+      "init_agentview_sha256": "b7fc03ded0cf5f6f5edd96acf0164cc3d54483b17733492b2274038e2c056c21",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 120
+        }
+      ]
+    },
+    {
+      "case_id": "c03dfc439bb66865a9f3a422",
+      "factor": "background",
+      "base_task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 95,
+      "init_agentview_sha256": "6d18b193063cea66d76f8f6164316c324ae6c788257527986a84653911d00db6",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 95
+        }
+      ]
+    },
+    {
+      "case_id": "8515f621f7ce09addd6043fc",
+      "factor": "sensor_noise",
+      "base_task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 121,
+      "init_agentview_sha256": "9201c884e1bf3c69886b4f43c52c95f3204c4db7afc6990db5bbf8c2596321e7",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 120
+        },
+        {
+          "start": 120,
+          "end": 121
+        }
+      ]
+    },
+    {
+      "case_id": "537c44cf53786dc807cc4fb8",
+      "factor": "sensor_noise",
+      "base_task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "success": false,
+      "steps": 220,
+      "init_agentview_sha256": "61fb309b9719feb6f8bd49f80978839e146dfda6257083b288e57f0a36201b15",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 120
+        },
+        {
+          "start": 120,
+          "end": 132
+        },
+        {
+          "start": 132,
+          "end": 144
+        },
+        {
+          "start": 144,
+          "end": 156
+        },
+        {
+          "start": 156,
+          "end": 168
+        },
+        {
+          "start": 168,
+          "end": 180
+        },
+        {
+          "start": 180,
+          "end": 192
+        },
+        {
+          "start": 192,
+          "end": 204
+        },
+        {
+          "start": 204,
+          "end": 216
+        },
+        {
+          "start": 216,
+          "end": 220
+        }
+      ]
+    },
+    {
+      "case_id": "a18e0e8cf110044fac201569",
+      "factor": "sensor_noise",
+      "base_task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 217,
+      "init_agentview_sha256": "e622aa4211992cd4e61a65c04a82956196b41c77cd1158455f79ec2e563082d3",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 120
+        },
+        {
+          "start": 120,
+          "end": 132
+        },
+        {
+          "start": 132,
+          "end": 144
+        },
+        {
+          "start": 144,
+          "end": 156
+        },
+        {
+          "start": 156,
+          "end": 168
+        },
+        {
+          "start": 168,
+          "end": 180
+        },
+        {
+          "start": 180,
+          "end": 192
+        },
+        {
+          "start": 192,
+          "end": 204
+        },
+        {
+          "start": 204,
+          "end": 216
+        },
+        {
+          "start": 216,
+          "end": 217
+        }
+      ]
+    },
+    {
+      "case_id": "adbef345ee9c87c18c78f860",
+      "factor": "sensor_noise",
+      "base_task": "pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate",
+      "success": false,
+      "steps": 220,
+      "init_agentview_sha256": "6b3ee30eabc8be97eb7d641fcfa59bc16554a8946c303160becdeef1046cb802",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 120
+        },
+        {
+          "start": 120,
+          "end": 132
+        },
+        {
+          "start": 132,
+          "end": 144
+        },
+        {
+          "start": 144,
+          "end": 156
+        },
+        {
+          "start": 156,
+          "end": 168
+        },
+        {
+          "start": 168,
+          "end": 180
+        },
+        {
+          "start": 180,
+          "end": 192
+        },
+        {
+          "start": 192,
+          "end": 204
+        },
+        {
+          "start": 204,
+          "end": 216
+        },
+        {
+          "start": 216,
+          "end": 220
+        }
+      ]
+    },
+    {
+      "case_id": "clean_461aa99ff7ae2e71a74745fe",
+      "factor": "clean",
+      "base_task": "pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 100,
+      "init_agentview_sha256": "131151ff95c8d302e66ea4d71f3da246dcc0d9025c772bea7a06a9baae54a3c6",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 100
+        }
+      ]
+    },
+    {
+      "case_id": "d09f6ffb1b6e044de0e2a00c",
+      "factor": "lighting",
+      "base_task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 101,
+      "init_agentview_sha256": "0e8797f3c8d9c627e9057761a4720d1accd4bf5965a143f6afb5c83e9a08af64",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 101
+        }
+      ]
+    },
+    {
+      "case_id": "e3cb3b3fa84a3a4e2bd54c98",
+      "factor": "lighting",
+      "base_task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 93,
+      "init_agentview_sha256": "3f967f91be1d3a3fa8c8c2f865a641d9952bc5d9f99ff5f96eb77c727d498e87",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 93
+        }
+      ]
+    },
+    {
+      "case_id": "95cbec413654751b1cde82b0",
+      "factor": "lighting",
+      "base_task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 171,
+      "init_agentview_sha256": "6903a9b9fc912cf6b4b01733bfc8dfe1973773df59669b5bd9a57c991ea5355e",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 120
+        },
+        {
+          "start": 120,
+          "end": 132
+        },
+        {
+          "start": 132,
+          "end": 144
+        },
+        {
+          "start": 144,
+          "end": 156
+        },
+        {
+          "start": 156,
+          "end": 168
+        },
+        {
+          "start": 168,
+          "end": 171
+        }
+      ]
+    },
+    {
+      "case_id": "36f206329f1c1c5275cdfc66",
+      "factor": "lighting",
+      "base_task": "pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 121,
+      "init_agentview_sha256": "e7e76ad7a83b63279b88773f1df785d3ae348124df7c19d3c98b3dedc1c023f5",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 120
+        },
+        {
+          "start": 120,
+          "end": 121
+        }
+      ]
+    },
+    {
+      "case_id": "6084fd23c807006a9ec4a099",
+      "factor": "background",
+      "base_task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 120,
+      "init_agentview_sha256": "5f327dfbbf572ab5b63316bb1dc7765e67d30310ed384192e63666585aae78ea",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 120
+        }
+      ]
+    },
+    {
+      "case_id": "db52f74d7afc5ee4e7baef3d",
+      "factor": "background",
+      "base_task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "success": false,
+      "steps": 220,
+      "init_agentview_sha256": "25aeb3bc83fd525e52a09c7a8c8c6b9a1ee8010cb808a29fde1ecda2bdf793d9",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 120
+        },
+        {
+          "start": 120,
+          "end": 132
+        },
+        {
+          "start": 132,
+          "end": 144
+        },
+        {
+          "start": 144,
+          "end": 156
+        },
+        {
+          "start": 156,
+          "end": 168
+        },
+        {
+          "start": 168,
+          "end": 180
+        },
+        {
+          "start": 180,
+          "end": 192
+        },
+        {
+          "start": 192,
+          "end": 204
+        },
+        {
+          "start": 204,
+          "end": 216
+        },
+        {
+          "start": 216,
+          "end": 220
+        }
+      ]
+    },
+    {
+      "case_id": "70df83d6d048882f8b83d81d",
+      "factor": "background",
+      "base_task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 81,
+      "init_agentview_sha256": "99e0ebaa331c21d5b1e686e7f44e100353512716d1d2d508affb145e4737cebd",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 81
+        }
+      ]
+    },
+    {
+      "case_id": "f839ded9ddcacca5f47d08ca",
+      "factor": "background",
+      "base_task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 117,
+      "init_agentview_sha256": "e610fef1c5ed9f9f7a2a1e6f7de7482a516721f3a9779b1a847d65db494aa70a",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 117
+        }
+      ]
+    },
+    {
+      "case_id": "3d16d19504b303a732927434",
+      "factor": "sensor_noise",
+      "base_task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "success": false,
+      "steps": 220,
+      "init_agentview_sha256": "79a5eb62c631862b876a954391f1a42bd526fe4daa24cd7e56ff2d04a51758e2",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 120
+        },
+        {
+          "start": 120,
+          "end": 132
+        },
+        {
+          "start": 132,
+          "end": 144
+        },
+        {
+          "start": 144,
+          "end": 156
+        },
+        {
+          "start": 156,
+          "end": 168
+        },
+        {
+          "start": 168,
+          "end": 180
+        },
+        {
+          "start": 180,
+          "end": 192
+        },
+        {
+          "start": 192,
+          "end": 204
+        },
+        {
+          "start": 204,
+          "end": 216
+        },
+        {
+          "start": 216,
+          "end": 220
+        }
+      ]
+    },
+    {
+      "case_id": "c799396aefd5984dc17e0980",
+      "factor": "sensor_noise",
+      "base_task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "success": false,
+      "steps": 220,
+      "init_agentview_sha256": "e5055f0b098ba594ee035c0c4c2f5f8c8560c468678ba6d4d36e4cacfb11d563",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 120
+        },
+        {
+          "start": 120,
+          "end": 132
+        },
+        {
+          "start": 132,
+          "end": 144
+        },
+        {
+          "start": 144,
+          "end": 156
+        },
+        {
+          "start": 156,
+          "end": 168
+        },
+        {
+          "start": 168,
+          "end": 180
+        },
+        {
+          "start": 180,
+          "end": 192
+        },
+        {
+          "start": 192,
+          "end": 204
+        },
+        {
+          "start": 204,
+          "end": 216
+        },
+        {
+          "start": 216,
+          "end": 220
+        }
+      ]
+    },
+    {
+      "case_id": "f26adf752cc7294f4d63ddd0",
+      "factor": "sensor_noise",
+      "base_task": "pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 101,
+      "init_agentview_sha256": "b78fea64c6238bb3a6175529eee2c58535bd24ba60570006e4d00611fc2c0423",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 101
+        }
+      ]
+    },
+    {
+      "case_id": "3334a1f1c3a0672b17618b90",
+      "factor": "sensor_noise",
+      "base_task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 118,
+      "init_agentview_sha256": "7520b8181262c9b0e400a96fa66ba297ee94d85dcfae0eb54b2ff22fc56bdf79",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 118
+        }
+      ]
+    },
+    {
+      "case_id": "clean_85c3af5bb68bc8ec5351f439",
+      "factor": "clean",
+      "base_task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 108,
+      "init_agentview_sha256": "a5f9159b5a54ee006ebde45f39f1f898d883ee4a01b7fc8f55a2c739ab462e46",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        }
+      ]
+    },
+    {
+      "case_id": "b21a7534610471bc409b5a97",
+      "factor": "lighting",
+      "base_task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 98,
+      "init_agentview_sha256": "d295a30d96ef230527c16b394d30a510b9cd6c0735d80d3cc853072895e73f62",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 98
+        }
+      ]
+    },
+    {
+      "case_id": "86ea35158f8967fd47bbe6c8",
+      "factor": "lighting",
+      "base_task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+      "success": false,
+      "steps": 220,
+      "init_agentview_sha256": "496cdffd894b2737e0a8edc4a7e09091adfbad3ed5f81af3d3ebab4538f97398",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 120
+        },
+        {
+          "start": 120,
+          "end": 132
+        },
+        {
+          "start": 132,
+          "end": 144
+        },
+        {
+          "start": 144,
+          "end": 156
+        },
+        {
+          "start": 156,
+          "end": 168
+        },
+        {
+          "start": 168,
+          "end": 180
+        },
+        {
+          "start": 180,
+          "end": 192
+        },
+        {
+          "start": 192,
+          "end": 204
+        },
+        {
+          "start": 204,
+          "end": 216
+        },
+        {
+          "start": 216,
+          "end": 220
+        }
+      ]
+    },
+    {
+      "case_id": "32c1ebe6e4d6cb178bfb0a0b",
+      "factor": "lighting",
+      "base_task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 127,
+      "init_agentview_sha256": "a4c71be2db4f5f11c0a762ad87caff4b4be5392f12db6369e92d8babc10de666",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 120
+        },
+        {
+          "start": 120,
+          "end": 127
+        }
+      ]
+    },
+    {
+      "case_id": "d620bf5c2a9ff266046162b6",
+      "factor": "lighting",
+      "base_task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 84,
+      "init_agentview_sha256": "2841f3bfaa7950c435491005bde32957827afab9a9e9d676298d5be0a5c8eb8e",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        }
+      ]
+    },
+    {
+      "case_id": "ea09068ddd4eeecc1bf0b4a1",
+      "factor": "background",
+      "base_task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "success": false,
+      "steps": 220,
+      "init_agentview_sha256": "ff4fa5ff2eba731156cbbcfb799b0093120aac6e5bedc179f9042f0a9a1c7a9a",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 120
+        },
+        {
+          "start": 120,
+          "end": 132
+        },
+        {
+          "start": 132,
+          "end": 144
+        },
+        {
+          "start": 144,
+          "end": 156
+        },
+        {
+          "start": 156,
+          "end": 168
+        },
+        {
+          "start": 168,
+          "end": 180
+        },
+        {
+          "start": 180,
+          "end": 192
+        },
+        {
+          "start": 192,
+          "end": 204
+        },
+        {
+          "start": 204,
+          "end": 216
+        },
+        {
+          "start": 216,
+          "end": 220
+        }
+      ]
+    },
+    {
+      "case_id": "ae32bc1ab77c25b035718b60",
+      "factor": "background",
+      "base_task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 126,
+      "init_agentview_sha256": "92525a9cf3573ad24daf5e947cf09402cac47ba74f88aec0490e84542f5a6f86",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 120
+        },
+        {
+          "start": 120,
+          "end": 126
+        }
+      ]
+    },
+    {
+      "case_id": "f02d68c51294f0479197a2f3",
+      "factor": "background",
+      "base_task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 122,
+      "init_agentview_sha256": "0ee273f47fa6c818f77acc05e3f3b30acbcd4239dea05cf26d2bf047ced709b1",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 120
+        },
+        {
+          "start": 120,
+          "end": 122
+        }
+      ]
+    },
+    {
+      "case_id": "28379ab819940b2bae111202",
+      "factor": "sensor_noise",
+      "base_task": "pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 117,
+      "init_agentview_sha256": "c2a03548a0e127d833b9a69ea686fb3e4553a2ec099ebfc3eb50e1d944ec26c1",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 117
+        }
+      ]
+    },
+    {
+      "case_id": "18686c3762693988cb814119",
+      "factor": "sensor_noise",
+      "base_task": "pick_up_the_black_bowl_next_to_the_plate_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 96,
+      "init_agentview_sha256": "64435ed266c2e97f3c61f29109c7ac563dcfb8dbd42412f215548940c2d29e59",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        }
+      ]
+    },
+    {
+      "case_id": "94221db7af991abeed5ea8f6",
+      "factor": "sensor_noise",
+      "base_task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "success": false,
+      "steps": 220,
+      "init_agentview_sha256": "a8619de2a364050467270849868a21a5102fd4badbe99ad415795a02b3b989ea",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 120
+        },
+        {
+          "start": 120,
+          "end": 132
+        },
+        {
+          "start": 132,
+          "end": 144
+        },
+        {
+          "start": 144,
+          "end": 156
+        },
+        {
+          "start": 156,
+          "end": 168
+        },
+        {
+          "start": 168,
+          "end": 180
+        },
+        {
+          "start": 180,
+          "end": 192
+        },
+        {
+          "start": 192,
+          "end": 204
+        },
+        {
+          "start": 204,
+          "end": 216
+        },
+        {
+          "start": 216,
+          "end": 220
+        }
+      ]
+    },
+    {
+      "case_id": "7a456242c9d69220ee747328",
+      "factor": "sensor_noise",
+      "base_task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 81,
+      "init_agentview_sha256": "07bcb352a807937be2d58daa03712d9855fac92a2fab56afbfc139a085103120",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 81
+        }
+      ]
+    },
+    {
+      "case_id": "clean_716b94a92dcadeb19bb4aef6",
+      "factor": "clean",
+      "base_task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 104,
+      "init_agentview_sha256": "83a5885776274daeba7433d6562a8f2dbbddc9ed574f5e3a159f6bab41ac4c0b",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 104
+        }
+      ]
+    },
+    {
+      "case_id": "7980e32cca8cc1820b8e9cbf",
+      "factor": "lighting",
+      "base_task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 104,
+      "init_agentview_sha256": "31891a8c323de6c15fbca21819e9a26c81a71c41eea40e9686e0f8d01e1767c8",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 104
+        }
+      ]
+    },
+    {
+      "case_id": "83326bf78cf7e67f0fc7696c",
+      "factor": "lighting",
+      "base_task": "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate",
+      "success": false,
+      "steps": 220,
+      "init_agentview_sha256": "5359def37195c149f4b9f100c322eb10b910d42915719bbfe1bd7b78e383cbc7",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 120
+        },
+        {
+          "start": 120,
+          "end": 132
+        },
+        {
+          "start": 132,
+          "end": 144
+        },
+        {
+          "start": 144,
+          "end": 156
+        },
+        {
+          "start": 156,
+          "end": 168
+        },
+        {
+          "start": 168,
+          "end": 180
+        },
+        {
+          "start": 180,
+          "end": 192
+        },
+        {
+          "start": 192,
+          "end": 204
+        },
+        {
+          "start": 204,
+          "end": 216
+        },
+        {
+          "start": 216,
+          "end": 220
+        }
+      ]
+    },
+    {
+      "case_id": "c03e1a782928638880efb08d",
+      "factor": "lighting",
+      "base_task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 84,
+      "init_agentview_sha256": "f1b9e2762a0a30339d5101e627facc2408848833e3da551d06b1a136e8c0483c",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        }
+      ]
+    },
+    {
+      "case_id": "c6224ce1f06d19c2455895e9",
+      "factor": "lighting",
+      "base_task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 118,
+      "init_agentview_sha256": "6a3fe39e8809c0e7617b07de602a774cc723fff1251af23d7073c30844b6ab77",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 118
+        }
+      ]
+    },
+    {
+      "case_id": "633f01dd7271d56b67fbfb82",
+      "factor": "background",
+      "base_task": "pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate",
+      "success": false,
+      "steps": 220,
+      "init_agentview_sha256": "399ac93e562aab001e845a8a40f9ad6a3e42220d9b0b096d296e7140670bf37a",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 120
+        },
+        {
+          "start": 120,
+          "end": 132
+        },
+        {
+          "start": 132,
+          "end": 144
+        },
+        {
+          "start": 144,
+          "end": 156
+        },
+        {
+          "start": 156,
+          "end": 168
+        },
+        {
+          "start": 168,
+          "end": 180
+        },
+        {
+          "start": 180,
+          "end": 192
+        },
+        {
+          "start": 192,
+          "end": 204
+        },
+        {
+          "start": 204,
+          "end": 216
+        },
+        {
+          "start": 216,
+          "end": 220
+        }
+      ]
+    },
+    {
+      "case_id": "59e33e7a354085f721bae4a6",
+      "factor": "background",
+      "base_task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "success": false,
+      "steps": 220,
+      "init_agentview_sha256": "29ab4c3d7be066b8b94e438ad82af0781913df211cd2afb2b96ef7ef4f1f9d83",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 120
+        },
+        {
+          "start": 120,
+          "end": 132
+        },
+        {
+          "start": 132,
+          "end": 144
+        },
+        {
+          "start": 144,
+          "end": 156
+        },
+        {
+          "start": 156,
+          "end": 168
+        },
+        {
+          "start": 168,
+          "end": 180
+        },
+        {
+          "start": 180,
+          "end": 192
+        },
+        {
+          "start": 192,
+          "end": 204
+        },
+        {
+          "start": 204,
+          "end": 216
+        },
+        {
+          "start": 216,
+          "end": 220
+        }
+      ]
+    },
+    {
+      "case_id": "54a816350ae1424dc7fd668f",
+      "factor": "background",
+      "base_task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "success": false,
+      "steps": 220,
+      "init_agentview_sha256": "3387c9ef63c2f2492ad6286de7cac139a601c99aa914a5334957d37e6d4ea415",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 120
+        },
+        {
+          "start": 120,
+          "end": 132
+        },
+        {
+          "start": 132,
+          "end": 144
+        },
+        {
+          "start": 144,
+          "end": 156
+        },
+        {
+          "start": 156,
+          "end": 168
+        },
+        {
+          "start": 168,
+          "end": 180
+        },
+        {
+          "start": 180,
+          "end": 192
+        },
+        {
+          "start": 192,
+          "end": 204
+        },
+        {
+          "start": 204,
+          "end": 216
+        },
+        {
+          "start": 216,
+          "end": 220
+        }
+      ]
+    },
+    {
+      "case_id": "3c22dc5799d7c86f110fd202",
+      "factor": "background",
+      "base_task": "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 136,
+      "init_agentview_sha256": "c911cb456cc67d4af1c3d08e39253cdeab752b5af74ffff6f73b3b43b69b851a",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 120
+        },
+        {
+          "start": 120,
+          "end": 132
+        },
+        {
+          "start": 132,
+          "end": 136
+        }
+      ]
+    },
+    {
+      "case_id": "bbd1bcb9649b33876a03fcd4",
+      "factor": "sensor_noise",
+      "base_task": "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate",
+      "success": false,
+      "steps": 220,
+      "init_agentview_sha256": "e53cd700bbbfe7a31d62b69c8c226070503e014478c40ccd56ea49261604ab74",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 120
+        },
+        {
+          "start": 120,
+          "end": 132
+        },
+        {
+          "start": 132,
+          "end": 144
+        },
+        {
+          "start": 144,
+          "end": 156
+        },
+        {
+          "start": 156,
+          "end": 168
+        },
+        {
+          "start": 168,
+          "end": 180
+        },
+        {
+          "start": 180,
+          "end": 192
+        },
+        {
+          "start": 192,
+          "end": 204
+        },
+        {
+          "start": 204,
+          "end": 216
+        },
+        {
+          "start": 216,
+          "end": 220
+        }
+      ]
+    },
+    {
+      "case_id": "c1b468cf01e901553e96299c",
+      "factor": "sensor_noise",
+      "base_task": "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 120,
+      "init_agentview_sha256": "93e9fa74e394a76849f6427f0c205103197bae5a363efd8551152aa627920fcc",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 120
+        }
+      ]
+    },
+    {
+      "case_id": "fa87a1d88283b9c2853efbdd",
+      "factor": "sensor_noise",
+      "base_task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 121,
+      "init_agentview_sha256": "140b6d46703dafdc4a646029ef289bbe53197f4e6043ef5529863ff9ef4d465e",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 120
+        },
+        {
+          "start": 120,
+          "end": 121
+        }
+      ]
+    },
+    {
+      "case_id": "fefe134dc96bca5f4eee8b14",
+      "factor": "sensor_noise",
+      "base_task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "success": false,
+      "steps": 220,
+      "init_agentview_sha256": "adda2a2df42fc57f6f95ed65e89616280aeee47a7c09e109ea382b000883b274",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 108
+        },
+        {
+          "start": 108,
+          "end": 120
+        },
+        {
+          "start": 120,
+          "end": 132
+        },
+        {
+          "start": 132,
+          "end": 144
+        },
+        {
+          "start": 144,
+          "end": 156
+        },
+        {
+          "start": 156,
+          "end": 168
+        },
+        {
+          "start": 168,
+          "end": 180
+        },
+        {
+          "start": 180,
+          "end": 192
+        },
+        {
+          "start": 192,
+          "end": 204
+        },
+        {
+          "start": 204,
+          "end": 216
+        },
+        {
+          "start": 216,
+          "end": 220
+        }
+      ]
+    },
+    {
+      "case_id": "clean_9570527652e7369e8e55140d",
+      "factor": "clean",
+      "base_task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 107,
+      "init_agentview_sha256": "ffdcabb4bc2a214dfb6fec83b499d95dc338ba7499496801e77e6fc86a76a686",
+      "seed_index": 1,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 24
+        },
+        {
+          "start": 24,
+          "end": 36
+        },
+        {
+          "start": 36,
+          "end": 48
+        },
+        {
+          "start": 48,
+          "end": 60
+        },
+        {
+          "start": 60,
+          "end": 72
+        },
+        {
+          "start": 72,
+          "end": 84
+        },
+        {
+          "start": 84,
+          "end": 96
+        },
+        {
+          "start": 96,
+          "end": 107
+        }
+      ]
+    }
+  ]
+}

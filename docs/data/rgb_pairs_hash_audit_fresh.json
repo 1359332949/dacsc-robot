@@ -1,0 +1,13 @@
+{
+  "schema": "rgb_pairs_hash_audit_v1",
+  "file": "runs/patch_diag/rgb_oracle_pairs_fresh.npz",
+  "file_sha256": "cc3c9edcde9eef9ac359d2117bb1938a8d1bcd103b912234506f1cc68d60711d",
+  "array_sha256": {
+    "clean_agentview": "40c1eec3c2ce0f9b2f4e2545b2fed37af1cf8c04346209760c41682d6f60001b",
+    "shift_agentview": "ad8f467d08884a0798f1e0912729d8acaa15e2467362772c41215d1c2d596d07",
+    "clean_eye": "4e2b5942fc1e747cd124972341c7ef1472aef94deba9b2f4ba1577fd87217cd3",
+    "shift_eye": "bada66bb7a7b60122304bb5b655eb6067e01d2ecb609f37033187e14ce31f5aa",
+    "state8": "ac02f6f29be1a4da31eca5292a33ace3bd1ee79780885cc28bcf74889f9ceb54",
+    "z0": "f3d15153b1a9c3ed8d1a55019ec63165e97e6fe2e4396e486d33b3ae95763a91"
+  }
+}

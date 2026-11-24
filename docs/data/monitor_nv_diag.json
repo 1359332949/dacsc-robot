@@ -1,0 +1,56 @@
+{
+  "schema": "monitor_false_alarm_diagnosis_v1",
+  "source_val_threshold": 0.9102588891983032,
+  "source_val_auc": 0.7472317330807897,
+  "target_auc": 0.8304437215354586,
+  "target_at_source_threshold": {
+    "recall": 0.6698113207547169,
+    "false_alarm_episode_fraction": 0.26666666666666666
+  },
+  "target_by_domain": {
+    "clean": {
+      "n_windows": 596,
+      "auc": 0.7386988993710691,
+      "recall_at_source_thr": 0.2783018867924528
+    },
+    "shift": {
+      "n_windows": 659,
+      "auc": 0.9395783765838543,
+      "recall_at_source_thr": 0.9308176100628931
+    }
+  },
+  "domain_classifier": {
+    "source_auc": 0.9211844297624379,
+    "target_auc": 0.8720783982238698
+  },
+  "false_alarm_episodes": [
+    {
+      "episode": "s35_dshift_seed7777",
+      "domain": "shift",
+      "state": "35",
+      "first_alarm_step": 9,
+      "max_score": 0.9999747276306152
+    },
+    {
+      "episode": "s44_dshift_seed7777",
+      "domain": "shift",
+      "state": "44",
+      "first_alarm_step": 9,
+      "max_score": 0.999946117401123
+    },
+    {
+      "episode": "s45_dshift_seed7777",
+      "domain": "shift",
+      "state": "45",
+      "first_alarm_step": 9,
+      "max_score": 0.9999986886978149
+    },
+    {
+      "episode": "s49_dshift_seed7777",
+      "domain": "shift",
+      "state": "49",
+      "first_alarm_step": 23,
+      "max_score": 0.9922348260879517
+    }
+  ]
+}

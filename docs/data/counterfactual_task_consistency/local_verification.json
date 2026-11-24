@@ -1,0 +1,10 @@
+{
+  "pass": true,
+  "scope": "CPU re-read current-proprio/input/output pairing and published command/velocity metrics",
+  "metrics_compared": 378,
+  "max_metric_abs_diff": 0.0,
+  "unique_boundaries": 14,
+  "independent_initial_states": 2,
+  "outputs_sha256": "38669e10da684d6762f1270f8ea94f05e7f944cc101534dda414b188c8d1e3fe",
+  "parameters_unchanged": true
+}

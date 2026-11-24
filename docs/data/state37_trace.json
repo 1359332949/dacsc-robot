@@ -1,0 +1,2186 @@
+{
+  "schema": "state37_three_input_trace_v1",
+  "state_id": 37,
+  "transform": {
+    "agentview": {
+      "a": 1.2384754437818535,
+      "b": -0.02146983269820374,
+      "clean_lum_mean": 0.4631920247276624,
+      "shift_lum_mean": 0.3913374785582225,
+      "clean_lum_std": 0.1956116314480702,
+      "shift_lum_std": 0.15794450665513676
+    },
+    "eye_in_hand": {
+      "a": 1.160209449888486,
+      "b": 0.006253241091910389,
+      "clean_lum_mean": 0.5488685652613638,
+      "shift_lum_mean": 0.46768738542993865,
+      "clean_lum_std": 0.2858239064117273,
+      "shift_lum_std": 0.24635443732142445
+    }
+  },
+  "target_geometry": {
+    "target_object": "akita_black_bowl_1",
+    "target_body": "akita_black_bowl_1_main",
+    "target_body_id": 23,
+    "target_geoms": [
+      "akita_black_bowl_1_g0",
+      "akita_black_bowl_1_g1",
+      "akita_black_bowl_1_g2",
+      "akita_black_bowl_1_g3",
+      "akita_black_bowl_1_g4",
+      "akita_black_bowl_1_g5",
+      "akita_black_bowl_1_g6",
+      "akita_black_bowl_1_g7",
+      "akita_black_bowl_1_g8",
+      "akita_black_bowl_1_g9",
+      "akita_black_bowl_1_g10",
+      "akita_black_bowl_1_g11",
+      "akita_black_bowl_1_g12",
+      "akita_black_bowl_1_g13",
+      "akita_black_bowl_1_g14",
+      "akita_black_bowl_1_g15",
+      "akita_black_bowl_1_g16",
+      "akita_black_bowl_1_g17",
+      "akita_black_bowl_1_g18",
+      "akita_black_bowl_1_g19",
+      "akita_black_bowl_1_g20",
+      "akita_black_bowl_1_g21",
+      "akita_black_bowl_1_g22",
+      "akita_black_bowl_1_g23",
+      "akita_black_bowl_1_g24",
+      "akita_black_bowl_1_g25",
+      "akita_black_bowl_1_g26",
+      "akita_black_bowl_1_g27",
+      "akita_black_bowl_1_g28",
+      "akita_black_bowl_1_g29",
+      "akita_black_bowl_1_g30",
+      "akita_black_bowl_1_g31",
+      "akita_black_bowl_1_g32",
+      "akita_black_bowl_1_g33",
+      "akita_black_bowl_1_g34",
+      "akita_black_bowl_1_g35",
+      "akita_black_bowl_1_g36",
+      "akita_black_bowl_1_g37",
+      "akita_black_bowl_1_g38",
+      "akita_black_bowl_1_g39",
+      "akita_black_bowl_1_g40"
+    ],
+    "finger_geoms": [
+      "gripper0_finger1_visual",
+      "gripper0_finger1_collision",
+      "gripper0_finger1_pad_collision",
+      "gripper0_finger2_visual",
+      "gripper0_finger2_collision",
+      "gripper0_finger2_pad_collision"
+    ],
+    "target_initial_pos": [
+      0.07760657037449806,
+      0.01714193792797348,
+      0.9171638354576062
+    ],
+    "note": "target body origin is not necessarily the grasp point; see EEF-target distance"
+  },
+  "records": [
+    {
+      "state_id": 37,
+      "step": 0,
+      "chunk": 0,
+      "k": 0,
+      "dino": {
+        "agentview": {
+          "clean_vs_transform": 0.31648736105020364,
+          "clean_vs_shift": 0.6934831885397479,
+          "clean_vs_transform_cosine": 0.9495186805725098,
+          "clean_vs_shift_cosine": 0.7639222145080566,
+          "clean_vs_transform_patch": {
+            "patch_l2_mean": 0.3153621256351471,
+            "patch_l2_max": 0.5502047538757324,
+            "patch_l2_top10_mean": 0.4311179518699646
+          },
+          "clean_vs_shift_patch": {
+            "patch_l2_mean": 0.6907429695129395,
+            "patch_l2_max": 0.9887226819992065,
+            "patch_l2_top10_mean": 0.9108471870422363
+          }
+        },
+        "eye_in_hand": {
+          "clean_vs_transform": 0.25611982876988054,
+          "clean_vs_shift": 0.4457147064197699,
+          "clean_vs_transform_cosine": 0.9668903350830078,
+          "clean_vs_shift_cosine": 0.898247241973877,
+          "clean_vs_transform_patch": {
+            "patch_l2_mean": 0.25125443935394287,
+            "patch_l2_max": 0.6667577624320984,
+            "patch_l2_top10_mean": 0.41359788179397583
+          },
+          "clean_vs_shift_patch": {
+            "patch_l2_mean": 0.4323698580265045,
+            "patch_l2_max": 0.8014916777610779,
+            "patch_l2_top10_mean": 0.7564948797225952
+          }
+        }
+      },
+      "resampler": {
+        "clean_vs_transform": 0.15555526175254392,
+        "clean_vs_shift": 0.36849472579927545
+      },
+      "action": {
+        "clean_vs_transform": {
+          "pre": {
+            "xyz": 0.03047732636332512,
+            "rot": 0.00819883681833744,
+            "grip": 0.0012972354888916016,
+            "norm": 0.02066725492477417
+          },
+          "post": {
+            "xyz": 0.03047732636332512,
+            "rot": 0.00819883681833744,
+            "grip": 0.0,
+            "norm": 0.02066143788397312
+          }
+        },
+        "clean_vs_shift": {
+          "pre": {
+            "xyz": 0.18694765865802765,
+            "rot": 0.020626498386263847,
+            "grip": 0.00779414176940918,
+            "norm": 0.1231638714671135
+          },
+          "post": {
+            "xyz": 0.18694765865802765,
+            "rot": 0.020626498386263847,
+            "grip": 0.0,
+            "norm": 0.12312863022089005
+          }
+        }
+      },
+      "eef_pos": [
+        -0.21674303677208584,
+        0.00027336580768111163,
+        1.1705101716014965
+      ],
+      "target_pos": [
+        0.07760657037598509,
+        0.01714193791515991,
+        0.9171638481547492
+      ],
+      "eef_target_distance": 0.3887294683416126,
+      "eef_quat": [
+        0.999600669571653,
+        0.00017641051700684193,
+        -0.028254008692369718,
+        0.0004257511524926159
+      ],
+      "target_quat": [
+        0.7071067838586219,
+        -1.4903066193449637e-05,
+        1.1384260013635871e-05,
+        0.7071067782657817
+      ],
+      "theta_rel": 1.570744434325656,
+      "eef_to_target_body_origin": 0.3887294683416126,
+      "target_finger_contact": false,
+      "pairing_pass": true,
+      "clip_fraction": {
+        "agentview": 0.030141194661458332,
+        "eye_in_hand": 0.004918416341145833
+      }
+    },
+    {
+      "state_id": 37,
+      "step": 1,
+      "chunk": 0,
+      "k": 1,
+      "dino": {
+        "agentview": {
+          "clean_vs_transform": 0.31288219645025506,
+          "clean_vs_shift": 0.6817516883165975,
+          "clean_vs_transform_cosine": 0.9505116939544678,
+          "clean_vs_shift_cosine": 0.7714331150054932,
+          "clean_vs_transform_patch": {
+            "patch_l2_mean": 0.31169024109840393,
+            "patch_l2_max": 0.47826310992240906,
+            "patch_l2_top10_mean": 0.4322108328342438
+          },
+          "clean_vs_shift_patch": {
+            "patch_l2_mean": 0.6788160800933838,
+            "patch_l2_max": 0.9882200956344604,
+            "patch_l2_top10_mean": 0.9178832173347473
+          }
+        },
+        "eye_in_hand": {
+          "clean_vs_transform": 0.24049990058454435,
+          "clean_vs_shift": 0.549551049015503,
+          "clean_vs_transform_cosine": 0.9710638523101807,
+          "clean_vs_shift_cosine": 0.8438965082168579,
+          "clean_vs_transform_patch": {
+            "patch_l2_mean": 0.23562054336071014,
+            "patch_l2_max": 0.44101762771606445,
+            "patch_l2_top10_mean": 0.37652212381362915
+          },
+          "clean_vs_shift_patch": {
+            "patch_l2_mean": 0.5362577438354492,
+            "patch_l2_max": 0.952445387840271,
+            "patch_l2_top10_mean": 0.8722222447395325
+          }
+        }
+      },
+      "resampler": {
+        "clean_vs_transform": 0.15800532053434915,
+        "clean_vs_shift": 0.3826755584495419
+      },
+      "action": {
+        "clean_vs_transform": {
+          "pre": {
+            "xyz": 0.02515565976500511,
+            "rot": 0.010634343139827251,
+            "grip": 0.0016264915466308594,
+            "norm": 0.017889881506562233
+          },
+          "post": {
+            "xyz": 0.02515565976500511,
+            "rot": 0.010634343139827251,
+            "grip": 0.0,
+            "norm": 0.017879314720630646
+          }
+        },
+        "clean_vs_shift": {
+          "pre": {
+            "xyz": 0.1832752376794815,
+            "rot": 0.015032149851322174,
+            "grip": 0.010206937789916992,
+            "norm": 0.12044649571180344
+          },
+          "post": {
+            "xyz": 0.1832752376794815,
+            "rot": 0.015032149851322174,
+            "grip": 0.0,
+            "norm": 0.12038470059633255
+          }
+        }
+      },
+      "eef_pos": [
+        -0.2151493176964074,
+        0.0026439127165231104,
+        1.1703630588821883
+      ],
+      "target_pos": [
+        0.07760657039454277,
+        0.017141937756581616,
+        0.917164017444656
+      ],
+      "eef_target_distance": 0.38733184393600834,
+      "eef_quat": [
+        0.9996443543525597,
+        0.0013541427510602724,
+        -0.02662806055112677,
+        0.000526782449949484
+      ],
+      "target_quat": [
+        0.7071067838589395,
+        -1.4899210089955446e-05,
+        1.1381191364987756e-05,
+        0.707106778265595
+      ],
+      "theta_rel": 1.5704549707582576,
+      "eef_to_target_body_origin": 0.38733184393600834,
+      "target_finger_contact": false,
+      "pairing_pass": true,
+      "clip_fraction": {
+        "agentview": 0.0298309326171875,
+        "eye_in_hand": 0.005055745442708333
+      }
+    },
+    {
+      "state_id": 37,
+      "step": 2,
+      "chunk": 0,
+      "k": 2,
+      "dino": {
+        "agentview": {
+          "clean_vs_transform": 0.30761007567177023,
+          "clean_vs_shift": 0.7551231886363399,
+          "clean_vs_transform_cosine": 0.9519924521446228,
+          "clean_vs_shift_cosine": 0.7216758131980896,
+          "clean_vs_transform_patch": {
+            "patch_l2_mean": 0.3062525987625122,
+            "patch_l2_max": 0.5118829607963562,
+            "patch_l2_top10_mean": 0.44470205903053284
+          },
+          "clean_vs_shift_patch": {
+            "patch_l2_mean": 0.7524397373199463,
+            "patch_l2_max": 0.9821121096611023,
+            "patch_l2_top10_mean": 0.9371840357780457
+          }
+        },
+        "eye_in_hand": {
+          "clean_vs_transform": 0.22646978330990292,
+          "clean_vs_shift": 0.6575072393945078,
+          "clean_vs_transform_cosine": 0.9745540022850037,
+          "clean_vs_shift_cosine": 0.7773801684379578,
+          "clean_vs_transform_patch": {
+            "patch_l2_mean": 0.21834005415439606,
+            "patch_l2_max": 0.5057398080825806,
+            "patch_l2_top10_mean": 0.39412736892700195
+          },
+          "clean_vs_shift_patch": {
+            "patch_l2_mean": 0.6485337018966675,
+            "patch_l2_max": 1.0422865152359009,
+            "patch_l2_top10_mean": 0.9189059138298035
+          }
+        }
+      },
+      "resampler": {
+        "clean_vs_transform": 0.17599134894776908,
+        "clean_vs_shift": 0.36262359157718244
+      },
+      "action": {
+        "clean_vs_transform": {
+          "pre": {
+            "xyz": 0.03541793301701546,
+            "rot": 0.007726430427283049,
+            "grip": 0.0016831159591674805,
+            "norm": 0.023740310221910477
+          },
+          "post": {
+            "xyz": 0.03541793301701546,
+            "rot": 0.007726430427283049,
+            "grip": 0.0,
+            "norm": 0.023731784895062447
+          }
+        },
+        "clean_vs_shift": {
+          "pre": {
+            "xyz": 0.2584780156612396,
+            "rot": 0.02903418429195881,
+            "grip": 0.005535602569580078,
+            "norm": 0.17029061913490295
+          },
+          "post": {
+            "xyz": 0.2584780156612396,
+            "rot": 0.02903418429195881,
+            "grip": 0.0,
+            "norm": 0.17027775943279266
+          }
+        }
+      },
+      "eef_pos": [
+        -0.2112015084474115,
+        0.00800036084498892,
+        1.169602318181925
+      ],
+      "target_pos": [
+        0.07760657039906389,
+        0.017141937718779986,
+        0.9171640668238565
+      ],
+      "eef_target_distance": 0.3836909506144897,
+      "eef_quat": [
+        0.9997237209868023,
+        0.0030672654458581694,
+        -0.02325401832680054,
+        0.0015245362061301337
+      ],
+      "target_quat": [
+        0.7071067838592022,
+        -1.489828255259422e-05,
+        1.1380456747479945e-05,
+        0.7071067782653634
+      ],
+      "theta_rel": 1.5682991630783074,
+      "eef_to_target_body_origin": 0.3836909506144897,
+      "target_finger_contact": false,
+      "pairing_pass": true,
+      "clip_fraction": {
+        "agentview": 0.030370076497395832,
+        "eye_in_hand": 0.005523681640625
+      }
+    },
+    {
+      "state_id": 37,
+      "step": 3,
+      "chunk": 0,
+      "k": 3,
+      "dino": {
+        "agentview": {
+          "clean_vs_transform": 0.3329953244084912,
+          "clean_vs_shift": 0.7287361889520121,
+          "clean_vs_transform_cosine": 0.944044828414917,
+          "clean_vs_shift_cosine": 0.7392662167549133,
+          "clean_vs_transform_patch": {
+            "patch_l2_mean": 0.33228737115859985,
+            "patch_l2_max": 0.48816096782684326,
+            "patch_l2_top10_mean": 0.4466579854488373
+          },
+          "clean_vs_shift_patch": {
+            "patch_l2_mean": 0.7266939282417297,
+            "patch_l2_max": 1.0674450397491455,
+            "patch_l2_top10_mean": 0.9667283296585083
+          }
+        },
+        "eye_in_hand": {
+          "clean_vs_transform": 0.22389240663099252,
+          "clean_vs_shift": 0.7088910594461783,
+          "clean_vs_transform_cosine": 0.9746552109718323,
+          "clean_vs_shift_cosine": 0.7426251173019409,
+          "clean_vs_transform_patch": {
+            "patch_l2_mean": 0.2139645218849182,
+            "patch_l2_max": 0.496402382850647,
+            "patch_l2_top10_mean": 0.41062068939208984
+          },
+          "clean_vs_shift_patch": {
+            "patch_l2_mean": 0.7014343738555908,
+            "patch_l2_max": 1.1349552869796753,
+            "patch_l2_top10_mean": 1.02991783618927
+          }
+        }
+      },
+      "resampler": {
+        "clean_vs_transform": 0.17183062851660344,
+        "clean_vs_shift": 0.3504437270434017
+      },
+      "action": {
+        "clean_vs_transform": {
+          "pre": {
+            "xyz": 0.03548036143183708,
+            "rot": 0.014078653417527676,
+            "grip": 0.0003216266632080078,
+            "norm": 0.02498941868543625
+          },
+          "post": {
+            "xyz": 0.03548036143183708,
+            "rot": 0.014078653417527676,
+            "grip": 0.0,
+            "norm": 0.02498912438750267
+          }
+        },
+        "clean_vs_shift": {
+          "pre": {
+            "xyz": 0.25166448950767517,
+            "rot": 0.037457071244716644,
+            "grip": 0.005645155906677246,
+            "norm": 0.16658160090446472
+          },
+          "post": {
+            "xyz": 0.25166448950767517,
+            "rot": 0.037457071244716644,
+            "grip": 0.0,
+            "norm": 0.16656793653964996
+          }
+        }
+      },
+      "eef_pos": [
+        -0.2053467693600608,
+        0.014297682336848076,
+        1.1683955371373302
+      ],
+      "target_pos": [
+        0.07760657040003009,
+        0.017141937710901466,
+        0.9171640802221955
+      ],
+      "eef_target_distance": 0.37840180656773226,
+      "eef_quat": [
+        0.9998037923520466,
+        0.004166458838940679,
+        -0.019102183296901012,
+        0.0031818253410105315
+      ],
+      "target_quat": [
+        0.7071067838594495,
+        -1.489808290201801e-05,
+        1.1380299500670429e-05,
+        0.707106778265123
+      ],
+      "theta_rel": 1.564816967344776,
+      "eef_to_target_body_origin": 0.37840180656773226,
+      "target_finger_contact": false,
+      "pairing_pass": true,
+      "clip_fraction": {
+        "agentview": 0.0301971435546875,
+        "eye_in_hand": 0.006810506184895833
+      }
+    },
+    {
+      "state_id": 37,
+      "step": 4,
+      "chunk": 0,
+      "k": 4,
+      "dino": {
+        "agentview": {
+          "clean_vs_transform": 0.32789168176442196,
+          "clean_vs_shift": 0.7287381009775419,
+          "clean_vs_transform_cosine": 0.9457477927207947,
+          "clean_vs_shift_cosine": 0.7418978214263916,
+          "clean_vs_transform_patch": {
+            "patch_l2_mean": 0.326958030462265,
+            "patch_l2_max": 0.5010890364646912,
+            "patch_l2_top10_mean": 0.44127172231674194
+          },
+          "clean_vs_shift_patch": {
+            "patch_l2_mean": 0.7259921431541443,
+            "patch_l2_max": 1.1032204627990723,
+            "patch_l2_top10_mean": 0.9621890783309937
+          }
+        },
+        "eye_in_hand": {
+          "clean_vs_transform": 0.20390573018796665,
+          "clean_vs_shift": 0.8640130368825424,
+          "clean_vs_transform_cosine": 0.979135274887085,
+          "clean_vs_shift_cosine": 0.6158427596092224,
+          "clean_vs_transform_patch": {
+            "patch_l2_mean": 0.19902098178863525,
+            "patch_l2_max": 0.4323215186595917,
+            "patch_l2_top10_mean": 0.34917566180229187
+          },
+          "clean_vs_shift_patch": {
+            "patch_l2_mean": 0.8572974801063538,
+            "patch_l2_max": 1.3027143478393555,
+            "patch_l2_top10_mean": 1.1717896461486816
+          }
+        }
+      },
+      "resampler": {
+        "clean_vs_transform": 0.1884354476553469,
+        "clean_vs_shift": 0.43215163940265555
+      },
+      "action": {
+        "clean_vs_transform": {
+          "pre": {
+            "xyz": 0.04418399930000305,
+            "rot": 0.014042053371667862,
+            "grip": 2.002716064453125e-05,
+            "norm": 0.03035084158182144
+          },
+          "post": {
+            "xyz": 0.04418399930000305,
+            "rot": 0.014042053371667862,
+            "grip": 0.0,
+            "norm": 0.03035084158182144
+          }
+        },
+        "clean_vs_shift": {
+          "pre": {
+            "xyz": 0.3633335530757904,
+            "rot": 0.04464032128453255,
+            "grip": 0.009222865104675293,
+            "norm": 0.23967155814170837
+          },
+          "post": {
+            "xyz": 0.3633335530757904,
+            "rot": 0.04464032128453255,
+            "grip": 0.0,
+            "norm": 0.23964619636535645
+          }
+        }
+      },
+      "eef_pos": [
+        -0.19792321420556191,
+        0.020841775917688286,
+        1.1671010016027885
+      ],
+      "target_pos": [
+        0.07760657040020431,
+        0.017141937709526586,
+        0.9171640838576482
+      ],
+      "eef_target_distance": 0.37201991056878597,
+      "eef_quat": [
+        0.9998637308151448,
+        0.004908434201978229,
+        -0.014776625650664933,
+        0.005484378586941777
+      ],
+      "target_quat": [
+        0.7071067838596924,
+        -1.489804205917751e-05,
+        1.1380267550793357e-05,
+        0.7071067782648813
+      ],
+      "theta_rel": 1.5600720191389195,
+      "eef_to_target_body_origin": 0.37201991056878597,
+      "target_finger_contact": false,
+      "pairing_pass": true,
+      "clip_fraction": {
+        "agentview": 0.030268351236979168,
+        "eye_in_hand": 0.00958251953125
+      }
+    },
+    {
+      "state_id": 37,
+      "step": 5,
+      "chunk": 0,
+      "k": 5,
+      "dino": {
+        "agentview": {
+          "clean_vs_transform": 0.3138392632811835,
+          "clean_vs_shift": 0.7448347918351602,
+          "clean_vs_transform_cosine": 0.9499098658561707,
+          "clean_vs_shift_cosine": 0.7289894819259644,
+          "clean_vs_transform_patch": {
+            "patch_l2_mean": 0.3125283718109131,
+            "patch_l2_max": 0.5492357611656189,
+            "patch_l2_top10_mean": 0.4437023103237152
+          },
+          "clean_vs_shift_patch": {
+            "patch_l2_mean": 0.7406377792358398,
+            "patch_l2_max": 1.124526023864746,
+            "patch_l2_top10_mean": 1.0239577293395996
+          }
+        },
+        "eye_in_hand": {
+          "clean_vs_transform": 0.16834770146356215,
+          "clean_vs_shift": 0.976116372159366,
+          "clean_vs_transform_cosine": 0.9858118891716003,
+          "clean_vs_shift_cosine": 0.507047176361084,
+          "clean_vs_transform_patch": {
+            "patch_l2_mean": 0.16410432755947113,
+            "patch_l2_max": 0.3618939220905304,
+            "patch_l2_top10_mean": 0.27619990706443787
+          },
+          "clean_vs_shift_patch": {
+            "patch_l2_mean": 0.9695157408714294,
+            "patch_l2_max": 1.283840537071228,
+            "patch_l2_top10_mean": 1.2227531671524048
+          }
+        }
+      },
+      "resampler": {
+        "clean_vs_transform": 0.17657387170952146,
+        "clean_vs_shift": 0.4864342528904288
+      },
+      "action": {
+        "clean_vs_transform": {
+          "pre": {
+            "xyz": 0.025769010186195374,
+            "rot": 0.00950899813324213,
+            "grip": 0.00011849403381347656,
+            "norm": 0.017981747165322304
+          },
+          "post": {
+            "xyz": 0.025769010186195374,
+            "rot": 0.00950899813324213,
+            "grip": 0.0,
+            "norm": 0.017981691285967827
+          }
+        },
+        "clean_vs_shift": {
+          "pre": {
+            "xyz": 0.4062495827674866,
+            "rot": 0.047446515411138535,
+            "grip": 0.011500835418701172,
+            "norm": 0.26779577136039734
+          },
+          "post": {
+            "xyz": 0.4062495827674866,
+            "rot": 0.047446515411138535,
+            "grip": 0.0,
+            "norm": 0.2677604854106903
+          }
+        }
+      },
+      "eef_pos": [
+        -0.1893088281936286,
+        0.027365016817190474,
+        1.1659396585482742
+      ],
+      "target_pos": [
+        0.07760657040020894,
+        0.017141937709503587,
+        0.9171640848440781
+      ],
+      "eef_target_distance": 0.3650172974323287,
+      "eef_quat": [
+        0.9998911903779671,
+        0.005522216163549698,
+        -0.010849521587862874,
+        0.008330691117154997
+      ],
+      "target_quat": [
+        0.7071067838599341,
+        -1.4898034393271634e-05,
+        1.138026161137475e-05,
+        0.7071067782646401
+      ],
+      "theta_rel": 1.5542848340401376,
+      "eef_to_target_body_origin": 0.3650172974323287,
+      "target_finger_contact": false,
+      "pairing_pass": true,
+      "clip_fraction": {
+        "agentview": 0.03033447265625,
+        "eye_in_hand": 0.013163248697916666
+      }
+    },
+    {
+      "state_id": 37,
+      "step": 6,
+      "chunk": 0,
+      "k": 6,
+      "dino": {
+        "agentview": {
+          "clean_vs_transform": 0.3298793789972081,
+          "clean_vs_shift": 0.755445959712727,
+          "clean_vs_transform_cosine": 0.9448769092559814,
+          "clean_vs_shift_cosine": 0.7228425741195679,
+          "clean_vs_transform_patch": {
+            "patch_l2_mean": 0.328268826007843,
+            "patch_l2_max": 0.5157393217086792,
+            "patch_l2_top10_mean": 0.45984745025634766
+          },
+          "clean_vs_shift_patch": {
+            "patch_l2_mean": 0.7508702278137207,
+            "patch_l2_max": 1.1123162508010864,
+            "patch_l2_top10_mean": 1.05764901638031
+          }
+        },
+        "eye_in_hand": {
+          "clean_vs_transform": 0.19526246043140055,
+          "clean_vs_shift": 1.0375801221846994,
+          "clean_vs_transform_cosine": 0.9808467626571655,
+          "clean_vs_shift_cosine": 0.44169527292251587,
+          "clean_vs_transform_patch": {
+            "patch_l2_mean": 0.19223514199256897,
+            "patch_l2_max": 0.43640080094337463,
+            "patch_l2_top10_mean": 0.2978811264038086
+          },
+          "clean_vs_shift_patch": {
+            "patch_l2_mean": 1.0321273803710938,
+            "patch_l2_max": 1.278095006942749,
+            "patch_l2_top10_mean": 1.2490689754486084
+          }
+        }
+      },
+      "resampler": {
+        "clean_vs_transform": 0.19434256159573415,
+        "clean_vs_shift": 0.5047517462573967
+      },
+      "action": {
+        "clean_vs_transform": {
+          "pre": {
+            "xyz": 0.006292116362601519,
+            "rot": 0.009844043292105198,
+            "grip": 0.0003848075866699219,
+            "norm": 0.007649797480553389
+          },
+          "post": {
+            "xyz": 0.006292116362601519,
+            "rot": 0.009844043292105198,
+            "grip": 0.0,
+            "norm": 0.007648414932191372
+          }
+        },
+        "clean_vs_shift": {
+          "pre": {
+            "xyz": 0.43357813358306885,
+            "rot": 0.046670086681842804,
+            "grip": 0.010571002960205078,
+            "norm": 0.2855110764503479
+          },
+          "post": {
+            "xyz": 0.43357813358306885,
+            "rot": 0.046670086681842804,
+            "grip": 0.0,
+            "norm": 0.28548312187194824
+          }
+        }
+      },
+      "eef_pos": [
+        -0.17978882597492804,
+        0.03365007672095534,
+        1.16504850167599
+      ],
+      "target_pos": [
+        0.07760657040017951,
+        0.017141937709741924,
+        0.9171640851117321
+      ],
+      "eef_target_distance": 0.3577311737941143,
+      "eef_quat": [
+        0.9998877755724453,
+        0.006040523699360588,
+        -0.007442070283741227,
+        0.011513640784582254
+      ],
+      "target_quat": [
+        0.7071067838601756,
+        -1.489803318978545e-05,
+        1.1380260695934749e-05,
+        0.7071067782643986
+      ],
+      "theta_rel": 1.547862024414791,
+      "eef_to_target_body_origin": 0.3577311737941143,
+      "target_finger_contact": false,
+      "pairing_pass": true,
+      "clip_fraction": {
+        "agentview": 0.0305633544921875,
+        "eye_in_hand": 0.0158233642578125
+      }
+    },
+    {
+      "state_id": 37,
+      "step": 7,
+      "chunk": 0,
+      "k": 7,
+      "dino": {
+        "agentview": {
+          "clean_vs_transform": 0.32856017390776954,
+          "clean_vs_shift": 0.7716655480043845,
+          "clean_vs_transform_cosine": 0.945606529712677,
+          "clean_vs_shift_cosine": 0.7123967409133911,
+          "clean_vs_transform_patch": {
+            "patch_l2_mean": 0.32721108198165894,
+            "patch_l2_max": 0.4919653832912445,
+            "patch_l2_top10_mean": 0.44395947456359863
+          },
+          "clean_vs_shift_patch": {
+            "patch_l2_mean": 0.7679529190063477,
+            "patch_l2_max": 1.1250419616699219,
+            "patch_l2_top10_mean": 1.0508809089660645
+          }
+        },
+        "eye_in_hand": {
+          "clean_vs_transform": 0.17572068527625398,
+          "clean_vs_shift": 1.0639186296675673,
+          "clean_vs_transform_cosine": 0.9844812154769897,
+          "clean_vs_shift_cosine": 0.41338908672332764,
+          "clean_vs_transform_patch": {
+            "patch_l2_mean": 0.17089706659317017,
+            "patch_l2_max": 0.29082897305488586,
+            "patch_l2_top10_mean": 0.2715066969394684
+          },
+          "clean_vs_shift_patch": {
+            "patch_l2_mean": 1.0573481321334839,
+            "patch_l2_max": 1.300234079360962,
+            "patch_l2_top10_mean": 1.270050287246704
+          }
+        }
+      },
+      "resampler": {
+        "clean_vs_transform": 0.20747684473781522,
+        "clean_vs_shift": 0.5323600817865749
+      },
+      "action": {
+        "clean_vs_transform": {
+          "pre": {
+            "xyz": 0.026318036019802094,
+            "rot": 0.009142685681581497,
+            "grip": 0.00022220611572265625,
+            "norm": 0.01823940873146057
+          },
+          "post": {
+            "xyz": 0.026318036019802094,
+            "rot": 0.009142685681581497,
+            "grip": 0.0,
+            "norm": 0.01823921501636505
+          }
+        },
+        "clean_vs_shift": {
+          "pre": {
+            "xyz": 0.4251427948474884,
+            "rot": 0.049925681203603745,
+            "grip": 0.010533809661865234,
+            "norm": 0.2802620828151703
+          },
+          "post": {
+            "xyz": 0.4251427948474884,
+            "rot": 0.049925681203603745,
+            "grip": 0.0,
+            "norm": 0.28023380041122437
+          }
+        }
+      },
+      "eef_pos": [
+        -0.16959326253518112,
+        0.03967583542945684,
+        1.1644923069813424
+      ],
+      "target_pos": [
+        0.07760657040014399,
+        0.017141937710024212,
+        0.9171640851843563
+      ],
+      "eef_target_distance": 0.3504094508527726,
+      "eef_quat": [
+        0.9998573369917674,
+        0.006478791785839766,
+        -0.0043628470721574705,
+        0.014976531178883801
+      ],
+      "target_quat": [
+        0.707106783860417,
+        -1.4898033088881816e-05,
+        1.1380260625462212e-05,
+        0.7071067782641571
+      ],
+      "theta_rel": 1.540904548747658,
+      "eef_to_target_body_origin": 0.3504094508527726,
+      "target_finger_contact": false,
+      "pairing_pass": true,
+      "clip_fraction": {
+        "agentview": 0.0307159423828125,
+        "eye_in_hand": 0.018397013346354168
+      }
+    },
+    {
+      "state_id": 37,
+      "step": 8,
+      "chunk": 0,
+      "k": 8,
+      "dino": {
+        "agentview": {
+          "clean_vs_transform": 0.3231006112200419,
+          "clean_vs_shift": 0.759512528142614,
+          "clean_vs_transform_cosine": 0.9468234777450562,
+          "clean_vs_shift_cosine": 0.7189979553222656,
+          "clean_vs_transform_patch": {
+            "patch_l2_mean": 0.32233184576034546,
+            "patch_l2_max": 0.5049208402633667,
+            "patch_l2_top10_mean": 0.4353733956813812
+          },
+          "clean_vs_shift_patch": {
+            "patch_l2_mean": 0.7555015087127686,
+            "patch_l2_max": 1.1485390663146973,
+            "patch_l2_top10_mean": 1.0877870321273804
+          }
+        },
+        "eye_in_hand": {
+          "clean_vs_transform": 0.17474239033612793,
+          "clean_vs_shift": 1.092289496178447,
+          "clean_vs_transform_cosine": 0.9847201704978943,
+          "clean_vs_shift_cosine": 0.3791155219078064,
+          "clean_vs_transform_patch": {
+            "patch_l2_mean": 0.16994184255599976,
+            "patch_l2_max": 0.35894832015037537,
+            "patch_l2_top10_mean": 0.28618067502975464
+          },
+          "clean_vs_shift_patch": {
+            "patch_l2_mean": 1.0865931510925293,
+            "patch_l2_max": 1.3148629665374756,
+            "patch_l2_top10_mean": 1.2842044830322266
+          }
+        }
+      },
+      "resampler": {
+        "clean_vs_transform": 0.16626341608212933,
+        "clean_vs_shift": 0.5298824451783418
+      },
+      "action": {
+        "clean_vs_transform": {
+          "pre": {
+            "xyz": 0.023130293935537338,
+            "rot": 0.009873466566205025,
+            "grip": 0.00019741058349609375,
+            "norm": 0.016464361920952797
+          },
+          "post": {
+            "xyz": 0.023130293935537338,
+            "rot": 0.009873466566205025,
+            "grip": 0.0,
+            "norm": 0.016464192420244217
+          }
+        },
+        "clean_vs_shift": {
+          "pre": {
+            "xyz": 0.45780056715011597,
+            "rot": 0.04261321201920509,
+            "grip": 0.010801076889038086,
+            "norm": 0.30102404952049255
+          },
+          "post": {
+            "xyz": 0.45780056715011597,
+            "rot": 0.04261321201920509,
+            "grip": 0.0,
+            "norm": 0.3009963631629944
+          }
+        }
+      },
+      "eef_pos": [
+        -0.15896552922743015,
+        0.04527459538794088,
+        1.164145976460865
+      ],
+      "target_pos": [
+        0.07760657040010756,
+        0.017141937710311538,
+        0.917164085204062
+      ],
+      "eef_target_distance": 0.3431586504213111,
+      "eef_quat": [
+        0.9998002134238502,
+        0.00672972759862106,
+        -0.0015272849748465527,
+        0.01875930181743627
+      ],
+      "target_quat": [
+        0.7071067838606585,
+        -1.4898033120406618e-05,
+        1.1380260652766816e-05,
+        0.7071067782639157
+      ],
+      "theta_rel": 1.533324444882608,
+      "eef_to_target_body_origin": 0.3431586504213111,
+      "target_finger_contact": false,
+      "pairing_pass": true,
+      "clip_fraction": {
+        "agentview": 0.0313568115234375,
+        "eye_in_hand": 0.0204315185546875
+      }
+    },
+    {
+      "state_id": 37,
+      "step": 9,
+      "chunk": 0,
+      "k": 9,
+      "dino": {
+        "agentview": {
+          "clean_vs_transform": 0.3282659095753937,
+          "clean_vs_shift": 0.776652641838602,
+          "clean_vs_transform_cosine": 0.9455596208572388,
+          "clean_vs_shift_cosine": 0.7089151740074158,
+          "clean_vs_transform_patch": {
+            "patch_l2_mean": 0.3274504542350769,
+            "patch_l2_max": 0.5028307437896729,
+            "patch_l2_top10_mean": 0.4395134449005127
+          },
+          "clean_vs_shift_patch": {
+            "patch_l2_mean": 0.7719531059265137,
+            "patch_l2_max": 1.1612286567687988,
+            "patch_l2_top10_mean": 1.1105482578277588
+          }
+        },
+        "eye_in_hand": {
+          "clean_vs_transform": 0.16178954848793364,
+          "clean_vs_shift": 1.1398549588004607,
+          "clean_vs_transform_cosine": 0.9869410395622253,
+          "clean_vs_shift_cosine": 0.3213561773300171,
+          "clean_vs_transform_patch": {
+            "patch_l2_mean": 0.15712162852287292,
+            "patch_l2_max": 0.3232559561729431,
+            "patch_l2_top10_mean": 0.27774283289909363
+          },
+          "clean_vs_shift_patch": {
+            "patch_l2_mean": 1.1352131366729736,
+            "patch_l2_max": 1.354819655418396,
+            "patch_l2_top10_mean": 1.3283915519714355
+          }
+        }
+      },
+      "resampler": {
+        "clean_vs_transform": 0.15489876779154466,
+        "clean_vs_shift": 0.5627244430337691
+      },
+      "action": {
+        "clean_vs_transform": {
+          "pre": {
+            "xyz": 0.031203221529722214,
+            "rot": 0.008082655258476734,
+            "grip": 0.0003191232681274414,
+            "norm": 0.02110183797776699
+          },
+          "post": {
+            "xyz": 0.031203221529722214,
+            "rot": 0.008082655258476734,
+            "grip": 0.0,
+            "norm": 0.021101493388414383
+          }
+        },
+        "clean_vs_shift": {
+          "pre": {
+            "xyz": 0.45918944478034973,
+            "rot": 0.03554081544280052,
+            "grip": 0.011975765228271484,
+            "norm": 0.30154308676719666
+          },
+          "post": {
+            "xyz": 0.45918944478034973,
+            "rot": 0.03554081544280052,
+            "grip": 0.0,
+            "norm": 0.3015091121196747
+          }
+        }
+      },
+      "eef_pos": [
+        -0.14798610140567367,
+        0.050429786657070874,
+        1.1638589377728348
+      ],
+      "target_pos": [
+        0.07760657040007113,
+        0.017141937710598475,
+        0.9171640852094086
+      ],
+      "eef_target_distance": 0.3359441690835372,
+      "eef_quat": [
+        0.9997193656676767,
+        0.006796826065146755,
+        0.001293075164940035,
+        0.022656588910869767
+      ],
+      "target_quat": [
+        0.7071067838609,
+        -1.4898033144969766e-05,
+        1.138026067286782e-05,
+        0.7071067782636742
+      ],
+      "theta_rel": 1.525528560178713,
+      "eef_to_target_body_origin": 0.3359441690835372,
+      "target_finger_contact": false,
+      "pairing_pass": true,
+      "clip_fraction": {
+        "agentview": 0.031534830729166664,
+        "eye_in_hand": 0.020848592122395832
+      }
+    },
+    {
+      "state_id": 37,
+      "step": 10,
+      "chunk": 0,
+      "k": 10,
+      "dino": {
+        "agentview": {
+          "clean_vs_transform": 0.2992578870700646,
+          "clean_vs_shift": 0.8007355911358562,
+          "clean_vs_transform_cosine": 0.9550240635871887,
+          "clean_vs_shift_cosine": 0.6927183866500854,
+          "clean_vs_transform_patch": {
+            "patch_l2_mean": 0.29862239956855774,
+            "patch_l2_max": 0.41230309009552,
+            "patch_l2_top10_mean": 0.3982519209384918
+          },
+          "clean_vs_shift_patch": {
+            "patch_l2_mean": 0.7958217859268188,
+            "patch_l2_max": 1.2567987442016602,
+            "patch_l2_top10_mean": 1.1526572704315186
+          }
+        },
+        "eye_in_hand": {
+          "clean_vs_transform": 0.211383667141733,
+          "clean_vs_shift": 1.09369924722762,
+          "clean_vs_transform_cosine": 0.9776184558868408,
+          "clean_vs_shift_cosine": 0.3698124885559082,
+          "clean_vs_transform_patch": {
+            "patch_l2_mean": 0.20738880336284637,
+            "patch_l2_max": 0.3618302345275879,
+            "patch_l2_top10_mean": 0.32079580426216125
+          },
+          "clean_vs_shift_patch": {
+            "patch_l2_mean": 1.0890111923217773,
+            "patch_l2_max": 1.3331141471862793,
+            "patch_l2_top10_mean": 1.2893829345703125
+          }
+        }
+      },
+      "resampler": {
+        "clean_vs_transform": 0.15214851249385214,
+        "clean_vs_shift": 0.5429168486012472
+      },
+      "action": {
+        "clean_vs_transform": {
+          "pre": {
+            "xyz": 0.038773950189352036,
+            "rot": 0.009163391776382923,
+            "grip": 2.086162567138672e-05,
+            "norm": 0.026082728058099747
+          },
+          "post": {
+            "xyz": 0.038773950189352036,
+            "rot": 0.009163391776382923,
+            "grip": 0.0,
+            "norm": 0.026082728058099747
+          }
+        },
+        "clean_vs_shift": {
+          "pre": {
+            "xyz": 0.44264107942581177,
+            "rot": 0.04325275868177414,
+            "grip": 0.012133955955505371,
+            "norm": 0.2911928594112396
+          },
+          "post": {
+            "xyz": 0.44264107942581177,
+            "rot": 0.04325275868177414,
+            "grip": 0.0,
+            "norm": 0.29115673899650574
+          }
+        }
+      },
+      "eef_pos": [
+        -0.1368073970591532,
+        0.05522032112160012,
+        1.1635860859177916
+      ],
+      "target_pos": [
+        0.0776065704000347,
+        0.01714193771088486,
+        0.9171640852108595
+      ],
+      "eef_target_distance": 0.3288572869151151,
+      "eef_quat": [
+        0.9996200054926763,
+        0.00669418110911979,
+        0.0041307746973008545,
+        0.02641910782938029
+      ],
+      "target_quat": [
+        0.7071067838611415,
+        -1.4898033156945666e-05,
+        1.1380260682160382e-05,
+        0.7071067782634327
+      ],
+      "theta_rel": 1.5180157497888718,
+      "eef_to_target_body_origin": 0.3288572869151151,
+      "target_finger_contact": false,
+      "pairing_pass": true,
+      "clip_fraction": {
+        "agentview": 0.032623291015625,
+        "eye_in_hand": 0.0206756591796875
+      }
+    },
+    {
+      "state_id": 37,
+      "step": 11,
+      "chunk": 0,
+      "k": 11,
+      "dino": {
+        "agentview": {
+          "clean_vs_transform": 0.3293129057024166,
+          "clean_vs_shift": 0.7953070078840803,
+          "clean_vs_transform_cosine": 0.9445356130599976,
+          "clean_vs_shift_cosine": 0.6926213502883911,
+          "clean_vs_transform_patch": {
+            "patch_l2_mean": 0.3267771303653717,
+            "patch_l2_max": 0.6498212814331055,
+            "patch_l2_top10_mean": 0.5032023191452026
+          },
+          "clean_vs_shift_patch": {
+            "patch_l2_mean": 0.7895640134811401,
+            "patch_l2_max": 1.1940464973449707,
+            "patch_l2_top10_mean": 1.1444919109344482
+          }
+        },
+        "eye_in_hand": {
+          "clean_vs_transform": 0.176212253539204,
+          "clean_vs_shift": 1.14274813951634,
+          "clean_vs_transform_cosine": 0.9843430519104004,
+          "clean_vs_shift_cosine": 0.3106224834918976,
+          "clean_vs_transform_patch": {
+            "patch_l2_mean": 0.17285636067390442,
+            "patch_l2_max": 0.41858986020088196,
+            "patch_l2_top10_mean": 0.29825839400291443
+          },
+          "clean_vs_shift_patch": {
+            "patch_l2_mean": 1.138176679611206,
+            "patch_l2_max": 1.4154809713363647,
+            "patch_l2_top10_mean": 1.3767107725143433
+          }
+        }
+      },
+      "resampler": {
+        "clean_vs_transform": 0.16662366532803188,
+        "clean_vs_shift": 0.5756167230220506
+      },
+      "action": {
+        "clean_vs_transform": {
+          "pre": {
+            "xyz": 0.029529239982366562,
+            "rot": 0.00980978924781084,
+            "grip": 0.002011418342590332,
+            "norm": 0.02038441225886345
+          },
+          "post": {
+            "xyz": 0.029529239982366562,
+            "rot": 0.00980978924781084,
+            "grip": 0.0,
+            "norm": 0.020370230078697205
+          }
+        },
+        "clean_vs_shift": {
+          "pre": {
+            "xyz": 0.43934160470962524,
+            "rot": 0.04261673986911774,
+            "grip": 0.012977361679077148,
+            "norm": 0.28900817036628723
+          },
+          "post": {
+            "xyz": 0.43934160470962524,
+            "rot": 0.04261673986911774,
+            "grip": 0.0,
+            "norm": 0.288966566324234
+          }
+        }
+      },
+      "eef_pos": [
+        -0.12556691152536126,
+        0.059705570289220355,
+        1.163295993362039
+      ],
+      "target_pos": [
+        0.07760657039999827,
+        0.01714193771117098,
+        0.9171640852112531
+      ],
+      "eef_target_distance": 0.32198143236196164,
+      "eef_quat": [
+        0.9995077221074422,
+        0.0064555722161619995,
+        0.00695186514971695,
+        0.029905026431930132
+      ],
+      "target_quat": [
+        0.7071067838613829,
+        -1.4898033162207035e-05,
+        1.138026068712046e-05,
+        0.7071067782631912
+      ],
+      "theta_rel": 1.5110703017126594,
+      "eef_to_target_body_origin": 0.32198143236196164,
+      "target_finger_contact": false,
+      "pairing_pass": true,
+      "clip_fraction": {
+        "agentview": 0.03375244140625,
+        "eye_in_hand": 0.019602457682291668
+      }
+    },
+    {
+      "state_id": 37,
+      "step": 12,
+      "chunk": 1,
+      "k": 0,
+      "dino": {
+        "agentview": {
+          "clean_vs_transform": 0.3178353443189173,
+          "clean_vs_shift": 0.7434675763083044,
+          "clean_vs_transform_cosine": 0.9485818147659302,
+          "clean_vs_shift_cosine": 0.7259592413902283,
+          "clean_vs_transform_patch": {
+            "patch_l2_mean": 0.31615257263183594,
+            "patch_l2_max": 0.6225184798240662,
+            "patch_l2_top10_mean": 0.4467889666557312
+          },
+          "clean_vs_shift_patch": {
+            "patch_l2_mean": 0.7424231171607971,
+            "patch_l2_max": 0.987204909324646,
+            "patch_l2_top10_mean": 0.915253758430481
+          }
+        },
+        "eye_in_hand": {
+          "clean_vs_transform": 0.2067519487160004,
+          "clean_vs_shift": 0.47749439550070266,
+          "clean_vs_transform_cosine": 0.9785531759262085,
+          "clean_vs_shift_cosine": 0.8864403963088989,
+          "clean_vs_transform_patch": {
+            "patch_l2_mean": 0.20466658473014832,
+            "patch_l2_max": 0.33843663334846497,
+            "patch_l2_top10_mean": 0.29882192611694336
+          },
+          "clean_vs_shift_patch": {
+            "patch_l2_mean": 0.46569839119911194,
+            "patch_l2_max": 0.9364674687385559,
+            "patch_l2_top10_mean": 0.829051673412323
+          }
+        }
+      },
+      "resampler": {
+        "clean_vs_transform": 0.11487316082137808,
+        "clean_vs_shift": 0.304060684139655
+      },
+      "action": {
+        "clean_vs_transform": {
+          "pre": {
+            "xyz": 0.04125630855560303,
+            "rot": 0.0035773133859038353,
+            "grip": 0.0002560615539550781,
+            "norm": 0.027110109105706215
+          },
+          "post": {
+            "xyz": 0.04125630855560303,
+            "rot": 0.0035773133859038353,
+            "grip": 0.0,
+            "norm": 0.027109935879707336
+          }
+        },
+        "clean_vs_shift": {
+          "pre": {
+            "xyz": 0.06917989253997803,
+            "rot": 0.02888297848403454,
+            "grip": 7.939338684082031e-05,
+            "norm": 0.04907757043838501
+          },
+          "post": {
+            "xyz": 0.06917989253997803,
+            "rot": 0.02888297848403454,
+            "grip": 0.0,
+            "norm": 0.04907756298780441
+          }
+        }
+      },
+      "eef_pos": [
+        -0.11436206448797505,
+        0.063974939516578,
+        1.1628701652950215
+      ],
+      "target_pos": [
+        0.07760657039996038,
+        0.017141937711468432,
+        0.9171640852113618
+      ],
+      "eef_target_distance": 0.31530424137472784,
+      "eef_quat": [
+        0.9993925434309234,
+        0.00610876053204429,
+        0.009673058351093451,
+        0.032918978136762235
+      ],
+      "target_quat": [
+        0.7071067838616341,
+        -1.4898033165546735e-05,
+        1.1380260689688521e-05,
+        0.7071067782629401
+      ],
+      "theta_rel": 1.505081942237792,
+      "eef_to_target_body_origin": 0.31530424137472784,
+      "target_finger_contact": false,
+      "pairing_pass": true,
+      "clip_fraction": {
+        "agentview": 0.03466796875,
+        "eye_in_hand": 0.018178304036458332
+      }
+    },
+    {
+      "state_id": 37,
+      "step": 13,
+      "chunk": 1,
+      "k": 1,
+      "dino": {
+        "agentview": {
+          "clean_vs_transform": 0.2951042639893716,
+          "clean_vs_shift": 0.7495897843557289,
+          "clean_vs_transform_cosine": 0.9559032917022705,
+          "clean_vs_shift_cosine": 0.7264834046363831,
+          "clean_vs_transform_patch": {
+            "patch_l2_mean": 0.294281542301178,
+            "patch_l2_max": 0.5112414956092834,
+            "patch_l2_top10_mean": 0.4087409973144531
+          },
+          "clean_vs_shift_patch": {
+            "patch_l2_mean": 0.7494634389877319,
+            "patch_l2_max": 0.9425367116928101,
+            "patch_l2_top10_mean": 0.8892693519592285
+          }
+        },
+        "eye_in_hand": {
+          "clean_vs_transform": 0.22101182892291144,
+          "clean_vs_shift": 0.4989447094699863,
+          "clean_vs_transform_cosine": 0.9753885269165039,
+          "clean_vs_shift_cosine": 0.8746795654296875,
+          "clean_vs_transform_patch": {
+            "patch_l2_mean": 0.21834376454353333,
+            "patch_l2_max": 0.3200593590736389,
+            "patch_l2_top10_mean": 0.291594922542572
+          },
+          "clean_vs_shift_patch": {
+            "patch_l2_mean": 0.48508933186531067,
+            "patch_l2_max": 0.9439002275466919,
+            "patch_l2_top10_mean": 0.8298043012619019
+          }
+        }
+      },
+      "resampler": {
+        "clean_vs_transform": 0.14037736358216382,
+        "clean_vs_shift": 0.33497586718504363
+      },
+      "action": {
+        "clean_vs_transform": {
+          "pre": {
+            "xyz": 0.027416078373789787,
+            "rot": 0.008188330568373203,
+            "grip": 0.0006165504455566406,
+            "norm": 0.01873289793729782
+          },
+          "post": {
+            "xyz": 0.027416078373789787,
+            "rot": 0.008188330568373203,
+            "grip": 0.0,
+            "norm": 0.01873144879937172
+          }
+        },
+        "clean_vs_shift": {
+          "pre": {
+            "xyz": 0.06546786427497864,
+            "rot": 0.02659577690064907,
+            "grip": 0.0010099411010742188,
+            "norm": 0.04626191034913063
+          },
+          "post": {
+            "xyz": 0.06546786427497864,
+            "rot": 0.02659577690064907,
+            "grip": 0.0,
+            "norm": 0.04626033455133438
+          }
+        }
+      },
+      "eef_pos": [
+        -0.10433648471724047,
+        0.06849608523324305,
+        1.1617386263475513
+      ],
+      "target_pos": [
+        0.07760657039992541,
+        0.017141937711742963,
+        0.9171640852113888
+      ],
+      "eef_target_distance": 0.3091233248155055,
+      "eef_quat": [
+        0.9992904587387574,
+        0.006437910267321101,
+        0.010602723479800177,
+        0.035562826657685453
+      ],
+      "target_quat": [
+        0.7071067838618659,
+        -1.4898033167908065e-05,
+        1.1380260691447236e-05,
+        0.7071067782627083
+      ],
+      "theta_rel": 1.4998153785600792,
+      "eef_to_target_body_origin": 0.3091233248155055,
+      "target_finger_contact": false,
+      "pairing_pass": true,
+      "clip_fraction": {
+        "agentview": 0.036280314127604164,
+        "eye_in_hand": 0.017079671223958332
+      }
+    },
+    {
+      "state_id": 37,
+      "step": 14,
+      "chunk": 1,
+      "k": 2,
+      "dino": {
+        "agentview": {
+          "clean_vs_transform": 0.3537060096167349,
+          "clean_vs_shift": 0.7431183539287108,
+          "clean_vs_transform_cosine": 0.9360567331314087,
+          "clean_vs_shift_cosine": 0.7253572940826416,
+          "clean_vs_transform_patch": {
+            "patch_l2_mean": 0.35293373465538025,
+            "patch_l2_max": 0.5759767293930054,
+            "patch_l2_top10_mean": 0.4805188775062561
+          },
+          "clean_vs_shift_patch": {
+            "patch_l2_mean": 0.7426244020462036,
+            "patch_l2_max": 1.051985263824463,
+            "patch_l2_top10_mean": 0.9539819955825806
+          }
+        },
+        "eye_in_hand": {
+          "clean_vs_transform": 0.26012172224025193,
+          "clean_vs_shift": 0.5485629459695468,
+          "clean_vs_transform_cosine": 0.9658769369125366,
+          "clean_vs_shift_cosine": 0.851162314414978,
+          "clean_vs_transform_patch": {
+            "patch_l2_mean": 0.2577114403247833,
+            "patch_l2_max": 0.3688814640045166,
+            "patch_l2_top10_mean": 0.33974069356918335
+          },
+          "clean_vs_shift_patch": {
+            "patch_l2_mean": 0.5309904217720032,
+            "patch_l2_max": 1.0867886543273926,
+            "patch_l2_top10_mean": 0.9657590985298157
+          }
+        }
+      },
+      "resampler": {
+        "clean_vs_transform": 0.21412633470850506,
+        "clean_vs_shift": 0.3231469827421988
+      },
+      "action": {
+        "clean_vs_transform": {
+          "pre": {
+            "xyz": 0.06091899052262306,
+            "rot": 0.012088596820831299,
+            "grip": 0.00010728836059570312,
+            "norm": 0.04065847769379616
+          },
+          "post": {
+            "xyz": 0.06091899052262306,
+            "rot": 0.012088596820831299,
+            "grip": 0.0,
+            "norm": 0.040658459067344666
+          }
+        },
+        "clean_vs_shift": {
+          "pre": {
+            "xyz": 0.05400111898779869,
+            "rot": 0.019602105021476746,
+            "grip": 0.0010569095611572266,
+            "norm": 0.03761117905378342
+          },
+          "post": {
+            "xyz": 0.05400111898779869,
+            "rot": 0.019602105021476746,
+            "grip": 0.0,
+            "norm": 0.03760905936360359
+          }
+        }
+      },
+      "eef_pos": [
+        -0.09409445127107467,
+        0.07356427178942032,
+        1.1602023182432184
+      ],
+      "target_pos": [
+        0.07760657039988898,
+        0.017141937712028932,
+        0.9171640852113967
+      ],
+      "eef_target_distance": 0.302873411412794,
+      "eef_quat": [
+        0.9991743644302725,
+        0.007392422599222513,
+        0.010271973436029728,
+        0.038606063192263264
+      ],
+      "target_quat": [
+        0.7071067838621073,
+        -1.489803317002602e-05,
+        1.1380260692974975e-05,
+        0.7071067782624668
+      ],
+      "theta_rel": 1.4937318691143526,
+      "eef_to_target_body_origin": 0.302873411412794,
+      "target_finger_contact": false,
+      "pairing_pass": true,
+      "clip_fraction": {
+        "agentview": 0.037434895833333336,
+        "eye_in_hand": 0.016733805338541668
+      }
+    },
+    {
+      "state_id": 37,
+      "step": 15,
+      "chunk": 1,
+      "k": 3,
+      "dino": {
+        "agentview": {
+          "clean_vs_transform": 0.35016581269691627,
+          "clean_vs_shift": 0.7742061667596136,
+          "clean_vs_transform_cosine": 0.9376190900802612,
+          "clean_vs_shift_cosine": 0.7049299478530884,
+          "clean_vs_transform_patch": {
+            "patch_l2_mean": 0.3486971855163574,
+            "patch_l2_max": 0.5575408339500427,
+            "patch_l2_top10_mean": 0.5108399391174316
+          },
+          "clean_vs_shift_patch": {
+            "patch_l2_mean": 0.7733094096183777,
+            "patch_l2_max": 1.1724556684494019,
+            "patch_l2_top10_mean": 1.0140010118484497
+          }
+        },
+        "eye_in_hand": {
+          "clean_vs_transform": 0.24823946906831748,
+          "clean_vs_shift": 0.5710327700237883,
+          "clean_vs_transform_cosine": 0.9692343473434448,
+          "clean_vs_shift_cosine": 0.8379388451576233,
+          "clean_vs_transform_patch": {
+            "patch_l2_mean": 0.24587059020996094,
+            "patch_l2_max": 0.4336444139480591,
+            "patch_l2_top10_mean": 0.35581716895103455
+          },
+          "clean_vs_shift_patch": {
+            "patch_l2_mean": 0.5494397878646851,
+            "patch_l2_max": 1.1816449165344238,
+            "patch_l2_top10_mean": 1.004172682762146
+          }
+        }
+      },
+      "resampler": {
+        "clean_vs_transform": 0.19426920368239073,
+        "clean_vs_shift": 0.3308963535405691
+      },
+      "action": {
+        "clean_vs_transform": {
+          "pre": {
+            "xyz": 0.07188647240400314,
+            "rot": 0.01093965396285057,
+            "grip": 0.00014650821685791016,
+            "norm": 0.047602590173482895
+          },
+          "post": {
+            "xyz": 0.07188647240400314,
+            "rot": 0.01093965396285057,
+            "grip": 0.0,
+            "norm": 0.04760255664587021
+          }
+        },
+        "clean_vs_shift": {
+          "pre": {
+            "xyz": 0.038782306015491486,
+            "rot": 0.016473254188895226,
+            "grip": 0.00028014183044433594,
+            "norm": 0.027584634721279144
+          },
+          "post": {
+            "xyz": 0.038782306015491486,
+            "rot": 0.016473254188895226,
+            "grip": 0.0,
+            "norm": 0.027584431692957878
+          }
+        }
+      },
+      "eef_pos": [
+        -0.08340446071203408,
+        0.07845791177120096,
+        1.1588531834968467
+      ],
+      "target_pos": [
+        0.07760657039985255,
+        0.0171419377123149,
+        0.9171640852113987
+      ],
+      "eef_target_distance": 0.2968127710266792,
+      "eef_quat": [
+        0.9990340331127142,
+        0.00834546229928318,
+        0.009918595331508236,
+        0.04198780070693797
+      ],
+      "target_quat": [
+        0.7071067838623488,
+        -1.4898033172115393e-05,
+        1.1380260694560373e-05,
+        0.7071067782622253
+      ],
+      "theta_rel": 1.4869718061546462,
+      "eef_to_target_body_origin": 0.2968127710266792,
+      "target_finger_contact": false,
+      "pairing_pass": true,
+      "clip_fraction": {
+        "agentview": 0.03875732421875,
+        "eye_in_hand": 0.0167999267578125
+      }
+    },
+    {
+      "state_id": 37,
+      "step": 16,
+      "chunk": 1,
+      "k": 4,
+      "dino": {
+        "agentview": {
+          "clean_vs_transform": 0.3263449354100488,
+          "clean_vs_shift": 0.7954961553654921,
+          "clean_vs_transform_cosine": 0.9461140036582947,
+          "clean_vs_shift_cosine": 0.6911935806274414,
+          "clean_vs_transform_patch": {
+            "patch_l2_mean": 0.3254047632217407,
+            "patch_l2_max": 0.4963552951812744,
+            "patch_l2_top10_mean": 0.4426025450229645
+          },
+          "clean_vs_shift_patch": {
+            "patch_l2_mean": 0.7940983772277832,
+            "patch_l2_max": 1.2543659210205078,
+            "patch_l2_top10_mean": 1.0685718059539795
+          }
+        },
+        "eye_in_hand": {
+          "clean_vs_transform": 0.27280726252351534,
+          "clean_vs_shift": 0.6812281135255661,
+          "clean_vs_transform_cosine": 0.962490439414978,
+          "clean_vs_shift_cosine": 0.7701147794723511,
+          "clean_vs_transform_patch": {
+            "patch_l2_mean": 0.2699821889400482,
+            "patch_l2_max": 0.3802914619445801,
+            "patch_l2_top10_mean": 0.3614696264266968
+          },
+          "clean_vs_shift_patch": {
+            "patch_l2_mean": 0.6646165251731873,
+            "patch_l2_max": 1.2492295503616333,
+            "patch_l2_top10_mean": 1.0767546892166138
+          }
+        }
+      },
+      "resampler": {
+        "clean_vs_transform": 0.19969753089005124,
+        "clean_vs_shift": 0.3701480757631862
+      },
+      "action": {
+        "clean_vs_transform": {
+          "pre": {
+            "xyz": 0.05267414078116417,
+            "rot": 0.01277938298881054,
+            "grip": 0.0014685392379760742,
+            "norm": 0.035488005727529526
+          },
+          "post": {
+            "xyz": 0.05267414078116417,
+            "rot": 0.01277938298881054,
+            "grip": 0.0,
+            "norm": 0.03548366203904152
+          }
+        },
+        "clean_vs_shift": {
+          "pre": {
+            "xyz": 0.10860593616962433,
+            "rot": 0.013960727490484715,
+            "grip": 0.0002002716064453125,
+            "norm": 0.0716843232512474
+          },
+          "post": {
+            "xyz": 0.10860593616962433,
+            "rot": 0.013960727490484715,
+            "grip": 0.0,
+            "norm": 0.07168427854776382
+          }
+        }
+      },
+      "eef_pos": [
+        -0.07240907990354525,
+        0.08312825185649216,
+        1.1576198024313842
+      ],
+      "target_pos": [
+        0.07760657039981612,
+        0.01714193771260087,
+        0.9171640852113987
+      ],
+      "eef_target_distance": 0.290994572000947,
+      "eef_quat": [
+        0.998876113930661,
+        0.009257313725272496,
+        0.009463282449102467,
+        0.04551106949590867
+      ],
+      "target_quat": [
+        0.7071067838625903,
+        -1.4898033174050704e-05,
+        1.1380260696168298e-05,
+        0.7071067782619839
+      ],
+      "theta_rel": 1.4799268594380173,
+      "eef_to_target_body_origin": 0.290994572000947,
+      "target_finger_contact": false,
+      "pairing_pass": true,
+      "clip_fraction": {
+        "agentview": 0.040654500325520836,
+        "eye_in_hand": 0.016245524088541668
+      }
+    },
+    {
+      "state_id": 37,
+      "step": 17,
+      "chunk": 1,
+      "k": 5,
+      "dino": {
+        "agentview": {
+          "clean_vs_transform": 0.3335779803364773,
+          "clean_vs_shift": 0.8045843614044725,
+          "clean_vs_transform_cosine": 0.9433799386024475,
+          "clean_vs_shift_cosine": 0.6836425065994263,
+          "clean_vs_transform_patch": {
+            "patch_l2_mean": 0.3334120213985443,
+            "patch_l2_max": 0.49842172861099243,
+            "patch_l2_top10_mean": 0.46168702840805054
+          },
+          "clean_vs_shift_patch": {
+            "patch_l2_mean": 0.8036274909973145,
+            "patch_l2_max": 1.2498153448104858,
+            "patch_l2_top10_mean": 1.105738878250122
+          }
+        },
+        "eye_in_hand": {
+          "clean_vs_transform": 0.21468049133713632,
+          "clean_vs_shift": 0.7352325728753369,
+          "clean_vs_transform_cosine": 0.9766843318939209,
+          "clean_vs_shift_cosine": 0.7280901074409485,
+          "clean_vs_transform_patch": {
+            "patch_l2_mean": 0.2123345136642456,
+            "patch_l2_max": 0.34333762526512146,
+            "patch_l2_top10_mean": 0.3075229823589325
+          },
+          "clean_vs_shift_patch": {
+            "patch_l2_mean": 0.7202205061912537,
+            "patch_l2_max": 1.282494306564331,
+            "patch_l2_top10_mean": 1.1434359550476074
+          }
+        }
+      },
+      "resampler": {
+        "clean_vs_transform": 0.20308531120167012,
+        "clean_vs_shift": 0.3813619571039944
+      },
+      "action": {
+        "clean_vs_transform": {
+          "pre": {
+            "xyz": 0.021893883123993874,
+            "rot": 0.013005824759602547,
+            "grip": 0.0005855560302734375,
+            "norm": 0.01667257770895958
+          },
+          "post": {
+            "xyz": 0.021893883123993874,
+            "rot": 0.013005824759602547,
+            "grip": 0.0,
+            "norm": 0.016671108081936836
+          }
+        },
+        "clean_vs_shift": {
+          "pre": {
+            "xyz": 0.11931601166725159,
+            "rot": 0.006321639753878117,
+            "grip": 0.00046241283416748047,
+            "norm": 0.0782204195857048
+          },
+          "post": {
+            "xyz": 0.11931601166725159,
+            "rot": 0.006321639753878117,
+            "grip": 0.0,
+            "norm": 0.07822022587060928
+          }
+        }
+      },
+      "eef_pos": [
+        -0.061225646556347886,
+        0.08730347028009733,
+        1.156407432478127
+      ],
+      "target_pos": [
+        0.0776065703997797,
+        0.01714193771288684,
+        0.9171640852113987
+      ],
+      "eef_target_distance": 0.2853671395387377,
+      "eef_quat": [
+        0.9987045167221951,
+        0.009997480495946787,
+        0.008778490994704034,
+        0.04911493416748163
+      ],
+      "target_quat": [
+        0.7071067838628318,
+        -1.4898033175750325e-05,
+        1.1380260697776915e-05,
+        0.7071067782617424
+      ],
+      "theta_rel": 1.4727137201788858,
+      "eef_to_target_body_origin": 0.2853671395387377,
+      "target_finger_contact": false,
+      "pairing_pass": true,
+      "clip_fraction": {
+        "agentview": 0.042027791341145836,
+        "eye_in_hand": 0.016550699869791668
+      }
+    },
+    {
+      "state_id": 37,
+      "step": 18,
+      "chunk": 1,
+      "k": 6,
+      "dino": {
+        "agentview": {
+          "clean_vs_transform": 0.3269235755064084,
+          "clean_vs_shift": 0.8117279656497027,
+          "clean_vs_transform_cosine": 0.9458918571472168,
+          "clean_vs_shift_cosine": 0.676750898361206,
+          "clean_vs_transform_patch": {
+            "patch_l2_mean": 0.3262249529361725,
+            "patch_l2_max": 0.45624279975891113,
+            "patch_l2_top10_mean": 0.4279596209526062
+          },
+          "clean_vs_shift_patch": {
+            "patch_l2_mean": 0.8094022274017334,
+            "patch_l2_max": 1.226072072982788,
+            "patch_l2_top10_mean": 1.13307785987854
+          }
+        },
+        "eye_in_hand": {
+          "clean_vs_transform": 0.21516063932757526,
+          "clean_vs_shift": 0.7606835182805533,
+          "clean_vs_transform_cosine": 0.9764611721038818,
+          "clean_vs_shift_cosine": 0.7068827152252197,
+          "clean_vs_transform_patch": {
+            "patch_l2_mean": 0.21137669682502747,
+            "patch_l2_max": 0.3898236155509949,
+            "patch_l2_top10_mean": 0.35420554876327515
+          },
+          "clean_vs_shift_patch": {
+            "patch_l2_mean": 0.7464926242828369,
+            "patch_l2_max": 1.253396987915039,
+            "patch_l2_top10_mean": 1.142871379852295
+          }
+        }
+      },
+      "resampler": {
+        "clean_vs_transform": 0.14162921788121816,
+        "clean_vs_shift": 0.39642834672611654
+      },
+      "action": {
+        "clean_vs_transform": {
+          "pre": {
+            "xyz": 0.035343799740076065,
+            "rot": 0.008254732936620712,
+            "grip": 0.0002454519271850586,
+            "norm": 0.02376081608235836
+          },
+          "post": {
+            "xyz": 0.035343799740076065,
+            "rot": 0.008254732936620712,
+            "grip": 0.0,
+            "norm": 0.023760635405778885
+          }
+        },
+        "clean_vs_shift": {
+          "pre": {
+            "xyz": 0.13172757625579834,
+            "rot": 0.009999815374612808,
+            "grip": 0.00029027462005615234,
+            "norm": 0.08648413419723511
+          },
+          "post": {
+            "xyz": 0.13172757625579834,
+            "rot": 0.009999815374612808,
+            "grip": 0.0,
+            "norm": 0.08648405969142914
+          }
+        }
+      },
+      "eef_pos": [
+        -0.04987243311338791,
+        0.09067798532685092,
+        1.1552077578492397
+      ],
+      "target_pos": [
+        0.07760657039974327,
+        0.01714193771317281,
+        0.9171640852113987
+      ],
+      "eef_target_distance": 0.27986288914083207,
+      "eef_quat": [
+        0.9985205018795398,
+        0.010454290521065057,
+        0.007919025414114399,
+        0.052771243802129365
+      ],
+      "target_quat": [
+        0.7071067838630732,
+        -1.4898033177567238e-05,
+        1.1380260699559045e-05,
+        0.7071067782615009
+      ],
+      "theta_rel": 1.4653871305418271,
+      "eef_to_target_body_origin": 0.27986288914083207,
+      "target_finger_contact": false,
+      "pairing_pass": true,
+      "clip_fraction": {
+        "agentview": 0.043935139973958336,
+        "eye_in_hand": 0.016591389973958332
+      }
+    },
+    {
+      "state_id": 37,
+      "step": 19,
+      "chunk": 1,
+      "k": 7,
+      "dino": {
+        "agentview": {
+          "clean_vs_transform": 0.3286700122967661,
+          "clean_vs_shift": 0.8233109364030381,
+          "clean_vs_transform_cosine": 0.9450430274009705,
+          "clean_vs_shift_cosine": 0.6650242209434509,
+          "clean_vs_transform_patch": {
+            "patch_l2_mean": 0.32846444845199585,
+            "patch_l2_max": 0.5325879454612732,
+            "patch_l2_top10_mean": 0.4416138231754303
+          },
+          "clean_vs_shift_patch": {
+            "patch_l2_mean": 0.821028470993042,
+            "patch_l2_max": 1.235919713973999,
+            "patch_l2_top10_mean": 1.153183937072754
+          }
+        },
+        "eye_in_hand": {
+          "clean_vs_transform": 0.23263517538156442,
+          "clean_vs_shift": 0.8108937911736452,
+          "clean_vs_transform_cosine": 0.9726728200912476,
+          "clean_vs_shift_cosine": 0.6640828847885132,
+          "clean_vs_transform_patch": {
+            "patch_l2_mean": 0.22965627908706665,
+            "patch_l2_max": 0.41948768496513367,
+            "patch_l2_top10_mean": 0.3557206988334656
+          },
+          "clean_vs_shift_patch": {
+            "patch_l2_mean": 0.7993303537368774,
+            "patch_l2_max": 1.2571775913238525,
+            "patch_l2_top10_mean": 1.1718006134033203
+          }
+        }
+      },
+      "resampler": {
+        "clean_vs_transform": 0.1651778104178265,
+        "clean_vs_shift": 0.41244751875270946
+      },
+      "action": {
+        "clean_vs_transform": {
+          "pre": {
+            "xyz": 0.039951227605342865,
+            "rot": 0.007380695082247257,
+            "grip": 0.0009441375732421875,
+            "norm": 0.026599187403917313
+          },
+          "post": {
+            "xyz": 0.039951227605342865,
+            "rot": 0.007380695082247257,
+            "grip": 0.0,
+            "norm": 0.0265967920422554
+          }
+        },
+        "clean_vs_shift": {
+          "pre": {
+            "xyz": 0.11584470421075821,
+            "rot": 0.010849745944142342,
+            "grip": 0.001312851905822754,
+            "norm": 0.07617167383432388
+          },
+          "post": {
+            "xyz": 0.11584470421075821,
+            "rot": 0.010849745944142342,
+            "grip": 0.0,
+            "norm": 0.07617004960775375
+          }
+        }
+      },
+      "eef_pos": [
+        -0.03834655772465887,
+        0.09315788501529383,
+        1.1540573294035208
+      ],
+      "target_pos": [
+        0.07760657039970684,
+        0.017141937713458778,
+        0.9171640852113987
+      ],
+      "eef_target_distance": 0.2744849017885853,
+      "eef_quat": [
+        0.998327790188445,
+        0.010482465336279057,
+        0.007082854200385496,
+        0.056405446849627734
+      ],
+      "target_quat": [
+        0.7071067838633147,
+        -1.4898033179430634e-05,
+        1.1380260701443178e-05,
+        0.7071067782612594
+      ],
+      "theta_rel": 1.458095964525251,
+      "eef_to_target_body_origin": 0.2744849017885853,
+      "target_finger_contact": false,
+      "pairing_pass": true,
+      "clip_fraction": {
+        "agentview": 0.046015421549479164,
+        "eye_in_hand": 0.016972859700520832
+      }
+    }
+  ]
+}

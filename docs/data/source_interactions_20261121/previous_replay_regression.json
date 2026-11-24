@@ -1,0 +1,110 @@
+{
+  "schema": "interaction_replay_reopened_validation_v1",
+  "pass": true,
+  "summary_sha256": "d6b2e6d50a110b4138297da3c76c29e9e108f86177093f0fe8ac78b28a764b6c",
+  "root": "runs/interaction_replay/20261121_pilot",
+  "reports": [
+    {
+      "pair_id": "state34_seed7777",
+      "contract": {
+        "pass": true,
+        "clean": {
+          "pass": true,
+          "transitions": 3,
+          "full_chunks": 3,
+          "partial_chunks": 0,
+          "executed_steps": 36
+        },
+        "shift": {
+          "pass": true,
+          "transitions": 3,
+          "full_chunks": 3,
+          "partial_chunks": 0,
+          "executed_steps": 36
+        },
+        "state8_max_abs": 0.0
+      },
+      "chunk_end_flags": [
+        {
+          "chunk": 0,
+          "executed_steps": 12,
+          "success": false,
+          "terminated": false,
+          "truncated": false,
+          "done": false
+        },
+        {
+          "chunk": 1,
+          "executed_steps": 12,
+          "success": false,
+          "terminated": false,
+          "truncated": false,
+          "done": false
+        },
+        {
+          "chunk": 2,
+          "executed_steps": 12,
+          "success": false,
+          "terminated": false,
+          "truncated": true,
+          "done": false
+        }
+      ],
+      "npz_sha256": {
+        "clean": "cf5acaaa78f54ab0ea7976c0c4518b98ef9036d5aa3ca51bc243e8667ad62804",
+        "shift": "8dee6cc208f3de0c769de8295d685d86c9fb7ca607d4188840876726b8be80af"
+      }
+    },
+    {
+      "pair_id": "state36_seed7777",
+      "contract": {
+        "pass": true,
+        "clean": {
+          "pass": true,
+          "transitions": 3,
+          "full_chunks": 3,
+          "partial_chunks": 0,
+          "executed_steps": 36
+        },
+        "shift": {
+          "pass": true,
+          "transitions": 3,
+          "full_chunks": 3,
+          "partial_chunks": 0,
+          "executed_steps": 36
+        },
+        "state8_max_abs": 0.0
+      },
+      "chunk_end_flags": [
+        {
+          "chunk": 0,
+          "executed_steps": 12,
+          "success": false,
+          "terminated": false,
+          "truncated": false,
+          "done": false
+        },
+        {
+          "chunk": 1,
+          "executed_steps": 12,
+          "success": false,
+          "terminated": false,
+          "truncated": false,
+          "done": false
+        },
+        {
+          "chunk": 2,
+          "executed_steps": 12,
+          "success": false,
+          "terminated": false,
+          "truncated": true,
+          "done": false
+        }
+      ],
+      "npz_sha256": {
+        "clean": "97d00e05391101d95b9e3789ca26baa5c173e05dbe2010209925d9d8c92269ce",
+        "shift": "45718cb413927a7429481eda17c3e42172c84d90b75237d5c7783855d1215b69"
+      }
+    }
+  ]
+}

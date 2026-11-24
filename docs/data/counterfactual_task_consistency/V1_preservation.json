@@ -1,0 +1,8 @@
+{
+  "pass": true,
+  "scope": "new loader, frozen old V1 artifact, no fit or protocol override",
+  "max_metric_abs_diff": 5.551115123125783e-16,
+  "model_sha256": "8d79ebfb0ae25bc03297e35d42cd427361d2bbd9fd94284fa4b62097af5db04b",
+  "decision_preserved": "STOP_V1",
+  "original_evaluate_code_drift_guard_not_bypassed": true
+}

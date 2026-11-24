@@ -1,0 +1,26 @@
+{
+  "auc": 0.9224110158655299,
+  "n_windows": 2689,
+  "threshold": 0.9997186660766602,
+  "threshold_source": "/hy-tmp/validation/monitor_multiseed/val.npz",
+  "recall_at_fpr": 0.7685050798258345,
+  "n_failure_episodes": 13,
+  "n_success_episodes": 27,
+  "first_alarm_remaining_steps": [
+    144,
+    144,
+    202,
+    204,
+    194,
+    192,
+    194,
+    200,
+    192,
+    98,
+    178,
+    194,
+    206
+  ],
+  "median_lead_steps": 194.0,
+  "false_alarm_episodes": 9
+}

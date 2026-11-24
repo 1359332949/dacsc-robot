@@ -1,0 +1,322 @@
+{
+  "metadata": {
+    "schema": "controlled_interaction_replay_v1",
+    "role": "target_dev_instrumentation_only",
+    "H": 12,
+    "E": 12,
+    "policy_weights_updated": false,
+    "target_test_accessed_this_run": false,
+    "checkpoint_sha256": "f933ab03c1a4664f7a11690645cdd5fa81788a5b98db81913024f7a23326dfe6",
+    "split_sha256": "0141c2e8e417f6686597930333e91782c62381a45f0bd9ebe9f38d08327a5fa1",
+    "episode_log_sha256": "8f50732476ede6f27c7ed900cd388653be85bd1792022ab7b4804af1741d84d9",
+    "matrix_sha256": "d51806a933d82ac5d78e7e9ab310cbe7a888fa6ef49ceace0438df95052db205",
+    "initial_state_file_sha256": "0627f5f5ce3ef23be546571012be8ef603d93bcb4032bc80feb34937ba580140",
+    "base_bddl_sha256": "3d4ccf070c3d9883ae0676f2d888588f98c696ddad71b7694f47c379fc99ef36",
+    "shift_bddl_sha256": "c7f7e12cae336d51a6bde78d6290d4e044080930e41c5d4dad651ae56886fde8",
+    "script_sha256": "28053e5cd8a0e8b4f20b8510733f809b0176d5a34b5d09491b4dbaf72d7e6610",
+    "contracts_sha256": "d6e05451d5e29b5b598feaa76ba875ab9eab56a28779922fa9c228f37ffa7bd2",
+    "torch_version": "2.9.1+cu128",
+    "numpy_version": "2.2.5",
+    "precision": "fp32",
+    "renderer": "osmesa",
+    "upstream_sha256": {
+      "corp/policy.py": "5f9867ce199d4916cb8907278321dbaf14ad79defd6ab5a01fcf56ace4016eac",
+      "corp/action_generator.py": "9bc64e228f934e8fcf5b927669b3a6c0cf4300735b7e973150436eeef3a289d9",
+      "corp/representation/extractor.py": "385c66cf90ad294210ea84418ca2c83726eac7dadc5d3bf4ffc0a42035377e34",
+      "scripts/evaluate_libero.py": "8ec144c71cfcd3c0cab9d1b505d432062424487970575a4ff83c2bd0613d066a"
+    },
+    "args": {
+      "matrix": "/hy-tmp/validation/multidomain_matrix.json",
+      "checkpoint": "/hy-tmp/patch-diag/repos/CoRP/checkpoints/corp_libero.pt",
+      "split": "docs/data/tta_split_libero_spatial_perturbation.json",
+      "episode_log": "docs/data/perturb_dev_v2.json",
+      "out": "runs/interaction_replay/20261121_pilot",
+      "states": "",
+      "seed": 7777,
+      "chunks": 3,
+      "max_steps": 36,
+      "probe_seed": 20261121,
+      "probe_tau": 0.5,
+      "probe_index": 0,
+      "suite": "libero_spatial",
+      "lighting_id": 2292,
+      "libero_src": "/hy-tmp/libero_plus",
+      "libero_config": "/hy-tmp/libero_config",
+      "render_gpu": 0
+    }
+  },
+  "selected_states": [
+    34,
+    36
+  ],
+  "reports": [
+    {
+      "pair_id": "state34_seed7777",
+      "state_id": 34,
+      "seed": 7777,
+      "contract": {
+        "pass": true,
+        "clean": {
+          "pass": true,
+          "transitions": 3,
+          "full_chunks": 3,
+          "partial_chunks": 0,
+          "executed_steps": 36
+        },
+        "shift": {
+          "pass": true,
+          "transitions": 3,
+          "full_chunks": 3,
+          "partial_chunks": 0,
+          "executed_steps": 36
+        },
+        "state8_max_abs": 0.0
+      },
+      "physics_max_abs_by_field": {
+        "qpos": 0.0,
+        "qvel": 0.0,
+        "time": 0.0,
+        "body_xpos": 0.0,
+        "body_xquat": 0.0,
+        "eef_pos": 0.0,
+        "site_xpos": 0.0,
+        "site_xmat": 0.0,
+        "ctrl": 0.0
+      },
+      "static_model_checks": {
+        "checks": {
+          "nq": true,
+          "nv": true,
+          "nu": true,
+          "njnt": true,
+          "jnt_qposadr": true,
+          "jnt_dofadr": true,
+          "joint_names": true,
+          "joint_types": true,
+          "actuator_names": true,
+          "nbody": true,
+          "body_names": true,
+          "body_pos": true,
+          "body_quat": true,
+          "site_names": true,
+          "site_bodyid": true,
+          "site_pos": true,
+          "site_quat": true,
+          "site_size": true,
+          "site_type": true,
+          "ngeom": true,
+          "geom_names": true,
+          "geom_bodyid": true,
+          "geom_type": true,
+          "geom_size": true,
+          "geom_pos": true,
+          "geom_quat": true,
+          "geom_contype": true,
+          "geom_conaffinity": true,
+          "geom_condim": true,
+          "geom_friction": true,
+          "geom_solref": true,
+          "geom_solimp": true,
+          "geom_margin": true,
+          "geom_gap": true,
+          "body_mass": true,
+          "body_inertia": true,
+          "dof_damping": true,
+          "dof_frictionloss": true,
+          "dof_armature": true,
+          "actuator_gainprm": true,
+          "actuator_biasprm": true,
+          "actuator_gear": true,
+          "actuator_ctrlrange": true,
+          "opt_timestep": true,
+          "opt_gravity": true,
+          "opt_integrator": true,
+          "opt_solver": true,
+          "opt_iterations": true,
+          "opt_tolerance": true,
+          "opt_cone": true,
+          "opt_jacobian": true
+        },
+        "pass": true
+      },
+      "probe_controls": {
+        "repeat_max_abs": 0.0,
+        "clean_shift_hidden_l2": 1.3507736921310425,
+        "clean_shift_velocity_l2": 1.3001868724822998,
+        "view_ownership": {
+          "agentview": {
+            "changed_view_max_abs": 4.568296432495117,
+            "other_view_max_abs": 0.0
+          },
+          "eye_in_hand": {
+            "changed_view_max_abs": 2.007291793823242,
+            "other_view_max_abs": 0.0
+          }
+        },
+        "only_images_vary": true
+      },
+      "official_sampler_parity_clean": [
+        {
+          "x_max_abs": 0.0,
+          "velocity_max_abs": 0.0,
+          "controller_max_abs": 0.0,
+          "clipped_max_abs": 0.0,
+          "official_predict_calls": 1,
+          "steps": 10
+        }
+      ],
+      "official_sampler_parity_shift": {
+        "x_max_abs": 0.0,
+        "velocity_max_abs": 0.0,
+        "controller_max_abs": 0.0,
+        "clipped_max_abs": 0.0,
+        "official_predict_calls": 1,
+        "steps": 10
+      },
+      "final_success": false,
+      "agentview": {
+        "paired_token_rms": 0.5686174035072327,
+        "paired_transition_delta_rms": 0.5244993567466736
+      },
+      "eye_in_hand": {
+        "paired_token_rms": 0.27164426445961,
+        "paired_transition_delta_rms": 0.3128334581851959
+      }
+    },
+    {
+      "pair_id": "state36_seed7777",
+      "state_id": 36,
+      "seed": 7777,
+      "contract": {
+        "pass": true,
+        "clean": {
+          "pass": true,
+          "transitions": 3,
+          "full_chunks": 3,
+          "partial_chunks": 0,
+          "executed_steps": 36
+        },
+        "shift": {
+          "pass": true,
+          "transitions": 3,
+          "full_chunks": 3,
+          "partial_chunks": 0,
+          "executed_steps": 36
+        },
+        "state8_max_abs": 0.0
+      },
+      "physics_max_abs_by_field": {
+        "qpos": 0.0,
+        "qvel": 0.0,
+        "time": 0.0,
+        "body_xpos": 0.0,
+        "body_xquat": 0.0,
+        "eef_pos": 0.0,
+        "site_xpos": 0.0,
+        "site_xmat": 0.0,
+        "ctrl": 0.0
+      },
+      "static_model_checks": {
+        "checks": {
+          "nq": true,
+          "nv": true,
+          "nu": true,
+          "njnt": true,
+          "jnt_qposadr": true,
+          "jnt_dofadr": true,
+          "joint_names": true,
+          "joint_types": true,
+          "actuator_names": true,
+          "nbody": true,
+          "body_names": true,
+          "body_pos": true,
+          "body_quat": true,
+          "site_names": true,
+          "site_bodyid": true,
+          "site_pos": true,
+          "site_quat": true,
+          "site_size": true,
+          "site_type": true,
+          "ngeom": true,
+          "geom_names": true,
+          "geom_bodyid": true,
+          "geom_type": true,
+          "geom_size": true,
+          "geom_pos": true,
+          "geom_quat": true,
+          "geom_contype": true,
+          "geom_conaffinity": true,
+          "geom_condim": true,
+          "geom_friction": true,
+          "geom_solref": true,
+          "geom_solimp": true,
+          "geom_margin": true,
+          "geom_gap": true,
+          "body_mass": true,
+          "body_inertia": true,
+          "dof_damping": true,
+          "dof_frictionloss": true,
+          "dof_armature": true,
+          "actuator_gainprm": true,
+          "actuator_biasprm": true,
+          "actuator_gear": true,
+          "actuator_ctrlrange": true,
+          "opt_timestep": true,
+          "opt_gravity": true,
+          "opt_integrator": true,
+          "opt_solver": true,
+          "opt_iterations": true,
+          "opt_tolerance": true,
+          "opt_cone": true,
+          "opt_jacobian": true
+        },
+        "pass": true
+      },
+      "probe_controls": {
+        "repeat_max_abs": 0.0,
+        "clean_shift_hidden_l2": 1.462610125541687,
+        "clean_shift_velocity_l2": 0.842208206653595,
+        "view_ownership": {
+          "agentview": {
+            "changed_view_max_abs": 3.82700252532959,
+            "other_view_max_abs": 0.0
+          },
+          "eye_in_hand": {
+            "changed_view_max_abs": 2.4976024627685547,
+            "other_view_max_abs": 0.0
+          }
+        },
+        "only_images_vary": true
+      },
+      "official_sampler_parity_clean": [
+        {
+          "x_max_abs": 0.0,
+          "velocity_max_abs": 0.0,
+          "controller_max_abs": 0.0,
+          "clipped_max_abs": 0.0,
+          "official_predict_calls": 1,
+          "steps": 10
+        }
+      ],
+      "official_sampler_parity_shift": {
+        "x_max_abs": 0.0,
+        "velocity_max_abs": 0.0,
+        "controller_max_abs": 0.0,
+        "clipped_max_abs": 0.0,
+        "official_predict_calls": 1,
+        "steps": 10
+      },
+      "final_success": false,
+      "agentview": {
+        "paired_token_rms": 0.421581894159317,
+        "paired_transition_delta_rms": 0.37444111704826355
+      },
+      "eye_in_hand": {
+        "paired_token_rms": 0.21997031569480896,
+        "paired_transition_delta_rms": 0.2654722332954407
+      }
+    }
+  ],
+  "pass": true,
+  "claim_scope": "data/probe correctness only; no learned observer, prediction-risk AUROC, or TTA effectiveness claim"
+}

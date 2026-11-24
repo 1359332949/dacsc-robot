@@ -1,0 +1,5261 @@
+{
+  "status": "EXPLORATORY_GATE_PASS",
+  "passed_factors": [
+    "sensor_noise",
+    "background"
+  ],
+  "primary_score": "all.velocity_variance.m1",
+  "rows": 100,
+  "factor_counts": {
+    "sensor_noise": 30,
+    "background": 30,
+    "lighting": 30,
+    "clean": 10
+  },
+  "max_predict_parity_error": 0.0,
+  "scores": {
+    "all.velocity_variance.m1": {
+      "clean_median": 0.0060899422603250385,
+      "shift_median": 0.0071735747785221585,
+      "domain_shift_auc": 0.64,
+      "threshold_strictly_above_clean_max": 0.0073125435451238665,
+      "clean_resubstitution_fpr": 0.0,
+      "factors": {
+        "sensor_noise": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.8733031674208145,
+          "same_task": {
+            "eligible_pairs": 23,
+            "concordance": 1.0
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 1.0
+          },
+          "same_task_and_noise_code": {
+            "eligible_pairs": 0,
+            "concordance": null
+          },
+          "failure_recall": 0.9230769230769231,
+          "shift_success_fpr": 0.5882352941176471,
+          "cluster_bootstrap_auc_95": [
+            0.7265769230769231,
+            1.0
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "8": 1,
+            "45": 2,
+            "7": 1,
+            "43": 3,
+            "12": 2,
+            "44": 2,
+            "50": 1,
+            "14": 1,
+            "18": 2,
+            "10": 1,
+            "9": 1,
+            "49": 2,
+            "6": 1,
+            "46": 1,
+            "30": 2,
+            "2": 1,
+            "20": 1,
+            "41": 1,
+            "28": 1,
+            "39": 1,
+            "47": 1,
+            "15": 1
+          },
+          "subtypes": {
+            "fog": {
+              "n": 1,
+              "failures": 1,
+              "auc": null
+            },
+            "gaussian_blur": {
+              "n": 7,
+              "failures": 5,
+              "auc": 0.7
+            },
+            "glass_blur": {
+              "n": 13,
+              "failures": 4,
+              "auc": 0.7777777777777778
+            },
+            "motion_blur": {
+              "n": 6,
+              "failures": 2,
+              "auc": 1.0
+            },
+            "zoom_blur": {
+              "n": 3,
+              "failures": 1,
+              "auc": 1.0
+            }
+          }
+        },
+        "background": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.7873303167420814,
+          "same_task": {
+            "eligible_pairs": 21,
+            "concordance": 0.7142857142857143
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 10,
+            "concordance": 0.6
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.6153846153846154,
+          "shift_success_fpr": 0.35294117647058826,
+          "cluster_bootstrap_auc_95": [
+            0.4428434065934066,
+            0.930443143812709
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "scene_texture": {
+              "n": 15,
+              "failures": 3,
+              "auc": 0.9722222222222222
+            },
+            "table_texture": {
+              "n": 15,
+              "failures": 10,
+              "auc": 0.48
+            }
+          }
+        },
+        "lighting": {
+          "n": 30,
+          "failures": 6,
+          "failure_auc": 0.6319444444444444,
+          "same_task": {
+            "eligible_pairs": 6,
+            "concordance": 0.16666666666666666
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 0.16666666666666666
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.3333333333333333,
+          "shift_success_fpr": 0.08333333333333333,
+          "cluster_bootstrap_auc_95": [
+            0.2,
+            1.0
+          ],
+          "bootstrap_valid": 995,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "light_asset": {
+              "n": 30,
+              "failures": 6,
+              "auc": 0.6319444444444444
+            }
+          }
+        }
+      }
+    },
+    "all.velocity_variance.m4": {
+      "clean_median": 0.004581337624716695,
+      "shift_median": 0.004899613030424311,
+      "domain_shift_auc": 0.6188888888888889,
+      "threshold_strictly_above_clean_max": 0.006489446733971407,
+      "clean_resubstitution_fpr": 0.0,
+      "factors": {
+        "sensor_noise": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.8733031674208145,
+          "same_task": {
+            "eligible_pairs": 23,
+            "concordance": 1.0
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 1.0
+          },
+          "same_task_and_noise_code": {
+            "eligible_pairs": 0,
+            "concordance": null
+          },
+          "failure_recall": 0.8461538461538461,
+          "shift_success_fpr": 0.29411764705882354,
+          "cluster_bootstrap_auc_95": [
+            0.726654761904762,
+            1.0
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "8": 1,
+            "45": 2,
+            "7": 1,
+            "43": 3,
+            "12": 2,
+            "44": 2,
+            "50": 1,
+            "14": 1,
+            "18": 2,
+            "10": 1,
+            "9": 1,
+            "49": 2,
+            "6": 1,
+            "46": 1,
+            "30": 2,
+            "2": 1,
+            "20": 1,
+            "41": 1,
+            "28": 1,
+            "39": 1,
+            "47": 1,
+            "15": 1
+          },
+          "subtypes": {
+            "fog": {
+              "n": 1,
+              "failures": 1,
+              "auc": null
+            },
+            "gaussian_blur": {
+              "n": 7,
+              "failures": 5,
+              "auc": 0.7
+            },
+            "glass_blur": {
+              "n": 13,
+              "failures": 4,
+              "auc": 0.8611111111111112
+            },
+            "motion_blur": {
+              "n": 6,
+              "failures": 2,
+              "auc": 1.0
+            },
+            "zoom_blur": {
+              "n": 3,
+              "failures": 1,
+              "auc": 1.0
+            }
+          }
+        },
+        "background": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.7737556561085973,
+          "same_task": {
+            "eligible_pairs": 21,
+            "concordance": 0.8571428571428571
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 10,
+            "concordance": 0.9
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.38461538461538464,
+          "shift_success_fpr": 0.11764705882352941,
+          "cluster_bootstrap_auc_95": [
+            0.5040966386554622,
+            0.9375
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "scene_texture": {
+              "n": 15,
+              "failures": 3,
+              "auc": 1.0
+            },
+            "table_texture": {
+              "n": 15,
+              "failures": 10,
+              "auc": 0.54
+            }
+          }
+        },
+        "lighting": {
+          "n": 30,
+          "failures": 6,
+          "failure_auc": 0.7986111111111112,
+          "same_task": {
+            "eligible_pairs": 6,
+            "concordance": 0.5
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 0.5
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.16666666666666666,
+          "shift_success_fpr": 0.0,
+          "cluster_bootstrap_auc_95": [
+            0.4230769230769231,
+            1.0
+          ],
+          "bootstrap_valid": 995,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "light_asset": {
+              "n": 30,
+              "failures": 6,
+              "auc": 0.7986111111111112
+            }
+          }
+        }
+      }
+    },
+    "all.relative_variance.m1": {
+      "clean_median": 0.00482912342645374,
+      "shift_median": 0.005656377782948453,
+      "domain_shift_auc": 0.6633333333333333,
+      "threshold_strictly_above_clean_max": 0.005676618533093255,
+      "clean_resubstitution_fpr": 0.0,
+      "factors": {
+        "sensor_noise": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.8597285067873304,
+          "same_task": {
+            "eligible_pairs": 23,
+            "concordance": 1.0
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 1.0
+          },
+          "same_task_and_noise_code": {
+            "eligible_pairs": 0,
+            "concordance": null
+          },
+          "failure_recall": 0.9230769230769231,
+          "shift_success_fpr": 0.5882352941176471,
+          "cluster_bootstrap_auc_95": [
+            0.6999369747899159,
+            1.0
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "8": 1,
+            "45": 2,
+            "7": 1,
+            "43": 3,
+            "12": 2,
+            "44": 2,
+            "50": 1,
+            "14": 1,
+            "18": 2,
+            "10": 1,
+            "9": 1,
+            "49": 2,
+            "6": 1,
+            "46": 1,
+            "30": 2,
+            "2": 1,
+            "20": 1,
+            "41": 1,
+            "28": 1,
+            "39": 1,
+            "47": 1,
+            "15": 1
+          },
+          "subtypes": {
+            "fog": {
+              "n": 1,
+              "failures": 1,
+              "auc": null
+            },
+            "gaussian_blur": {
+              "n": 7,
+              "failures": 5,
+              "auc": 0.7
+            },
+            "glass_blur": {
+              "n": 13,
+              "failures": 4,
+              "auc": 0.7777777777777778
+            },
+            "motion_blur": {
+              "n": 6,
+              "failures": 2,
+              "auc": 1.0
+            },
+            "zoom_blur": {
+              "n": 3,
+              "failures": 1,
+              "auc": 0.0
+            }
+          }
+        },
+        "background": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.8009049773755657,
+          "same_task": {
+            "eligible_pairs": 21,
+            "concordance": 0.7619047619047619
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 10,
+            "concordance": 0.7
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.7692307692307693,
+          "shift_success_fpr": 0.35294117647058826,
+          "cluster_bootstrap_auc_95": [
+            0.5,
+            0.9346266233766234
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "scene_texture": {
+              "n": 15,
+              "failures": 3,
+              "auc": 1.0
+            },
+            "table_texture": {
+              "n": 15,
+              "failures": 10,
+              "auc": 0.52
+            }
+          }
+        },
+        "lighting": {
+          "n": 30,
+          "failures": 6,
+          "failure_auc": 0.6736111111111112,
+          "same_task": {
+            "eligible_pairs": 6,
+            "concordance": 0.5
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 0.5
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.3333333333333333,
+          "shift_success_fpr": 0.20833333333333334,
+          "cluster_bootstrap_auc_95": [
+            0.23861538461538462,
+            1.0
+          ],
+          "bootstrap_valid": 995,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "light_asset": {
+              "n": 30,
+              "failures": 6,
+              "auc": 0.6736111111111112
+            }
+          }
+        }
+      }
+    },
+    "all.relative_variance.m4": {
+      "clean_median": 0.0037380465757651275,
+      "shift_median": 0.004071841676786689,
+      "domain_shift_auc": 0.6511111111111111,
+      "threshold_strictly_above_clean_max": 0.004827763875852924,
+      "clean_resubstitution_fpr": 0.0,
+      "factors": {
+        "sensor_noise": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.8733031674208145,
+          "same_task": {
+            "eligible_pairs": 23,
+            "concordance": 0.9565217391304348
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 1.0
+          },
+          "same_task_and_noise_code": {
+            "eligible_pairs": 0,
+            "concordance": null
+          },
+          "failure_recall": 0.8461538461538461,
+          "shift_success_fpr": 0.4117647058823529,
+          "cluster_bootstrap_auc_95": [
+            0.7029536983484352,
+            1.0
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "8": 1,
+            "45": 2,
+            "7": 1,
+            "43": 3,
+            "12": 2,
+            "44": 2,
+            "50": 1,
+            "14": 1,
+            "18": 2,
+            "10": 1,
+            "9": 1,
+            "49": 2,
+            "6": 1,
+            "46": 1,
+            "30": 2,
+            "2": 1,
+            "20": 1,
+            "41": 1,
+            "28": 1,
+            "39": 1,
+            "47": 1,
+            "15": 1
+          },
+          "subtypes": {
+            "fog": {
+              "n": 1,
+              "failures": 1,
+              "auc": null
+            },
+            "gaussian_blur": {
+              "n": 7,
+              "failures": 5,
+              "auc": 0.6
+            },
+            "glass_blur": {
+              "n": 13,
+              "failures": 4,
+              "auc": 0.8888888888888888
+            },
+            "motion_blur": {
+              "n": 6,
+              "failures": 2,
+              "auc": 1.0
+            },
+            "zoom_blur": {
+              "n": 3,
+              "failures": 1,
+              "auc": 1.0
+            }
+          }
+        },
+        "background": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.7601809954751131,
+          "same_task": {
+            "eligible_pairs": 21,
+            "concordance": 0.8571428571428571
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 10,
+            "concordance": 0.9
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.38461538461538464,
+          "shift_success_fpr": 0.17647058823529413,
+          "cluster_bootstrap_auc_95": [
+            0.4940243212669683,
+            0.9350151515151516
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "scene_texture": {
+              "n": 15,
+              "failures": 3,
+              "auc": 0.9444444444444444
+            },
+            "table_texture": {
+              "n": 15,
+              "failures": 10,
+              "auc": 0.5
+            }
+          }
+        },
+        "lighting": {
+          "n": 30,
+          "failures": 6,
+          "failure_auc": 0.7986111111111112,
+          "same_task": {
+            "eligible_pairs": 6,
+            "concordance": 0.5
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 0.5
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.3333333333333333,
+          "shift_success_fpr": 0.041666666666666664,
+          "cluster_bootstrap_auc_95": [
+            0.4230769230769231,
+            1.0
+          ],
+          "bootstrap_valid": 995,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "light_asset": {
+              "n": 30,
+              "failures": 6,
+              "auc": 0.7986111111111112
+            }
+          }
+        }
+      }
+    },
+    "all.turning.m1": {
+      "clean_median": 0.000942838081394294,
+      "shift_median": 0.001201324431200437,
+      "domain_shift_auc": 0.6466666666666666,
+      "threshold_strictly_above_clean_max": 0.0015289606184306266,
+      "clean_resubstitution_fpr": 0.0,
+      "factors": {
+        "sensor_noise": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.8642533936651584,
+          "same_task": {
+            "eligible_pairs": 23,
+            "concordance": 1.0
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 1.0
+          },
+          "same_task_and_noise_code": {
+            "eligible_pairs": 0,
+            "concordance": null
+          },
+          "failure_recall": 0.8461538461538461,
+          "shift_success_fpr": 0.29411764705882354,
+          "cluster_bootstrap_auc_95": [
+            0.7036324786324787,
+            1.0
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "8": 1,
+            "45": 2,
+            "7": 1,
+            "43": 3,
+            "12": 2,
+            "44": 2,
+            "50": 1,
+            "14": 1,
+            "18": 2,
+            "10": 1,
+            "9": 1,
+            "49": 2,
+            "6": 1,
+            "46": 1,
+            "30": 2,
+            "2": 1,
+            "20": 1,
+            "41": 1,
+            "28": 1,
+            "39": 1,
+            "47": 1,
+            "15": 1
+          },
+          "subtypes": {
+            "fog": {
+              "n": 1,
+              "failures": 1,
+              "auc": null
+            },
+            "gaussian_blur": {
+              "n": 7,
+              "failures": 5,
+              "auc": 0.7
+            },
+            "glass_blur": {
+              "n": 13,
+              "failures": 4,
+              "auc": 0.8055555555555556
+            },
+            "motion_blur": {
+              "n": 6,
+              "failures": 2,
+              "auc": 1.0
+            },
+            "zoom_blur": {
+              "n": 3,
+              "failures": 1,
+              "auc": 0.0
+            }
+          }
+        },
+        "background": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.7873303167420814,
+          "same_task": {
+            "eligible_pairs": 21,
+            "concordance": 0.8571428571428571
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 10,
+            "concordance": 0.8
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.5384615384615384,
+          "shift_success_fpr": 0.17647058823529413,
+          "cluster_bootstrap_auc_95": [
+            0.5,
+            0.9382797270955165
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "scene_texture": {
+              "n": 15,
+              "failures": 3,
+              "auc": 0.9166666666666666
+            },
+            "table_texture": {
+              "n": 15,
+              "failures": 10,
+              "auc": 0.52
+            }
+          }
+        },
+        "lighting": {
+          "n": 30,
+          "failures": 6,
+          "failure_auc": 0.6388888888888888,
+          "same_task": {
+            "eligible_pairs": 6,
+            "concordance": 0.5
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 0.5
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.3333333333333333,
+          "shift_success_fpr": 0.041666666666666664,
+          "cluster_bootstrap_auc_95": [
+            0.14183673469387756,
+            1.0
+          ],
+          "bootstrap_valid": 995,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "light_asset": {
+              "n": 30,
+              "failures": 6,
+              "auc": 0.6388888888888888
+            }
+          }
+        }
+      }
+    },
+    "all.turning.m4": {
+      "clean_median": 0.0008706276181829713,
+      "shift_median": 0.0009646392013385587,
+      "domain_shift_auc": 0.6777777777777778,
+      "threshold_strictly_above_clean_max": 0.00117514473591018,
+      "clean_resubstitution_fpr": 0.0,
+      "factors": {
+        "sensor_noise": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.8778280542986425,
+          "same_task": {
+            "eligible_pairs": 23,
+            "concordance": 0.9565217391304348
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 1.0
+          },
+          "same_task_and_noise_code": {
+            "eligible_pairs": 0,
+            "concordance": null
+          },
+          "failure_recall": 0.8461538461538461,
+          "shift_success_fpr": 0.35294117647058826,
+          "cluster_bootstrap_auc_95": [
+            0.7252380952380952,
+            1.0
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "8": 1,
+            "45": 2,
+            "7": 1,
+            "43": 3,
+            "12": 2,
+            "44": 2,
+            "50": 1,
+            "14": 1,
+            "18": 2,
+            "10": 1,
+            "9": 1,
+            "49": 2,
+            "6": 1,
+            "46": 1,
+            "30": 2,
+            "2": 1,
+            "20": 1,
+            "41": 1,
+            "28": 1,
+            "39": 1,
+            "47": 1,
+            "15": 1
+          },
+          "subtypes": {
+            "fog": {
+              "n": 1,
+              "failures": 1,
+              "auc": null
+            },
+            "gaussian_blur": {
+              "n": 7,
+              "failures": 5,
+              "auc": 0.6
+            },
+            "glass_blur": {
+              "n": 13,
+              "failures": 4,
+              "auc": 0.9444444444444444
+            },
+            "motion_blur": {
+              "n": 6,
+              "failures": 2,
+              "auc": 1.0
+            },
+            "zoom_blur": {
+              "n": 3,
+              "failures": 1,
+              "auc": 0.5
+            }
+          }
+        },
+        "background": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.755656108597285,
+          "same_task": {
+            "eligible_pairs": 21,
+            "concordance": 0.8095238095238095
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 10,
+            "concordance": 0.8
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.5384615384615384,
+          "shift_success_fpr": 0.11764705882352941,
+          "cluster_bootstrap_auc_95": [
+            0.4762828947368421,
+            0.9600476190476189
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "scene_texture": {
+              "n": 15,
+              "failures": 3,
+              "auc": 0.8055555555555556
+            },
+            "table_texture": {
+              "n": 15,
+              "failures": 10,
+              "auc": 0.56
+            }
+          }
+        },
+        "lighting": {
+          "n": 30,
+          "failures": 6,
+          "failure_auc": 0.8680555555555556,
+          "same_task": {
+            "eligible_pairs": 6,
+            "concordance": 0.5
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 0.5
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.3333333333333333,
+          "shift_success_fpr": 0.041666666666666664,
+          "cluster_bootstrap_auc_95": [
+            0.6239772727272728,
+            1.0
+          ],
+          "bootstrap_valid": 995,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "light_asset": {
+              "n": 30,
+              "failures": 6,
+              "auc": 0.8680555555555556
+            }
+          }
+        }
+      }
+    },
+    "all.path_excess.m1": {
+      "clean_median": 0.0017241997962076372,
+      "shift_median": 0.0021196096780012885,
+      "domain_shift_auc": 0.6533333333333333,
+      "threshold_strictly_above_clean_max": 0.00238973616972471,
+      "clean_resubstitution_fpr": 0.0,
+      "factors": {
+        "sensor_noise": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.8597285067873304,
+          "same_task": {
+            "eligible_pairs": 23,
+            "concordance": 1.0
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 1.0
+          },
+          "same_task_and_noise_code": {
+            "eligible_pairs": 0,
+            "concordance": null
+          },
+          "failure_recall": 0.9230769230769231,
+          "shift_success_fpr": 0.47058823529411764,
+          "cluster_bootstrap_auc_95": [
+            0.7076923076923077,
+            1.0
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "8": 1,
+            "45": 2,
+            "7": 1,
+            "43": 3,
+            "12": 2,
+            "44": 2,
+            "50": 1,
+            "14": 1,
+            "18": 2,
+            "10": 1,
+            "9": 1,
+            "49": 2,
+            "6": 1,
+            "46": 1,
+            "30": 2,
+            "2": 1,
+            "20": 1,
+            "41": 1,
+            "28": 1,
+            "39": 1,
+            "47": 1,
+            "15": 1
+          },
+          "subtypes": {
+            "fog": {
+              "n": 1,
+              "failures": 1,
+              "auc": null
+            },
+            "gaussian_blur": {
+              "n": 7,
+              "failures": 5,
+              "auc": 0.7
+            },
+            "glass_blur": {
+              "n": 13,
+              "failures": 4,
+              "auc": 0.8055555555555556
+            },
+            "motion_blur": {
+              "n": 6,
+              "failures": 2,
+              "auc": 1.0
+            },
+            "zoom_blur": {
+              "n": 3,
+              "failures": 1,
+              "auc": 0.5
+            }
+          }
+        },
+        "background": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.8099547511312217,
+          "same_task": {
+            "eligible_pairs": 21,
+            "concordance": 0.7619047619047619
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 10,
+            "concordance": 0.7
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.5384615384615384,
+          "shift_success_fpr": 0.23529411764705882,
+          "cluster_bootstrap_auc_95": [
+            0.5,
+            0.939137022397892
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "scene_texture": {
+              "n": 15,
+              "failures": 3,
+              "auc": 0.9722222222222222
+            },
+            "table_texture": {
+              "n": 15,
+              "failures": 10,
+              "auc": 0.54
+            }
+          }
+        },
+        "lighting": {
+          "n": 30,
+          "failures": 6,
+          "failure_auc": 0.6041666666666666,
+          "same_task": {
+            "eligible_pairs": 6,
+            "concordance": 0.5
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 0.5
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.3333333333333333,
+          "shift_success_fpr": 0.041666666666666664,
+          "cluster_bootstrap_auc_95": [
+            0.17500000000000002,
+            1.0
+          ],
+          "bootstrap_valid": 995,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "light_asset": {
+              "n": 30,
+              "failures": 6,
+              "auc": 0.6041666666666666
+            }
+          }
+        }
+      }
+    },
+    "all.path_excess.m4": {
+      "clean_median": 0.0014909492261938884,
+      "shift_median": 0.0016378788171489966,
+      "domain_shift_auc": 0.6622222222222223,
+      "threshold_strictly_above_clean_max": 0.0017558892293550454,
+      "clean_resubstitution_fpr": 0.0,
+      "factors": {
+        "sensor_noise": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.8868778280542986,
+          "same_task": {
+            "eligible_pairs": 23,
+            "concordance": 0.9565217391304348
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 1.0
+          },
+          "same_task_and_noise_code": {
+            "eligible_pairs": 0,
+            "concordance": null
+          },
+          "failure_recall": 1.0,
+          "shift_success_fpr": 0.5882352941176471,
+          "cluster_bootstrap_auc_95": [
+            0.7307126696832579,
+            1.0
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "8": 1,
+            "45": 2,
+            "7": 1,
+            "43": 3,
+            "12": 2,
+            "44": 2,
+            "50": 1,
+            "14": 1,
+            "18": 2,
+            "10": 1,
+            "9": 1,
+            "49": 2,
+            "6": 1,
+            "46": 1,
+            "30": 2,
+            "2": 1,
+            "20": 1,
+            "41": 1,
+            "28": 1,
+            "39": 1,
+            "47": 1,
+            "15": 1
+          },
+          "subtypes": {
+            "fog": {
+              "n": 1,
+              "failures": 1,
+              "auc": null
+            },
+            "gaussian_blur": {
+              "n": 7,
+              "failures": 5,
+              "auc": 0.6
+            },
+            "glass_blur": {
+              "n": 13,
+              "failures": 4,
+              "auc": 0.9444444444444444
+            },
+            "motion_blur": {
+              "n": 6,
+              "failures": 2,
+              "auc": 1.0
+            },
+            "zoom_blur": {
+              "n": 3,
+              "failures": 1,
+              "auc": 1.0
+            }
+          }
+        },
+        "background": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.7647058823529411,
+          "same_task": {
+            "eligible_pairs": 21,
+            "concordance": 0.8095238095238095
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 10,
+            "concordance": 0.8
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.6923076923076923,
+          "shift_success_fpr": 0.23529411764705882,
+          "cluster_bootstrap_auc_95": [
+            0.47770833333333335,
+            0.95
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "scene_texture": {
+              "n": 15,
+              "failures": 3,
+              "auc": 0.8611111111111112
+            },
+            "table_texture": {
+              "n": 15,
+              "failures": 10,
+              "auc": 0.54
+            }
+          }
+        },
+        "lighting": {
+          "n": 30,
+          "failures": 6,
+          "failure_auc": 0.7708333333333334,
+          "same_task": {
+            "eligible_pairs": 6,
+            "concordance": 0.5
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 0.5
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.3333333333333333,
+          "shift_success_fpr": 0.041666666666666664,
+          "cluster_bootstrap_auc_95": [
+            0.41244444444444445,
+            1.0
+          ],
+          "bootstrap_valid": 995,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "light_asset": {
+              "n": 30,
+              "failures": 6,
+              "auc": 0.7708333333333334
+            }
+          }
+        }
+      }
+    },
+    "xyz.velocity_variance.m1": {
+      "clean_median": 0.009129423666270137,
+      "shift_median": 0.011917033073050802,
+      "domain_shift_auc": 0.6222222222222222,
+      "threshold_strictly_above_clean_max": 0.014476037511680029,
+      "clean_resubstitution_fpr": 0.0,
+      "factors": {
+        "sensor_noise": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.665158371040724,
+          "same_task": {
+            "eligible_pairs": 23,
+            "concordance": 0.8695652173913043
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 0.6666666666666666
+          },
+          "same_task_and_noise_code": {
+            "eligible_pairs": 0,
+            "concordance": null
+          },
+          "failure_recall": 0.5384615384615384,
+          "shift_success_fpr": 0.29411764705882354,
+          "cluster_bootstrap_auc_95": [
+            0.53125,
+            0.843078431372549
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "8": 1,
+            "45": 2,
+            "7": 1,
+            "43": 3,
+            "12": 2,
+            "44": 2,
+            "50": 1,
+            "14": 1,
+            "18": 2,
+            "10": 1,
+            "9": 1,
+            "49": 2,
+            "6": 1,
+            "46": 1,
+            "30": 2,
+            "2": 1,
+            "20": 1,
+            "41": 1,
+            "28": 1,
+            "39": 1,
+            "47": 1,
+            "15": 1
+          },
+          "subtypes": {
+            "fog": {
+              "n": 1,
+              "failures": 1,
+              "auc": null
+            },
+            "gaussian_blur": {
+              "n": 7,
+              "failures": 5,
+              "auc": 0.8
+            },
+            "glass_blur": {
+              "n": 13,
+              "failures": 4,
+              "auc": 0.5833333333333334
+            },
+            "motion_blur": {
+              "n": 6,
+              "failures": 2,
+              "auc": 1.0
+            },
+            "zoom_blur": {
+              "n": 3,
+              "failures": 1,
+              "auc": 0.0
+            }
+          }
+        },
+        "background": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.7828054298642534,
+          "same_task": {
+            "eligible_pairs": 21,
+            "concordance": 0.7142857142857143
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 10,
+            "concordance": 0.6
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.6923076923076923,
+          "shift_success_fpr": 0.29411764705882354,
+          "cluster_bootstrap_auc_95": [
+            0.4764338235294117,
+            0.923623511904762
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "scene_texture": {
+              "n": 15,
+              "failures": 3,
+              "auc": 0.9722222222222222
+            },
+            "table_texture": {
+              "n": 15,
+              "failures": 10,
+              "auc": 0.54
+            }
+          }
+        },
+        "lighting": {
+          "n": 30,
+          "failures": 6,
+          "failure_auc": 0.5069444444444444,
+          "same_task": {
+            "eligible_pairs": 6,
+            "concordance": 0.5
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 0.5
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.16666666666666666,
+          "shift_success_fpr": 0.16666666666666666,
+          "cluster_bootstrap_auc_95": [
+            0.0916666666666667,
+            1.0
+          ],
+          "bootstrap_valid": 995,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "light_asset": {
+              "n": 30,
+              "failures": 6,
+              "auc": 0.5069444444444444
+            }
+          }
+        }
+      }
+    },
+    "xyz.velocity_variance.m4": {
+      "clean_median": 0.007145660892056127,
+      "shift_median": 0.008540809200926272,
+      "domain_shift_auc": 0.6355555555555555,
+      "threshold_strictly_above_clean_max": 0.009335363399166192,
+      "clean_resubstitution_fpr": 0.0,
+      "factors": {
+        "sensor_noise": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.7647058823529411,
+          "same_task": {
+            "eligible_pairs": 23,
+            "concordance": 0.9130434782608695
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 1.0
+          },
+          "same_task_and_noise_code": {
+            "eligible_pairs": 0,
+            "concordance": null
+          },
+          "failure_recall": 0.7692307692307693,
+          "shift_success_fpr": 0.47058823529411764,
+          "cluster_bootstrap_auc_95": [
+            0.6563967611336032,
+            0.900014619883041
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "8": 1,
+            "45": 2,
+            "7": 1,
+            "43": 3,
+            "12": 2,
+            "44": 2,
+            "50": 1,
+            "14": 1,
+            "18": 2,
+            "10": 1,
+            "9": 1,
+            "49": 2,
+            "6": 1,
+            "46": 1,
+            "30": 2,
+            "2": 1,
+            "20": 1,
+            "41": 1,
+            "28": 1,
+            "39": 1,
+            "47": 1,
+            "15": 1
+          },
+          "subtypes": {
+            "fog": {
+              "n": 1,
+              "failures": 1,
+              "auc": null
+            },
+            "gaussian_blur": {
+              "n": 7,
+              "failures": 5,
+              "auc": 0.8
+            },
+            "glass_blur": {
+              "n": 13,
+              "failures": 4,
+              "auc": 0.7777777777777778
+            },
+            "motion_blur": {
+              "n": 6,
+              "failures": 2,
+              "auc": 1.0
+            },
+            "zoom_blur": {
+              "n": 3,
+              "failures": 1,
+              "auc": 0.0
+            }
+          }
+        },
+        "background": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.7375565610859729,
+          "same_task": {
+            "eligible_pairs": 21,
+            "concordance": 0.8571428571428571
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 10,
+            "concordance": 0.9
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.5384615384615384,
+          "shift_success_fpr": 0.11764705882352941,
+          "cluster_bootstrap_auc_95": [
+            0.40902847152847155,
+            0.9100086206896552
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "scene_texture": {
+              "n": 15,
+              "failures": 3,
+              "auc": 0.9722222222222222
+            },
+            "table_texture": {
+              "n": 15,
+              "failures": 10,
+              "auc": 0.5
+            }
+          }
+        },
+        "lighting": {
+          "n": 30,
+          "failures": 6,
+          "failure_auc": 0.6597222222222222,
+          "same_task": {
+            "eligible_pairs": 6,
+            "concordance": 0.5
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 0.5
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.16666666666666666,
+          "shift_success_fpr": 0.0,
+          "cluster_bootstrap_auc_95": [
+            0.2666017316017316,
+            1.0
+          ],
+          "bootstrap_valid": 995,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "light_asset": {
+              "n": 30,
+              "failures": 6,
+              "auc": 0.6597222222222222
+            }
+          }
+        }
+      }
+    },
+    "xyz.relative_variance.m1": {
+      "clean_median": 0.006134410168302115,
+      "shift_median": 0.0106164055928167,
+      "domain_shift_auc": 0.6533333333333333,
+      "threshold_strictly_above_clean_max": 0.012472349249115533,
+      "clean_resubstitution_fpr": 0.0,
+      "factors": {
+        "sensor_noise": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.7330316742081447,
+          "same_task": {
+            "eligible_pairs": 23,
+            "concordance": 0.9565217391304348
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 1.0
+          },
+          "same_task_and_noise_code": {
+            "eligible_pairs": 0,
+            "concordance": null
+          },
+          "failure_recall": 0.6153846153846154,
+          "shift_success_fpr": 0.35294117647058826,
+          "cluster_bootstrap_auc_95": [
+            0.6344257703081232,
+            0.923488713667285
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "8": 1,
+            "45": 2,
+            "7": 1,
+            "43": 3,
+            "12": 2,
+            "44": 2,
+            "50": 1,
+            "14": 1,
+            "18": 2,
+            "10": 1,
+            "9": 1,
+            "49": 2,
+            "6": 1,
+            "46": 1,
+            "30": 2,
+            "2": 1,
+            "20": 1,
+            "41": 1,
+            "28": 1,
+            "39": 1,
+            "47": 1,
+            "15": 1
+          },
+          "subtypes": {
+            "fog": {
+              "n": 1,
+              "failures": 1,
+              "auc": null
+            },
+            "gaussian_blur": {
+              "n": 7,
+              "failures": 5,
+              "auc": 0.8
+            },
+            "glass_blur": {
+              "n": 13,
+              "failures": 4,
+              "auc": 0.6388888888888888
+            },
+            "motion_blur": {
+              "n": 6,
+              "failures": 2,
+              "auc": 1.0
+            },
+            "zoom_blur": {
+              "n": 3,
+              "failures": 1,
+              "auc": 0.0
+            }
+          }
+        },
+        "background": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.8009049773755657,
+          "same_task": {
+            "eligible_pairs": 21,
+            "concordance": 0.7142857142857143
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 10,
+            "concordance": 0.6
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.5384615384615384,
+          "shift_success_fpr": 0.17647058823529413,
+          "cluster_bootstrap_auc_95": [
+            0.4642940392940393,
+            0.9353586427939876
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "scene_texture": {
+              "n": 15,
+              "failures": 3,
+              "auc": 0.9722222222222222
+            },
+            "table_texture": {
+              "n": 15,
+              "failures": 10,
+              "auc": 0.5
+            }
+          }
+        },
+        "lighting": {
+          "n": 30,
+          "failures": 6,
+          "failure_auc": 0.6388888888888888,
+          "same_task": {
+            "eligible_pairs": 6,
+            "concordance": 0.5
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 0.5
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.3333333333333333,
+          "shift_success_fpr": 0.16666666666666666,
+          "cluster_bootstrap_auc_95": [
+            0.20681444991789819,
+            1.0
+          ],
+          "bootstrap_valid": 995,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "light_asset": {
+              "n": 30,
+              "failures": 6,
+              "auc": 0.6388888888888888
+            }
+          }
+        }
+      }
+    },
+    "xyz.relative_variance.m4": {
+      "clean_median": 0.006398068843499713,
+      "shift_median": 0.007521576278636419,
+      "domain_shift_auc": 0.7044444444444444,
+      "threshold_strictly_above_clean_max": 0.007952648629528686,
+      "clean_resubstitution_fpr": 0.0,
+      "factors": {
+        "sensor_noise": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.8190045248868778,
+          "same_task": {
+            "eligible_pairs": 23,
+            "concordance": 0.9130434782608695
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 1.0
+          },
+          "same_task_and_noise_code": {
+            "eligible_pairs": 0,
+            "concordance": null
+          },
+          "failure_recall": 1.0,
+          "shift_success_fpr": 0.6470588235294118,
+          "cluster_bootstrap_auc_95": [
+            0.7267361111111111,
+            0.9334722222222221
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "8": 1,
+            "45": 2,
+            "7": 1,
+            "43": 3,
+            "12": 2,
+            "44": 2,
+            "50": 1,
+            "14": 1,
+            "18": 2,
+            "10": 1,
+            "9": 1,
+            "49": 2,
+            "6": 1,
+            "46": 1,
+            "30": 2,
+            "2": 1,
+            "20": 1,
+            "41": 1,
+            "28": 1,
+            "39": 1,
+            "47": 1,
+            "15": 1
+          },
+          "subtypes": {
+            "fog": {
+              "n": 1,
+              "failures": 1,
+              "auc": null
+            },
+            "gaussian_blur": {
+              "n": 7,
+              "failures": 5,
+              "auc": 0.8
+            },
+            "glass_blur": {
+              "n": 13,
+              "failures": 4,
+              "auc": 0.8333333333333334
+            },
+            "motion_blur": {
+              "n": 6,
+              "failures": 2,
+              "auc": 1.0
+            },
+            "zoom_blur": {
+              "n": 3,
+              "failures": 1,
+              "auc": 0.5
+            }
+          }
+        },
+        "background": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.8371040723981901,
+          "same_task": {
+            "eligible_pairs": 21,
+            "concordance": 0.8571428571428571
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 10,
+            "concordance": 0.9
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.6923076923076923,
+          "shift_success_fpr": 0.23529411764705882,
+          "cluster_bootstrap_auc_95": [
+            0.5713585434173669,
+            0.9450340038314176
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "scene_texture": {
+              "n": 15,
+              "failures": 3,
+              "auc": 1.0
+            },
+            "table_texture": {
+              "n": 15,
+              "failures": 10,
+              "auc": 0.6
+            }
+          }
+        },
+        "lighting": {
+          "n": 30,
+          "failures": 6,
+          "failure_auc": 0.7847222222222222,
+          "same_task": {
+            "eligible_pairs": 6,
+            "concordance": 0.5
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 0.5
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.3333333333333333,
+          "shift_success_fpr": 0.041666666666666664,
+          "cluster_bootstrap_auc_95": [
+            0.4227732793522267,
+            1.0
+          ],
+          "bootstrap_valid": 995,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "light_asset": {
+              "n": 30,
+              "failures": 6,
+              "auc": 0.7847222222222222
+            }
+          }
+        }
+      }
+    },
+    "xyz.turning.m1": {
+      "clean_median": 0.0014268575664176263,
+      "shift_median": 0.0019112749781348198,
+      "domain_shift_auc": 0.6766666666666666,
+      "threshold_strictly_above_clean_max": 0.0035681968721201895,
+      "clean_resubstitution_fpr": 0.0,
+      "factors": {
+        "sensor_noise": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.7782805429864253,
+          "same_task": {
+            "eligible_pairs": 23,
+            "concordance": 0.9130434782608695
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 1.0
+          },
+          "same_task_and_noise_code": {
+            "eligible_pairs": 0,
+            "concordance": null
+          },
+          "failure_recall": 0.6153846153846154,
+          "shift_success_fpr": 0.29411764705882354,
+          "cluster_bootstrap_auc_95": [
+            0.6666208791208791,
+            0.9610514485514485
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "8": 1,
+            "45": 2,
+            "7": 1,
+            "43": 3,
+            "12": 2,
+            "44": 2,
+            "50": 1,
+            "14": 1,
+            "18": 2,
+            "10": 1,
+            "9": 1,
+            "49": 2,
+            "6": 1,
+            "46": 1,
+            "30": 2,
+            "2": 1,
+            "20": 1,
+            "41": 1,
+            "28": 1,
+            "39": 1,
+            "47": 1,
+            "15": 1
+          },
+          "subtypes": {
+            "fog": {
+              "n": 1,
+              "failures": 1,
+              "auc": null
+            },
+            "gaussian_blur": {
+              "n": 7,
+              "failures": 5,
+              "auc": 0.8
+            },
+            "glass_blur": {
+              "n": 13,
+              "failures": 4,
+              "auc": 0.75
+            },
+            "motion_blur": {
+              "n": 6,
+              "failures": 2,
+              "auc": 1.0
+            },
+            "zoom_blur": {
+              "n": 3,
+              "failures": 1,
+              "auc": 0.0
+            }
+          }
+        },
+        "background": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.8144796380090498,
+          "same_task": {
+            "eligible_pairs": 21,
+            "concordance": 0.8095238095238095
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 10,
+            "concordance": 0.7
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.3076923076923077,
+          "shift_success_fpr": 0.058823529411764705,
+          "cluster_bootstrap_auc_95": [
+            0.5416118421052631,
+            0.9511097826086956
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "scene_texture": {
+              "n": 15,
+              "failures": 3,
+              "auc": 0.9444444444444444
+            },
+            "table_texture": {
+              "n": 15,
+              "failures": 10,
+              "auc": 0.52
+            }
+          }
+        },
+        "lighting": {
+          "n": 30,
+          "failures": 6,
+          "failure_auc": 0.6944444444444444,
+          "same_task": {
+            "eligible_pairs": 6,
+            "concordance": 0.8333333333333334
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 0.8333333333333334
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.16666666666666666,
+          "shift_success_fpr": 0.041666666666666664,
+          "cluster_bootstrap_auc_95": [
+            0.35354700854700855,
+            1.0
+          ],
+          "bootstrap_valid": 995,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "light_asset": {
+              "n": 30,
+              "failures": 6,
+              "auc": 0.6944444444444444
+            }
+          }
+        }
+      }
+    },
+    "xyz.turning.m4": {
+      "clean_median": 0.001333188691190462,
+      "shift_median": 0.0016228179557359118,
+      "domain_shift_auc": 0.7044444444444444,
+      "threshold_strictly_above_clean_max": 0.0019752235902379214,
+      "clean_resubstitution_fpr": 0.0,
+      "factors": {
+        "sensor_noise": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.8597285067873304,
+          "same_task": {
+            "eligible_pairs": 23,
+            "concordance": 0.9130434782608695
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 1.0
+          },
+          "same_task_and_noise_code": {
+            "eligible_pairs": 0,
+            "concordance": null
+          },
+          "failure_recall": 0.9230769230769231,
+          "shift_success_fpr": 0.4117647058823529,
+          "cluster_bootstrap_auc_95": [
+            0.7561805555555555,
+            0.9636525974025973
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "8": 1,
+            "45": 2,
+            "7": 1,
+            "43": 3,
+            "12": 2,
+            "44": 2,
+            "50": 1,
+            "14": 1,
+            "18": 2,
+            "10": 1,
+            "9": 1,
+            "49": 2,
+            "6": 1,
+            "46": 1,
+            "30": 2,
+            "2": 1,
+            "20": 1,
+            "41": 1,
+            "28": 1,
+            "39": 1,
+            "47": 1,
+            "15": 1
+          },
+          "subtypes": {
+            "fog": {
+              "n": 1,
+              "failures": 1,
+              "auc": null
+            },
+            "gaussian_blur": {
+              "n": 7,
+              "failures": 5,
+              "auc": 0.8
+            },
+            "glass_blur": {
+              "n": 13,
+              "failures": 4,
+              "auc": 0.8888888888888888
+            },
+            "motion_blur": {
+              "n": 6,
+              "failures": 2,
+              "auc": 1.0
+            },
+            "zoom_blur": {
+              "n": 3,
+              "failures": 1,
+              "auc": 1.0
+            }
+          }
+        },
+        "background": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.8506787330316742,
+          "same_task": {
+            "eligible_pairs": 21,
+            "concordance": 0.8095238095238095
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 10,
+            "concordance": 0.7
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.5384615384615384,
+          "shift_success_fpr": 0.11764705882352941,
+          "cluster_bootstrap_auc_95": [
+            0.6489103618421053,
+            0.9667063492063491
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "scene_texture": {
+              "n": 15,
+              "failures": 3,
+              "auc": 0.9166666666666666
+            },
+            "table_texture": {
+              "n": 15,
+              "failures": 10,
+              "auc": 0.64
+            }
+          }
+        },
+        "lighting": {
+          "n": 30,
+          "failures": 6,
+          "failure_auc": 0.8958333333333334,
+          "same_task": {
+            "eligible_pairs": 6,
+            "concordance": 0.8333333333333334
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 0.8333333333333334
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.16666666666666666,
+          "shift_success_fpr": 0.0,
+          "cluster_bootstrap_auc_95": [
+            0.7163394736842105,
+            1.0
+          ],
+          "bootstrap_valid": 995,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "light_asset": {
+              "n": 30,
+              "failures": 6,
+              "auc": 0.8958333333333334
+            }
+          }
+        }
+      }
+    },
+    "xyz.path_excess.m1": {
+      "clean_median": 0.002453549058795912,
+      "shift_median": 0.00354836785403001,
+      "domain_shift_auc": 0.6666666666666666,
+      "threshold_strictly_above_clean_max": 0.005628006885190606,
+      "clean_resubstitution_fpr": 0.0,
+      "factors": {
+        "sensor_noise": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.7601809954751131,
+          "same_task": {
+            "eligible_pairs": 23,
+            "concordance": 0.9565217391304348
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 1.0
+          },
+          "same_task_and_noise_code": {
+            "eligible_pairs": 0,
+            "concordance": null
+          },
+          "failure_recall": 0.5384615384615384,
+          "shift_success_fpr": 0.29411764705882354,
+          "cluster_bootstrap_auc_95": [
+            0.6785542582417583,
+            0.9279331140350877
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "8": 1,
+            "45": 2,
+            "7": 1,
+            "43": 3,
+            "12": 2,
+            "44": 2,
+            "50": 1,
+            "14": 1,
+            "18": 2,
+            "10": 1,
+            "9": 1,
+            "49": 2,
+            "6": 1,
+            "46": 1,
+            "30": 2,
+            "2": 1,
+            "20": 1,
+            "41": 1,
+            "28": 1,
+            "39": 1,
+            "47": 1,
+            "15": 1
+          },
+          "subtypes": {
+            "fog": {
+              "n": 1,
+              "failures": 1,
+              "auc": null
+            },
+            "gaussian_blur": {
+              "n": 7,
+              "failures": 5,
+              "auc": 0.8
+            },
+            "glass_blur": {
+              "n": 13,
+              "failures": 4,
+              "auc": 0.6388888888888888
+            },
+            "motion_blur": {
+              "n": 6,
+              "failures": 2,
+              "auc": 1.0
+            },
+            "zoom_blur": {
+              "n": 3,
+              "failures": 1,
+              "auc": 0.0
+            }
+          }
+        },
+        "background": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.8144796380090498,
+          "same_task": {
+            "eligible_pairs": 21,
+            "concordance": 0.7619047619047619
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 10,
+            "concordance": 0.7
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.3076923076923077,
+          "shift_success_fpr": 0.058823529411764705,
+          "cluster_bootstrap_auc_95": [
+            0.5138392857142857,
+            0.9539130434782609
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "scene_texture": {
+              "n": 15,
+              "failures": 3,
+              "auc": 0.9444444444444444
+            },
+            "table_texture": {
+              "n": 15,
+              "failures": 10,
+              "auc": 0.48
+            }
+          }
+        },
+        "lighting": {
+          "n": 30,
+          "failures": 6,
+          "failure_auc": 0.6666666666666666,
+          "same_task": {
+            "eligible_pairs": 6,
+            "concordance": 0.5
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 0.5
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.16666666666666666,
+          "shift_success_fpr": 0.041666666666666664,
+          "cluster_bootstrap_auc_95": [
+            0.2753918495297806,
+            1.0
+          ],
+          "bootstrap_valid": 995,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "light_asset": {
+              "n": 30,
+              "failures": 6,
+              "auc": 0.6666666666666666
+            }
+          }
+        }
+      }
+    },
+    "xyz.path_excess.m4": {
+      "clean_median": 0.002436575986088041,
+      "shift_median": 0.0028038737788566026,
+      "domain_shift_auc": 0.6866666666666666,
+      "threshold_strictly_above_clean_max": 0.003102402037414298,
+      "clean_resubstitution_fpr": 0.0,
+      "factors": {
+        "sensor_noise": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.8461538461538461,
+          "same_task": {
+            "eligible_pairs": 23,
+            "concordance": 0.9130434782608695
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 1.0
+          },
+          "same_task_and_noise_code": {
+            "eligible_pairs": 0,
+            "concordance": null
+          },
+          "failure_recall": 0.9230769230769231,
+          "shift_success_fpr": 0.5882352941176471,
+          "cluster_bootstrap_auc_95": [
+            0.7785515873015874,
+            0.960532765737874
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "8": 1,
+            "45": 2,
+            "7": 1,
+            "43": 3,
+            "12": 2,
+            "44": 2,
+            "50": 1,
+            "14": 1,
+            "18": 2,
+            "10": 1,
+            "9": 1,
+            "49": 2,
+            "6": 1,
+            "46": 1,
+            "30": 2,
+            "2": 1,
+            "20": 1,
+            "41": 1,
+            "28": 1,
+            "39": 1,
+            "47": 1,
+            "15": 1
+          },
+          "subtypes": {
+            "fog": {
+              "n": 1,
+              "failures": 1,
+              "auc": null
+            },
+            "gaussian_blur": {
+              "n": 7,
+              "failures": 5,
+              "auc": 0.8
+            },
+            "glass_blur": {
+              "n": 13,
+              "failures": 4,
+              "auc": 0.8888888888888888
+            },
+            "motion_blur": {
+              "n": 6,
+              "failures": 2,
+              "auc": 1.0
+            },
+            "zoom_blur": {
+              "n": 3,
+              "failures": 1,
+              "auc": 0.5
+            }
+          }
+        },
+        "background": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.8416289592760181,
+          "same_task": {
+            "eligible_pairs": 21,
+            "concordance": 0.8571428571428571
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 10,
+            "concordance": 0.8
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.6923076923076923,
+          "shift_success_fpr": 0.17647058823529413,
+          "cluster_bootstrap_auc_95": [
+            0.6110906862745099,
+            0.983333333333333
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "scene_texture": {
+              "n": 15,
+              "failures": 3,
+              "auc": 0.9166666666666666
+            },
+            "table_texture": {
+              "n": 15,
+              "failures": 10,
+              "auc": 0.68
+            }
+          }
+        },
+        "lighting": {
+          "n": 30,
+          "failures": 6,
+          "failure_auc": 0.7916666666666666,
+          "same_task": {
+            "eligible_pairs": 6,
+            "concordance": 0.5
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 0.5
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.16666666666666666,
+          "shift_success_fpr": 0.0,
+          "cluster_bootstrap_auc_95": [
+            0.4444444444444444,
+            1.0
+          ],
+          "bootstrap_valid": 995,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "light_asset": {
+              "n": 30,
+              "failures": 6,
+              "auc": 0.7916666666666666
+            }
+          }
+        }
+      }
+    },
+    "rotation.velocity_variance.m1": {
+      "clean_median": 0.0029483539201735952,
+      "shift_median": 0.00302079227500087,
+      "domain_shift_auc": 0.5455555555555556,
+      "threshold_strictly_above_clean_max": 0.006644895630288353,
+      "clean_resubstitution_fpr": 0.0,
+      "factors": {
+        "sensor_noise": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.8371040723981901,
+          "same_task": {
+            "eligible_pairs": 23,
+            "concordance": 0.9565217391304348
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 1.0
+          },
+          "same_task_and_noise_code": {
+            "eligible_pairs": 0,
+            "concordance": null
+          },
+          "failure_recall": 0.5384615384615384,
+          "shift_success_fpr": 0.17647058823529413,
+          "cluster_bootstrap_auc_95": [
+            0.7407206742346061,
+            0.960790679908327
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "8": 1,
+            "45": 2,
+            "7": 1,
+            "43": 3,
+            "12": 2,
+            "44": 2,
+            "50": 1,
+            "14": 1,
+            "18": 2,
+            "10": 1,
+            "9": 1,
+            "49": 2,
+            "6": 1,
+            "46": 1,
+            "30": 2,
+            "2": 1,
+            "20": 1,
+            "41": 1,
+            "28": 1,
+            "39": 1,
+            "47": 1,
+            "15": 1
+          },
+          "subtypes": {
+            "fog": {
+              "n": 1,
+              "failures": 1,
+              "auc": null
+            },
+            "gaussian_blur": {
+              "n": 7,
+              "failures": 5,
+              "auc": 1.0
+            },
+            "glass_blur": {
+              "n": 13,
+              "failures": 4,
+              "auc": 0.8055555555555556
+            },
+            "motion_blur": {
+              "n": 6,
+              "failures": 2,
+              "auc": 0.75
+            },
+            "zoom_blur": {
+              "n": 3,
+              "failures": 1,
+              "auc": 1.0
+            }
+          }
+        },
+        "background": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.7647058823529411,
+          "same_task": {
+            "eligible_pairs": 21,
+            "concordance": 0.8571428571428571
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 10,
+            "concordance": 0.9
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.07692307692307693,
+          "shift_success_fpr": 0.0,
+          "cluster_bootstrap_auc_95": [
+            0.49984567901234567,
+            0.9740450725744844
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "scene_texture": {
+              "n": 15,
+              "failures": 3,
+              "auc": 0.8888888888888888
+            },
+            "table_texture": {
+              "n": 15,
+              "failures": 10,
+              "auc": 0.64
+            }
+          }
+        },
+        "lighting": {
+          "n": 30,
+          "failures": 6,
+          "failure_auc": 0.8472222222222222,
+          "same_task": {
+            "eligible_pairs": 6,
+            "concordance": 0.16666666666666666
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 0.16666666666666666
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.16666666666666666,
+          "shift_success_fpr": 0.08333333333333333,
+          "cluster_bootstrap_auc_95": [
+            0.5714285714285714,
+            0.9668279569892473
+          ],
+          "bootstrap_valid": 995,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "light_asset": {
+              "n": 30,
+              "failures": 6,
+              "auc": 0.8472222222222222
+            }
+          }
+        }
+      }
+    },
+    "rotation.velocity_variance.m4": {
+      "clean_median": 0.002611597460503759,
+      "shift_median": 0.0030983955865082824,
+      "domain_shift_auc": 0.5511111111111111,
+      "threshold_strictly_above_clean_max": 0.005570789123177896,
+      "clean_resubstitution_fpr": 0.0,
+      "factors": {
+        "sensor_noise": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.8190045248868778,
+          "same_task": {
+            "eligible_pairs": 23,
+            "concordance": 0.9565217391304348
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 1.0
+          },
+          "same_task_and_noise_code": {
+            "eligible_pairs": 0,
+            "concordance": null
+          },
+          "failure_recall": 0.5384615384615384,
+          "shift_success_fpr": 0.17647058823529413,
+          "cluster_bootstrap_auc_95": [
+            0.7230555555555556,
+            0.9808635224424698
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "8": 1,
+            "45": 2,
+            "7": 1,
+            "43": 3,
+            "12": 2,
+            "44": 2,
+            "50": 1,
+            "14": 1,
+            "18": 2,
+            "10": 1,
+            "9": 1,
+            "49": 2,
+            "6": 1,
+            "46": 1,
+            "30": 2,
+            "2": 1,
+            "20": 1,
+            "41": 1,
+            "28": 1,
+            "39": 1,
+            "47": 1,
+            "15": 1
+          },
+          "subtypes": {
+            "fog": {
+              "n": 1,
+              "failures": 1,
+              "auc": null
+            },
+            "gaussian_blur": {
+              "n": 7,
+              "failures": 5,
+              "auc": 1.0
+            },
+            "glass_blur": {
+              "n": 13,
+              "failures": 4,
+              "auc": 0.6666666666666666
+            },
+            "motion_blur": {
+              "n": 6,
+              "failures": 2,
+              "auc": 1.0
+            },
+            "zoom_blur": {
+              "n": 3,
+              "failures": 1,
+              "auc": 0.5
+            }
+          }
+        },
+        "background": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.7601809954751131,
+          "same_task": {
+            "eligible_pairs": 21,
+            "concordance": 0.8095238095238095
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 10,
+            "concordance": 0.8
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.3076923076923077,
+          "shift_success_fpr": 0.0,
+          "cluster_bootstrap_auc_95": [
+            0.5356698448610213,
+            0.9853145424836601
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "scene_texture": {
+              "n": 15,
+              "failures": 3,
+              "auc": 0.8611111111111112
+            },
+            "table_texture": {
+              "n": 15,
+              "failures": 10,
+              "auc": 0.62
+            }
+          }
+        },
+        "lighting": {
+          "n": 30,
+          "failures": 6,
+          "failure_auc": 0.9097222222222222,
+          "same_task": {
+            "eligible_pairs": 6,
+            "concordance": 0.16666666666666666
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 0.16666666666666666
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.16666666666666666,
+          "shift_success_fpr": 0.041666666666666664,
+          "cluster_bootstrap_auc_95": [
+            0.6932050092764379,
+            1.0
+          ],
+          "bootstrap_valid": 995,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "light_asset": {
+              "n": 30,
+              "failures": 6,
+              "auc": 0.9097222222222222
+            }
+          }
+        }
+      }
+    },
+    "rotation.relative_variance.m1": {
+      "clean_median": 0.002625821910089075,
+      "shift_median": 0.00291878946577001,
+      "domain_shift_auc": 0.55,
+      "threshold_strictly_above_clean_max": 0.006062223149527033,
+      "clean_resubstitution_fpr": 0.0,
+      "factors": {
+        "sensor_noise": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.8461538461538461,
+          "same_task": {
+            "eligible_pairs": 23,
+            "concordance": 0.9565217391304348
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 1.0
+          },
+          "same_task_and_noise_code": {
+            "eligible_pairs": 0,
+            "concordance": null
+          },
+          "failure_recall": 0.6153846153846154,
+          "shift_success_fpr": 0.17647058823529413,
+          "cluster_bootstrap_auc_95": [
+            0.7767708333333333,
+            0.9572916666666667
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "8": 1,
+            "45": 2,
+            "7": 1,
+            "43": 3,
+            "12": 2,
+            "44": 2,
+            "50": 1,
+            "14": 1,
+            "18": 2,
+            "10": 1,
+            "9": 1,
+            "49": 2,
+            "6": 1,
+            "46": 1,
+            "30": 2,
+            "2": 1,
+            "20": 1,
+            "41": 1,
+            "28": 1,
+            "39": 1,
+            "47": 1,
+            "15": 1
+          },
+          "subtypes": {
+            "fog": {
+              "n": 1,
+              "failures": 1,
+              "auc": null
+            },
+            "gaussian_blur": {
+              "n": 7,
+              "failures": 5,
+              "auc": 1.0
+            },
+            "glass_blur": {
+              "n": 13,
+              "failures": 4,
+              "auc": 0.75
+            },
+            "motion_blur": {
+              "n": 6,
+              "failures": 2,
+              "auc": 0.75
+            },
+            "zoom_blur": {
+              "n": 3,
+              "failures": 1,
+              "auc": 0.5
+            }
+          }
+        },
+        "background": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.7420814479638009,
+          "same_task": {
+            "eligible_pairs": 21,
+            "concordance": 0.8571428571428571
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 10,
+            "concordance": 0.9
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.23076923076923078,
+          "shift_success_fpr": 0.0,
+          "cluster_bootstrap_auc_95": [
+            0.40862980769230767,
+            0.944108005521049
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "scene_texture": {
+              "n": 15,
+              "failures": 3,
+              "auc": 0.8611111111111112
+            },
+            "table_texture": {
+              "n": 15,
+              "failures": 10,
+              "auc": 0.6
+            }
+          }
+        },
+        "lighting": {
+          "n": 30,
+          "failures": 6,
+          "failure_auc": 0.8472222222222222,
+          "same_task": {
+            "eligible_pairs": 6,
+            "concordance": 0.16666666666666666
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 0.16666666666666666
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.5,
+          "shift_success_fpr": 0.08333333333333333,
+          "cluster_bootstrap_auc_95": [
+            0.5709415584415585,
+            1.0
+          ],
+          "bootstrap_valid": 995,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "light_asset": {
+              "n": 30,
+              "failures": 6,
+              "auc": 0.8472222222222222
+            }
+          }
+        }
+      }
+    },
+    "rotation.relative_variance.m4": {
+      "clean_median": 0.002683990773469147,
+      "shift_median": 0.002952816529363095,
+      "domain_shift_auc": 0.5588888888888889,
+      "threshold_strictly_above_clean_max": 0.005024437072802222,
+      "clean_resubstitution_fpr": 0.0,
+      "factors": {
+        "sensor_noise": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.8099547511312217,
+          "same_task": {
+            "eligible_pairs": 23,
+            "concordance": 0.9565217391304348
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 1.0
+          },
+          "same_task_and_noise_code": {
+            "eligible_pairs": 0,
+            "concordance": null
+          },
+          "failure_recall": 0.7692307692307693,
+          "shift_success_fpr": 0.17647058823529413,
+          "cluster_bootstrap_auc_95": [
+            0.7229916897506925,
+            0.9583946078431372
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "8": 1,
+            "45": 2,
+            "7": 1,
+            "43": 3,
+            "12": 2,
+            "44": 2,
+            "50": 1,
+            "14": 1,
+            "18": 2,
+            "10": 1,
+            "9": 1,
+            "49": 2,
+            "6": 1,
+            "46": 1,
+            "30": 2,
+            "2": 1,
+            "20": 1,
+            "41": 1,
+            "28": 1,
+            "39": 1,
+            "47": 1,
+            "15": 1
+          },
+          "subtypes": {
+            "fog": {
+              "n": 1,
+              "failures": 1,
+              "auc": null
+            },
+            "gaussian_blur": {
+              "n": 7,
+              "failures": 5,
+              "auc": 1.0
+            },
+            "glass_blur": {
+              "n": 13,
+              "failures": 4,
+              "auc": 0.6666666666666666
+            },
+            "motion_blur": {
+              "n": 6,
+              "failures": 2,
+              "auc": 1.0
+            },
+            "zoom_blur": {
+              "n": 3,
+              "failures": 1,
+              "auc": 0.5
+            }
+          }
+        },
+        "background": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.7194570135746606,
+          "same_task": {
+            "eligible_pairs": 21,
+            "concordance": 0.8095238095238095
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 10,
+            "concordance": 0.8
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.38461538461538464,
+          "shift_success_fpr": 0.0,
+          "cluster_bootstrap_auc_95": [
+            0.4614958448753463,
+            0.9853145424836601
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "scene_texture": {
+              "n": 15,
+              "failures": 3,
+              "auc": 0.8333333333333334
+            },
+            "table_texture": {
+              "n": 15,
+              "failures": 10,
+              "auc": 0.58
+            }
+          }
+        },
+        "lighting": {
+          "n": 30,
+          "failures": 6,
+          "failure_auc": 0.9097222222222222,
+          "same_task": {
+            "eligible_pairs": 6,
+            "concordance": 0.16666666666666666
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 0.16666666666666666
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.16666666666666666,
+          "shift_success_fpr": 0.041666666666666664,
+          "cluster_bootstrap_auc_95": [
+            0.6932050092764379,
+            1.0
+          ],
+          "bootstrap_valid": 995,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "light_asset": {
+              "n": 30,
+              "failures": 6,
+              "auc": 0.9097222222222222
+            }
+          }
+        }
+      }
+    },
+    "rotation.turning.m1": {
+      "clean_median": 0.0006995475961143348,
+      "shift_median": 0.0007286631252009049,
+      "domain_shift_auc": 0.5455555555555556,
+      "threshold_strictly_above_clean_max": 0.0012346351733810096,
+      "clean_resubstitution_fpr": 0.0,
+      "factors": {
+        "sensor_noise": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.8280542986425339,
+          "same_task": {
+            "eligible_pairs": 23,
+            "concordance": 0.8695652173913043
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 0.8333333333333334
+          },
+          "same_task_and_noise_code": {
+            "eligible_pairs": 0,
+            "concordance": null
+          },
+          "failure_recall": 0.46153846153846156,
+          "shift_success_fpr": 0.17647058823529413,
+          "cluster_bootstrap_auc_95": [
+            0.7296296296296296,
+            0.9411764705882353
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "8": 1,
+            "45": 2,
+            "7": 1,
+            "43": 3,
+            "12": 2,
+            "44": 2,
+            "50": 1,
+            "14": 1,
+            "18": 2,
+            "10": 1,
+            "9": 1,
+            "49": 2,
+            "6": 1,
+            "46": 1,
+            "30": 2,
+            "2": 1,
+            "20": 1,
+            "41": 1,
+            "28": 1,
+            "39": 1,
+            "47": 1,
+            "15": 1
+          },
+          "subtypes": {
+            "fog": {
+              "n": 1,
+              "failures": 1,
+              "auc": null
+            },
+            "gaussian_blur": {
+              "n": 7,
+              "failures": 5,
+              "auc": 1.0
+            },
+            "glass_blur": {
+              "n": 13,
+              "failures": 4,
+              "auc": 0.7222222222222222
+            },
+            "motion_blur": {
+              "n": 6,
+              "failures": 2,
+              "auc": 0.625
+            },
+            "zoom_blur": {
+              "n": 3,
+              "failures": 1,
+              "auc": 0.5
+            }
+          }
+        },
+        "background": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.7239819004524887,
+          "same_task": {
+            "eligible_pairs": 21,
+            "concordance": 0.8571428571428571
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 10,
+            "concordance": 0.9
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.3076923076923077,
+          "shift_success_fpr": 0.058823529411764705,
+          "cluster_bootstrap_auc_95": [
+            0.3818987573099415,
+            0.9409773284313725
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "scene_texture": {
+              "n": 15,
+              "failures": 3,
+              "auc": 0.8611111111111112
+            },
+            "table_texture": {
+              "n": 15,
+              "failures": 10,
+              "auc": 0.58
+            }
+          }
+        },
+        "lighting": {
+          "n": 30,
+          "failures": 6,
+          "failure_auc": 0.7986111111111112,
+          "same_task": {
+            "eligible_pairs": 6,
+            "concordance": 0.16666666666666666
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 0.16666666666666666
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.5,
+          "shift_success_fpr": 0.08333333333333333,
+          "cluster_bootstrap_auc_95": [
+            0.4371527777777778,
+            1.0
+          ],
+          "bootstrap_valid": 995,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "light_asset": {
+              "n": 30,
+              "failures": 6,
+              "auc": 0.7986111111111112
+            }
+          }
+        }
+      }
+    },
+    "rotation.turning.m4": {
+      "clean_median": 0.000639970425413455,
+      "shift_median": 0.0006653573466192726,
+      "domain_shift_auc": 0.5677777777777778,
+      "threshold_strictly_above_clean_max": 0.0011384337848453342,
+      "clean_resubstitution_fpr": 0.0,
+      "factors": {
+        "sensor_noise": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.7782805429864253,
+          "same_task": {
+            "eligible_pairs": 23,
+            "concordance": 0.9130434782608695
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 0.8333333333333334
+          },
+          "same_task_and_noise_code": {
+            "eligible_pairs": 0,
+            "concordance": null
+          },
+          "failure_recall": 0.46153846153846156,
+          "shift_success_fpr": 0.17647058823529413,
+          "cluster_bootstrap_auc_95": [
+            0.6057348901098901,
+            0.9378189792663477
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "8": 1,
+            "45": 2,
+            "7": 1,
+            "43": 3,
+            "12": 2,
+            "44": 2,
+            "50": 1,
+            "14": 1,
+            "18": 2,
+            "10": 1,
+            "9": 1,
+            "49": 2,
+            "6": 1,
+            "46": 1,
+            "30": 2,
+            "2": 1,
+            "20": 1,
+            "41": 1,
+            "28": 1,
+            "39": 1,
+            "47": 1,
+            "15": 1
+          },
+          "subtypes": {
+            "fog": {
+              "n": 1,
+              "failures": 1,
+              "auc": null
+            },
+            "gaussian_blur": {
+              "n": 7,
+              "failures": 5,
+              "auc": 0.9
+            },
+            "glass_blur": {
+              "n": 13,
+              "failures": 4,
+              "auc": 0.75
+            },
+            "motion_blur": {
+              "n": 6,
+              "failures": 2,
+              "auc": 0.625
+            },
+            "zoom_blur": {
+              "n": 3,
+              "failures": 1,
+              "auc": 1.0
+            }
+          }
+        },
+        "background": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.7647058823529411,
+          "same_task": {
+            "eligible_pairs": 21,
+            "concordance": 0.7619047619047619
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 10,
+            "concordance": 0.8
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.38461538461538464,
+          "shift_success_fpr": 0.058823529411764705,
+          "cluster_bootstrap_auc_95": [
+            0.5374884259259259,
+            1.0
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "scene_texture": {
+              "n": 15,
+              "failures": 3,
+              "auc": 0.8611111111111112
+            },
+            "table_texture": {
+              "n": 15,
+              "failures": 10,
+              "auc": 0.6
+            }
+          }
+        },
+        "lighting": {
+          "n": 30,
+          "failures": 6,
+          "failure_auc": 0.9166666666666666,
+          "same_task": {
+            "eligible_pairs": 6,
+            "concordance": 0.16666666666666666
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 0.16666666666666666
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.0,
+          "shift_success_fpr": 0.041666666666666664,
+          "cluster_bootstrap_auc_95": [
+            0.7062222222222222,
+            1.0
+          ],
+          "bootstrap_valid": 995,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "light_asset": {
+              "n": 30,
+              "failures": 6,
+              "auc": 0.9166666666666666
+            }
+          }
+        }
+      }
+    },
+    "rotation.path_excess.m1": {
+      "clean_median": 0.0009927942169165593,
+      "shift_median": 0.0010651679113237167,
+      "domain_shift_auc": 0.5311111111111111,
+      "threshold_strictly_above_clean_max": 0.0019552856723890066,
+      "clean_resubstitution_fpr": 0.0,
+      "factors": {
+        "sensor_noise": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.8371040723981901,
+          "same_task": {
+            "eligible_pairs": 23,
+            "concordance": 0.9565217391304348
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 1.0
+          },
+          "same_task_and_noise_code": {
+            "eligible_pairs": 0,
+            "concordance": null
+          },
+          "failure_recall": 0.5384615384615384,
+          "shift_success_fpr": 0.17647058823529413,
+          "cluster_bootstrap_auc_95": [
+            0.754625496031746,
+            0.9467179487179487
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "8": 1,
+            "45": 2,
+            "7": 1,
+            "43": 3,
+            "12": 2,
+            "44": 2,
+            "50": 1,
+            "14": 1,
+            "18": 2,
+            "10": 1,
+            "9": 1,
+            "49": 2,
+            "6": 1,
+            "46": 1,
+            "30": 2,
+            "2": 1,
+            "20": 1,
+            "41": 1,
+            "28": 1,
+            "39": 1,
+            "47": 1,
+            "15": 1
+          },
+          "subtypes": {
+            "fog": {
+              "n": 1,
+              "failures": 1,
+              "auc": null
+            },
+            "gaussian_blur": {
+              "n": 7,
+              "failures": 5,
+              "auc": 1.0
+            },
+            "glass_blur": {
+              "n": 13,
+              "failures": 4,
+              "auc": 0.75
+            },
+            "motion_blur": {
+              "n": 6,
+              "failures": 2,
+              "auc": 0.75
+            },
+            "zoom_blur": {
+              "n": 3,
+              "failures": 1,
+              "auc": 0.5
+            }
+          }
+        },
+        "background": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.7149321266968326,
+          "same_task": {
+            "eligible_pairs": 21,
+            "concordance": 0.7619047619047619
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 10,
+            "concordance": 0.8
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.3076923076923077,
+          "shift_success_fpr": 0.058823529411764705,
+          "cluster_bootstrap_auc_95": [
+            0.3628720238095238,
+            0.92647732169791
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "scene_texture": {
+              "n": 15,
+              "failures": 3,
+              "auc": 0.8611111111111112
+            },
+            "table_texture": {
+              "n": 15,
+              "failures": 10,
+              "auc": 0.58
+            }
+          }
+        },
+        "lighting": {
+          "n": 30,
+          "failures": 6,
+          "failure_auc": 0.8263888888888888,
+          "same_task": {
+            "eligible_pairs": 6,
+            "concordance": 0.16666666666666666
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 0.16666666666666666
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.16666666666666666,
+          "shift_success_fpr": 0.041666666666666664,
+          "cluster_bootstrap_auc_95": [
+            0.5,
+            1.0
+          ],
+          "bootstrap_valid": 995,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "light_asset": {
+              "n": 30,
+              "failures": 6,
+              "auc": 0.8263888888888888
+            }
+          }
+        }
+      }
+    },
+    "rotation.path_excess.m4": {
+      "clean_median": 0.000896259005502803,
+      "shift_median": 0.0009379961782043089,
+      "domain_shift_auc": 0.5533333333333333,
+      "threshold_strictly_above_clean_max": 0.0017758475958485898,
+      "clean_resubstitution_fpr": 0.0,
+      "factors": {
+        "sensor_noise": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.8009049773755657,
+          "same_task": {
+            "eligible_pairs": 23,
+            "concordance": 0.9565217391304348
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 1.0
+          },
+          "same_task_and_noise_code": {
+            "eligible_pairs": 0,
+            "concordance": null
+          },
+          "failure_recall": 0.38461538461538464,
+          "shift_success_fpr": 0.17647058823529413,
+          "cluster_bootstrap_auc_95": [
+            0.701731893837157,
+            0.9389015151515151
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "8": 1,
+            "45": 2,
+            "7": 1,
+            "43": 3,
+            "12": 2,
+            "44": 2,
+            "50": 1,
+            "14": 1,
+            "18": 2,
+            "10": 1,
+            "9": 1,
+            "49": 2,
+            "6": 1,
+            "46": 1,
+            "30": 2,
+            "2": 1,
+            "20": 1,
+            "41": 1,
+            "28": 1,
+            "39": 1,
+            "47": 1,
+            "15": 1
+          },
+          "subtypes": {
+            "fog": {
+              "n": 1,
+              "failures": 1,
+              "auc": null
+            },
+            "gaussian_blur": {
+              "n": 7,
+              "failures": 5,
+              "auc": 1.0
+            },
+            "glass_blur": {
+              "n": 13,
+              "failures": 4,
+              "auc": 0.75
+            },
+            "motion_blur": {
+              "n": 6,
+              "failures": 2,
+              "auc": 0.875
+            },
+            "zoom_blur": {
+              "n": 3,
+              "failures": 1,
+              "auc": 1.0
+            }
+          }
+        },
+        "background": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.7285067873303167,
+          "same_task": {
+            "eligible_pairs": 21,
+            "concordance": 0.7619047619047619
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 10,
+            "concordance": 0.8
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.38461538461538464,
+          "shift_success_fpr": 0.058823529411764705,
+          "cluster_bootstrap_auc_95": [
+            0.47659774436090224,
+            0.9615885416666666
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "scene_texture": {
+              "n": 15,
+              "failures": 3,
+              "auc": 0.8611111111111112
+            },
+            "table_texture": {
+              "n": 15,
+              "failures": 10,
+              "auc": 0.6
+            }
+          }
+        },
+        "lighting": {
+          "n": 30,
+          "failures": 6,
+          "failure_auc": 0.9166666666666666,
+          "same_task": {
+            "eligible_pairs": 6,
+            "concordance": 0.16666666666666666
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 0.16666666666666666
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.0,
+          "shift_success_fpr": 0.0,
+          "cluster_bootstrap_auc_95": [
+            0.7062222222222222,
+            1.0
+          ],
+          "bootstrap_valid": 995,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "light_asset": {
+              "n": 30,
+              "failures": 6,
+              "auc": 0.9166666666666666
+            }
+          }
+        }
+      }
+    },
+    "gripper.velocity_variance.m1": {
+      "clean_median": 0.00033813317864623996,
+      "shift_median": 0.00043200356023885106,
+      "domain_shift_auc": 0.6477777777777778,
+      "threshold_strictly_above_clean_max": 0.0009859259396341586,
+      "clean_resubstitution_fpr": 0.0,
+      "factors": {
+        "sensor_noise": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.8416289592760181,
+          "same_task": {
+            "eligible_pairs": 23,
+            "concordance": 1.0
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 1.0
+          },
+          "same_task_and_noise_code": {
+            "eligible_pairs": 0,
+            "concordance": null
+          },
+          "failure_recall": 0.8461538461538461,
+          "shift_success_fpr": 0.29411764705882354,
+          "cluster_bootstrap_auc_95": [
+            0.6923076923076923,
+            1.0
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "8": 1,
+            "45": 2,
+            "7": 1,
+            "43": 3,
+            "12": 2,
+            "44": 2,
+            "50": 1,
+            "14": 1,
+            "18": 2,
+            "10": 1,
+            "9": 1,
+            "49": 2,
+            "6": 1,
+            "46": 1,
+            "30": 2,
+            "2": 1,
+            "20": 1,
+            "41": 1,
+            "28": 1,
+            "39": 1,
+            "47": 1,
+            "15": 1
+          },
+          "subtypes": {
+            "fog": {
+              "n": 1,
+              "failures": 1,
+              "auc": null
+            },
+            "gaussian_blur": {
+              "n": 7,
+              "failures": 5,
+              "auc": 0.5
+            },
+            "glass_blur": {
+              "n": 13,
+              "failures": 4,
+              "auc": 0.9444444444444444
+            },
+            "motion_blur": {
+              "n": 6,
+              "failures": 2,
+              "auc": 1.0
+            },
+            "zoom_blur": {
+              "n": 3,
+              "failures": 1,
+              "auc": 1.0
+            }
+          }
+        },
+        "background": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.7692307692307693,
+          "same_task": {
+            "eligible_pairs": 21,
+            "concordance": 0.8571428571428571
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 10,
+            "concordance": 0.8
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.38461538461538464,
+          "shift_success_fpr": 0.058823529411764705,
+          "cluster_bootstrap_auc_95": [
+            0.5933550824175824,
+            0.9197706228956228
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "scene_texture": {
+              "n": 15,
+              "failures": 3,
+              "auc": 0.9444444444444444
+            },
+            "table_texture": {
+              "n": 15,
+              "failures": 10,
+              "auc": 0.56
+            }
+          }
+        },
+        "lighting": {
+          "n": 30,
+          "failures": 6,
+          "failure_auc": 0.6944444444444444,
+          "same_task": {
+            "eligible_pairs": 6,
+            "concordance": 0.5
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 0.5
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.16666666666666666,
+          "shift_success_fpr": 0.0,
+          "cluster_bootstrap_auc_95": [
+            0.29590909090909095,
+            1.0
+          ],
+          "bootstrap_valid": 995,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "light_asset": {
+              "n": 30,
+              "failures": 6,
+              "auc": 0.6944444444444444
+            }
+          }
+        }
+      }
+    },
+    "gripper.velocity_variance.m4": {
+      "clean_median": 0.0004799077485188965,
+      "shift_median": 0.0006473226563548466,
+      "domain_shift_auc": 0.6855555555555556,
+      "threshold_strictly_above_clean_max": 0.0008073736522259971,
+      "clean_resubstitution_fpr": 0.0,
+      "factors": {
+        "sensor_noise": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.8506787330316742,
+          "same_task": {
+            "eligible_pairs": 23,
+            "concordance": 1.0
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 1.0
+          },
+          "same_task_and_noise_code": {
+            "eligible_pairs": 0,
+            "concordance": null
+          },
+          "failure_recall": 0.9230769230769231,
+          "shift_success_fpr": 0.35294117647058826,
+          "cluster_bootstrap_auc_95": [
+            0.7098031655844156,
+            1.0
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "8": 1,
+            "45": 2,
+            "7": 1,
+            "43": 3,
+            "12": 2,
+            "44": 2,
+            "50": 1,
+            "14": 1,
+            "18": 2,
+            "10": 1,
+            "9": 1,
+            "49": 2,
+            "6": 1,
+            "46": 1,
+            "30": 2,
+            "2": 1,
+            "20": 1,
+            "41": 1,
+            "28": 1,
+            "39": 1,
+            "47": 1,
+            "15": 1
+          },
+          "subtypes": {
+            "fog": {
+              "n": 1,
+              "failures": 1,
+              "auc": null
+            },
+            "gaussian_blur": {
+              "n": 7,
+              "failures": 5,
+              "auc": 0.5
+            },
+            "glass_blur": {
+              "n": 13,
+              "failures": 4,
+              "auc": 0.9444444444444444
+            },
+            "motion_blur": {
+              "n": 6,
+              "failures": 2,
+              "auc": 1.0
+            },
+            "zoom_blur": {
+              "n": 3,
+              "failures": 1,
+              "auc": 1.0
+            }
+          }
+        },
+        "background": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.7375565610859729,
+          "same_task": {
+            "eligible_pairs": 21,
+            "concordance": 0.8571428571428571
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 10,
+            "concordance": 0.8
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.38461538461538464,
+          "shift_success_fpr": 0.17647058823529413,
+          "cluster_bootstrap_auc_95": [
+            0.5555555555555556,
+            0.9323177083333333
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "scene_texture": {
+              "n": 15,
+              "failures": 3,
+              "auc": 0.9722222222222222
+            },
+            "table_texture": {
+              "n": 15,
+              "failures": 10,
+              "auc": 0.54
+            }
+          }
+        },
+        "lighting": {
+          "n": 30,
+          "failures": 6,
+          "failure_auc": 0.5069444444444444,
+          "same_task": {
+            "eligible_pairs": 6,
+            "concordance": 0.6666666666666666
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 0.6666666666666666
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.16666666666666666,
+          "shift_success_fpr": 0.2916666666666667,
+          "cluster_bootstrap_auc_95": [
+            0.10338557993730407,
+            1.0
+          ],
+          "bootstrap_valid": 995,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "light_asset": {
+              "n": 30,
+              "failures": 6,
+              "auc": 0.5069444444444444
+            }
+          }
+        }
+      }
+    },
+    "gripper.relative_variance.m1": {
+      "clean_median": 0.00018448539803903112,
+      "shift_median": 0.0002804138292286481,
+      "domain_shift_auc": 0.6555555555555556,
+      "threshold_strictly_above_clean_max": 0.0004481599284083382,
+      "clean_resubstitution_fpr": 0.0,
+      "factors": {
+        "sensor_noise": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.8190045248868778,
+          "same_task": {
+            "eligible_pairs": 23,
+            "concordance": 1.0
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 1.0
+          },
+          "same_task_and_noise_code": {
+            "eligible_pairs": 0,
+            "concordance": null
+          },
+          "failure_recall": 0.7692307692307693,
+          "shift_success_fpr": 0.35294117647058826,
+          "cluster_bootstrap_auc_95": [
+            0.6632635345804988,
+            1.0
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "8": 1,
+            "45": 2,
+            "7": 1,
+            "43": 3,
+            "12": 2,
+            "44": 2,
+            "50": 1,
+            "14": 1,
+            "18": 2,
+            "10": 1,
+            "9": 1,
+            "49": 2,
+            "6": 1,
+            "46": 1,
+            "30": 2,
+            "2": 1,
+            "20": 1,
+            "41": 1,
+            "28": 1,
+            "39": 1,
+            "47": 1,
+            "15": 1
+          },
+          "subtypes": {
+            "fog": {
+              "n": 1,
+              "failures": 1,
+              "auc": null
+            },
+            "gaussian_blur": {
+              "n": 7,
+              "failures": 5,
+              "auc": 0.4
+            },
+            "glass_blur": {
+              "n": 13,
+              "failures": 4,
+              "auc": 0.8888888888888888
+            },
+            "motion_blur": {
+              "n": 6,
+              "failures": 2,
+              "auc": 1.0
+            },
+            "zoom_blur": {
+              "n": 3,
+              "failures": 1,
+              "auc": 1.0
+            }
+          }
+        },
+        "background": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.6877828054298643,
+          "same_task": {
+            "eligible_pairs": 21,
+            "concordance": 0.8571428571428571
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 10,
+            "concordance": 0.8
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.38461538461538464,
+          "shift_success_fpr": 0.17647058823529413,
+          "cluster_bootstrap_auc_95": [
+            0.5127717391304347,
+            0.9177172459893047
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "scene_texture": {
+              "n": 15,
+              "failures": 3,
+              "auc": 0.7222222222222222
+            },
+            "table_texture": {
+              "n": 15,
+              "failures": 10,
+              "auc": 0.54
+            }
+          }
+        },
+        "lighting": {
+          "n": 30,
+          "failures": 6,
+          "failure_auc": 0.3333333333333333,
+          "same_task": {
+            "eligible_pairs": 6,
+            "concordance": 0.5
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 0.5
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.16666666666666666,
+          "shift_success_fpr": 0.041666666666666664,
+          "cluster_bootstrap_auc_95": [
+            0.05857142857142857,
+            1.0
+          ],
+          "bootstrap_valid": 995,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "light_asset": {
+              "n": 30,
+              "failures": 6,
+              "auc": 0.3333333333333333
+            }
+          }
+        }
+      }
+    },
+    "gripper.relative_variance.m4": {
+      "clean_median": 0.0002599021385519158,
+      "shift_median": 0.0003471648560502803,
+      "domain_shift_auc": 0.6666666666666666,
+      "threshold_strictly_above_clean_max": 0.0005240462026233378,
+      "clean_resubstitution_fpr": 0.0,
+      "factors": {
+        "sensor_noise": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.8371040723981901,
+          "same_task": {
+            "eligible_pairs": 23,
+            "concordance": 1.0
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 1.0
+          },
+          "same_task_and_noise_code": {
+            "eligible_pairs": 0,
+            "concordance": null
+          },
+          "failure_recall": 0.7692307692307693,
+          "shift_success_fpr": 0.35294117647058826,
+          "cluster_bootstrap_auc_95": [
+            0.6874919871794872,
+            1.0
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "8": 1,
+            "45": 2,
+            "7": 1,
+            "43": 3,
+            "12": 2,
+            "44": 2,
+            "50": 1,
+            "14": 1,
+            "18": 2,
+            "10": 1,
+            "9": 1,
+            "49": 2,
+            "6": 1,
+            "46": 1,
+            "30": 2,
+            "2": 1,
+            "20": 1,
+            "41": 1,
+            "28": 1,
+            "39": 1,
+            "47": 1,
+            "15": 1
+          },
+          "subtypes": {
+            "fog": {
+              "n": 1,
+              "failures": 1,
+              "auc": null
+            },
+            "gaussian_blur": {
+              "n": 7,
+              "failures": 5,
+              "auc": 0.5
+            },
+            "glass_blur": {
+              "n": 13,
+              "failures": 4,
+              "auc": 0.9166666666666666
+            },
+            "motion_blur": {
+              "n": 6,
+              "failures": 2,
+              "auc": 1.0
+            },
+            "zoom_blur": {
+              "n": 3,
+              "failures": 1,
+              "auc": 1.0
+            }
+          }
+        },
+        "background": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.7330316742081447,
+          "same_task": {
+            "eligible_pairs": 21,
+            "concordance": 0.8571428571428571
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 10,
+            "concordance": 0.8
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.38461538461538464,
+          "shift_success_fpr": 0.17647058823529413,
+          "cluster_bootstrap_auc_95": [
+            0.5555555555555556,
+            0.9142978896103896
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "scene_texture": {
+              "n": 15,
+              "failures": 3,
+              "auc": 0.9444444444444444
+            },
+            "table_texture": {
+              "n": 15,
+              "failures": 10,
+              "auc": 0.52
+            }
+          }
+        },
+        "lighting": {
+          "n": 30,
+          "failures": 6,
+          "failure_auc": 0.4236111111111111,
+          "same_task": {
+            "eligible_pairs": 6,
+            "concordance": 0.6666666666666666
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 0.6666666666666666
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.16666666666666666,
+          "shift_success_fpr": 0.0,
+          "cluster_bootstrap_auc_95": [
+            0.08333333333333333,
+            1.0
+          ],
+          "bootstrap_valid": 995,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "light_asset": {
+              "n": 30,
+              "failures": 6,
+              "auc": 0.4236111111111111
+            }
+          }
+        }
+      }
+    },
+    "gripper.turning.m1": {
+      "clean_median": 5.635512468078597e-05,
+      "shift_median": 8.003445289391417e-05,
+      "domain_shift_auc": 0.6477777777777778,
+      "threshold_strictly_above_clean_max": 0.00010651012447715491,
+      "clean_resubstitution_fpr": 0.0,
+      "factors": {
+        "sensor_noise": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.7782805429864253,
+          "same_task": {
+            "eligible_pairs": 23,
+            "concordance": 1.0
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 1.0
+          },
+          "same_task_and_noise_code": {
+            "eligible_pairs": 0,
+            "concordance": null
+          },
+          "failure_recall": 0.7692307692307693,
+          "shift_success_fpr": 0.4117647058823529,
+          "cluster_bootstrap_auc_95": [
+            0.6289240696278511,
+            1.0
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "8": 1,
+            "45": 2,
+            "7": 1,
+            "43": 3,
+            "12": 2,
+            "44": 2,
+            "50": 1,
+            "14": 1,
+            "18": 2,
+            "10": 1,
+            "9": 1,
+            "49": 2,
+            "6": 1,
+            "46": 1,
+            "30": 2,
+            "2": 1,
+            "20": 1,
+            "41": 1,
+            "28": 1,
+            "39": 1,
+            "47": 1,
+            "15": 1
+          },
+          "subtypes": {
+            "fog": {
+              "n": 1,
+              "failures": 1,
+              "auc": null
+            },
+            "gaussian_blur": {
+              "n": 7,
+              "failures": 5,
+              "auc": 0.3
+            },
+            "glass_blur": {
+              "n": 13,
+              "failures": 4,
+              "auc": 0.8611111111111112
+            },
+            "motion_blur": {
+              "n": 6,
+              "failures": 2,
+              "auc": 1.0
+            },
+            "zoom_blur": {
+              "n": 3,
+              "failures": 1,
+              "auc": 1.0
+            }
+          }
+        },
+        "background": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.6244343891402715,
+          "same_task": {
+            "eligible_pairs": 21,
+            "concordance": 0.7142857142857143
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 10,
+            "concordance": 0.7
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.3076923076923077,
+          "shift_success_fpr": 0.11764705882352941,
+          "cluster_bootstrap_auc_95": [
+            0.34017543859649124,
+            0.8681390977443609
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "scene_texture": {
+              "n": 15,
+              "failures": 3,
+              "auc": 0.7777777777777778
+            },
+            "table_texture": {
+              "n": 15,
+              "failures": 10,
+              "auc": 0.48
+            }
+          }
+        },
+        "lighting": {
+          "n": 30,
+          "failures": 6,
+          "failure_auc": 0.3194444444444444,
+          "same_task": {
+            "eligible_pairs": 6,
+            "concordance": 0.5
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 0.5
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.16666666666666666,
+          "shift_success_fpr": 0.4583333333333333,
+          "cluster_bootstrap_auc_95": [
+            0.04901477832512316,
+            1.0
+          ],
+          "bootstrap_valid": 995,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "light_asset": {
+              "n": 30,
+              "failures": 6,
+              "auc": 0.3194444444444444
+            }
+          }
+        }
+      }
+    },
+    "gripper.turning.m4": {
+      "clean_median": 5.609112535687343e-05,
+      "shift_median": 9.363251422188973e-05,
+      "domain_shift_auc": 0.6888888888888889,
+      "threshold_strictly_above_clean_max": 0.00010737021980937301,
+      "clean_resubstitution_fpr": 0.0,
+      "factors": {
+        "sensor_noise": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.8054298642533937,
+          "same_task": {
+            "eligible_pairs": 23,
+            "concordance": 1.0
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 1.0
+          },
+          "same_task_and_noise_code": {
+            "eligible_pairs": 0,
+            "concordance": null
+          },
+          "failure_recall": 0.7692307692307693,
+          "shift_success_fpr": 0.4117647058823529,
+          "cluster_bootstrap_auc_95": [
+            0.6532955465587045,
+            1.0
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "8": 1,
+            "45": 2,
+            "7": 1,
+            "43": 3,
+            "12": 2,
+            "44": 2,
+            "50": 1,
+            "14": 1,
+            "18": 2,
+            "10": 1,
+            "9": 1,
+            "49": 2,
+            "6": 1,
+            "46": 1,
+            "30": 2,
+            "2": 1,
+            "20": 1,
+            "41": 1,
+            "28": 1,
+            "39": 1,
+            "47": 1,
+            "15": 1
+          },
+          "subtypes": {
+            "fog": {
+              "n": 1,
+              "failures": 1,
+              "auc": null
+            },
+            "gaussian_blur": {
+              "n": 7,
+              "failures": 5,
+              "auc": 0.3
+            },
+            "glass_blur": {
+              "n": 13,
+              "failures": 4,
+              "auc": 0.9444444444444444
+            },
+            "motion_blur": {
+              "n": 6,
+              "failures": 2,
+              "auc": 1.0
+            },
+            "zoom_blur": {
+              "n": 3,
+              "failures": 1,
+              "auc": 1.0
+            }
+          }
+        },
+        "background": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.48868778280542985,
+          "same_task": {
+            "eligible_pairs": 21,
+            "concordance": 0.5714285714285714
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 10,
+            "concordance": 0.7
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.38461538461538464,
+          "shift_success_fpr": 0.11764705882352941,
+          "cluster_bootstrap_auc_95": [
+            0.16658496732026143,
+            0.8296401515151515
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "scene_texture": {
+              "n": 15,
+              "failures": 3,
+              "auc": 0.6944444444444444
+            },
+            "table_texture": {
+              "n": 15,
+              "failures": 10,
+              "auc": 0.48
+            }
+          }
+        },
+        "lighting": {
+          "n": 30,
+          "failures": 6,
+          "failure_auc": 0.3958333333333333,
+          "same_task": {
+            "eligible_pairs": 6,
+            "concordance": 0.5
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 0.5
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.16666666666666666,
+          "shift_success_fpr": 0.4583333333333333,
+          "cluster_bootstrap_auc_95": [
+            0.053840682788051215,
+            1.0
+          ],
+          "bootstrap_valid": 995,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "light_asset": {
+              "n": 30,
+              "failures": 6,
+              "auc": 0.3958333333333333
+            }
+          }
+        }
+      }
+    },
+    "gripper.path_excess.m1": {
+      "clean_median": 6.865025073166109e-05,
+      "shift_median": 9.63626989636257e-05,
+      "domain_shift_auc": 0.6355555555555555,
+      "threshold_strictly_above_clean_max": 0.00017748549361740196,
+      "clean_resubstitution_fpr": 0.0,
+      "factors": {
+        "sensor_noise": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.7918552036199095,
+          "same_task": {
+            "eligible_pairs": 23,
+            "concordance": 1.0
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 1.0
+          },
+          "same_task_and_noise_code": {
+            "eligible_pairs": 0,
+            "concordance": null
+          },
+          "failure_recall": 0.7692307692307693,
+          "shift_success_fpr": 0.29411764705882354,
+          "cluster_bootstrap_auc_95": [
+            0.6428463203463204,
+            1.0
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "8": 1,
+            "45": 2,
+            "7": 1,
+            "43": 3,
+            "12": 2,
+            "44": 2,
+            "50": 1,
+            "14": 1,
+            "18": 2,
+            "10": 1,
+            "9": 1,
+            "49": 2,
+            "6": 1,
+            "46": 1,
+            "30": 2,
+            "2": 1,
+            "20": 1,
+            "41": 1,
+            "28": 1,
+            "39": 1,
+            "47": 1,
+            "15": 1
+          },
+          "subtypes": {
+            "fog": {
+              "n": 1,
+              "failures": 1,
+              "auc": null
+            },
+            "gaussian_blur": {
+              "n": 7,
+              "failures": 5,
+              "auc": 0.3
+            },
+            "glass_blur": {
+              "n": 13,
+              "failures": 4,
+              "auc": 0.8611111111111112
+            },
+            "motion_blur": {
+              "n": 6,
+              "failures": 2,
+              "auc": 1.0
+            },
+            "zoom_blur": {
+              "n": 3,
+              "failures": 1,
+              "auc": 1.0
+            }
+          }
+        },
+        "background": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.5972850678733032,
+          "same_task": {
+            "eligible_pairs": 21,
+            "concordance": 0.8095238095238095
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 10,
+            "concordance": 0.9
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.3076923076923077,
+          "shift_success_fpr": 0.058823529411764705,
+          "cluster_bootstrap_auc_95": [
+            0.3523214285714286,
+            0.8447563306258958
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "scene_texture": {
+              "n": 15,
+              "failures": 3,
+              "auc": 0.7222222222222222
+            },
+            "table_texture": {
+              "n": 15,
+              "failures": 10,
+              "auc": 0.54
+            }
+          }
+        },
+        "lighting": {
+          "n": 30,
+          "failures": 6,
+          "failure_auc": 0.3333333333333333,
+          "same_task": {
+            "eligible_pairs": 6,
+            "concordance": 0.5
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 0.5
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.16666666666666666,
+          "shift_success_fpr": 0.0,
+          "cluster_bootstrap_auc_95": [
+            0.024821428571428574,
+            1.0
+          ],
+          "bootstrap_valid": 995,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "light_asset": {
+              "n": 30,
+              "failures": 6,
+              "auc": 0.3333333333333333
+            }
+          }
+        }
+      }
+    },
+    "gripper.path_excess.m4": {
+      "clean_median": 7.403859535298762e-05,
+      "shift_median": 9.898078201445171e-05,
+      "domain_shift_auc": 0.64,
+      "threshold_strictly_above_clean_max": 0.0001519107424897137,
+      "clean_resubstitution_fpr": 0.0,
+      "factors": {
+        "sensor_noise": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.8190045248868778,
+          "same_task": {
+            "eligible_pairs": 23,
+            "concordance": 1.0
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 1.0
+          },
+          "same_task_and_noise_code": {
+            "eligible_pairs": 0,
+            "concordance": null
+          },
+          "failure_recall": 0.7692307692307693,
+          "shift_success_fpr": 0.35294117647058826,
+          "cluster_bootstrap_auc_95": [
+            0.6599915966386555,
+            1.0
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "8": 1,
+            "45": 2,
+            "7": 1,
+            "43": 3,
+            "12": 2,
+            "44": 2,
+            "50": 1,
+            "14": 1,
+            "18": 2,
+            "10": 1,
+            "9": 1,
+            "49": 2,
+            "6": 1,
+            "46": 1,
+            "30": 2,
+            "2": 1,
+            "20": 1,
+            "41": 1,
+            "28": 1,
+            "39": 1,
+            "47": 1,
+            "15": 1
+          },
+          "subtypes": {
+            "fog": {
+              "n": 1,
+              "failures": 1,
+              "auc": null
+            },
+            "gaussian_blur": {
+              "n": 7,
+              "failures": 5,
+              "auc": 0.4
+            },
+            "glass_blur": {
+              "n": 13,
+              "failures": 4,
+              "auc": 0.9166666666666666
+            },
+            "motion_blur": {
+              "n": 6,
+              "failures": 2,
+              "auc": 1.0
+            },
+            "zoom_blur": {
+              "n": 3,
+              "failures": 1,
+              "auc": 1.0
+            }
+          }
+        },
+        "background": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.5520361990950227,
+          "same_task": {
+            "eligible_pairs": 21,
+            "concordance": 0.7142857142857143
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 10,
+            "concordance": 0.7
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.38461538461538464,
+          "shift_success_fpr": 0.058823529411764705,
+          "cluster_bootstrap_auc_95": [
+            0.22916666666666666,
+            0.852661943319838
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "scene_texture": {
+              "n": 15,
+              "failures": 3,
+              "auc": 0.6944444444444444
+            },
+            "table_texture": {
+              "n": 15,
+              "failures": 10,
+              "auc": 0.48
+            }
+          }
+        },
+        "lighting": {
+          "n": 30,
+          "failures": 6,
+          "failure_auc": 0.2986111111111111,
+          "same_task": {
+            "eligible_pairs": 6,
+            "concordance": 0.5
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 0.5
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.16666666666666666,
+          "shift_success_fpr": 0.0,
+          "cluster_bootstrap_auc_95": [
+            0.04393472906403941,
+            1.0
+          ],
+          "bootstrap_valid": 995,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "light_asset": {
+              "n": 30,
+              "failures": 6,
+              "auc": 0.2986111111111111
+            }
+          }
+        }
+      }
+    },
+    "endpoint_variance_xyz": {
+      "clean_median": 0.001993999700061977,
+      "shift_median": 0.002132497727870941,
+      "domain_shift_auc": 0.56,
+      "threshold_strictly_above_clean_max": 0.002451424254104495,
+      "clean_resubstitution_fpr": 0.0,
+      "factors": {
+        "sensor_noise": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.6425339366515838,
+          "same_task": {
+            "eligible_pairs": 23,
+            "concordance": 0.7391304347826086
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 0.8333333333333334
+          },
+          "same_task_and_noise_code": {
+            "eligible_pairs": 0,
+            "concordance": null
+          },
+          "failure_recall": 0.6153846153846154,
+          "shift_success_fpr": 0.5294117647058824,
+          "cluster_bootstrap_auc_95": [
+            0.5185019841269841,
+            0.8061545729402873
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "8": 1,
+            "45": 2,
+            "7": 1,
+            "43": 3,
+            "12": 2,
+            "44": 2,
+            "50": 1,
+            "14": 1,
+            "18": 2,
+            "10": 1,
+            "9": 1,
+            "49": 2,
+            "6": 1,
+            "46": 1,
+            "30": 2,
+            "2": 1,
+            "20": 1,
+            "41": 1,
+            "28": 1,
+            "39": 1,
+            "47": 1,
+            "15": 1
+          },
+          "subtypes": {
+            "fog": {
+              "n": 1,
+              "failures": 1,
+              "auc": null
+            },
+            "gaussian_blur": {
+              "n": 7,
+              "failures": 5,
+              "auc": 0.9
+            },
+            "glass_blur": {
+              "n": 13,
+              "failures": 4,
+              "auc": 0.5833333333333334
+            },
+            "motion_blur": {
+              "n": 6,
+              "failures": 2,
+              "auc": 1.0
+            },
+            "zoom_blur": {
+              "n": 3,
+              "failures": 1,
+              "auc": 0.0
+            }
+          }
+        },
+        "background": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.6968325791855203,
+          "same_task": {
+            "eligible_pairs": 21,
+            "concordance": 0.7619047619047619
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 10,
+            "concordance": 0.7
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.46153846153846156,
+          "shift_success_fpr": 0.11764705882352941,
+          "cluster_bootstrap_auc_95": [
+            0.3362878787878788,
+            0.9154323308270675
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "scene_texture": {
+              "n": 15,
+              "failures": 3,
+              "auc": 0.9444444444444444
+            },
+            "table_texture": {
+              "n": 15,
+              "failures": 10,
+              "auc": 0.46
+            }
+          }
+        },
+        "lighting": {
+          "n": 30,
+          "failures": 6,
+          "failure_auc": 0.6041666666666666,
+          "same_task": {
+            "eligible_pairs": 6,
+            "concordance": 0.16666666666666666
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 0.16666666666666666
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.16666666666666666,
+          "shift_success_fpr": 0.041666666666666664,
+          "cluster_bootstrap_auc_95": [
+            0.1748369565217391,
+            1.0
+          ],
+          "bootstrap_valid": 995,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "light_asset": {
+              "n": 30,
+              "failures": 6,
+              "auc": 0.6041666666666666
+            }
+          }
+        }
+      }
+    },
+    "endpoint_variance_rotation": {
+      "clean_median": 5.8352949054096825e-05,
+      "shift_median": 6.874180326121859e-05,
+      "domain_shift_auc": 0.5577777777777778,
+      "threshold_strictly_above_clean_max": 0.00015908312343526632,
+      "clean_resubstitution_fpr": 0.0,
+      "factors": {
+        "sensor_noise": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.7647058823529411,
+          "same_task": {
+            "eligible_pairs": 23,
+            "concordance": 0.8260869565217391
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 1.0
+          },
+          "same_task_and_noise_code": {
+            "eligible_pairs": 0,
+            "concordance": null
+          },
+          "failure_recall": 0.38461538461538464,
+          "shift_success_fpr": 0.11764705882352941,
+          "cluster_bootstrap_auc_95": [
+            0.6087886539657414,
+            0.9602600524475524
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "8": 1,
+            "45": 2,
+            "7": 1,
+            "43": 3,
+            "12": 2,
+            "44": 2,
+            "50": 1,
+            "14": 1,
+            "18": 2,
+            "10": 1,
+            "9": 1,
+            "49": 2,
+            "6": 1,
+            "46": 1,
+            "30": 2,
+            "2": 1,
+            "20": 1,
+            "41": 1,
+            "28": 1,
+            "39": 1,
+            "47": 1,
+            "15": 1
+          },
+          "subtypes": {
+            "fog": {
+              "n": 1,
+              "failures": 1,
+              "auc": null
+            },
+            "gaussian_blur": {
+              "n": 7,
+              "failures": 5,
+              "auc": 1.0
+            },
+            "glass_blur": {
+              "n": 13,
+              "failures": 4,
+              "auc": 0.6388888888888888
+            },
+            "motion_blur": {
+              "n": 6,
+              "failures": 2,
+              "auc": 1.0
+            },
+            "zoom_blur": {
+              "n": 3,
+              "failures": 1,
+              "auc": 0.5
+            }
+          }
+        },
+        "background": {
+          "n": 30,
+          "failures": 13,
+          "failure_auc": 0.6742081447963801,
+          "same_task": {
+            "eligible_pairs": 21,
+            "concordance": 0.7142857142857143
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 10,
+            "concordance": 0.7
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.23076923076923078,
+          "shift_success_fpr": 0.0,
+          "cluster_bootstrap_auc_95": [
+            0.3948684210526316,
+            0.9496120689655172
+          ],
+          "bootstrap_valid": 1000,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "scene_texture": {
+              "n": 15,
+              "failures": 3,
+              "auc": 0.8055555555555556
+            },
+            "table_texture": {
+              "n": 15,
+              "failures": 10,
+              "auc": 0.56
+            }
+          }
+        },
+        "lighting": {
+          "n": 30,
+          "failures": 6,
+          "failure_auc": 0.9305555555555556,
+          "same_task": {
+            "eligible_pairs": 6,
+            "concordance": 0.5
+          },
+          "same_task_and_subtype": {
+            "eligible_pairs": 6,
+            "concordance": 0.5
+          },
+          "same_task_and_noise_code": null,
+          "failure_recall": 0.0,
+          "shift_success_fpr": 0.0,
+          "cluster_bootstrap_auc_95": [
+            0.75,
+            1.0
+          ],
+          "bootstrap_valid": 995,
+          "noise_code_coverage": {
+            "0": 30
+          },
+          "subtypes": {
+            "light_asset": {
+              "n": 30,
+              "failures": 6,
+              "auc": 0.9305555555555556
+            }
+          }
+        }
+      }
+    }
+  },
+  "inputs": {
+    "05a2e087b49114ba4a11204b.json": "2f64f5ea304f251183150ab2aa063272ab33009a3f87767a4d82644f8b5f0074",
+    "18686c3762693988cb814119.json": "4564f2693557fd7231aa2e884110c1e1b1eb70e37680e0aadd68249636d0d95b",
+    "1ac40af63b5cb206fa1a87ff.json": "fce1a4c94a6a5688de9aec6793e13aea33f6d179009b2a6fb7fdb0f1dced2602",
+    "1f80bb87b8b30a1a90c033fb.json": "0f29af7170b46cfd5d7eda6baf25c5b57136b8c619832468346c6ba46ba9871e",
+    "2394dfc73bd22efc84b9df52.json": "93597926df41362baf67b5878e816147872601ad41ea9872fe00bf3624cb8d03",
+    "260f480dfa38ae5a1cfe6ab4.json": "c48a5a2c5f90e1ed0f80a65c1c4ee6c5bad3e8bd086076c3b00afb1e5b0c6b47",
+    "28379ab819940b2bae111202.json": "ed3f83c78ddab5e2c132e09223f505b178a524cfd96fcfe0e13fa89aca83ade1",
+    "31ee3c9ef1bf8221f99a7bb4.json": "e8739b29c7beb8d2bcfb0205a196351f7d87db4211f70e3a2112fb8220d59cf2",
+    "32c1ebe6e4d6cb178bfb0a0b.json": "12228fe2232d28c2343653e599555d35dd16a0935428ea24d29435e19f498ac4",
+    "3334a1f1c3a0672b17618b90.json": "ffbb51861a6f93641b40d2e86dbabcd7ee71a0a69bdd3baeefc33f6c087d2531",
+    "34e41085eb40929c9e32189e.json": "61ab227074d026bb477012876a9fc23b790efa25038ac89684c38f229cc2f0cb",
+    "34f60c2ad49319e81d18c70b.json": "f4d98383133729879910aa566e3aa2662a14f97b5bdd406b17b7ff21e23590d2",
+    "36f206329f1c1c5275cdfc66.json": "82255260197e089398993a8d9ab12e9ff55288a3b4d97ead28fecedef6b0e41d",
+    "3c22dc5799d7c86f110fd202.json": "f36a7e9885cf93c2a0a5ffd29ff37285d4db58954123ea35143343a743586b2e",
+    "3d16d19504b303a732927434.json": "8a0434c595c4fbfd30cc6680ecfa9625d3e69a59a034b56046df2eb76df608b7",
+    "44b86cc69b604627bf02d513.json": "58f7f2bc23c52b190ac98bf9aa1a9ee16dfd364a02fd73e5730563bf6edb90f5",
+    "451d4d5283da4bf94b611a95.json": "3307b2cbb1f723f7fcdfbb4f2aaf8370ad3ad8f279b78b15e8fb566acee092d2",
+    "4832622edb4a76f005547b05.json": "b81be4e4e7c4f835e3435bda1bd3f5351a559cbc87261b49afcdb9fcf6357fea",
+    "48c5f5e426f8006a5c08d586.json": "3dc819acc2c59d472a7f863ea20de691c72e46d6dac5fc6aa6e84c8ac460eb98",
+    "4d8c976994c211cbd47334cc.json": "6e44d32d2edc0a5d62f46ee0502e3fcee41969e0862eb64702f1f6d0bb86aa33",
+    "537c44cf53786dc807cc4fb8.json": "5cce5b527277662b52e5d52bb6352a8445739449ce4b200c7f22857a4e22b328",
+    "54a816350ae1424dc7fd668f.json": "85f297219172d0028d7a38b3aad6efa8e6bdba4797ac02b9b679f92b4d711f3a",
+    "58374a4e57b5316b75daa5a8.json": "730e3d0984f9e47d09fd1c7be9aedc13dcb1b730495639a9170c4d04836f46f1",
+    "59e33e7a354085f721bae4a6.json": "1010931548bda67a87141119bf40b1e05aded351d4b1a4f39a7d38696ca005e6",
+    "6084fd23c807006a9ec4a099.json": "26f60664f4cec1627f99f3f8c8fdf9ea50f10b36953ba7e84a4d4196a4986718",
+    "633f01dd7271d56b67fbfb82.json": "d330650aecec1a89e41f885617ea6afe9b8d88e1dd95596b9a5a1b655dc11229",
+    "63bf3b8d60bbb2fdd492cb75.json": "bd96ca4f5906e1a94d271ec714ac42551fe7f7bbe60ce0434d5f724d5a10a4d9",
+    "6a3b246ac12849cbf06ba83c.json": "59f5e3fed8a6bea300f0ef3d14d3003056b5ff8e61189ced782abbbb7826c529",
+    "6b142b87741e2537ff1f11b4.json": "aebd964244ee9be54a130affad969bbb2ae1d8e0125414a0039516b383f17f41",
+    "6c5e826a4b500e66715842b0.json": "0d4de678ed621d8bef3b22defae3f6721073ce8c2337d89b6f6e958b65498e17",
+    "70df83d6d048882f8b83d81d.json": "e17b47fa4e5e49d5748b4e453e6840feff3160a9be68ff0573fe5e09a5033f3f",
+    "734d3d4af8d6b04b33187f95.json": "19b4c42a6ab551736aec86203fd57b127fb07c89c507d062a60d2b9f3a8321a7",
+    "752ca42ecf1bafb47444baaf.json": "c85d2b8e77ae029929d3994c515b5bac931777c89ff55ebd8129b5be47907e11",
+    "7980e32cca8cc1820b8e9cbf.json": "fc4188e4c46f26a204ced5ee9b2896f2e574d38d993cd169d7e2bb3825335797",
+    "7a456242c9d69220ee747328.json": "5b182c1c79bd663646f21bcc7eb5d471b797db34e7421ae3eee57950728edcc6",
+    "7bb89a9650ff3abfe48cb96a.json": "639745ffe6a79aa36ad78c2879aefa3cbf846d630a7d420137e54eddd36046fa",
+    "7bcd821113099b91165fea6d.json": "7832368987ba3ac6e352bdfe656de2fd260dcb8a8dd938504df2f35545fe9a6f",
+    "800d8909fb4bc3cdd0ac8651.json": "4e1d4d2f4817b066daaa64dc282bd6c0d6e3341ca7fbd1690e8c32b93189dbd8",
+    "812b5e0de96c5d3d3af052b6.json": "540b086b5616a1e60feaea9824516543bc1c9af9fbeddce348f468f0388dce72",
+    "83326bf78cf7e67f0fc7696c.json": "07337698a1bec0b41d5b1e4a404f605de9ac0367bbf1634950ac478992f37916",
+    "8515f621f7ce09addd6043fc.json": "bef985e64938b1c6a63e5ddb70b60705e90d05c0049f8a5547163c1175c6bbdb",
+    "86ea35158f8967fd47bbe6c8.json": "167c7cac377fe3905b9aa7f223f91d16163c866ed710f257bff21ddd0fbe8a1a",
+    "94221db7af991abeed5ea8f6.json": "12785ac07b48315a251846521e1cbccc6ab57c6667b90c0f640ad8a9dda4365a",
+    "9483c62e9ccc44ccf351379b.json": "d970f3aa9d102de7bcda7c9699593f57eb87e11266cbd081a47dbafd400cf4e1",
+    "95599a32b2a06ea8e3c757ca.json": "2d778b0eb429666561c43b552bc9f8ec5ea052fb5b7d806a3d4dccae879914ce",
+    "95cbec413654751b1cde82b0.json": "df92636cb6ffe3648163ef4706ddb18b376d5129728b152c63d4ba4d75419a6b",
+    "9a2827472fab45e6e0abc9a7.json": "4ccb7cb3156c8c92940ec1b36bd7759e91eb960d6e74400a50a4a0924a644ef7",
+    "9b4fc8a339c2979d31daba94.json": "867c0e9e4447d9e60165ccc8390d5defe6763b44012dad7f21e4280345f487da",
+    "a18e0e8cf110044fac201569.json": "4986f9668abc4717f45e3c5ebd4d0da25034d5ea2d5eaa92c7b3ea25e1e52f86",
+    "a63ae211ace3f870deb4457c.json": "3d8d5da12926ba1459a29b84bb087a33edba137fad5fa1324f66a9c126396e44",
+    "a6a44da460e4d03dcdc9c351.json": "cd94fd51440c19bee3ca6ea4b3eb2f3468a5189afc6bd9fee625a089b67bd023",
+    "a7cce4f24d150da551883e11.json": "02a85f1414a88a6c288dfa5498b4bb1e710b8676fd847b13d2cd1f63ec0ec3a6",
+    "a861b524a7c5075bb405dcec.json": "9de466f99f1a512999ca56a86be27f5b0a72e37e3370ebdeb992683490a8e0f1",
+    "aa96bf31685d038f1ccca0b4.json": "fc8c87ba82920d0a67d32df1763e3f147021d7df4c2b7569fe6595196d185e8b",
+    "ab9c5902be6e729c218ff1a8.json": "7098145b145765fe2473a001c658238947d6e413c3c2fc34dfd795152fc77614",
+    "adbef345ee9c87c18c78f860.json": "356660a02f8a873fb495799d548dabc681e29060ea921cd2b00d2992bf80bb74",
+    "ae32bc1ab77c25b035718b60.json": "7b10d78f008104e751f2d37fdd5c4ab7e81deb47dafc0f946d49db168205fb33",
+    "b0aa244cf3afa8d4827c8f53.json": "1989c66d022cc8d7b247a7dd96dbbb8ff01ea1ff0ff57ae0a965174fbfe04b62",
+    "b21a7534610471bc409b5a97.json": "1921330b20750bf520d657a7e4f72ae1d816ac3f616b1d3855c903167a5179c3",
+    "b2590175d0f2a15c297828a5.json": "a24b2553288cd6b909cb2322a440a163820cd90603db1077a68f3f108408de11",
+    "bbd1bcb9649b33876a03fcd4.json": "36c1389ec5b2d11cd7a2998c7c66a87e75cc6eab7e845f903e4d56fec4098ef9",
+    "c03dfc439bb66865a9f3a422.json": "5e5658b69398d48aba4a0c806bc20eb70bf7299ea44bf919d701c2a30701dac3",
+    "c03e1a782928638880efb08d.json": "7f21675e8c2184b985994d55681f170c9fde70db390d9fdefeecf0a8bd7548f2",
+    "c1b468cf01e901553e96299c.json": "e76f054d9273f8e10d52d04f81ef21d6a766f5c9ea302184ae6caec5553be180",
+    "c2b40c2441dbfc7d229e74dc.json": "c0b23fb7c097cf6c850463156de10f55559cb98dec17650d94e6b6f185502f2f",
+    "c2ec56926e653213cfd2e324.json": "c054e182fec5d619672ba3aa8df52508f7d517e0ddb34a025779810ce0b241c6",
+    "c31dbfc54953ebb8ad93b276.json": "d9171bf493bd974b3611f44090aceae82252e78d3b2cbd9709e99c895f08bf0f",
+    "c6224ce1f06d19c2455895e9.json": "c25b49a6bd393b80414c4850bba426f9d1a8ac4da5aa64d0ac23a30c10dda54a",
+    "c71fb60309bb3abd27edef73.json": "f8e13be13abf7d88f3c3382f37b0e6abfcb89bb59937a222f184ed09c734e4e6",
+    "c799396aefd5984dc17e0980.json": "25cda4ec4a64195b6be450d6b23bedc306e3d31132ed0efcb8f9573f80195fce",
+    "clean_25eefa3907243c5956889cfa.json": "a6e1b6bb4bac4e8cec0ef76d24d1752adffdd52813934f7aaeb6031b32c91332",
+    "clean_3adf13803680f268479750e9.json": "f5f17ca3038c443b1270d070a7ccde4d292fb62146aa04e3563c940a5828db23",
+    "clean_461aa99ff7ae2e71a74745fe.json": "f9ca45f361bc80c46b9b58d02c1fa5d98d68d7da876ffd858dfd636011f30207",
+    "clean_716b94a92dcadeb19bb4aef6.json": "824f52a87b12d7627bddcf04d39293d9af3955721f4c1ac46cd0b4a2473be2eb",
+    "clean_74da4077f0571b787e7da5a7.json": "0f4475b719b26f38282e368c94304af35b7fe342311bf73f7880cfab037bb636",
+    "clean_7b3a2104f946feffbf23f05a.json": "0aa061694757f7facf90b99baedbbe616434c4cf072ea67fb817e07942919269",
+    "clean_85c3af5bb68bc8ec5351f439.json": "e6791830d18492d6cff2097b5f0ed142c69f940856ae2ebdc657df633ce815c6",
+    "clean_9570527652e7369e8e55140d.json": "4f128aa2d12326b356ff23abfd1e5085dc6d4b96cf098462ae497654622fecc6",
+    "clean_9bd7f4f1a5c801ca5cf925b0.json": "0563aed54f43c659639bcdf86ba1cd698d6d94ca794a80871c1d1c41825fed7d",
+    "clean_9f0d3717f1f17095d5da34e7.json": "c2b756878a2215af5c3efb2c2ce917d107f39f9cf3b4b8e8378dce4ccc3174cc",
+    "d09f6ffb1b6e044de0e2a00c.json": "ae0eb05fe64ddf5bd784e9f572d43d82adfa86239d7149b73d6fabd553774f34",
+    "d10a1668e6e30258ca64ba89.json": "ed30cc574f5f59271a2e39c1ca940257b17b0e379688439de174c2ddaca60c47",
+    "d11a5908570c39a0bc352a5a.json": "3d8cb552d0ed0018a9531dc93aab743cc87646d001d1faae1c9ea2f86920433c",
+    "d4009212e035c43e3f7076db.json": "ee96fe32a20f0c41864473c438aa53461771639e5215e677386848d496f20df7",
+    "d5bb1b7dd92c8a2af097198f.json": "4037545878a5596a24db4101b4ab2e80344fd360ca188cfdd100e2a48e1ca6f0",
+    "d620bf5c2a9ff266046162b6.json": "29d742cf248c9fdc3c19579255fe6ceaa3dc1262ac039e19873577034494e38e",
+    "db52f74d7afc5ee4e7baef3d.json": "ae763a369829eae5b5b7c410c7542ee0a0b1751265e138260e4955a1e75d8118",
+    "e3cb3b3fa84a3a4e2bd54c98.json": "8bd99835cd8c686e71bb42585cca19b63a9197852e3511838a46748f7e5a9686",
+    "e67548ff2cbebe1ca8a7b35e.json": "a9027eaae134644f7b3ca5259a0ef51d9d33816e7fa32a4a6186c979d8c147af",
+    "ea09068ddd4eeecc1bf0b4a1.json": "d859515a4cbd486b590b5eb527649b811e73c3931e61da1b881c7f303c541379",
+    "ea9df039791e3060e68ecb80.json": "68dc97d4673aebeb9d8b1f537bc6d588eac2205f269987c809231b3e5d57a46b",
+    "eeefdf07e36e0b4cbea8ec39.json": "abcb9f58c122ad2da47fb295f9a7ea99c92f11dba705b4a7106105653a0216c8",
+    "f02d68c51294f0479197a2f3.json": "6247d7b9bf73c924397b28f8d8bafbe80e69c469557916da2ba5ff0fe5a45d71",
+    "f26adf752cc7294f4d63ddd0.json": "311e43962262d3dd95320a7769c6e6ade996fe844dcc09e3bcef61ca7c3aa305",
+    "f769d77490544e345ff5b8f2.json": "308cfe8b66e2a7c1f376fb5ad1e40f1ca09a612aaaddf8aa4f93bed0bd0ab8e7",
+    "f839ded9ddcacca5f47d08ca.json": "0752d3187dd49ebeaa2b7bfc82dccbdf8a5c433f5e7e2b450475d1a3c56c0739",
+    "fa87a1d88283b9c2853efbdd.json": "f66a7a5fc63650919669dbe8c9ac6556784b459e6f362665ab7df5bf45e9edb7",
+    "fb2c93fc2cd4b6eca8912ca8.json": "b838164b2f17a61b6dffde43c3b6837847c1354881e7307067d208569b9466ec",
+    "fefe134dc96bca5f4eee8b14.json": "73f20d5b5f7734627194526571aa2ba92959b285c2612e4c69f16b59355ff418",
+    "ff1eb7e58555351a29bc38ef.json": "86c20b8e935358904dab2cb7cbc6f8afd7ef4a4fbb37e58dce5dbfdae45f14a5"
+  },
+  "limitations": [
+    "Dev reuse; multiple prespecified scores are descriptive",
+    "bootstrap has only 10 base-task clusters; no population guarantee",
+    "threshold estimated and evaluated on same 10 Clean cases",
+    "t=0 final outcome association; no causal risk event/lead time",
+    "gradient localization requires external spatial ground truth; not inferred from a heatmap"
+  ]
+}

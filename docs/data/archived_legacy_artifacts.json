@@ -1,0 +1,23 @@
+{
+  "source_commit": "29829e48da41bf421074434c031ff5609643aa20",
+  "removed_from_current_checkout_only": [
+    {
+      "path": "docs/data/b3_boundary.json",
+      "bytes": 81769845,
+      "sha256": "dd4a9a0747bdab131d03d6cb6971f88f1750ba295db0ae362aff5257d0a76ec9",
+      "reason": "B3-1 三状态 instrumentation pilot 的逐边界记录；该试跑的方法、限制和摘要仍在 HANDOFF_RESEARCH_SUMMARY。"
+    },
+    {
+      "path": "docs/data/rgb_oracle_pairs.npz",
+      "bytes": 4696120,
+      "sha256": "1005f84e0eaf0e7c2157b18616d6fa2413f7bec132d978c57f2a4fe118fbad6d",
+      "reason": "早期 RGB 配对文件；保留原 manifest、fresh 修正版及其 manifest。"
+    },
+    {
+      "path": "docs/data/flow_geometry_v1/repair_token_raw.tar.gz",
+      "bytes": 11569072,
+      "sha256": "408c60940f1bbdcfa9607e0eb9fda9778888e147196f98f169b5a102f61c052a",
+      "reason": "原始 Token 缩放位置的完整逐例归档。它仍是有效的历史对照；保留其结果、验证记录、哈希和修正后 Value 位置的原始归档。"
+    }
+  ]
+}

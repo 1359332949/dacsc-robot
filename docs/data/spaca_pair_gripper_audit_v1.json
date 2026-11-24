@@ -1,0 +1,18 @@
+{
+  "schema": "spaca_pair_gripper_audit_v1",
+  "source_fit": {
+    "n": 18,
+    "max_abs_gripper_diff": 0.008573770523071289,
+    "mean_abs_gripper_diff": 0.0013411188567126239,
+    "n_gt_0.05": 0,
+    "n_gt_0.1": 0
+  },
+  "source_validation": {
+    "n": 19,
+    "max_abs_gripper_diff": 0.008238792419433594,
+    "mean_abs_gripper_diff": 0.0013884156942367554,
+    "n_gt_0.05": 0,
+    "n_gt_0.1": 0
+  },
+  "note": "Clean/Shift controller gripper actions are nearly identical on almost all paired chunks; the adapter cannot learn the 84-96-step grasp-closure timing because no such disagreement exists in the training set."
+}

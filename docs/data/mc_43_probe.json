@@ -1,0 +1,342 @@
+{
+  "records": [
+    {
+      "state_id": 43,
+      "snapshot_step": 0,
+      "branch_successes": 0,
+      "branches": 5,
+      "first_action_diff": 0.0,
+      "restore_diff": 0.0,
+      "branch_details": [
+        {
+          "branch": 0,
+          "seed": 7777,
+          "success": false,
+          "steps": 220,
+          "first_action_diff": 0.0,
+          "restore_diff": 0.0,
+          "chunk2_obs_diff": 0.0,
+          "chunk2_state_diff": 0.0
+        },
+        {
+          "branch": 1,
+          "seed": 8777,
+          "success": false,
+          "steps": 220,
+          "first_action_diff": 0.13551759719848633,
+          "restore_diff": 0.0,
+          "chunk2_obs_diff": 198.0,
+          "chunk2_state_diff": 0.025748441912458286
+        },
+        {
+          "branch": 2,
+          "seed": 9777,
+          "success": false,
+          "steps": 220,
+          "first_action_diff": 0.302575945854187,
+          "restore_diff": 0.0,
+          "chunk2_obs_diff": 201.0,
+          "chunk2_state_diff": 0.041867746913155646
+        },
+        {
+          "branch": 3,
+          "seed": 10777,
+          "success": false,
+          "steps": 220,
+          "first_action_diff": 0.12063217163085938,
+          "restore_diff": 0.0,
+          "chunk2_obs_diff": 184.0,
+          "chunk2_state_diff": 0.014807738480709348
+        },
+        {
+          "branch": 4,
+          "seed": 11777,
+          "success": false,
+          "steps": 220,
+          "first_action_diff": 0.09842073917388916,
+          "restore_diff": 0.0,
+          "chunk2_obs_diff": 184.0,
+          "chunk2_state_diff": 0.020398025431969002
+        }
+      ],
+      "init_state_hash": "8385e4c03671fa86",
+      "init_obs_hash": "bb4c327e374af393",
+      "first_action_hash": "7fda221c90f8e8cb",
+      "chunk_action_hashes": [
+        "7fda221c90f8e8cb",
+        "8b5d5688e765c008",
+        "88085df9176c6c59",
+        "f84db9f67aaed177",
+        "e8d7d86a61f945cc",
+        "6fa5e756e5cb9e85",
+        "af3b125c4518e648",
+        "fcee6ea9af169005",
+        "7e0c43299f990461",
+        "40684a4d07c1bc6d",
+        "623c506d050c07ba",
+        "d134a314fff9ec6e",
+        "f4e54bbab5e50102",
+        "01e4cbe30e3b5d8c",
+        "4a640bcb6c9e8339",
+        "5ad86f12f5a588de",
+        "ad2ea6a42d7aac87",
+        "881d8daf4b9baa10",
+        "0386aeb92f613373"
+      ],
+      "chunk_obs_hashes": [
+        "bb4c327e374af393",
+        "5c888777da6acdd8",
+        "9d7b52f5d36113a8",
+        "6270faec5fd46566",
+        "2cdda9a85771a401",
+        "1a3a983aa7bb50d8",
+        "49de0a7608c6cf07",
+        "1c054a5883d27436",
+        "ae796830d0b45cbd",
+        "eb8f6955a4592aca",
+        "662ecc615ccb14c9",
+        "3fc70be8d1307fd7",
+        "3db523b41ac5dff9",
+        "67c3fa99e2433316",
+        "127bb006fcf0de86",
+        "8247785b5c575bde",
+        "41a644df12df2246",
+        "06e6c5aa932a2a3a",
+        "b53bcc049cc2a604"
+      ],
+      "final_success": false,
+      "final_steps": 220
+    },
+    {
+      "state_id": 43,
+      "snapshot_step": 40,
+      "branch_successes": 0,
+      "branches": 5,
+      "first_action_diff": null,
+      "restore_diff": 0.0,
+      "branch_details": [
+        {
+          "branch": 0,
+          "seed": 7777,
+          "success": false,
+          "steps": 180,
+          "first_action_diff": null,
+          "restore_diff": 0.0,
+          "chunk2_obs_diff": 201.0,
+          "chunk2_state_diff": 0.8733193427095457
+        },
+        {
+          "branch": 1,
+          "seed": 8777,
+          "success": false,
+          "steps": 180,
+          "first_action_diff": null,
+          "restore_diff": 0.0,
+          "chunk2_obs_diff": 201.0,
+          "chunk2_state_diff": 0.8543774312617118
+        },
+        {
+          "branch": 2,
+          "seed": 9777,
+          "success": false,
+          "steps": 180,
+          "first_action_diff": null,
+          "restore_diff": 0.0,
+          "chunk2_obs_diff": 201.0,
+          "chunk2_state_diff": 0.8864197813235908
+        },
+        {
+          "branch": 3,
+          "seed": 10777,
+          "success": false,
+          "steps": 180,
+          "first_action_diff": null,
+          "restore_diff": 0.0,
+          "chunk2_obs_diff": 201.0,
+          "chunk2_state_diff": 0.8565305130482331
+        },
+        {
+          "branch": 4,
+          "seed": 11777,
+          "success": false,
+          "steps": 180,
+          "first_action_diff": null,
+          "restore_diff": 0.0,
+          "chunk2_obs_diff": 201.0,
+          "chunk2_state_diff": 0.8576970170585922
+        }
+      ],
+      "init_state_hash": "8385e4c03671fa86",
+      "init_obs_hash": "bb4c327e374af393",
+      "first_action_hash": "7fda221c90f8e8cb",
+      "chunk_action_hashes": [
+        "7fda221c90f8e8cb",
+        "8b5d5688e765c008",
+        "88085df9176c6c59",
+        "f84db9f67aaed177",
+        "e8d7d86a61f945cc",
+        "6fa5e756e5cb9e85",
+        "af3b125c4518e648",
+        "fcee6ea9af169005",
+        "7e0c43299f990461",
+        "40684a4d07c1bc6d",
+        "623c506d050c07ba",
+        "d134a314fff9ec6e",
+        "f4e54bbab5e50102",
+        "01e4cbe30e3b5d8c",
+        "4a640bcb6c9e8339",
+        "5ad86f12f5a588de",
+        "ad2ea6a42d7aac87",
+        "881d8daf4b9baa10",
+        "0386aeb92f613373"
+      ],
+      "chunk_obs_hashes": [
+        "bb4c327e374af393",
+        "5c888777da6acdd8",
+        "9d7b52f5d36113a8",
+        "6270faec5fd46566",
+        "2cdda9a85771a401",
+        "1a3a983aa7bb50d8",
+        "49de0a7608c6cf07",
+        "1c054a5883d27436",
+        "ae796830d0b45cbd",
+        "eb8f6955a4592aca",
+        "662ecc615ccb14c9",
+        "3fc70be8d1307fd7",
+        "3db523b41ac5dff9",
+        "67c3fa99e2433316",
+        "127bb006fcf0de86",
+        "8247785b5c575bde",
+        "41a644df12df2246",
+        "06e6c5aa932a2a3a",
+        "b53bcc049cc2a604"
+      ],
+      "final_success": false,
+      "final_steps": 220
+    },
+    {
+      "state_id": 43,
+      "snapshot_step": 80,
+      "branch_successes": 0,
+      "branches": 5,
+      "first_action_diff": null,
+      "restore_diff": 0.0,
+      "branch_details": [
+        {
+          "branch": 0,
+          "seed": 7777,
+          "success": false,
+          "steps": 140,
+          "first_action_diff": null,
+          "restore_diff": 0.0,
+          "chunk2_obs_diff": 201.0,
+          "chunk2_state_diff": 0.7554947277920422
+        },
+        {
+          "branch": 1,
+          "seed": 8777,
+          "success": false,
+          "steps": 140,
+          "first_action_diff": null,
+          "restore_diff": 0.0,
+          "chunk2_obs_diff": 201.0,
+          "chunk2_state_diff": 0.766665892944423
+        },
+        {
+          "branch": 2,
+          "seed": 9777,
+          "success": false,
+          "steps": 140,
+          "first_action_diff": null,
+          "restore_diff": 0.0,
+          "chunk2_obs_diff": 201.0,
+          "chunk2_state_diff": 0.7473918150390879
+        },
+        {
+          "branch": 3,
+          "seed": 10777,
+          "success": false,
+          "steps": 140,
+          "first_action_diff": null,
+          "restore_diff": 0.0,
+          "chunk2_obs_diff": 201.0,
+          "chunk2_state_diff": 0.7251713655493317
+        },
+        {
+          "branch": 4,
+          "seed": 11777,
+          "success": false,
+          "steps": 140,
+          "first_action_diff": null,
+          "restore_diff": 0.0,
+          "chunk2_obs_diff": 201.0,
+          "chunk2_state_diff": 0.7332771940807383
+        }
+      ],
+      "init_state_hash": "8385e4c03671fa86",
+      "init_obs_hash": "bb4c327e374af393",
+      "first_action_hash": "7fda221c90f8e8cb",
+      "chunk_action_hashes": [
+        "7fda221c90f8e8cb",
+        "8b5d5688e765c008",
+        "88085df9176c6c59",
+        "f84db9f67aaed177",
+        "e8d7d86a61f945cc",
+        "6fa5e756e5cb9e85",
+        "af3b125c4518e648",
+        "fcee6ea9af169005",
+        "7e0c43299f990461",
+        "40684a4d07c1bc6d",
+        "623c506d050c07ba",
+        "d134a314fff9ec6e",
+        "f4e54bbab5e50102",
+        "01e4cbe30e3b5d8c",
+        "4a640bcb6c9e8339",
+        "5ad86f12f5a588de",
+        "ad2ea6a42d7aac87",
+        "881d8daf4b9baa10",
+        "0386aeb92f613373"
+      ],
+      "chunk_obs_hashes": [
+        "bb4c327e374af393",
+        "5c888777da6acdd8",
+        "9d7b52f5d36113a8",
+        "6270faec5fd46566",
+        "2cdda9a85771a401",
+        "1a3a983aa7bb50d8",
+        "49de0a7608c6cf07",
+        "1c054a5883d27436",
+        "ae796830d0b45cbd",
+        "eb8f6955a4592aca",
+        "662ecc615ccb14c9",
+        "3fc70be8d1307fd7",
+        "3db523b41ac5dff9",
+        "67c3fa99e2433316",
+        "127bb006fcf0de86",
+        "8247785b5c575bde",
+        "41a644df12df2246",
+        "06e6c5aa932a2a3a",
+        "b53bcc049cc2a604"
+      ],
+      "final_success": false,
+      "final_steps": 220
+    }
+  ],
+  "summary": {
+    "43": {
+      "branch_success_rates": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "snapshot_steps": [
+        0,
+        40,
+        80
+      ],
+      "ponr_step": 0,
+      "ponr_note": "unrecoverable from step 0",
+      "final_success": false
+    }
+  }
+}

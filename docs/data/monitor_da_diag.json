@@ -1,0 +1,70 @@
+{
+  "schema": "monitor_false_alarm_diagnosis_v1",
+  "source_val_threshold": 0.7317746877670288,
+  "source_val_auc": 0.7708712755882567,
+  "target_auc": 0.8289629147690306,
+  "target_at_source_threshold": {
+    "recall": 0.6735849056603773,
+    "false_alarm_episode_fraction": 0.4
+  },
+  "target_by_domain": {
+    "clean": {
+      "n_windows": 596,
+      "auc": 0.7456392492138365,
+      "recall_at_source_thr": 0.29245283018867924
+    },
+    "shift": {
+      "n_windows": 659,
+      "auc": 0.9333167339862409,
+      "recall_at_source_thr": 0.9276729559748428
+    }
+  },
+  "domain_classifier": {
+    "source_auc": 0.9211844297624379,
+    "target_auc": 0.8720783982238698
+  },
+  "false_alarm_episodes": [
+    {
+      "episode": "s35_dclean_seed7777",
+      "domain": "clean",
+      "state": "35",
+      "first_alarm_step": 19,
+      "max_score": 0.9442198872566223
+    },
+    {
+      "episode": "s35_dshift_seed7777",
+      "domain": "shift",
+      "state": "35",
+      "first_alarm_step": 9,
+      "max_score": 0.9987854361534119
+    },
+    {
+      "episode": "s39_dshift_seed7777",
+      "domain": "shift",
+      "state": "39",
+      "first_alarm_step": 21,
+      "max_score": 0.9155839681625366
+    },
+    {
+      "episode": "s44_dshift_seed7777",
+      "domain": "shift",
+      "state": "44",
+      "first_alarm_step": 9,
+      "max_score": 0.9986838698387146
+    },
+    {
+      "episode": "s45_dshift_seed7777",
+      "domain": "shift",
+      "state": "45",
+      "first_alarm_step": 9,
+      "max_score": 0.999922513961792
+    },
+    {
+      "episode": "s49_dshift_seed7777",
+      "domain": "shift",
+      "state": "49",
+      "first_alarm_step": 19,
+      "max_score": 0.9962949156761169
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "schema": "monitor_false_alarm_diag_v1",
+  "threshold": 0.8893319964408875,
+  "n_target_windows": 1255,
+  "false_alarm_episodes": [
+    {
+      "episode": "s35_dshift_seed7777",
+      "state": "35",
+      "domain": "shift",
+      "first_alarm_time": 35,
+      "max_score": 0.9999946355819702,
+      "n_windows": 44
+    },
+    {
+      "episode": "s44_dshift_seed7777",
+      "state": "44",
+      "domain": "shift",
+      "first_alarm_time": 37,
+      "max_score": 0.9998975992202759,
+      "n_windows": 41
+    },
+    {
+      "episode": "s45_dshift_seed7777",
+      "state": "45",
+      "domain": "shift",
+      "first_alarm_time": 37,
+      "max_score": 0.9999990463256836,
+      "n_windows": 46
+    },
+    {
+      "episode": "s49_dclean_seed7777",
+      "state": "49",
+      "domain": "clean",
+      "first_alarm_time": 113,
+      "max_score": 0.9999481439590454,
+      "n_windows": 67
+    }
+  ],
+  "false_alarm_count": 4,
+  "target_success_episodes": 15
+}

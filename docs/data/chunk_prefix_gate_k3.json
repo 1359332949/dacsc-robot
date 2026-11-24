@@ -1,0 +1,97 @@
+{
+  "schema": "chunk_prefix_gate_k3",
+  "K": 3,
+  "threshold": 0.8,
+  "factors": {
+    "sensor_noise": {
+      "disp": {
+        "fail_recall": [
+          6,
+          13
+        ],
+        "shift_success_fpr": [
+          2,
+          17
+        ],
+        "clean_fpr": [
+          0,
+          10
+        ]
+      },
+      "cmd": {
+        "fail_recall": [
+          5,
+          13
+        ],
+        "shift_success_fpr": [
+          2,
+          17
+        ],
+        "clean_fpr": [
+          0,
+          10
+        ]
+      }
+    },
+    "background": {
+      "disp": {
+        "fail_recall": [
+          7,
+          13
+        ],
+        "shift_success_fpr": [
+          2,
+          17
+        ],
+        "clean_fpr": [
+          0,
+          10
+        ]
+      },
+      "cmd": {
+        "fail_recall": [
+          7,
+          13
+        ],
+        "shift_success_fpr": [
+          2,
+          17
+        ],
+        "clean_fpr": [
+          0,
+          10
+        ]
+      }
+    },
+    "lighting": {
+      "disp": {
+        "fail_recall": [
+          1,
+          6
+        ],
+        "shift_success_fpr": [
+          0,
+          24
+        ],
+        "clean_fpr": [
+          0,
+          10
+        ]
+      },
+      "cmd": {
+        "fail_recall": [
+          1,
+          6
+        ],
+        "shift_success_fpr": [
+          0,
+          24
+        ],
+        "clean_fpr": [
+          0,
+          10
+        ]
+      }
+    }
+  }
+}

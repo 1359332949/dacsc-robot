@@ -1,0 +1,165 @@
+{
+  "physical_pair": {
+    "raw_state_equal": true,
+    "model_physics_compatible": true,
+    "physical_init_hash": "cc4d12a63e8e3d094a5eabe945a937de8a6a9c25c305c42f76e223f1ea154534",
+    "scope": "listed simulator fields and static physics; not all hidden state"
+  },
+  "initial_observation": {
+    "agentview": {
+      "mean": 85.21067301432292,
+      "std": 33.50603813479611,
+      "sha256": "64608066908dcbb4c4ec63133c3c42713159dd4e2e8ac3dc8857ed598056a2eb"
+    },
+    "eye_in_hand": {
+      "mean": 81.68813069661458,
+      "std": 42.588791872808414,
+      "sha256": "ee65d28f00ba5ffc8f94a8fb94d67a5e2b1370c079aed8ed9f1033376535f125"
+    }
+  },
+  "status": "completed",
+  "success": true,
+  "steps": 180,
+  "chunks": [
+    {
+      "start": 0,
+      "end": 12,
+      "z0_hash": "7115b65c9983b850979911c4ba5e1df8bc9ff1f95c1b3a20bdb676ab00c2f66a",
+      "official_parity": {
+        "x_max_abs": 0.0,
+        "velocity_max_abs": 0.0,
+        "controller_max_abs": 0.0,
+        "clipped_max_abs": 0.0,
+        "official_predict_calls": 1,
+        "steps": 10
+      }
+    },
+    {
+      "start": 12,
+      "end": 24,
+      "z0_hash": "d4aab99e0fa60a5d9d234f303266e5adda59682e61df7983877c6ca9d212d01c",
+      "official_parity": {}
+    },
+    {
+      "start": 24,
+      "end": 36,
+      "z0_hash": "a9ce9f5a6c01adda2549a76cbce9b25ee54a910ffed5e4584fce0444043e10ac",
+      "official_parity": {}
+    },
+    {
+      "start": 36,
+      "end": 48,
+      "z0_hash": "d48ea7e02bd520cb43f9bf6a3feefbab3a1fffaab81b22d609722d7aa0157314",
+      "official_parity": {}
+    },
+    {
+      "start": 48,
+      "end": 60,
+      "z0_hash": "63ee1e74ec99da2783e3747f028f3d5ec0a74e617ec6b6c7fd415f098b59b90a",
+      "official_parity": {}
+    },
+    {
+      "start": 60,
+      "end": 72,
+      "z0_hash": "9753d84423c2d5f2a048ad2bf3a5d3010eb3aa02d8c378e7fc88306f7a456140",
+      "official_parity": {}
+    },
+    {
+      "start": 72,
+      "end": 84,
+      "z0_hash": "8282087c322bfbc4542f2613faced040e9007530c3f2dab37a9fee8bbc7a9d35",
+      "official_parity": {}
+    },
+    {
+      "start": 84,
+      "end": 96,
+      "z0_hash": "d106d8bcf4744e5068edcf1d2000bae0985d41729a1bf97808581df11e9f691a",
+      "official_parity": {}
+    },
+    {
+      "start": 96,
+      "end": 108,
+      "z0_hash": "6e0d3843f832a44b690a7cc05ea9d0513b0845fe12a4ebb66f5d892b146f2b40",
+      "official_parity": {}
+    },
+    {
+      "start": 108,
+      "end": 120,
+      "z0_hash": "6f1fd3f9cde2733a71cccc538d3b659d2057932a67310cf3d56f359d7d15d758",
+      "official_parity": {}
+    },
+    {
+      "start": 120,
+      "end": 132,
+      "z0_hash": "13e4bff63a684f6c56fe6b5e0c6f0d934b384ee970d32642e4a052aead9ad9b7",
+      "official_parity": {}
+    },
+    {
+      "start": 132,
+      "end": 144,
+      "z0_hash": "32f87dfa7f1b6038fd2b0f8cc6a3f057e64a7f100af56c1df9e01ba0381e0f67",
+      "official_parity": {}
+    },
+    {
+      "start": 144,
+      "end": 156,
+      "z0_hash": "fc276e94f77d1c41e06b94c231e67ca54c4a87ba76a99bae9b631fa4f148fb13",
+      "official_parity": {}
+    },
+    {
+      "start": 156,
+      "end": 168,
+      "z0_hash": "c5d9c7417af4c0fd989661ac5ea2d37dd112244e90a4d1ab8a5dc01915f58147",
+      "official_parity": {}
+    },
+    {
+      "start": 168,
+      "end": 180,
+      "z0_hash": "976b213a534b2220351208bcd6cfb26c5d6e8136c1b8ae01a91258430dc63ca6",
+      "official_parity": {}
+    }
+  ],
+  "action_sha256": "d32f84ee07ace20959cc36d6aab1aa0c2f9d9f07878c314d04c9279368d812d9",
+  "terminal_flags": {
+    "reward": 1.0,
+    "success": true,
+    "terminated": true,
+    "truncated": false,
+    "done": true,
+    "flags_source": "legacy_done_minus_explicit_time_limit"
+  },
+  "collector_truncated": false,
+  "case_id": "3c22dc5799d7c86f110fd202",
+  "base_task": "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate",
+  "factor": "background",
+  "pair_group_id": "7b3a2104f946feffbf23f05a269987c8ff88bd4041f973fd09e7be80db7f511a",
+  "role": "target_dev",
+  "seeds": {
+    "environment_seed": 3085737013,
+    "sensor_noise_seed": 3018193341,
+    "policy_flow_seed": 110199952,
+    "method_augmentation_seed": 3606772321
+  },
+  "init_state_index": 0,
+  "audit_sha256": "d60f3211d73b8f1362d2286c1c0831897697457ff01d281b36106116a71aa355",
+  "manifest_sha256": "d3e0d8c642cd215c879d2f0174663ff5ec585cd5c6d6b531a213c26e9fb982c0",
+  "checkpoint_sha256": "f933ab03c1a4664f7a11690645cdd5fa81788a5b98db81913024f7a23326dfe6",
+  "code_sha256": {
+    "scripts/static_visual_v2.py": "f5234358fe24edab30e1cbce3656a81fc8a37d35392019e0194c1e0259c442e4",
+    "dacsc/static_visual_v2.py": "cfd502ea2804c8c1440e564850acb12d8bf3bfba3eafb66442af33997c16960e"
+  },
+  "wall_seconds": 107.85217591798573,
+  "method": "frozen",
+  "new_model_training": false,
+  "blind_accessed": false,
+  "language_instruction": "pick up the black bowl on the wooden cabinet and place it on the plate",
+  "language_source": "official benchmark.grab_language_from_filename(clean_base_task)",
+  "bddl_language_diagnostic": "pick the akita black bowl on the wooden cabinet and place it on the plate",
+  "runtime_versions": {
+    "python": "3.10.12",
+    "torch": "2.5.1+cu121",
+    "numpy": "1.26.4",
+    "mujoco": "3.3.0",
+    "robosuite": "1.4.1"
+  }
+}

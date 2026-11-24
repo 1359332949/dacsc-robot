@@ -1,0 +1,12 @@
+{
+  "pass": true,
+  "compared_fields": [
+    "baseline_summary",
+    "gate1",
+    "legacy_events",
+    "legacy_action_divergence",
+    "episodes"
+  ],
+  "source_sha256": "c883c376c2c42bac9be65c17e8c688d56d564bd7a3d992c046197be0cb8ecd73",
+  "excerpt_sha256": "daa01323f9682e9fd9f26e268317ee213851cdf03323a936d31bd32f05c34366"
+}

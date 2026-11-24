@@ -1,0 +1,62 @@
+{
+  "status": "P0_BLOCKED_NO_TARGET_RUNS",
+  "commit": "4976dc30028e805ff8094b55501d532c48fec182",
+  "tasks": 10,
+  "visual_instances": 1277,
+  "parse_errors": 0,
+  "shortfall_cells": 14,
+  "source_smoke_planned": 50,
+  "source_smoke_executed": 0,
+  "dev_rollouts": 0,
+  "blind_rollouts": 0,
+  "blockers": [
+    "historical coverage not certified; original server logs unresolved",
+    "some task/factor cells have fewer than 13 independent candidate groups",
+    "simulator assets absent locally",
+    "Clean compatibility smoke not yet run",
+    "independent Clean Holdout historical freshness unresolved"
+  ],
+  "per_factor": {
+    "lighting": {
+      "raw_total": 292,
+      "candidate_group_count": 290,
+      "smallest_raw_cell": 4,
+      "smallest_candidate_cell": 4
+    },
+    "background": {
+      "raw_total": 258,
+      "candidate_group_count": 258,
+      "smallest_raw_cell": 6,
+      "smallest_candidate_cell": 6
+    },
+    "sensor_noise": {
+      "raw_total": 351,
+      "candidate_group_count": 351,
+      "smallest_raw_cell": 28,
+      "smallest_candidate_cell": 28
+    },
+    "camera": {
+      "raw_total": 376,
+      "candidate_group_count": 0,
+      "smallest_raw_cell": 6,
+      "smallest_candidate_cell": 0
+    }
+  },
+  "history_scan": {
+    "roots": [
+      "/private/tmp/patch-diag/docs",
+      "/private/tmp/patch-diag/scripts",
+      "/Users/wentiliangkaihua/dacsc-robot/docs",
+      "/Users/wentiliangkaihua/dacsc-robot/scripts"
+    ],
+    "files_scanned": 830,
+    "unread_or_large_files": [
+      "/private/tmp/patch-diag/docs/data/b3_boundary.json",
+      "/Users/wentiliangkaihua/dacsc-robot/docs/data/b3_boundary.json"
+    ],
+    "scope": "exact references conservatively quarantined; cannot certify completeness without server/log review"
+  },
+  "server_status": "SSH closes during key exchange before authentication; GitHub account/plugin verified separately",
+  "training_coverage": "unknown",
+  "candidates_are_not_certified_fresh": true
+}

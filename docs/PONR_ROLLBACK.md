@@ -1,0 +1,142 @@
+# Point-of-No-Return rollback probe
+
+Motivation: failure lead time must be measured against the first
+irrecoverable state, not episode timeout.
+
+`scripts/verify_ponr_rollback.py`:
+
+1. runs a frozen rollout and saves MuJoCo snapshots at requested steps;
+2. restores each snapshot in a fresh environment;
+3. runs N frozen-policy branches;
+4. reports branch success rates and a candidate PoNR step.
+
+Protocol guardrails:
+
+- target-dev only; target test is not touched;
+- model compatibility is checked before restore;
+- branch seeds are recorded;
+- no recovery action is inserted during branching.
+
+## Preliminary probe (state 34, target-dev shift, seed 7777)
+
+Snapshots at steps 20, 40, 80, 100, 120 all produced 0/1 or 0/2 successful
+branches. This cannot yet be interpreted as a PoNR: the rollback/render path
+needs validation (controller state and observation freshness), and failure may
+start before step 20. Do not report these numbers as effective warning lead.
+
+## Controller/observation consistency status
+
+Follow-up fixes attempted:
+
+- snapshot OSC controller `goal_pos`, `goal_ori`, `ori_ref`, `relative_ori`,
+  and interpolator `start/goal/step`;
+- restore controller state with the MuJoCo state;
+- save the exact observation at the snapshot and reuse it for the first
+  branch action;
+- restore in the same simulator instead of a fresh environment;
+- call `sim.forward()` after restore.
+
+Despite these, a successful state-35 branch at step 0 still returned 0/1
+success while the original rollout succeeded. The rollback harness is therefore
+**not yet validated**; do not use its branch success rates as PoNR evidence.
+Next check: compare the first post-restore action against the original action,
+and restore any remaining robot/controller buffers.
+
+## Additional rollback fixes and test
+
+Added:
+
+- robosuite episode `done`/`timestep` reset after restore;
+- exact observation at snapshot;
+- RNG state (torch/numpy/cuda) at snapshot;
+- exact-RNG branch for branch 0.
+
+Sanity test (state 35, shift, success):
+
+- snapshot 0: 1/2 branches success;
+- snapshot 20: 0/2 branches success.
+
+The exact-RNG branch still differs from the original first action by about
+0.14, so the harness is not exact yet. Do not interpret the step-20 drop as a
+validated PoNR; it is exploratory.
+
+## MuJoCo full-state restore (validated path)
+
+Adding `sim.get_state()/set_state()` and restoring in the same simulator made
+**full action replay** from a step-0 snapshot reproduce success: 1/1 on state
+35. This validates the MuJoCo/environment restore path for replay.
+
+However, **policy resampling** from the same snapshot still differs:
+
+- exact-RNG first action diff ~0.14;
+- replay-first-action 0/1;
+- policy branches at steps 0/40/80: 0/2 for states 35 and 45.
+
+So the environment is now replay-exact, but the policy branch is not
+action-exact. The missing piece is the flow-matching sample / action chunk
+state, not qpos/qvel or controller state.
+
+Do not use policy-branch rates as PoNR yet. Use full action replay for
+environment validation, and next save/restore the sampled action chunk or
+sample generator explicitly.
+
+## Current validated/unvalidated split
+
+Validated:
+
+- MuJoCo full-state restore (`sim.get_state/set_state`) in the same simulator;
+- full action replay from a step-0 snapshot reproduces success (state 35: 1/1);
+- controller state and episode flags are restored.
+
+Not validated:
+
+- policy resampling from the same snapshot does not reproduce the original
+  action chunk (first action diff ~0.14; replay-first-chunk still fails);
+- policy-branch success rates are therefore not a PoNR estimate yet.
+
+The failure is in sampled flow-matching action chunks, not in MuJoCo state.
+Next: save the sampled action chunk + generator state at each snapshot, or
+define PoNR using action-replay continuation rather than policy resampling.
+
+## Exact first-action branch (state 35, step 0)
+
+After full-state restore, deep-copied observation, controller state and exact
+RNG, branch 0 reproduces the original first action:
+
+- first_action_diff = 0.0;
+- restore_diff = 0.0;
+- branch 0 still fails (0/1).
+
+Full action replay from the same snapshot succeeds 1/1. Therefore the
+remaining mismatch appears after the first action chunk, in the resampled
+policy observation/action chunk path, not in MuJoCo state or the first action.
+PoNR remains unvalidated.
+
+## Chunk-level check and remaining blocker
+
+With full-state restore, exact first action and same RNG:
+
+- branch 0 first_action_diff = 0.0;
+- chunk-2 observation diff = 0.0;
+- chunk-2 qpos diff = 0.0.
+
+In the latest run, however, the original state-35 rollout itself ended in
+failure (220 steps), while an earlier identical run succeeded. That means the
+remaining blocker is not the restore path but **original rollout
+determinism** (env reset / policy sampling seed stability).
+
+Do not start PoNR or recovery until repeated original rollouts with a fixed
+seed produce a stable outcome.
+
+## Determinism check (blocker)
+
+Repeated identical state-35 runs with deterministic flags:
+
+| run | original success | branch | chunk-2 obs diff | chunk-2 qpos diff |
+|---|---|---|---:|---:|
+| 1 | true | 0/1 | 192.0 | 0.00124 |
+| 2 | false | 0/1 | 192.0 | 0.00124 |
+| 3 | false | 1/1 | 1.0 | 0.0 |
+
+The original rollout itself changes across identical runs. Until evaluation is
+deterministic or explicitly multi-repeat, PoNR and recovery cannot be started.

@@ -1,0 +1,189 @@
+{
+  "physical_pair": {
+    "raw_state_equal": true,
+    "model_physics_compatible": true,
+    "physical_init_hash": "e03df327df6094e9e2d138bf942f771e63231c835b7763c95b94b6ab247a97bb",
+    "scope": "listed simulator fields and static physics; not all hidden state"
+  },
+  "initial_observation": {
+    "agentview": {
+      "mean": 101.11217753092448,
+      "std": 48.7364773727825,
+      "sha256": "8aa85a97ace0a3062416a68f1a1481cd93d13c78cc4d3a18890019902def4b70"
+    },
+    "eye_in_hand": {
+      "mean": 102.4034932454427,
+      "std": 62.73508696153991,
+      "sha256": "846b294aee8c65d369356361b694edc44c993b2ea8c21f253f765c2fe2959940"
+    }
+  },
+  "status": "completed",
+  "success": false,
+  "steps": 220,
+  "chunks": [
+    {
+      "start": 0,
+      "end": 12,
+      "z0_hash": "b844a655c50cd9356c516ff1ba2c870ede931037c10336a11897cbb9d0b97814",
+      "official_parity": {
+        "x_max_abs": 0.0,
+        "velocity_max_abs": 0.0,
+        "controller_max_abs": 0.0,
+        "clipped_max_abs": 0.0,
+        "official_predict_calls": 1,
+        "steps": 10
+      }
+    },
+    {
+      "start": 12,
+      "end": 24,
+      "z0_hash": "2377e62430bc90c0a788c91962753229ec6e8cbc0ac34dced1d2532cf7f5c4f3",
+      "official_parity": {}
+    },
+    {
+      "start": 24,
+      "end": 36,
+      "z0_hash": "45acd4895e7c1674e1fcbd7f49b6d4bfd878a0d4530fe0981479ed36469d48af",
+      "official_parity": {}
+    },
+    {
+      "start": 36,
+      "end": 48,
+      "z0_hash": "d3ecb0ed013f1ea1ff42513175881ed0016afa05709838ade9aacbe670e8c488",
+      "official_parity": {}
+    },
+    {
+      "start": 48,
+      "end": 60,
+      "z0_hash": "750f0027189d7719f0da1e5ea8ad243ac30bef345849774d6ea11a40beac623f",
+      "official_parity": {}
+    },
+    {
+      "start": 60,
+      "end": 72,
+      "z0_hash": "b0df707b79c3b94ee764670cee260037ea0b7c7d6ab67a807b6318a7d17d4c5f",
+      "official_parity": {}
+    },
+    {
+      "start": 72,
+      "end": 84,
+      "z0_hash": "7432d0eee455f6deb259ffd7b2ed5fad45bc1cef5c1c60fcf3046d4140542499",
+      "official_parity": {}
+    },
+    {
+      "start": 84,
+      "end": 96,
+      "z0_hash": "3a765ab9eff0863a12b69918c55a1745d63635a497f8a18e13d3985eafddcd88",
+      "official_parity": {}
+    },
+    {
+      "start": 96,
+      "end": 108,
+      "z0_hash": "12b7b9ef585c85060255d8755481ff069a4c89238c7693ab9c878704db72f93f",
+      "official_parity": {}
+    },
+    {
+      "start": 108,
+      "end": 120,
+      "z0_hash": "1acc93cabf4dbe8e919e3a3eeda05390dcdca4a44359db2170065e46106dd983",
+      "official_parity": {}
+    },
+    {
+      "start": 120,
+      "end": 132,
+      "z0_hash": "17cd7c375d7f2406b5cefaf19f227b466d4d78965a821598d37689f0815f8251",
+      "official_parity": {}
+    },
+    {
+      "start": 132,
+      "end": 144,
+      "z0_hash": "e3323642409fb97bfea1f35085fd6efd44a346931399d714b97e2a230cdb9d3f",
+      "official_parity": {}
+    },
+    {
+      "start": 144,
+      "end": 156,
+      "z0_hash": "19022754ae66db36aa4bf1a60376ac601bee5897d6a2520de66e7e178a7b86c3",
+      "official_parity": {}
+    },
+    {
+      "start": 156,
+      "end": 168,
+      "z0_hash": "22324b9b7f09a065eee72ff4d509adc9e23578783b214b6da27990d5898f6257",
+      "official_parity": {}
+    },
+    {
+      "start": 168,
+      "end": 180,
+      "z0_hash": "f937ad3d9176906bafc2a9d197e99649659fdf2ad9a671c521a0cdf161ac1a86",
+      "official_parity": {}
+    },
+    {
+      "start": 180,
+      "end": 192,
+      "z0_hash": "141688e6a774bad0ff4a75da5e754f86f324111e40ec5da1584cb71c3f3609fb",
+      "official_parity": {}
+    },
+    {
+      "start": 192,
+      "end": 204,
+      "z0_hash": "880544b9227d53c70abb0e53c8ee389bcf7dd598ab9409b1e0169e731d76531e",
+      "official_parity": {}
+    },
+    {
+      "start": 204,
+      "end": 216,
+      "z0_hash": "11ecfc6be46d3ec85d70812c3d2f603a73d9c573500703e20d681e271d7a0dbc",
+      "official_parity": {}
+    },
+    {
+      "start": 216,
+      "end": 220,
+      "z0_hash": "6c6b03af91fe1e848ad988e701a3c638611e68bbcc73df30783477942a9629b3",
+      "official_parity": {}
+    }
+  ],
+  "action_sha256": "6802820c8e9a229627945b7e4710645a02265e6562e23b97de0a40e824eb92e6",
+  "terminal_flags": {
+    "reward": 0.0,
+    "success": false,
+    "terminated": false,
+    "truncated": false,
+    "done": false,
+    "flags_source": "legacy_done_minus_explicit_time_limit"
+  },
+  "collector_truncated": true,
+  "case_id": "a7cce4f24d150da551883e11",
+  "base_task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+  "factor": "lighting",
+  "pair_group_id": "9f0d3717f1f17095d5da34e79aaa2731401674a769aea9bbd6a8424acbea064d",
+  "role": "target_dev",
+  "seeds": {
+    "environment_seed": 1872260725,
+    "sensor_noise_seed": 2475808610,
+    "policy_flow_seed": 213787036,
+    "method_augmentation_seed": 1700451326
+  },
+  "init_state_index": 0,
+  "audit_sha256": "d60f3211d73b8f1362d2286c1c0831897697457ff01d281b36106116a71aa355",
+  "manifest_sha256": "d3e0d8c642cd215c879d2f0174663ff5ec585cd5c6d6b531a213c26e9fb982c0",
+  "checkpoint_sha256": "f933ab03c1a4664f7a11690645cdd5fa81788a5b98db81913024f7a23326dfe6",
+  "code_sha256": {
+    "scripts/static_visual_v2.py": "f5234358fe24edab30e1cbce3656a81fc8a37d35392019e0194c1e0259c442e4",
+    "dacsc/static_visual_v2.py": "cfd502ea2804c8c1440e564850acb12d8bf3bfba3eafb66442af33997c16960e"
+  },
+  "wall_seconds": 220.95025175600313,
+  "method": "frozen",
+  "new_model_training": false,
+  "blind_accessed": false,
+  "language_instruction": "pick up the black bowl between the plate and the ramekin and place it on the plate",
+  "language_source": "official benchmark.grab_language_from_filename(clean_base_task)",
+  "bddl_language_diagnostic": "pick the akita black bowl between the plate and the ramekin and place it on the plate",
+  "runtime_versions": {
+    "python": "3.10.12",
+    "torch": "2.5.1+cu121",
+    "numpy": "1.26.4",
+    "mujoco": "3.3.0",
+    "robosuite": "1.4.1"
+  }
+}

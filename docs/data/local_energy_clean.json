@@ -1,0 +1,69 @@
+{
+  "schema": "local_patch_energy_v1",
+  "records": [
+    {
+      "state_id": 34,
+      "domain": "clean",
+      "success": true,
+      "steps": 88,
+      "eps": 0.2,
+      "mode": "local_patch_energy"
+    },
+    {
+      "state_id": 35,
+      "domain": "clean",
+      "success": true,
+      "steps": 77,
+      "eps": 0.2,
+      "mode": "local_patch_energy"
+    },
+    {
+      "state_id": 36,
+      "domain": "clean",
+      "success": true,
+      "steps": 99,
+      "eps": 0.2,
+      "mode": "local_patch_energy"
+    },
+    {
+      "state_id": 37,
+      "domain": "clean",
+      "success": true,
+      "steps": 101,
+      "eps": 0.2,
+      "mode": "local_patch_energy"
+    },
+    {
+      "state_id": 43,
+      "domain": "clean",
+      "success": true,
+      "steps": 92,
+      "eps": 0.2,
+      "mode": "local_patch_energy"
+    },
+    {
+      "state_id": 44,
+      "domain": "clean",
+      "success": true,
+      "steps": 86,
+      "eps": 0.2,
+      "mode": "local_patch_energy"
+    },
+    {
+      "state_id": 45,
+      "domain": "clean",
+      "success": true,
+      "steps": 96,
+      "eps": 0.2,
+      "mode": "local_patch_energy"
+    },
+    {
+      "state_id": 49,
+      "domain": "clean",
+      "success": true,
+      "steps": 94,
+      "eps": 0.2,
+      "mode": "local_patch_energy"
+    }
+  ]
+}

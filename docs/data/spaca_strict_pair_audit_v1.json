@@ -1,0 +1,152 @@
+{
+  "schema": "spaca_strict_pair_audit_v1",
+  "n": 12,
+  "n_pass": 11,
+  "records": [
+    {
+      "state_id": 0,
+      "chunk": 0,
+      "pairing_pass": true,
+      "model_pass": true,
+      "state_pass": true,
+      "camera_pass": true,
+      "state8_max": 0.00011695921421051025,
+      "action_rmse": 0.04669086255566965,
+      "gripper_rmse": 0.0018442327523661688,
+      "z0": "4d9c252d7913fd7c2d7b3ea2129131380771cb5ccb1ccf91cf991f68edd6eb16"
+    },
+    {
+      "state_id": 0,
+      "chunk": 1,
+      "pairing_pass": true,
+      "model_pass": true,
+      "state_pass": true,
+      "camera_pass": true,
+      "state8_max": 0.0007377490401268005,
+      "action_rmse": 0.04771797466238124,
+      "gripper_rmse": 0.001211532729875356,
+      "z0": "a9cd440d4211020177c32329bbb4a7c7ea59c325888506ab560c06385df37159"
+    },
+    {
+      "state_id": 1,
+      "chunk": 0,
+      "pairing_pass": true,
+      "model_pass": true,
+      "state_pass": true,
+      "camera_pass": true,
+      "state8_max": 7.393211126327515e-05,
+      "action_rmse": 0.062171224530078485,
+      "gripper_rmse": 0.0030609799768876035,
+      "z0": "9268c1453e1817d20b8db1599da3122a4fc82bb1d60ed9de658ce034b2d4a629"
+    },
+    {
+      "state_id": 1,
+      "chunk": 1,
+      "pairing_pass": true,
+      "model_pass": true,
+      "state_pass": true,
+      "camera_pass": true,
+      "state8_max": 0.0008099377155303955,
+      "action_rmse": 0.03594020477341127,
+      "gripper_rmse": 0.0019850995861428636,
+      "z0": "a1c9ae6bd50a997fec30faa36e7e5db103f448c58491f5bd270fef78d09c471e"
+    },
+    {
+      "state_id": 2,
+      "chunk": 0,
+      "pairing_pass": true,
+      "model_pass": true,
+      "state_pass": true,
+      "camera_pass": true,
+      "state8_max": 1.849886029958725e-05,
+      "action_rmse": 0.06271662033138628,
+      "gripper_rmse": 0.0016118105463809494,
+      "z0": "d25de0585994e3a95fa4f45efd99a91c1fa46b8ba530ff719f612fc1d0621354"
+    },
+    {
+      "state_id": 2,
+      "chunk": 1,
+      "pairing_pass": true,
+      "model_pass": true,
+      "state_pass": true,
+      "camera_pass": true,
+      "state8_max": 0.0007428675889968872,
+      "action_rmse": 0.06873225855483768,
+      "gripper_rmse": 0.0018489378928975586,
+      "z0": "e3914c5c404097a828ab81d3b15b3b4070a9dbf857957bbe11c60fcb472e31c5"
+    },
+    {
+      "state_id": 4,
+      "chunk": 0,
+      "pairing_pass": true,
+      "model_pass": true,
+      "state_pass": true,
+      "camera_pass": true,
+      "state8_max": 0.0002908781170845032,
+      "action_rmse": 0.07952388156101474,
+      "gripper_rmse": 0.0030394372145559918,
+      "z0": "9a0cdb3b14dd01a4ac200d13ac3f3a548d8708af0c1c6558a7efc665599d2569"
+    },
+    {
+      "state_id": 4,
+      "chunk": 1,
+      "pairing_pass": true,
+      "model_pass": true,
+      "state_pass": true,
+      "camera_pass": true,
+      "state8_max": 0.0008243024349212646,
+      "action_rmse": 0.06979397916073433,
+      "gripper_rmse": 0.0019398273884135438,
+      "z0": "1381561f299bef6dfe0fdc49f84404778824e75f655fef2b87df5b2544fcaa92"
+    },
+    {
+      "state_id": 6,
+      "chunk": 0,
+      "pairing_pass": true,
+      "model_pass": true,
+      "state_pass": true,
+      "camera_pass": true,
+      "state8_max": 3.49879264831543e-05,
+      "action_rmse": 0.057058314096143536,
+      "gripper_rmse": 0.001573029346335076,
+      "z0": "5b3dadee6ff328dce21cbe6b52dc334cfb6fca63527475255bed5081760eabcc"
+    },
+    {
+      "state_id": 6,
+      "chunk": 1,
+      "pairing_pass": true,
+      "model_pass": true,
+      "state_pass": true,
+      "camera_pass": true,
+      "state8_max": 0.0008233562111854553,
+      "action_rmse": 0.05245905420863204,
+      "gripper_rmse": 0.002155914835689986,
+      "z0": "7019872585f38ebefda44ecfdd84138b988305877c2b539e90ce12da86e42cdb"
+    },
+    {
+      "state_id": 8,
+      "chunk": 0,
+      "pairing_pass": true,
+      "model_pass": true,
+      "state_pass": true,
+      "camera_pass": true,
+      "state8_max": 0.00010862201452255249,
+      "action_rmse": 0.041877793383064875,
+      "gripper_rmse": 0.001460669781071206,
+      "z0": "61cafc59a0cb20b179f192bd0ff47d4c5ea13e48667b0a0e0827680717212932"
+    },
+    {
+      "state_id": 8,
+      "chunk": 1,
+      "pairing_pass": false,
+      "model_pass": true,
+      "state_pass": true,
+      "camera_pass": true,
+      "state8_max": 0.0011801943182945251,
+      "action_rmse": 0.06902090834976245,
+      "gripper_rmse": 0.001419963854903146,
+      "z0": "8d6c5a9c4902230d199f4b89a9afbb8ad9462f969553034bc9be0593f89dc009"
+    }
+  ],
+  "source": "spaca_strict_pairs_final/pairs.json"
+}

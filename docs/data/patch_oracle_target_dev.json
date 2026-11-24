@@ -1,0 +1,567 @@
+{
+  "schema": "patch_closed_loop_oracle_v1",
+  "records": [
+    {
+      "state_id": 36,
+      "mode": "frozen",
+      "success": true,
+      "steps": 93,
+      "hit_max_steps": false,
+      "chunks": [
+        {
+          "chunk": 0,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 1,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 2,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 3,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 4,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 5,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 6,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 7,
+          "mode": "frozen",
+          "patch_source": "shift"
+        }
+      ]
+    },
+    {
+      "state_id": 36,
+      "mode": "oracle",
+      "success": true,
+      "steps": 100,
+      "hit_max_steps": false,
+      "chunks": [
+        {
+          "chunk": 0,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "clean_state_input_max": 0.0004525184631347656
+        },
+        {
+          "chunk": 1,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "clean_state_input_max": 0.008325040340423584
+        },
+        {
+          "chunk": 2,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "clean_state_input_max": 0.008501708507537842
+        },
+        {
+          "chunk": 3,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "clean_state_input_max": 0.0019176602363586426
+        },
+        {
+          "chunk": 4,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "clean_state_input_max": 0.004160463809967041
+        },
+        {
+          "chunk": 5,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "clean_state_input_max": 0.0018907785415649414
+        },
+        {
+          "chunk": 6,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "clean_state_input_max": 0.004262685775756836
+        },
+        {
+          "chunk": 7,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "clean_state_input_max": 0.00336301326751709
+        },
+        {
+          "chunk": 8,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "clean_state_input_max": 0.0028911232948303223
+        }
+      ]
+    },
+    {
+      "state_id": 37,
+      "mode": "frozen",
+      "success": true,
+      "steps": 114,
+      "hit_max_steps": false,
+      "chunks": [
+        {
+          "chunk": 0,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 1,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 2,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 3,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 4,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 5,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 6,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 7,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 8,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 9,
+          "mode": "frozen",
+          "patch_source": "shift"
+        }
+      ]
+    },
+    {
+      "state_id": 37,
+      "mode": "oracle",
+      "success": true,
+      "steps": 113,
+      "hit_max_steps": false,
+      "chunks": [
+        {
+          "chunk": 0,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "clean_state_input_max": 0.0004532933235168457
+        },
+        {
+          "chunk": 1,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "clean_state_input_max": 0.008231878280639648
+        },
+        {
+          "chunk": 2,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "clean_state_input_max": 0.008616745471954346
+        },
+        {
+          "chunk": 3,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "clean_state_input_max": 0.0030978918075561523
+        },
+        {
+          "chunk": 4,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "clean_state_input_max": 0.0024987459182739258
+        },
+        {
+          "chunk": 5,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "clean_state_input_max": 0.010416597127914429
+        },
+        {
+          "chunk": 6,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "clean_state_input_max": 0.0013759732246398926
+        },
+        {
+          "chunk": 7,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "clean_state_input_max": 0.004687905311584473
+        },
+        {
+          "chunk": 8,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "clean_state_input_max": 0.002308487892150879
+        },
+        {
+          "chunk": 9,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "clean_state_input_max": 0.0012368559837341309
+        }
+      ]
+    },
+    {
+      "state_id": 43,
+      "mode": "frozen",
+      "success": false,
+      "steps": 220,
+      "hit_max_steps": true,
+      "chunks": [
+        {
+          "chunk": 0,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 1,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 2,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 3,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 4,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 5,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 6,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 7,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 8,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 9,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 10,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 11,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 12,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 13,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 14,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 15,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 16,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 17,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 18,
+          "mode": "frozen",
+          "patch_source": "shift"
+        }
+      ]
+    },
+    {
+      "state_id": 43,
+      "mode": "oracle",
+      "success": true,
+      "steps": 92,
+      "hit_max_steps": false,
+      "chunks": [
+        {
+          "chunk": 0,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "clean_state_input_max": 0.0004547238349914551
+        },
+        {
+          "chunk": 1,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "clean_state_input_max": 0.00791466236114502
+        },
+        {
+          "chunk": 2,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "clean_state_input_max": 0.008141756057739258
+        },
+        {
+          "chunk": 3,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "clean_state_input_max": 0.002779722213745117
+        },
+        {
+          "chunk": 4,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "clean_state_input_max": 0.0038938522338867188
+        },
+        {
+          "chunk": 5,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "clean_state_input_max": 0.0032142996788024902
+        },
+        {
+          "chunk": 6,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "clean_state_input_max": 0.0038335323333740234
+        },
+        {
+          "chunk": 7,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "clean_state_input_max": 0.0031043291091918945
+        }
+      ]
+    },
+    {
+      "state_id": 45,
+      "mode": "frozen",
+      "success": false,
+      "steps": 220,
+      "hit_max_steps": true,
+      "chunks": [
+        {
+          "chunk": 0,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 1,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 2,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 3,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 4,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 5,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 6,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 7,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 8,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 9,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 10,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 11,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 12,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 13,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 14,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 15,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 16,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 17,
+          "mode": "frozen",
+          "patch_source": "shift"
+        },
+        {
+          "chunk": 18,
+          "mode": "frozen",
+          "patch_source": "shift"
+        }
+      ]
+    },
+    {
+      "state_id": 45,
+      "mode": "oracle",
+      "success": true,
+      "steps": 94,
+      "hit_max_steps": false,
+      "chunks": [
+        {
+          "chunk": 0,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "clean_state_input_max": 0.0004551410675048828
+        },
+        {
+          "chunk": 1,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "clean_state_input_max": 0.008386671543121338
+        },
+        {
+          "chunk": 2,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "clean_state_input_max": 0.006401002407073975
+        },
+        {
+          "chunk": 3,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "clean_state_input_max": 0.0020710229873657227
+        },
+        {
+          "chunk": 4,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "clean_state_input_max": 0.008519470691680908
+        },
+        {
+          "chunk": 5,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "clean_state_input_max": 0.001772165298461914
+        },
+        {
+          "chunk": 6,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "clean_state_input_max": 0.005388140678405762
+        },
+        {
+          "chunk": 7,
+          "mode": "oracle",
+          "patch_source": "same_state_clean",
+          "clean_state_input_max": 0.004671573638916016
+        }
+      ]
+    }
+  ]
+}

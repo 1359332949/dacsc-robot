@@ -1,0 +1,44 @@
+{
+  "records": [
+    {
+      "state_id": 34,
+      "snapshot_step": 80,
+      "branch_successes": 0,
+      "branches": 2,
+      "final_success": false,
+      "final_steps": 220
+    },
+    {
+      "state_id": 34,
+      "snapshot_step": 100,
+      "branch_successes": 0,
+      "branches": 2,
+      "final_success": false,
+      "final_steps": 220
+    },
+    {
+      "state_id": 34,
+      "snapshot_step": 120,
+      "branch_successes": 0,
+      "branches": 2,
+      "final_success": false,
+      "final_steps": 220
+    }
+  ],
+  "summary": {
+    "34": {
+      "branch_success_rates": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "snapshot_steps": [
+        80,
+        100,
+        120
+      ],
+      "ponr_step": null,
+      "final_success": false
+    }
+  }
+}

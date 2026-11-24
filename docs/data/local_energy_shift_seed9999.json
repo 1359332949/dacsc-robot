@@ -1,0 +1,85 @@
+{
+  "schema": "local_patch_energy_v1",
+  "records": [
+    {
+      "state_id": 34,
+      "domain": "shift",
+      "success": false,
+      "steps": 220,
+      "eps": 0.2,
+      "mode": "local_patch_energy"
+    },
+    {
+      "state_id": 35,
+      "domain": "shift",
+      "success": true,
+      "steps": 87,
+      "eps": 0.2,
+      "mode": "local_patch_energy"
+    },
+    {
+      "state_id": 36,
+      "domain": "shift",
+      "success": false,
+      "steps": 220,
+      "eps": 0.2,
+      "mode": "local_patch_energy"
+    },
+    {
+      "state_id": 37,
+      "domain": "shift",
+      "success": true,
+      "steps": 129,
+      "eps": 0.2,
+      "mode": "local_patch_energy"
+    },
+    {
+      "state_id": 39,
+      "domain": "shift",
+      "success": true,
+      "steps": 106,
+      "eps": 0.2,
+      "mode": "local_patch_energy"
+    },
+    {
+      "state_id": 43,
+      "domain": "shift",
+      "success": false,
+      "steps": 220,
+      "eps": 0.2,
+      "mode": "local_patch_energy"
+    },
+    {
+      "state_id": 44,
+      "domain": "shift",
+      "success": true,
+      "steps": 96,
+      "eps": 0.2,
+      "mode": "local_patch_energy"
+    },
+    {
+      "state_id": 45,
+      "domain": "shift",
+      "success": false,
+      "steps": 220,
+      "eps": 0.2,
+      "mode": "local_patch_energy"
+    },
+    {
+      "state_id": 48,
+      "domain": "shift",
+      "success": false,
+      "steps": 220,
+      "eps": 0.2,
+      "mode": "local_patch_energy"
+    },
+    {
+      "state_id": 49,
+      "domain": "shift",
+      "success": false,
+      "steps": 220,
+      "eps": 0.2,
+      "mode": "local_patch_energy"
+    }
+  ]
+}

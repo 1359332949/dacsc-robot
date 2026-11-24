@@ -1,0 +1,69 @@
+{
+  "cases": 7,
+  "identity_and_receipts_pass": true,
+  "rows": [
+    {
+      "case_id": "05a2e087b49114ba4a11204b",
+      "factor": "sensor_noise",
+      "success": true,
+      "curvature_change_pct": -1.2757675479435404,
+      "heldout_curvature_change_pct": -1.4586867942519288,
+      "xyz_command_rms_change_pct": 0.31211229987961886,
+      "finite_difference_relative_error": 0.00020855190692073487
+    },
+    {
+      "case_id": "1f80bb87b8b30a1a90c033fb",
+      "factor": "background",
+      "success": false,
+      "curvature_change_pct": -0.8754589007060054,
+      "heldout_curvature_change_pct": -0.6217551553607814,
+      "xyz_command_rms_change_pct": 0.18674724558471745,
+      "finite_difference_relative_error": 0.000309198620403562
+    },
+    {
+      "case_id": "260f480dfa38ae5a1cfe6ab4",
+      "factor": "lighting",
+      "success": true,
+      "curvature_change_pct": -0.5921806462822254,
+      "heldout_curvature_change_pct": -0.37060626308882405,
+      "xyz_command_rms_change_pct": -0.008069540342436898,
+      "finite_difference_relative_error": 0.0006189610748791147
+    },
+    {
+      "case_id": "31ee3c9ef1bf8221f99a7bb4",
+      "factor": "sensor_noise",
+      "success": false,
+      "curvature_change_pct": -1.2719817386991572,
+      "heldout_curvature_change_pct": 0.3404182519903598,
+      "xyz_command_rms_change_pct": 0.3317881024503144,
+      "finite_difference_relative_error": 0.00020421623229072
+    },
+    {
+      "case_id": "34e41085eb40929c9e32189e",
+      "factor": "background",
+      "success": true,
+      "curvature_change_pct": -0.8858810180946808,
+      "heldout_curvature_change_pct": -2.048404028955775,
+      "xyz_command_rms_change_pct": 0.17989256837804835,
+      "finite_difference_relative_error": 1.8154416106359878e-05
+    },
+    {
+      "case_id": "36f206329f1c1c5275cdfc66",
+      "factor": "lighting",
+      "success": false,
+      "curvature_change_pct": -1.3510542249393853,
+      "heldout_curvature_change_pct": -0.27852375393120354,
+      "xyz_command_rms_change_pct": -0.0499100181491019,
+      "finite_difference_relative_error": 0.0004583957043688293
+    },
+    {
+      "case_id": "clean_25eefa3907243c5956889cfa",
+      "factor": "clean",
+      "success": true,
+      "curvature_change_pct": -0.8635580909381435,
+      "heldout_curvature_change_pct": -0.1311473708555333,
+      "xyz_command_rms_change_pct": -0.08144237683368472,
+      "finite_difference_relative_error": 0.0001304593638899825
+    }
+  ]
+}

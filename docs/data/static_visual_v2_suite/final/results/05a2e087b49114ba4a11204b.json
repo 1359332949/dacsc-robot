@@ -1,0 +1,123 @@
+{
+  "physical_pair": {
+    "raw_state_equal": true,
+    "model_physics_compatible": true,
+    "physical_init_hash": "3495dc3f550bab0826fc71c02c2bba416dfa826a47a14518b1a183f480df3d6a",
+    "scope": "listed simulator fields and static physics; not all hidden state"
+  },
+  "initial_observation": {
+    "agentview": {
+      "mean": 122.12857055664062,
+      "std": 44.94248711858616,
+      "sha256": "e52c291f6372e5ebaa601974c350149987fdddbb3c75b3b4fd5558952189c64a"
+    },
+    "eye_in_hand": {
+      "mean": 127.78673299153645,
+      "std": 63.6252884160142,
+      "sha256": "f8fc691a81614709b2a1ae46d8b02afc2f0837a979badb717c207aa9cb6daccc"
+    }
+  },
+  "status": "completed",
+  "success": true,
+  "steps": 89,
+  "chunks": [
+    {
+      "start": 0,
+      "end": 12,
+      "z0_hash": "5054eee540baab7cbda9208a947bee34b8b32ad7528023db4d35d3f5992cbdcf",
+      "official_parity": {
+        "x_max_abs": 0.0,
+        "velocity_max_abs": 0.0,
+        "controller_max_abs": 0.0,
+        "clipped_max_abs": 0.0,
+        "official_predict_calls": 1,
+        "steps": 10
+      }
+    },
+    {
+      "start": 12,
+      "end": 24,
+      "z0_hash": "e193036d9ff2b46bb003db43111f3a6c54366a5d0052b006d71c68a1f25f4bf5",
+      "official_parity": {}
+    },
+    {
+      "start": 24,
+      "end": 36,
+      "z0_hash": "c5e7b3624ba6e9fd085cd887e44a9879815ee625ec16e1bf6cb3024de3e145de",
+      "official_parity": {}
+    },
+    {
+      "start": 36,
+      "end": 48,
+      "z0_hash": "cce0437940778ba1afe61d7d10728349f76328d2d36ec2851df88505ec3e8b6c",
+      "official_parity": {}
+    },
+    {
+      "start": 48,
+      "end": 60,
+      "z0_hash": "ce6c11de49cff5561568268c0679b40eb4bd75575ee4ed9e6df3067c221a1fdc",
+      "official_parity": {}
+    },
+    {
+      "start": 60,
+      "end": 72,
+      "z0_hash": "1fb615e82a83396feaeb38c219f55b972624c1747477037d2488c7e02023d2bc",
+      "official_parity": {}
+    },
+    {
+      "start": 72,
+      "end": 84,
+      "z0_hash": "86118949ac88a6230c3f46803808c6ed102613137499c0066a1a98464bf09552",
+      "official_parity": {}
+    },
+    {
+      "start": 84,
+      "end": 89,
+      "z0_hash": "3caf54f64de18dac96e543caa3e7625b02565de66fed2d5a2413332a6600e684",
+      "official_parity": {}
+    }
+  ],
+  "action_sha256": "fa40c840bb6119e77e60e2b44f5605165a7ceb0785b2300e37e30a20259669f1",
+  "terminal_flags": {
+    "reward": 1.0,
+    "success": true,
+    "terminated": true,
+    "truncated": false,
+    "done": true,
+    "flags_source": "legacy_done_minus_explicit_time_limit"
+  },
+  "collector_truncated": false,
+  "case_id": "05a2e087b49114ba4a11204b",
+  "base_task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+  "factor": "sensor_noise",
+  "pair_group_id": "74da4077f0571b787e7da5a7929b450c27f7b5c372b63d5c74f9164cdb0588e4",
+  "role": "target_dev",
+  "seeds": {
+    "environment_seed": 2252915891,
+    "sensor_noise_seed": 746364111,
+    "policy_flow_seed": 1704458474,
+    "method_augmentation_seed": 326877847
+  },
+  "init_state_index": 0,
+  "audit_sha256": "d60f3211d73b8f1362d2286c1c0831897697457ff01d281b36106116a71aa355",
+  "manifest_sha256": "d3e0d8c642cd215c879d2f0174663ff5ec585cd5c6d6b531a213c26e9fb982c0",
+  "checkpoint_sha256": "f933ab03c1a4664f7a11690645cdd5fa81788a5b98db81913024f7a23326dfe6",
+  "code_sha256": {
+    "scripts/static_visual_v2.py": "f5234358fe24edab30e1cbce3656a81fc8a37d35392019e0194c1e0259c442e4",
+    "dacsc/static_visual_v2.py": "cfd502ea2804c8c1440e564850acb12d8bf3bfba3eafb66442af33997c16960e"
+  },
+  "wall_seconds": 67.52524378600356,
+  "method": "frozen",
+  "new_model_training": false,
+  "blind_accessed": false,
+  "language_instruction": "pick up the black bowl on the cookie box and place it on the plate",
+  "language_source": "official benchmark.grab_language_from_filename(clean_base_task)",
+  "bddl_language_diagnostic": "pick the akita black bowl on the cookies box and place it on the plate",
+  "runtime_versions": {
+    "python": "3.10.12",
+    "torch": "2.5.1+cu121",
+    "numpy": "1.26.4",
+    "mujoco": "3.3.0",
+    "robosuite": "1.4.1"
+  }
+}

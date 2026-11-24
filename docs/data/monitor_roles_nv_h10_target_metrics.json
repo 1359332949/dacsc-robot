@@ -1,0 +1,16 @@
+{
+  "auc": 0.6481360544217687,
+  "n_windows": 1255,
+  "threshold": 0.049061648547649384,
+  "threshold_source": "/hy-tmp/validation/monitor_roles_nv_h10/source_val_windows.npz",
+  "recall_at_fpr": 0.4,
+  "n_failure_episodes": 5,
+  "n_success_episodes": 20,
+  "first_alarm_remaining_steps": [
+    62,
+    42,
+    86
+  ],
+  "median_lead_steps": 62.0,
+  "false_alarm_episodes": 3
+}

@@ -1,0 +1,139 @@
+{
+  "schema": "multi_state_trace_summary_v1",
+  "trace": {
+    "36": {
+      "T": {
+        "dino_rel": 0.2765346009042447,
+        "resampler_rel": 0.18146140912497086,
+        "action_xyz": 0.03576343636959791,
+        "action_rot": 0.007204649120103568,
+        "action_grip_pre": 0.0010907292366027833,
+        "action_grip_post": 0.00024435520172119143
+      },
+      "S": {
+        "dino_rel": 0.7537744765665466,
+        "resampler_rel": 0.4212633490113153,
+        "action_xyz": 0.2895076863467693,
+        "action_rot": 0.022555510490201415,
+        "action_grip_pre": 0.0038504272699356077,
+        "action_grip_post": 0.0006498068571090699
+      },
+      "target_contact_steps": 0,
+      "n_steps": 20,
+      "pairing_pass": 20,
+      "distance_start": 0.3712241358508243,
+      "distance_end": 0.2753983479342908
+    },
+    "37": {
+      "T": {
+        "dino_rel": 0.26920413992369097,
+        "resampler_rel": 0.17206907901652221,
+        "action_xyz": 0.03515360245946795,
+        "action_rot": 0.00981599388178438,
+        "action_grip_pre": 0.000629645586013794,
+        "action_grip_post": 0.0
+      },
+      "S": {
+        "dino_rel": 0.7773361149465714,
+        "resampler_rel": 0.424227078449767,
+        "action_xyz": 0.250528378598392,
+        "action_rot": 0.02937710387632251,
+        "action_grip_pre": 0.006179535388946533,
+        "action_grip_post": 0.0
+      },
+      "target_contact_steps": 0,
+      "n_steps": 20,
+      "pairing_pass": 20,
+      "distance_start": 0.3887294683416126,
+      "distance_end": 0.2744849017885853
+    },
+    "43": {
+      "T": {
+        "dino_rel": 0.2419554013536957,
+        "resampler_rel": 0.16790735550011385,
+        "action_xyz": 0.02008797232992947,
+        "action_rot": 0.005490188859403134,
+        "action_grip_pre": 0.0004169642925262451,
+        "action_grip_post": 0.0
+      },
+      "S": {
+        "dino_rel": 0.7273581325027275,
+        "resampler_rel": 0.36978713499821286,
+        "action_xyz": 0.3026309313252568,
+        "action_rot": 0.016006707190535964,
+        "action_grip_pre": 0.004112249612808228,
+        "action_grip_post": 0.0003951072692871094
+      },
+      "target_contact_steps": 0,
+      "n_steps": 20,
+      "pairing_pass": 20,
+      "distance_start": 0.36794067439462547,
+      "distance_end": 0.27111603772306275
+    },
+    "45": {
+      "T": {
+        "dino_rel": 0.26685460466493677,
+        "resampler_rel": 0.1564284636022961,
+        "action_xyz": 0.029504413809627296,
+        "action_rot": 0.0050399730796925725,
+        "action_grip_pre": 0.0007977485656738281,
+        "action_grip_post": 6.470680236816406e-05
+      },
+      "S": {
+        "dino_rel": 0.7086728390028338,
+        "resampler_rel": 0.40959152289454986,
+        "action_xyz": 0.26993377320468426,
+        "action_rot": 0.02131087831221521,
+        "action_grip_pre": 0.0020384788513183594,
+        "action_grip_post": 0.0
+      },
+      "target_contact_steps": 0,
+      "n_steps": 20,
+      "pairing_pass": 20,
+      "distance_start": 0.3810230531126629,
+      "distance_end": 0.26521514607784447
+    }
+  },
+  "closed_loop_alignment": {
+    "37/clean": {
+      "frozen_success": true,
+      "transform_success": false,
+      "first_eef_divergence_1mm": 3,
+      "first_action_divergence_0.01": 1,
+      "first_action_divergence_0.05": 9,
+      "first_action_divergence_0.1": 13,
+      "max_action_divergence": 2.0,
+      "max_eef_divergence": 0.10723384634270021
+    },
+    "37/shift": {
+      "frozen_success": true,
+      "transform_success": false,
+      "first_eef_divergence_1mm": 4,
+      "first_action_divergence_0.01": 1,
+      "first_action_divergence_0.05": 11,
+      "first_action_divergence_0.1": 25,
+      "max_action_divergence": 2.0,
+      "max_eef_divergence": 0.15196316097220422
+    },
+    "43/shift": {
+      "frozen_success": false,
+      "transform_success": false,
+      "first_eef_divergence_1mm": 3,
+      "first_action_divergence_0.01": 1,
+      "first_action_divergence_0.05": 1,
+      "first_action_divergence_0.1": 29,
+      "max_action_divergence": 2.0,
+      "max_eef_divergence": 0.10585193384602187
+    },
+    "45/shift": {
+      "frozen_success": false,
+      "transform_success": false,
+      "first_eef_divergence_1mm": 2,
+      "first_action_divergence_0.01": 1,
+      "first_action_divergence_0.05": 1,
+      "first_action_divergence_0.1": 2,
+      "max_action_divergence": 2.0,
+      "max_eef_divergence": 0.13939161169434167
+    }
+  }
+}

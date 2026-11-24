@@ -1,0 +1,2437 @@
+{
+  "status": "post-grid mechanism control; no configuration selection",
+  "receipt_checks_pass": true,
+  "n_dit_blocks": [
+    1
+  ],
+  "summary": {
+    "0.75": {
+      "mean_xyz_improvement_pct": 0.00013230132406283346,
+      "n_material_improve": 0,
+      "mean_relative_curvature_change_pct": -0.0003977735875737576,
+      "rows": [
+        {
+          "case_id": "3d16d19504b303a732927434",
+          "factor": "sensor_noise",
+          "baseline_success": false,
+          "metrics": {
+            "controller": {
+              "xyz": {
+                "step0_distance": 1.7543617187908258,
+                "distance": 1.7543558850856722,
+                "distance_change_pct": -0.0003325257893593836
+              },
+              "rotation": {
+                "step0_distance": 0.1432753784636452,
+                "distance": 0.14327443858033345,
+                "distance_change_pct": -0.0006559977867914846
+              },
+              "all": {
+                "step0_distance": 2.0312382479920976,
+                "distance": 2.0312290350327706,
+                "distance_change_pct": -0.00045356369869908875
+              },
+              "action_norm_ratio_mean": 0.9999997474532838,
+              "action_norm_ratio_min_noise": 0.9999987659720005,
+              "xyz_action_norm_ratio_mean": 0.999998092156125,
+              "xyz_action_norm_ratio_min_noise": 0.9999972808923323
+            },
+            "clipped": {
+              "xyz": {
+                "step0_distance": 1.7543617187908258,
+                "distance": 1.7543558850856722,
+                "distance_change_pct": -0.0003325257893593836
+              },
+              "rotation": {
+                "step0_distance": 0.1432753784636452,
+                "distance": 0.14327443858033345,
+                "distance_change_pct": -0.0006559977867914846
+              },
+              "all": {
+                "step0_distance": 2.0308091229688294,
+                "distance": 2.030799921264993,
+                "distance_change_pct": -0.0004531053033107746
+              },
+              "action_norm_ratio_mean": 0.9999997432300737,
+              "action_norm_ratio_min_noise": 0.9999987494280148,
+              "xyz_action_norm_ratio_mean": 0.999998092156125,
+              "xyz_action_norm_ratio_min_noise": 0.9999972808923323
+            },
+            "raw_curvature": {
+              "step0": 0.10201943852007389,
+              "after": 0.10201834514737129,
+              "change_pct": -0.0010717297786233537
+            },
+            "relative_curvature": {
+              "step0": 0.08316642418503761,
+              "after": 0.08316556923091412,
+              "change_pct": -0.0010280039473564706
+            }
+          },
+          "gradient": 2.224929630756378e-06
+        },
+        {
+          "case_id": "537c44cf53786dc807cc4fb8",
+          "factor": "sensor_noise",
+          "baseline_success": false,
+          "metrics": {
+            "controller": {
+              "xyz": {
+                "step0_distance": 1.9166833267515961,
+                "distance": 1.9166815792627767,
+                "distance_change_pct": -9.117253721990792e-05
+              },
+              "rotation": {
+                "step0_distance": 0.30675953308648335,
+                "distance": 0.3067591430898679,
+                "distance_change_pct": -0.00012713430990185515
+              },
+              "all": {
+                "step0_distance": 1.9413114573303216,
+                "distance": 1.9413096615696797,
+                "distance_change_pct": -9.250244906722216e-05
+              },
+              "action_norm_ratio_mean": 0.9999998723407024,
+              "action_norm_ratio_min_noise": 0.9999998404087616,
+              "xyz_action_norm_ratio_mean": 0.9999991530829578,
+              "xyz_action_norm_ratio_min_noise": 0.999998931858206
+            },
+            "clipped": {
+              "xyz": {
+                "step0_distance": 1.9166833267515961,
+                "distance": 1.9166815792627767,
+                "distance_change_pct": -9.117253721990792e-05
+              },
+              "rotation": {
+                "step0_distance": 0.30675953308648335,
+                "distance": 0.3067591430898679,
+                "distance_change_pct": -0.00012713430990185515
+              },
+              "all": {
+                "step0_distance": 1.9411819947724864,
+                "distance": 1.9411802021307296,
+                "distance_change_pct": -9.234794891010978e-05
+              },
+              "action_norm_ratio_mean": 0.9999998531243316,
+              "action_norm_ratio_min_noise": 0.9999998164979107,
+              "xyz_action_norm_ratio_mean": 0.9999991530829578,
+              "xyz_action_norm_ratio_min_noise": 0.999998931858206
+            },
+            "raw_curvature": {
+              "step0": 0.1011216789484024,
+              "after": 0.10112080723047256,
+              "change_pct": -0.000862048513139424
+            },
+            "relative_curvature": {
+              "step0": 0.07429166045039892,
+              "after": 0.07429107371717691,
+              "change_pct": -0.0007897699667136493
+            }
+          },
+          "gradient": 1.492910087108612e-06
+        },
+        {
+          "case_id": "8515f621f7ce09addd6043fc",
+          "factor": "sensor_noise",
+          "baseline_success": false,
+          "metrics": {
+            "controller": {
+              "xyz": {
+                "step0_distance": 1.2294070762783271,
+                "distance": 1.2294046771980969,
+                "distance_change_pct": -0.00019514124137698374
+              },
+              "rotation": {
+                "step0_distance": 0.12432630772415812,
+                "distance": 0.12432592398101858,
+                "distance_change_pct": -0.0003086580359079605
+              },
+              "all": {
+                "step0_distance": 1.2358210599630597,
+                "distance": 1.2358186325659568,
+                "distance_change_pct": -0.00019641978774576074
+              },
+              "action_norm_ratio_mean": 0.9999998864676093,
+              "action_norm_ratio_min_noise": 0.9999998002320963,
+              "xyz_action_norm_ratio_mean": 0.9999995568923845,
+              "xyz_action_norm_ratio_min_noise": 0.9999992932693882
+            },
+            "clipped": {
+              "xyz": {
+                "step0_distance": 1.2294070762783271,
+                "distance": 1.2294046771980969,
+                "distance_change_pct": -0.00019514124137698374
+              },
+              "rotation": {
+                "step0_distance": 0.12432630772415812,
+                "distance": 0.12432592398101858,
+                "distance_change_pct": -0.0003086580359079605
+              },
+              "all": {
+                "step0_distance": 1.2357407455565665,
+                "distance": 1.235738318812065,
+                "distance_change_pct": -0.0001963797431003833
+              },
+              "action_norm_ratio_mean": 0.9999998930042162,
+              "action_norm_ratio_min_noise": 0.9999998207483599,
+              "xyz_action_norm_ratio_mean": 0.9999995568923845,
+              "xyz_action_norm_ratio_min_noise": 0.9999992932693882
+            },
+            "raw_curvature": {
+              "step0": 0.06458615139126778,
+              "after": 0.06458559446036816,
+              "change_pct": -0.0008623069924773574
+            },
+            "relative_curvature": {
+              "step0": 0.048969377763569355,
+              "after": 0.04896897543221712,
+              "change_pct": -0.0008215978446246552
+            }
+          },
+          "gradient": 1.0225921869277954e-06
+        },
+        {
+          "case_id": "94221db7af991abeed5ea8f6",
+          "factor": "sensor_noise",
+          "baseline_success": false,
+          "metrics": {
+            "controller": {
+              "xyz": {
+                "step0_distance": 1.670709825988831,
+                "distance": 1.6707055030675892,
+                "distance_change_pct": -0.0002587475798954131
+              },
+              "rotation": {
+                "step0_distance": 0.1360704563192975,
+                "distance": 0.13607011605126432,
+                "distance_change_pct": -0.0002500675329475399
+              },
+              "all": {
+                "step0_distance": 2.166189469504282,
+                "distance": 2.16617242419178,
+                "distance_change_pct": -0.0007868800371291229
+              },
+              "action_norm_ratio_mean": 1.0000004433690426,
+              "action_norm_ratio_min_noise": 1.0000002011278402,
+              "xyz_action_norm_ratio_mean": 0.9999996326609493,
+              "xyz_action_norm_ratio_min_noise": 0.9999995160200902
+            },
+            "clipped": {
+              "xyz": {
+                "step0_distance": 1.670709825988831,
+                "distance": 1.6707055030675892,
+                "distance_change_pct": -0.0002587475798954131
+              },
+              "rotation": {
+                "step0_distance": 0.1360704563192975,
+                "distance": 0.13607011605126432,
+                "distance_change_pct": -0.0002500675329475399
+              },
+              "all": {
+                "step0_distance": 2.1658325409849852,
+                "distance": 2.165815500700028,
+                "distance_change_pct": -0.0007867775848269254
+              },
+              "action_norm_ratio_mean": 1.000000437421962,
+              "action_norm_ratio_min_noise": 1.0000001813171115,
+              "xyz_action_norm_ratio_mean": 0.9999996326609493,
+              "xyz_action_norm_ratio_min_noise": 0.9999995160200902
+            },
+            "raw_curvature": {
+              "step0": 0.20924339070916176,
+              "after": 0.20924299582839012,
+              "change_pct": -0.00018871839645440147
+            },
+            "relative_curvature": {
+              "step0": 0.14074735343456268,
+              "after": 0.1407471001148224,
+              "change_pct": -0.00017998188535095494
+            }
+          },
+          "gradient": 6.426125764846802e-07
+        },
+        {
+          "case_id": "c799396aefd5984dc17e0980",
+          "factor": "sensor_noise",
+          "baseline_success": false,
+          "metrics": {
+            "controller": {
+              "xyz": {
+                "step0_distance": 1.689231504886422,
+                "distance": 1.6892257186193467,
+                "distance_change_pct": -0.00034253842996490036
+              },
+              "rotation": {
+                "step0_distance": 0.10923856645529192,
+                "distance": 0.10923827927839741,
+                "distance_change_pct": -0.00026288965869758485
+              },
+              "all": {
+                "step0_distance": 1.707926159312379,
+                "distance": 1.707919271514655,
+                "distance_change_pct": -0.000403284280547922
+              },
+              "action_norm_ratio_mean": 1.0000004258005333,
+              "action_norm_ratio_min_noise": 1.0000001368309779,
+              "xyz_action_norm_ratio_mean": 0.9999995939191113,
+              "xyz_action_norm_ratio_min_noise": 0.9999993991691002
+            },
+            "clipped": {
+              "xyz": {
+                "step0_distance": 1.689231504886422,
+                "distance": 1.6892257186193467,
+                "distance_change_pct": -0.00034253842996490036
+              },
+              "rotation": {
+                "step0_distance": 0.10923856645529192,
+                "distance": 0.10923827927839741,
+                "distance_change_pct": -0.00026288965869758485
+              },
+              "all": {
+                "step0_distance": 1.7066373926645642,
+                "distance": 1.706630547937927,
+                "distance_change_pct": -0.00040106508076842573
+              },
+              "action_norm_ratio_mean": 1.0000004171860317,
+              "action_norm_ratio_min_noise": 1.0000001297555223,
+              "xyz_action_norm_ratio_mean": 0.9999995939191113,
+              "xyz_action_norm_ratio_min_noise": 0.9999993991691002
+            },
+            "raw_curvature": {
+              "step0": 0.16466806083917618,
+              "after": 0.16466667503118515,
+              "change_pct": -0.0008415766748925968
+            },
+            "relative_curvature": {
+              "step0": 0.1145758256316185,
+              "after": 0.11457493901252747,
+              "change_pct": -0.000773827363798052
+            }
+          },
+          "gradient": 2.3245811462402344e-06
+        },
+        {
+          "case_id": "clean_25eefa3907243c5956889cfa",
+          "factor": "clean",
+          "baseline_success": true,
+          "metrics": {
+            "controller": {
+              "xyz": {
+                "step0_distance": 3.5405699605457094e-07,
+                "distance": 2.30536460214722e-06,
+                "distance_change_pct": null
+              },
+              "rotation": {
+                "step0_distance": 6.664892495144169e-08,
+                "distance": 3.7144014942346513e-07,
+                "distance_change_pct": null
+              },
+              "all": {
+                "step0_distance": 3.765354181824843e-07,
+                "distance": 2.3429507366991904e-06,
+                "distance_change_pct": null
+              },
+              "action_norm_ratio_mean": 0.9999997764421824,
+              "action_norm_ratio_min_noise": 0.9999997305699577,
+              "xyz_action_norm_ratio_mean": 0.9999994336563368,
+              "xyz_action_norm_ratio_min_noise": 0.9999992708386156
+            },
+            "clipped": {
+              "xyz": {
+                "step0_distance": 3.5405699605457094e-07,
+                "distance": 2.30536460214722e-06,
+                "distance_change_pct": null
+              },
+              "rotation": {
+                "step0_distance": 6.664892495144169e-08,
+                "distance": 3.7144014942346513e-07,
+                "distance_change_pct": null
+              },
+              "all": {
+                "step0_distance": 3.6061223730582655e-07,
+                "distance": 2.3354422772000248e-06,
+                "distance_change_pct": null
+              },
+              "action_norm_ratio_mean": 0.9999997731046606,
+              "action_norm_ratio_min_noise": 0.9999997220344427,
+              "xyz_action_norm_ratio_mean": 0.9999994336563368,
+              "xyz_action_norm_ratio_min_noise": 0.9999992708386156
+            },
+            "raw_curvature": {
+              "step0": 0.0039922421565279365,
+              "after": 0.003992241283413023,
+              "change_pct": -2.1870289412806443e-05
+            },
+            "relative_curvature": {
+              "step0": 0.003073386149480939,
+              "after": 0.003073386149480939,
+              "change_pct": 0.0
+            }
+          },
+          "gradient": -9.313225746154785e-10
+        },
+        {
+          "case_id": "clean_3adf13803680f268479750e9",
+          "factor": "clean",
+          "baseline_success": true,
+          "metrics": {
+            "controller": {
+              "xyz": {
+                "step0_distance": 1.7356215468655451e-07,
+                "distance": 2.0366290007363044e-06,
+                "distance_change_pct": null
+              },
+              "rotation": {
+                "step0_distance": 1.0017785410762175e-07,
+                "distance": 1.6061786207946706e-07,
+                "distance_change_pct": null
+              },
+              "all": {
+                "step0_distance": 2.7559640928165333e-07,
+                "distance": 2.054496059074785e-06,
+                "distance_change_pct": null
+              },
+              "action_norm_ratio_mean": 0.9999998808424693,
+              "action_norm_ratio_min_noise": 0.9999998673349848,
+              "xyz_action_norm_ratio_mean": 0.9999993610061665,
+              "xyz_action_norm_ratio_min_noise": 0.999999179878573
+            },
+            "clipped": {
+              "xyz": {
+                "step0_distance": 1.7356215468655451e-07,
+                "distance": 2.0366290007363044e-06,
+                "distance_change_pct": null
+              },
+              "rotation": {
+                "step0_distance": 1.0017785410762175e-07,
+                "distance": 1.6061786207946706e-07,
+                "distance_change_pct": null
+              },
+              "all": {
+                "step0_distance": 2.027168626543279e-07,
+                "distance": 2.0432099738684763e-06,
+                "distance_change_pct": null
+              },
+              "action_norm_ratio_mean": 0.9999998742666824,
+              "action_norm_ratio_min_noise": 0.999999858316863,
+              "xyz_action_norm_ratio_mean": 0.9999993610061665,
+              "xyz_action_norm_ratio_min_noise": 0.999999179878573
+            },
+            "raw_curvature": {
+              "step0": 0.0036914226948283613,
+              "after": 0.0036914205993525684,
+              "change_pct": -5.676607547355772e-05
+            },
+            "relative_curvature": {
+              "step0": 0.00307327150949277,
+              "after": 0.0030732698796782643,
+              "change_pct": -5.303190754313292e-05
+            }
+          },
+          "gradient": 3.3032847568392754e-09
+        },
+        {
+          "case_id": "db52f74d7afc5ee4e7baef3d",
+          "factor": "background",
+          "baseline_success": false,
+          "metrics": {
+            "controller": {
+              "xyz": {
+                "step0_distance": 2.228241446610428,
+                "distance": 2.2282429583669443,
+                "distance_change_pct": 6.784527406544782e-05
+              },
+              "rotation": {
+                "step0_distance": 0.34017031127615116,
+                "distance": 0.3401700065661626,
+                "distance_change_pct": -8.957571501211348e-05
+              },
+              "all": {
+                "step0_distance": 3.8065702682340836,
+                "distance": 3.806572261034589,
+                "distance_change_pct": 5.235160169814179e-05
+              },
+              "action_norm_ratio_mean": 0.9999996025784621,
+              "action_norm_ratio_min_noise": 0.9999992172599078,
+              "xyz_action_norm_ratio_mean": 0.9999989990555034,
+              "xyz_action_norm_ratio_min_noise": 0.9999989154721571
+            },
+            "clipped": {
+              "xyz": {
+                "step0_distance": 2.228241446610428,
+                "distance": 2.2282429583669443,
+                "distance_change_pct": 6.784527406544782e-05
+              },
+              "rotation": {
+                "step0_distance": 0.34017031127615116,
+                "distance": 0.3401700065661626,
+                "distance_change_pct": -8.957571501211348e-05
+              },
+              "all": {
+                "step0_distance": 3.7921223441588285,
+                "distance": 3.792124344735642,
+                "distance_change_pct": 5.2756125246133934e-05
+              },
+              "action_norm_ratio_mean": 0.9999996017791855,
+              "action_norm_ratio_min_noise": 0.9999992112489463,
+              "xyz_action_norm_ratio_mean": 0.9999989990555034,
+              "xyz_action_norm_ratio_min_noise": 0.9999989154721571
+            },
+            "raw_curvature": {
+              "step0": 0.1266437340527773,
+              "after": 0.12664362601935863,
+              "change_pct": -8.530498525338714e-05
+            },
+            "relative_curvature": {
+              "step0": 0.11410974524915218,
+              "after": 0.11410968564450741,
+              "change_pct": -5.223449114355461e-05
+            }
+          },
+          "gradient": 1.8067657947540283e-07
+        },
+        {
+          "case_id": "ea09068ddd4eeecc1bf0b4a1",
+          "factor": "background",
+          "baseline_success": false,
+          "metrics": {
+            "controller": {
+              "xyz": {
+                "step0_distance": 2.6237496490882286,
+                "distance": 2.623750892323614,
+                "distance_change_pct": 4.7383918122534396e-05
+              },
+              "rotation": {
+                "step0_distance": 0.2280758662696596,
+                "distance": 0.22807577237866938,
+                "distance_change_pct": -4.1166560815764086e-05
+              },
+              "all": {
+                "step0_distance": 2.6338201931348917,
+                "distance": 2.633821433066958,
+                "distance_change_pct": 4.7077324016875366e-05
+              },
+              "action_norm_ratio_mean": 0.9999999698570344,
+              "action_norm_ratio_min_noise": 0.9999998937850071,
+              "xyz_action_norm_ratio_mean": 0.9999999536919117,
+              "xyz_action_norm_ratio_min_noise": 0.9999996637475805
+            },
+            "clipped": {
+              "xyz": {
+                "step0_distance": 2.6237496490882286,
+                "distance": 2.623750892323614,
+                "distance_change_pct": 4.7383918122534396e-05
+              },
+              "rotation": {
+                "step0_distance": 0.2280758662696596,
+                "distance": 0.22807577237866938,
+                "distance_change_pct": -4.1166560815764086e-05
+              },
+              "all": {
+                "step0_distance": 2.6337505340094403,
+                "distance": 2.6337517724767565,
+                "distance_change_pct": 4.702295453018479e-05
+              },
+              "action_norm_ratio_mean": 0.999999960714469,
+              "action_norm_ratio_min_noise": 0.9999998749914605,
+              "xyz_action_norm_ratio_mean": 0.9999999536919117,
+              "xyz_action_norm_ratio_min_noise": 0.9999996637475805
+            },
+            "raw_curvature": {
+              "step0": 0.012678274535574019,
+              "after": 0.01267833705060184,
+              "change_pct": 0.0004930878223730062
+            },
+            "relative_curvature": {
+              "step0": 0.010729516623541713,
+              "after": 0.01072957192081958,
+              "change_pct": 0.0005153752942188561
+            }
+          },
+          "gradient": -1.4586839824914932e-07
+        },
+        {
+          "case_id": "f769d77490544e345ff5b8f2",
+          "factor": "background",
+          "baseline_success": false,
+          "metrics": {
+            "controller": {
+              "xyz": {
+                "step0_distance": 2.4709663288694843,
+                "distance": 2.47096747751778,
+                "distance_change_pct": 4.648579312593881e-05
+              },
+              "rotation": {
+                "step0_distance": 0.3389929185567442,
+                "distance": 0.3389926666333234,
+                "distance_change_pct": -7.431524583489946e-05
+              },
+              "all": {
+                "step0_distance": 3.614648230363654,
+                "distance": 3.614651452809745,
+                "distance_change_pct": 8.914964571005157e-05
+              },
+              "action_norm_ratio_mean": 0.9999997653872836,
+              "action_norm_ratio_min_noise": 0.9999995225559462,
+              "xyz_action_norm_ratio_mean": 0.9999993314877755,
+              "xyz_action_norm_ratio_min_noise": 0.9999992081389671
+            },
+            "clipped": {
+              "xyz": {
+                "step0_distance": 2.4709663288694843,
+                "distance": 2.47096747751778,
+                "distance_change_pct": 4.648579312593881e-05
+              },
+              "rotation": {
+                "step0_distance": 0.3389929185567442,
+                "distance": 0.3389926666333234,
+                "distance_change_pct": -7.431524583489946e-05
+              },
+              "all": {
+                "step0_distance": 3.603210327337791,
+                "distance": 3.6032135366571945,
+                "distance_change_pct": 8.906833384170199e-05
+              },
+              "action_norm_ratio_mean": 0.9999997569818311,
+              "action_norm_ratio_min_noise": 0.9999995193118028,
+              "xyz_action_norm_ratio_mean": 0.9999993314877755,
+              "xyz_action_norm_ratio_min_noise": 0.9999992081389671
+            },
+            "raw_curvature": {
+              "step0": 0.10438482277095318,
+              "after": 0.10438475012779236,
+              "change_pct": -6.959168861175868e-05
+            },
+            "relative_curvature": {
+              "step0": 0.09643886797130108,
+              "after": 0.09643881767988205,
+              "change_pct": -5.21484958215801e-05
+            }
+          },
+          "gradient": 1.9185245037078857e-07
+        }
+      ]
+    },
+    "0.5": {
+      "mean_xyz_improvement_pct": 0.0005079843560962249,
+      "n_material_improve": 0,
+      "mean_relative_curvature_change_pct": -0.0015478720104114552,
+      "rows": [
+        {
+          "case_id": "3d16d19504b303a732927434",
+          "factor": "sensor_noise",
+          "baseline_success": false,
+          "metrics": {
+            "controller": {
+              "xyz": {
+                "step0_distance": 1.7543617187908258,
+                "distance": 1.7543389840674493,
+                "distance_change_pct": -0.0012958971421395127
+              },
+              "rotation": {
+                "step0_distance": 0.1432753784636452,
+                "distance": 0.14327171950531475,
+                "distance_change_pct": -0.0025537942175857253
+              },
+              "all": {
+                "step0_distance": 2.0312382479920976,
+                "distance": 2.0312026132132104,
+                "distance_change_pct": -0.001754337725889954
+              },
+              "action_norm_ratio_mean": 0.9999990411072573,
+              "action_norm_ratio_min_noise": 0.9999953108382119,
+              "xyz_action_norm_ratio_mean": 0.9999925666495523,
+              "xyz_action_norm_ratio_min_noise": 0.9999897277248043
+            },
+            "clipped": {
+              "xyz": {
+                "step0_distance": 1.7543617187908258,
+                "distance": 1.7543389840674493,
+                "distance_change_pct": -0.0012958971421395127
+              },
+              "rotation": {
+                "step0_distance": 0.1432753784636452,
+                "distance": 0.14327171950531475,
+                "distance_change_pct": -0.0025537942175857253
+              },
+              "all": {
+                "step0_distance": 2.0308091229688294,
+                "distance": 2.030773532793223,
+                "distance_change_pct": -0.0017525120999395405
+              },
+              "action_norm_ratio_mean": 0.999999018833238,
+              "action_norm_ratio_min_noise": 0.9999952660017403,
+              "xyz_action_norm_ratio_mean": 0.9999925666495523,
+              "xyz_action_norm_ratio_min_noise": 0.9999897277248043
+            },
+            "raw_curvature": {
+              "step0": 0.10201943852007389,
+              "after": 0.1020151786506176,
+              "change_pct": -0.004175546854678913
+            },
+            "relative_curvature": {
+              "step0": 0.08316642418503761,
+              "after": 0.08316310122609138,
+              "change_pct": -0.0039955534685942595
+            }
+          },
+          "gradient": 2.224929630756378e-06
+        },
+        {
+          "case_id": "537c44cf53786dc807cc4fb8",
+          "factor": "sensor_noise",
+          "baseline_success": false,
+          "metrics": {
+            "controller": {
+              "xyz": {
+                "step0_distance": 1.9166833267515961,
+                "distance": 1.9166765939795134,
+                "distance_change_pct": -0.0003512720118559187
+              },
+              "rotation": {
+                "step0_distance": 0.30675953308648335,
+                "distance": 0.3067579824584288,
+                "distance_change_pct": -0.0005054865089171301
+              },
+              "all": {
+                "step0_distance": 1.9413114573303216,
+                "distance": 1.9413045318139597,
+                "distance_change_pct": -0.0003567442172003332
+              },
+              "action_norm_ratio_mean": 0.9999994861352938,
+              "action_norm_ratio_min_noise": 0.9999993937834765,
+              "xyz_action_norm_ratio_mean": 0.9999966848533923,
+              "xyz_action_norm_ratio_min_noise": 0.9999958600604886
+            },
+            "clipped": {
+              "xyz": {
+                "step0_distance": 1.9166833267515961,
+                "distance": 1.9166765939795134,
+                "distance_change_pct": -0.0003512720118559187
+              },
+              "rotation": {
+                "step0_distance": 0.30675953308648335,
+                "distance": 0.3067579824584288,
+                "distance_change_pct": -0.0005054865089171301
+              },
+              "all": {
+                "step0_distance": 1.9411819947724864,
+                "distance": 1.9411750809533947,
+                "distance_change_pct": -0.0003561654244865764
+              },
+              "action_norm_ratio_mean": 0.9999994114197444,
+              "action_norm_ratio_min_noise": 0.9999992760231661,
+              "xyz_action_norm_ratio_mean": 0.9999966848533923,
+              "xyz_action_norm_ratio_min_noise": 0.9999958600604886
+            },
+            "raw_curvature": {
+              "step0": 0.1011216789484024,
+              "after": 0.10111833922564983,
+              "change_pct": -0.0033026773163746803
+            },
+            "relative_curvature": {
+              "step0": 0.07429166045039892,
+              "after": 0.07428941130638123,
+              "change_pct": -0.0030274515390615875
+            }
+          },
+          "gradient": 1.492910087108612e-06
+        },
+        {
+          "case_id": "8515f621f7ce09addd6043fc",
+          "factor": "sensor_noise",
+          "baseline_success": false,
+          "metrics": {
+            "controller": {
+              "xyz": {
+                "step0_distance": 1.2294070762783271,
+                "distance": 1.229398104798384,
+                "distance_change_pct": -0.0007297403859407581
+              },
+              "rotation": {
+                "step0_distance": 0.12432630772415812,
+                "distance": 0.1243248672490958,
+                "distance_change_pct": -0.0011586245008632368
+              },
+              "all": {
+                "step0_distance": 1.2358210599630597,
+                "distance": 1.235811982053575,
+                "distance_change_pct": -0.0007345650417267535
+              },
+              "action_norm_ratio_mean": 0.9999995595520843,
+              "action_norm_ratio_min_noise": 0.9999992584610483,
+              "xyz_action_norm_ratio_mean": 0.9999983496058238,
+              "xyz_action_norm_ratio_min_noise": 0.9999972633753185
+            },
+            "clipped": {
+              "xyz": {
+                "step0_distance": 1.2294070762783271,
+                "distance": 1.229398104798384,
+                "distance_change_pct": -0.0007297403859407581
+              },
+              "rotation": {
+                "step0_distance": 0.12432630772415812,
+                "distance": 0.1243248672490958,
+                "distance_change_pct": -0.0011586245008632368
+              },
+              "all": {
+                "step0_distance": 1.2357407455565665,
+                "distance": 1.2357316712024125,
+                "distance_change_pct": -0.000734325074791542
+              },
+              "action_norm_ratio_mean": 0.9999995923990604,
+              "action_norm_ratio_min_noise": 0.9999993049621245,
+              "xyz_action_norm_ratio_mean": 0.9999983496058238,
+              "xyz_action_norm_ratio_min_noise": 0.9999972633753185
+            },
+            "raw_curvature": {
+              "step0": 0.06458615139126778,
+              "after": 0.0645839897915721,
+              "change_pct": -0.003346847039376044
+            },
+            "relative_curvature": {
+              "step0": 0.048969377763569355,
+              "after": 0.04896783735603094,
+              "change_pct": -0.00314565471069006
+            }
+          },
+          "gradient": 1.0225921869277954e-06
+        },
+        {
+          "case_id": "94221db7af991abeed5ea8f6",
+          "factor": "sensor_noise",
+          "baseline_success": false,
+          "metrics": {
+            "controller": {
+              "xyz": {
+                "step0_distance": 1.670709825988831,
+                "distance": 1.670693052743475,
+                "distance_change_pct": -0.0010039592211241732
+              },
+              "rotation": {
+                "step0_distance": 0.1360704563192975,
+                "distance": 0.1360691145120896,
+                "distance_change_pct": -0.0009861120806031742
+              },
+              "all": {
+                "step0_distance": 2.166189469504282,
+                "distance": 2.1661230342584146,
+                "distance_change_pct": -0.003066917589733542
+              },
+              "action_norm_ratio_mean": 1.0000017752005586,
+              "action_norm_ratio_min_noise": 1.0000008311782638,
+              "xyz_action_norm_ratio_mean": 0.9999985837427597,
+              "xyz_action_norm_ratio_min_noise": 0.9999981128147932
+            },
+            "clipped": {
+              "xyz": {
+                "step0_distance": 1.670709825988831,
+                "distance": 1.670693052743475,
+                "distance_change_pct": -0.0010039592211241732
+              },
+              "rotation": {
+                "step0_distance": 0.1360704563192975,
+                "distance": 0.1360691145120896,
+                "distance_change_pct": -0.0009861120806031742
+              },
+              "all": {
+                "step0_distance": 2.1658325409849852,
+                "distance": 2.165766125422362,
+                "distance_change_pct": -0.003066514209504323
+              },
+              "action_norm_ratio_mean": 1.0000017512549406,
+              "action_norm_ratio_min_noise": 1.0000007652830212,
+              "xyz_action_norm_ratio_mean": 0.9999985837427597,
+              "xyz_action_norm_ratio_min_noise": 0.9999981128147932
+            },
+            "raw_curvature": {
+              "step0": 0.20924339070916176,
+              "after": 0.20924189314246178,
+              "change_pct": -0.0007157056167494957
+            },
+            "relative_curvature": {
+              "step0": 0.14074735343456268,
+              "after": 0.14074639976024628,
+              "change_pct": -0.0006775788625068557
+            }
+          },
+          "gradient": 6.426125764846802e-07
+        },
+        {
+          "case_id": "c799396aefd5984dc17e0980",
+          "factor": "sensor_noise",
+          "baseline_success": false,
+          "metrics": {
+            "controller": {
+              "xyz": {
+                "step0_distance": 1.689231504886422,
+                "distance": 1.6892093809335806,
+                "distance_change_pct": -0.0013097051989152675
+              },
+              "rotation": {
+                "step0_distance": 0.10923856645529192,
+                "distance": 0.1092374349054376,
+                "distance_change_pct": -0.0010358519807129873
+              },
+              "all": {
+                "step0_distance": 1.707926159312379,
+                "distance": 1.707899641385631,
+                "distance_change_pct": -0.0015526389477216185
+              },
+              "action_norm_ratio_mean": 1.000001641315635,
+              "action_norm_ratio_min_noise": 1.0000005427648093,
+              "xyz_action_norm_ratio_mean": 0.999998399533223,
+              "xyz_action_norm_ratio_min_noise": 0.9999977668204778
+            },
+            "clipped": {
+              "xyz": {
+                "step0_distance": 1.689231504886422,
+                "distance": 1.6892093809335806,
+                "distance_change_pct": -0.0013097051989152675
+              },
+              "rotation": {
+                "step0_distance": 0.10923856645529192,
+                "distance": 0.1092374349054376,
+                "distance_change_pct": -0.0010358519807129873
+              },
+              "all": {
+                "step0_distance": 1.7066373926645642,
+                "distance": 1.706611041578743,
+                "distance_change_pct": -0.0015440354192652883
+              },
+              "action_norm_ratio_mean": 1.0000015925353334,
+              "action_norm_ratio_min_noise": 1.0000005000195038,
+              "xyz_action_norm_ratio_mean": 0.999998399533223,
+              "xyz_action_norm_ratio_min_noise": 0.9999977668204778
+            },
+            "raw_curvature": {
+              "step0": 0.16466806083917618,
+              "after": 0.16466264054179192,
+              "change_pct": -0.0032916507042290988
+            },
+            "relative_curvature": {
+              "step0": 0.1145758256316185,
+              "after": 0.11457233689725399,
+              "change_pct": -0.003044913135274996
+            }
+          },
+          "gradient": 2.3245811462402344e-06
+        },
+        {
+          "case_id": "clean_25eefa3907243c5956889cfa",
+          "factor": "clean",
+          "baseline_success": true,
+          "metrics": {
+            "controller": {
+              "xyz": {
+                "step0_distance": 3.5405699605457094e-07,
+                "distance": 8.561023248820102e-06,
+                "distance_change_pct": null
+              },
+              "rotation": {
+                "step0_distance": 6.664892495144169e-08,
+                "distance": 1.3892913914042878e-06,
+                "distance_change_pct": null
+              },
+              "all": {
+                "step0_distance": 3.765354181824843e-07,
+                "distance": 8.676617410672233e-06,
+                "distance_change_pct": null
+              },
+              "action_norm_ratio_mean": 0.999999107790599,
+              "action_norm_ratio_min_noise": 0.9999989453709907,
+              "xyz_action_norm_ratio_mean": 0.9999977448711581,
+              "xyz_action_norm_ratio_min_noise": 0.9999972089575591
+            },
+            "clipped": {
+              "xyz": {
+                "step0_distance": 3.5405699605457094e-07,
+                "distance": 8.561023248820102e-06,
+                "distance_change_pct": null
+              },
+              "rotation": {
+                "step0_distance": 6.664892495144169e-08,
+                "distance": 1.3892913914042878e-06,
+                "distance_change_pct": null
+              },
+              "all": {
+                "step0_distance": 3.6061223730582655e-07,
+                "distance": 8.673601970912773e-06,
+                "distance_change_pct": null
+              },
+              "action_norm_ratio_mean": 0.9999990949777601,
+              "action_norm_ratio_min_noise": 0.999998936309681,
+              "xyz_action_norm_ratio_mean": 0.9999977448711581,
+              "xyz_action_norm_ratio_min_noise": 0.9999972089575591
+            },
+            "raw_curvature": {
+              "step0": 0.0039922421565279365,
+              "after": 0.003992240992374718,
+              "change_pct": -2.9160385883741924e-05
+            },
+            "relative_curvature": {
+              "step0": 0.003073386149480939,
+              "after": 0.0030733870225958526,
+              "change_pct": 2.8408890750952764e-05
+            }
+          },
+          "gradient": -9.313225746154785e-10
+        },
+        {
+          "case_id": "clean_3adf13803680f268479750e9",
+          "factor": "clean",
+          "baseline_success": true,
+          "metrics": {
+            "controller": {
+              "xyz": {
+                "step0_distance": 1.7356215468655451e-07,
+                "distance": 7.853025077520404e-06,
+                "distance_change_pct": null
+              },
+              "rotation": {
+                "step0_distance": 1.0017785410762175e-07,
+                "distance": 5.350825210015532e-07,
+                "distance_change_pct": null
+              },
+              "all": {
+                "step0_distance": 2.7559640928165333e-07,
+                "distance": 7.873823457650779e-06,
+                "distance_change_pct": null
+              },
+              "action_norm_ratio_mean": 0.9999995220037736,
+              "action_norm_ratio_min_noise": 0.9999994476791202,
+              "xyz_action_norm_ratio_mean": 0.9999975395116,
+              "xyz_action_norm_ratio_min_noise": 0.9999968296260388
+            },
+            "clipped": {
+              "xyz": {
+                "step0_distance": 1.7356215468655451e-07,
+                "distance": 7.853025077520404e-06,
+                "distance_change_pct": null
+              },
+              "rotation": {
+                "step0_distance": 1.0017785410762175e-07,
+                "distance": 5.350825210015532e-07,
+                "distance_change_pct": null
+              },
+              "all": {
+                "step0_distance": 2.027168626543279e-07,
+                "distance": 7.871344792118084e-06,
+                "distance_change_pct": null
+              },
+              "action_norm_ratio_mean": 0.9999995217446708,
+              "action_norm_ratio_min_noise": 0.9999994528933399,
+              "xyz_action_norm_ratio_mean": 0.9999975395116,
+              "xyz_action_norm_ratio_min_noise": 0.9999968296260388
+            },
+            "raw_curvature": {
+              "step0": 0.0036914226948283613,
+              "after": 0.0036914150114171207,
+              "change_pct": -0.00020814227672527608
+            },
+            "relative_curvature": {
+              "step0": 0.00307327150949277,
+              "after": 0.0030732656887266785,
+              "change_pct": -0.00018939966981434964
+            }
+          },
+          "gradient": 3.3032847568392754e-09
+        },
+        {
+          "case_id": "db52f74d7afc5ee4e7baef3d",
+          "factor": "background",
+          "baseline_success": false,
+          "metrics": {
+            "controller": {
+              "xyz": {
+                "step0_distance": 2.228241446610428,
+                "distance": 2.228247235490458,
+                "distance_change_pct": 0.00025979590492219984
+              },
+              "rotation": {
+                "step0_distance": 0.34017031127615116,
+                "distance": 0.34016915974368894,
+                "distance_change_pct": -0.0003385164501601423
+              },
+              "all": {
+                "step0_distance": 3.8065702682340836,
+                "distance": 3.806578291682644,
+                "distance_change_pct": 0.00021077894258869634
+              },
+              "action_norm_ratio_mean": 0.9999983982419112,
+              "action_norm_ratio_min_noise": 0.999996708696887,
+              "xyz_action_norm_ratio_mean": 0.9999961571108749,
+              "xyz_action_norm_ratio_min_noise": 0.9999956954566616
+            },
+            "clipped": {
+              "xyz": {
+                "step0_distance": 2.228241446610428,
+                "distance": 2.228247235490458,
+                "distance_change_pct": 0.00025979590492219984
+              },
+              "rotation": {
+                "step0_distance": 0.34017031127615116,
+                "distance": 0.34016915974368894,
+                "distance_change_pct": -0.0003385164501601423
+              },
+              "all": {
+                "step0_distance": 3.7921223441588285,
+                "distance": 3.7921303282440593,
+                "distance_change_pct": 0.00021054397791875346
+              },
+              "action_norm_ratio_mean": 0.9999983991455106,
+              "action_norm_ratio_min_noise": 0.9999966660588832,
+              "xyz_action_norm_ratio_mean": 0.9999961571108749,
+              "xyz_action_norm_ratio_min_noise": 0.9999956954566616
+            },
+            "raw_curvature": {
+              "step0": 0.1266437340527773,
+              "after": 0.12664326466619968,
+              "change_pct": -0.0003706354531618494
+            },
+            "relative_curvature": {
+              "step0": 0.11410974524915218,
+              "after": 0.1141094770282507,
+              "change_pct": -0.00023505521014044461
+            }
+          },
+          "gradient": 1.8067657947540283e-07
+        },
+        {
+          "case_id": "ea09068ddd4eeecc1bf0b4a1",
+          "factor": "background",
+          "baseline_success": false,
+          "metrics": {
+            "controller": {
+              "xyz": {
+                "step0_distance": 2.6237496490882286,
+                "distance": 2.623754544391447,
+                "distance_change_pct": 0.00018657661260412794
+              },
+              "rotation": {
+                "step0_distance": 0.2280758662696596,
+                "distance": 0.22807552530305678,
+                "distance_change_pct": -0.00014949701097055623
+              },
+              "all": {
+                "step0_distance": 2.6338201931348917,
+                "distance": 2.633825076379653,
+                "distance_change_pct": 0.000185405396102567
+              },
+              "action_norm_ratio_mean": 0.9999998693767731,
+              "action_norm_ratio_min_noise": 0.9999995830148716,
+              "xyz_action_norm_ratio_mean": 0.9999996997818198,
+              "xyz_action_norm_ratio_min_noise": 0.9999985351516778
+            },
+            "clipped": {
+              "xyz": {
+                "step0_distance": 2.6237496490882286,
+                "distance": 2.623754544391447,
+                "distance_change_pct": 0.00018657661260412794
+              },
+              "rotation": {
+                "step0_distance": 0.2280758662696596,
+                "distance": 0.22807552530305678,
+                "distance_change_pct": -0.00014949701097055623
+              },
+              "all": {
+                "step0_distance": 2.6337505340094403,
+                "distance": 2.6337554121704776,
+                "distance_change_pct": 0.00018521727758180617
+              },
+              "action_norm_ratio_mean": 0.9999998371919804,
+              "action_norm_ratio_min_noise": 0.9999995259868069,
+              "xyz_action_norm_ratio_mean": 0.9999996997818198,
+              "xyz_action_norm_ratio_min_noise": 0.9999985351516778
+            },
+            "raw_curvature": {
+              "step0": 0.012678274535574019,
+              "after": 0.012678518076427281,
+              "change_pct": 0.0019209305854639425
+            },
+            "relative_curvature": {
+              "step0": 0.010729516623541713,
+              "after": 0.010729733505286276,
+              "change_pct": 0.0020213561539916824
+            }
+          },
+          "gradient": -1.4586839824914932e-07
+        },
+        {
+          "case_id": "f769d77490544e345ff5b8f2",
+          "factor": "background",
+          "baseline_success": false,
+          "metrics": {
+            "controller": {
+              "xyz": {
+                "step0_distance": 2.4709663288694843,
+                "distance": 2.470970784678896,
+                "distance_change_pct": 0.00018032659367950288
+              },
+              "rotation": {
+                "step0_distance": 0.3389929185567442,
+                "distance": 0.33899192310159887,
+                "distance_change_pct": -0.00029365071977371926
+              },
+              "all": {
+                "step0_distance": 3.614648230363654,
+                "distance": 3.6146611213055846,
+                "distance_change_pct": 0.0003566306071567382
+              },
+              "action_norm_ratio_mean": 0.9999990412176439,
+              "action_norm_ratio_min_noise": 0.9999979721041335,
+              "xyz_action_norm_ratio_mean": 0.9999972721423758,
+              "xyz_action_norm_ratio_min_noise": 0.9999968539111681
+            },
+            "clipped": {
+              "xyz": {
+                "step0_distance": 2.4709663288694843,
+                "distance": 2.470970784678896,
+                "distance_change_pct": 0.00018032659367950288
+              },
+              "rotation": {
+                "step0_distance": 0.3389929185567442,
+                "distance": 0.33899192310159887,
+                "distance_change_pct": -0.00029365071977371926
+              },
+              "all": {
+                "step0_distance": 3.603210327337791,
+                "distance": 3.6032231661953182,
+                "distance_change_pct": 0.00035631718275919155
+              },
+              "action_norm_ratio_mean": 0.999999017834414,
+              "action_norm_ratio_min_noise": 0.9999979304483757,
+              "xyz_action_norm_ratio_mean": 0.9999972721423758,
+              "xyz_action_norm_ratio_min_noise": 0.9999968539111681
+            },
+            "raw_curvature": {
+              "step0": 0.10438482277095318,
+              "after": 0.10438444651663303,
+              "change_pct": -0.00036044925896261404
+            },
+            "relative_curvature": {
+              "step0": 0.09643886797130108,
+              "after": 0.09643859975039959,
+              "change_pct": -0.0002781253110151205
+            }
+          },
+          "gradient": 1.9185245037078857e-07
+        }
+      ]
+    },
+    "0.25": {
+      "mean_xyz_improvement_pct": 0.002523862062352167,
+      "n_material_improve": 0,
+      "mean_relative_curvature_change_pct": -0.007753919886581417,
+      "rows": [
+        {
+          "case_id": "3d16d19504b303a732927434",
+          "factor": "sensor_noise",
+          "baseline_success": false,
+          "metrics": {
+            "controller": {
+              "xyz": {
+                "step0_distance": 1.7543617187908258,
+                "distance": 1.75424836890725,
+                "distance_change_pct": -0.006461032657156807
+              },
+              "rotation": {
+                "step0_distance": 0.1432753784636452,
+                "distance": 0.1432571559496624,
+                "distance_change_pct": -0.012718524409560672
+              },
+              "all": {
+                "step0_distance": 2.0312382479920976,
+                "distance": 2.0310599359836434,
+                "distance_change_pct": -0.008778488128136086
+              },
+              "action_norm_ratio_mean": 0.9999951504812215,
+              "action_norm_ratio_min_noise": 0.9999764263133911,
+              "xyz_action_norm_ratio_mean": 0.9999630324951654,
+              "xyz_action_norm_ratio_min_noise": 0.999948660932756
+            },
+            "clipped": {
+              "xyz": {
+                "step0_distance": 1.7543617187908258,
+                "distance": 1.75424836890725,
+                "distance_change_pct": -0.006461032657156807
+              },
+              "rotation": {
+                "step0_distance": 0.1432753784636452,
+                "distance": 0.1432571559496624,
+                "distance_change_pct": -0.012718524409560672
+              },
+              "all": {
+                "step0_distance": 2.0308091229688294,
+                "distance": 2.030631030668222,
+                "distance_change_pct": -0.00876952435329148
+              },
+              "action_norm_ratio_mean": 0.9999950170072941,
+              "action_norm_ratio_min_noise": 0.9999761614174575,
+              "xyz_action_norm_ratio_mean": 0.9999630324951654,
+              "xyz_action_norm_ratio_min_noise": 0.999948660932756
+            },
+            "raw_curvature": {
+              "step0": 0.10201943852007389,
+              "after": 0.10199809446930885,
+              "change_pct": -0.020921552867436688
+            },
+            "relative_curvature": {
+              "step0": 0.08316642418503761,
+              "after": 0.08314979448914528,
+              "change_pct": -0.01999568462308643
+            }
+          },
+          "gradient": 2.224929630756378e-06
+        },
+        {
+          "case_id": "537c44cf53786dc807cc4fb8",
+          "factor": "sensor_noise",
+          "baseline_success": false,
+          "metrics": {
+            "controller": {
+              "xyz": {
+                "step0_distance": 1.9166833267515961,
+                "distance": 1.9166501286680715,
+                "distance_change_pct": -0.001732058867587316
+              },
+              "rotation": {
+                "step0_distance": 0.30675953308648335,
+                "distance": 0.30675176990848874,
+                "distance_change_pct": -0.0025307047238243285
+              },
+              "all": {
+                "step0_distance": 1.9413114573303216,
+                "distance": 1.9412772903129345,
+                "distance_change_pct": -0.0017599966897652308
+              },
+              "action_norm_ratio_mean": 0.9999973473927386,
+              "action_norm_ratio_min_noise": 0.9999968055583548,
+              "xyz_action_norm_ratio_mean": 0.9999832763673269,
+              "xyz_action_norm_ratio_min_noise": 0.9999790042376356
+            },
+            "clipped": {
+              "xyz": {
+                "step0_distance": 1.9166833267515961,
+                "distance": 1.9166501286680715,
+                "distance_change_pct": -0.001732058867587316
+              },
+              "rotation": {
+                "step0_distance": 0.30675953308648335,
+                "distance": 0.30675176990848874,
+                "distance_change_pct": -0.0025307047238243285
+              },
+              "all": {
+                "step0_distance": 1.9411819947724864,
+                "distance": 1.9411478844315226,
+                "distance_change_pct": -0.0017571943823790903
+              },
+              "action_norm_ratio_mean": 0.9999970017476181,
+              "action_norm_ratio_min_noise": 0.9999962690408791,
+              "xyz_action_norm_ratio_mean": 0.9999832763673269,
+              "xyz_action_norm_ratio_min_noise": 0.9999790042376356
+            },
+            "raw_curvature": {
+              "step0": 0.1011216789484024,
+              "after": 0.10110499523580074,
+              "change_pct": -0.016498650709872997
+            },
+            "relative_curvature": {
+              "step0": 0.07429166045039892,
+              "after": 0.07428042776882648,
+              "change_pct": -0.015119707251576298
+            }
+          },
+          "gradient": 1.492910087108612e-06
+        },
+        {
+          "case_id": "8515f621f7ce09addd6043fc",
+          "factor": "sensor_noise",
+          "baseline_success": false,
+          "metrics": {
+            "controller": {
+              "xyz": {
+                "step0_distance": 1.2294070762783271,
+                "distance": 1.2293625372441526,
+                "distance_change_pct": -0.003622806069203399
+              },
+              "rotation": {
+                "step0_distance": 0.12432630772415812,
+                "distance": 0.12431912794116212,
+                "distance_change_pct": -0.005774950714310112
+              },
+              "all": {
+                "step0_distance": 1.2358210599630597,
+                "distance": 1.2357759887077793,
+                "distance_change_pct": -0.003647069688372806
+              },
+              "action_norm_ratio_mean": 0.9999978227099204,
+              "action_norm_ratio_min_noise": 0.9999963767214654,
+              "xyz_action_norm_ratio_mean": 0.9999918360686001,
+              "xyz_action_norm_ratio_min_noise": 0.9999865903914934
+            },
+            "clipped": {
+              "xyz": {
+                "step0_distance": 1.2294070762783271,
+                "distance": 1.2293625372441526,
+                "distance_change_pct": -0.003622806069203399
+              },
+              "rotation": {
+                "step0_distance": 0.12432630772415812,
+                "distance": 0.12431912794116212,
+                "distance_change_pct": -0.005774950714310112
+              },
+              "all": {
+                "step0_distance": 1.2357407455565665,
+                "distance": 1.2356956943403514,
+                "distance_change_pct": -0.0036456850983634936
+              },
+              "action_norm_ratio_mean": 0.9999979716782595,
+              "action_norm_ratio_min_noise": 0.9999965664272387,
+              "xyz_action_norm_ratio_mean": 0.9999918360686001,
+              "xyz_action_norm_ratio_min_noise": 0.9999865903914934
+            },
+            "raw_curvature": {
+              "step0": 0.06458615139126778,
+              "after": 0.06457534246146679,
+              "change_pct": -0.016735677181789477
+            },
+            "relative_curvature": {
+              "step0": 0.048969377763569355,
+              "after": 0.048961663618683815,
+              "change_pct": -0.01575299756264581
+            }
+          },
+          "gradient": 1.0225921869277954e-06
+        },
+        {
+          "case_id": "94221db7af991abeed5ea8f6",
+          "factor": "sensor_noise",
+          "baseline_success": false,
+          "metrics": {
+            "controller": {
+              "xyz": {
+                "step0_distance": 1.670709825988831,
+                "distance": 1.670626298438098,
+                "distance_change_pct": -0.004999524719007109
+              },
+              "rotation": {
+                "step0_distance": 0.1360704563192975,
+                "distance": 0.13606382806656772,
+                "distance_change_pct": -0.0048711916672328215
+              },
+              "all": {
+                "step0_distance": 2.166189469504282,
+                "distance": 2.1658581270638217,
+                "distance_change_pct": -0.015296096907713164
+              },
+              "action_norm_ratio_mean": 1.0000088354260712,
+              "action_norm_ratio_min_noise": 1.0000041047818728,
+              "xyz_action_norm_ratio_mean": 0.9999929883624615,
+              "xyz_action_norm_ratio_min_noise": 0.9999905388576951
+            },
+            "clipped": {
+              "xyz": {
+                "step0_distance": 1.670709825988831,
+                "distance": 1.670626298438098,
+                "distance_change_pct": -0.004999524719007109
+              },
+              "rotation": {
+                "step0_distance": 0.1360704563192975,
+                "distance": 0.13606382806656772,
+                "distance_change_pct": -0.0048711916672328215
+              },
+              "all": {
+                "step0_distance": 2.1658325409849852,
+                "distance": 2.165501296613588,
+                "distance_change_pct": -0.01529408969203061
+              },
+              "action_norm_ratio_mean": 1.0000087082543394,
+              "action_norm_ratio_min_noise": 1.0000037752750555,
+              "xyz_action_norm_ratio_mean": 0.9999929883624615,
+              "xyz_action_norm_ratio_min_noise": 0.9999905388576951
+            },
+            "raw_curvature": {
+              "step0": 0.20924339070916176,
+              "after": 0.20923582091927528,
+              "change_pct": -0.003617696052826691
+            },
+            "relative_curvature": {
+              "step0": 0.14074735343456268,
+              "after": 0.14074254035949707,
+              "change_pct": -0.0034196558217014505
+            }
+          },
+          "gradient": 6.426125764846802e-07
+        },
+        {
+          "case_id": "c799396aefd5984dc17e0980",
+          "factor": "sensor_noise",
+          "baseline_success": false,
+          "metrics": {
+            "controller": {
+              "xyz": {
+                "step0_distance": 1.689231504886422,
+                "distance": 1.6891213014624007,
+                "distance_change_pct": -0.006523879273057087
+              },
+              "rotation": {
+                "step0_distance": 0.10923856645529192,
+                "distance": 0.10923303084511035,
+                "distance_change_pct": -0.005067450408036134
+              },
+              "all": {
+                "step0_distance": 1.707926159312379,
+                "distance": 1.7077937621164212,
+                "distance_change_pct": -0.007751927402466219
+              },
+              "action_norm_ratio_mean": 1.000008295167345,
+              "action_norm_ratio_min_noise": 1.0000028936541794,
+              "xyz_action_norm_ratio_mean": 0.9999919965022326,
+              "xyz_action_norm_ratio_min_noise": 0.9999890072799189
+            },
+            "clipped": {
+              "xyz": {
+                "step0_distance": 1.689231504886422,
+                "distance": 1.6891213014624007,
+                "distance_change_pct": -0.006523879273057087
+              },
+              "rotation": {
+                "step0_distance": 0.10923856645529192,
+                "distance": 0.10923303084511035,
+                "distance_change_pct": -0.005067450408036134
+              },
+              "all": {
+                "step0_distance": 1.7066373926645642,
+                "distance": 1.7065058373972177,
+                "distance_change_pct": -0.007708448667065326
+              },
+              "action_norm_ratio_mean": 1.0000080566024951,
+              "action_norm_ratio_min_noise": 1.0000026658132,
+              "xyz_action_norm_ratio_mean": 0.9999919965022326,
+              "xyz_action_norm_ratio_min_noise": 0.9999890072799189
+            },
+            "raw_curvature": {
+              "step0": 0.16466806083917618,
+              "after": 0.16464099660515785,
+              "change_pct": -0.016435630492273035
+            },
+            "relative_curvature": {
+              "step0": 0.1145758256316185,
+              "after": 0.11455840617418289,
+              "change_pct": -0.015203431735777428
+            }
+          },
+          "gradient": 2.3245811462402344e-06
+        },
+        {
+          "case_id": "clean_25eefa3907243c5956889cfa",
+          "factor": "clean",
+          "baseline_success": true,
+          "metrics": {
+            "controller": {
+              "xyz": {
+                "step0_distance": 3.5405699605457094e-07,
+                "distance": 4.2763366477640413e-05,
+                "distance_change_pct": null
+              },
+              "rotation": {
+                "step0_distance": 6.664892495144169e-08,
+                "distance": 6.8866018493047155e-06,
+                "distance_change_pct": null
+              },
+              "all": {
+                "step0_distance": 3.765354181824843e-07,
+                "distance": 4.3320813099970734e-05,
+                "distance_change_pct": null
+              },
+              "action_norm_ratio_mean": 0.9999954746634528,
+              "action_norm_ratio_min_noise": 0.9999947456160144,
+              "xyz_action_norm_ratio_mean": 0.9999886460039861,
+              "xyz_action_norm_ratio_min_noise": 0.999986141394627
+            },
+            "clipped": {
+              "xyz": {
+                "step0_distance": 3.5405699605457094e-07,
+                "distance": 4.2763366477640413e-05,
+                "distance_change_pct": null
+              },
+              "rotation": {
+                "step0_distance": 6.664892495144169e-08,
+                "distance": 6.8866018493047155e-06,
+                "distance_change_pct": null
+              },
+              "all": {
+                "step0_distance": 3.6061223730582655e-07,
+                "distance": 4.3316102250191756e-05,
+                "distance_change_pct": null
+              },
+              "action_norm_ratio_mean": 0.9999954432488781,
+              "action_norm_ratio_min_noise": 0.9999947192444941,
+              "xyz_action_norm_ratio_mean": 0.9999886460039861,
+              "xyz_action_norm_ratio_min_noise": 0.999986141394627
+            },
+            "raw_curvature": {
+              "step0": 0.0039922421565279365,
+              "after": 0.003992238896898925,
+              "change_pct": -8.164908047447739e-05
+            },
+            "relative_curvature": {
+              "step0": 0.003073386149480939,
+              "after": 0.0030733930179849267,
+              "change_pct": 0.0002234832739533843
+            }
+          },
+          "gradient": -9.313225746154785e-10
+        },
+        {
+          "case_id": "clean_3adf13803680f268479750e9",
+          "factor": "clean",
+          "baseline_success": true,
+          "metrics": {
+            "controller": {
+              "xyz": {
+                "step0_distance": 1.7356215468655451e-07,
+                "distance": 3.921667818271212e-05,
+                "distance_change_pct": null
+              },
+              "rotation": {
+                "step0_distance": 1.0017785410762175e-07,
+                "distance": 2.6127838442321515e-06,
+                "distance_change_pct": null
+              },
+              "all": {
+                "step0_distance": 2.7559640928165333e-07,
+                "distance": 3.9307226120296554e-05,
+                "distance_change_pct": null
+              },
+              "action_norm_ratio_mean": 0.9999975897081519,
+              "action_norm_ratio_min_noise": 0.9999971578620843,
+              "xyz_action_norm_ratio_mean": 0.9999876392397427,
+              "xyz_action_norm_ratio_min_noise": 0.9999837893438095
+            },
+            "clipped": {
+              "xyz": {
+                "step0_distance": 1.7356215468655451e-07,
+                "distance": 3.921667818271212e-05,
+                "distance_change_pct": null
+              },
+              "rotation": {
+                "step0_distance": 1.0017785410762175e-07,
+                "distance": 2.6127838442321515e-06,
+                "distance_change_pct": null
+              },
+              "all": {
+                "step0_distance": 2.027168626543279e-07,
+                "distance": 3.930481939228454e-05,
+                "distance_change_pct": null
+              },
+              "action_norm_ratio_mean": 0.999997599458291,
+              "action_norm_ratio_min_noise": 0.9999971750136847,
+              "xyz_action_norm_ratio_mean": 0.9999876392397427,
+              "xyz_action_norm_ratio_min_noise": 0.9999837893438095
+            },
+            "raw_curvature": {
+              "step0": 0.0036914226948283613,
+              "after": 0.003691387246362865,
+              "change_pct": -0.0009602927767082825
+            },
+            "relative_curvature": {
+              "step0": 0.00307327150949277,
+              "after": 0.003073245723498985,
+              "change_pct": -0.0008390405372593612
+            }
+          },
+          "gradient": 3.3032847568392754e-09
+        },
+        {
+          "case_id": "db52f74d7afc5ee4e7baef3d",
+          "factor": "background",
+          "baseline_success": false,
+          "metrics": {
+            "controller": {
+              "xyz": {
+                "step0_distance": 2.228241446610428,
+                "distance": 2.2282705481132465,
+                "distance_change_pct": 0.0013060300472877984
+              },
+              "rotation": {
+                "step0_distance": 0.34017031127615116,
+                "distance": 0.34016450297837586,
+                "distance_change_pct": -0.0017074675780825999
+              },
+              "all": {
+                "step0_distance": 3.8065702682340836,
+                "distance": 3.806610555952752,
+                "distance_change_pct": 0.0010583731766322657
+              },
+              "action_norm_ratio_mean": 0.9999919755169062,
+              "action_norm_ratio_min_noise": 0.9999831990385719,
+              "xyz_action_norm_ratio_mean": 0.9999807529749333,
+              "xyz_action_norm_ratio_min_noise": 0.9999782738318389
+            },
+            "clipped": {
+              "xyz": {
+                "step0_distance": 2.228241446610428,
+                "distance": 2.2282705481132465,
+                "distance_change_pct": 0.0013060300472877984
+              },
+              "rotation": {
+                "step0_distance": 0.34017031127615116,
+                "distance": 0.34016450297837586,
+                "distance_change_pct": -0.0017074675780825999
+              },
+              "all": {
+                "step0_distance": 3.7921223441588285,
+                "distance": 3.792162384860529,
+                "distance_change_pct": 0.0010558916107239469
+              },
+              "action_norm_ratio_mean": 0.9999919764234012,
+              "action_norm_ratio_min_noise": 0.9999829659707261,
+              "xyz_action_norm_ratio_mean": 0.9999807529749333,
+              "xyz_action_norm_ratio_min_noise": 0.9999782738318389
+            },
+            "raw_curvature": {
+              "step0": 0.1266437340527773,
+              "after": 0.12664133869111538,
+              "change_pct": -0.0018914174316098098
+            },
+            "relative_curvature": {
+              "step0": 0.11410974524915218,
+              "after": 0.11410840041935444,
+              "change_pct": -0.0011785407064146547
+            }
+          },
+          "gradient": 1.8067657947540283e-07
+        },
+        {
+          "case_id": "ea09068ddd4eeecc1bf0b4a1",
+          "factor": "background",
+          "baseline_success": false,
+          "metrics": {
+            "controller": {
+              "xyz": {
+                "step0_distance": 2.6237496490882286,
+                "distance": 2.623774193865006,
+                "distance_change_pct": 0.0009354847092968299
+              },
+              "rotation": {
+                "step0_distance": 0.2280758662696596,
+                "distance": 0.22807419306257304,
+                "distance_change_pct": -0.0007336186480078055
+              },
+              "all": {
+                "step0_distance": 2.6338201931348917,
+                "distance": 2.633844678478742,
+                "distance_change_pct": 0.0009296513070244927
+              },
+              "action_norm_ratio_mean": 0.9999993598234234,
+              "action_norm_ratio_min_noise": 0.9999978497241327,
+              "xyz_action_norm_ratio_mean": 0.9999985508605584,
+              "xyz_action_norm_ratio_min_noise": 0.999992365025882
+            },
+            "clipped": {
+              "xyz": {
+                "step0_distance": 2.6237496490882286,
+                "distance": 2.623774193865006,
+                "distance_change_pct": 0.0009354847092968299
+              },
+              "rotation": {
+                "step0_distance": 0.2280758662696596,
+                "distance": 0.22807419306257304,
+                "distance_change_pct": -0.0007336186480078055
+              },
+              "all": {
+                "step0_distance": 2.6337505340094403,
+                "distance": 2.6337749949995346,
+                "distance_change_pct": 0.0009287512153566269
+              },
+              "action_norm_ratio_mean": 0.9999992012161288,
+              "action_norm_ratio_min_noise": 0.9999976719982719,
+              "xyz_action_norm_ratio_mean": 0.9999985508605584,
+              "xyz_action_norm_ratio_min_noise": 0.999992365025882
+            },
+            "raw_curvature": {
+              "step0": 0.012678274535574019,
+              "after": 0.01267949235625565,
+              "change_pct": 0.009605571154147619
+            },
+            "relative_curvature": {
+              "step0": 0.010729516623541713,
+              "after": 0.010730600799433887,
+              "change_pct": 0.010104610768713052
+            }
+          },
+          "gradient": -1.4586839824914932e-07
+        },
+        {
+          "case_id": "f769d77490544e345ff5b8f2",
+          "factor": "background",
+          "baseline_success": false,
+          "metrics": {
+            "controller": {
+              "xyz": {
+                "step0_distance": 2.4709663288694843,
+                "distance": 2.4709887378241935,
+                "distance_change_pct": 0.0009068903306097553
+              },
+              "rotation": {
+                "step0_distance": 0.3389929185567442,
+                "distance": 0.33898780608019696,
+                "distance_change_pct": -0.0015081366799618579
+              },
+              "all": {
+                "step0_distance": 3.614648230363654,
+                "distance": 3.6147130325757075,
+                "distance_change_pct": 0.0017927667624650923
+              },
+              "action_norm_ratio_mean": 0.9999951254802026,
+              "action_norm_ratio_min_noise": 0.9999897269951571,
+              "xyz_action_norm_ratio_mean": 0.9999863314665919,
+              "xyz_action_norm_ratio_min_noise": 0.9999841977035947
+            },
+            "clipped": {
+              "xyz": {
+                "step0_distance": 2.4709663288694843,
+                "distance": 2.4709887378241935,
+                "distance_change_pct": 0.0009068903306097553
+              },
+              "rotation": {
+                "step0_distance": 0.3389929185567442,
+                "distance": 0.33898780608019696,
+                "distance_change_pct": -0.0015081366799618579
+              },
+              "all": {
+                "step0_distance": 3.603210327337791,
+                "distance": 3.6032749274570817,
+                "distance_change_pct": 0.0017928489713936457
+              },
+              "action_norm_ratio_mean": 0.9999950175966607,
+              "action_norm_ratio_min_noise": 0.9999895732269088,
+              "xyz_action_norm_ratio_mean": 0.9999863314665919,
+              "xyz_action_norm_ratio_min_noise": 0.9999841977035947
+            },
+            "raw_curvature": {
+              "step0": 0.10438482277095318,
+              "after": 0.10438285581767559,
+              "change_pct": -0.0018843287993175473
+            },
+            "relative_curvature": {
+              "step0": 0.09643886797130108,
+              "after": 0.09643745422363281,
+              "change_pct": -0.0014659521601623204
+            }
+          },
+          "gradient": 1.9185245037078857e-07
+        }
+      ]
+    },
+    "0.1": {
+      "mean_xyz_improvement_pct": 0.016643031554401666,
+      "n_material_improve": 0,
+      "mean_relative_curvature_change_pct": -0.05123311509716427,
+      "rows": [
+        {
+          "case_id": "3d16d19504b303a732927434",
+          "factor": "sensor_noise",
+          "baseline_success": false,
+          "metrics": {
+            "controller": {
+              "xyz": {
+                "step0_distance": 1.7543617187908258,
+                "distance": 1.753613923827169,
+                "distance_change_pct": -0.04262490201690783
+              },
+              "rotation": {
+                "step0_distance": 0.1432753784636452,
+                "distance": 0.14315518403534427,
+                "distance_change_pct": -0.08389049785787472
+              },
+              "all": {
+                "step0_distance": 2.0312382479920976,
+                "distance": 2.0300607891837483,
+                "distance_change_pct": -0.057967538249792394
+              },
+              "action_norm_ratio_mean": 0.9999679840747346,
+              "action_norm_ratio_min_noise": 0.9998445055660227,
+              "xyz_action_norm_ratio_mean": 0.9997563141947907,
+              "xyz_action_norm_ratio_min_noise": 0.9996620057991928
+            },
+            "clipped": {
+              "xyz": {
+                "step0_distance": 1.7543617187908258,
+                "distance": 1.753613923827169,
+                "distance_change_pct": -0.04262490201690783
+              },
+              "rotation": {
+                "step0_distance": 0.1432753784636452,
+                "distance": 0.14315518403534427,
+                "distance_change_pct": -0.08389049785787472
+              },
+              "all": {
+                "step0_distance": 2.0308091229688294,
+                "distance": 2.0296331103862073,
+                "distance_change_pct": -0.05790857295848717
+              },
+              "action_norm_ratio_mean": 0.9999670458181222,
+              "action_norm_ratio_min_noise": 0.9998426620018693,
+              "xyz_action_norm_ratio_mean": 0.9997563141947907,
+              "xyz_action_norm_ratio_min_noise": 0.9996620057991928
+            },
+            "raw_curvature": {
+              "step0": 0.10201943852007389,
+              "after": 0.10187841951847076,
+              "change_pct": -0.13822758059521822
+            },
+            "relative_curvature": {
+              "step0": 0.08316642418503761,
+              "after": 0.08305654861032963,
+              "change_pct": -0.13211530468536514
+            }
+          },
+          "gradient": 2.224929630756378e-06
+        },
+        {
+          "case_id": "537c44cf53786dc807cc4fb8",
+          "factor": "sensor_noise",
+          "baseline_success": false,
+          "metrics": {
+            "controller": {
+              "xyz": {
+                "step0_distance": 1.9166833267515961,
+                "distance": 1.9164641755050789,
+                "distance_change_pct": -0.011433878693389854
+              },
+              "rotation": {
+                "step0_distance": 0.30675953308648335,
+                "distance": 0.30670825061193663,
+                "distance_change_pct": -0.01671748357117142
+              },
+              "all": {
+                "step0_distance": 1.9413114573303216,
+                "distance": 1.9410859114206982,
+                "distance_change_pct": -0.011618223792564386
+              },
+              "action_norm_ratio_mean": 0.999982421443584,
+              "action_norm_ratio_min_noise": 0.9999787920140898,
+              "xyz_action_norm_ratio_mean": 0.9998895265032319,
+              "xyz_action_norm_ratio_min_noise": 0.9998613686610122
+            },
+            "clipped": {
+              "xyz": {
+                "step0_distance": 1.9166833267515961,
+                "distance": 1.9164641755050789,
+                "distance_change_pct": -0.011433878693389854
+              },
+              "rotation": {
+                "step0_distance": 0.30675953308648335,
+                "distance": 0.30670825061193663,
+                "distance_change_pct": -0.01671748357117142
+              },
+              "all": {
+                "step0_distance": 1.9411819947724864,
+                "distance": 1.9409568208700358,
+                "distance_change_pct": -0.011599834691289335
+              },
+              "action_norm_ratio_mean": 0.9999801498065046,
+              "action_norm_ratio_min_noise": 0.9999753460970756,
+              "xyz_action_norm_ratio_mean": 0.9998895265032319,
+              "xyz_action_norm_ratio_min_noise": 0.9998613686610122
+            },
+            "raw_curvature": {
+              "step0": 0.1011216789484024,
+              "after": 0.10101158916950226,
+              "change_pct": -0.10886862248037366
+            },
+            "relative_curvature": {
+              "step0": 0.07429166045039892,
+              "after": 0.0742175281047821,
+              "change_pct": -0.09978555488918683
+            }
+          },
+          "gradient": 1.492910087108612e-06
+        },
+        {
+          "case_id": "8515f621f7ce09addd6043fc",
+          "factor": "sensor_noise",
+          "baseline_success": false,
+          "metrics": {
+            "controller": {
+              "xyz": {
+                "step0_distance": 1.2294070762783271,
+                "distance": 1.2291140183540215,
+                "distance_change_pct": -0.02383733833652979
+              },
+              "rotation": {
+                "step0_distance": 0.12432630772415812,
+                "distance": 0.1242790293200633,
+                "distance_change_pct": -0.03802767488255698
+              },
+              "all": {
+                "step0_distance": 1.2358210599630597,
+                "distance": 1.2355244950934288,
+                "distance_change_pct": -0.023997395677965994
+              },
+              "action_norm_ratio_mean": 0.9999856840003217,
+              "action_norm_ratio_min_noise": 0.9999761351074102,
+              "xyz_action_norm_ratio_mean": 0.9999461884938441,
+              "xyz_action_norm_ratio_min_noise": 0.9999116822545662
+            },
+            "clipped": {
+              "xyz": {
+                "step0_distance": 1.2294070762783271,
+                "distance": 1.2291140183540215,
+                "distance_change_pct": -0.02383733833652979
+              },
+              "rotation": {
+                "step0_distance": 0.12432630772415812,
+                "distance": 0.1242790293200633,
+                "distance_change_pct": -0.03802767488255698
+              },
+              "all": {
+                "step0_distance": 1.2357407455565665,
+                "distance": 1.2354443138732054,
+                "distance_change_pct": -0.0239881774900641
+              },
+              "action_norm_ratio_mean": 0.9999866344682005,
+              "action_norm_ratio_min_noise": 0.9999773555575039,
+              "xyz_action_norm_ratio_mean": 0.9999461884938441,
+              "xyz_action_norm_ratio_min_noise": 0.9999116822545662
+            },
+            "raw_curvature": {
+              "step0": 0.06458615139126778,
+              "after": 0.06451483815908432,
+              "change_pct": -0.11041567061557123
+            },
+            "relative_curvature": {
+              "step0": 0.048969377763569355,
+              "after": 0.048918500542640686,
+              "change_pct": -0.10389599225522073
+            }
+          },
+          "gradient": 1.0225921869277954e-06
+        },
+        {
+          "case_id": "94221db7af991abeed5ea8f6",
+          "factor": "sensor_noise",
+          "baseline_success": false,
+          "metrics": {
+            "controller": {
+              "xyz": {
+                "step0_distance": 1.670709825988831,
+                "distance": 1.670158679819989,
+                "distance_change_pct": -0.03298874288453213
+              },
+              "rotation": {
+                "step0_distance": 0.1360704563192975,
+                "distance": 0.13602672466273275,
+                "distance_change_pct": -0.032138979869478224
+              },
+              "all": {
+                "step0_distance": 2.166189469504282,
+                "distance": 2.164005965828598,
+                "distance_change_pct": -0.10079929324851022
+              },
+              "action_norm_ratio_mean": 1.0000582781649257,
+              "action_norm_ratio_min_noise": 1.0000269000614224,
+              "xyz_action_norm_ratio_mean": 0.9999538015810792,
+              "xyz_action_norm_ratio_min_noise": 0.9999376769493907
+            },
+            "clipped": {
+              "xyz": {
+                "step0_distance": 1.670709825988831,
+                "distance": 1.670158679819989,
+                "distance_change_pct": -0.03298874288453213
+              },
+              "rotation": {
+                "step0_distance": 0.1360704563192975,
+                "distance": 0.13602672466273275,
+                "distance_change_pct": -0.032138979869478224
+              },
+              "all": {
+                "step0_distance": 2.1658325409849852,
+                "distance": 2.1636496813217416,
+                "distance_change_pct": -0.10078616984168232
+              },
+              "action_norm_ratio_mean": 1.0000574758323637,
+              "action_norm_ratio_min_noise": 1.0000247451957944,
+              "xyz_action_norm_ratio_mean": 0.9999538015810792,
+              "xyz_action_norm_ratio_min_noise": 0.9999376769493907
+            },
+            "raw_curvature": {
+              "step0": 0.20924339070916176,
+              "after": 0.20919334888458252,
+              "change_pct": -0.023915605845248322
+            },
+            "relative_curvature": {
+              "step0": 0.14074735343456268,
+              "after": 0.1407155618071556,
+              "change_pct": -0.022587726611755787
+            }
+          },
+          "gradient": 6.426125764846802e-07
+        },
+        {
+          "case_id": "c799396aefd5984dc17e0980",
+          "factor": "sensor_noise",
+          "baseline_success": false,
+          "metrics": {
+            "controller": {
+              "xyz": {
+                "step0_distance": 1.689231504886422,
+                "distance": 1.6885044999010885,
+                "distance_change_pct": -0.04303761700100717
+              },
+              "rotation": {
+                "step0_distance": 0.10923856645529192,
+                "distance": 0.10920216119487738,
+                "distance_change_pct": -0.033326380596032656
+              },
+              "all": {
+                "step0_distance": 1.707926159312379,
+                "distance": 1.707053341499795,
+                "distance_change_pct": -0.05110395480653063
+              },
+              "action_norm_ratio_mean": 1.000054546519467,
+              "action_norm_ratio_min_noise": 1.0000189166684221,
+              "xyz_action_norm_ratio_mean": 0.9999471843865604,
+              "xyz_action_norm_ratio_min_noise": 0.9999275233573774
+            },
+            "clipped": {
+              "xyz": {
+                "step0_distance": 1.689231504886422,
+                "distance": 1.6885044999010885,
+                "distance_change_pct": -0.04303761700100717
+              },
+              "rotation": {
+                "step0_distance": 0.10923856645529192,
+                "distance": 0.10920216119487738,
+                "distance_change_pct": -0.033326380596032656
+              },
+              "all": {
+                "step0_distance": 1.7066373926645642,
+                "distance": 1.7057701152289986,
+                "distance_change_pct": -0.05081790890633098
+              },
+              "action_norm_ratio_mean": 1.0000529956534185,
+              "action_norm_ratio_min_noise": 1.0000174719189212,
+              "xyz_action_norm_ratio_mean": 0.9999471843865604,
+              "xyz_action_norm_ratio_min_noise": 0.9999275233573774
+            },
+            "raw_curvature": {
+              "step0": 0.16466806083917618,
+              "after": 0.16448937356472015,
+              "change_pct": -0.10851362039815404
+            },
+            "relative_curvature": {
+              "step0": 0.1145758256316185,
+              "after": 0.11446085385978222,
+              "change_pct": -0.10034557569407188
+            }
+          },
+          "gradient": 2.3245811462402344e-06
+        },
+        {
+          "case_id": "clean_25eefa3907243c5956889cfa",
+          "factor": "clean",
+          "baseline_success": true,
+          "metrics": {
+            "controller": {
+              "xyz": {
+                "step0_distance": 3.5405699605457094e-07,
+                "distance": 0.0002822281461503473,
+                "distance_change_pct": null
+              },
+              "rotation": {
+                "step0_distance": 6.664892495144169e-08,
+                "distance": 4.5492362521357765e-05,
+                "distance_change_pct": null
+              },
+              "all": {
+                "step0_distance": 3.765354181824843e-07,
+                "distance": 0.0002859130442189167,
+                "distance_change_pct": null
+              },
+              "action_norm_ratio_mean": 0.9999700683883299,
+              "action_norm_ratio_min_noise": 0.9999654152269744,
+              "xyz_action_norm_ratio_mean": 0.9999249267449226,
+              "xyz_action_norm_ratio_min_noise": 0.9999085185208623
+            },
+            "clipped": {
+              "xyz": {
+                "step0_distance": 3.5405699605457094e-07,
+                "distance": 0.0002822281461503473,
+                "distance_change_pct": null
+              },
+              "rotation": {
+                "step0_distance": 6.664892495144169e-08,
+                "distance": 4.5492362521357765e-05,
+                "distance_change_pct": null
+              },
+              "all": {
+                "step0_distance": 3.6061223730582655e-07,
+                "distance": 0.0002858826437165666,
+                "distance_change_pct": null
+              },
+              "action_norm_ratio_mean": 0.9999698680488325,
+              "action_norm_ratio_min_noise": 0.9999651436887106,
+              "xyz_action_norm_ratio_mean": 0.9999249267449226,
+              "xyz_action_norm_ratio_min_noise": 0.9999085185208623
+            },
+            "raw_curvature": {
+              "step0": 0.0039922421565279365,
+              "after": 0.003992222482338548,
+              "change_pct": -0.0004928105214352385
+            },
+            "relative_curvature": {
+              "step0": 0.003073386149480939,
+              "after": 0.003073432599194348,
+              "change_pct": 0.001511352988203818
+            }
+          },
+          "gradient": -9.313225746154785e-10
+        },
+        {
+          "case_id": "clean_3adf13803680f268479750e9",
+          "factor": "clean",
+          "baseline_success": true,
+          "metrics": {
+            "controller": {
+              "xyz": {
+                "step0_distance": 1.7356215468655451e-07,
+                "distance": 0.0002586134535930425,
+                "distance_change_pct": null
+              },
+              "rotation": {
+                "step0_distance": 1.0017785410762175e-07,
+                "distance": 1.7214222223915198e-05,
+                "distance_change_pct": null
+              },
+              "all": {
+                "step0_distance": 2.7559640928165333e-07,
+                "distance": 0.00025920572610309213,
+                "distance_change_pct": null
+              },
+              "action_norm_ratio_mean": 0.999984172341969,
+              "action_norm_ratio_min_noise": 0.9999813179122521,
+              "xyz_action_norm_ratio_mean": 0.9999185504055914,
+              "xyz_action_norm_ratio_min_noise": 0.9998931653777093
+            },
+            "clipped": {
+              "xyz": {
+                "step0_distance": 1.7356215468655451e-07,
+                "distance": 0.0002586134535930425,
+                "distance_change_pct": null
+              },
+              "rotation": {
+                "step0_distance": 1.0017785410762175e-07,
+                "distance": 1.7214222223915198e-05,
+                "distance_change_pct": null
+              },
+              "all": {
+                "step0_distance": 2.027168626543279e-07,
+                "distance": 0.0002591930836976314,
+                "distance_change_pct": null
+              },
+              "action_norm_ratio_mean": 0.9999842053840211,
+              "action_norm_ratio_min_noise": 0.9999813952343052,
+              "xyz_action_norm_ratio_mean": 0.9999185504055914,
+              "xyz_action_norm_ratio_min_noise": 0.9998931653777093
+            },
+            "raw_curvature": {
+              "step0": 0.0036914226948283613,
+              "after": 0.0036911925999447703,
+              "change_pct": -0.006233230453756011
+            },
+            "relative_curvature": {
+              "step0": 0.00307327150949277,
+              "after": 0.003073103929637,
+              "change_pct": -0.00545281649383389
+            }
+          },
+          "gradient": 3.3032847568392754e-09
+        },
+        {
+          "case_id": "db52f74d7afc5ee4e7baef3d",
+          "factor": "background",
+          "baseline_success": false,
+          "metrics": {
+            "controller": {
+              "xyz": {
+                "step0_distance": 2.228241446610428,
+                "distance": 2.228433328129328,
+                "distance_change_pct": 0.00861134322727164
+              },
+              "rotation": {
+                "step0_distance": 0.34017031127615116,
+                "distance": 0.3401319476961161,
+                "distance_change_pct": -0.011277756689331841
+              },
+              "all": {
+                "step0_distance": 3.8065702682340836,
+                "distance": 3.806836963463808,
+                "distance_change_pct": 0.007006181705082604
+              },
+              "action_norm_ratio_mean": 0.9999467545157797,
+              "action_norm_ratio_min_noise": 0.9998882314083509,
+              "xyz_action_norm_ratio_mean": 0.999873060035006,
+              "xyz_action_norm_ratio_min_noise": 0.9998559998065463
+            },
+            "clipped": {
+              "xyz": {
+                "step0_distance": 2.228241446610428,
+                "distance": 2.228433328129328,
+                "distance_change_pct": 0.00861134322727164
+              },
+              "rotation": {
+                "step0_distance": 0.34017031127615116,
+                "distance": 0.3401319476961161,
+                "distance_change_pct": -0.011277756689331841
+              },
+              "all": {
+                "step0_distance": 3.7921223441588285,
+                "distance": 3.792387309215191,
+                "distance_change_pct": 0.006987249680134866
+              },
+              "action_norm_ratio_mean": 0.9999467709597482,
+              "action_norm_ratio_min_noise": 0.9998867221558366,
+              "xyz_action_norm_ratio_mean": 0.999873060035006,
+              "xyz_action_norm_ratio_min_noise": 0.9998559998065463
+            },
+            "raw_curvature": {
+              "step0": 0.1266437340527773,
+              "after": 0.12662758864462376,
+              "change_pct": -0.012748682968244385
+            },
+            "relative_curvature": {
+              "step0": 0.11410974524915218,
+              "after": 0.1141006238758564,
+              "change_pct": -0.0079935094727146
+            }
+          },
+          "gradient": 1.8067657947540283e-07
+        },
+        {
+          "case_id": "ea09068ddd4eeecc1bf0b4a1",
+          "factor": "background",
+          "baseline_success": false,
+          "metrics": {
+            "controller": {
+              "xyz": {
+                "step0_distance": 2.6237496490882286,
+                "distance": 2.623911639028993,
+                "distance_change_pct": 0.006173986181212676
+              },
+              "rotation": {
+                "step0_distance": 0.2280758662696596,
+                "distance": 0.22806482828123203,
+                "distance_change_pct": -0.004839612628937395
+              },
+              "all": {
+                "step0_distance": 2.6338201931348917,
+                "distance": 2.6339817905610436,
+                "distance_change_pct": 0.006135476771462756
+              },
+              "action_norm_ratio_mean": 0.9999957934526469,
+              "action_norm_ratio_min_noise": 0.9999858112231849,
+              "xyz_action_norm_ratio_mean": 0.9999904436931378,
+              "xyz_action_norm_ratio_min_noise": 0.9999496678768165
+            },
+            "clipped": {
+              "xyz": {
+                "step0_distance": 2.6237496490882286,
+                "distance": 2.623911639028993,
+                "distance_change_pct": 0.006173986181212676
+              },
+              "rotation": {
+                "step0_distance": 0.2280758662696596,
+                "distance": 0.22806482828123203,
+                "distance_change_pct": -0.004839612628937395
+              },
+              "all": {
+                "step0_distance": 2.6337505340094403,
+                "distance": 2.6339119717296313,
+                "distance_change_pct": 0.006129575223856598
+              },
+              "action_norm_ratio_mean": 0.999994739103437,
+              "action_norm_ratio_min_noise": 0.9999846547408223,
+              "xyz_action_norm_ratio_mean": 0.9999904436931378,
+              "xyz_action_norm_ratio_min_noise": 0.9999496678768165
+            },
+            "raw_curvature": {
+              "step0": 0.012678274535574019,
+              "after": 0.012686296715401113,
+              "change_pct": 0.06327501273604152
+            },
+            "relative_curvature": {
+              "step0": 0.010729516623541713,
+              "after": 0.01073666091542691,
+              "change_pct": 0.06658540301360816
+            }
+          },
+          "gradient": -1.4586839824914932e-07
+        },
+        {
+          "case_id": "f769d77490544e345ff5b8f2",
+          "factor": "background",
+          "baseline_success": false,
+          "metrics": {
+            "controller": {
+              "xyz": {
+                "step0_distance": 2.4709663288694843,
+                "distance": 2.471114411338669,
+                "distance_change_pct": 0.005992897088669125
+              },
+              "rotation": {
+                "step0_distance": 0.3389929185567442,
+                "distance": 0.33895901144718155,
+                "distance_change_pct": -0.010002306156420282
+              },
+              "all": {
+                "step0_distance": 3.614648230363654,
+                "distance": 3.6150770858547943,
+                "distance_change_pct": 0.011864376940962096
+              },
+              "action_norm_ratio_mean": 0.9999677980586279,
+              "action_norm_ratio_min_noise": 0.9999323065042673,
+              "xyz_action_norm_ratio_mean": 0.9999096522709804,
+              "xyz_action_norm_ratio_min_noise": 0.9998955098166012
+            },
+            "clipped": {
+              "xyz": {
+                "step0_distance": 2.4709663288694843,
+                "distance": 2.471114411338669,
+                "distance_change_pct": 0.005992897088669125
+              },
+              "rotation": {
+                "step0_distance": 0.3389929185567442,
+                "distance": 0.33895901144718155,
+                "distance_change_pct": -0.010002306156420282
+              },
+              "all": {
+                "step0_distance": 3.603210327337791,
+                "distance": 3.6036378037183816,
+                "distance_change_pct": 0.011863764303399194
+              },
+              "action_norm_ratio_mean": 0.9999670531508553,
+              "action_norm_ratio_min_noise": 0.99993119335803,
+              "xyz_action_norm_ratio_mean": 0.9999096522709804,
+              "xyz_action_norm_ratio_min_noise": 0.9998955098166012
+            },
+            "raw_curvature": {
+              "step0": 0.10438482277095318,
+              "after": 0.10437175631523132,
+              "change_pct": -0.012517581938642497
+            },
+            "relative_curvature": {
+              "step0": 0.09643886797130108,
+              "after": 0.09642948769032955,
+              "change_pct": -0.009726660182607372
+            }
+          },
+          "gradient": 1.9185245037078857e-07
+        }
+      ]
+    }
+  }
+}

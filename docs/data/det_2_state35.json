@@ -1,0 +1,38 @@
+{
+  "records": [
+    {
+      "state_id": 35,
+      "snapshot_step": 0,
+      "branch_successes": 0,
+      "branches": 1,
+      "first_action_diff": 0.0,
+      "restore_diff": 0.0,
+      "branch_details": [
+        {
+          "branch": 0,
+          "seed": 7777,
+          "success": false,
+          "steps": 220,
+          "first_action_diff": 0.0,
+          "restore_diff": 0.0,
+          "chunk2_obs_diff": 192.0,
+          "chunk2_state_diff": 0.0012404812930769255
+        }
+      ],
+      "final_success": false,
+      "final_steps": 220
+    }
+  ],
+  "summary": {
+    "35": {
+      "branch_success_rates": [
+        0.0
+      ],
+      "snapshot_steps": [
+        0
+      ],
+      "ponr_step": null,
+      "final_success": false
+    }
+  }
+}

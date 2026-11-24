@@ -1,0 +1,17 @@
+{
+  "schema": "gate0_chunk_audit_v1",
+  "checkpoint": "/hy-tmp/patch-diag/repos/CoRP/checkpoints/corp_libero.pt",
+  "action_horizon_H": 12,
+  "executed_E_source": "official evaluator control-flow (for action in chunk:)",
+  "executed_E_observed": 12,
+  "runtime_E_measurement_available": false,
+  "leftover_L": 0,
+  "num_sample_steps": 10,
+  "euler_update": "x_{n+1}=x_n+v_theta(x_n,tau_n)/N",
+  "flow_velocity_sign_in_sampler": "positive",
+  "eval_evidence": [
+    "for action in chunk:"
+  ],
+  "overlap_available": false,
+  "conclusion": "Official evaluator source executes the full predicted chunk (for action in chunk); H=E=12, L=0. This is a source-control-flow audit, not a runtime count. No action-chunk overlap exists in the current CoRP protocol. SALT-style leftover supervision requires changing E and rerunning all methods under the same E. Training target velocity sign is not defined in the released inference repo; only the sampler sign is verified."
+}

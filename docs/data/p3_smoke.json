@@ -1,0 +1,147 @@
+{
+  "schema": "photometric_policy_pilot_v1",
+  "params": {
+    "agentview": {
+      "a": 1.2384754437818535,
+      "b": -0.02146983269820374,
+      "clean_lum_mean": 0.4631920247276624,
+      "shift_lum_mean": 0.3913374785582225,
+      "clean_lum_std": 0.1956116314480702,
+      "shift_lum_std": 0.15794450665513676
+    },
+    "eye_in_hand": {
+      "a": 1.160209449888486,
+      "b": 0.006253241091910389,
+      "clean_lum_mean": 0.5488685652613638,
+      "shift_lum_mean": 0.46768738542993865,
+      "clean_lum_std": 0.2858239064117273,
+      "shift_lum_std": 0.24635443732142445
+    }
+  },
+  "records": [
+    {
+      "state_id": 36,
+      "domain": "clean",
+      "mode": "frozen",
+      "success": true,
+      "steps": 98,
+      "hit_max_steps": false,
+      "transform": {
+        "agentview": {
+          "a": 1.2384754437818535,
+          "b": -0.02146983269820374,
+          "clean_lum_mean": 0.4631920247276624,
+          "shift_lum_mean": 0.3913374785582225,
+          "clean_lum_std": 0.1956116314480702,
+          "shift_lum_std": 0.15794450665513676
+        },
+        "eye_in_hand": {
+          "a": 1.160209449888486,
+          "b": 0.006253241091910389,
+          "clean_lum_mean": 0.5488685652613638,
+          "shift_lum_mean": 0.46768738542993865,
+          "clean_lum_std": 0.2858239064117273,
+          "shift_lum_std": 0.24635443732142445
+        }
+      },
+      "transform_clip_fraction_mean": {
+        "agentview": null,
+        "eye_in_hand": null
+      },
+      "action_clip_fraction_mean": 0.12698413183291754
+    },
+    {
+      "state_id": 36,
+      "domain": "clean",
+      "mode": "transform",
+      "success": true,
+      "steps": 91,
+      "hit_max_steps": false,
+      "transform": {
+        "agentview": {
+          "a": 1.2384754437818535,
+          "b": -0.02146983269820374,
+          "clean_lum_mean": 0.4631920247276624,
+          "shift_lum_mean": 0.3913374785582225,
+          "clean_lum_std": 0.1956116314480702,
+          "shift_lum_std": 0.15794450665513676
+        },
+        "eye_in_hand": {
+          "a": 1.160209449888486,
+          "b": 0.006253241091910389,
+          "clean_lum_mean": 0.5488685652613638,
+          "shift_lum_mean": 0.46768738542993865,
+          "clean_lum_std": 0.2858239064117273,
+          "shift_lum_std": 0.24635443732142445
+        }
+      },
+      "transform_clip_fraction_mean": {
+        "agentview": 0.060766855875651046,
+        "eye_in_hand": 0.018877665201822914
+      },
+      "action_clip_fraction_mean": 0.1324404813349247
+    },
+    {
+      "state_id": 36,
+      "domain": "shift",
+      "mode": "frozen",
+      "success": true,
+      "steps": 93,
+      "hit_max_steps": false,
+      "transform": {
+        "agentview": {
+          "a": 1.2384754437818535,
+          "b": -0.02146983269820374,
+          "clean_lum_mean": 0.4631920247276624,
+          "shift_lum_mean": 0.3913374785582225,
+          "clean_lum_std": 0.1956116314480702,
+          "shift_lum_std": 0.15794450665513676
+        },
+        "eye_in_hand": {
+          "a": 1.160209449888486,
+          "b": 0.006253241091910389,
+          "clean_lum_mean": 0.5488685652613638,
+          "shift_lum_mean": 0.46768738542993865,
+          "clean_lum_std": 0.2858239064117273,
+          "shift_lum_std": 0.24635443732142445
+        }
+      },
+      "transform_clip_fraction_mean": {
+        "agentview": null,
+        "eye_in_hand": null
+      },
+      "action_clip_fraction_mean": 0.1324404813349247
+    },
+    {
+      "state_id": 36,
+      "domain": "shift",
+      "mode": "transform",
+      "success": true,
+      "steps": 95,
+      "hit_max_steps": false,
+      "transform": {
+        "agentview": {
+          "a": 1.2384754437818535,
+          "b": -0.02146983269820374,
+          "clean_lum_mean": 0.4631920247276624,
+          "shift_lum_mean": 0.3913374785582225,
+          "clean_lum_std": 0.1956116314480702,
+          "shift_lum_std": 0.15794450665513676
+        },
+        "eye_in_hand": {
+          "a": 1.160209449888486,
+          "b": 0.006253241091910389,
+          "clean_lum_mean": 0.5488685652613638,
+          "shift_lum_mean": 0.46768738542993865,
+          "clean_lum_std": 0.2858239064117273,
+          "shift_lum_std": 0.24635443732142445
+        }
+      },
+      "transform_clip_fraction_mean": {
+        "agentview": 0.05976804097493489,
+        "eye_in_hand": 0.00012079874674479167
+      },
+      "action_clip_fraction_mean": 0.129464291036129
+    }
+  ]
+}

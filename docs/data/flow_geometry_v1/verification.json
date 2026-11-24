@@ -1,0 +1,10 @@
+{
+  "pass": true,
+  "cases": 100,
+  "native_predict_max_abs": 0,
+  "both_rgb_hashes_verified": true,
+  "all_trace_metrics_recomputed": true,
+  "result_receipts_verified": true,
+  "manifest_sha256": "d3e0d8c642cd215c879d2f0174663ff5ec585cd5c6d6b531a213c26e9fb982c0",
+  "scope": "execution/data consistency, not scientific validation"
+}

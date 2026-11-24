@@ -1,0 +1,117 @@
+{
+  "physical_pair": {
+    "raw_state_equal": true,
+    "model_physics_compatible": true,
+    "physical_init_hash": "e03df327df6094e9e2d138bf942f771e63231c835b7763c95b94b6ab247a97bb",
+    "scope": "listed simulator fields and static physics; not all hidden state"
+  },
+  "initial_observation": {
+    "agentview": {
+      "mean": 118.83943176269531,
+      "std": 48.86905492978985,
+      "sha256": "5474aea5f6a1f6bbdbeb36f5c36681248e5ecf1bc59f06e46d334eae9eea1b19"
+    },
+    "eye_in_hand": {
+      "mean": 123.5922342936198,
+      "std": 64.53335566073625,
+      "sha256": "6ffaa390b79d36c57ee64228c90d926b4349a1ac887837ef335d6e809b8f1869"
+    }
+  },
+  "status": "completed",
+  "success": true,
+  "steps": 73,
+  "chunks": [
+    {
+      "start": 0,
+      "end": 12,
+      "z0_hash": "b844a655c50cd9356c516ff1ba2c870ede931037c10336a11897cbb9d0b97814",
+      "official_parity": {
+        "x_max_abs": 0.0,
+        "velocity_max_abs": 0.0,
+        "controller_max_abs": 0.0,
+        "clipped_max_abs": 0.0,
+        "official_predict_calls": 1,
+        "steps": 10
+      }
+    },
+    {
+      "start": 12,
+      "end": 24,
+      "z0_hash": "2377e62430bc90c0a788c91962753229ec6e8cbc0ac34dced1d2532cf7f5c4f3",
+      "official_parity": {}
+    },
+    {
+      "start": 24,
+      "end": 36,
+      "z0_hash": "45acd4895e7c1674e1fcbd7f49b6d4bfd878a0d4530fe0981479ed36469d48af",
+      "official_parity": {}
+    },
+    {
+      "start": 36,
+      "end": 48,
+      "z0_hash": "d3ecb0ed013f1ea1ff42513175881ed0016afa05709838ade9aacbe670e8c488",
+      "official_parity": {}
+    },
+    {
+      "start": 48,
+      "end": 60,
+      "z0_hash": "750f0027189d7719f0da1e5ea8ad243ac30bef345849774d6ea11a40beac623f",
+      "official_parity": {}
+    },
+    {
+      "start": 60,
+      "end": 72,
+      "z0_hash": "b0df707b79c3b94ee764670cee260037ea0b7c7d6ab67a807b6318a7d17d4c5f",
+      "official_parity": {}
+    },
+    {
+      "start": 72,
+      "end": 73,
+      "z0_hash": "7432d0eee455f6deb259ffd7b2ed5fad45bc1cef5c1c60fcf3046d4140542499",
+      "official_parity": {}
+    }
+  ],
+  "action_sha256": "62b0fdfbaa9bdab984ba7ecf6e72854c93641e6259a84c453e0cdf17f8120f84",
+  "terminal_flags": {
+    "reward": 1.0,
+    "success": true,
+    "terminated": true,
+    "truncated": false,
+    "done": true,
+    "flags_source": "legacy_done_minus_explicit_time_limit"
+  },
+  "collector_truncated": false,
+  "case_id": "7a456242c9d69220ee747328",
+  "base_task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+  "factor": "sensor_noise",
+  "pair_group_id": "9f0d3717f1f17095d5da34e79aaa2731401674a769aea9bbd6a8424acbea064d",
+  "role": "target_dev",
+  "seeds": {
+    "environment_seed": 1872260725,
+    "sensor_noise_seed": 2475808610,
+    "policy_flow_seed": 213787036,
+    "method_augmentation_seed": 1700451326
+  },
+  "init_state_index": 0,
+  "audit_sha256": "d60f3211d73b8f1362d2286c1c0831897697457ff01d281b36106116a71aa355",
+  "manifest_sha256": "d3e0d8c642cd215c879d2f0174663ff5ec585cd5c6d6b531a213c26e9fb982c0",
+  "checkpoint_sha256": "f933ab03c1a4664f7a11690645cdd5fa81788a5b98db81913024f7a23326dfe6",
+  "code_sha256": {
+    "scripts/static_visual_v2.py": "f5234358fe24edab30e1cbce3656a81fc8a37d35392019e0194c1e0259c442e4",
+    "dacsc/static_visual_v2.py": "cfd502ea2804c8c1440e564850acb12d8bf3bfba3eafb66442af33997c16960e"
+  },
+  "wall_seconds": 85.07261104599456,
+  "method": "frozen",
+  "new_model_training": false,
+  "blind_accessed": false,
+  "language_instruction": "pick up the black bowl between the plate and the ramekin and place it on the plate",
+  "language_source": "official benchmark.grab_language_from_filename(clean_base_task)",
+  "bddl_language_diagnostic": "pick the akita black bowl between the plate and the ramekin and place it on the plate",
+  "runtime_versions": {
+    "python": "3.10.12",
+    "torch": "2.5.1+cu121",
+    "numpy": "1.26.4",
+    "mujoco": "3.3.0",
+    "robosuite": "1.4.1"
+  }
+}

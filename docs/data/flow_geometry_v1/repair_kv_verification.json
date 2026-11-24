@@ -1,0 +1,14 @@
+{
+  "pass": true,
+  "cases": 10,
+  "configurations": 180,
+  "checkpoint_evaluations": 360,
+  "matched_null_evaluations": 1800,
+  "max_null_spatial_norm_error": 4.680445460536475e-06,
+  "max_zero_gate_controller_error": 3.5315752029418945e-06,
+  "max_native_sampler_error": 0.0,
+  "max_batched_v1_error": 3.7848949432373047e-06,
+  "receipt_and_constraints_verified": true,
+  "heldout_noise_separation_verified": true,
+  "scope": "consistency only; no task-repair inference"
+}

@@ -1,0 +1,16 @@
+{
+  "auc": 0.8289629147690306,
+  "n_windows": 1255,
+  "threshold": 0.9965237379074097,
+  "recall_at_fpr": 0.5811320754716981,
+  "n_failure_episodes": 5,
+  "n_success_episodes": 15,
+  "first_alarm_remaining_steps": [
+    122,
+    206,
+    194,
+    202
+  ],
+  "median_lead_steps": 198.0,
+  "false_alarm_episodes": 3
+}

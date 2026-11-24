@@ -1,0 +1,165 @@
+{
+  "schema": "local_patch_energy_v1",
+  "records": [
+    {
+      "state_id": 34,
+      "domain": "clean",
+      "success": false,
+      "steps": 220,
+      "eps": 0.3,
+      "mode": "local_patch_energy"
+    },
+    {
+      "state_id": 35,
+      "domain": "clean",
+      "success": true,
+      "steps": 80,
+      "eps": 0.3,
+      "mode": "local_patch_energy"
+    },
+    {
+      "state_id": 36,
+      "domain": "clean",
+      "success": true,
+      "steps": 91,
+      "eps": 0.3,
+      "mode": "local_patch_energy"
+    },
+    {
+      "state_id": 37,
+      "domain": "clean",
+      "success": true,
+      "steps": 116,
+      "eps": 0.3,
+      "mode": "local_patch_energy"
+    },
+    {
+      "state_id": 39,
+      "domain": "clean",
+      "success": true,
+      "steps": 101,
+      "eps": 0.3,
+      "mode": "local_patch_energy"
+    },
+    {
+      "state_id": 43,
+      "domain": "clean",
+      "success": true,
+      "steps": 99,
+      "eps": 0.3,
+      "mode": "local_patch_energy"
+    },
+    {
+      "state_id": 44,
+      "domain": "clean",
+      "success": true,
+      "steps": 100,
+      "eps": 0.3,
+      "mode": "local_patch_energy"
+    },
+    {
+      "state_id": 45,
+      "domain": "clean",
+      "success": true,
+      "steps": 123,
+      "eps": 0.3,
+      "mode": "local_patch_energy"
+    },
+    {
+      "state_id": 48,
+      "domain": "clean",
+      "success": false,
+      "steps": 220,
+      "eps": 0.3,
+      "mode": "local_patch_energy"
+    },
+    {
+      "state_id": 49,
+      "domain": "clean",
+      "success": true,
+      "steps": 94,
+      "eps": 0.3,
+      "mode": "local_patch_energy"
+    },
+    {
+      "state_id": 34,
+      "domain": "shift",
+      "success": false,
+      "steps": 220,
+      "eps": 0.3,
+      "mode": "local_patch_energy"
+    },
+    {
+      "state_id": 35,
+      "domain": "shift",
+      "success": false,
+      "steps": 220,
+      "eps": 0.3,
+      "mode": "local_patch_energy"
+    },
+    {
+      "state_id": 36,
+      "domain": "shift",
+      "success": true,
+      "steps": 90,
+      "eps": 0.3,
+      "mode": "local_patch_energy"
+    },
+    {
+      "state_id": 37,
+      "domain": "shift",
+      "success": false,
+      "steps": 220,
+      "eps": 0.3,
+      "mode": "local_patch_energy"
+    },
+    {
+      "state_id": 39,
+      "domain": "shift",
+      "success": false,
+      "steps": 220,
+      "eps": 0.3,
+      "mode": "local_patch_energy"
+    },
+    {
+      "state_id": 43,
+      "domain": "shift",
+      "success": false,
+      "steps": 220,
+      "eps": 0.3,
+      "mode": "local_patch_energy"
+    },
+    {
+      "state_id": 44,
+      "domain": "shift",
+      "success": false,
+      "steps": 220,
+      "eps": 0.3,
+      "mode": "local_patch_energy"
+    },
+    {
+      "state_id": 45,
+      "domain": "shift",
+      "success": false,
+      "steps": 220,
+      "eps": 0.3,
+      "mode": "local_patch_energy"
+    },
+    {
+      "state_id": 48,
+      "domain": "shift",
+      "success": false,
+      "steps": 220,
+      "eps": 0.3,
+      "mode": "local_patch_energy"
+    },
+    {
+      "state_id": 49,
+      "domain": "shift",
+      "success": false,
+      "steps": 220,
+      "eps": 0.3,
+      "mode": "local_patch_energy"
+    }
+  ]
+}

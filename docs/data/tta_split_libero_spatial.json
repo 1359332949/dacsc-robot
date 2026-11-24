@@ -1,0 +1,211 @@
+{
+  "schema": "tta_split_v2",
+  "task_suite": "libero_spatial",
+  "task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+  "source_domain": "clean",
+  "target_domain": "lighting_2292",
+  "lighting_id": 2292,
+  "source_train_state_ids": [
+    0,
+    1,
+    2,
+    4,
+    6,
+    8,
+    10,
+    13,
+    14,
+    17
+  ],
+  "source_val_state_ids": [
+    18,
+    20,
+    21,
+    22,
+    25,
+    27,
+    29,
+    31,
+    32,
+    33
+  ],
+  "target_dev_state_ids": [
+    34,
+    35,
+    36,
+    37,
+    39,
+    43,
+    44,
+    45,
+    48,
+    49
+  ],
+  "target_test_state_ids": [
+    3,
+    5,
+    7,
+    9,
+    11,
+    12,
+    15,
+    16,
+    19,
+    23,
+    24,
+    26,
+    28,
+    30,
+    38,
+    40,
+    41,
+    42,
+    46,
+    47
+  ],
+  "screening_seeds": [
+    7777,
+    8888,
+    9999
+  ],
+  "evaluation_seeds": [
+    2014,
+    2015,
+    2016
+  ],
+  "invariants": [
+    "all four state sets disjoint",
+    "target_test never used for method selection",
+    "adapter sees target_test observations only during test",
+    "target labels evaluation-only",
+    "source calibration uses clean source states only"
+  ],
+  "note": "libero_spatial pilot only; target test exploratory, final claim requires fresh perturbation/task",
+  "status": "frozen_pilot_not_confirmatory",
+  "frozen_at": "2026-11-17",
+  "protocol_doc": "docs/EVALUATION_PROTOCOL.md",
+  "tta_mode": "episodic",
+  "matrix_sha256": "d51806a933d82ac5d78e7e9ab310cbe7a888fa6ef49ceace0438df95052db205",
+  "checkpoint_sha256": "f933ab03c1a4664f7a11690645cdd5fa81788a5b98db81913024f7a23326dfe6",
+  "target_test_used_for": [
+    "exploratory_frozen_vs_first",
+    "exploratory_online"
+  ],
+  "confirmatory_test": false,
+  "retired_splits": [
+    "libero_object_heldout_20",
+    "libero_goal_lighting_2313_0_of_20"
+  ],
+  "history": [
+    "libero_object heldout consumed during development",
+    "libero_goal failed clean validation",
+    "libero_spatial pilot frozen 2026-11-17"
+  ],
+  "policy": {
+    "name": "CoRP",
+    "checkpoint_sha256": "f933ab03c1a4664f7a11690645cdd5fa81788a5b98db81913024f7a23326dfe6",
+    "training_data_provenance": "official CoRP LIBERO checkpoint; training-state overlap not independently verified"
+  },
+  "benchmark": {
+    "suite": "libero_spatial",
+    "task_id": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+    "bddl_sha256": "3d4ccf070c3d9883ae0676f2d888588f98c696ddad71b7694f47c379fc99ef36",
+    "initial_state_file_sha256": "0627f5f5ce3ef23be546571012be8ef603d93bcb4032bc80feb34937ba580140",
+    "matrix_sha256": "d51806a933d82ac5d78e7e9ab310cbe7a888fa6ef49ceace0438df95052db205"
+  },
+  "source_calibration": {
+    "fit_state_ids": [
+      0,
+      1,
+      2,
+      4,
+      6,
+      8,
+      10,
+      13,
+      14,
+      17
+    ],
+    "validation_state_ids": [
+      18,
+      20,
+      21,
+      22,
+      25,
+      27,
+      29,
+      31,
+      32,
+      33
+    ],
+    "capture_scope": "one post-settling Clean frame per state; not a full trajectory"
+  },
+  "target": {
+    "development": {
+      "perturbation_ids": [
+        2292
+      ],
+      "state_ids": [
+        34,
+        35,
+        36,
+        37,
+        39,
+        43,
+        44,
+        45,
+        48,
+        49
+      ]
+    },
+    "test": {
+      "perturbation_ids": [
+        2292
+      ],
+      "state_ids": [
+        3,
+        5,
+        7,
+        9,
+        11,
+        12,
+        15,
+        16,
+        19,
+        23,
+        24,
+        26,
+        28,
+        30,
+        38,
+        40,
+        41,
+        42,
+        46,
+        47
+      ]
+    },
+    "test_used_for": [
+      "exploratory_frozen_vs_first",
+      "exploratory_online"
+    ]
+  },
+  "seeds": {
+    "screening": [
+      7777,
+      8888,
+      9999
+    ],
+    "evaluation": [
+      2014,
+      2015,
+      2016
+    ]
+  },
+  "protocol": {
+    "tta_mode": "episodic",
+    "episode_reset": true,
+    "source_assisted": true
+  },
+  "target_test_status": "exploratory_accessed"
+}

@@ -1,0 +1,9 @@
+{
+  "schema": "provenance_overlay_v1",
+  "file": "docs/data/perturb_dev_clean_v2.json",
+  "file_sha256": "3f6f653fe2df64ed99924131898a560d9318dc87cf27e92ef11367d2d1ff2322",
+  "collected_under_target_test_status": "locked_unused",
+  "current_access_ledger": "docs/data/tta_access_ledger.json",
+  "current_target_test_status": "admission_accessed",
+  "note": "target_test_status in the rollout file was captured before the 2312 admission event; the access ledger supersedes it for provenance. Rollout records themselves are unaffected."
+}

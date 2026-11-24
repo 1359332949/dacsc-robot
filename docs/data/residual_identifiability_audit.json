@@ -1,0 +1,641 @@
+{
+  "schema": "residual_identifiability_audit_v1",
+  "pairing": {
+    "source_state8_max_abs_diff": 0.0,
+    "target_state8_max_abs_diff": 0.0,
+    "source_clean_shift_action_shape_equal": true,
+    "target_clean_shift_action_shape_equal": true,
+    "note": "state8 equality is necessary, not sufficient; full MuJoCo/camera pairing not audited here"
+  },
+  "source_n": 20,
+  "target_n": 10,
+  "predictors": {
+    "zero": {
+      "cosine_median": 0.0,
+      "cosine_mean": 0.0,
+      "cosine_min": 0.0,
+      "cosine_max": 0.0,
+      "orthogonal_error_median": 0.9999999999982023,
+      "per_state": [
+        {
+          "state_id": 34,
+          "cosine": 0.0,
+          "scale": 0.0,
+          "orthogonal_error": 0.9999999999982893,
+          "success": false
+        },
+        {
+          "state_id": 35,
+          "cosine": 0.0,
+          "scale": 0.0,
+          "orthogonal_error": 0.9999999999983297,
+          "success": true
+        },
+        {
+          "state_id": 36,
+          "cosine": 0.0,
+          "scale": 0.0,
+          "orthogonal_error": 0.9999999999966953,
+          "success": true
+        },
+        {
+          "state_id": 37,
+          "cosine": 0.0,
+          "scale": 0.0,
+          "orthogonal_error": 0.9999999999985385,
+          "success": false
+        },
+        {
+          "state_id": 39,
+          "cosine": 0.0,
+          "scale": 0.0,
+          "orthogonal_error": 0.9999999999985335,
+          "success": false
+        },
+        {
+          "state_id": 43,
+          "cosine": 0.0,
+          "scale": 0.0,
+          "orthogonal_error": 0.9999999999974326,
+          "success": false
+        },
+        {
+          "state_id": 44,
+          "cosine": 0.0,
+          "scale": 0.0,
+          "orthogonal_error": 0.9999999999969676,
+          "success": false
+        },
+        {
+          "state_id": 45,
+          "cosine": 0.0,
+          "scale": 0.0,
+          "orthogonal_error": 0.9999999999975877,
+          "success": true
+        },
+        {
+          "state_id": 48,
+          "cosine": 0.0,
+          "scale": 0.0,
+          "orthogonal_error": 0.9999999999983696,
+          "success": false
+        },
+        {
+          "state_id": 49,
+          "cosine": 0.0,
+          "scale": 0.0,
+          "orthogonal_error": 0.9999999999981153,
+          "success": true
+        }
+      ],
+      "per_dim_cosine": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "per_step_cosine": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "global_mean": {
+      "cosine_median": 0.9033665449281736,
+      "cosine_mean": 0.8628001499180229,
+      "cosine_min": 0.5286780836882189,
+      "cosine_max": 0.9634209877785477,
+      "orthogonal_error_median": 0.4271280703649488,
+      "per_state": [
+        {
+          "state_id": 34,
+          "cosine": 0.9296722938935804,
+          "scale": 1.0690745568508706,
+          "orthogonal_error": 0.3683876028856372,
+          "success": false
+        },
+        {
+          "state_id": 35,
+          "cosine": 0.9354220558504295,
+          "scale": 1.1017078259362338,
+          "orthogonal_error": 0.35353299339916266,
+          "success": true
+        },
+        {
+          "state_id": 36,
+          "cosine": 0.8405398335483696,
+          "scale": 0.5003823434140722,
+          "orthogonal_error": 0.5417497468472783,
+          "success": true
+        },
+        {
+          "state_id": 37,
+          "cosine": 0.9634209877785477,
+          "scale": 1.2968296261252474,
+          "orthogonal_error": 0.26799253777154414,
+          "success": false
+        },
+        {
+          "state_id": 39,
+          "cosine": 0.8249578878579068,
+          "scale": 1.1066628296960501,
+          "orthogonal_error": 0.5651941995946264,
+          "success": false
+        },
+        {
+          "state_id": 43,
+          "cosine": 0.8868641275887544,
+          "scale": 0.6795683809857931,
+          "orthogonal_error": 0.46203032280144574,
+          "success": false
+        },
+        {
+          "state_id": 44,
+          "cosine": 0.5286780836882189,
+          "scale": 0.3429906085232571,
+          "orthogonal_error": 0.8488224100603072,
+          "success": false
+        },
+        {
+          "state_id": 45,
+          "cosine": 0.8514139659440155,
+          "scale": 0.6943404870364315,
+          "orthogonal_error": 0.5244942884224819,
+          "success": true
+        },
+        {
+          "state_id": 48,
+          "cosine": 0.9471633007628131,
+          "scale": 1.142917443680376,
+          "orthogonal_error": 0.32075174462706,
+          "success": false
+        },
+        {
+          "state_id": 49,
+          "cosine": 0.9198689622675927,
+          "scale": 0.960157362089064,
+          "orthogonal_error": 0.3922258179284519,
+          "success": true
+        }
+      ],
+      "per_dim_cosine": [
+        0.9068308170532091,
+        0.815043900044091,
+        0.7226267723384106,
+        0.30521654504045875,
+        0.4393144840469355,
+        0.2627949310036851,
+        0.5384658001101977
+      ],
+      "per_step_cosine": [
+        0.8204129746546878,
+        0.816498563383288,
+        0.8331185500078115,
+        0.8681753399129982,
+        0.8850028492110995,
+        0.8907051708649354,
+        0.8830292352708787,
+        0.8721131070065127,
+        0.8643075334865694,
+        0.863874239024605,
+        0.8559162761703726,
+        0.830742576709537
+      ]
+    },
+    "knn_state_k1": {
+      "cosine_median": 0.8431951723983881,
+      "cosine_mean": 0.7735993276796659,
+      "cosine_min": 0.12995073264134896,
+      "cosine_max": 0.9404154606671737,
+      "orthogonal_error_median": 0.537607401005015,
+      "per_state": [
+        {
+          "state_id": 34,
+          "cosine": 0.9404154606671737,
+          "scale": 0.5199470137113927,
+          "orthogonal_error": 0.3400275890763168,
+          "success": false
+        },
+        {
+          "state_id": 35,
+          "cosine": 0.763966141126626,
+          "scale": 0.9672393754283619,
+          "orthogonal_error": 0.6452563329455069,
+          "success": true
+        },
+        {
+          "state_id": 36,
+          "cosine": 0.7903484175237891,
+          "scale": 0.632038836007379,
+          "orthogonal_error": 0.6126576359662315,
+          "success": true
+        },
+        {
+          "state_id": 37,
+          "cosine": 0.7843398947399712,
+          "scale": 1.3836645506251266,
+          "orthogonal_error": 0.6203313062494874,
+          "success": false
+        },
+        {
+          "state_id": 39,
+          "cosine": 0.8434255436906096,
+          "scale": 1.1983353524859883,
+          "orthogonal_error": 0.5372460816462991,
+          "success": false
+        },
+        {
+          "state_id": 43,
+          "cosine": 0.8518671370997489,
+          "scale": 0.7668082630839481,
+          "orthogonal_error": 0.5237579409622242,
+          "success": false
+        },
+        {
+          "state_id": 44,
+          "cosine": 0.12995073264134896,
+          "scale": 0.06808694633343161,
+          "orthogonal_error": 0.9915204521742647,
+          "success": false
+        },
+        {
+          "state_id": 45,
+          "cosine": 0.9372987207087398,
+          "scale": 0.5628817579779687,
+          "orthogonal_error": 0.34852705511967047,
+          "success": true
+        },
+        {
+          "state_id": 48,
+          "cosine": 0.8429648011061667,
+          "scale": 1.087820912948574,
+          "orthogonal_error": 0.537968720363731,
+          "success": false
+        },
+        {
+          "state_id": 49,
+          "cosine": 0.8514164274924856,
+          "scale": 0.6097402677641786,
+          "orthogonal_error": 0.5244902925605074,
+          "success": true
+        }
+      ],
+      "per_dim_cosine": [
+        0.8178470536839151,
+        0.6801175733350535,
+        0.579278957315701,
+        0.4654370486176033,
+        0.4920095684704773,
+        0.20780815657937585,
+        0.5033827948273317
+      ],
+      "per_step_cosine": [
+        0.6298669529990109,
+        0.6612433543276682,
+        0.7305998821138798,
+        0.7663400198906395,
+        0.7926449860242919,
+        0.8011263034896184,
+        0.8029747434039076,
+        0.7937755683604129,
+        0.7853295264448619,
+        0.7674605708045923,
+        0.750506918767649,
+        0.7279089899339966
+      ]
+    },
+    "knn_state_k3": {
+      "cosine_median": 0.8687375728726585,
+      "cosine_mean": 0.8239472433251722,
+      "cosine_min": 0.40626149362292374,
+      "cosine_max": 0.9261101972961412,
+      "orthogonal_error_median": 0.49492040672561344,
+      "per_state": [
+        {
+          "state_id": 34,
+          "cosine": 0.9225753845846953,
+          "scale": 0.8946731218839907,
+          "orthogonal_error": 0.3858168733377994,
+          "success": false
+        },
+        {
+          "state_id": 35,
+          "cosine": 0.9161650939801028,
+          "scale": 0.9451455860019377,
+          "orthogonal_error": 0.4008010985092182,
+          "success": true
+        },
+        {
+          "state_id": 36,
+          "cosine": 0.7782368848820962,
+          "scale": 0.39069684973144286,
+          "orthogonal_error": 0.6279708201822695,
+          "success": true
+        },
+        {
+          "state_id": 37,
+          "cosine": 0.8594924623734518,
+          "scale": 1.6623506271644104,
+          "orthogonal_error": 0.511148419850948,
+          "success": false
+        },
+        {
+          "state_id": 39,
+          "cosine": 0.8178333000075054,
+          "scale": 1.2650814136069664,
+          "orthogonal_error": 0.5754552053747243,
+          "success": false
+        },
+        {
+          "state_id": 43,
+          "cosine": 0.8779826833718654,
+          "scale": 0.7186706426036273,
+          "orthogonal_error": 0.47869239360027876,
+          "success": false
+        },
+        {
+          "state_id": 44,
+          "cosine": 0.40626149362292374,
+          "scale": 0.29164570495511677,
+          "orthogonal_error": 0.9137568597786219,
+          "success": false
+        },
+        {
+          "state_id": 45,
+          "cosine": 0.9261101972961412,
+          "scale": 0.54750106927493,
+          "orthogonal_error": 0.37725310132168804,
+          "success": true
+        },
+        {
+          "state_id": 48,
+          "cosine": 0.8916704317425674,
+          "scale": 1.017738833917693,
+          "orthogonal_error": 0.45268514571366675,
+          "success": false
+        },
+        {
+          "state_id": 49,
+          "cosine": 0.8431445013903727,
+          "scale": 0.714615691275865,
+          "orthogonal_error": 0.5376870370105081,
+          "success": true
+        }
+      ],
+      "per_dim_cosine": [
+        0.9030407250214474,
+        0.6534899670682456,
+        0.6453106806000116,
+        0.45525521410578756,
+        0.461765484145875,
+        0.2813814215499111,
+        0.5770669399119958
+      ],
+      "per_step_cosine": [
+        0.7626810912602123,
+        0.7743743332413978,
+        0.8068991181850285,
+        0.8279606260866611,
+        0.8390353352158446,
+        0.8298563043970236,
+        0.8204170438547005,
+        0.8056204337385658,
+        0.7937910673523608,
+        0.7863437622893202,
+        0.7875029722851365,
+        0.7728330923878527
+      ]
+    },
+    "knn_state_k5": {
+      "cosine_median": 0.8687575224953146,
+      "cosine_mean": 0.8154792464218324,
+      "cosine_min": 0.3078316819186569,
+      "cosine_max": 0.9324368470144552,
+      "orthogonal_error_median": 0.49425289799389427,
+      "per_state": [
+        {
+          "state_id": 34,
+          "cosine": 0.9324368470144552,
+          "scale": 0.8751665470671106,
+          "orthogonal_error": 0.3613329853798678,
+          "success": false
+        },
+        {
+          "state_id": 35,
+          "cosine": 0.8841936536308715,
+          "scale": 1.009802928860286,
+          "orthogonal_error": 0.46712052285525535,
+          "success": true
+        },
+        {
+          "state_id": 36,
+          "cosine": 0.8013424905867828,
+          "scale": 0.48448207656896597,
+          "orthogonal_error": 0.5982058280984871,
+          "success": true
+        },
+        {
+          "state_id": 37,
+          "cosine": 0.9317131640595979,
+          "scale": 1.3706326701147342,
+          "orthogonal_error": 0.3631949612968178,
+          "success": false
+        },
+        {
+          "state_id": 39,
+          "cosine": 0.7715779547279412,
+          "scale": 1.1531625867607824,
+          "orthogonal_error": 0.6361347811370672,
+          "success": false
+        },
+        {
+          "state_id": 43,
+          "cosine": 0.8533213913597575,
+          "scale": 0.7363574348402115,
+          "orthogonal_error": 0.5213852731325331,
+          "success": false
+        },
+        {
+          "state_id": 44,
+          "cosine": 0.3078316819186569,
+          "scale": 0.21094448703440394,
+          "orthogonal_error": 0.9514408313713851,
+          "success": false
+        },
+        {
+          "state_id": 45,
+          "cosine": 0.9229405171063471,
+          "scale": 0.5433597612161614,
+          "orthogonal_error": 0.38494259555968113,
+          "success": true
+        },
+        {
+          "state_id": 48,
+          "cosine": 0.9092203665262856,
+          "scale": 1.1324093766428396,
+          "orthogonal_error": 0.41631517518244393,
+          "success": false
+        },
+        {
+          "state_id": 49,
+          "cosine": 0.8402143972876297,
+          "scale": 0.6787509999583919,
+          "orthogonal_error": 0.5422543375434319,
+          "success": true
+        }
+      ],
+      "per_dim_cosine": [
+        0.9001990349189688,
+        0.7017195476618804,
+        0.6028899252248953,
+        0.5038839698463595,
+        0.4851260111670416,
+        0.22049336774470185,
+        0.558740898437472
+      ],
+      "per_step_cosine": [
+        0.7559720914730422,
+        0.7598607533298175,
+        0.7990336248971566,
+        0.8323968062138273,
+        0.8524412066919173,
+        0.8511360593313374,
+        0.843824690839904,
+        0.8283714983076158,
+        0.816598313816133,
+        0.8068568931152773,
+        0.8005466489391591,
+        0.7734034777268922
+      ]
+    },
+    "shuffled": {
+      "cosine_median": 0.7031631549574867,
+      "cosine_mean": 0.6886206835240315,
+      "cosine_min": 0.5202829618546623,
+      "cosine_max": 0.8648930397317924,
+      "orthogonal_error_median": 0.7097020626458475,
+      "per_state": [
+        {
+          "state_id": 34,
+          "cosine": 0.6723248399939143,
+          "scale": 0.7365735706098921,
+          "orthogonal_error": 0.7402562458514224,
+          "success": false
+        },
+        {
+          "state_id": 35,
+          "cosine": 0.8376379424184689,
+          "scale": 1.3225074086622495,
+          "orthogonal_error": 0.5462258483575381,
+          "success": true
+        },
+        {
+          "state_id": 36,
+          "cosine": 0.7456200986438019,
+          "scale": 0.2750214573957734,
+          "orthogonal_error": 0.666371269256443,
+          "success": true
+        },
+        {
+          "state_id": 37,
+          "cosine": 0.8648930397317924,
+          "scale": 1.7687553998937335,
+          "orthogonal_error": 0.5019562030855937,
+          "success": false
+        },
+        {
+          "state_id": 39,
+          "cosine": 0.6285362828003418,
+          "scale": 0.990496034231618,
+          "orthogonal_error": 0.7777802653698344,
+          "success": false
+        },
+        {
+          "state_id": 43,
+          "cosine": 0.5202829618546623,
+          "scale": 0.2455722776989796,
+          "orthogonal_error": 0.8539939341692946,
+          "success": false
+        },
+        {
+          "state_id": 44,
+          "cosine": 0.5781328772752747,
+          "scale": 0.2573386332593884,
+          "orthogonal_error": 0.8159426304627337,
+          "success": false
+        },
+        {
+          "state_id": 45,
+          "cosine": 0.5440232148556858,
+          "scale": 0.4769251013054245,
+          "orthogonal_error": 0.8390701649397431,
+          "success": true
+        },
+        {
+          "state_id": 48,
+          "cosine": 0.7340014699210591,
+          "scale": 0.9380694804209784,
+          "orthogonal_error": 0.6791478794402724,
+          "success": false
+        },
+        {
+          "state_id": 49,
+          "cosine": 0.760754107745314,
+          "scale": 1.0406877571040283,
+          "orthogonal_error": 0.6490402048732244,
+          "success": true
+        }
+      ],
+      "per_dim_cosine": [
+        0.7522064676637014,
+        0.32913109516380007,
+        0.47748341396546085,
+        -0.18094122789138944,
+        0.3457669560382953,
+        0.15969263114905935,
+        0.29181505316679873
+      ],
+      "per_step_cosine": [
+        0.48734143738475777,
+        0.5124782524299811,
+        0.5602957081010654,
+        0.5944207175568136,
+        0.6164860227764785,
+        0.6062144893674198,
+        0.6006333711266387,
+        0.5896134107527108,
+        0.5681633168524816,
+        0.5836644646382372,
+        0.6264944308844829,
+        0.6496814687052042
+      ]
+    }
+  },
+  "source_mean_norm": 0.5083026585771585,
+  "target_mean_norm": 0.45519673509428954,
+  "source_vs_target_mean_cosine": 0.9932331389523037,
+  "target_residual_cos_to_source_global_mean": [
+    0.9296722938935804,
+    0.9354220558504295,
+    0.8405398335483696,
+    0.9634209877785477,
+    0.8249578878579068,
+    0.8868641275887544,
+    0.5286780836882189,
+    0.8514139659440155,
+    0.9471633007628131,
+    0.9198689622675927
+  ]
+}

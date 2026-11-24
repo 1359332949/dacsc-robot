@@ -1,0 +1,6 @@
+{
+  "pass": true,
+  "max_output_abs_diff": 0.0,
+  "arrays": 226,
+  "reason": "metadata wording correction: recording end is not always task termination; no input/model/config changes"
+}

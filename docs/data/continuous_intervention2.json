@@ -1,0 +1,125 @@
+{
+  "schema": "continuous_intervention_v1",
+  "records": [
+    {
+      "state_id": 37,
+      "mode": "baseline_clean",
+      "success": true,
+      "steps": 142,
+      "injected_steps": 0,
+      "injected_max": null
+    },
+    {
+      "state_id": 37,
+      "mode": "baseline_shift",
+      "success": true,
+      "steps": 114,
+      "injected_steps": 0,
+      "injected_max": null
+    },
+    {
+      "state_id": 37,
+      "mode": "p0b_chunk1",
+      "success": true,
+      "steps": 103,
+      "injected_steps": 12,
+      "injected_max": 0.2384932041168213
+    },
+    {
+      "state_id": 37,
+      "mode": "p0b_chunk2",
+      "success": true,
+      "steps": 97,
+      "injected_steps": 24,
+      "injected_max": 0.2384932041168213
+    },
+    {
+      "state_id": 37,
+      "mode": "fixed_chunk2",
+      "success": true,
+      "steps": 139,
+      "injected_steps": 24,
+      "injected_max": 0.2384932041168213
+    },
+    {
+      "state_id": 43,
+      "mode": "baseline_clean",
+      "success": true,
+      "steps": 95,
+      "injected_steps": 0,
+      "injected_max": null
+    },
+    {
+      "state_id": 43,
+      "mode": "baseline_shift",
+      "success": false,
+      "steps": 220,
+      "injected_steps": 0,
+      "injected_max": null
+    },
+    {
+      "state_id": 43,
+      "mode": "p0b_chunk1",
+      "success": true,
+      "steps": 94,
+      "injected_steps": 12,
+      "injected_max": 0.1435186266899109
+    },
+    {
+      "state_id": 43,
+      "mode": "p0b_chunk2",
+      "success": true,
+      "steps": 94,
+      "injected_steps": 24,
+      "injected_max": 0.1435186266899109
+    },
+    {
+      "state_id": 43,
+      "mode": "fixed_chunk2",
+      "success": true,
+      "steps": 106,
+      "injected_steps": 24,
+      "injected_max": 0.1435186266899109
+    },
+    {
+      "state_id": 45,
+      "mode": "baseline_clean",
+      "success": true,
+      "steps": 91,
+      "injected_steps": 0,
+      "injected_max": null
+    },
+    {
+      "state_id": 45,
+      "mode": "baseline_shift",
+      "success": false,
+      "steps": 220,
+      "injected_steps": 0,
+      "injected_max": null
+    },
+    {
+      "state_id": 45,
+      "mode": "p0b_chunk1",
+      "success": true,
+      "steps": 93,
+      "injected_steps": 12,
+      "injected_max": 0.16620314121246338
+    },
+    {
+      "state_id": 45,
+      "mode": "p0b_chunk2",
+      "success": false,
+      "steps": 220,
+      "injected_steps": 24,
+      "injected_max": 0.23659253120422363
+    },
+    {
+      "state_id": 45,
+      "mode": "fixed_chunk2",
+      "success": true,
+      "steps": 89,
+      "injected_steps": 24,
+      "injected_max": 0.16620314121246338
+    }
+  ]
+}

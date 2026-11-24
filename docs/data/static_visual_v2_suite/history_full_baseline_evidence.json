@@ -1,0 +1,22 @@
+{
+  "source": "user referenced DeepSeek session-72603ae9-4cd6-420f-a92c-2917ff9a1a6b",
+  "source_sha256": "58e1474d635a2632660e6482767503dbd3c76e5a135cdca265f7e371f74d0e92",
+  "evidence": [
+    {
+      "record_type": "tool/result",
+      "seq": 12627,
+      "text": "{\"turn\": 202, \"step\": 1, \"message\": {\"role\": \"tool\", \"source\": {\"kind\": \"tool\", \"callId\": \"call_00_XZn2IxBhzyURKxDmILTM4549\"}, \"toolCallId\": \"call_00_XZn2IxBhzyURKxDmILTM4549\", \"content\": [{\"type\": \"text\", \"text\": \"procs=0\\nWed Nov 11 09:42:08 AM CST 2026\\ndebias_cam_obj_big\\nbase_cam_obj_big\\ncamera_obj_big.json\\ntopk10_l3_extra3\\nbase_l3_extra3\\nbase_cam_obj3\\ndebias_cam_obj3\\ncamera_obj3.json\\nbase_full=10030/10030\\n\"}], \"isError\": false, \"id\": \"555816fd-2140-4e8e-989d-9528e05ad499\"}, \"meta\": {\"cwd\": \"/Users/wentiliangkaihua/Documents/deepseek-harness/default-workspace\"}}"
+    },
+    {
+      "record_type": "tool/result",
+      "seq": 12645,
+      "text": "{\"turn\": 203, \"step\": 1, \"message\": {\"role\": \"tool\", \"source\": {\"kind\": \"tool\", \"callId\": \"call_00_94Var7CUrvPUHEah4nGb1464\"}, \"toolCallId\": \"call_00_94Var7CUrvPUHEah4nGb1464\", \"content\": [{\"type\": \"text\", \"text\": \"total records 10030\\n== overall 535700 5357 10030\\n== per dimension\\nSensor Noise             n= 1601 SR= 39.6%\\nCamera Viewpoints        n= 1599 SR= 44.2%\\nRobot Initial States     n= 1550 SR= 35.5%\\nLanguage Instructions    n= 1537 SR= 74.3%\\nObjects Layout           n= 1525 SR= 71.1%\\nLight Conditions         n= 1142 SR= 72.8%\\nBackground Textures      n= 1076 SR= 37.8%\\n== per suite\\nlibero_10      n= 2519 SR= 51.4%\\nlibero_goal    n= 2591 SR= 24.5%\\nlibero_object  n= 2518 SR= 71.0%\\nlibero_spatial n= 2402 SR= 68.3%\\n== per level\\nL1 n= 1644 SR= 72.0%\\nL2 n= 2202 SR= 63.0%\\nL3 n= 2094 SR= 53.8%\\nL4 n= 1886 SR= 46.3%\\nL5 n= 2083 SR= 33.1%\\n\"}], \"isError\": false, \"id\": \"2f4fa7e9-9d87-404f-b5d2-1f84d4b2b897\"}, \"meta\": {\"cwd\": \"/Users/wentiliangkaihua/Documents/deepseek-harness/default-workspace\"}}"
+    },
+    {
+      "record_type": "compaction/summary",
+      "seq": 14168,
+      "text": "- Full official baseline completed: 10,030/10,030, overall 5,357 (53.4%); per dimension: Language 74.3, Light 72.8, Objects Layout 71.1, Camera 44.2, Sensor Noise 39.6, Background 37.8, Robot 35.5; per suite: object 71.0, spatial 68.3, libero_10 51.4, goal 24.5; per level: L1 72.0, L2 63.0, L3 53.8, L4 46.3, L5 33.1."
+    }
+  ],
+  "decision": "all official instance pools development-only until raw history evidence refutes full-access record; new manifests cannot reset previous access"
+}

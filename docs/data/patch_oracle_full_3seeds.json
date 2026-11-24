@@ -1,0 +1,44 @@
+{
+  "schema": "patch_oracle_full_3seeds_summary_v1",
+  "seeds": [
+    7777,
+    8888,
+    9999
+  ],
+  "states": [
+    34,
+    35,
+    36,
+    37,
+    39,
+    43,
+    44,
+    45,
+    48,
+    49
+  ],
+  "frozen_success": 6,
+  "oracle_success": 24,
+  "episodes_per_mode": 30,
+  "transitions": {
+    "false_true": 19,
+    "false_false": 5,
+    "true_true": 5,
+    "true_false": 1
+  },
+  "per_seed": {
+    "7777": {
+      "frozen": 2,
+      "oracle": 7
+    },
+    "8888": {
+      "frozen": 0,
+      "oracle": 9
+    },
+    "9999": {
+      "frozen": 4,
+      "oracle": 8
+    }
+  },
+  "note": "Target-dev pilot, known lighting 2292, same env/z0 seeds; oracle is privileged same-state Clean-patch replacement."
+}
