@@ -91,6 +91,7 @@ def main():
     roundings = Counter()
     hashes = hashlib.sha256()
     first = {}
+    streams = {}
     for path in sorted(a.root.glob("*.json")):
         data = path.read_bytes()
         hashes.update(path.name.encode() + hashlib.sha256(data).digest())
@@ -101,6 +102,11 @@ def main():
         key = (s, cid, reg)
         assert key in expect - exposed
         exposed.add(key)
+        streams[key] = (r["env_seed"], r["sensor_seed"], r["policy_seed"])
+        assert (
+            r["reference"]
+            == "9dceecd7ac5d343b49f2c2c7808becbd50ec6ed90b8077b7bd54c57e66f0f44f"
+        )
         c = cases[cid]
         task = c["base_task"]
         sub = c["sub_dimension"]
@@ -144,6 +150,11 @@ def main():
         compact.append(dict(seed=s, id=cid, task=task, groups=groups, wins=wins))
     assert exposed == expect, (len(exposed), len(expect - exposed))
     checks = Counter()
+    presentations = {(i, reg) for _, i, reg in expect}
+    for cid, reg in presentations:
+        kk = [(s, cid, reg) for s in (0, 1, 2)]
+        assert len({(streams[k][:2], first[k]["state"]) for k in kk}) == 1
+        assert len({streams[k][2] for k in kk}) == len({first[k]["z"] for k in kk}) == 3
     for (s, cid, reg), u in first.items():
         if reg == "dual":
             v = first[s, cid, "standard"]
@@ -194,6 +205,7 @@ def main():
         paired_outcomes=compact,
         arm_order=ARMS,
         raw_digest=hashes.hexdigest(),
+        verified_three_seed_presentations=len(presentations),
         archive_standard_frozen_matches=dict(old),
         archive_success_disagreements=mismatch,
         rounding_events=dict(roundings),
