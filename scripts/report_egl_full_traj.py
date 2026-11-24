@@ -297,6 +297,34 @@ def render(d, path):
         f"10 条 seed 0 Frozen Clean 提供 {d['source']['n_chunks']} 个实际推理块，外层 9 任务、内层 8+1，按块等权。全局三臂和额外桌面两臂共 1,260 局，另有 10 局源采集。全部为 Dev。",
         "",
     ]
+    old = "dead075_vs_frozen"
+    new = "full_traj_dead075_vs_frozen"
+    z = g["all"]
+    tab = z["table_texture"]
+    clean = z["clean"][new]
+    lines += [
+        "## 两个问题分别看",
+        "",
+        f"全轨迹参考在标准 Dev 成功 {z['standard100'][new]['wins']}/300，旧参考 {z['standard100'][old]['wins']}/300，同期 Frozen {z['standard100'][new]['reference_wins']}/300。在双眼 Sensor、桌面纹理、场景纹理与灯光上，相比 Frozen 的净局数分别为 {z['dual_sensor'][new]['net']:+d}、{tab[new]['net']:+d}、{z['scene_texture'][new]['net']:+d}、{z['lighting'][new]['net']:+d}。标准集与双眼压力集重复使用 Sensor 身份。",
+        "",
+        f"桌面对 Frozen 的救回/误伤从旧参考的 {tab[old]['recovered']}/{tab[old]['harmed']} 变成全轨迹参考的 {tab[new]['recovered']}/{tab[new]['harmed']}；Clean 成功 {clean['wins']}/{clean['n']}（对 Frozen 救回 {clean['recovered']}、误伤 {clean['harmed']}）。减少激活与避免动作误伤是两道不同的评价关口。",
+        "",
+    ]
+    history = [r["wins"] for r in d["prior_seven"]]
+    repeated = [v for v in history if v["frozen"] and not v["dead075"]]
+    counts = Counter((v["early_0_2"], v["late_3_plus"]) for v in repeated)
+    lines += [
+        f"历史七局中，本轮复现原损伤 {len(repeated)}/7；其中仅早期开启就失败、仅晚期开启就失败、两种单独时间窗都失败、两种都成功（只有全程失败）的局数依次为 {counts[0, 1]}、{counts[1, 0]}、{counts[0, 0]}、{counts[1, 1]}。新参考实际成功 {sum(v['full_traj_dead075'] for v in repeated)}/{len(repeated)}。以下时间窗使用旧参考，仅用于归因；不能凭一个时间窗的胜负推出帧内哪个通道导致失败。",
+        "",
+    ]
+    for gr in ["standard100", "dual_sensor", "lighting", "table_texture"]:
+        seq = ", ".join(f"{g[str(s)][gr][new]['net']:+d}" for s in (0, 1, 2))
+        lines.append(f"- {gr}：全轨迹参考相对 Frozen 各种子净数（0/1/2）：{seq}。")
+    lines += [
+        "",
+        f"来源核验：10 次 Clean 源重放均与历史胜负一致，完整动作哈希匹配 {d['source']['source_vs_archive']['action_sha']}/10；其中一局为 103 而非 105 步，两者均有 9 个实际推理块。闭环 390 组中，Frozen 与旧参考的成败和上轮分别匹配 {d['archive_checks']['frozen_success_match']}/390、{d['archive_checks']['dead075_success_match']}/390；本报告只使用本轮成对结果。",
+        "",
+    ]
     for s in ["all", "0", "1", "2"]:
         lines += [
             f"## {s}：成功数/分母；救回/误伤；净差 95% 区间（pp）",
