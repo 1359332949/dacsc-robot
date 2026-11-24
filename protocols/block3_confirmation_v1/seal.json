@@ -1,0 +1,13 @@
+{
+  "phase": "FROZEN_METHOD__NO_SCORING_MANIFEST",
+  "files": {
+    "docs/BLOCK3_INDEPENDENT_CONFIRMATION_V1.md": "fd824745054b97585460508ce823b8a274f64af2734c422c61535055bf3daaeb",
+    "scripts/audit_block3_method_holdout.py": "b87868eeb2c334f4656c1cde77556f5703d3e34526fe82578d617fd38a0e0a0c",
+    "scripts/block3_object_clean_compat.py": "fb941772e961383deed5cde4de3bb42c55d764c14b53241f7c28b3100595d2e3",
+    "scripts/check_block3_freeze.py": "58a1cf39f7e5635af41d1b25b2c43a1794aebea66af52aac33fffdb0ff644e6a",
+    "protocols/block3_confirmation_v1/method_lock.json": "2ce9bf87c3129cea69ffbe054104406bd7db84130cae090b2b49e9528aa7ee44",
+    "protocols/block3_confirmation_v1/history_audit.json": "7421c3c56f1153472f792abe92c306eeed9ecc383ae2fb782bb0debad8f47a54",
+    "protocols/block3_confirmation_v1/smoke_plan.json": "49057b1bf7e0a924a442aa3cb9090a0a5af828366578199bb750d9fe0d8af3dc",
+    "protocols/block3_confirmation_v1/object_clean_smoke.json": "f75516d409beacd239698f0aea4d661269eefbf2b7ccd50877ed06962dd50b35"
+  }
+}

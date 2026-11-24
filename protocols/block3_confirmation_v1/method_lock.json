@@ -1,0 +1,46 @@
+{
+  "method": "block3_full_traj_dead075",
+  "method_commit": "8576589d8c1baaf3f48820125428d0f084c646fb",
+  "artifact_source": "9e2ef5ec51b51d4c8129cca1a14d47d206ffca07b1ec771b0dfa99e344b7828c",
+  "checkpoint": "f933ab03c1a4664f7a11690645cdd5fa81788a5b98db81913024f7a23326dfe6",
+  "libero_plus": "4976dc30028e805ff8094b55501d532c48fec182",
+  "server_wrapper_sha256": "d3d3ddfa861fbdece477004532155be93250f9785e6e580ab9618a9daf8d7c27",
+  "server_evaluate_libero_sha256": "8ec144c71cfcd3c0cab9d1b505d432062424487970575a4ff83c2bd0613d066a",
+  "block": 3,
+  "alpha": 0.75,
+  "tau_quantile": 0.95,
+  "ema": false,
+  "views": [
+    "agentview",
+    "eye_in_hand"
+  ],
+  "H": 12,
+  "E": 12,
+  "max_steps": 220,
+  "source_chunks": {
+    "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate": 7,
+    "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate": 8,
+    "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate": 11,
+    "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate": 10,
+    "pick_up_the_black_bowl_next_to_the_plate_and_place_it_on_the_plate": 9,
+    "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate": 10,
+    "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate": 18,
+    "pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate": 9,
+    "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate": 9,
+    "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate": 10
+  },
+  "refs": {
+    "transfer_spatial10.npz": "8cffb42f96d0275fe7277631825ec0f96c6471acb87a2692125e80088dc15bd9",
+    "spatial_loto.npz": "f5aa659cd4b4fe7e02a512bb1f884ebf19a6711c87f3c62831ddca004b11b218"
+  },
+  "files": {
+    "dacsc/single_block_probe.py": "7b1aacc076e755f31f3b91535fb3446e2e31b26e97a54905561ecbcde84a32d4",
+    "dacsc/static_visual_v2.py": "cfd502ea2804c8c1440e564850acb12d8bf3bfba3eafb66442af33997c16960e",
+    "scripts/target_only_action_validation.py": "98c5874f5926d890a15184576dff77eb2f459ff64184006fbb158ee06dee9d96",
+    "scripts/egl_shallow_block3_closed_loop.py": "48701c73823e67c90764a8e1aa371a84f314438138046d92b7ccfb9a3c9d6721",
+    "scripts/egl_block3_full_traj.py": "305b67777e57d1e4b2bf582aff22e4ed0c2b2d00d9f05e180486a2918b89fb9c",
+    "scripts/report_egl_full_traj.py": "0712d64d22646196f3f2fed2002250dbe7ff850a84fbf25e7dcfe06a223b46bd",
+    "scripts/freeze_block3_confirmation.py": "7b2cdcc275ce92364ebb4d9d2f73138e1dfad00ff4fe770a4d89cc8c53e180b9",
+    "docs/data/static_visual_v2_suite/final/dev_manifest.json": "d3e0d8c642cd215c879d2f0174663ff5ec585cd5c6d6b531a213c26e9fb982c0"
+  }
+}

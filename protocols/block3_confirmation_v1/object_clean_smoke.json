@@ -1,0 +1,420 @@
+{
+  "status": "PASS_COMPATIBILITY_ONLY",
+  "wins": 20,
+  "n": 20,
+  "by_task": {
+    "pick_up_the_alphabet_soup_and_place_it_in_the_basket": 2,
+    "pick_up_the_bbq_sauce_and_place_it_in_the_basket": 2,
+    "pick_up_the_butter_and_place_it_in_the_basket": 2,
+    "pick_up_the_chocolate_pudding_and_place_it_in_the_basket": 2,
+    "pick_up_the_cream_cheese_and_place_it_in_the_basket": 2,
+    "pick_up_the_ketchup_and_place_it_in_the_basket": 2,
+    "pick_up_the_milk_and_place_it_in_the_basket": 2,
+    "pick_up_the_orange_juice_and_place_it_in_the_basket": 2,
+    "pick_up_the_salad_dressing_and_place_it_in_the_basket": 2,
+    "pick_up_the_tomato_sauce_and_place_it_in_the_basket": 2
+  },
+  "scoring_authorized": false,
+  "rows": [
+    {
+      "suite": "libero_object",
+      "role": "compatibility_only_exclude_from_scoring",
+      "task": "pick_up_the_alphabet_soup_and_place_it_in_the_basket",
+      "init_index": 8,
+      "raw_init_hash": "1f3966b3fb0a30d3dbdd920597c78f71244746bcc9e54eff32230ae112a8ce92",
+      "settled_state_sha256": "59185d0510524493323b67aa350e4f8e19333898891c3c1c9b0e1101c9616a96",
+      "pixels": [
+        "07f6cbf40f2b970cc0a3228060c096f0be3c1e9226cda7df85b30dc033f3c6dc",
+        "dc9f36534e889f25aa10fcd8edd6a6027c77da52a7a236d442abc032ec4ecc6b"
+      ],
+      "language": "pick up the alphabet soup and place it in the basket",
+      "bddl_sha256": "df088984da13131f8332ee0f13a7896c6a97afd02ee5007a42e8fc5e0893571e",
+      "init_asset_sha256": "b9023e5546b239cacb2aaa3c76df3b73c3de6f97500fea5e27a0db9827002a19",
+      "environment_seed": 2559127248,
+      "policy_seed": 2074143247,
+      "actions_sha256": "d8158a5ff2384cad02e6c81cc81963529c91b8ce2267b48c187ecca9ada47ed8",
+      "steps": 143,
+      "success": true
+    },
+    {
+      "suite": "libero_object",
+      "role": "compatibility_only_exclude_from_scoring",
+      "task": "pick_up_the_alphabet_soup_and_place_it_in_the_basket",
+      "init_index": 9,
+      "raw_init_hash": "5bf361ee3742d0efd0a80045473f3aabe427bde8e211b99994a2b9cc568f1f42",
+      "settled_state_sha256": "14995378e9d786e4775369fe27b4cbb18c6e09e23321cfed2ee7476f927ca7de",
+      "pixels": [
+        "fe1c0a587d0f0cdf29174431aee34a9ddc1d78166c9845452a710d2a4786f779",
+        "cbecd4b2f3e34cb73262e0a8dd3fa75b7c04a90f8c4c682d5129fbfbd8544b9a"
+      ],
+      "language": "pick up the alphabet soup and place it in the basket",
+      "bddl_sha256": "df088984da13131f8332ee0f13a7896c6a97afd02ee5007a42e8fc5e0893571e",
+      "init_asset_sha256": "b9023e5546b239cacb2aaa3c76df3b73c3de6f97500fea5e27a0db9827002a19",
+      "environment_seed": 3233879125,
+      "policy_seed": 1059563446,
+      "actions_sha256": "7d0bd0b0a32e0b5d50ca4a285a92ca24da458ab2f62ce378dcb0b6baaad7673f",
+      "steps": 139,
+      "success": true
+    },
+    {
+      "suite": "libero_object",
+      "role": "compatibility_only_exclude_from_scoring",
+      "task": "pick_up_the_bbq_sauce_and_place_it_in_the_basket",
+      "init_index": 8,
+      "raw_init_hash": "f88aa160f952c7946ef7485b3737e1fded13be0d1023ebb9578b34d1a33d8497",
+      "settled_state_sha256": "f3e1107375efcb4e42c1b3f605872bf43f131e0769a353f9321ffe38f3465f03",
+      "pixels": [
+        "abf61251e53478e38942ffaf284a06213459347691c30a2a6eb71c53c6e51250",
+        "80137e2c2c2eaa31e974591c3abff99ab64d303256ff801f75fc3245f52adf90"
+      ],
+      "language": "pick up the bbq sauce and place it in the basket",
+      "bddl_sha256": "8a7e37b76fce5621e649e260dbcfcec7ce2f9a055ca09a4f1ebaf5ca74a739c2",
+      "init_asset_sha256": "c524077b0c23006f28fc06760a5b5ab37eee67287b5329e84a34b0a8bd599b4a",
+      "environment_seed": 2499839876,
+      "policy_seed": 1172756225,
+      "actions_sha256": "38d99be63ba6a82f1902119704f9b1923700039c674a3e9ea2126f10c9546fe9",
+      "steps": 107,
+      "success": true
+    },
+    {
+      "suite": "libero_object",
+      "role": "compatibility_only_exclude_from_scoring",
+      "task": "pick_up_the_bbq_sauce_and_place_it_in_the_basket",
+      "init_index": 9,
+      "raw_init_hash": "b050480f7a807ba3f795ff0ddbcb8f13d3eb0bddc84780da809a491266a55bd5",
+      "settled_state_sha256": "4a638d6d44260f3598f55faea99b5b2184b15e6af65ce641a8047c9b643e061f",
+      "pixels": [
+        "d7fca6b0f233dd4134858fedfdcaf71eabdcda92a1022ceb89e7e56d01b27f2f",
+        "f53805d5d72e85a7f4b2d5e57f6ed0be10b9082465e41171fd84fe8235cf157e"
+      ],
+      "language": "pick up the bbq sauce and place it in the basket",
+      "bddl_sha256": "8a7e37b76fce5621e649e260dbcfcec7ce2f9a055ca09a4f1ebaf5ca74a739c2",
+      "init_asset_sha256": "c524077b0c23006f28fc06760a5b5ab37eee67287b5329e84a34b0a8bd599b4a",
+      "environment_seed": 3684487111,
+      "policy_seed": 2593058365,
+      "actions_sha256": "2da40f1ef640b9129a4a365f9df587a71f68b2b433fe6d095bfd4eb36fb3ec08",
+      "steps": 132,
+      "success": true
+    },
+    {
+      "suite": "libero_object",
+      "role": "compatibility_only_exclude_from_scoring",
+      "task": "pick_up_the_butter_and_place_it_in_the_basket",
+      "init_index": 8,
+      "raw_init_hash": "5aa8fcbdb5d32250bea18bbc4b45b719f0baac7c8da7345646fef104dedea446",
+      "settled_state_sha256": "5dca7ab1de5af8e53b7f9fd28b487850cb0cbd24e90f265fc191faf278570d62",
+      "pixels": [
+        "cc5f5a38b3653ce6a05a7f4ac66615c09e77bc47e4f0c10a480a5541420851e6",
+        "ae0ea3610b21192e0f879970673e3c53a971f019ce363025601a135ab288cc40"
+      ],
+      "language": "pick up the butter and place it in the basket",
+      "bddl_sha256": "5d8053b40ff33246fdbcc38548db84032c6bb647b4b88b6646d9cf6b73a5006c",
+      "init_asset_sha256": "f0925a8653c5902c5a4d78a2053365382ad7d05be7f059abe19c2004ffc5dc59",
+      "environment_seed": 3933029535,
+      "policy_seed": 3569511465,
+      "actions_sha256": "e29c854c6b61e4ee6d8e2209b815587a18ce30e5167f37bd51ee1fb7e2ea765c",
+      "steps": 146,
+      "success": true
+    },
+    {
+      "suite": "libero_object",
+      "role": "compatibility_only_exclude_from_scoring",
+      "task": "pick_up_the_butter_and_place_it_in_the_basket",
+      "init_index": 9,
+      "raw_init_hash": "efe58afdf2460a5697a00f4cde0a5baeafb6beb9e7694ecddea87e8bcd1085e3",
+      "settled_state_sha256": "0cf53f0a5c36aa86b5deea6b60d828e12743191e33a554e5dcc53b1eee2bd4dd",
+      "pixels": [
+        "863f33f9fe93b962ad05598fafea238001668db32107f648c1787058e1579e77",
+        "a4b86c27df5343a6d307f71daed725ad7ef214bf6b415244f973a5322c929174"
+      ],
+      "language": "pick up the butter and place it in the basket",
+      "bddl_sha256": "5d8053b40ff33246fdbcc38548db84032c6bb647b4b88b6646d9cf6b73a5006c",
+      "init_asset_sha256": "f0925a8653c5902c5a4d78a2053365382ad7d05be7f059abe19c2004ffc5dc59",
+      "environment_seed": 2787713066,
+      "policy_seed": 3835702486,
+      "actions_sha256": "082eab87004a631f3d3836b2ec5d2f46103a2b81612a7480c93ab64645952fd8",
+      "steps": 148,
+      "success": true
+    },
+    {
+      "suite": "libero_object",
+      "role": "compatibility_only_exclude_from_scoring",
+      "task": "pick_up_the_chocolate_pudding_and_place_it_in_the_basket",
+      "init_index": 8,
+      "raw_init_hash": "7a213d3bd478e018ae14feb416388efedac35ba228d76a6793f7e22db5de9d3d",
+      "settled_state_sha256": "2f4226adac75c0caf72059f3a2f606268dea81e6d57b89d08cc5d384f81b8e71",
+      "pixels": [
+        "5efb547f4171014766dc85213ad68ec60b34eeb7ab532dabd3cfc31c17a79c62",
+        "c1411ece73a8068baaa9cca6098fbd7169b3a9ca95979b340bcec874f3c7bd2d"
+      ],
+      "language": "pick up the chocolate pudding and place it in the basket",
+      "bddl_sha256": "674ceabc400b7b16d46e8eaf678709d4a633235c7e0a80233775044fe38b19b0",
+      "init_asset_sha256": "1124189363e76609da182dd92217cd02c41be58e88c42e3949d23ba160da75a5",
+      "environment_seed": 3817492659,
+      "policy_seed": 2787286284,
+      "actions_sha256": "28697ca68a5eb4cd44518d621f014022f7d2bc4df54edf6173be629a7fb6bfe7",
+      "steps": 148,
+      "success": true
+    },
+    {
+      "suite": "libero_object",
+      "role": "compatibility_only_exclude_from_scoring",
+      "task": "pick_up_the_chocolate_pudding_and_place_it_in_the_basket",
+      "init_index": 9,
+      "raw_init_hash": "9f156bb883d2cde42899de8d8a1cee1ef2b02a55b4a6a656269b2e7658f7d569",
+      "settled_state_sha256": "0cd1cf415e067811757a24b51b09b0f57d571dbe7526ebb8b853f3d65d8476d8",
+      "pixels": [
+        "094a70b6b0ddaf845fcf3870e53f48d99de6d04930950089ff7d94cb070cb7ea",
+        "57247a77172e3700bc11947cc6c8f9ab483f61e09aec46dd3131e9bd03344a14"
+      ],
+      "language": "pick up the chocolate pudding and place it in the basket",
+      "bddl_sha256": "674ceabc400b7b16d46e8eaf678709d4a633235c7e0a80233775044fe38b19b0",
+      "init_asset_sha256": "1124189363e76609da182dd92217cd02c41be58e88c42e3949d23ba160da75a5",
+      "environment_seed": 1029113423,
+      "policy_seed": 3961241285,
+      "actions_sha256": "d724fc4d38a8561953cddb91449e98c7e32091e18224e9475642068cd7219929",
+      "steps": 139,
+      "success": true
+    },
+    {
+      "suite": "libero_object",
+      "role": "compatibility_only_exclude_from_scoring",
+      "task": "pick_up_the_cream_cheese_and_place_it_in_the_basket",
+      "init_index": 8,
+      "raw_init_hash": "39f414831711c9ec6026816394c13f960e20fb9ecc9947bf65e829a075058197",
+      "settled_state_sha256": "7483a44b13c840f86f37dcdd4b789308a7645832bfadb3f4c020462899534744",
+      "pixels": [
+        "969bb58417f908d16d0c12171a8a0d7e3779cdb71b6a4619f129a08de612304b",
+        "4b4458a645c530fbf5f8ef19d857b9990545abe27e98115b6c5d6d629d8ae616"
+      ],
+      "language": "pick up the cream cheese and place it in the basket",
+      "bddl_sha256": "7019f37ee158d67a21338a6df0c441dd8f84979b946b5e20bb49463ef0508ea2",
+      "init_asset_sha256": "5ea5483bca8abd80a8f1935e2c60570d60eaaf6a985c283d62805b46fb76aa94",
+      "environment_seed": 2329236700,
+      "policy_seed": 1312261679,
+      "actions_sha256": "065e2062c07bd25fc5b491fcc9e199372e9c01ed3be13bd5f5525e12ffc4595f",
+      "steps": 128,
+      "success": true
+    },
+    {
+      "suite": "libero_object",
+      "role": "compatibility_only_exclude_from_scoring",
+      "task": "pick_up_the_cream_cheese_and_place_it_in_the_basket",
+      "init_index": 9,
+      "raw_init_hash": "0eb52c2d32409ce5f4089cbd27369226c6a457c8c1c1f2ac97a14998faa9472a",
+      "settled_state_sha256": "dde1f3036b630b83d66863c857776c533bf4798e8d1cf9c80304a74e31817aef",
+      "pixels": [
+        "e0ef64513f019a047aaf6d1bb6fa625163e0bd43304d65e976e34b163e3dacfc",
+        "f42d2f3e77c279b464bb3c6bd521728d1db9f48a6fe3df74c7333e9a6b938bab"
+      ],
+      "language": "pick up the cream cheese and place it in the basket",
+      "bddl_sha256": "7019f37ee158d67a21338a6df0c441dd8f84979b946b5e20bb49463ef0508ea2",
+      "init_asset_sha256": "5ea5483bca8abd80a8f1935e2c60570d60eaaf6a985c283d62805b46fb76aa94",
+      "environment_seed": 4234746735,
+      "policy_seed": 438795883,
+      "actions_sha256": "4744c03d2e8b8197f309cdad0c5b0859dc7bf44898846f208f76039a8a631560",
+      "steps": 121,
+      "success": true
+    },
+    {
+      "suite": "libero_object",
+      "role": "compatibility_only_exclude_from_scoring",
+      "task": "pick_up_the_ketchup_and_place_it_in_the_basket",
+      "init_index": 8,
+      "raw_init_hash": "56db011c6e55dff6068cba4e8adbc231f6e0a7ac9c68dff1de48823693f53994",
+      "settled_state_sha256": "2b68da1336db7ace9a9b3bef6963383cf7c70c41d0b558c4c3423ea4acc9f7f7",
+      "pixels": [
+        "feaced2448825c2232ed1f3d5202172e9740aeb212dcc76a9ad1f1ea7a9fb249",
+        "3ee94f6b956c3600e11b4056b1801b3cad80d7dbc2cf2cb36bf5cec9b255927b"
+      ],
+      "language": "pick up the ketchup and place it in the basket",
+      "bddl_sha256": "4a4e545483a3fe30cf0ef3dc05bfe5e6ad5e37c94b4376dfa73fe1b60e75b319",
+      "init_asset_sha256": "b987f7b11e8f9b47353cd7882e1da38ecdf6ec9715ad8a84346583ea71049fd3",
+      "environment_seed": 3660423618,
+      "policy_seed": 1257866622,
+      "actions_sha256": "bafaab366e680e558fc9f7feb9a62dfb84f6b11d666a6ce6026882d71b5b9345",
+      "steps": 162,
+      "success": true
+    },
+    {
+      "suite": "libero_object",
+      "role": "compatibility_only_exclude_from_scoring",
+      "task": "pick_up_the_ketchup_and_place_it_in_the_basket",
+      "init_index": 9,
+      "raw_init_hash": "07d95273c595ba49d35743c190613152ad37675e6c89256abe7a87d03fa2c906",
+      "settled_state_sha256": "8b27984f150d11b42b32a532c79729f35e2cf4867fa412afdced7c5c8e04fc2d",
+      "pixels": [
+        "a99480df58299334bb588a1312c7880ad783e96504ed07c095f764a8ed54fd3c",
+        "a5e111134186b72d8522dca22879867d2b8f7c09c755d581f3bd379dd33134b8"
+      ],
+      "language": "pick up the ketchup and place it in the basket",
+      "bddl_sha256": "4a4e545483a3fe30cf0ef3dc05bfe5e6ad5e37c94b4376dfa73fe1b60e75b319",
+      "init_asset_sha256": "b987f7b11e8f9b47353cd7882e1da38ecdf6ec9715ad8a84346583ea71049fd3",
+      "environment_seed": 2533538570,
+      "policy_seed": 644990100,
+      "actions_sha256": "6c2d5cc30dfb48bd3b4cf1901f3e602b37ee79cf1e97543c3f30486b2d2bbd0a",
+      "steps": 142,
+      "success": true
+    },
+    {
+      "suite": "libero_object",
+      "role": "compatibility_only_exclude_from_scoring",
+      "task": "pick_up_the_milk_and_place_it_in_the_basket",
+      "init_index": 8,
+      "raw_init_hash": "33ccbaf1d5e504d1dc1f7f070d4c33bba74c6bef97db6b200adc39a6966ed060",
+      "settled_state_sha256": "78f030307785a108002ee6c9c0db9b7306c56b8ff469b15269dd34c873e6160e",
+      "pixels": [
+        "c7d0527deb4b266542684f6196f159ef388e440c9601ab553ed085b0e36fbd37",
+        "cece77e72b60eeea631dd7a64df2d95bdbc0de9250ba2a1e6daed39af22bc095"
+      ],
+      "language": "pick up the milk and place it in the basket",
+      "bddl_sha256": "9910aabf6717e8ba3e24a3f8500d9bce9ee075346ea6961e8fd766f1257d2996",
+      "init_asset_sha256": "4a86269faf4c98baff4c1428997ac828d00c56922a9a131be94e19b6027e1db2",
+      "environment_seed": 4006819323,
+      "policy_seed": 3523383509,
+      "actions_sha256": "478eceb76fa546de1d610d86e0c982d6704c0deb06b8a17df460762e4fbc894d",
+      "steps": 127,
+      "success": true
+    },
+    {
+      "suite": "libero_object",
+      "role": "compatibility_only_exclude_from_scoring",
+      "task": "pick_up_the_milk_and_place_it_in_the_basket",
+      "init_index": 9,
+      "raw_init_hash": "bfd602e7b696acbad869488d438ffa0b3e88efd11d6ae76a362eaefb37303b74",
+      "settled_state_sha256": "299654d56cd7e6b9be0089509a02f64a3fb8db8e2ec98b8be49b9fd9eb36751b",
+      "pixels": [
+        "459e84133e6576b9ed0bcf5206285d3c0e1205b768c961b33e57d7cd265401cb",
+        "1a10763edc4741cbcecfdda2d54e05ca1f65a906160bc1c7f68259667b7fd4bb"
+      ],
+      "language": "pick up the milk and place it in the basket",
+      "bddl_sha256": "9910aabf6717e8ba3e24a3f8500d9bce9ee075346ea6961e8fd766f1257d2996",
+      "init_asset_sha256": "4a86269faf4c98baff4c1428997ac828d00c56922a9a131be94e19b6027e1db2",
+      "environment_seed": 2911878243,
+      "policy_seed": 957459235,
+      "actions_sha256": "c3e1555f15068c781679ed4e82dcc4b36e28219f9147090d3c694f0d61c5791f",
+      "steps": 126,
+      "success": true
+    },
+    {
+      "suite": "libero_object",
+      "role": "compatibility_only_exclude_from_scoring",
+      "task": "pick_up_the_orange_juice_and_place_it_in_the_basket",
+      "init_index": 8,
+      "raw_init_hash": "84dc77fd3d7de0843fd70095bf1ef8c1abf43384a598d441128ae2259b65b909",
+      "settled_state_sha256": "7d01891a8a7a3885ffb1cdb58c3c4e8593f25ebd9b9a87e564fc16c3dfb1a0aa",
+      "pixels": [
+        "2d11e25db8e914da99fdd583c80681388aea63325c401918aaf632c2cfb753e2",
+        "325eb344217679b1c36eaa391fb1107e1c165a1d8e9ed39c04b5d0bf62e92c24"
+      ],
+      "language": "pick up the orange juice and place it in the basket",
+      "bddl_sha256": "6298533e7bcfb83e40779a77fda39216e8cd53f22bf1af6388585dad0abb0b50",
+      "init_asset_sha256": "35b19ffab1fe08c6457ebd732c37d04b9bc0d22b7ce7de015986092ddddea151",
+      "environment_seed": 615898127,
+      "policy_seed": 3037952058,
+      "actions_sha256": "2ea7f4c1e2d533e987da7c0c21d4e9ed231e643995b26a1538e6fb535ad1ccb9",
+      "steps": 116,
+      "success": true
+    },
+    {
+      "suite": "libero_object",
+      "role": "compatibility_only_exclude_from_scoring",
+      "task": "pick_up_the_orange_juice_and_place_it_in_the_basket",
+      "init_index": 9,
+      "raw_init_hash": "550653c02a1b19d5aba7e44ec44d3fee7bc2d88cdc1f70ecbcb972ff58a9e874",
+      "settled_state_sha256": "e5976611d105fcdf06ca691454083285b8fc3f855b73ff9b933d7f9118f06cac",
+      "pixels": [
+        "aaff1c6258ffe4f9cc1b790c859f016f3533a45e82198cd0702884d430a63a76",
+        "3deeb57f642a0f584b1cf0e95c155416b9ab5ed2e367b1679ec9c796c89bcda8"
+      ],
+      "language": "pick up the orange juice and place it in the basket",
+      "bddl_sha256": "6298533e7bcfb83e40779a77fda39216e8cd53f22bf1af6388585dad0abb0b50",
+      "init_asset_sha256": "35b19ffab1fe08c6457ebd732c37d04b9bc0d22b7ce7de015986092ddddea151",
+      "environment_seed": 197351172,
+      "policy_seed": 3620138637,
+      "actions_sha256": "7dcaeb851c2fa7e62d376d8de595b7bbdcefd11dffee3db2ebddb0c718119ff4",
+      "steps": 118,
+      "success": true
+    },
+    {
+      "suite": "libero_object",
+      "role": "compatibility_only_exclude_from_scoring",
+      "task": "pick_up_the_salad_dressing_and_place_it_in_the_basket",
+      "init_index": 8,
+      "raw_init_hash": "3e6144244a037eff404175d3d5f036937161bd57998325f4b5e964738abdeca6",
+      "settled_state_sha256": "962612f5428a9db7f23885deaa8f6f2ca2b4d8dd0d032e40d171b3322ddec874",
+      "pixels": [
+        "0f17fb486e98fc150da31ec7d513484cec5a8bb278cd1e41dd1c9648b5762b01",
+        "351bf14b9850f95d605824559236738aa75f963d7a39939700a929aa9646b347"
+      ],
+      "language": "pick up the salad dressing and place it in the basket",
+      "bddl_sha256": "024978e9e8f43a49b49d0965f4f426d364ce056307f0fcf5733dc4682fac437a",
+      "init_asset_sha256": "6f6793ee550419a4a79dcb6ac83a9ba7bbf5e76e92fef26b82b6a7a10f72b04a",
+      "environment_seed": 207057676,
+      "policy_seed": 310763005,
+      "actions_sha256": "3ba5fbab40a882b465ba9088edfc5602917a38876d184a8c1f4c8295684c1652",
+      "steps": 114,
+      "success": true
+    },
+    {
+      "suite": "libero_object",
+      "role": "compatibility_only_exclude_from_scoring",
+      "task": "pick_up_the_salad_dressing_and_place_it_in_the_basket",
+      "init_index": 9,
+      "raw_init_hash": "9898ff99beb17337221e114f40bbf92b53afddcfdb8f50b4929691dffd6d693b",
+      "settled_state_sha256": "f71b81b1459fd62dc19ed49b650e4cf35c03477da2b20413f81cf4608625fbf1",
+      "pixels": [
+        "abcd22c052fea9a8bd113fd64c05612e934f9c3ef079bbb23db65762ebdc826d",
+        "9723eab9eb5a153d5902eeb19faf5187773e9eb8752e68fbc4268d6e6db5efad"
+      ],
+      "language": "pick up the salad dressing and place it in the basket",
+      "bddl_sha256": "024978e9e8f43a49b49d0965f4f426d364ce056307f0fcf5733dc4682fac437a",
+      "init_asset_sha256": "6f6793ee550419a4a79dcb6ac83a9ba7bbf5e76e92fef26b82b6a7a10f72b04a",
+      "environment_seed": 2701122595,
+      "policy_seed": 2535619740,
+      "actions_sha256": "31f8cd3e62b786d80afee87de4cfc2b3970fca3352effafc6bf8bbc3b28ae0c4",
+      "steps": 116,
+      "success": true
+    },
+    {
+      "suite": "libero_object",
+      "role": "compatibility_only_exclude_from_scoring",
+      "task": "pick_up_the_tomato_sauce_and_place_it_in_the_basket",
+      "init_index": 8,
+      "raw_init_hash": "6bdc3b66d17f5c3aa77a603b9214e8c061f226c8cde1fd40312acdda3ee6bc9d",
+      "settled_state_sha256": "60c8d4a1980bdf27647880ab0afe2f3b54f0e2d2992529c94abd6f5ef478e501",
+      "pixels": [
+        "a36267edc6356205fc35286c7cb5a551a7f0ab4e08e698cdba807e4a0ecf889c",
+        "e3b806e2fe5841e9aaf413330f054f4db49e6f49220b66fb5a29e363d90795bc"
+      ],
+      "language": "pick up the tomato sauce and place it in the basket",
+      "bddl_sha256": "b1f4bb69d256a05f693838de46182bb0d3de0de68eec350df1b5b1e76f6c136d",
+      "init_asset_sha256": "2326da7ccacd3ebc75d80847f92d2e310b537b8dbbd8a76840a29b13f00f9a65",
+      "environment_seed": 2295787340,
+      "policy_seed": 3199218300,
+      "actions_sha256": "daf3a146e92818fc3b5a85f1095fb8c7d412103b58d6e8ad8d2372b559e47c82",
+      "steps": 115,
+      "success": true
+    },
+    {
+      "suite": "libero_object",
+      "role": "compatibility_only_exclude_from_scoring",
+      "task": "pick_up_the_tomato_sauce_and_place_it_in_the_basket",
+      "init_index": 9,
+      "raw_init_hash": "4c703567cba4dce525d901da73ebb39b74ffcd6ad823b5eed58f9e0f3fd10522",
+      "settled_state_sha256": "3db3fd52b09e3e2127a034f41740c4407b55e62ffa66e3ebd4b692fd86505d4f",
+      "pixels": [
+        "589feacc8e5ae7c6ec634531610c7779408ae7d3402534a581b41ef3042450f0",
+        "cbf8052d15cf04eab01fa547f0ac46233a34a188cb996986e010f8bf71fd2983"
+      ],
+      "language": "pick up the tomato sauce and place it in the basket",
+      "bddl_sha256": "b1f4bb69d256a05f693838de46182bb0d3de0de68eec350df1b5b1e76f6c136d",
+      "init_asset_sha256": "2326da7ccacd3ebc75d80847f92d2e310b537b8dbbd8a76840a29b13f00f9a65",
+      "environment_seed": 2070356826,
+      "policy_seed": 1180783943,
+      "actions_sha256": "c39d27cad651e6e07eafa3e1f39e53701ab50f555563889ee98cf6ae0a31f62e",
+      "steps": 112,
+      "success": true
+    }
+  ]
+}
