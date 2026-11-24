@@ -16,6 +16,19 @@ def boundary_bg_weights(patches: torch.Tensor, grid: int = 16) -> torch.Tensor:
     med=sim.median(dim=1,keepdim=True).values
     return torch.sigmoid((sim-med)/0.10)
 
+
+
+def boundary_bg_weights_multi(patches: torch.Tensor, grid: int = 16) -> torch.Tensor:
+    """Multi-prototype border similarity: max cosine to any border token."""
+    B,N,C=patches.shape
+    if N!=grid*grid: raise ValueError(f'expected {grid*grid} patches, got {N}')
+    x=F.normalize(patches.float(),dim=-1)
+    g=x.view(B,grid,grid,C)
+    border=torch.cat([g[:,0,:,:],g[:,:,0,:],g[:,:,-1,:]],dim=1)  # B,3*grid,C
+    sim=torch.einsum('bnc,bkc->bnk',x,border).max(dim=-1).values
+    med=sim.median(dim=1,keepdim=True).values
+    return torch.sigmoid((sim-med)/0.10)
+
 def _manual_mha(mha, q, k, v, attn_bias=None):
     # q [B,L,H], k/v [B,N,H]; bias [B,1,1,N] or [B,N]
     B,L,H=q.shape; N=k.shape[1]; D=H//mha.num_heads

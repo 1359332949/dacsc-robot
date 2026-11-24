@@ -8,3 +8,9 @@ with torch.no_grad(): a=r(p,l); b=resampler_forward_with_bias(r,p,l)
 print('parity',float((a-b).abs().max()))
 w=boundary_bg_weights(p['agentview']); print('bg stats',float(w.min()),float(w.mean()),float(w.max()),w.shape)
 assert torch.allclose(a,b,atol=1e-5)
+
+def test_multi_prototype_shape():
+    import torch
+    from dacsc.spatial_patch_bias import boundary_bg_weights_multi
+    p=torch.randn(2,256,384); w=boundary_bg_weights_multi(p)
+    assert w.shape==(2,256) and torch.isfinite(w).all()

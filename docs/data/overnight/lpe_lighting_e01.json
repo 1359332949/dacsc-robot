@@ -1,0 +1,279 @@
+{
+  "schema": "local_patch_energy_v2",
+  "means": {
+    "agentview": 47.94847030639649,
+    "eye_in_hand": 50.22341651916504
+  },
+  "rows": [
+    {
+      "case_id": "d09f6ffb1b6e044de0e2a00c",
+      "factor": "lighting",
+      "base_task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 101,
+      "method": "local_patch_energy",
+      "eps": 0.1
+    },
+    {
+      "case_id": "7980e32cca8cc1820b8e9cbf",
+      "factor": "lighting",
+      "base_task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 95,
+      "method": "local_patch_energy",
+      "eps": 0.1
+    },
+    {
+      "case_id": "a861b524a7c5075bb405dcec",
+      "factor": "lighting",
+      "base_task": "pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate",
+      "success": false,
+      "steps": 220,
+      "method": "local_patch_energy",
+      "eps": 0.1
+    },
+    {
+      "case_id": "48c5f5e426f8006a5c08d586",
+      "factor": "lighting",
+      "base_task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 109,
+      "method": "local_patch_energy",
+      "eps": 0.1
+    },
+    {
+      "case_id": "734d3d4af8d6b04b33187f95",
+      "factor": "lighting",
+      "base_task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+      "success": false,
+      "steps": 220,
+      "method": "local_patch_energy",
+      "eps": 0.1
+    },
+    {
+      "case_id": "b21a7534610471bc409b5a97",
+      "factor": "lighting",
+      "base_task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 94,
+      "method": "local_patch_energy",
+      "eps": 0.1
+    },
+    {
+      "case_id": "9483c62e9ccc44ccf351379b",
+      "factor": "lighting",
+      "base_task": "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 124,
+      "method": "local_patch_energy",
+      "eps": 0.1
+    },
+    {
+      "case_id": "260f480dfa38ae5a1cfe6ab4",
+      "factor": "lighting",
+      "base_task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 99,
+      "method": "local_patch_energy",
+      "eps": 0.1
+    },
+    {
+      "case_id": "e3cb3b3fa84a3a4e2bd54c98",
+      "factor": "lighting",
+      "base_task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 88,
+      "method": "local_patch_energy",
+      "eps": 0.1
+    },
+    {
+      "case_id": "83326bf78cf7e67f0fc7696c",
+      "factor": "lighting",
+      "base_task": "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 132,
+      "method": "local_patch_energy",
+      "eps": 0.1
+    },
+    {
+      "case_id": "9b4fc8a339c2979d31daba94",
+      "factor": "lighting",
+      "base_task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 109,
+      "method": "local_patch_energy",
+      "eps": 0.1
+    },
+    {
+      "case_id": "7bb89a9650ff3abfe48cb96a",
+      "factor": "lighting",
+      "base_task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 109,
+      "method": "local_patch_energy",
+      "eps": 0.1
+    },
+    {
+      "case_id": "a7cce4f24d150da551883e11",
+      "factor": "lighting",
+      "base_task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "success": false,
+      "steps": 220,
+      "method": "local_patch_energy",
+      "eps": 0.1
+    },
+    {
+      "case_id": "86ea35158f8967fd47bbe6c8",
+      "factor": "lighting",
+      "base_task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+      "success": false,
+      "steps": 220,
+      "method": "local_patch_energy",
+      "eps": 0.1
+    },
+    {
+      "case_id": "ab9c5902be6e729c218ff1a8",
+      "factor": "lighting",
+      "base_task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 114,
+      "method": "local_patch_energy",
+      "eps": 0.1
+    },
+    {
+      "case_id": "6c5e826a4b500e66715842b0",
+      "factor": "lighting",
+      "base_task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 156,
+      "method": "local_patch_energy",
+      "eps": 0.1
+    },
+    {
+      "case_id": "95cbec413654751b1cde82b0",
+      "factor": "lighting",
+      "base_task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 115,
+      "method": "local_patch_energy",
+      "eps": 0.1
+    },
+    {
+      "case_id": "c03e1a782928638880efb08d",
+      "factor": "lighting",
+      "base_task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 84,
+      "method": "local_patch_energy",
+      "eps": 0.1
+    },
+    {
+      "case_id": "c2b40c2441dbfc7d229e74dc",
+      "factor": "lighting",
+      "base_task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 114,
+      "method": "local_patch_energy",
+      "eps": 0.1
+    },
+    {
+      "case_id": "ff1eb7e58555351a29bc38ef",
+      "factor": "lighting",
+      "base_task": "pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 110,
+      "method": "local_patch_energy",
+      "eps": 0.1
+    },
+    {
+      "case_id": "6b142b87741e2537ff1f11b4",
+      "factor": "lighting",
+      "base_task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 84,
+      "method": "local_patch_energy",
+      "eps": 0.1
+    },
+    {
+      "case_id": "32c1ebe6e4d6cb178bfb0a0b",
+      "factor": "lighting",
+      "base_task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 156,
+      "method": "local_patch_energy",
+      "eps": 0.1
+    },
+    {
+      "case_id": "eeefdf07e36e0b4cbea8ec39",
+      "factor": "lighting",
+      "base_task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 147,
+      "method": "local_patch_energy",
+      "eps": 0.1
+    },
+    {
+      "case_id": "44b86cc69b604627bf02d513",
+      "factor": "lighting",
+      "base_task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 93,
+      "method": "local_patch_energy",
+      "eps": 0.1
+    },
+    {
+      "case_id": "36f206329f1c1c5275cdfc66",
+      "factor": "lighting",
+      "base_task": "pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate",
+      "success": false,
+      "steps": 220,
+      "method": "local_patch_energy",
+      "eps": 0.1
+    },
+    {
+      "case_id": "c6224ce1f06d19c2455895e9",
+      "factor": "lighting",
+      "base_task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 104,
+      "method": "local_patch_energy",
+      "eps": 0.1
+    },
+    {
+      "case_id": "a6a44da460e4d03dcdc9c351",
+      "factor": "lighting",
+      "base_task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 95,
+      "method": "local_patch_energy",
+      "eps": 0.1
+    },
+    {
+      "case_id": "b2590175d0f2a15c297828a5",
+      "factor": "lighting",
+      "base_task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 94,
+      "method": "local_patch_energy",
+      "eps": 0.1
+    },
+    {
+      "case_id": "58374a4e57b5316b75daa5a8",
+      "factor": "lighting",
+      "base_task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 122,
+      "method": "local_patch_energy",
+      "eps": 0.1
+    },
+    {
+      "case_id": "d620bf5c2a9ff266046162b6",
+      "factor": "lighting",
+      "base_task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "success": true,
+      "steps": 85,
+      "method": "local_patch_energy",
+      "eps": 0.1
+    }
+  ]
+}
