@@ -89,3 +89,23 @@ the 30-minute scheduled task will keep trying.
 3. Channel: calibration complete; closed-loop unconfirmed; do not cite.
 4. No Blind, no target-test, no Adapter, no z0=0 candidate.
 5. These are single-seed development results, not statistical significance.
+
+## Addendum: multi-prototype + ReLU spatial (2026-11-24 11:47)
+
+Both beta4 and beta6 passed Clean 10/10. Shift was run with 4 shards each,
+merged and deduplicated: 90 unique cases per beta, 30/factor, no duplicates,
+all scripts asserted initial agentview SHA.
+
+| Multi/ReLU | Sensor | Background | Lighting | Total | Net |
+|---|---:|---:|---:|---:|---:|
+| Frozen | 17 | 17 | 24 | 58 | — |
+| beta4 | 16 | 20 | 22 | 58 | 0 |
+| beta6 | 18 | 14 | 21 | 53 | -5 |
+
+Paired beta4: Sensor -1, Background +3, Lighting -2.
+Paired beta6: Sensor +1, Background -3, Lighting -3.
+
+Conclusion: multi-prototype max-cosine + ReLU does NOT improve over the
+single-prototype sigmoid beta4 (+5). It trades Background gain for Sensor and
+Lighting losses. The original single-prototype beta4 remains the best result;
+this negative ablation is retained and must be disclosed.
