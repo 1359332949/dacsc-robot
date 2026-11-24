@@ -1,0 +1,184 @@
+{
+  "status": "partial_remote_unavailable",
+  "as_of": "2026-11-24T22:00:14+08:00",
+  "last_verified_groups": {
+    "0": 130,
+    "1": 43,
+    "2": 26
+  },
+  "required_groups": 390,
+  "seed0_clean_source_check": {
+    "equal_task_mean_old": [
+      43.71527777777777,
+      62.70399305555556
+    ],
+    "equal_task_mean_full": [
+      5.78125,
+      7.439236111111112
+    ],
+    "views": [
+      "agentview",
+      "eye_in_hand"
+    ],
+    "tau_new_old_median": [
+      1.82991361618042,
+      4.547849178314209
+    ],
+    "cases": [
+      {
+        "task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+        "id": "clean_25eefa3907243c5956889cfa",
+        "chunks": 11,
+        "available_5_7": 3,
+        "old_pct": [
+          23.090277777777775,
+          69.44444444444446
+        ],
+        "full_pct": [
+          13.107638888888888,
+          25.260416666666668
+        ]
+      },
+      {
+        "task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+        "id": "clean_3adf13803680f268479750e9",
+        "chunks": 9,
+        "available_5_7": 3,
+        "old_pct": [
+          34.982638888888886,
+          52.864583333333336
+        ],
+        "full_pct": [
+          5.815972222222221,
+          1.215277777777778
+        ]
+      },
+      {
+        "task": "pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate",
+        "id": "clean_461aa99ff7ae2e71a74745fe",
+        "chunks": 9,
+        "available_5_7": 3,
+        "old_pct": [
+          37.065972222222214,
+          53.99305555555555
+        ],
+        "full_pct": [
+          1.9097222222222223,
+          1.388888888888889
+        ]
+      },
+      {
+        "task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+        "id": "clean_716b94a92dcadeb19bb4aef6",
+        "chunks": 8,
+        "available_5_7": 3,
+        "old_pct": [
+          53.21180555555556,
+          64.32291666666666
+        ],
+        "full_pct": [
+          5.208333333333334,
+          3.298611111111111
+        ]
+      },
+      {
+        "task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+        "id": "clean_74da4077f0571b787e7da5a7",
+        "chunks": 18,
+        "available_5_7": 3,
+        "old_pct": [
+          67.53472222222221,
+          62.06597222222222
+        ],
+        "full_pct": [
+          12.586805555555555,
+          1.909722222222222
+        ]
+      },
+      {
+        "task": "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate",
+        "id": "clean_7b3a2104f946feffbf23f05a",
+        "chunks": 10,
+        "available_5_7": 3,
+        "old_pct": [
+          21.09375,
+          48.784722222222214
+        ],
+        "full_pct": [
+          7.465277777777778,
+          1.0416666666666665
+        ]
+      },
+      {
+        "task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+        "id": "clean_85c3af5bb68bc8ec5351f439",
+        "chunks": 10,
+        "available_5_7": 3,
+        "old_pct": [
+          44.53125,
+          73.69791666666666
+        ],
+        "full_pct": [
+          3.125,
+          8.940972222222221
+        ]
+      },
+      {
+        "task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+        "id": "clean_9570527652e7369e8e55140d",
+        "chunks": 10,
+        "available_5_7": 3,
+        "old_pct": [
+          46.527777777777786,
+          60.937500000000014
+        ],
+        "full_pct": [
+          1.909722222222222,
+          1.736111111111111
+        ]
+      },
+      {
+        "task": "pick_up_the_black_bowl_next_to_the_plate_and_place_it_on_the_plate",
+        "id": "clean_9bd7f4f1a5c801ca5cf925b0",
+        "chunks": 9,
+        "available_5_7": 3,
+        "old_pct": [
+          48.95833333333333,
+          77.5173611111111
+        ],
+        "full_pct": [
+          2.2569444444444446,
+          27.51736111111111
+        ]
+      },
+      {
+        "task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+        "id": "clean_9f0d3717f1f17095d5da34e7",
+        "chunks": 7,
+        "available_5_7": 2,
+        "old_pct": [
+          60.15625,
+          63.411458333333336
+        ],
+        "full_pct": [
+          4.427083333333334,
+          2.083333333333333
+        ]
+      }
+    ]
+  },
+  "bilateral_glass_only": {
+    "order": [
+      "frozen",
+      "dead075",
+      "full_traj_dead075"
+    ],
+    "n": 39,
+    "success": [
+      4,
+      9,
+      14
+    ]
+  },
+  "final_grid": null
+}
