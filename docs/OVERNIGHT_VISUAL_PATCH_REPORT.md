@@ -66,11 +66,12 @@ No Dev Shift images or success labels were read. Output:
 docs/data/v2_channel_sensitivity_source.json. Top R channels include
 130, 164, 134, 327, 382, 254, 274, 242, 316, 138.
 
-Channel closed-loop Clean runs failed with `CUDA error: device-side assert
-triggered` because the channel index tensor was CPU while patch tokens were CUDA.
-The script was fixed (index to device, clamp) but a clean rerun could not be
-confirmed before the SSH/TUN link closed at roughly 05:00-08:00. Therefore:
-**no channel suppression success claim, positive or negative.**
+Channel bug found and fixed twice: index tensor moved to CUDA, then channel
+indexing corrected to the last dimension (`patches[:,:,idx]`, not token dim).
+Clean gates now: p10/g0.3 10/10, p10/g0.5 9/10, p20/g0.3 10/10, p20/g0.5
+10/10. Closed-loop Shift runs for p10/g0.3, p20/g0.3, p20/g0.5 were launched
+but had only 3-13/90 episodes when this report was written; **no channel shift
+result is claimed yet.**
 
 ## Server/network blocker
 

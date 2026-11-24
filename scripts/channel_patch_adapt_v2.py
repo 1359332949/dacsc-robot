@@ -22,7 +22,7 @@ def main():
   except Exception: pass
  sens=json.load(open(args.sensitivity)); rank=sens['top20pct'] if args.pct<=20 else list(np.argsort(-np.asarray(sens['R']))); chans=rank[:max(1,int(384*args.pct/100))]
  factors=set(args.factors.split(',')); cases=[c for c in man['cases'] if c['factor'] in factors][args.shard_id::args.num_shards]
- policy=load_policy(args.checkpoint,device='cuda:0'); policy.eval(); from libero.libero.benchmark import grab_language_from_filename; rows=[]; idx=torch.tensor(chans,dtype=torch.long)
+ policy=load_policy(args.checkpoint,device='cuda:0'); policy.eval(); from libero.libero.benchmark import grab_language_from_filename; rows=[]; idx=torch.tensor([c for c in chans if 0<=int(c)<384],dtype=torch.long)
  for c in cases:
   cr=res[c['case_id']]; initial=torch.load('/hy-tmp/LIBERO-plus/'+c['init_state_file'],map_location='cpu',weights_only=False)[c['init_state_index']]; lang=grab_language_from_filename(c['suite'],c['base_task']+'.bddl'); env=OffScreenRenderEnv(bddl_file_name='/hy-tmp/LIBERO-plus/'+c['bddl'],camera_heights=256,camera_widths=256,render_gpu_device_id=args.render_gpu)
   try:
@@ -33,7 +33,7 @@ def main():
     ob=sensor_transform(obs,int(c['runtime_params']['noise']),cr['seeds']['sensor_noise_seed'],steps,noise_wrapper) if c['factor']=='sensor_noise' else obs
     if steps==0:
      for k,kk in [('agentview','agentview'),('robot0_eye_in_hand','eye_in_hand')]: assert array_hash(np.asarray(ob[k+'_image']))==cr['initial_observation'][kk]['sha256']
-    po=policy_observation(ob,lang,policy); z0=torch.randn((1,12,7),device='cuda:0',dtype=torch.float32,generator=gen); enc=encode_observation(policy,po,z0); patches={v:p.clone() for v,p in enc['patches'].items()}; patches['agentview'][:,idx,:]*=args.gamma
+    po=policy_observation(ob,lang,policy); z0=torch.randn((1,12,7),device='cuda:0',dtype=torch.float32,generator=gen); enc=encode_observation(policy,po,z0); patches={v:p.clone() for v,p in enc['patches'].items()}; idx=idx.to(patches['agentview'].device); patches['agentview'][:,:,idx]=patches['agentview'][:,:,idx]*args.gamma
     visual=policy.representation_extractor.cross_attention_resampler(patches,enc['pooled_language']); rep=Representation(tokens=torch.cat([visual,enc['language_tokens'].to(visual.dtype),enc['state_token']],dim=1),pooled_language=enc['pooled_language'],action_dtype=visual.dtype)
     with torch.no_grad(): ctrl=policy.normalizer.unnormalize_action(sample_from_z0(policy,rep,z0))
     done=False
