@@ -1,0 +1,10 @@
+{
+  "python": "3.10.12 (main, Aug 31 2026, 10:18:17) [GCC 11.4.0]",
+  "packages": {
+    "torch": "2.5.1+cu121",
+    "numpy": "1.26.4",
+    "robosuite": "1.4.1",
+    "mujoco": "3.3.0",
+    "transformers": "4.44.2"
+  }
+}

@@ -1,0 +1,536 @@
+{
+  "seed": 2,
+  "methods": {
+    "trust": {
+      "all": {
+        "n": 100,
+        "frozen": 73,
+        "success": 81,
+        "rescued": 8,
+        "harmed": 0,
+        "net": 8,
+        "exact_p": 0.0078125,
+        "accepted": 11,
+        "accepted_original_success": 2,
+        "median_applied_trust": 1.0
+      },
+      "clean": {
+        "n": 10,
+        "frozen": 10,
+        "success": 10,
+        "rescued": 0,
+        "harmed": 0,
+        "net": 0,
+        "exact_p": 1.0,
+        "accepted": 0,
+        "accepted_original_success": 0,
+        "median_applied_trust": 1.0
+      },
+      "lighting": {
+        "n": 30,
+        "frozen": 26,
+        "success": 26,
+        "rescued": 0,
+        "harmed": 0,
+        "net": 0,
+        "exact_p": 1.0,
+        "accepted": 0,
+        "accepted_original_success": 0,
+        "median_applied_trust": 1.0
+      },
+      "background": {
+        "n": 30,
+        "frozen": 20,
+        "success": 20,
+        "rescued": 0,
+        "harmed": 0,
+        "net": 0,
+        "exact_p": 1.0,
+        "accepted": 0,
+        "accepted_original_success": 0,
+        "median_applied_trust": 1.0
+      },
+      "sensor_noise": {
+        "n": 30,
+        "frozen": 17,
+        "success": 25,
+        "rescued": 8,
+        "harmed": 0,
+        "net": 8,
+        "exact_p": 0.0078125,
+        "accepted": 11,
+        "accepted_original_success": 2,
+        "median_applied_trust": 1.0
+      },
+      "base_task": {
+        "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate": {
+          "n": 11,
+          "frozen": 8,
+          "success": 8,
+          "rescued": 0,
+          "harmed": 0,
+          "net": 0,
+          "exact_p": 1.0
+        },
+        "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate": {
+          "n": 14,
+          "frozen": 13,
+          "success": 14,
+          "rescued": 1,
+          "harmed": 0,
+          "net": 1,
+          "exact_p": 1.0
+        },
+        "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate": {
+          "n": 10,
+          "frozen": 6,
+          "success": 6,
+          "rescued": 0,
+          "harmed": 0,
+          "net": 0,
+          "exact_p": 1.0
+        },
+        "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate": {
+          "n": 12,
+          "frozen": 10,
+          "success": 10,
+          "rescued": 0,
+          "harmed": 0,
+          "net": 0,
+          "exact_p": 1.0
+        },
+        "pick_up_the_black_bowl_next_to_the_plate_and_place_it_on_the_plate": {
+          "n": 2,
+          "frozen": 2,
+          "success": 2,
+          "rescued": 0,
+          "harmed": 0,
+          "net": 0,
+          "exact_p": 1.0
+        },
+        "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate": {
+          "n": 10,
+          "frozen": 8,
+          "success": 9,
+          "rescued": 1,
+          "harmed": 0,
+          "net": 1,
+          "exact_p": 1.0
+        },
+        "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate": {
+          "n": 12,
+          "frozen": 10,
+          "success": 12,
+          "rescued": 2,
+          "harmed": 0,
+          "net": 2,
+          "exact_p": 0.5
+        },
+        "pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate": {
+          "n": 8,
+          "frozen": 2,
+          "success": 3,
+          "rescued": 1,
+          "harmed": 0,
+          "net": 1,
+          "exact_p": 1.0
+        },
+        "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate": {
+          "n": 12,
+          "frozen": 9,
+          "success": 10,
+          "rescued": 1,
+          "harmed": 0,
+          "net": 1,
+          "exact_p": 1.0
+        },
+        "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate": {
+          "n": 9,
+          "frozen": 5,
+          "success": 7,
+          "rescued": 2,
+          "harmed": 0,
+          "net": 2,
+          "exact_p": 0.5
+        }
+      },
+      "sub_dimension": {
+        "background/scene_texture": {
+          "n": 15,
+          "frozen": 13,
+          "success": 13,
+          "rescued": 0,
+          "harmed": 0,
+          "net": 0,
+          "exact_p": 1.0
+        },
+        "background/table_texture": {
+          "n": 15,
+          "frozen": 7,
+          "success": 7,
+          "rescued": 0,
+          "harmed": 0,
+          "net": 0,
+          "exact_p": 1.0
+        },
+        "clean": {
+          "n": 10,
+          "frozen": 10,
+          "success": 10,
+          "rescued": 0,
+          "harmed": 0,
+          "net": 0,
+          "exact_p": 1.0
+        },
+        "lighting/light_asset": {
+          "n": 30,
+          "frozen": 26,
+          "success": 26,
+          "rescued": 0,
+          "harmed": 0,
+          "net": 0,
+          "exact_p": 1.0
+        },
+        "sensor_noise/fog": {
+          "n": 1,
+          "frozen": 0,
+          "success": 1,
+          "rescued": 1,
+          "harmed": 0,
+          "net": 1,
+          "exact_p": 1.0
+        },
+        "sensor_noise/gaussian_blur": {
+          "n": 7,
+          "frozen": 2,
+          "success": 6,
+          "rescued": 4,
+          "harmed": 0,
+          "net": 4,
+          "exact_p": 0.125
+        },
+        "sensor_noise/glass_blur": {
+          "n": 13,
+          "frozen": 8,
+          "success": 10,
+          "rescued": 2,
+          "harmed": 0,
+          "net": 2,
+          "exact_p": 0.5
+        },
+        "sensor_noise/motion_blur": {
+          "n": 6,
+          "frozen": 6,
+          "success": 6,
+          "rescued": 0,
+          "harmed": 0,
+          "net": 0,
+          "exact_p": 1.0
+        },
+        "sensor_noise/zoom_blur": {
+          "n": 3,
+          "frozen": 1,
+          "success": 2,
+          "rescued": 1,
+          "harmed": 0,
+          "net": 1,
+          "exact_p": 1.0
+        }
+      }
+    }
+  },
+  "qualifiers": [
+    "trust"
+  ],
+  "joint_rollback_hashes_verified": 0,
+  "frozen_vs_archive": {
+    "n": 100,
+    "frozen": 72,
+    "success": 73,
+    "rescued": 1,
+    "harmed": 0,
+    "net": 1,
+    "exact_p": 1.0
+  },
+  "archive_mismatches": [
+    {
+      "case_id": "fa87a1d88283b9c2853efbdd",
+      "factor": "sensor_noise",
+      "pixels": false,
+      "steps": true,
+      "outcome": false
+    },
+    {
+      "case_id": "451d4d5283da4bf94b611a95",
+      "factor": "background",
+      "pixels": false,
+      "steps": true,
+      "outcome": true
+    },
+    {
+      "case_id": "260f480dfa38ae5a1cfe6ab4",
+      "factor": "lighting",
+      "pixels": true,
+      "steps": false,
+      "outcome": false
+    },
+    {
+      "case_id": "d09f6ffb1b6e044de0e2a00c",
+      "factor": "lighting",
+      "pixels": true,
+      "steps": false,
+      "outcome": false
+    },
+    {
+      "case_id": "a18e0e8cf110044fac201569",
+      "factor": "sensor_noise",
+      "pixels": false,
+      "steps": true,
+      "outcome": false
+    }
+  ],
+  "render_corrections": {
+    "frozen": {
+      "episodes": 0,
+      "views": 0,
+      "max_pixels": 0,
+      "max_intensity": 0
+    },
+    "trust": {
+      "episodes": 8,
+      "views": 17,
+      "max_pixels": 40,
+      "max_intensity": 1.0
+    }
+  },
+  "frozen_matches_historical_by_factor": {
+    "clean": {
+      "n": 10,
+      "frozen": 10,
+      "success": 10,
+      "rescued": 0,
+      "harmed": 0,
+      "net": 0,
+      "exact_p": 1.0
+    },
+    "sensor_noise": {
+      "n": 30,
+      "frozen": 17,
+      "success": 17,
+      "rescued": 0,
+      "harmed": 0,
+      "net": 0,
+      "exact_p": 1.0
+    },
+    "lighting": {
+      "n": 30,
+      "frozen": 26,
+      "success": 26,
+      "rescued": 0,
+      "harmed": 0,
+      "net": 0,
+      "exact_p": 1.0
+    },
+    "background": {
+      "n": 30,
+      "frozen": 19,
+      "success": 20,
+      "rescued": 1,
+      "harmed": 0,
+      "net": 1,
+      "exact_p": 1.0
+    }
+  },
+  "compared_to_historical_for_context_only": {
+    "trust": {
+      "n": 100,
+      "frozen": 72,
+      "success": 81,
+      "rescued": 9,
+      "harmed": 0,
+      "net": 9,
+      "exact_p": 0.00390625
+    }
+  },
+  "crossover": {},
+  "trigger_breakdown": {
+    "trust": {
+      "clean": {
+        "n": 10,
+        "accepted": 0,
+        "accepted_paired_transitions": {
+          "n": 0,
+          "frozen": 0,
+          "success": 0,
+          "rescued": 0,
+          "harmed": 0,
+          "net": 0,
+          "exact_p": 1.0
+        },
+        "candidate_trusts": [
+          0.863941219068025,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "accepted_trusts": []
+      },
+      "sensor_noise": {
+        "n": 30,
+        "accepted": 11,
+        "accepted_paired_transitions": {
+          "n": 11,
+          "frozen": 2,
+          "success": 10,
+          "rescued": 8,
+          "harmed": 0,
+          "net": 8,
+          "exact_p": 0.0078125
+        },
+        "candidate_trusts": [
+          0.13585593328678097,
+          0.8346357374666666,
+          1.0,
+          0.7526329866448006,
+          1.0,
+          1.0,
+          1.0,
+          0.8556455525190819,
+          0.11723397718317513,
+          0.7477046549641674,
+          0.5090657425278297,
+          0.34858537215736196,
+          0.11922155758717239,
+          1.0,
+          0.1040343542249962,
+          0.8160032394458164,
+          1.0,
+          1.0,
+          0.11877153751527221,
+          0.469833708696512,
+          1.0,
+          0.1370860106489762,
+          0.1540226612143458,
+          1.0,
+          0.806092470598441,
+          0.11548808291291733,
+          0.1489564034443883,
+          1.0,
+          0.11206092337279043,
+          1.0
+        ],
+        "accepted_trusts": [
+          0.13585593328678097,
+          0.11723397718317513,
+          0.11922155758717239,
+          0.1040343542249962,
+          0.11877153751527221,
+          0.469833708696512,
+          0.1370860106489762,
+          0.1540226612143458,
+          0.11548808291291733,
+          0.1489564034443883,
+          0.11206092337279043
+        ]
+      },
+      "lighting": {
+        "n": 30,
+        "accepted": 0,
+        "accepted_paired_transitions": {
+          "n": 0,
+          "frozen": 0,
+          "success": 0,
+          "rescued": 0,
+          "harmed": 0,
+          "net": 0,
+          "exact_p": 1.0
+        },
+        "candidate_trusts": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          0.8194870385364076,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "accepted_trusts": []
+      },
+      "background": {
+        "n": 30,
+        "accepted": 0,
+        "accepted_paired_transitions": {
+          "n": 0,
+          "frozen": 0,
+          "success": 0,
+          "rescued": 0,
+          "harmed": 0,
+          "net": 0,
+          "exact_p": 1.0
+        },
+        "candidate_trusts": [
+          1.0,
+          1.0,
+          1.0,
+          0.8873541535898147,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          0.7692954171115834,
+          1.0,
+          1.0,
+          1.0,
+          0.8122275840881307,
+          1.0,
+          0.79490068395247,
+          1.0,
+          0.755484386851577,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          0.7471294760276631,
+          1.0,
+          1.0,
+          0.7477517857034236,
+          1.0,
+          1.0,
+          0.755985853895863,
+          1.0
+        ],
+        "accepted_trusts": []
+      }
+    }
+  }
+}

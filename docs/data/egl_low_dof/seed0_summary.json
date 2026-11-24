@@ -1,0 +1,1209 @@
+{
+  "seed": 0,
+  "methods": {
+    "rgb": {
+      "all": {
+        "n": 100,
+        "frozen": 73,
+        "success": 70,
+        "rescued": 6,
+        "harmed": 9,
+        "net": -3,
+        "exact_p": 0.60723876953125
+      },
+      "clean": {
+        "n": 10,
+        "frozen": 10,
+        "success": 10,
+        "rescued": 0,
+        "harmed": 0,
+        "net": 0,
+        "exact_p": 1.0
+      },
+      "lighting": {
+        "n": 30,
+        "frozen": 24,
+        "success": 26,
+        "rescued": 4,
+        "harmed": 2,
+        "net": 2,
+        "exact_p": 0.6875
+      },
+      "background": {
+        "n": 30,
+        "frozen": 19,
+        "success": 13,
+        "rescued": 1,
+        "harmed": 7,
+        "net": -6,
+        "exact_p": 0.0703125
+      },
+      "sensor_noise": {
+        "n": 30,
+        "frozen": 20,
+        "success": 21,
+        "rescued": 1,
+        "harmed": 0,
+        "net": 1,
+        "exact_p": 1.0
+      },
+      "base_task": {
+        "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate": {
+          "n": 11,
+          "frozen": 7,
+          "success": 7,
+          "rescued": 2,
+          "harmed": 2,
+          "net": 0,
+          "exact_p": 1.0
+        },
+        "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate": {
+          "n": 14,
+          "frozen": 14,
+          "success": 12,
+          "rescued": 0,
+          "harmed": 2,
+          "net": -2,
+          "exact_p": 0.5
+        },
+        "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate": {
+          "n": 10,
+          "frozen": 5,
+          "success": 4,
+          "rescued": 2,
+          "harmed": 3,
+          "net": -1,
+          "exact_p": 1.0
+        },
+        "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate": {
+          "n": 12,
+          "frozen": 9,
+          "success": 9,
+          "rescued": 0,
+          "harmed": 0,
+          "net": 0,
+          "exact_p": 1.0
+        },
+        "pick_up_the_black_bowl_next_to_the_plate_and_place_it_on_the_plate": {
+          "n": 2,
+          "frozen": 2,
+          "success": 2,
+          "rescued": 0,
+          "harmed": 0,
+          "net": 0,
+          "exact_p": 1.0
+        },
+        "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate": {
+          "n": 10,
+          "frozen": 7,
+          "success": 8,
+          "rescued": 1,
+          "harmed": 0,
+          "net": 1,
+          "exact_p": 1.0
+        },
+        "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate": {
+          "n": 12,
+          "frozen": 10,
+          "success": 10,
+          "rescued": 0,
+          "harmed": 0,
+          "net": 0,
+          "exact_p": 1.0
+        },
+        "pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate": {
+          "n": 8,
+          "frozen": 4,
+          "success": 5,
+          "rescued": 1,
+          "harmed": 0,
+          "net": 1,
+          "exact_p": 1.0
+        },
+        "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate": {
+          "n": 12,
+          "frozen": 9,
+          "success": 7,
+          "rescued": 0,
+          "harmed": 2,
+          "net": -2,
+          "exact_p": 0.5
+        },
+        "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate": {
+          "n": 9,
+          "frozen": 6,
+          "success": 6,
+          "rescued": 0,
+          "harmed": 0,
+          "net": 0,
+          "exact_p": 1.0
+        }
+      },
+      "sub_dimension": {
+        "background/scene_texture": {
+          "n": 15,
+          "frozen": 11,
+          "success": 9,
+          "rescued": 1,
+          "harmed": 3,
+          "net": -2,
+          "exact_p": 0.625
+        },
+        "background/table_texture": {
+          "n": 15,
+          "frozen": 8,
+          "success": 4,
+          "rescued": 0,
+          "harmed": 4,
+          "net": -4,
+          "exact_p": 0.125
+        },
+        "clean": {
+          "n": 10,
+          "frozen": 10,
+          "success": 10,
+          "rescued": 0,
+          "harmed": 0,
+          "net": 0,
+          "exact_p": 1.0
+        },
+        "lighting/light_asset": {
+          "n": 30,
+          "frozen": 24,
+          "success": 26,
+          "rescued": 4,
+          "harmed": 2,
+          "net": 2,
+          "exact_p": 0.6875
+        },
+        "sensor_noise/fog": {
+          "n": 1,
+          "frozen": 0,
+          "success": 0,
+          "rescued": 0,
+          "harmed": 0,
+          "net": 0,
+          "exact_p": 1.0
+        },
+        "sensor_noise/gaussian_blur": {
+          "n": 7,
+          "frozen": 2,
+          "success": 3,
+          "rescued": 1,
+          "harmed": 0,
+          "net": 1,
+          "exact_p": 1.0
+        },
+        "sensor_noise/glass_blur": {
+          "n": 13,
+          "frozen": 10,
+          "success": 10,
+          "rescued": 0,
+          "harmed": 0,
+          "net": 0,
+          "exact_p": 1.0
+        },
+        "sensor_noise/motion_blur": {
+          "n": 6,
+          "frozen": 5,
+          "success": 5,
+          "rescued": 0,
+          "harmed": 0,
+          "net": 0,
+          "exact_p": 1.0
+        },
+        "sensor_noise/zoom_blur": {
+          "n": 3,
+          "frozen": 3,
+          "success": 3,
+          "rescued": 0,
+          "harmed": 0,
+          "net": 0,
+          "exact_p": 1.0
+        }
+      }
+    },
+    "trust": {
+      "all": {
+        "n": 100,
+        "frozen": 73,
+        "success": 80,
+        "rescued": 7,
+        "harmed": 0,
+        "net": 7,
+        "exact_p": 0.015625,
+        "accepted": 11,
+        "accepted_original_success": 3,
+        "median_applied_trust": 1.0
+      },
+      "clean": {
+        "n": 10,
+        "frozen": 10,
+        "success": 10,
+        "rescued": 0,
+        "harmed": 0,
+        "net": 0,
+        "exact_p": 1.0,
+        "accepted": 0,
+        "accepted_original_success": 0,
+        "median_applied_trust": 1.0
+      },
+      "lighting": {
+        "n": 30,
+        "frozen": 24,
+        "success": 24,
+        "rescued": 0,
+        "harmed": 0,
+        "net": 0,
+        "exact_p": 1.0,
+        "accepted": 0,
+        "accepted_original_success": 0,
+        "median_applied_trust": 1.0
+      },
+      "background": {
+        "n": 30,
+        "frozen": 19,
+        "success": 19,
+        "rescued": 0,
+        "harmed": 0,
+        "net": 0,
+        "exact_p": 1.0,
+        "accepted": 0,
+        "accepted_original_success": 0,
+        "median_applied_trust": 1.0
+      },
+      "sensor_noise": {
+        "n": 30,
+        "frozen": 20,
+        "success": 27,
+        "rescued": 7,
+        "harmed": 0,
+        "net": 7,
+        "exact_p": 0.015625,
+        "accepted": 11,
+        "accepted_original_success": 3,
+        "median_applied_trust": 1.0
+      },
+      "base_task": {
+        "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate": {
+          "n": 11,
+          "frozen": 7,
+          "success": 8,
+          "rescued": 1,
+          "harmed": 0,
+          "net": 1,
+          "exact_p": 1.0
+        },
+        "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate": {
+          "n": 14,
+          "frozen": 14,
+          "success": 14,
+          "rescued": 0,
+          "harmed": 0,
+          "net": 0,
+          "exact_p": 1.0
+        },
+        "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate": {
+          "n": 10,
+          "frozen": 5,
+          "success": 5,
+          "rescued": 0,
+          "harmed": 0,
+          "net": 0,
+          "exact_p": 1.0
+        },
+        "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate": {
+          "n": 12,
+          "frozen": 9,
+          "success": 9,
+          "rescued": 0,
+          "harmed": 0,
+          "net": 0,
+          "exact_p": 1.0
+        },
+        "pick_up_the_black_bowl_next_to_the_plate_and_place_it_on_the_plate": {
+          "n": 2,
+          "frozen": 2,
+          "success": 2,
+          "rescued": 0,
+          "harmed": 0,
+          "net": 0,
+          "exact_p": 1.0
+        },
+        "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate": {
+          "n": 10,
+          "frozen": 7,
+          "success": 8,
+          "rescued": 1,
+          "harmed": 0,
+          "net": 1,
+          "exact_p": 1.0
+        },
+        "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate": {
+          "n": 12,
+          "frozen": 10,
+          "success": 12,
+          "rescued": 2,
+          "harmed": 0,
+          "net": 2,
+          "exact_p": 0.5
+        },
+        "pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate": {
+          "n": 8,
+          "frozen": 4,
+          "success": 4,
+          "rescued": 0,
+          "harmed": 0,
+          "net": 0,
+          "exact_p": 1.0
+        },
+        "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate": {
+          "n": 12,
+          "frozen": 9,
+          "success": 10,
+          "rescued": 1,
+          "harmed": 0,
+          "net": 1,
+          "exact_p": 1.0
+        },
+        "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate": {
+          "n": 9,
+          "frozen": 6,
+          "success": 8,
+          "rescued": 2,
+          "harmed": 0,
+          "net": 2,
+          "exact_p": 0.5
+        }
+      },
+      "sub_dimension": {
+        "background/scene_texture": {
+          "n": 15,
+          "frozen": 11,
+          "success": 11,
+          "rescued": 0,
+          "harmed": 0,
+          "net": 0,
+          "exact_p": 1.0
+        },
+        "background/table_texture": {
+          "n": 15,
+          "frozen": 8,
+          "success": 8,
+          "rescued": 0,
+          "harmed": 0,
+          "net": 0,
+          "exact_p": 1.0
+        },
+        "clean": {
+          "n": 10,
+          "frozen": 10,
+          "success": 10,
+          "rescued": 0,
+          "harmed": 0,
+          "net": 0,
+          "exact_p": 1.0
+        },
+        "lighting/light_asset": {
+          "n": 30,
+          "frozen": 24,
+          "success": 24,
+          "rescued": 0,
+          "harmed": 0,
+          "net": 0,
+          "exact_p": 1.0
+        },
+        "sensor_noise/fog": {
+          "n": 1,
+          "frozen": 0,
+          "success": 1,
+          "rescued": 1,
+          "harmed": 0,
+          "net": 1,
+          "exact_p": 1.0
+        },
+        "sensor_noise/gaussian_blur": {
+          "n": 7,
+          "frozen": 2,
+          "success": 5,
+          "rescued": 3,
+          "harmed": 0,
+          "net": 3,
+          "exact_p": 0.25
+        },
+        "sensor_noise/glass_blur": {
+          "n": 13,
+          "frozen": 10,
+          "success": 12,
+          "rescued": 2,
+          "harmed": 0,
+          "net": 2,
+          "exact_p": 0.5
+        },
+        "sensor_noise/motion_blur": {
+          "n": 6,
+          "frozen": 5,
+          "success": 6,
+          "rescued": 1,
+          "harmed": 0,
+          "net": 1,
+          "exact_p": 1.0
+        },
+        "sensor_noise/zoom_blur": {
+          "n": 3,
+          "frozen": 3,
+          "success": 3,
+          "rescued": 0,
+          "harmed": 0,
+          "net": 0,
+          "exact_p": 1.0
+        }
+      }
+    },
+    "joint": {
+      "all": {
+        "n": 100,
+        "frozen": 73,
+        "success": 75,
+        "rescued": 11,
+        "harmed": 9,
+        "net": 2,
+        "exact_p": 0.8238029479980469,
+        "accepted": 11,
+        "accepted_original_success": 3,
+        "median_applied_trust": 1.0
+      },
+      "clean": {
+        "n": 10,
+        "frozen": 10,
+        "success": 10,
+        "rescued": 0,
+        "harmed": 0,
+        "net": 0,
+        "exact_p": 1.0,
+        "accepted": 0,
+        "accepted_original_success": 0,
+        "median_applied_trust": 1.0
+      },
+      "lighting": {
+        "n": 30,
+        "frozen": 24,
+        "success": 26,
+        "rescued": 4,
+        "harmed": 2,
+        "net": 2,
+        "exact_p": 0.6875,
+        "accepted": 0,
+        "accepted_original_success": 0,
+        "median_applied_trust": 1.0
+      },
+      "background": {
+        "n": 30,
+        "frozen": 19,
+        "success": 13,
+        "rescued": 1,
+        "harmed": 7,
+        "net": -6,
+        "exact_p": 0.0703125,
+        "accepted": 0,
+        "accepted_original_success": 0,
+        "median_applied_trust": 1.0
+      },
+      "sensor_noise": {
+        "n": 30,
+        "frozen": 20,
+        "success": 26,
+        "rescued": 6,
+        "harmed": 0,
+        "net": 6,
+        "exact_p": 0.03125,
+        "accepted": 11,
+        "accepted_original_success": 3,
+        "median_applied_trust": 1.0
+      },
+      "base_task": {
+        "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate": {
+          "n": 11,
+          "frozen": 7,
+          "success": 8,
+          "rescued": 3,
+          "harmed": 2,
+          "net": 1,
+          "exact_p": 1.0
+        },
+        "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate": {
+          "n": 14,
+          "frozen": 14,
+          "success": 12,
+          "rescued": 0,
+          "harmed": 2,
+          "net": -2,
+          "exact_p": 0.5
+        },
+        "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate": {
+          "n": 10,
+          "frozen": 5,
+          "success": 3,
+          "rescued": 1,
+          "harmed": 3,
+          "net": -2,
+          "exact_p": 0.625
+        },
+        "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate": {
+          "n": 12,
+          "frozen": 9,
+          "success": 9,
+          "rescued": 0,
+          "harmed": 0,
+          "net": 0,
+          "exact_p": 1.0
+        },
+        "pick_up_the_black_bowl_next_to_the_plate_and_place_it_on_the_plate": {
+          "n": 2,
+          "frozen": 2,
+          "success": 2,
+          "rescued": 0,
+          "harmed": 0,
+          "net": 0,
+          "exact_p": 1.0
+        },
+        "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate": {
+          "n": 10,
+          "frozen": 7,
+          "success": 9,
+          "rescued": 2,
+          "harmed": 0,
+          "net": 2,
+          "exact_p": 0.5
+        },
+        "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate": {
+          "n": 12,
+          "frozen": 10,
+          "success": 12,
+          "rescued": 2,
+          "harmed": 0,
+          "net": 2,
+          "exact_p": 0.5
+        },
+        "pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate": {
+          "n": 8,
+          "frozen": 4,
+          "success": 5,
+          "rescued": 1,
+          "harmed": 0,
+          "net": 1,
+          "exact_p": 1.0
+        },
+        "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate": {
+          "n": 12,
+          "frozen": 9,
+          "success": 8,
+          "rescued": 1,
+          "harmed": 2,
+          "net": -1,
+          "exact_p": 1.0
+        },
+        "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate": {
+          "n": 9,
+          "frozen": 6,
+          "success": 7,
+          "rescued": 1,
+          "harmed": 0,
+          "net": 1,
+          "exact_p": 1.0
+        }
+      },
+      "sub_dimension": {
+        "background/scene_texture": {
+          "n": 15,
+          "frozen": 11,
+          "success": 9,
+          "rescued": 1,
+          "harmed": 3,
+          "net": -2,
+          "exact_p": 0.625
+        },
+        "background/table_texture": {
+          "n": 15,
+          "frozen": 8,
+          "success": 4,
+          "rescued": 0,
+          "harmed": 4,
+          "net": -4,
+          "exact_p": 0.125
+        },
+        "clean": {
+          "n": 10,
+          "frozen": 10,
+          "success": 10,
+          "rescued": 0,
+          "harmed": 0,
+          "net": 0,
+          "exact_p": 1.0
+        },
+        "lighting/light_asset": {
+          "n": 30,
+          "frozen": 24,
+          "success": 26,
+          "rescued": 4,
+          "harmed": 2,
+          "net": 2,
+          "exact_p": 0.6875
+        },
+        "sensor_noise/fog": {
+          "n": 1,
+          "frozen": 0,
+          "success": 1,
+          "rescued": 1,
+          "harmed": 0,
+          "net": 1,
+          "exact_p": 1.0
+        },
+        "sensor_noise/gaussian_blur": {
+          "n": 7,
+          "frozen": 2,
+          "success": 4,
+          "rescued": 2,
+          "harmed": 0,
+          "net": 2,
+          "exact_p": 0.5
+        },
+        "sensor_noise/glass_blur": {
+          "n": 13,
+          "frozen": 10,
+          "success": 12,
+          "rescued": 2,
+          "harmed": 0,
+          "net": 2,
+          "exact_p": 0.5
+        },
+        "sensor_noise/motion_blur": {
+          "n": 6,
+          "frozen": 5,
+          "success": 6,
+          "rescued": 1,
+          "harmed": 0,
+          "net": 1,
+          "exact_p": 1.0
+        },
+        "sensor_noise/zoom_blur": {
+          "n": 3,
+          "frozen": 3,
+          "success": 3,
+          "rescued": 0,
+          "harmed": 0,
+          "net": 0,
+          "exact_p": 1.0
+        }
+      }
+    }
+  },
+  "qualifiers": [
+    "trust"
+  ],
+  "joint_rollback_hashes_verified": 89,
+  "frozen_vs_archive": {
+    "n": 100,
+    "frozen": 73,
+    "success": 73,
+    "rescued": 0,
+    "harmed": 0,
+    "net": 0,
+    "exact_p": 1.0
+  },
+  "archive_mismatches": [
+    {
+      "case_id": "d09f6ffb1b6e044de0e2a00c",
+      "factor": "lighting",
+      "pixels": true,
+      "steps": true,
+      "outcome": false
+    }
+  ],
+  "render_corrections": {
+    "frozen": {
+      "episodes": 0,
+      "views": 0,
+      "max_pixels": 0,
+      "max_intensity": 0
+    },
+    "rgb": {
+      "episodes": 2,
+      "views": 2,
+      "max_pixels": 3,
+      "max_intensity": 1.0
+    },
+    "trust": {
+      "episodes": 6,
+      "views": 11,
+      "max_pixels": 25,
+      "max_intensity": 1.0
+    },
+    "joint": {
+      "episodes": 6,
+      "views": 12,
+      "max_pixels": 6,
+      "max_intensity": 1.0
+    }
+  },
+  "frozen_matches_historical_by_factor": {
+    "clean": {
+      "n": 10,
+      "frozen": 10,
+      "success": 10,
+      "rescued": 0,
+      "harmed": 0,
+      "net": 0,
+      "exact_p": 1.0
+    },
+    "sensor_noise": {
+      "n": 30,
+      "frozen": 20,
+      "success": 20,
+      "rescued": 0,
+      "harmed": 0,
+      "net": 0,
+      "exact_p": 1.0
+    },
+    "lighting": {
+      "n": 30,
+      "frozen": 24,
+      "success": 24,
+      "rescued": 0,
+      "harmed": 0,
+      "net": 0,
+      "exact_p": 1.0
+    },
+    "background": {
+      "n": 30,
+      "frozen": 19,
+      "success": 19,
+      "rescued": 0,
+      "harmed": 0,
+      "net": 0,
+      "exact_p": 1.0
+    }
+  },
+  "compared_to_historical_for_context_only": {
+    "rgb": {
+      "n": 100,
+      "frozen": 73,
+      "success": 70,
+      "rescued": 6,
+      "harmed": 9,
+      "net": -3,
+      "exact_p": 0.60723876953125
+    },
+    "trust": {
+      "n": 100,
+      "frozen": 73,
+      "success": 80,
+      "rescued": 7,
+      "harmed": 0,
+      "net": 7,
+      "exact_p": 0.015625
+    },
+    "joint": {
+      "n": 100,
+      "frozen": 73,
+      "success": 75,
+      "rescued": 11,
+      "harmed": 9,
+      "net": 2,
+      "exact_p": 0.8238029479980469
+    }
+  },
+  "crossover": {
+    "clean": {
+      "neither": 10,
+      "raw_only": 0,
+      "rgb_only": 0,
+      "both": 0
+    },
+    "sensor_noise": {
+      "neither": 19,
+      "raw_only": 0,
+      "rgb_only": 0,
+      "both": 11
+    },
+    "background": {
+      "neither": 30,
+      "raw_only": 0,
+      "rgb_only": 0,
+      "both": 0
+    },
+    "lighting": {
+      "neither": 30,
+      "raw_only": 0,
+      "rgb_only": 0,
+      "both": 0
+    }
+  },
+  "trigger_breakdown": {
+    "trust": {
+      "clean": {
+        "n": 10,
+        "accepted": 0,
+        "accepted_paired_transitions": {
+          "n": 0,
+          "frozen": 0,
+          "success": 0,
+          "rescued": 0,
+          "harmed": 0,
+          "net": 0,
+          "exact_p": 1.0
+        },
+        "candidate_trusts": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          0.8639412319417525,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "accepted_trusts": []
+      },
+      "sensor_noise": {
+        "n": 30,
+        "accepted": 11,
+        "accepted_paired_transitions": {
+          "n": 11,
+          "frozen": 3,
+          "success": 10,
+          "rescued": 7,
+          "harmed": 0,
+          "net": 7,
+          "exact_p": 0.015625
+        },
+        "candidate_trusts": [
+          0.11877153751527221,
+          0.469833708696512,
+          1.0,
+          0.13708602699090308,
+          0.1040343542249962,
+          1.0,
+          1.0,
+          0.8160032516052124,
+          1.0,
+          0.1489564034443883,
+          0.11206092337279043,
+          1.0,
+          0.1540226612143458,
+          0.11548808291291733,
+          0.8060925066335833,
+          1.0,
+          1.0,
+          0.7526330987958635,
+          1.0,
+          0.13585593328678097,
+          1.0,
+          0.8346357623407503,
+          0.5090657425278297,
+          1.0,
+          0.3485853306027499,
+          0.11922155758717239,
+          0.7477044098475206,
+          0.11723397718317513,
+          0.8556455525190819,
+          1.0
+        ],
+        "accepted_trusts": [
+          0.11877153751527221,
+          0.469833708696512,
+          0.13708602699090308,
+          0.1040343542249962,
+          0.1489564034443883,
+          0.11206092337279043,
+          0.1540226612143458,
+          0.11548808291291733,
+          0.13585593328678097,
+          0.11922155758717239,
+          0.11723397718317513
+        ]
+      },
+      "lighting": {
+        "n": 30,
+        "accepted": 0,
+        "accepted_paired_transitions": {
+          "n": 0,
+          "frozen": 0,
+          "success": 0,
+          "rescued": 0,
+          "harmed": 0,
+          "net": 0,
+          "exact_p": 1.0
+        },
+        "candidate_trusts": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          0.8194870263250992,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "accepted_trusts": []
+      },
+      "background": {
+        "n": 30,
+        "accepted": 0,
+        "accepted_paired_transitions": {
+          "n": 0,
+          "frozen": 0,
+          "success": 0,
+          "rescued": 0,
+          "harmed": 0,
+          "net": 0,
+          "exact_p": 1.0
+        },
+        "candidate_trusts": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          0.7471295428262467,
+          0.7477517857034236,
+          1.0,
+          0.79490068395247,
+          1.0,
+          1.0,
+          0.8122275840881307,
+          1.0,
+          1.0,
+          0.7554845219427246,
+          1.0,
+          1.0,
+          0.7559858989561327,
+          1.0,
+          1.0,
+          1.0,
+          0.8873541469785111,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          0.7692955088187491,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "accepted_trusts": []
+      }
+    },
+    "joint": {
+      "clean": {
+        "n": 10,
+        "accepted": 0,
+        "accepted_paired_transitions": {
+          "n": 0,
+          "frozen": 0,
+          "success": 0,
+          "rescued": 0,
+          "harmed": 0,
+          "net": 0,
+          "exact_p": 1.0
+        },
+        "candidate_trusts": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          0.8680569380621418
+        ],
+        "accepted_trusts": []
+      },
+      "sensor_noise": {
+        "n": 30,
+        "accepted": 11,
+        "accepted_paired_transitions": {
+          "n": 11,
+          "frozen": 4,
+          "success": 9,
+          "rescued": 6,
+          "harmed": 1,
+          "net": 5,
+          "exact_p": 0.125
+        },
+        "candidate_trusts": [
+          1.0,
+          0.1336821915384035,
+          0.14278710658333235,
+          1.0,
+          1.0,
+          0.8397346287988346,
+          0.12335839489937957,
+          0.1594652268877844,
+          0.1454716825043923,
+          0.44299485497751356,
+          1.0,
+          0.11535899075487455,
+          0.79440061751529,
+          1.0,
+          1.0,
+          0.10872750774872396,
+          0.11814500397071222,
+          0.34920059027709266,
+          1.0,
+          0.6053876343477639,
+          1.0,
+          0.838818787539518,
+          0.11835580367317354,
+          0.7713156685503233,
+          1.0,
+          0.7534120094470146,
+          1.0,
+          0.8586033367402062,
+          1.0,
+          0.12870446607473393
+        ],
+        "accepted_trusts": [
+          0.1336821915384035,
+          0.14278710658333235,
+          0.12335839489937957,
+          0.1594652268877844,
+          0.1454716825043923,
+          0.44299485497751356,
+          0.11535899075487455,
+          0.10872750774872396,
+          0.11814500397071222,
+          0.11835580367317354,
+          0.12870446607473393
+        ]
+      },
+      "lighting": {
+        "n": 30,
+        "accepted": 0,
+        "accepted_paired_transitions": {
+          "n": 0,
+          "frozen": 0,
+          "success": 0,
+          "rescued": 0,
+          "harmed": 0,
+          "net": 0,
+          "exact_p": 1.0
+        },
+        "candidate_trusts": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          0.8284633729231596,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "accepted_trusts": []
+      },
+      "background": {
+        "n": 30,
+        "accepted": 0,
+        "accepted_paired_transitions": {
+          "n": 0,
+          "frozen": 0,
+          "success": 0,
+          "rescued": 0,
+          "harmed": 0,
+          "net": 0,
+          "exact_p": 1.0
+        },
+        "candidate_trusts": [
+          0.8738091567876648,
+          1.0,
+          1.0,
+          0.7591473407798373,
+          0.7475780294937159,
+          0.7704910143913708,
+          1.0,
+          1.0,
+          1.0,
+          0.799637974633439,
+          0.8188590807033644,
+          0.7651518920156596,
+          1.0,
+          0.7958239882192825,
+          0.8203547447203295,
+          0.9005370044962565,
+          1.0,
+          1.0,
+          0.743400209137189,
+          1.0,
+          0.7470064431736001,
+          1.0,
+          1.0,
+          1.0,
+          0.8276549065693637,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          0.8984824199254983
+        ],
+        "accepted_trusts": []
+      }
+    }
+  },
+  "joint_vs_rgb": {
+    "n": 100,
+    "frozen": 70,
+    "success": 75,
+    "rescued": 6,
+    "harmed": 1,
+    "net": 5,
+    "exact_p": 0.125
+  }
+}

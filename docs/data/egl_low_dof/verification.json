@@ -1,0 +1,36 @@
+{
+  "manifest_sha256": "d3e0d8c642cd215c879d2f0174663ff5ec585cd5c6d6b531a213c26e9fb982c0",
+  "archives": {
+    "seed0_evidence.tar.gz": "0b65ca77305539ed3a4f5b6409989bec62533e65a35056fb36e8b4183458278a",
+    "repeat_evidence.tar.gz": "98f078f9761c00bf8be038f7de371d5cdba72ff236b084d012362912b52f6612"
+  },
+  "seeds": {
+    "0": {
+      "methods": [
+        "frozen",
+        "trust",
+        "joint",
+        "rgb"
+      ],
+      "rollouts": 400,
+      "observed_wall_span_minutes": 18.0
+    },
+    "2": {
+      "methods": [
+        "frozen",
+        "trust"
+      ],
+      "rollouts": 200,
+      "observed_wall_span_minutes": 17.06
+    },
+    "1": {
+      "methods": [
+        "frozen",
+        "trust"
+      ],
+      "rollouts": 200,
+      "observed_wall_span_minutes": 15.64
+    }
+  },
+  "scope": "integrity and completeness; not an independent confirmation dataset"
+}
