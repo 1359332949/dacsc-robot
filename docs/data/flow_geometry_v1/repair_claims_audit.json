@@ -1,0 +1,112 @@
+{
+  "status": "retrospective exploratory audit; no deployment threshold fitted",
+  "distance_definition": "mean over four identical z0 of flattened full-chunk un-clipped controller L2",
+  "reference_warning": "successful Clean policy output is a privileged prediction reference, not expert true action",
+  "factors": {
+    "sensor_noise": {
+      "n": 30,
+      "m4_curvature_auc": 0.8733031674208145,
+      "paired_clean_normalized_m4_auc": 0.8778280542986425,
+      "native_unclipped_reference_distance_aucs": {
+        "xyz": 0.8506787330316742,
+        "rotation": 0.579185520361991,
+        "all": 0.8461538461538461
+      },
+      "curvature_vs_reference_distance_spearman": {
+        "xyz": 0.9176863181312569,
+        "rotation": 0.28898776418242494,
+        "all": 0.907007786429366
+      },
+      "normalized_curvature_vs_reference_distance_spearman": {
+        "xyz": 0.8972191323692991,
+        "rotation": 0.37886540600667407,
+        "all": 0.9007786429365963
+      },
+      "ratio_median_fail": 7.6802291794267905,
+      "ratio_median_success": 1.2558129619072074,
+      "mean_fail_over_success_velocity_deviation_by_flow_step": [
+        7.733408883012108,
+        7.8423610639832075,
+        7.885682481321355,
+        7.691519620563161,
+        6.860860410741304,
+        4.775380985466828,
+        6.4102789889372,
+        11.410553130457807,
+        9.390185380266733,
+        4.123841189427617
+      ],
+      "warning": "mean step-energy ratios can be driven by outliers; not proof of a late-time causal repair mechanism"
+    },
+    "background": {
+      "n": 30,
+      "m4_curvature_auc": 0.7737556561085973,
+      "paired_clean_normalized_m4_auc": 0.8416289592760181,
+      "native_unclipped_reference_distance_aucs": {
+        "xyz": 0.7737556561085973,
+        "rotation": 0.7013574660633484,
+        "all": 0.7647058823529411
+      },
+      "curvature_vs_reference_distance_spearman": {
+        "xyz": 0.4318131256952169,
+        "rotation": 0.38020022246941043,
+        "all": 0.43715239154616237
+      },
+      "normalized_curvature_vs_reference_distance_spearman": {
+        "xyz": 0.6164627363737486,
+        "rotation": 0.5163515016685205,
+        "all": 0.6169076751946607
+      },
+      "ratio_median_fail": 1.3179750841174471,
+      "ratio_median_success": 0.9834718324851088,
+      "mean_fail_over_success_velocity_deviation_by_flow_step": [
+        8.669309318443112,
+        9.298663713705,
+        9.019044817418047,
+        7.844778621446221,
+        6.130520762055749,
+        4.836224634284478,
+        7.695220369647478,
+        24.347530170542075,
+        10.122055465651716,
+        3.7657478207742106
+      ],
+      "warning": "mean step-energy ratios can be driven by outliers; not proof of a late-time causal repair mechanism"
+    },
+    "lighting": {
+      "n": 30,
+      "m4_curvature_auc": 0.7986111111111112,
+      "paired_clean_normalized_m4_auc": 0.4652777777777778,
+      "native_unclipped_reference_distance_aucs": {
+        "xyz": 0.5486111111111112,
+        "rotation": 0.7708333333333334,
+        "all": 0.5486111111111112
+      },
+      "curvature_vs_reference_distance_spearman": {
+        "xyz": 0.681372549019608,
+        "rotation": 0.5155971479500892,
+        "all": 0.7054367201426026
+      },
+      "normalized_curvature_vs_reference_distance_spearman": {
+        "xyz": 0.6114081996434938,
+        "rotation": 0.0044563279857397515,
+        "all": 0.5258467023172907
+      },
+      "ratio_median_fail": 1.043853064506279,
+      "ratio_median_success": 1.0128252306470549,
+      "mean_fail_over_success_velocity_deviation_by_flow_step": [
+        1.41374375727345,
+        1.4231375288019925,
+        1.4357808383941797,
+        1.4565437605073213,
+        1.4614054405802357,
+        1.3835350538493547,
+        1.1270969356442742,
+        0.863670860202823,
+        1.4197111304378938,
+        1.4108519692726442
+      ],
+      "warning": "mean step-energy ratios can be driven by outliers; not proof of a late-time causal repair mechanism"
+    }
+  }
+}
