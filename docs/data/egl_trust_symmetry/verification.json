@@ -1,0 +1,10 @@
+{
+  "wall_span_minutes_from_receipts": 49.14,
+  "cases": 100,
+  "standard_rollouts": 1200,
+  "wrist_stress_rollouts": 60,
+  "archive_bytes": 767212,
+  "archive_sha256": "db3d7f8877e35a02505644f2711556aa1a486015b78446e9f3a7a48b0ed62ea2",
+  "all_member_hashes_verified": true,
+  "summary_sha256": "2307367154a3718274042aaa71dbc3257ca59dc9fd590b5e5b87a1c3d13a61fd"
+}
