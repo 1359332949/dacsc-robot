@@ -15,12 +15,12 @@ import libero.libero.envs.bddl_utils as BDDLUtils  # noqa
 import libero.libero.envs.env_wrapper as noise_wrapper  # noqa
 
 def main():
- ap=argparse.ArgumentParser(); ap.add_argument('--checkpoint',required=True); ap.add_argument('--manifest',required=True); ap.add_argument('--results',required=True); ap.add_argument('--sensitivity',required=True); ap.add_argument('--out',required=True); ap.add_argument('--factors',default='clean'); ap.add_argument('--pct',type=int,default=10); ap.add_argument('--gamma',type=float,default=0.5); ap.add_argument('--max-steps',type=int,default=220); ap.add_argument('--shard-id',type=int,default=0); ap.add_argument('--num-shards',type=int,default=1); ap.add_argument('--render-gpu',type=int,default=0); args=ap.parse_args()
+ ap=argparse.ArgumentParser(); ap.add_argument('--checkpoint',required=True); ap.add_argument('--manifest',required=True); ap.add_argument('--results',required=True); ap.add_argument('--sensitivity',required=True); ap.add_argument('--out',required=True); ap.add_argument('--factors',default='clean'); ap.add_argument('--pct',type=int,default=10); ap.add_argument('--gamma',type=float,default=0.5); ap.add_argument('--shrink',default='mean',choices=['mean','zero']); ap.add_argument('--max-steps',type=int,default=220); ap.add_argument('--shard-id',type=int,default=0); ap.add_argument('--num-shards',type=int,default=1); ap.add_argument('--render-gpu',type=int,default=0); args=ap.parse_args()
  man=json.load(open(args.manifest)); res={}
  for p in Path(args.results).glob('*.json'):
   try: d=json.loads(p.read_text(errors='ignore')); res[d['case_id']]=d
   except Exception: pass
- sens=json.load(open(args.sensitivity)); rank=sens['top20pct'] if args.pct<=20 else list(np.argsort(-np.asarray(sens['R']))); chans=rank[:max(1,int(384*args.pct/100))]
+ sens=json.load(open(args.sensitivity)); rank=sens['top20pct'] if args.pct<=20 else list(np.argsort(-np.asarray(sens['R']))); chans=rank[:max(1,int(384*args.pct/100))]; mu=torch.tensor(sens.get('channel_mean',[0.0]*384),dtype=torch.float32)
  factors=set(args.factors.split(',')); cases=[c for c in man['cases'] if c['factor'] in factors][args.shard_id::args.num_shards]
  policy=load_policy(args.checkpoint,device='cuda:0'); policy.eval(); from libero.libero.benchmark import grab_language_from_filename; rows=[]; idx=torch.tensor([c for c in chans if 0<=int(c)<384],dtype=torch.long)
  for c in cases:
@@ -33,7 +33,7 @@ def main():
     ob=sensor_transform(obs,int(c['runtime_params']['noise']),cr['seeds']['sensor_noise_seed'],steps,noise_wrapper) if c['factor']=='sensor_noise' else obs
     if steps==0:
      for k,kk in [('agentview','agentview'),('robot0_eye_in_hand','eye_in_hand')]: assert array_hash(np.asarray(ob[k+'_image']))==cr['initial_observation'][kk]['sha256']
-    po=policy_observation(ob,lang,policy); z0=torch.randn((1,12,7),device='cuda:0',dtype=torch.float32,generator=gen); enc=encode_observation(policy,po,z0); patches={v:p.clone() for v,p in enc['patches'].items()}; idx=idx.to(patches['agentview'].device); patches['agentview'][:,:,idx]=patches['agentview'][:,:,idx]*args.gamma
+    po=policy_observation(ob,lang,policy); z0=torch.randn((1,12,7),device='cuda:0',dtype=torch.float32,generator=gen); enc=encode_observation(policy,po,z0); patches={v:p.clone() for v,p in enc['patches'].items()}; idx=idx.to(patches['agentview'].device); mu=mu.to(patches['agentview'].device); cur=patches['agentview'][:,:,idx]; patches['agentview'][:,:,idx]=mu[idx]+args.gamma*(cur-mu[idx]) if args.shrink=='mean' else cur*args.gamma
     visual=policy.representation_extractor.cross_attention_resampler(patches,enc['pooled_language']); rep=Representation(tokens=torch.cat([visual,enc['language_tokens'].to(visual.dtype),enc['state_token']],dim=1),pooled_language=enc['pooled_language'],action_dtype=visual.dtype)
     with torch.no_grad(): ctrl=policy.normalizer.unnormalize_action(sample_from_z0(policy,rep,z0))
     done=False

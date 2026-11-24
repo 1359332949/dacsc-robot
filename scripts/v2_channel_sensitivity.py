@@ -28,8 +28,8 @@ def main():
   prep=prepare_observation(obs,config=cfg,normalizer=norm,device=torch.device('cuda:0'))
   with torch.no_grad(): patches=ex.visual_encoder(prep['images']['agentview'])  # [N,256,384]
   P[kind]=patches.float().cpu().numpy()
- base=P['clean']; dom=np.stack([P[k] for k in kinds if k!='clean']); s_dom=dom.std(axis=0).mean(axis=(0,1)); s_task=base.std(axis=0).mean(axis=0); R=s_dom/(s_task+1e-6)
+ base=P['clean']; dom=np.stack([P[k] for k in kinds if k!='clean']); s_dom=np.abs(dom-base[None]).mean(axis=(0,1,2)) if False else np.abs(dom-base[None]).mean(axis=0).mean(axis=(0,1)); s_task=base.std(axis=0).mean(axis=0); R=s_dom/(s_task+1e-6); mu=base.mean(axis=(0,1))
  order=np.argsort(-R); top=order[:max(1,int(.2*384))].tolist()
- out={'schema':'v2_channel_sensitivity_source_v1','pairs':args.pairs,'n_images':n,'images_kind':'source_fit Clean agentview from rgb_oracle_pairs_fresh.npz','perturbations':kinds,'s_domain':s_dom.tolist(),'s_task':s_task.tolist(),'R':R.tolist(),'top20pct':top,'target_dev_images_read':False}
+ out={'schema':'v2_channel_sensitivity_source_v1','pairs':args.pairs,'n_images':n,'images_kind':'source_fit Clean agentview from rgb_oracle_pairs_fresh.npz','perturbations':kinds,'s_domain':s_dom.tolist(),'s_task':s_task.tolist(),'R':R.tolist(),'channel_mean':mu.tolist(),'top20pct':top,'target_dev_images_read':False}
  Path(args.out).parent.mkdir(parents=True,exist_ok=True); Path(args.out).write_text(json.dumps(out,indent=2)+'\n'); print('top',top[:10],'R range',float(R.min()),float(R.max()))
 if __name__=='__main__': main()
