@@ -112,7 +112,7 @@ The next useful experiment is a separately frozen **Sensor-only** evaluation cov
 
 ## Literature correction
 
-The checked CoRe primary text (arXiv:2608.14822, Section 2.1, Eq.2) defines an OOD score from Mahalanobis distance of a VLA-encoded visual embedding to stored nominal embeddings. Eq.2 is not a Suffix/Token manifold-projection repair objective. Its detector therefore provides a source-calibrated anomaly-score reference, not direct support for the proposed suffix-alignment fallback. No novelty or top-conference acceptance claim is made.
+The checked CoRe primary text (arXiv:2608.14822, Online Suffix OOD Detection, Eq.2) defines a per-task Mahalanobis OOD score over stochastic-forward-averaged action-expert suffix latents: the last action-head hidden state before motor decoding. Eq.2 is not a Suffix/Token manifold-projection repair objective. Its detector therefore provides a source-calibrated anomaly-score reference, not direct support for the proposed suffix-alignment fallback. No novelty or top-conference acceptance claim is made.
 
 ## Evidence and reproduction
 
