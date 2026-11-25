@@ -1,0 +1,289 @@
+{
+  "clean": {
+    "frozen": {
+      "success": 30,
+      "n": 30
+    },
+    "spatial_ref": {
+      "success": 30,
+      "n": 30,
+      "cluster_ci95": [
+        0.0,
+        0.0
+      ]
+    },
+    "object_clean_cal": {
+      "success": 29,
+      "n": 30,
+      "cluster_ci95": [
+        -0.1,
+        0.0
+      ]
+    },
+    "_vs_frozen": {
+      "spatial_ref": [
+        0,
+        0,
+        0
+      ],
+      "object_clean_cal": [
+        0,
+        1,
+        -1
+      ]
+    },
+    "_vs_spatial": {
+      "object_clean_cal": [
+        0,
+        1,
+        -1
+      ]
+    }
+  },
+  "sensor_single": {
+    "frozen": {
+      "success": 53,
+      "n": 90
+    },
+    "spatial_ref": {
+      "success": 71,
+      "n": 90,
+      "cluster_ci95": [
+        0.06666666666666667,
+        0.3333333333333333
+      ]
+    },
+    "object_clean_cal": {
+      "success": 70,
+      "n": 90,
+      "cluster_ci95": [
+        0.07777777777777778,
+        0.31111111111111106
+      ]
+    },
+    "_vs_frozen": {
+      "spatial_ref": [
+        21,
+        3,
+        18
+      ],
+      "object_clean_cal": [
+        22,
+        5,
+        17
+      ]
+    },
+    "_vs_spatial": {
+      "object_clean_cal": [
+        5,
+        6,
+        -1
+      ]
+    }
+  },
+  "sensor_bilateral": {
+    "frozen": {
+      "success": 20,
+      "n": 90
+    },
+    "spatial_ref": {
+      "success": 22,
+      "n": 90,
+      "cluster_ci95": [
+        0.0,
+        0.06666666666666667
+      ]
+    },
+    "object_clean_cal": {
+      "success": 24,
+      "n": 90,
+      "cluster_ci95": [
+        0.0,
+        0.13333333333333333
+      ]
+    },
+    "_vs_frozen": {
+      "spatial_ref": [
+        2,
+        0,
+        2
+      ],
+      "object_clean_cal": [
+        5,
+        1,
+        4
+      ]
+    },
+    "_vs_spatial": {
+      "object_clean_cal": [
+        3,
+        1,
+        2
+      ]
+    }
+  },
+  "background": {
+    "frozen": {
+      "success": 41,
+      "n": 90
+    },
+    "spatial_ref": {
+      "success": 49,
+      "n": 90,
+      "cluster_ci95": [
+        -0.03333333333333334,
+        0.2111111111111111
+      ]
+    },
+    "object_clean_cal": {
+      "success": 50,
+      "n": 90,
+      "cluster_ci95": [
+        0.01111111111111111,
+        0.21111111111111108
+      ]
+    },
+    "_vs_frozen": {
+      "spatial_ref": [
+        13,
+        5,
+        8
+      ],
+      "object_clean_cal": [
+        12,
+        3,
+        9
+      ]
+    },
+    "_vs_spatial": {
+      "object_clean_cal": [
+        6,
+        5,
+        1
+      ]
+    }
+  },
+  "lighting": {
+    "frozen": {
+      "success": 86,
+      "n": 90
+    },
+    "spatial_ref": {
+      "success": 87,
+      "n": 90,
+      "cluster_ci95": [
+        -0.02222222222222222,
+        0.04444444444444444
+      ]
+    },
+    "object_clean_cal": {
+      "success": 88,
+      "n": 90,
+      "cluster_ci95": [
+        0.0,
+        0.05555555555555556
+      ]
+    },
+    "_vs_frozen": {
+      "spatial_ref": [
+        4,
+        3,
+        1
+      ],
+      "object_clean_cal": [
+        4,
+        2,
+        2
+      ]
+    },
+    "_vs_spatial": {
+      "object_clean_cal": [
+        1,
+        0,
+        1
+      ]
+    }
+  },
+  "standard100": {
+    "frozen": {
+      "success": 210,
+      "n": 300
+    },
+    "spatial_ref": {
+      "success": 237,
+      "n": 300,
+      "cluster_ci95": [
+        0.05,
+        0.13
+      ]
+    },
+    "object_clean_cal": {
+      "success": 237,
+      "n": 300,
+      "cluster_ci95": [
+        0.06,
+        0.12333333333333334
+      ]
+    },
+    "_vs_frozen": {
+      "spatial_ref": [
+        38,
+        11,
+        27
+      ],
+      "object_clean_cal": [
+        38,
+        11,
+        27
+      ]
+    },
+    "_vs_spatial": {
+      "object_clean_cal": [
+        12,
+        12,
+        0
+      ]
+    }
+  },
+  "combined130": {
+    "frozen": {
+      "success": 230,
+      "n": 390
+    },
+    "spatial_ref": {
+      "success": 259,
+      "n": 390,
+      "cluster_ci95": [
+        0.041025641025641026,
+        0.11025641025641027
+      ]
+    },
+    "object_clean_cal": {
+      "success": 261,
+      "n": 390,
+      "cluster_ci95": [
+        0.05641025641025641,
+        0.10512820512820513
+      ]
+    },
+    "_vs_frozen": {
+      "spatial_ref": [
+        40,
+        11,
+        29
+      ],
+      "object_clean_cal": [
+        43,
+        12,
+        31
+      ]
+    },
+    "_vs_spatial": {
+      "object_clean_cal": [
+        15,
+        13,
+        2
+      ]
+    }
+  }
+}
