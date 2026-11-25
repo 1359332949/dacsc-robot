@@ -26,18 +26,27 @@ def conditions():
         for fam_i,fam in enumerate(FAMS):
             for k in (1,2): out.append({'case_id':f'sensor_{ti}_{fam}_{k}','group':'sensor_bilateral','base_task':t,'bddl':t+'.bddl','init':t+'.pruned_init','init_index':k,'code':fam_i*10+5,'dual':True})
         lights=sorted([f.stem for f in (LIB/'libero/libero/bddl_files/libero_10').glob(t+'_light_*.bddl')])[:10]
-        bgs=sorted([f.stem for f in (LIB/'libero/libero/bddl_files/libero_10').glob(t+'*table_*.bddl')]+[f.stem for f in (LIB/'libero/libero/bddl_files/libero_10').glob(t+'*scene_*.bddl')])[:10]
+        tabs=sorted([f.stem for f in (LIB/'libero/libero/bddl_files/libero_10').glob(t+'*table_*.bddl')]); scns=sorted([f.stem for f in (LIB/'libero/libero/bddl_files/libero_10').glob(t+'*scene_*.bddl')]); bgs=[]
+        for j in range(5):
+            if j<len(tabs): bgs.append((tabs[j],'table'))
+            if j<len(scns): bgs.append((scns[j],'scene'))
+        while len(bgs)<10:
+            pool=[(x,'table') for x in tabs] + [(x,'scene') for x in scns]
+            bgs.append(pool[len(bgs)%len(pool)])
+        bgs=bgs[:10]
         for j,v in enumerate(lights): out.append({'case_id':f'light_{ti}_{j}','group':'lighting','base_task':t,'bddl':v+'.bddl','init':t+'.pruned_init','init_index':(j%10)+1,'code':0,'dual':False})
-        for j,v in enumerate(bgs): out.append({'case_id':f'bg_{ti}_{j}','group':'background','base_task':t,'bddl':v+'.bddl','init':t+'.pruned_init','init_index':(j%10)+1,'code':0,'dual':False})
+        for j,(v,sg) in enumerate(bgs): out.append({'case_id':f'bg_{ti}_{j}','group':'background','sub_group':sg,'base_task':t,'bddl':v+'.bddl','init':t+'.pruned_init','init_index':(j%10)+1,'code':0,'dual':False})
+    assert len(out)==400 and all(sum(1 for x in out if x['group']==g)==100 for g in ('clean','sensor_bilateral','lighting','background')),(len(out),{g:sum(1 for x in out if x['group']==g) for g in ('clean','sensor_bilateral','lighting','background')})
     return out
 def main():
-    ap=argparse.ArgumentParser(); ap.add_argument('--out',type=Path,required=True); ap.add_argument('--workers',type=int,default=8); ap.add_argument('--shard',type=int,default=0); ap.add_argument('--max-steps',type=int,default=520); a=ap.parse_args()
+    ap=argparse.ArgumentParser(); ap.add_argument('--out',type=Path,required=True); ap.add_argument('--workers',type=int,default=8); ap.add_argument('--shard',type=int,default=0); ap.add_argument('--max-steps',type=int,default=520); ap.add_argument('--case-ids',default=None); a=ap.parse_args()
     policy=load_policy(CORP/'checkpoints/corp_libero.pt',device='cuda:0').eval().requires_grad_(False); ext=policy.representation_extractor; cal=Calib(ROOT/'runs/phase2_calib/spatial_shared_calib.npz'); allc=conditions(); print('conditions',len(allc),flush=True)
+    if a.case_ids: ids=set(a.case_ids.split(',')); allc=[c for c in allc if c['case_id'] in ids]; print('selected',len(allc),flush=True)
     (a.out/'trials').mkdir(parents=True,exist_ok=True)
     for c in allc[a.shard::a.workers]:
         dest=a.out/'trials'/f'{c["case_id"]}.json'
         if dest.exists(): continue
-        bddl=LIB/'libero/libero/bddl_files/libero_10'/c['bddl']; initf=LIB/'libero/libero/init_files/libero_10'/c['init']; init=torch.load(initf,weights_only=False,map_location='cpu')[c['init_index']]; lang=grab_language_from_filename('libero_10',c['bddl']); es=seed_for('phase2_libero10',c['case_id'],'env'); ps=seed_for('phase2_libero10',c['case_id'],'policy'); ns=seed_for('phase2_libero10',c['case_id'],'sensor'); cache={}; rows=[]
+        bddl=LIB/'libero/libero/bddl_files/libero_10'/c['bddl']; initf=LIB/'libero/libero/init_files/libero_10'/c['init']; init=torch.load(initf,weights_only=False,map_location='cpu')[c['init_index']]; lang=grab_language_from_filename('libero_10',c['base_task']+'.bddl'); es=seed_for('phase2_libero10',c['case_id'],'env'); ps=seed_for('phase2_libero10',c['case_id'],'policy'); ns=seed_for('phase2_libero10',c['case_id'],'sensor'); cache={}; rows=[]
         for arm in ARMS:
             random.seed(es);np.random.seed(es);torch.manual_seed(es);ctypes.CDLL(None).srand(ctypes.c_uint(es)); env=OffScreenRenderEnv(bddl_file_name=str(bddl),camera_heights=256,camera_widths=256,render_gpu_device_id=0); hook=None; ada=None
             try:
