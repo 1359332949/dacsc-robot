@@ -61,15 +61,17 @@ CUDA synchronize; inference arms no_grad; ActMAD includes one update + forward.
 
 | Arm | Median ms | IQR ms | x Frozen | Backward | Peak MB |
 |---|---:|---:|---:|---:|---:|
-| Frozen | 23.12 | 4.90 | 1.00x | 0 | 397.6 |
-| Ours V1 Block-3 | 24.01 | 1.18 | **1.04x** | 0 | 397.6 |
-| Pixel-Align | 24.30 | 3.02 | 1.05x | 0 | 397.9 |
-| Deep Block-12 | 23.99 | 2.07 | 1.04x | 0 | 397.8 |
-| True ActMAD (4-frame, 1-step SGD) | 212.95 | 7.76 | **9.21x** | 1 | 1098.8 |
-| Multi-Sample Consensus (N=8) | 183.94 | 10.62 | **7.96x** | 0 | 398.2 |
+| Frozen | 22.38 | 1.29 | 1.00x | 0 | 397.6 |
+| Ours V1 Block-3 | 23.15 | 1.27 | **1.03x** | 0 | 397.6 |
+| Pixel-Align | 23.63 | 1.05 | 1.06x | 0 | 397.9 |
+| Deep Block-12 | 23.07 | 0.96 | 1.03x | 0 | 397.8 |
+| True ActMAD (4-frame, 1-step SGD, no per-step clone) | 71.98 | 3.04 | **3.22x** | 1 | 1099.5 |
+| Multi-Sample Consensus (N=8) | 180.50 | 1.46 | **8.07x** | 0 | 398.2 |
 
-V1 is 1.04x Frozen, ~0.9 ms overhead, zero backward. True ActMAD is 9.2x
-because it now backprops through the 4-frame window; N=8 consensus is 8.0x.
+
+V1 is 1.03x Frozen, ~0.8 ms overhead, zero backward. True ActMAD is 3.22x
+with one backward through the 4-frame window; the earlier 9.2x included an
+accidental per-step full state_dict clone, now removed. N=8 consensus is 8.07x.
 
 ## 6. Phase 1.5 decision
 
