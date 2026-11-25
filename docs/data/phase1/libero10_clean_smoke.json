@@ -1,0 +1,122 @@
+[
+  {
+    "task": "KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it",
+    "success": true,
+    "steps": 221,
+    "max_steps": 520,
+    "language": "turn on the stove and put the moka pot on it",
+    "initial_state_sha256": "3b30fe8b65bfd80887cfa1274878f781a16e6d9a6dcca08f44d3398ad02708c3",
+    "initial_agentview_sha256": "5334b97247504c6c0430ecedb639d037d39d18e2e8be5fef4e03cc02456bf166",
+    "action_sha256": "1b51c7fbdc1ff74ebb1ccc77e284ab06ba777ea343780e352039f9b2bf897ecc",
+    "finite_actions": true,
+    "init_index": 0
+  },
+  {
+    "task": "KITCHEN_SCENE4_put_the_black_bowl_in_the_bottom_drawer_of_the_cabinet_and_close_it",
+    "success": true,
+    "steps": 214,
+    "max_steps": 520,
+    "language": "put the black bowl in the bottom drawer of the cabinet and close it",
+    "initial_state_sha256": "8c4617b81b72b304bd019d32803ba8d9a5ba808d1bdc49482671bd85d4bb06b3",
+    "initial_agentview_sha256": "cc917278688dc820eb3b66d3d6dbfa87ecd9764f775fe81cbd940b0995eeb2c6",
+    "action_sha256": "3382b82f06a86dd4cb2e34d0fcdcc0961951d517e86066decd0df137fa07d579",
+    "finite_actions": true,
+    "init_index": 0
+  },
+  {
+    "task": "KITCHEN_SCENE6_put_the_yellow_and_white_mug_in_the_microwave_and_close_it",
+    "success": false,
+    "steps": 520,
+    "max_steps": 520,
+    "language": "put the yellow and white mug in the microwave and close it",
+    "initial_state_sha256": "5396737f6c0a4651dc2a1269fbb45e877488d9d9c804a678af97472d397915a2",
+    "initial_agentview_sha256": "77775f7781d1a40c29af06b83bbca9e1d40a90dbbbb554d19d6dd1012e9890b7",
+    "action_sha256": "d9d2743e2a3030b1752635aa5a9d739c99df4acb0dfa9f48891eb4692c59acab",
+    "finite_actions": true,
+    "init_index": 0
+  },
+  {
+    "task": "KITCHEN_SCENE8_put_both_moka_pots_on_the_stove",
+    "success": true,
+    "steps": 359,
+    "max_steps": 520,
+    "language": "put both moka pots on the stove",
+    "initial_state_sha256": "3d73289a8d0b357be7459cf9783b7228dc8af55ed05969d474409d3aa82bfa72",
+    "initial_agentview_sha256": "e67f9c1b3590de380cd3e42be840ce010fa2fa3fc2996965fac2be2351bef308",
+    "action_sha256": "30b220676c19798b7399071735c67b7615b821e08ff0b2cb9c81798af376f12e",
+    "finite_actions": true,
+    "init_index": 0
+  },
+  {
+    "task": "LIVING_ROOM_SCENE1_put_both_the_alphabet_soup_and_the_cream_cheese_box_in_the_basket",
+    "success": true,
+    "steps": 223,
+    "max_steps": 520,
+    "language": "put both the alphabet soup and the cream cheese box in the basket",
+    "initial_state_sha256": "13095c49834aa32044eeda64328f1bc23a0b57da48568f39637890f341fb200a",
+    "initial_agentview_sha256": "fe0d89b2d4d2dff8abed88b50d9944735f3dd76329e7bbf9d4a572d659c50702",
+    "action_sha256": "fce61402b1d0b518340c7e8d139e0c24624cfc85f4c9bf6448b46aff5e3380bc",
+    "finite_actions": true,
+    "init_index": 0
+  },
+  {
+    "task": "LIVING_ROOM_SCENE2_put_both_the_alphabet_soup_and_the_tomato_sauce_in_the_basket",
+    "success": true,
+    "steps": 288,
+    "max_steps": 520,
+    "language": "put both the alphabet soup and the tomato sauce in the basket",
+    "initial_state_sha256": "ad5b9f7fcd2b672d25ca7fafa601472fef0cc48d94656af3b75ea1e0a1b41799",
+    "initial_agentview_sha256": "da8457890c7781d51c13efe6e3eb6114e904029a30abf9258573412078beb456",
+    "action_sha256": "ada816720342b9f8174c11a1da83234e1ddc9cc09ea8b897d5f16e0b65449353",
+    "finite_actions": true,
+    "init_index": 0
+  },
+  {
+    "task": "LIVING_ROOM_SCENE2_put_both_the_cream_cheese_box_and_the_butter_in_the_basket",
+    "success": true,
+    "steps": 232,
+    "max_steps": 520,
+    "language": "put both the cream cheese box and the butter in the basket",
+    "initial_state_sha256": "a9bc7d7e2d1f0889a398e48c1302bac8ad289a3282348f604b31d99fb7c21b75",
+    "initial_agentview_sha256": "6fe4e3767caa01185234d04ddb46d7c7970d66e61e8c4c41dbbb68100aee0e2d",
+    "action_sha256": "ca7db76aa7bc4a6252d765a8099769f2efb08ec0a382431402456157e7c9d37c",
+    "finite_actions": true,
+    "init_index": 0
+  },
+  {
+    "task": "LIVING_ROOM_SCENE5_put_the_white_mug_on_the_left_plate_and_put_the_yellow_and_white_mug_on_the_right_plate",
+    "success": true,
+    "steps": 211,
+    "max_steps": 520,
+    "language": "put the white mug on the left plate and put the yellow and white mug on the right plate",
+    "initial_state_sha256": "5bc3b8f2b3bc2ac0d6140243675c6ed2c32772511f3d02536a9fe1dab1c8b1d2",
+    "initial_agentview_sha256": "272b6af020a30a862a52fb863c877b9db17b20b90ea893f5ea3c0b20278995e6",
+    "action_sha256": "ca4be2c19bb9f40fb21c764bb45da90f85cc8f476a39088631d76532e5d675db",
+    "finite_actions": true,
+    "init_index": 0
+  },
+  {
+    "task": "LIVING_ROOM_SCENE6_put_the_white_mug_on_the_plate_and_put_the_chocolate_pudding_to_the_right_of_the_plate",
+    "success": true,
+    "steps": 217,
+    "max_steps": 520,
+    "language": "put the white mug on the plate and put the chocolate pudding to the right of the plate",
+    "initial_state_sha256": "428554418b498fe998e9061d8f101809d72c649b9443fb5ed19855388fcbd2cb",
+    "initial_agentview_sha256": "e61a6f6763fff307a2ca4fc78a344b45140e991190e9543b79260a0dba83e4e0",
+    "action_sha256": "325ff5de80fa142a9bacfa4deb7ccd5aa3781ec64976f01ac0263bde3581b9dc",
+    "finite_actions": true,
+    "init_index": 0
+  },
+  {
+    "task": "STUDY_SCENE1_pick_up_the_book_and_place_it_in_the_back_compartment_of_the_caddy",
+    "success": true,
+    "steps": 167,
+    "max_steps": 520,
+    "language": "pick up the book and place it in the back compartment of the caddy",
+    "initial_state_sha256": "e3fab76f7eef38ecf0a21bc61ccdd421534802f44d6b05c14c8b2aa3c6074843",
+    "initial_agentview_sha256": "3cd58f42140354f97598f25c2625cdd9cb66469b2f014cb0f558682ac2d12433",
+    "action_sha256": "ad14e964055831c784282b2c49eaa232d895388333a65175d7f6249f9404eefe",
+    "finite_actions": true,
+    "init_index": 0
+  }
+]

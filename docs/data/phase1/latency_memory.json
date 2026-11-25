@@ -1,0 +1,56 @@
+{
+  "arms": {
+    "frozen": {
+      "forward_ms": 32.781311599925786,
+      "peak_mem_mb": 205.67578125,
+      "backward": 0
+    },
+    "v1_block3": {
+      "forward_ms": 32.19131106743589,
+      "peak_mem_mb": 205.67578125,
+      "backward": 0
+    },
+    "pixel_align": {
+      "forward_ms": 31.376393866958097,
+      "peak_mem_mb": 205.67578125,
+      "backward": 0
+    },
+    "deep_block12": {
+      "forward_ms": 23.822224999700364,
+      "peak_mem_mb": 205.67578125,
+      "backward": 0
+    },
+    "actmad_proxy": {
+      "forward_ms": 23.069735267199576,
+      "peak_mem_mb": 205.6787109375,
+      "backward": 1,
+      "actmad_update_ms": 34.645534004084766,
+      "actmad_loss": 0.015086488798260689,
+      "actmad_scale_changed": 0.13142997026443481
+    }
+  },
+  "checks": {
+    "frozen": {
+      "finite_action": true,
+      "action_abs_mean": 0.3425326943397522
+    },
+    "v1_block3": {
+      "finite_action": true,
+      "action_abs_mean": 0.3425275683403015
+    },
+    "pixel_align": {
+      "finite_action": true,
+      "action_abs_mean": 0.34222880005836487,
+      "image_mean_abs_diff": 0.710751473903656
+    },
+    "deep_block12": {
+      "finite_action": true,
+      "action_abs_mean": 0.34534719586372375
+    },
+    "actmad_proxy": {
+      "finite_action": true,
+      "action_abs_mean": 0.3425326943397522
+    }
+  },
+  "device": "NVIDIA GeForce RTX 3090"
+}
