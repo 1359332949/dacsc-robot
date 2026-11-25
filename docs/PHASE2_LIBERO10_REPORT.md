@@ -70,6 +70,16 @@
 - Next: either add a Clean-preserving gate for V1 or report libero_10 honestly
   as a mixed/negative transfer suite. Do not tune on this test set.
 
-Note: task-cluster bootstrap CIs failed to write because the background
-bootstrap had an empty group in the first pass; the success and McNemar tables
-above are complete and computed from all 2,000 rows.
+## Task-cluster 95% CI vs Frozen
+
+| Group | Pixel | Deep B12 | ActMAD | Ours V1 |
+|---|---:|---:|---:|---:|
+| Clean | [-32,-9] | [-12,+3] | [-4,+5] | **[-9,-1]** |
+| Sensor | [-16,-8] | [-6,+6] | [-6,+5] | [-6,+10] |
+| Lighting | [-45,-5] | [-3,+12] | [-11,+4] | [0,+20] |
+| Background | [-22,-6] | [-7,+7] | [-8,+8] | [-8,+7] |
+| Total | [-25,-11] | [-4.5,+3.5] | [-3.3,+1.3] | [-3.3,+7.0] |
+
+V1's Clean interval excludes zero: **the Clean loss is a real regression on
+libero_10**, even though total is nominally +7. The total interval includes zero.
+
