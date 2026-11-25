@@ -1,0 +1,391 @@
+{
+  "clean": {
+    "frozen": {
+      "success": 10,
+      "n": 10
+    },
+    "v1_hard075": {
+      "success": 10,
+      "n": 10,
+      "ci95_vs_frozen": [
+        0.0,
+        0.0
+      ]
+    },
+    "w2_proj_rms_noclamp": {
+      "success": 10,
+      "n": 10,
+      "ci95_vs_frozen": [
+        0.0,
+        0.0
+      ]
+    },
+    "js_shrink_rms_noclamp": {
+      "success": 10,
+      "n": 10,
+      "ci95_vs_frozen": [
+        0.0,
+        0.0
+      ]
+    },
+    "_vs_frozen": {
+      "v1_hard075": [
+        0,
+        0,
+        0
+      ],
+      "w2_proj_rms_noclamp": [
+        0,
+        0,
+        0
+      ],
+      "js_shrink_rms_noclamp": [
+        0,
+        0,
+        0
+      ]
+    },
+    "_vs_v1": {
+      "w2_proj_rms_noclamp": [
+        0,
+        0,
+        0
+      ],
+      "js_shrink_rms_noclamp": [
+        0,
+        0,
+        0
+      ]
+    }
+  },
+  "sensor_bilateral": {
+    "frozen": {
+      "success": 5,
+      "n": 30
+    },
+    "v1_hard075": {
+      "success": 7,
+      "n": 30,
+      "ci95_vs_frozen": [
+        0.0,
+        0.14166666666666666
+      ]
+    },
+    "w2_proj_rms_noclamp": {
+      "success": 5,
+      "n": 30,
+      "ci95_vs_frozen": [
+        -0.14166666666666666,
+        0.0
+      ]
+    },
+    "js_shrink_rms_noclamp": {
+      "success": 5,
+      "n": 30,
+      "ci95_vs_frozen": [
+        -0.125,
+        0.0
+      ]
+    },
+    "_vs_frozen": {
+      "v1_hard075": [
+        3,
+        1,
+        2
+      ],
+      "w2_proj_rms_noclamp": [
+        2,
+        2,
+        0
+      ],
+      "js_shrink_rms_noclamp": [
+        1,
+        1,
+        0
+      ]
+    },
+    "_vs_v1": {
+      "w2_proj_rms_noclamp": [
+        1,
+        3,
+        -2
+      ],
+      "js_shrink_rms_noclamp": [
+        0,
+        2,
+        -2
+      ]
+    }
+  },
+  "background": {
+    "frozen": {
+      "success": 19,
+      "n": 30
+    },
+    "v1_hard075": {
+      "success": 23,
+      "n": 30,
+      "ci95_vs_frozen": [
+        0.05555555555555555,
+        0.6111111111111112
+      ]
+    },
+    "w2_proj_rms_noclamp": {
+      "success": 17,
+      "n": 30,
+      "ci95_vs_frozen": [
+        -0.6296296296296297,
+        -0.0925925925925926
+      ]
+    },
+    "js_shrink_rms_noclamp": {
+      "success": 20,
+      "n": 30,
+      "ci95_vs_frozen": [
+        -0.5925925925925926,
+        -6.1679056923619804e-18
+      ]
+    },
+    "_vs_frozen": {
+      "v1_hard075": [
+        5,
+        1,
+        4
+      ],
+      "w2_proj_rms_noclamp": [
+        1,
+        3,
+        -2
+      ],
+      "js_shrink_rms_noclamp": [
+        4,
+        3,
+        1
+      ]
+    },
+    "_vs_v1": {
+      "w2_proj_rms_noclamp": [
+        1,
+        7,
+        -6
+      ],
+      "js_shrink_rms_noclamp": [
+        3,
+        6,
+        -3
+      ]
+    }
+  },
+  "background_table_texture": {
+    "frozen": {
+      "success": 0,
+      "n": 0
+    },
+    "v1_hard075": {
+      "success": 0,
+      "n": 0
+    },
+    "w2_proj_rms_noclamp": {
+      "success": 0,
+      "n": 0
+    },
+    "js_shrink_rms_noclamp": {
+      "success": 0,
+      "n": 0
+    },
+    "_vs_frozen": {
+      "v1_hard075": [
+        0,
+        0,
+        0
+      ],
+      "w2_proj_rms_noclamp": [
+        0,
+        0,
+        0
+      ],
+      "js_shrink_rms_noclamp": [
+        0,
+        0,
+        0
+      ]
+    },
+    "_vs_v1": {
+      "w2_proj_rms_noclamp": [
+        0,
+        0,
+        0
+      ],
+      "js_shrink_rms_noclamp": [
+        0,
+        0,
+        0
+      ]
+    }
+  },
+  "background_scene_texture": {
+    "frozen": {
+      "success": 0,
+      "n": 0
+    },
+    "v1_hard075": {
+      "success": 0,
+      "n": 0
+    },
+    "w2_proj_rms_noclamp": {
+      "success": 0,
+      "n": 0
+    },
+    "js_shrink_rms_noclamp": {
+      "success": 0,
+      "n": 0
+    },
+    "_vs_frozen": {
+      "v1_hard075": [
+        0,
+        0,
+        0
+      ],
+      "w2_proj_rms_noclamp": [
+        0,
+        0,
+        0
+      ],
+      "js_shrink_rms_noclamp": [
+        0,
+        0,
+        0
+      ]
+    },
+    "_vs_v1": {
+      "w2_proj_rms_noclamp": [
+        0,
+        0,
+        0
+      ],
+      "js_shrink_rms_noclamp": [
+        0,
+        0,
+        0
+      ]
+    }
+  },
+  "lighting": {
+    "frozen": {
+      "success": 24,
+      "n": 30
+    },
+    "v1_hard075": {
+      "success": 28,
+      "n": 30,
+      "ci95_vs_frozen": [
+        -0.05555555555555555,
+        0.4166666666666667
+      ]
+    },
+    "w2_proj_rms_noclamp": {
+      "success": 27,
+      "n": 30,
+      "ci95_vs_frozen": [
+        -0.3333333333333333,
+        0.2222222222222222
+      ]
+    },
+    "js_shrink_rms_noclamp": {
+      "success": 24,
+      "n": 30,
+      "ci95_vs_frozen": [
+        -0.3492063492063492,
+        0.0
+      ]
+    },
+    "_vs_frozen": {
+      "v1_hard075": [
+        6,
+        2,
+        4
+      ],
+      "w2_proj_rms_noclamp": [
+        3,
+        0,
+        3
+      ],
+      "js_shrink_rms_noclamp": [
+        3,
+        3,
+        0
+      ]
+    },
+    "_vs_v1": {
+      "w2_proj_rms_noclamp": [
+        2,
+        3,
+        -1
+      ],
+      "js_shrink_rms_noclamp": [
+        0,
+        4,
+        -4
+      ]
+    }
+  },
+  "total100": {
+    "frozen": {
+      "success": 58,
+      "n": 100
+    },
+    "v1_hard075": {
+      "success": 68,
+      "n": 100,
+      "ci95_vs_frozen": [
+        0.026515151515151512,
+        0.2375
+      ]
+    },
+    "w2_proj_rms_noclamp": {
+      "success": 59,
+      "n": 100,
+      "ci95_vs_frozen": [
+        -0.23765151515151514,
+        0.006919191919191922
+      ]
+    },
+    "js_shrink_rms_noclamp": {
+      "success": 59,
+      "n": 100,
+      "ci95_vs_frozen": [
+        -0.20166666666666666,
+        -0.004191919191919189
+      ]
+    },
+    "_vs_frozen": {
+      "v1_hard075": [
+        14,
+        4,
+        10
+      ],
+      "w2_proj_rms_noclamp": [
+        6,
+        5,
+        1
+      ],
+      "js_shrink_rms_noclamp": [
+        8,
+        7,
+        1
+      ]
+    },
+    "_vs_v1": {
+      "w2_proj_rms_noclamp": [
+        4,
+        13,
+        -9
+      ],
+      "js_shrink_rms_noclamp": [
+        3,
+        12,
+        -9
+      ]
+    }
+  }
+}
