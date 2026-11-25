@@ -39,14 +39,14 @@ def ref_weighted(others):
     scores=[]
     for i in range(len(others)):
         ins=[others[j] for j in range(len(others)) if j!=i]; mi=torch.stack([x[0] for x in ins]).mean(0); si=(torch.stack([x[1] for x in ins]).mean(0)-mi.square()).clamp_min(0).sqrt().clamp_min(1e-3); m,q=others[i]; scores.append(score(m.float(),(q-m.square()).clamp_min(0).sqrt().float(),mi,si))
-    return mu,ss,torch.cat(scores).quantile(.95,dim=0)
+    return mu,ss,torch.stack(scores).quantile(.95,dim=0)
 def ref_unif(patches):
     # patches list [2,256,384]
     raw=torch.stack([torch.stack([p.mean(1),p.square().mean(1)]) for p in patches]) # [9,2mom,2view,384]
     mu=raw[:,0].mean(0); ss=(raw[:,1].mean(0)-mu.square()).clamp_min(0).sqrt().clamp_min(1e-3); scores=[]
     for i in range(len(patches)):
         others=[raw[j] for j in range(len(patches)) if j!=i]; ins=torch.stack(others); mi=ins[:,0].mean(0); si=(ins[:,1].mean(0)-mi.square()).clamp_min(0).sqrt().clamp_min(1e-3); m=raw[i,0]; q=raw[i,1]; scores.append(score(m,(q-m.square()).clamp_min(0).sqrt(),mi,si))
-    return mu,ss,torch.cat(scores).quantile(.95,dim=0)
+    return mu,ss,torch.stack(scores).quantile(.95,dim=0)
 def align_weighted(x,ref,w,alpha=.75):
     mu,ss,tau=ref; p=x[:,1:]; ww=wtil(w); m=(ww[:,:,None]*p).sum(1); sd=((ww[:,:,None]*(p-m[:,None,:]).square()).sum(1)+1e-6).sqrt(); active=score(m,sd,mu,ss)>tau; gain=(((1-alpha)*sd+alpha*ss)/(sd.square()+1e-6).sqrt()).clamp(.5,2); out=torch.where(active[:,None,:],gain[:,None,:]*(p-m[:,None,:])+((1-alpha)*m+alpha*mu)[:,None,:],p); return torch.cat((x[:,:1],out),1)
 def align_spatial(x,ref,w,pref=.35,bg=.75):
@@ -99,13 +99,28 @@ def main():
         else:
             m=p.mean(1); sd=p.std(1,unbiased=False)
         return float((score(m,sd,ref[0],ref[1])>ref[2]).float().mean())
+    def active_rate_case(rid,arm):
+        p=patch[rid]; w=att[rid]
+        if arm in ('v1_full','spatial_full'): ref=ref_full[rid.split('_')[0]] if False else ref_full[next(t for t in clean if clean[t]['id']==(rid if rid.startswith('clean_') else ''))] if False else None
+        # resolve task by case id
+        task=next(t for t in clean if clean[t]['id']==rid) if rid.startswith('clean_') else None
+        if task is None:
+            task=next(r['task'] for r in t0 if r['id']==rid)
+        if arm in ('v1_full','spatial_full'): ref=ref_full[task]
+        elif arm in ('v1_t0','spatial_t0'): ref=ref_u[task]
+        else: ref=ref_w[task]
+        if arm=='weighted_t0':
+            ww=wtil(w); m=(ww[:,:,None]*p).sum(1); sd=((ww[:,:,None]*(p-m[:,None,:]).square()).sum(1)+1e-6).sqrt()
+        else:
+            m=p.mean(1); sd=p.std(1,unbiased=False)
+        return float((score(m,sd,ref[0],ref[1])>ref[2]).float().mean())
     res=[]
     for r in t0:
         for zi,z in enumerate(zs):
             fz=predict(raw[r['id']],z,'frozen',None); bx,br=dist(fz,clean_ref[r['task']][zi])
             for arm in ARMS:
                 ref=ref_full[r['task']] if arm.endswith('_full') else (ref_u[r['task']] if arm in ('v1_t0','spatial_t0') else ref_w[r['task']])
-                a=predict(raw[r['id']],z,arm,ref,att[r['id']] if arm.startswith('spatial') or arm=='weighted_t0' else None); ax,ar=dist(a,clean_ref[r['task']][zi]); res.append({'id':r['id'],'task':r['task'],'factor':r['factor'],'sub':r['sub'],'arm':arm,'z':zi,'near_xyz':(bx-ax)/(bx+1e-12)*100 if r['factor']!='clean' else 0.0,'near_rot':(br-ar)/(br+1e-12)*100 if r['factor']!='clean' else 0.0,'drift_xyz':float((a-fz).abs()[:,:3].mean()),'drift_rot':float((a-fz).abs()[:,3:6].mean()),'active_rate':float(__import__('torch').mean(__import__('torch').tensor([1.0])))})
+                a=predict(raw[r['id']],z,arm,ref,att[r['id']] if arm.startswith('spatial') or arm=='weighted_t0' else None); ax,ar=dist(a,clean_ref[r['task']][zi]); res.append({'id':r['id'],'task':r['task'],'factor':r['factor'],'sub':r['sub'],'arm':arm,'z':zi,'near_xyz':(bx-ax)/(bx+1e-12)*100 if r['factor']!='clean' else 0.0,'near_rot':(br-ar)/(br+1e-12)*100 if r['factor']!='clean' else 0.0,'drift_xyz':float((a-fz).abs()[:,:3].mean()),'drift_rot':float((a-fz).abs()[:,3:6].mean()),'active_rate':active_rate_case(r['id'],arm)})
     # geometry
     geom=[]
     caseids=sorted({r['case'] for r in moves if r.get('factor')=='clean'})
@@ -120,7 +135,7 @@ def main():
     factors=['clean','sensor_noise','background','lighting']
     for fac in factors:
         for arm in ARMS:
-            sub=[x for x in res if x['factor']==fac and x['arm']==arm]; groups[f'{fac}__{arm}']={'n':len(sub),'near_xyz':float(np.mean([x['near_xyz'] for x in sub])),'near_rot':float(np.mean([x['near_rot'] for x in sub])),'drift_xyz':float(np.mean([x['drift_xyz'] for x in sub])),'drift_rot':float(np.mean([x['drift_rot'] for x in sub])),'active_rate':float(np.mean([active_rate(arm,t) for t in clean]))}
+            sub=[x for x in res if x['factor']==fac and x['arm']==arm]; groups[f'{fac}__{arm}']={'n':len(sub),'near_xyz':float(np.mean([x['near_xyz'] for x in sub])),'near_rot':float(np.mean([x['near_rot'] for x in sub])),'drift_xyz':float(np.mean([x['drift_xyz'] for x in sub])),'drift_rot':float(np.mean([x['drift_rot'] for x in sub])),'active_rate':float(np.mean([x['active_rate'] for x in sub]))}
     for fac in ['table_texture','scene_texture']:
         for arm in ARMS:
             sub=[x for x in res if x['factor']=='background' and fac in x['sub'] and x['arm']==arm]; groups[f'background_{fac}__{arm}']={'n':len(sub),'near_xyz':float(np.mean([x['near_xyz'] for x in sub])),'near_rot':float(np.mean([x['near_rot'] for x in sub]))}

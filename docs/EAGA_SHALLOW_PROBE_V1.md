@@ -39,27 +39,27 @@ true weighted LOTO reference with its own weighted tau.
 |---|---:|---:|---:|
 | v1_full | 0.0555 | 0.00182 | 0.00027 |
 | spatial_full | 0.0555 | 0.00173 | 0.00027 |
-| v1_t0 | 0.0918 | 0.00172 | 0.00027 |
-| weighted_t0 | 0.0827 | 0.00598 | 0.00164 |
-| spatial_t0 | 0.0918 | 0.00164 | 0.00027 |
+| v1_t0 | 0.1289 | 0.00160 | 0.00027 |
+| weighted_t0 | 0.1132 | 0.00724 | 0.00173 |
+| spatial_t0 | 0.1289 | 0.00154 | 0.00027 |
 
 ### Relative action distance to same-task Clean Frozen (%; positive better)
 
 | Group | v1_full | spatial_full | v1_t0 | weighted_t0 | spatial_t0 |
 |---|---:|---:|---:|---:|---:|
-| Sensor XYZ | 11.06 | 10.32 | **14.28** | 9.96 | 13.47 |
-| Sensor rot | 10.02 | 10.56 | 12.99 | 5.12 | **13.35** |
-| Background XYZ | 16.19 | **19.65** | 16.11 | 3.36 | **19.72** |
-| Background rot | 14.51 | 15.61 | 14.07 | 8.89 | **15.62** |
-| Lighting XYZ | 25.22 | 25.93 | **27.96** | 3.36 | 26.43 |
-| Lighting rot | **18.66** | 16.82 | 19.21 | 11.23 | 17.50 |
+| Sensor XYZ | 11.06 | 10.32 | **14.57** | 7.92 | 13.75 |
+| Sensor rot | 10.02 | 10.56 | 13.23 | 3.24 | **13.47** |
+| Background XYZ | 16.19 | **19.65** | 16.05 | 4.28 | **19.68** |
+| Background rot | 14.51 | **15.61** | 13.79 | 8.20 | 15.35 |
+| Lighting XYZ | 25.22 | 25.93 | **28.00** | 3.80 | 26.47 |
+| Lighting rot | **18.66** | 16.82 | 18.97 | 12.54 | 17.23 |
 
 Background split:
 
 | Subgroup | v1_full | spatial_full | v1_t0 | weighted_t0 | spatial_t0 |
 |---|---:|---:|---:|---:|---:|
-| Table XYZ / rot | 16.58 / 9.82 | 19.38 / 12.36 | 17.22 / 12.20 | -3.77 / 3.14 | **20.00 / 14.62** |
-| Scene XYZ / rot | 15.81 / 19.20 | 19.92 / 18.87 | 15.01 / 15.94 | 10.49 / 14.64 | **19.43 / 16.63** |
+| Table XYZ / rot | 16.58 / 9.82 | 19.38 / 12.36 | 17.21 / 12.23 | -2.22 / 3.46 | **19.97 / 14.57** |
+| Scene XYZ / rot | 15.81 / 19.20 | **19.92 / 18.87** | 14.89 / 15.35 | 10.78 / 12.94 | 19.38 / 16.12 |
 
 ### Geometry (frozen-delta; 128 pair-noise comparisons)
 
@@ -67,9 +67,9 @@ Background split:
 |---|---:|---:|
 | v1_full | 0.99979 | 0.99685 |
 | spatial_full | 0.99983 | 0.99765 |
-| v1_t0 | 0.99991 | 1.00041 |
-| weighted_t0 | 0.99746 | 0.99801 |
-| spatial_t0 | **0.99992** | **1.00165** |
+| v1_t0 | 0.99984 | 1.00772 |
+| weighted_t0 | 0.99799 | 0.97214 |
+| spatial_t0 | **0.99986** | **1.00690** |
 
 All five pass the geometry-preservation gate; V1 values match the original
 `4e850b8` behavior. This corrects the false "geometry failure" in v1/v2.
