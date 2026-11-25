@@ -1,18 +1,16 @@
-# EAGA shallow feasibility probe V1 (2026-11-25)
+# EAGA shallow feasibility probe V1 (corrected 2026-11-25)
 
-Status: **attention survival passes; geometry/action probe fails; do not run closed loop.**
+Status: **attention survival passes; corrected action/geometry probe fails; stop route 2.**
 
-## Scope
+Supersedes the invalid experiment-2 numbers in `d80611d`. The four bugs in
+`scripts/eaga_action_probe.py` were: double preprocessing, unused attention
+weights, wrong Clean-relative reference, and wrong frozen-delta geometry
+comparison. The corrected script is `scripts/eaga_action_probe_v2.py`.
 
-Cached `4e850b8` Spatial Dev t=0 observations (100) and cached physical
-bowl-move frames (37; only 32 nonzero-offset pairs were usable in this cache).
-No closed-loop rollouts, no Object, no Blind, no gradients, no weights changed.
+## Experiment 1: attention survival (unchanged, valid)
 
-## Experiment 1: frozen CoRP attention survival
-
-Extracted native `CrossAttentionResampler` weights per view, averaged over
-heads and 48 queries -> 256 patch weights (sum=1). Clean reference is the
-same-task Clean t=0 frame.
+Cached `4e850b8` Spatial Dev t=0, 100 cases. Native `CrossAttentionResampler`
+weights per view, averaged over heads and 48 queries -> 256 patch weights.
 
 | Group | n | N_eff mean | N_eff max | cosine to Clean | top-25% IoU |
 |---|---:|---:|---:|---:|---:|
@@ -23,49 +21,64 @@ same-task Clean t=0 frame.
 | Scene texture | 15 | 66.8 | - | 0.691 | 0.367 |
 | Lighting | 30 | 55.0 | 115.6 | 0.800 | 0.594 |
 
-Hard gate: **PASS** by the stated thresholds (`N_eff max < 180`,
-table IoU mean 0.339 > 0.25). Caveat: the cache is single-eye Sensor, not the
-bilateral stress set; the attention map is not uniformly collapsed, but
-cosine/IoU show substantial drift under blur/texture.
+Gate: **PASS** by `N_eff max < 180` and table IoU mean > 0.25.
+Caveat: cached Sensor is single-eye, not bilateral.
 
-## Experiment 2: pure-forward action probe
+## Experiment 2: corrected action probe
 
-Three arms on the same cached t=0 inputs, fixed z0, no execution:
-V1 uniform dead-zone alpha=0.75; EAGA weighted moments; EAGA spatial
-foreground/background modulation (fg .35, bg .75).
+Single preprocessing (`visual_from_obs` prepares exactly once), true weighted
+target moments, Clean-relative action distance, and Frozen-delta geometry.
+4 fixed policy noises; no execution; no weights changed.
 
-Clean and Shift mean **normalized action change vs frozen** (lower is not
-automatically better; it is a drift diagnostic):
+### Identity check
 
-| Group | V1 xyz | weighted xyz | spatial xyz |
+V1 Clean absolute drift:
+
+```text
+xyz 0.00183, rot 0.00027
+```
+
+This is the expected small-drift regime (the buggy version reported 0.305).
+
+### Relative action distance to same-task Clean Frozen (%)
+
+Positive = closer to Clean than Frozen; negative = farther.
+
+| Group | V1 xyz / rot | weighted xyz / rot | spatial xyz / rot |
 |---|---:|---:|---:|
-| Clean | 0.305 | 0.307 | 0.205 |
-| Sensor | 0.193 | 0.206 | 0.175 |
-| Background | 0.142 | 0.138 | 0.126 |
-| Lighting | 0.271 | 0.204 | 0.208 |
+| Sensor | **+11.06 / +10.02** | -19.16 / -43.87 | +2.95 / -22.70 |
+| Background | **+16.19 / +14.51** | -45.73 / -25.51 | -18.41 / -16.06 |
+| Lighting | **+25.22 / +18.66** | -147.19 / -78.50 | -55.88 / -43.02 |
 
-Geometry probe (32 nonzero-offset physical bowl moves):
+Clean absolute drift:
 
-| Arm | median cosine | median amplitude ratio | cos>0 |
-|---|---:|---:|---:|
-| Frozen | 0.054 | 2.174 | 17/32 |
-| V1 | -0.148 | 2.430 | 14/32 |
-| EAGA weighted | -0.147 | 2.354 | 13/32 |
-| EAGA spatial | -0.140 | 2.249 | 14/32 |
+| Arm | xyz drift | rot drift |
+|---|---:|---:|
+| V1 | **0.00183** | **0.00027** |
+| weighted | 0.05234 | 0.00998 |
+| spatial | 0.03322 | 0.00634 |
 
-The cached geometry set is **not** the reported 97/108-pair set; only 32
-nonzero-offset pairs are present here. Under this available probe, neither V1
-nor EAGA preserves the Frozen geometry direction (`cos` near zero/negative),
-and EAGA does not improve it.
+### Geometry fidelity, corrected frozen-delta definition
+
+`delta_a(adapt) = a_adapt(moved) - a_adapt(zero)`;
+`delta_a(frozen) = a_frozen(moved) - a_frozen(zero)`.
+Median cosine / amplitude ratio over 32 nonzero-offset pairs x 4 noises = 128.
+
+| Arm | median cosine | median amplitude ratio |
+|---|---:|---:|
+| V1 | **0.99979** | **0.99685** |
+| EAGA weighted | 0.82955 | 1.04584 |
+| EAGA spatial | 0.96631 | 1.09327 |
 
 ## Decision
 
-- Attention survival: pass, so the route is not physically impossible.
-- Action/geometry: fail. EAGA does not meet the pre-declared 97/97 geometry
-  gate; weighted moments and foreground/background modulation do not improve
-  the direction response.
-- **Do not run the 5-arm closed loop. Move to route 1 (second policy backbone
-  validation of the minimal V1 principle).**
+- Attention survival: **PASS**.
+- Corrected action probe: V1 is positive on every domain and preserves the
+  Frozen geometry response (cos 0.9998; ratio 0.9969).
+- EAGA weighted moments and foreground/background modulation are **worse** on
+  every Shift group, have 10-50x larger Clean drift, and degrade geometry.
+- **Do not run closed loop; stop route 2 and move to route 1 (second policy
+  backbone validation).**
 
-Limitations: single-eye cached Sensor; 32 geometry pairs from a 37-frame cache,
-not the full 97/108 set; no task-cluster intervals; no closed-loop evidence.
+Limitations: cached Sensor is single-eye; geometry cache has 32 nonzero pairs,
+not the full 97/108 set; no closed-loop success; no task-cluster intervals.
