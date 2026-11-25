@@ -74,7 +74,7 @@ def main():
         r=json.loads((final/'results'/(c['case_id']+'.json')).read_text())['seeds']; es=r['environment_seed']; ns=r['sensor_noise_seed']; ps=r['policy_flow_seed'] if s==0 else seed_for(c['pair_group_id'],s,'egl_policy_seed'); return es,ns,ps
     def initial_of(c): return torch.load(LIB/c['init_state_file'],weights_only=False,map_location='cpu')[c['init_state_index']]
     def lang_of(c): return grab_language_from_filename(c['suite'],c['base_task']+'.bddl')
-    def run_arm(c,s,arm,refs,matched):
+    def run_arm(c,s,arm,refs,matched,cache):
         es,ns,ps=stream_seeds(c,s); code=int(c['runtime_params']['noise']); dual=bool(c.get('_dual',False)); init=initial_of(c); lang=lang_of(c); random.seed(es); np.random.seed(es); torch.manual_seed(es); ctypes.CDLL(None).srand(ctypes.c_uint(es))
         env=OffScreenRenderEnv(bddl_file_name=str(LIB/c['bddl']),camera_heights=256,camera_widths=256,render_gpu_device_id=0); hooks=[]
         try:
@@ -87,7 +87,7 @@ def main():
                 hooks.append(ext.visual_encoder.backbone.blocks[5].register_forward_hook(lambda mod,args,x:align_hard(x,b6,.5)))
             elif arm=='v2_soft_b3': hooks.append(ext.visual_encoder.backbone.blocks[2].register_forward_hook(lambda mod,args,x:align_soft(x,b3,.75)))
             elif arm=='v2_hard_matched_b3': hooks.append(ext.visual_encoder.backbone.blocks[2].register_forward_hook(lambda mod,args,x:align_hard(x,b3,float(matched))))
-            g=torch.Generator(device='cuda:0').manual_seed(ps); steps=0; success=False; cache={}; audit=[]
+            g=torch.Generator(device='cuda:0').manual_seed(ps); steps=0; success=False; audit=[]
             with torch.no_grad():
                 while steps<220:
                     raw=observed(obs,code,ns,steps,dual,wrapper); key=(steps,array_hash(env.sim.get_state().flatten()),*(array_hash(np.asarray(raw[k])) for k in ('robot0_eef_pos','robot0_eef_quat','robot0_gripper_qpos'))); raw=match_pixels(raw,key,cache,audit); po=policy_observation(raw,lang,policy); z=torch.randn((1,12,7),device='cuda:0',generator=g); _,rep=visual_from_obs(policy,po); plan=policy.normalizer.unnormalize_action(sample_z(policy,rep,z))[0].clamp(-1,1).cpu().numpy()
@@ -165,7 +165,8 @@ def main():
         regime='dual' if c.get('_dual') else 'standard'
         dest=a.out/'trials'/f'{regime}_{c["case_id"]}_{s}.json'
         if dest.exists(): continue
-        rows=[run_arm(c,s,arm,refs,matched) for arm in ARMS]
+        cache={}
+        rows=[run_arm(c,s,arm,refs,matched,cache) for arm in ARMS]
         rows[0]['env_seed'],rows[0]['sensor_seed'],rows[0]['policy_seed']=stream_seeds(c,s)
         tmp=dest.with_suffix('.pending'); tmp.write_text(json.dumps(rows,allow_nan=False)); tmp.rename(dest); print(dest.name,flush=True)
 if __name__=='__main__': main()
