@@ -13,7 +13,9 @@ def groupof(cid):
  if cid.startswith('sensor_'):
   parts=cid.split('_'); return 'sensor_'+'_'.join(parts[2:-1])
  if cid.startswith('bg_'):
-  parts=cid.split('_'); return 'background_table' if int(parts[2])<5 else 'background_scene'
+  sg=next(iter(by[cid].values())).get('sub_group')
+  if not sg: return 'background_unknown'
+  return 'background_'+sg
  return g
 def members(g):
  if g=='total': return list(by)
@@ -34,7 +36,7 @@ for g in G:
   for k in ks:
    if base not in by[k] or arm not in by[k]: continue
    x=by[k][base]['success']; y=by[k][arm]['success']; b+= (not x and y); c+= (x and not y)
-  p=1.0 if b+c==0 else min(1.0,2*binomtest(min(b,c),b+c,0.5).pvalue)
+  p=1.0 if b+c==0 else float(binomtest(min(b,c),b+c,0.5).pvalue)
   return b,c,b-c,p
  d['_vs_frozen']={a:net('frozen',a) for a in ARMS[1:]}; d['_vs_actmad']={a:net('actmad_true',a) for a in ARMS if a!='actmad_true'}
  out[g]=d

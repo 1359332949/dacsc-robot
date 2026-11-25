@@ -68,7 +68,7 @@ def main():
                             obs,rew,done,info=env.step(ac); steps+=1; success=bool(is_success(env,info,rew,done))
                             if done or success or steps>=a.max_steps: break
                         if done or success: break
-                rows.append({'case_id':c['case_id'],'group':c['group'],'base_task':c['base_task'],'init_index':c['init_index'],'arm':arm,'success':success,'steps':steps,'finite':finite})
+                rows.append({'case_id':c['case_id'],'group':c['group'],'sub_group':c.get('sub_group'),'base_task':c['base_task'],'init_index':c['init_index'],'arm':arm,'success':success,'steps':steps,'finite':finite})
             finally:
                 if hook: hook.remove()
                 if ada: ada.close()
