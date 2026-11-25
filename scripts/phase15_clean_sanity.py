@@ -25,7 +25,7 @@ def main():
         try:
             env.noise=0;env.seed(es);env.reset();obs=env.set_init_state(init)
             for _ in range(SETTLING_STEPS): obs=env.step(DUMMY_ACTION)[0]
-            if arm=='v1_block3': hook=policy.representation_extractor.visual_encoder.backbone.blocks[2].register_forward_hook(lambda m,a,x:align(x,cal.ref(3),.75,'dead'))
+            if arm=='v1_block3': hook=policy.representation_extractor.visual_encoder.backbone.blocks[2].register_forward_hook(lambda m,a,x:align(x,cal.ref(2),.75,'dead'))
             elif arm=='deep_block12': hook=policy.representation_extractor.visual_encoder.backbone.blocks[11].register_forward_hook(lambda m,a,x:align(x,cal.ref(11),.75,'dead'))
             elif arm=='actmad_true': ada=ActMAD(policy,cal,lr=a.lr); ada.reset()
             gen=torch.Generator(device='cuda:0').manual_seed(ps); steps=0; success=False; finite=True

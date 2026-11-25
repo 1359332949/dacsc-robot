@@ -6,7 +6,7 @@ tasks=[np.load(f,allow_pickle=False) for f in fs]; names=[str(x['task']) for x i
 mu_l=torch.stack([torch.from_numpy(x['mu_l']).float() for x in tasks]).mean(0)
 ss_l=torch.stack([torch.from_numpy(x['ss_l']).float() for x in tasks]).mean(0)
 pix_n=sum(int(x['pixel_n']) for x in tasks); pix_sum=sum(torch.from_numpy(x['pixel_sum']).float() for x in tasks); pix_sq=sum(torch.from_numpy(x['pixel_sq']).float() for x in tasks)
-mu_pix=pix_sum/pix_n; ss_pix=(pix_sq/pix_n-mu_pix.square()).clamp_min(0).sqrt()
+mu_pix=pix_sum/pix_n; ss_pix=(pix_sq/pix_n-mu_pix.square()).clamp_min(0).sqrt(); assert float(mu_pix.min())>=0.05 and float(mu_pix.max())<=0.95,(float(mu_pix.min()),float(mu_pix.max())); assert float(ss_pix.min())>=0.05 and float(ss_pix.max())<=0.50,(float(ss_pix.min()),float(ss_pix.max()))
 def loto_tau(key):
  taus=[]
  for i in range(len(tasks)):

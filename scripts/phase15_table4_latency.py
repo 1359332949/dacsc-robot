@@ -20,7 +20,7 @@ def main():
     for f in sorted(INPUT.glob('index_*.json')): rows+=json.load(open(f))
     r=next(x for x in rows if x.get('factor')=='clean'); raw=raw_from_npz(INPUT/(r['id']+'.npz')); z=torch.randn((1,12,7),device='cuda:0',generator=torch.Generator(device='cuda:0').manual_seed(0)); zs=[torch.randn((1,12,7),device='cuda:0',generator=torch.Generator(device='cuda:0').manual_seed(i)) for i in range(8)]
     def make(arm):
-        if arm=='v1_block3': return [ext.visual_encoder.backbone.blocks[2].register_forward_hook(lambda m,a,x:align(x,cal.ref(3),.75,'dead'))]
+        if arm=='v1_block3': return [ext.visual_encoder.backbone.blocks[2].register_forward_hook(lambda m,a,x:align(x,cal.ref(2),.75,'dead'))]
         if arm=='deep_block12': return [ext.visual_encoder.backbone.blocks[11].register_forward_hook(lambda m,a,x:align(x,cal.ref(11),.75,'dead'))]
         if arm=='actmad_true': return [ActMAD(policy,cal)]
         return []

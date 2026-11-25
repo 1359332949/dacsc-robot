@@ -34,7 +34,8 @@ def main():
             for step in range(a.max_steps):
                 po=policy_observation(obs,lang,policy)
                 for vi,v in enumerate(ext.view_names):
-                    x=po['images'][v].float(); pix_sum[vi]+=x.mean((0,1,2)); pix_sq[vi]+=x.square().mean((0,1,2)); pix_n+=1
+                    x=po['images'][v].float()/255.; pix_sum[vi]+=x.mean((0,1,2)); pix_sq[vi]+=x.square().mean((0,1,2))
+                pix_n+=1
                 batch=prepare_observation(po,config=policy.config,normalizer=policy.normalizer,device='cuda:0')
                 for i in range(12): caps[i].clear()
                 ext.visual_encoder(torch.cat([batch['images'][v] for v in ext.view_names]))
