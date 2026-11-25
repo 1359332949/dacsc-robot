@@ -83,7 +83,7 @@ Result: **4/10**, all actions finite. Peak memory 1514 MB.
 | 8 | ❌ | 300 |
 | 9 | ❌ | 300 |
 
-Result: **3/10**, all actions finite.
+Result: **3/10**, all actions finite. Config B (n_action_steps=10, num_steps=1) gave **1/10**, so the 83% community number did not reproduce.
 
 (Some per-task timings in the E=8/E=1 tables overlap because sharded runs
 contended for one GPU; use totals, not per-task timing, as latency evidence.)
@@ -102,6 +102,28 @@ contended for one GPU; use totals, not per-task timing, as latency evidence.)
      `LiberoProcessorStep` + manual env wrapper;
   2. camera order / flip convention;
   3. checkpoint's intended `n_action_steps` and action postprocessing.
+
+
+## 5b. Official source difference audit
+
+Checked `lerobot/envs/libero.py` and `lerobot/processor/env_processor.py`:
+
+1. Official `LiberoEnv.step(action)` does **not** remap the gripper or apply
+   `[0,1] -> [-1,+1]`; it calls `self._env.step(action)` directly. Our raw
+   `OffScreenRenderEnv.step` is therefore the same on this point.
+2. Official observation is raw `pixels` (HWC uint8) + nested `robot_state`;
+   `preprocess_observation` makes CHW/[0,1] and batch; `LiberoProcessorStep`
+   flips H/W. Our path does the same.
+3. Remaining differences: our env used 256x256; official `LiberoEnv` config
+   defaults to 360x360 with `control_mode="relative"`; our env did not
+   explicitly force `controller.use_delta=True`; our max_steps=300 vs official
+   spatial max 280; our success check is the CoRP helper.
+4. Config A (n_action_steps=1, num_steps=10): 3/10.
+   Config B (n_action_steps=10, num_steps=1): **1/10**, not the community 83%.
+   Both all-finite.
+5. No action/gripper postprocessing difference was found; the low score is not
+   explained by the user-suggested gripper remap alone. The official-env
+   end-to-end parity run is still required.
 
 ## 6. What was not done
 

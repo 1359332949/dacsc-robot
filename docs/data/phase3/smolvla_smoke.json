@@ -2,8 +2,56 @@
   "status": "forward_hook_ok_clean_smoke_failed",
   "checkpoint": "HuggingFaceVLA/smolvla_libero",
   "sha256": "71d9563c8295284acba8fc2d5c19de000d6fe9ba58a406832af7ef3d221ed52f",
-  "keys": {"checkpoint": 788, "model": 788, "missing": 0, "unexpected": 0},
-  "hook": {"path": "model.vlm_with_expert.vlm.model.vision_model.encoder.layers[2]", "calls": 2, "shape": [1,1024,768], "cls": false, "finite": true, "action_shape": [1,7], "peak_mem_mb": 1514},
-  "clean_smoke": {"e8_success": 4, "e8_n": 10, "e1_success": 3, "e1_n": 10, "all_finite": true},
-  "decision": "do_not_start_v1_transfer"
+  "keys": {
+    "checkpoint": 788,
+    "model": 788,
+    "missing": 0,
+    "unexpected": 0
+  },
+  "hook": {
+    "path": "model.vlm_with_expert.vlm.model.vision_model.encoder.layers[2]",
+    "calls": 2,
+    "shape": [
+      1,
+      1024,
+      768
+    ],
+    "cls": false,
+    "finite": true,
+    "action_shape": [
+      1,
+      7
+    ],
+    "peak_mem_mb": 1514
+  },
+  "clean_smoke": {
+    "e8_success": 4,
+    "e8_n": 10,
+    "e1_success": 3,
+    "e1_n": 10,
+    "all_finite": true,
+    "configA": {
+      "n_action_steps": 1,
+      "num_steps": 10,
+      "success": 3,
+      "n": 10
+    },
+    "configB": {
+      "n_action_steps": 10,
+      "num_steps": 1,
+      "success": 1,
+      "n": 10
+    }
+  },
+  "decision": "do_not_start_v1_transfer",
+  "source_audit": {
+    "step_action_remap": false,
+    "image_flip": "LiberoProcessorStep",
+    "remaining_diffs": [
+      "256 vs 360",
+      "control_mode not forced",
+      "max_steps 300 vs 280",
+      "success helper"
+    ]
+  }
 }
