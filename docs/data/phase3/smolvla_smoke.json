@@ -1,40 +1,9 @@
 {
-  "status": "setup_ready_no_smoke",
-  "server_egress": {
-    "direct_hf": "blocked",
-    "direct_pypi": "blocked",
-    "hf_mirror": "https://hf-mirror.com (works)",
-    "pypi_mirror": "https://pypi.tuna.tsinghua.edu.cn/simple (works)"
-  },
-  "venv": "/hy-tmp/smolvla_venv",
-  "lerobot": "0.4.4",
-  "torch": "2.10.0+cu128",
-  "transformers": "4.57.6",
-  "disk_free": "26G",
-  "checkpoint": {
-    "repo_id": "HuggingFaceVLA/smolvla_libero",
-    "path": "/hy-tmp/smolvla_ckpt/HuggingFaceVLA_smolvla_libero",
-    "model_safetensors_bytes": 1218047032,
-    "sha256": "71d9563c8295284acba8fc2d5c19de000d6fe9ba58a406832af7ef3d221ed52f",
-    "config_chunk_size": 50,
-    "config_n_action_steps": 1,
-    "state_dim": 8,
-    "action_dim": 7,
-    "image_keys": ["observation.images.image", "observation.images.image2"],
-    "image_resolution": [3, 256, 256]
-  },
-  "siglip": {
-    "module_path": "model.vlm_with_expert.vlm.model.vision_model.encoder.layers.{i}",
-    "depth": 12,
-    "hidden_size": 768,
-    "patch_size": 16,
-    "input_resolution": 512,
-    "patches": 1024,
-    "cls_token": false,
-    "layer_output_shape": "[B, 1024, 768]",
-    "quarter_depth_block_index": 2,
-    "camera_handling": "per-camera embed_image call; two images passed as separate tensors, not concatenated on batch dim"
-  },
-  "smoke": null,
-  "note": "Model was NOT run. Only safetensors metadata and lerobot source were inspected."
+  "status": "forward_hook_ok_clean_smoke_failed",
+  "checkpoint": "HuggingFaceVLA/smolvla_libero",
+  "sha256": "71d9563c8295284acba8fc2d5c19de000d6fe9ba58a406832af7ef3d221ed52f",
+  "keys": {"checkpoint": 788, "model": 788, "missing": 0, "unexpected": 0},
+  "hook": {"path": "model.vlm_with_expert.vlm.model.vision_model.encoder.layers[2]", "calls": 2, "shape": [1,1024,768], "cls": false, "finite": true, "action_shape": [1,7], "peak_mem_mb": 1514},
+  "clean_smoke": {"e8_success": 4, "e8_n": 10, "e1_success": 3, "e1_n": 10, "all_finite": true},
+  "decision": "do_not_start_v1_transfer"
 }

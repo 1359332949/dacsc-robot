@@ -1,17 +1,8 @@
-# Phase 3 setup: SmolVLA-450M
+# Phase 3: SmolVLA-450M forward hook + 10-game Clean smoke
 
-Status: **environment + checkpoint ready; model NOT run; smoke NOT run.**
+Status: **forward hook validated; Clean smoke FAILED; do not start V1 transfer.**
 
-## 1. Mirror route (server egress is blocked directly)
-
-| Target | Direct | Working mirror |
-|---|---|---|
-| HuggingFace | timeout | `https://hf-mirror.com` |
-| PyPI | timeout | `https://pypi.tuna.tsinghua.edu.cn/simple` |
-
-The server has no direct internet, but both mirrors are reachable.
-
-## 2. Environment
+## 1. Environment
 
 ```text
 venv: /hy-tmp/smolvla_venv
@@ -19,66 +10,104 @@ python: 3.10.12
 lerobot: 0.4.4
 torch: 2.10.0+cu128
 transformers: 4.57.6
-disk free after install + checkpoint: ~26 GB
+numpy: 1.26.4 (downgraded for LIBERO/robosuite compatibility)
 ```
 
-`python3.10-dev` was installed because `evdev` needed `Python.h`.
-
-## 3. Checkpoint
+Checkpoint:
 
 ```text
-repo_id: HuggingFaceVLA/smolvla_libero
-local: /hy-tmp/smolvla_ckpt/HuggingFaceVLA_smolvla_libero
+HuggingFaceVLA/smolvla_libero
 model.safetensors: 1,218,047,032 bytes
 sha256: 71d9563c8295284acba8fc2d5c19de000d6fe9ba58a406832af7ef3d221ed52f
 ```
 
-Downloaded via `hf-mirror` with `aria2c -x16` (direct one-stream download was
-~150 KB/s; 16 connections gave ~2.7 MB/s).
+Checkpoint keys: 788; model keys: 788; missing=0, unexpected=0. All weights
+loaded.
 
-Config facts:
+## 2. Official LIBERO input protocol
+
+From `lerobot/processor/env_processor.py` and `lerobot/envs/libero.py`:
+
+- images: HWC uint8 -> CHW float [0,1], then `torch.flip(img, dims=[2,3])`;
+- state: `eef_pos(3) + quat->axis_angle(3) + gripper_qpos(2)` = 8;
+- keys: `observation.images.image` / `observation.images.image2`;
+- `LiberoProcessorStep` performs the 180-degree flip.
+
+## 3. Forward hook validation
+
+Hook: `model.vlm_with_expert.vlm.model.vision_model.encoder.layers[2]`
 
 ```text
-input images: observation.images.image, observation.images.image2
-resolution: 3 x 256 x 256
-state: 8, action: 7
-chunk_size: 50
-n_action_steps: 1
+hook calls per replan: 2  (two cameras, separate calls)
+each shape: [1, 1024, 768]
+CLS token: absent
+finite: true
+action shape: [1, 7]
+peak memory: ~1514 MB
+first forward latency: ~1651 ms (cold; includes loading/warmup)
 ```
 
-## 4. SigLIP structure (safetensors metadata + lerobot source)
+This confirms the SmolVLA/SigLIP hook contract: **do not slice `x[:,1:]`**.
 
-```text
-hook path: model.vlm_with_expert.vlm.model.vision_model.encoder.layers.{i}
-depth: 12
-hidden: 768
-patch: 16
-input resolution: 512
-patches: 1024
-CLS token: no (position_embedding is [1024, 768])
-layer output: [B, 1024, 768]
-25% depth: blocks[2] (0-indexed)
-```
+## 4. 10-game libero_spatial Clean smoke
 
-Camera handling: `embed_image()` is called once per camera; the two camera
-tensors are passed as separate images, not concatenated on the batch dimension.
+### E=8 (fast, SALT-like, but not the checkpoint default)
 
-## 5. What was NOT done
+| Task index | Success | Steps | Seconds |
+|---:|---:|---:|---:|
+| 0 | ❌ | 300 | 871 |
+| 1 | ❌ | 300 | 874 |
+| 2 | ❌ | 300 | 883 |
+| 3 | ❌ | 300 | 869 |
+| 4 | ✅ | 77 | 339 |
+| 5 | ❌ | 300 | 881 |
+| 6 | ❌ | 300 | 880 |
+| 7 | ❌ | 300 | 896 |
+| 8 | ❌ | 300 | 880 |
+| 9 | ✅ | 94 | 423 |
 
-- SmolVLA weights were **not loaded**.
-- No inference, no LIBERO smoke, no 10-game Clean run.
-- No SigLIP forward hook was executed.
+Result: **4/10**, all actions finite. Peak memory 1514 MB.
 
-Per instruction: install/download/inspect only; do not run the model yet.
+### E=1 (checkpoint config)
 
-## 6. Next, after confirmation
+| Task index | Success | Steps | Seconds |
+|---:|---:|---:|---:|
+| 0 | ❌ | 300 | 871 |
+| 1 | ❌ | 300 | 874 |
+| 2 | ❌ | 300 | 883 |
+| 3 | ❌ | 300 | 869 |
+| 4 | ✅ | 77 | 339 |
+| 5 | ❌ | 300 | 881 |
+| 6 | ✅ | 94 | 423 |
+| 7 | ❌ | 300 | 897 |
+| 8 | ✅ | 110 | 443 |
+| 9 | ❌ | 300 | 896 |
 
-1. Load checkpoint + run one forward to verify the hook output shape.
-2. Confirm observation adapter for `image` / `image2`.
-3. Run 10-game libero_spatial Clean smoke at max_steps=300.
-4. Only then start SigLIP layer sweep and V1 transfer.
+Result: **3/10**, all actions finite.
 
-## Files
+(Some per-task timings in the E=8/E=1 tables overlap because sharded runs
+contended for one GPU; use totals, not per-task timing, as latency evidence.)
 
-- `docs/data/phase3/smolvla_smoke.json`
-- `scripts/phase3_inspect_smolvla.py` (to be run after confirmation)
+## 5. Decision
+
+- Hook contract is confirmed.
+- **SmolVLA Clean smoke is not acceptable**: 3/10 (E=1, checkpoint default) and
+  4/10 (E=8), far below the expected LIBERO Clean range.
+- All actions finite, so this is not NaN/crash; it is a protocol/checkpoint
+  mismatch or an evaluation-adapter issue.
+- **Do not start SigLIP layer sweep or V1 transfer.**
+- Next debug: compare against the official `lerobot` LIBERO eval command and
+  checkpoint-specific `n_action_steps`/camera/state adapter. Suspects:
+  1. `HuggingFaceVLA/smolvla_libero` may expect a different eval adapter than
+     `LiberoProcessorStep` + manual env wrapper;
+  2. camera order / flip convention;
+  3. checkpoint's intended `n_action_steps` and action postprocessing.
+
+## 6. What was not done
+
+- No SigLIP layer sweep.
+- No V1 cross-backbone transfer.
+- No method comparison.
+
+The forward hook result is valid; the smoke result is a **negative setup
+check**, not a method result.
