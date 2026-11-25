@@ -1,58 +1,75 @@
-# Phase 2A: libero_10 5-arm fair physical table
-
-Status: **RUNNING; no final table yet. Do not quote partial numbers.**
+# Phase 2A complete: libero_10 5-arm fair physical table
 
 ## Protocol
 
 - 400 conditions = Clean 100 + bilateral Sensor 100 + Lighting 100 + Background 100.
-- 10 official `libero_10` base tasks, init_index 1..10.
-- 5 paired arms: frozen, pixel_align, deep_block12, actmad_true, ours_v1.
-- Shared Spatial calibration; EGL/FP32; max_steps=520; 8 workers.
-- Language uses base-task BDDL only; background is 5 table + 5 scene per task.
-- Assertion `len(conditions)==400` and 100 per group passes.
+- 10 official libero_10 base tasks, init_index 1..10.
+- 5 paired arms: Frozen, Pixel-Align, Deep Block-12, true ActMAD, Ours V1.
+- Shared Spatial init0 calibration; EGL/FP32; max_steps=520; 8 workers.
+- Language uses base-task BDDL only. Background = 5 table + 5 scene per task.
+- 2,000 rollouts total; all 400 condition files complete.
 
-## Progress at 17:34
+## Success
 
-```text
-46 / 400 condition files complete
-8 workers alive
-```
+| Group | n | Frozen | Pixel | Deep B12 | ActMAD | Ours V1 |
+|---|---:|---:|---:|---:|---:|---:|
+| Clean | 100 | 95/100 | 74/100 | 91/100 | 95/100 | 90/100 |
+| Sensor bilateral | 100 | 14/100 | 2/100 | 14/100 | 14/100 | **17/100** |
+| – Motion blur | 20 | 12/20 | 2/20 | 14/20 | 13/20 | **15/20** |
+| – Gaussian blur | 20 | 0/20 | 0/20 | 0/20 | 0/20 | 0/20 |
+| – Zoom blur | 20 | 0/20 | 0/20 | 0/20 | 0/20 | 0/20 |
+| – Fog | 20 | 0/20 | 0/20 | 0/20 | 0/20 | 0/20 |
+| – Glass blur | 20 | 2/20 | 0/20 | 0/20 | 1/20 | 2/20 |
+| Lighting | 100 | 53/100 | 28/100 | 57/100 | 50/100 | **62/100** |
+| Background | 100 | 28/100 | 14/100 | 28/100 | 28/100 | 28/100 |
+| – Table | 50 | 15/50 | 8/50 | 14/50 | 15/50 | **16/50** |
+| – Scene | 50 | 13/50 | 6/50 | **14/50** | 13/50 | 12/50 |
+| **Total** | **400** | **190** | **118** | **190** | **187** | **197** |
 
-Early observations (not final):
-- Several libero_10 Clean/Lighting/Sensor conditions are hard for Frozen too; all arms often max out at 520.
-- No per-arm conclusion can be drawn until all 400 conditions × 5 arms finish.
+## Paired transitions vs Frozen
 
-## Corrected Phase 1.5 sanity (after ActMAD reshape fix)
-
-| Arm | Clean |
-|---|---:|
-| Frozen | 10/10 |
-| V1 Block-3 | 10/10 |
-| Pixel-Align | 9/10 |
-| Deep Block-12 | 10/10 |
-| True ActMAD | 10/10 |
-
-## Corrected Table 4
-
-| Arm | Median ms | x Frozen | Backward | Peak MB |
+| Group | Pixel | Deep B12 | ActMAD | Ours V1 |
 |---|---:|---:|---:|---:|
-| Frozen | 22.38 | 1.00x | 0 | 397.6 |
-| V1 Block-3 | 23.15 | **1.03x** | 0 | 397.6 |
-| Pixel-Align | 23.63 | 1.06x | 0 | 397.9 |
-| Deep Block-12 | 23.07 | 1.03x | 0 | 397.8 |
-| True ActMAD (4-frame) | 71.98 | **3.22x** | 1 | 1099.5 |
-| Multi-Sample Consensus N=8 | 180.50 | 8.07x | 0 | 398.2 |
+| Clean | **-21** (p=1.1e-5) | -4 (p=.78) | 0 (p=1) | **-5** (p=.45) |
+| Sensor | **-12** (p=.001) | 0 | 0 | +3 (p=1) |
+| Lighting | **-25** (p=4.5e-5) | +4 (p=.85) | -3 (p=1) | **+9** (p=.16) |
+| Background | **-14** (p=.019) | 0 | 0 | 0 |
+| **Total** | **-72** (p=3.7e-14) | 0 (p=1) | -3 (p=1) | **+7** (p=.87) |
 
-The earlier 9.21x ActMAD number included an accidental per-step state_dict
-clone; it is retracted.
+## Paired transitions vs ActMAD
 
-## Calibration granularity
+| Group | Frozen | Pixel | Deep B12 | Ours V1 |
+|---|---:|---:|---:|---:|
+| Clean | 0 | -21 (p=.0002) | -4 | -5 |
+| Sensor | 0 | -12 (p=.001) | 0 | +3 |
+| Lighting | +3 | -22 (p=.0009) | +7 (p=.19) | **+12** (p=.008) |
+| Background | 0 | -14 (p=.025) | 0 | 0 |
+| **Total** | +3 | -69 (p=1.7e-11) | +3 | **+10** (p=.41) |
 
-91 replan frames from 10 Spatial Clean init0 trajectories. This matches the
-12-step CoRP replan cadence and is accepted.
+## What this says
 
-## Next
+1. **V1 is the best total arm** (197/400 vs Frozen 190), but the +7 is not
+   statistically significant and is not a Clean-safe win: V1 loses 5 Clean
+   successes. It gains +9 on Lighting and +3 on Sensor, and is flat on
+   Background.
+2. **The Clean regression is the main red flag.** Any method that loses Clean
+   while claiming a TTA win needs a gate or a stronger no-op; V1 does not meet
+   the pre-declared Clean guardrail on libero_10.
+3. **Pixel-Align is catastrophic** (-72 total, p=3.7e-14); it should stay as a
+   weak baseline, not a serious competitor.
+4. **Deep Block-12 and true ActMAD are identity on this suite** (190/187), with
+   no significant gains; ActMAD costs 3.22x latency.
+5. **Sensor is floor-bound**: Gaussian/Zoom/Fog are 0/20 for every method; only
+   Motion blur carries signal, and V1 leads there (15/20 vs Frozen 12/20).
+6. **Background has no method signal**; V1 is literally 28/100, same as Frozen.
 
-Let the 2,000-rollout run finish, then analyze from JSON only (no hand-copied
-numbers): per-group success, rescued/harmed vs Frozen and vs ActMAD, exact
-two-sided McNemar, task-cluster 95% CI, table/scene split, five sensor subtypes.
+## Decision
+
+- V1 remains the best total arm but **fails the Clean guardrail** on libero_10.
+- Do not claim a universal gain on this suite.
+- Next: either add a Clean-preserving gate for V1 or report libero_10 honestly
+  as a mixed/negative transfer suite. Do not tune on this test set.
+
+Note: task-cluster bootstrap CIs failed to write because the background
+bootstrap had an empty group in the first pass; the success and McNemar tables
+above are complete and computed from all 2,000 rows.
