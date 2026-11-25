@@ -19,14 +19,12 @@ Status: **STOP after seed 0. Both zero-hyperparameter W2 arms are far below V1.*
 | Clean | 10/10 | 10/10 | 10/10 | 10/10 |
 | Bilateral Sensor | 5/30 | **7/30** | 5/30 | 5/30 |
 | Background | 19/30 | **23/30** | 17/30 | 20/30 |
-| Table texture | — | — | — | — |
-| Scene texture | — | — | — | — |
+| Table texture | 8/15 | **11/15** | 5/15 | 7/15 |
+| Scene texture | 11/15 | 12/15 | 12/15 | **13/15** |
 | Lighting | 24/30 | **28/30** | 27/30 | 24/30 |
 | **FairPhysical100** | **58/100** | **68/100** | **59/100** | **59/100** |
 
-Background table/scene split is retained in the JSON; the seed-0 group
-membership for those subkeys was not populated by the generic analyzer, so the
-aggregate 30-case row is the valid primary row here.
+Background split is now populated; Table is the weak point of both W2 arms.
 
 ## Paired transitions
 

@@ -178,95 +178,95 @@
   },
   "background_table_texture": {
     "frozen": {
-      "success": 0,
-      "n": 0
+      "success": 8,
+      "n": 15
     },
     "v1_hard075": {
-      "success": 0,
-      "n": 0
+      "success": 11,
+      "n": 15
     },
     "w2_proj_rms_noclamp": {
-      "success": 0,
-      "n": 0
+      "success": 5,
+      "n": 15
     },
     "js_shrink_rms_noclamp": {
-      "success": 0,
-      "n": 0
+      "success": 7,
+      "n": 15
     },
     "_vs_frozen": {
       "v1_hard075": [
-        0,
-        0,
-        0
+        4,
+        1,
+        3
       ],
       "w2_proj_rms_noclamp": [
         0,
-        0,
-        0
+        3,
+        -3
       ],
       "js_shrink_rms_noclamp": [
-        0,
-        0,
-        0
+        1,
+        2,
+        -1
       ]
     },
     "_vs_v1": {
       "w2_proj_rms_noclamp": [
         0,
-        0,
-        0
+        6,
+        -6
       ],
       "js_shrink_rms_noclamp": [
-        0,
-        0,
-        0
+        1,
+        5,
+        -4
       ]
     }
   },
   "background_scene_texture": {
     "frozen": {
-      "success": 0,
-      "n": 0
+      "success": 11,
+      "n": 15
     },
     "v1_hard075": {
-      "success": 0,
-      "n": 0
+      "success": 12,
+      "n": 15
     },
     "w2_proj_rms_noclamp": {
-      "success": 0,
-      "n": 0
+      "success": 12,
+      "n": 15
     },
     "js_shrink_rms_noclamp": {
-      "success": 0,
-      "n": 0
+      "success": 13,
+      "n": 15
     },
     "_vs_frozen": {
       "v1_hard075": [
+        1,
         0,
-        0,
-        0
+        1
       ],
       "w2_proj_rms_noclamp": [
+        1,
         0,
-        0,
-        0
+        1
       ],
       "js_shrink_rms_noclamp": [
-        0,
-        0,
-        0
+        3,
+        1,
+        2
       ]
     },
     "_vs_v1": {
       "w2_proj_rms_noclamp": [
-        0,
-        0,
+        1,
+        1,
         0
       ],
       "js_shrink_rms_noclamp": [
-        0,
-        0,
-        0
+        2,
+        1,
+        1
       ]
     }
   },
