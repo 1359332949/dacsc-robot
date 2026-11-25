@@ -53,5 +53,13 @@
       "max_steps 300 vs 280",
       "success helper"
     ]
+  },
+  "official_eval": {
+    "command": "lerobot-eval task_ids=[0]",
+    "success": 0,
+    "n": 1,
+    "steps": 280,
+    "seconds": 204,
+    "note": "LIBERO-plus task0 is perturbation, not vanilla base"
   }
 }

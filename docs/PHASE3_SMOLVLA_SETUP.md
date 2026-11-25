@@ -133,3 +133,18 @@ Checked `lerobot/envs/libero.py` and `lerobot/processor/env_processor.py`:
 
 The forward hook result is valid; the smoke result is a **negative setup
 check**, not a method result.
+
+## 7. Official `lerobot-eval` parity attempt
+
+After creating base-init symlinks for LIBERO-plus names, official eval launched:
+`lerobot-eval --env.type=libero --env.task=libero_spatial --env.task_ids=[0]`.
+
+Result: **0/1**, 280 steps, 204 s. The task ID 0 in LIBERO-plus is
+`..._table_1` (a perturbation), not the vanilla LIBERO base task; the symlinked
+base init state does not make it the same benchmark condition. Therefore the
+official eval CLI cannot be used directly on this LIBERO-plus asset tree.
+
+This does **not** invalidate the hook result; it confirms the asset/benchmark
+mismatch. To compare with the community 83% one must install vanilla LIBERO (or
+write a base-task bridge that preserves vanilla task IDs), not just symlink
+init files.
