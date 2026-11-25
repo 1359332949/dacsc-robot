@@ -1,0 +1,92 @@
+{
+  "clean": {
+    "frozen": {
+      "success": 95,
+      "n": 100
+    },
+    "ours_v1_insuite": {
+      "success": 98,
+      "n": 100
+    },
+    "vs_frozen": [
+      4,
+      1,
+      3,
+      0.375
+    ],
+    "ours_v1_spatial": {
+      "success": 90,
+      "n": 100
+    },
+    "vs_frozen_spatial": [
+      4,
+      1,
+      3,
+      0.375
+    ]
+  },
+  "lighting": {
+    "frozen": {
+      "success": 54,
+      "n": 100
+    },
+    "ours_v1_insuite": {
+      "success": 59,
+      "n": 100
+    },
+    "vs_frozen": [
+      8,
+      3,
+      5,
+      0.2265625
+    ]
+  },
+  "background": {
+    "frozen": {
+      "success": 28,
+      "n": 100
+    },
+    "ours_v1_insuite": {
+      "success": 28,
+      "n": 100
+    },
+    "vs_frozen": [
+      4,
+      4,
+      0,
+      1.0
+    ]
+  },
+  "background_table": {
+    "frozen": {
+      "success": 28,
+      "n": 100
+    },
+    "ours_v1_insuite": {
+      "success": 28,
+      "n": 100
+    },
+    "vs_frozen": [
+      4,
+      4,
+      0,
+      1.0
+    ]
+  },
+  "background_scene": {
+    "frozen": {
+      "success": 0,
+      "n": 0
+    },
+    "ours_v1_insuite": {
+      "success": 0,
+      "n": 0
+    },
+    "vs_frozen": [
+      0,
+      0,
+      0,
+      1
+    ]
+  }
+}
