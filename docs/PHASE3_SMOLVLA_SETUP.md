@@ -1,102 +1,84 @@
 # Phase 3 setup: SmolVLA-450M
 
-Status: **BLOCKED before install/download.** Phase 3 has not produced a smoke
-result. This is an environment/egress blocker, not a method result.
+Status: **environment + checkpoint ready; model NOT run; smoke NOT run.**
 
-## 1. Phase 2 residual cleanup (done)
+## 1. Mirror route (server egress is blocked directly)
 
-- `scripts/analyze_phase2.py`: reads `sub_group` from the trial JSON; McNemar
-  no longer multiplied by 2.
-- `scripts/phase2_suite_eval.py`: trial rows now include `sub_group`.
-- `docs/data/phase2/libero10_insuite_v1.json`: `vs_frozen_spatial` corrected to
-  the actual Spatial-V1 vs Frozen counts.
-- Committed in `822cafd`.
+| Target | Direct | Working mirror |
+|---|---|---|
+| HuggingFace | timeout | `https://hf-mirror.com` |
+| PyPI | timeout | `https://pypi.tuna.tsinghua.edu.cn/simple` |
 
-## 2. Server preflight
+The server has no direct internet, but both mirrors are reachable.
 
-```text
-disk /hy-tmp: 35G free
-GPU: RTX 3090, 24 GB
-system python: 3.11.12
-corp venv python: 3.10
-```
-
-Network:
+## 2. Environment
 
 ```text
-huggingface.co:443  -> timeout
-pypi.org:443        -> timeout
-github.com:443      -> timeout
+venv: /hy-tmp/smolvla_venv
+python: 3.10.12
+lerobot: 0.4.4
+torch: 2.10.0+cu128
+transformers: 4.57.6
+disk free after install + checkpoint: ~26 GB
 ```
 
-Installed in `corp_venv`:
+`python3.10-dev` was installed because `evdev` needed `Python.h`.
+
+## 3. Checkpoint
 
 ```text
-torch 2.5.1+cu121
-transformers 4.44.2
-safetensors 0.8.0
-huggingface_hub 0.24.6
+repo_id: HuggingFaceVLA/smolvla_libero
+local: /hy-tmp/smolvla_ckpt/HuggingFaceVLA_smolvla_libero
+model.safetensors: 1,218,047,032 bytes
+sha256: 71d9563c8295284acba8fc2d5c19de000d6fe9ba58a406832af7ef3d221ed52f
 ```
 
-Missing: `lerobot`, `accelerate`, `torchvision`, `diffusers`, `datasets`,
-`draccus`, `av`, and the other smolvla deps.
+Downloaded via `hf-mirror` with `aria2c -x16` (direct one-stream download was
+~150 KB/s; 16 connections gave ~2.7 MB/s).
 
-## 3. Checkpoint candidates (HF metadata only, not downloaded)
-
-| repo_id | model size | image keys | resolution | state/action | chunk | n_action_steps | VLM |
-|---|---:|---|---|---:|---:|---:|---|
-| `HuggingFaceVLA/smolvla_libero` | 1.218 GB | `image`, `image2` | 256 | 8 / 7 | 50 | 1 | SmolVLM2-500M-Instruct |
-| `lerobot/smolvla_libero` | 0.907 GB | `camera1`, `camera2` | 256 | 8 / 7 | 50 | 50 | SmolVLM2-500M-Video-Instruct |
-
-The `HuggingFaceVLA` checkpoint has the LIBERO eval metadata and
-`n_action_steps=1`; the `lerobot` checkpoint uses `n_action_steps=50`.
-
-## 4. SigLIP structure (partial)
-
-From the SmolVLM2-500M-Video config:
+Config facts:
 
 ```text
-hidden_size = 768
-image_size = 512
-patch_size = 16
-num_attention_heads = 12
-depth = not exposed in config
+input images: observation.images.image, observation.images.image2
+resolution: 3 x 256 x 256
+state: 8, action: 7
+chunk_size: 50
+n_action_steps: 1
 ```
 
-The exact number of vision layers and hook path must be read from the loaded
-`lerobot`/`transformers` module; it cannot be honestly inferred from config
-alone. If depth is 12, 25% depth is `blocks[2]`; if 24, `blocks[5]`.
-
-## 5. Why no smoke was run
-
-The 10-game Clean smoke cannot be executed without:
-
-1. an isolated `smolvla_venv` with `lerobot` and deps;
-2. the model weights;
-3. a working LIBERO observation adapter for SmolVLA's two camera names.
-
-None of these can be installed because the server has no outbound network.
-
-## 6. Required unblock (choose one)
-
-**A. Enable server egress** to `huggingface.co` + `pypi.org` (or an internal
-mirror), then rerun this setup.
-
-**B. Offline bundle transfer** from the Mac host:
+## 4. SigLIP structure (safetensors metadata + lerobot source)
 
 ```text
-host: download lerobot wheel + linux cp310 dependencies + one checkpoint
-      (~1.5-2 GB total)
-scp to /hy-tmp
-server: python -m venv /hy-tmp/smolvla_venv
-        pip install --no-index --find-links /hy-tmp/wheels lerobot[...]
+hook path: model.vlm_with_expert.vlm.model.vision_model.encoder.layers.{i}
+depth: 12
+hidden: 768
+patch: 16
+input resolution: 512
+patches: 1024
+CLS token: no (position_embedding is [1024, 768])
+layer output: [B, 1024, 768]
+25% depth: blocks[2] (0-indexed)
 ```
 
-Disk has 35 GB; the transfer is feasible, but it needs explicit approval to
-prepare the offline bundle.
+Camera handling: `embed_image()` is called once per camera; the two camera
+tensors are passed as separate images, not concatenated on the batch dimension.
 
-## Decision
+## 5. What was NOT done
 
-Do not start SigLIP layer sweep or V1 transfer until the environment and
-checkpoint are actually installed and the 10-game smoke is clean. The current
-Phase 3 status is **blocked, no smoke result**.
+- SmolVLA weights were **not loaded**.
+- No inference, no LIBERO smoke, no 10-game Clean run.
+- No SigLIP forward hook was executed.
+
+Per instruction: install/download/inspect only; do not run the model yet.
+
+## 6. Next, after confirmation
+
+1. Load checkpoint + run one forward to verify the hook output shape.
+2. Confirm observation adapter for `image` / `image2`.
+3. Run 10-game libero_spatial Clean smoke at max_steps=300.
+4. Only then start SigLIP layer sweep and V1 transfer.
+
+## Files
+
+- `docs/data/phase3/smolvla_smoke.json`
+- `scripts/phase3_inspect_smolvla.py` (to be run after confirmation)

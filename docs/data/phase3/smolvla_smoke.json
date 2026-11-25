@@ -1,52 +1,40 @@
 {
-  "status": "blocked_no_egress",
-  "reason": "server has no outbound access to huggingface.co, pypi.org, or github.com",
-  "disk_free_gb": 35,
-  "gpu": "NVIDIA GeForce RTX 3090 24576 MiB",
-  "python_system": "3.11.12",
-  "corp_venv_python": "3.10",
-  "installed_in_corp_venv": {
-    "torch": "2.5.1+cu121",
-    "transformers": "4.44.2",
-    "safetensors": "0.8.0",
-    "huggingface_hub": "0.24.6",
-    "lerobot": null,
-    "accelerate": null,
-    "torchvision": null,
-    "diffusers": null,
-    "datasets": null,
-    "draccus": null,
-    "av": null
+  "status": "setup_ready_no_smoke",
+  "server_egress": {
+    "direct_hf": "blocked",
+    "direct_pypi": "blocked",
+    "hf_mirror": "https://hf-mirror.com (works)",
+    "pypi_mirror": "https://pypi.tuna.tsinghua.edu.cn/simple (works)"
   },
-  "checkpoint_candidates": {
-    "HuggingFaceVLA/smolvla_libero": {
-      "model_safetensors_bytes": 1218047032,
-      "input_images": ["observation.images.image", "observation.images.image2"],
-      "resolution": [3, 256, 256],
-      "state_dim": 8,
-      "action_dim": 7,
-      "chunk_size": 50,
-      "n_action_steps": 1,
-      "vlm": "HuggingFaceTB/SmolVLM2-500M-Instruct"
-    },
-    "lerobot/smolvla_libero": {
-      "model_safetensors_bytes": 906712520,
-      "input_images": ["observation.images.camera1", "observation.images.camera2"],
-      "resolution": [3, 256, 256],
-      "state_dim": 8,
-      "action_dim": 7,
-      "chunk_size": 50,
-      "n_action_steps": 50,
-      "vlm": "HuggingFaceTB/SmolVLM2-500M-Video-Instruct"
-    }
+  "venv": "/hy-tmp/smolvla_venv",
+  "lerobot": "0.4.4",
+  "torch": "2.10.0+cu128",
+  "transformers": "4.57.6",
+  "disk_free": "26G",
+  "checkpoint": {
+    "repo_id": "HuggingFaceVLA/smolvla_libero",
+    "path": "/hy-tmp/smolvla_ckpt/HuggingFaceVLA_smolvla_libero",
+    "model_safetensors_bytes": 1218047032,
+    "sha256": "71d9563c8295284acba8fc2d5c19de000d6fe9ba58a406832af7ef3d221ed52f",
+    "config_chunk_size": 50,
+    "config_n_action_steps": 1,
+    "state_dim": 8,
+    "action_dim": 7,
+    "image_keys": ["observation.images.image", "observation.images.image2"],
+    "image_resolution": [3, 256, 256]
   },
-  "siglip_config_from_smolvlm2_500m_video": {
+  "siglip": {
+    "module_path": "model.vlm_with_expert.vlm.model.vision_model.encoder.layers.{i}",
+    "depth": 12,
     "hidden_size": 768,
-    "image_size": 512,
     "patch_size": 16,
-    "num_attention_heads": 12,
-    "depth_in_vlm_config": "not exposed; requires lerobot/transformers instantiation to confirm"
+    "input_resolution": 512,
+    "patches": 1024,
+    "cls_token": false,
+    "layer_output_shape": "[B, 1024, 768]",
+    "quarter_depth_block_index": 2,
+    "camera_handling": "per-camera embed_image call; two images passed as separate tensors, not concatenated on batch dim"
   },
   "smoke": null,
-  "note": "No environment or checkpoint is installed on the server; do not fabricate smoke numbers."
+  "note": "Model was NOT run. Only safetensors metadata and lerobot source were inspected."
 }
