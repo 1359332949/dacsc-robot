@@ -1,0 +1,958 @@
+{
+  "schema": "eaga_attention_probe_v1",
+  "groups": {
+    "clean": {
+      "n": 10,
+      "n_eff_mean": 46.21059608459473,
+      "cos_mean": 1.0,
+      "iou_mean": 1.0,
+      "n_eff_max": 101.16419982910156,
+      "iou_min": 1.0
+    },
+    "sensor_noise": {
+      "n": 30,
+      "n_eff_mean": 52.232792154947916,
+      "cos_mean": 0.40984941869974134,
+      "iou_mean": 0.3429941615271891,
+      "n_eff_max": 129.42459106445312,
+      "iou_min": 0.11963330786860199
+    },
+    "background": {
+      "n": 30,
+      "n_eff_mean": 61.50990289052327,
+      "cos_mean": 0.6278096636136373,
+      "iou_mean": 0.3531283871012886,
+      "n_eff_max": 109.36843872070312,
+      "iou_min": 0.13274336283185842
+    },
+    "background_table_texture": {
+      "n": 15,
+      "n_eff_mean": 56.237976710001625,
+      "cos_mean": 0.5641464650630951,
+      "iou_mean": 0.33932815130663757,
+      "iou_min": 0.13274336283185842
+    },
+    "background_scene_texture": {
+      "n": 15,
+      "n_eff_mean": 66.78182907104492,
+      "cos_mean": 0.6914728621641795,
+      "iou_mean": 0.3669286228959397,
+      "iou_min": 0.2135154565061107
+    },
+    "lighting": {
+      "n": 30,
+      "n_eff_mean": 54.988687928517656,
+      "cos_mean": 0.8004929865399997,
+      "iou_mean": 0.5935875614601038,
+      "n_eff_max": 115.5848388671875,
+      "iou_min": 0.28724479482514653
+    }
+  },
+  "cases": [
+    {
+      "id": "05a2e087b49114ba4a11204b",
+      "task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "motion_blur",
+      "n_eff": 56.98262023925781,
+      "cos": 0.4334833025932312,
+      "iou": 0.3432967032967033
+    },
+    {
+      "id": "2394dfc73bd22efc84b9df52",
+      "task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "table_texture",
+      "n_eff": 20.534526824951172,
+      "cos": 0.4010506868362427,
+      "iou": 0.43892888720474926
+    },
+    {
+      "id": "32c1ebe6e4d6cb178bfb0a0b",
+      "task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "n_eff": 13.310914039611816,
+      "cos": 0.603646993637085,
+      "iou": 0.4108527131782945
+    },
+    {
+      "id": "36f206329f1c1c5275cdfc66",
+      "task": "pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "n_eff": 47.73685836791992,
+      "cos": 0.7311602234840393,
+      "iou": 0.610636277302944
+    },
+    {
+      "id": "451d4d5283da4bf94b611a95",
+      "task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "scene_texture",
+      "n_eff": 84.0284423828125,
+      "cos": 0.9575076103210449,
+      "iou": 0.4463738508682329
+    },
+    {
+      "id": "537c44cf53786dc807cc4fb8",
+      "task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "gaussian_blur",
+      "n_eff": 85.70698547363281,
+      "cos": 0.4624202847480774,
+      "iou": 0.35111111111111115
+    },
+    {
+      "id": "6084fd23c807006a9ec4a099",
+      "task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "scene_texture",
+      "n_eff": 92.32331085205078,
+      "cos": 0.8282783031463623,
+      "iou": 0.32931554024967713
+    },
+    {
+      "id": "6b142b87741e2537ff1f11b4",
+      "task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "n_eff": 47.55362319946289,
+      "cos": 0.6235779523849487,
+      "iou": 0.5161199887860948
+    },
+    {
+      "id": "752ca42ecf1bafb47444baaf",
+      "task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "scene_texture",
+      "n_eff": 87.63450622558594,
+      "cos": 0.7285248041152954,
+      "iou": 0.2718150516478111
+    },
+    {
+      "id": "7bcd821113099b91165fea6d",
+      "task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "motion_blur",
+      "n_eff": 87.85143280029297,
+      "cos": 0.27118778228759766,
+      "iou": 0.2608401738290681
+    },
+    {
+      "id": "8515f621f7ce09addd6043fc",
+      "task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "motion_blur",
+      "n_eff": 56.303794860839844,
+      "cos": 0.2607712745666504,
+      "iou": 0.15858453473132372
+    },
+    {
+      "id": "95599a32b2a06ea8e3c757ca",
+      "task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "table_texture",
+      "n_eff": 66.97823333740234,
+      "cos": 0.7864090800285339,
+      "iou": 0.3156146179401993
+    },
+    {
+      "id": "a18e0e8cf110044fac201569",
+      "task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "glass_blur",
+      "n_eff": 31.45707130432129,
+      "cos": 0.5984501838684082,
+      "iou": 0.45454545454545453
+    },
+    {
+      "id": "a861b524a7c5075bb405dcec",
+      "task": "pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "n_eff": 47.73685836791992,
+      "cos": 0.7311602234840393,
+      "iou": 0.610636277302944
+    },
+    {
+      "id": "ae32bc1ab77c25b035718b60",
+      "task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "table_texture",
+      "n_eff": 65.81244659423828,
+      "cos": 0.7988065481185913,
+      "iou": 0.27532800631350496
+    },
+    {
+      "id": "bbd1bcb9649b33876a03fcd4",
+      "task": "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "gaussian_blur",
+      "n_eff": 98.75870513916016,
+      "cos": 0.1977112889289856,
+      "iou": 0.1546525802519301
+    },
+    {
+      "id": "c2b40c2441dbfc7d229e74dc",
+      "task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "n_eff": 24.847000122070312,
+      "cos": 0.8506768941879272,
+      "iou": 0.718817591925018
+    },
+    {
+      "id": "c71fb60309bb3abd27edef73",
+      "task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "scene_texture",
+      "n_eff": 33.85040283203125,
+      "cos": 0.734096884727478,
+      "iou": 0.4971272229822161
+    },
+    {
+      "id": "clean_461aa99ff7ae2e71a74745fe",
+      "task": "pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate",
+      "factor": "clean",
+      "sub": "zoom_blur",
+      "n_eff": 39.396949768066406,
+      "cos": 1.0,
+      "iou": 1.0
+    },
+    {
+      "id": "clean_85c3af5bb68bc8ec5351f439",
+      "task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "clean",
+      "sub": "motion_blur",
+      "n_eff": 22.471172332763672,
+      "cos": 1.0,
+      "iou": 1.0
+    },
+    {
+      "id": "d09f6ffb1b6e044de0e2a00c",
+      "task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "n_eff": 115.5848388671875,
+      "cos": 0.8928160071372986,
+      "iou": 0.5710843373493976
+    },
+    {
+      "id": "d5bb1b7dd92c8a2af097198f",
+      "task": "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "glass_blur",
+      "n_eff": 30.27069091796875,
+      "cos": 0.19993427395820618,
+      "iou": 0.22322394518571945
+    },
+    {
+      "id": "e67548ff2cbebe1ca8a7b35e",
+      "task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "table_texture",
+      "n_eff": 34.11729431152344,
+      "cos": 0.6581240892410278,
+      "iou": 0.43379224030037544
+    },
+    {
+      "id": "f02d68c51294f0479197a2f3",
+      "task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "table_texture",
+      "n_eff": 94.33506774902344,
+      "cos": 0.8723492622375488,
+      "iou": 0.3260042283298097
+    },
+    {
+      "id": "fa87a1d88283b9c2853efbdd",
+      "task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "glass_blur",
+      "n_eff": 67.8650131225586,
+      "cos": 0.49010834097862244,
+      "iou": 0.2982670744138634
+    },
+    {
+      "id": "18686c3762693988cb814119",
+      "task": "pick_up_the_black_bowl_next_to_the_plate_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "glass_blur",
+      "n_eff": 36.76324462890625,
+      "cos": 0.4787907004356384,
+      "iou": 0.4067632850241546
+    },
+    {
+      "id": "260f480dfa38ae5a1cfe6ab4",
+      "task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "n_eff": 115.28034973144531,
+      "cos": 0.8930838108062744,
+      "iou": 0.5824175824175825
+    },
+    {
+      "id": "3334a1f1c3a0672b17618b90",
+      "task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "glass_blur",
+      "n_eff": 22.409095764160156,
+      "cos": 0.34055295586586,
+      "iou": 0.45193540117918485
+    },
+    {
+      "id": "3c22dc5799d7c86f110fd202",
+      "task": "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "table_texture",
+      "n_eff": 33.834922790527344,
+      "cos": 0.48945993185043335,
+      "iou": 0.37861864599954415
+    },
+    {
+      "id": "4832622edb4a76f005547b05",
+      "task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "gaussian_blur",
+      "n_eff": 52.26428985595703,
+      "cos": 0.7704360485076904,
+      "iou": 0.5950464396284829
+    },
+    {
+      "id": "54a816350ae1424dc7fd668f",
+      "task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "table_texture",
+      "n_eff": 83.54965209960938,
+      "cos": 0.7164847254753113,
+      "iou": 0.3090909090909091
+    },
+    {
+      "id": "633f01dd7271d56b67fbfb82",
+      "task": "pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "table_texture",
+      "n_eff": 37.240596771240234,
+      "cos": 0.5859748125076294,
+      "iou": 0.4714587737843552
+    },
+    {
+      "id": "6c5e826a4b500e66715842b0",
+      "task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "n_eff": 13.310914039611816,
+      "cos": 0.603646993637085,
+      "iou": 0.4108527131782945
+    },
+    {
+      "id": "7980e32cca8cc1820b8e9cbf",
+      "task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "n_eff": 111.74630737304688,
+      "cos": 0.892058253288269,
+      "iou": 0.5802469135802469
+    },
+    {
+      "id": "800d8909fb4bc3cdd0ac8651",
+      "task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "scene_texture",
+      "n_eff": 89.51807403564453,
+      "cos": 0.9376162886619568,
+      "iou": 0.4463738508682329
+    },
+    {
+      "id": "86ea35158f8967fd47bbe6c8",
+      "task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "n_eff": 26.773860931396484,
+      "cos": 0.7108076810836792,
+      "iou": 0.6668357855572468
+    },
+    {
+      "id": "95cbec413654751b1cde82b0",
+      "task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "n_eff": 43.99108123779297,
+      "cos": 0.8865492343902588,
+      "iou": 0.6212922879589546
+    },
+    {
+      "id": "a63ae211ace3f870deb4457c",
+      "task": "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "gaussian_blur",
+      "n_eff": 72.86907958984375,
+      "cos": 0.2610956132411957,
+      "iou": 0.11963330786860199
+    },
+    {
+      "id": "aa96bf31685d038f1ccca0b4",
+      "task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "glass_blur",
+      "n_eff": 26.21790885925293,
+      "cos": 0.2522880434989929,
+      "iou": 0.1855917667238422
+    },
+    {
+      "id": "b0aa244cf3afa8d4827c8f53",
+      "task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "motion_blur",
+      "n_eff": 59.20856475830078,
+      "cos": 0.8046848773956299,
+      "iou": 0.6306394027913016
+    },
+    {
+      "id": "c03dfc439bb66865a9f3a422",
+      "task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "table_texture",
+      "n_eff": 81.2633056640625,
+      "cos": 0.42163220047950745,
+      "iou": 0.2805122048819528
+    },
+    {
+      "id": "c2ec56926e653213cfd2e324",
+      "task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "scene_texture",
+      "n_eff": 59.461883544921875,
+      "cos": 0.7351166009902954,
+      "iou": 0.4971272229822161
+    },
+    {
+      "id": "c799396aefd5984dc17e0980",
+      "task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "fog",
+      "n_eff": 48.343170166015625,
+      "cos": 0.3185884356498718,
+      "iou": 0.23122456529781724
+    },
+    {
+      "id": "clean_716b94a92dcadeb19bb4aef6",
+      "task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "factor": "clean",
+      "sub": "gaussian_blur",
+      "n_eff": 101.16419982910156,
+      "cos": 1.0,
+      "iou": 1.0
+    },
+    {
+      "id": "clean_9570527652e7369e8e55140d",
+      "task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "factor": "clean",
+      "sub": "gaussian_blur",
+      "n_eff": 50.662498474121094,
+      "cos": 1.0,
+      "iou": 1.0
+    },
+    {
+      "id": "d10a1668e6e30258ca64ba89",
+      "task": "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "zoom_blur",
+      "n_eff": 38.54943084716797,
+      "cos": 0.19095736742019653,
+      "iou": 0.22081932963938597
+    },
+    {
+      "id": "d620bf5c2a9ff266046162b6",
+      "task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "n_eff": 41.02724838256836,
+      "cos": 0.8591076731681824,
+      "iou": 0.6522318454363758
+    },
+    {
+      "id": "ea09068ddd4eeecc1bf0b4a1",
+      "task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "table_texture",
+      "n_eff": 87.02854919433594,
+      "cos": 0.20326581597328186,
+      "iou": 0.13274336283185842
+    },
+    {
+      "id": "f26adf752cc7294f4d63ddd0",
+      "task": "pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "glass_blur",
+      "n_eff": 37.38929748535156,
+      "cos": 0.5605437159538269,
+      "iou": 0.5520282186948854
+    },
+    {
+      "id": "fb2c93fc2cd4b6eca8912ca8",
+      "task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "scene_texture",
+      "n_eff": 87.40283203125,
+      "cos": 0.8198922872543335,
+      "iou": 0.32931554024967713
+    },
+    {
+      "id": "1ac40af63b5cb206fa1a87ff",
+      "task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "motion_blur",
+      "n_eff": 51.530250549316406,
+      "cos": 0.4308949112892151,
+      "iou": 0.34211682037769
+    },
+    {
+      "id": "28379ab819940b2bae111202",
+      "task": "pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "glass_blur",
+      "n_eff": 52.23345947265625,
+      "cos": 0.4825923442840576,
+      "iou": 0.610636277302944
+    },
+    {
+      "id": "34e41085eb40929c9e32189e",
+      "task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "scene_texture",
+      "n_eff": 29.690547943115234,
+      "cos": 0.6731036901473999,
+      "iou": 0.38414776712649057
+    },
+    {
+      "id": "3d16d19504b303a732927434",
+      "task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "glass_blur",
+      "n_eff": 51.527503967285156,
+      "cos": 0.4384055733680725,
+      "iou": 0.2736633663366337
+    },
+    {
+      "id": "48c5f5e426f8006a5c08d586",
+      "task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "n_eff": 43.804813385009766,
+      "cos": 0.8876335024833679,
+      "iou": 0.6212922879589546
+    },
+    {
+      "id": "58374a4e57b5316b75daa5a8",
+      "task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "n_eff": 75.91725158691406,
+      "cos": 0.9535908699035645,
+      "iou": 0.42239782689220895
+    },
+    {
+      "id": "63bf3b8d60bbb2fdd492cb75",
+      "task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "scene_texture",
+      "n_eff": 32.69455337524414,
+      "cos": 0.7902829647064209,
+      "iou": 0.4883720930232558
+    },
+    {
+      "id": "70df83d6d048882f8b83d81d",
+      "task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "table_texture",
+      "n_eff": 41.82585144042969,
+      "cos": 0.4887148439884186,
+      "iou": 0.37163702690378475
+    },
+    {
+      "id": "7a456242c9d69220ee747328",
+      "task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "glass_blur",
+      "n_eff": 37.69920349121094,
+      "cos": 0.4790012836456299,
+      "iou": 0.39928315412186377
+    },
+    {
+      "id": "812b5e0de96c5d3d3af052b6",
+      "task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "scene_texture",
+      "n_eff": 31.603336334228516,
+      "cos": 0.6760966777801514,
+      "iou": 0.3617021276595745
+    },
+    {
+      "id": "94221db7af991abeed5ea8f6",
+      "task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "glass_blur",
+      "n_eff": 64.6949691772461,
+      "cos": 0.2545822560787201,
+      "iou": 0.28012801280128014
+    },
+    {
+      "id": "9a2827472fab45e6e0abc9a7",
+      "task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "motion_blur",
+      "n_eff": 27.332489013671875,
+      "cos": 0.3971845507621765,
+      "iou": 0.38033395176252316
+    },
+    {
+      "id": "a6a44da460e4d03dcdc9c351",
+      "task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "n_eff": 111.9568099975586,
+      "cos": 0.8918461799621582,
+      "iou": 0.5706112616681722
+    },
+    {
+      "id": "ab9c5902be6e729c218ff1a8",
+      "task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "n_eff": 13.310775756835938,
+      "cos": 0.6036535501480103,
+      "iou": 0.4108527131782945
+    },
+    {
+      "id": "b21a7534610471bc409b5a97",
+      "task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "n_eff": 111.66494750976562,
+      "cos": 0.8920028209686279,
+      "iou": 0.5802469135802469
+    },
+    {
+      "id": "c03e1a782928638880efb08d",
+      "task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "n_eff": 41.467864990234375,
+      "cos": 0.8973946571350098,
+      "iou": 0.6040100250626567
+    },
+    {
+      "id": "c31dbfc54953ebb8ad93b276",
+      "task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "zoom_blur",
+      "n_eff": 72.3048095703125,
+      "cos": 0.1353207379579544,
+      "iou": 0.13274336283185842
+    },
+    {
+      "id": "clean_25eefa3907243c5956889cfa",
+      "task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "clean",
+      "sub": "glass_blur",
+      "n_eff": 23.93319320678711,
+      "cos": 1.0,
+      "iou": 1.0
+    },
+    {
+      "id": "clean_74da4077f0571b787e7da5a7",
+      "task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "clean",
+      "sub": "motion_blur",
+      "n_eff": 49.197959899902344,
+      "cos": 1.0,
+      "iou": 1.0
+    },
+    {
+      "id": "clean_9bd7f4f1a5c801ca5cf925b0",
+      "task": "pick_up_the_black_bowl_next_to_the_plate_and_place_it_on_the_plate",
+      "factor": "clean",
+      "sub": "glass_blur",
+      "n_eff": 35.62117385864258,
+      "cos": 1.0,
+      "iou": 1.0
+    },
+    {
+      "id": "d11a5908570c39a0bc352a5a",
+      "task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "glass_blur",
+      "n_eff": 53.19942855834961,
+      "cos": 0.5787326693534851,
+      "iou": 0.2132973944294699
+    },
+    {
+      "id": "db52f74d7afc5ee4e7baef3d",
+      "task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "scene_texture",
+      "n_eff": 109.36843872070312,
+      "cos": 0.32380226254463196,
+      "iou": 0.23362060976739876
+    },
+    {
+      "id": "ea9df039791e3060e68ecb80",
+      "task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "table_texture",
+      "n_eff": 13.014333724975586,
+      "cos": 0.43415170907974243,
+      "iou": 0.1743119266055046
+    },
+    {
+      "id": "f769d77490544e345ff5b8f2",
+      "task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "table_texture",
+      "n_eff": 98.69741821289062,
+      "cos": 0.2850668430328369,
+      "iou": 0.2445954875861418
+    },
+    {
+      "id": "fefe134dc96bca5f4eee8b14",
+      "task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "gaussian_blur",
+      "n_eff": 129.42459106445312,
+      "cos": 0.5410400629043579,
+      "iou": 0.3206349206349206
+    },
+    {
+      "id": "1f80bb87b8b30a1a90c033fb",
+      "task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "table_texture",
+      "n_eff": 57.341773986816406,
+      "cos": 0.7250324487686157,
+      "iou": 0.43056943056943053
+    },
+    {
+      "id": "31ee3c9ef1bf8221f99a7bb4",
+      "task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "gaussian_blur",
+      "n_eff": 23.055339813232422,
+      "cos": 0.4109712243080139,
+      "iou": 0.48100588550026757
+    },
+    {
+      "id": "34f60c2ad49319e81d18c70b",
+      "task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "scene_texture",
+      "n_eff": 72.98894500732422,
+      "cos": 0.3257535696029663,
+      "iou": 0.2135154565061107
+    },
+    {
+      "id": "44b86cc69b604627bf02d513",
+      "task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "n_eff": 103.66902923583984,
+      "cos": 0.9775568246841431,
+      "iou": 0.7312999273783587
+    },
+    {
+      "id": "4d8c976994c211cbd47334cc",
+      "task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "gaussian_blur",
+      "n_eff": 22.590232849121094,
+      "cos": 0.3287810683250427,
+      "iou": 0.21915820029027577
+    },
+    {
+      "id": "59e33e7a354085f721bae4a6",
+      "task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "table_texture",
+      "n_eff": 27.995677947998047,
+      "cos": 0.5956739783287048,
+      "iou": 0.5067165212574436
+    },
+    {
+      "id": "6a3b246ac12849cbf06ba83c",
+      "task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "scene_texture",
+      "n_eff": 89.4100341796875,
+      "cos": 0.7303228378295898,
+      "iou": 0.286302884132248
+    },
+    {
+      "id": "734d3d4af8d6b04b33187f95",
+      "task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "n_eff": 26.773860931396484,
+      "cos": 0.7108076810836792,
+      "iou": 0.6668357855572468
+    },
+    {
+      "id": "7bb89a9650ff3abfe48cb96a",
+      "task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "n_eff": 43.804813385009766,
+      "cos": 0.8876335024833679,
+      "iou": 0.6212922879589546
+    },
+    {
+      "id": "83326bf78cf7e67f0fc7696c",
+      "task": "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "n_eff": 19.21232032775879,
+      "cos": 0.808111310005188,
+      "iou": 0.718817591925018
+    },
+    {
+      "id": "9483c62e9ccc44ccf351379b",
+      "task": "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "n_eff": 18.16742706298828,
+      "cos": 0.7366670370101929,
+      "iou": 0.7069701280227596
+    },
+    {
+      "id": "9b4fc8a339c2979d31daba94",
+      "task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "n_eff": 43.804813385009766,
+      "cos": 0.8876335024833679,
+      "iou": 0.6212922879589546
+    },
+    {
+      "id": "a7cce4f24d150da551883e11",
+      "task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "n_eff": 45.161529541015625,
+      "cos": 0.23823697865009308,
+      "iou": 0.28724479482514653
+    },
+    {
+      "id": "adbef345ee9c87c18c78f860",
+      "task": "pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "zoom_blur",
+      "n_eff": 51.57049560546875,
+      "cos": 0.34150469303131104,
+      "iou": 0.36554526981259877
+    },
+    {
+      "id": "b2590175d0f2a15c297828a5",
+      "task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "n_eff": 112.12110900878906,
+      "cos": 0.8924561738967896,
+      "iou": 0.5706112616681722
+    },
+    {
+      "id": "c1b468cf01e901553e96299c",
+      "task": "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "glass_blur",
+      "n_eff": 20.610595703125,
+      "cos": 0.5844666957855225,
+      "iou": 0.6330749354005167
+    },
+    {
+      "id": "c6224ce1f06d19c2455895e9",
+      "task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "n_eff": 82.14930725097656,
+      "cos": 0.9968820810317993,
+      "iou": 0.8441127694859039
+    },
+    {
+      "id": "clean_3adf13803680f268479750e9",
+      "task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "factor": "clean",
+      "sub": "glass_blur",
+      "n_eff": 79.9196548461914,
+      "cos": 1.0,
+      "iou": 1.0
+    },
+    {
+      "id": "clean_7b3a2104f946feffbf23f05a",
+      "task": "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "clean",
+      "sub": "gaussian_blur",
+      "n_eff": 21.082000732421875,
+      "cos": 1.0,
+      "iou": 1.0
+    },
+    {
+      "id": "clean_9f0d3717f1f17095d5da34e7",
+      "task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "factor": "clean",
+      "sub": "glass_blur",
+      "n_eff": 38.65715789794922,
+      "cos": 1.0,
+      "iou": 1.0
+    },
+    {
+      "id": "d4009212e035c43e3f7076db",
+      "task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "scene_texture",
+      "n_eff": 16.038345336914062,
+      "cos": 0.39676111936569214,
+      "iou": 0.43983822042467136
+    },
+    {
+      "id": "e3cb3b3fa84a3a4e2bd54c98",
+      "task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "n_eff": 38.69452667236328,
+      "cos": 0.8443453907966614,
+      "iou": 0.6634599156118144
+    },
+    {
+      "id": "eeefdf07e36e0b4cbea8ec39",
+      "task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "n_eff": 15.328248023986816,
+      "cos": 0.7720920443534851,
+      "iou": 0.49419703103913637
+    },
+    {
+      "id": "f839ded9ddcacca5f47d08ca",
+      "task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "scene_texture",
+      "n_eff": 85.71378326416016,
+      "cos": 0.7149370312690735,
+      "iou": 0.27898190495128256
+    },
+    {
+      "id": "ff1eb7e58555351a29bc38ef",
+      "task": "pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "n_eff": 53.75133514404297,
+      "cos": 0.8579535484313965,
+      "iou": 0.7200577200577201
+    }
+  ],
+  "gate": {
+    "pass": true,
+    "reasons": []
+  },
+  "max_parity": 3.0517578125e-05
+}

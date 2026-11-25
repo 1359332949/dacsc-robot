@@ -1,0 +1,4500 @@
+{
+  "groups": {
+    "clean__v1": {
+      "n": 10,
+      "xyz": 0.3046492800116539,
+      "rot": 0.024779488891363145
+    },
+    "clean__weighted": {
+      "n": 10,
+      "xyz": 0.30738492757081987,
+      "rot": 0.024858434312045576
+    },
+    "clean__spatial": {
+      "n": 10,
+      "xyz": 0.20454001650214196,
+      "rot": 0.024757212866097687
+    },
+    "sensor_noise__v1": {
+      "n": 30,
+      "xyz": 0.19273429413636525,
+      "rot": 0.02885954671849807
+    },
+    "sensor_noise__weighted": {
+      "n": 30,
+      "xyz": 0.20640014509359997,
+      "rot": 0.0318090317149957
+    },
+    "sensor_noise__spatial": {
+      "n": 30,
+      "xyz": 0.17455494987467926,
+      "rot": 0.029489863353470962
+    },
+    "background__v1": {
+      "n": 30,
+      "xyz": 0.1418040486673514,
+      "rot": 0.04982580312838157
+    },
+    "background__weighted": {
+      "n": 30,
+      "xyz": 0.13805188337961832,
+      "rot": 0.047457082631687325
+    },
+    "background__spatial": {
+      "n": 30,
+      "xyz": 0.12550181572635968,
+      "rot": 0.044134091151257354
+    },
+    "lighting__v1": {
+      "n": 30,
+      "xyz": 0.2714829042553902,
+      "rot": 0.04614092685903112
+    },
+    "lighting__weighted": {
+      "n": 30,
+      "xyz": 0.20386348863442738,
+      "rot": 0.046825079961369434
+    },
+    "lighting__spatial": {
+      "n": 30,
+      "xyz": 0.20810342530409495,
+      "rot": 0.047195203912754856
+    },
+    "geom__frozen": {
+      "n": 32,
+      "cos_median": 0.05439099844405737,
+      "ratio_median": 2.1740992552445073,
+      "cos_pos": 17
+    },
+    "geom__v1": {
+      "n": 32,
+      "cos_median": -0.14779723695536698,
+      "ratio_median": 2.4300019788013634,
+      "cos_pos": 14
+    },
+    "geom__weighted": {
+      "n": 32,
+      "cos_median": -0.14744256569862102,
+      "ratio_median": 2.354020212818453,
+      "cos_pos": 13
+    },
+    "geom__spatial": {
+      "n": 32,
+      "cos_median": -0.14024460812501757,
+      "ratio_median": 2.248792469945344,
+      "cos_pos": 14
+    }
+  },
+  "rows": [
+    {
+      "id": "05a2e087b49114ba4a11204b",
+      "task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "motion_blur",
+      "arm": "v1",
+      "xyz": 0.26221802830696106,
+      "rot": 0.031301822513341904,
+      "all": 0.2144244909286499
+    },
+    {
+      "id": "05a2e087b49114ba4a11204b",
+      "task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "motion_blur",
+      "arm": "weighted",
+      "xyz": 0.29413747787475586,
+      "rot": 0.02410607598721981,
+      "all": 0.18709702789783478
+    },
+    {
+      "id": "05a2e087b49114ba4a11204b",
+      "task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "motion_blur",
+      "arm": "spatial",
+      "xyz": 0.19812321662902832,
+      "rot": 0.03542471304535866,
+      "all": 0.18791227042675018
+    },
+    {
+      "id": "2394dfc73bd22efc84b9df52",
+      "task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "table_texture",
+      "arm": "v1",
+      "xyz": 0.18663209676742554,
+      "rot": 0.05875376984477043,
+      "all": 0.24534642696380615
+    },
+    {
+      "id": "2394dfc73bd22efc84b9df52",
+      "task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "table_texture",
+      "arm": "weighted",
+      "xyz": 0.19979923963546753,
+      "rot": 0.05356158688664436,
+      "all": 0.2219659686088562
+    },
+    {
+      "id": "2394dfc73bd22efc84b9df52",
+      "task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "table_texture",
+      "arm": "spatial",
+      "xyz": 0.20706194639205933,
+      "rot": 0.0632724016904831,
+      "all": 0.18828286230564117
+    },
+    {
+      "id": "32c1ebe6e4d6cb178bfb0a0b",
+      "task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "v1",
+      "xyz": 0.25876715779304504,
+      "rot": 0.04493994638323784,
+      "all": 0.34743601083755493
+    },
+    {
+      "id": "32c1ebe6e4d6cb178bfb0a0b",
+      "task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "weighted",
+      "xyz": 0.19013074040412903,
+      "rot": 0.05878109484910965,
+      "all": 0.2888841927051544
+    },
+    {
+      "id": "32c1ebe6e4d6cb178bfb0a0b",
+      "task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "spatial",
+      "xyz": 0.16868892312049866,
+      "rot": 0.06310655921697617,
+      "all": 0.2680095434188843
+    },
+    {
+      "id": "36f206329f1c1c5275cdfc66",
+      "task": "pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "v1",
+      "xyz": 0.2468269169330597,
+      "rot": 0.07331999391317368,
+      "all": 0.14024163782596588
+    },
+    {
+      "id": "36f206329f1c1c5275cdfc66",
+      "task": "pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "weighted",
+      "xyz": 0.09859786182641983,
+      "rot": 0.08035769313573837,
+      "all": 0.14669081568717957
+    },
+    {
+      "id": "36f206329f1c1c5275cdfc66",
+      "task": "pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "spatial",
+      "xyz": 0.15522949397563934,
+      "rot": 0.06264956295490265,
+      "all": 0.14816944301128387
+    },
+    {
+      "id": "451d4d5283da4bf94b611a95",
+      "task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "scene_texture",
+      "arm": "v1",
+      "xyz": 0.14797735214233398,
+      "rot": 0.02159925550222397,
+      "all": 0.16626280546188354
+    },
+    {
+      "id": "451d4d5283da4bf94b611a95",
+      "task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "scene_texture",
+      "arm": "weighted",
+      "xyz": 0.11807230859994888,
+      "rot": 0.03310992196202278,
+      "all": 0.15808157622814178
+    },
+    {
+      "id": "451d4d5283da4bf94b611a95",
+      "task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "scene_texture",
+      "arm": "spatial",
+      "xyz": 0.0969047024846077,
+      "rot": 0.034384649246931076,
+      "all": 0.1816321760416031
+    },
+    {
+      "id": "537c44cf53786dc807cc4fb8",
+      "task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "gaussian_blur",
+      "arm": "v1",
+      "xyz": 0.05344556272029877,
+      "rot": 0.036094166338443756,
+      "all": 0.055307354778051376
+    },
+    {
+      "id": "537c44cf53786dc807cc4fb8",
+      "task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "gaussian_blur",
+      "arm": "weighted",
+      "xyz": 0.06759562343358994,
+      "rot": 0.04628875479102135,
+      "all": 0.04977678507566452
+    },
+    {
+      "id": "537c44cf53786dc807cc4fb8",
+      "task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "gaussian_blur",
+      "arm": "spatial",
+      "xyz": 0.057413432747125626,
+      "rot": 0.04052305594086647,
+      "all": 0.04550917074084282
+    },
+    {
+      "id": "6084fd23c807006a9ec4a099",
+      "task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "scene_texture",
+      "arm": "v1",
+      "xyz": 0.14426837861537933,
+      "rot": 0.03743268549442291,
+      "all": 0.14916212856769562
+    },
+    {
+      "id": "6084fd23c807006a9ec4a099",
+      "task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "scene_texture",
+      "arm": "weighted",
+      "xyz": 0.10674811899662018,
+      "rot": 0.04274698346853256,
+      "all": 0.09176589548587799
+    },
+    {
+      "id": "6084fd23c807006a9ec4a099",
+      "task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "scene_texture",
+      "arm": "spatial",
+      "xyz": 0.12157077342271805,
+      "rot": 0.03810805827379227,
+      "all": 0.0946740061044693
+    },
+    {
+      "id": "6b142b87741e2537ff1f11b4",
+      "task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "v1",
+      "xyz": 0.28649044036865234,
+      "rot": 0.03518909215927124,
+      "all": 0.15460650622844696
+    },
+    {
+      "id": "6b142b87741e2537ff1f11b4",
+      "task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "weighted",
+      "xyz": 0.23734807968139648,
+      "rot": 0.04768257215619087,
+      "all": 0.1340256929397583
+    },
+    {
+      "id": "6b142b87741e2537ff1f11b4",
+      "task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "spatial",
+      "xyz": 0.2724405527114868,
+      "rot": 0.04975445568561554,
+      "all": 0.15030232071876526
+    },
+    {
+      "id": "752ca42ecf1bafb47444baaf",
+      "task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "scene_texture",
+      "arm": "v1",
+      "xyz": 0.10915892571210861,
+      "rot": 0.07773065567016602,
+      "all": 0.10562309622764587
+    },
+    {
+      "id": "752ca42ecf1bafb47444baaf",
+      "task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "scene_texture",
+      "arm": "weighted",
+      "xyz": 0.08232323080301285,
+      "rot": 0.06751509010791779,
+      "all": 0.08977202326059341
+    },
+    {
+      "id": "752ca42ecf1bafb47444baaf",
+      "task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "scene_texture",
+      "arm": "spatial",
+      "xyz": 0.09858319163322449,
+      "rot": 0.06332976371049881,
+      "all": 0.09427723288536072
+    },
+    {
+      "id": "7bcd821113099b91165fea6d",
+      "task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "motion_blur",
+      "arm": "v1",
+      "xyz": 0.30106091499328613,
+      "rot": 0.038352105766534805,
+      "all": 0.26487940549850464
+    },
+    {
+      "id": "7bcd821113099b91165fea6d",
+      "task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "motion_blur",
+      "arm": "weighted",
+      "xyz": 0.21751666069030762,
+      "rot": 0.031495433300733566,
+      "all": 0.15436798334121704
+    },
+    {
+      "id": "7bcd821113099b91165fea6d",
+      "task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "motion_blur",
+      "arm": "spatial",
+      "xyz": 0.18821819126605988,
+      "rot": 0.03172106295824051,
+      "all": 0.18846261501312256
+    },
+    {
+      "id": "8515f621f7ce09addd6043fc",
+      "task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "motion_blur",
+      "arm": "v1",
+      "xyz": 0.09117816388607025,
+      "rot": 0.02400992624461651,
+      "all": 0.16948337852954865
+    },
+    {
+      "id": "8515f621f7ce09addd6043fc",
+      "task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "motion_blur",
+      "arm": "weighted",
+      "xyz": 0.13390563428401947,
+      "rot": 0.024334829300642014,
+      "all": 0.18373072147369385
+    },
+    {
+      "id": "8515f621f7ce09addd6043fc",
+      "task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "motion_blur",
+      "arm": "spatial",
+      "xyz": 0.14043006300926208,
+      "rot": 0.026736926287412643,
+      "all": 0.10436489433050156
+    },
+    {
+      "id": "95599a32b2a06ea8e3c757ca",
+      "task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "table_texture",
+      "arm": "v1",
+      "xyz": 0.1665651500225067,
+      "rot": 0.03348623588681221,
+      "all": 0.11156771332025528
+    },
+    {
+      "id": "95599a32b2a06ea8e3c757ca",
+      "task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "table_texture",
+      "arm": "weighted",
+      "xyz": 0.14629346132278442,
+      "rot": 0.028147883713245392,
+      "all": 0.16933892667293549
+    },
+    {
+      "id": "95599a32b2a06ea8e3c757ca",
+      "task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "table_texture",
+      "arm": "spatial",
+      "xyz": 0.10238795727491379,
+      "rot": 0.030383029952645302,
+      "all": 0.17268899083137512
+    },
+    {
+      "id": "a18e0e8cf110044fac201569",
+      "task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "glass_blur",
+      "arm": "v1",
+      "xyz": 0.26807641983032227,
+      "rot": 0.01638474315404892,
+      "all": 0.12271445989608765
+    },
+    {
+      "id": "a18e0e8cf110044fac201569",
+      "task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "glass_blur",
+      "arm": "weighted",
+      "xyz": 0.25756436586380005,
+      "rot": 0.025435062125325203,
+      "all": 0.14483383297920227
+    },
+    {
+      "id": "a18e0e8cf110044fac201569",
+      "task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "glass_blur",
+      "arm": "spatial",
+      "xyz": 0.22518335282802582,
+      "rot": 0.033224329352378845,
+      "all": 0.1347378045320511
+    },
+    {
+      "id": "a861b524a7c5075bb405dcec",
+      "task": "pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "v1",
+      "xyz": 0.2468269169330597,
+      "rot": 0.07331999391317368,
+      "all": 0.14024163782596588
+    },
+    {
+      "id": "a861b524a7c5075bb405dcec",
+      "task": "pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "weighted",
+      "xyz": 0.09859786182641983,
+      "rot": 0.08035769313573837,
+      "all": 0.14669081568717957
+    },
+    {
+      "id": "a861b524a7c5075bb405dcec",
+      "task": "pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "spatial",
+      "xyz": 0.15522949397563934,
+      "rot": 0.06264956295490265,
+      "all": 0.14816944301128387
+    },
+    {
+      "id": "ae32bc1ab77c25b035718b60",
+      "task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "table_texture",
+      "arm": "v1",
+      "xyz": 0.19264568388462067,
+      "rot": 0.04837353900074959,
+      "all": 0.10877089202404022
+    },
+    {
+      "id": "ae32bc1ab77c25b035718b60",
+      "task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "table_texture",
+      "arm": "weighted",
+      "xyz": 0.21283704042434692,
+      "rot": 0.039695605635643005,
+      "all": 0.13297121226787567
+    },
+    {
+      "id": "ae32bc1ab77c25b035718b60",
+      "task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "table_texture",
+      "arm": "spatial",
+      "xyz": 0.1569443941116333,
+      "rot": 0.04401316121220589,
+      "all": 0.11060220748186111
+    },
+    {
+      "id": "bbd1bcb9649b33876a03fcd4",
+      "task": "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "gaussian_blur",
+      "arm": "v1",
+      "xyz": 0.09819987416267395,
+      "rot": 0.024743573740124702,
+      "all": 0.05365695804357529
+    },
+    {
+      "id": "bbd1bcb9649b33876a03fcd4",
+      "task": "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "gaussian_blur",
+      "arm": "weighted",
+      "xyz": 0.06434473395347595,
+      "rot": 0.035742390900850296,
+      "all": 0.046436648815870285
+    },
+    {
+      "id": "bbd1bcb9649b33876a03fcd4",
+      "task": "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "gaussian_blur",
+      "arm": "spatial",
+      "xyz": 0.055430054664611816,
+      "rot": 0.03097202628850937,
+      "all": 0.039903562515974045
+    },
+    {
+      "id": "c2b40c2441dbfc7d229e74dc",
+      "task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "v1",
+      "xyz": 0.41662636399269104,
+      "rot": 0.03727634623646736,
+      "all": 0.203936368227005
+    },
+    {
+      "id": "c2b40c2441dbfc7d229e74dc",
+      "task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "weighted",
+      "xyz": 0.40997812151908875,
+      "rot": 0.02947799302637577,
+      "all": 0.21572048962116241
+    },
+    {
+      "id": "c2b40c2441dbfc7d229e74dc",
+      "task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "spatial",
+      "xyz": 0.2592371702194214,
+      "rot": 0.03816967457532883,
+      "all": 0.1519559621810913
+    },
+    {
+      "id": "c71fb60309bb3abd27edef73",
+      "task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "scene_texture",
+      "arm": "v1",
+      "xyz": 0.12576830387115479,
+      "rot": 0.08504858613014221,
+      "all": 0.2595876157283783
+    },
+    {
+      "id": "c71fb60309bb3abd27edef73",
+      "task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "scene_texture",
+      "arm": "weighted",
+      "xyz": 0.2268415242433548,
+      "rot": 0.05270250886678696,
+      "all": 0.17051030695438385
+    },
+    {
+      "id": "c71fb60309bb3abd27edef73",
+      "task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "scene_texture",
+      "arm": "spatial",
+      "xyz": 0.14055891335010529,
+      "rot": 0.04673062264919281,
+      "all": 0.15474888682365417
+    },
+    {
+      "id": "clean_461aa99ff7ae2e71a74745fe",
+      "task": "pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate",
+      "factor": "clean",
+      "sub": "zoom_blur",
+      "arm": "v1",
+      "xyz": 0.3787745237350464,
+      "rot": 0.023550935089588165,
+      "all": 0.1984463930130005
+    },
+    {
+      "id": "clean_461aa99ff7ae2e71a74745fe",
+      "task": "pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate",
+      "factor": "clean",
+      "sub": "zoom_blur",
+      "arm": "weighted",
+      "xyz": 0.39106130599975586,
+      "rot": 0.016755515709519386,
+      "all": 0.22445499897003174
+    },
+    {
+      "id": "clean_461aa99ff7ae2e71a74745fe",
+      "task": "pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate",
+      "factor": "clean",
+      "sub": "zoom_blur",
+      "arm": "spatial",
+      "xyz": 0.21207980811595917,
+      "rot": 0.009665874764323235,
+      "all": 0.12135306000709534
+    },
+    {
+      "id": "clean_85c3af5bb68bc8ec5351f439",
+      "task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "clean",
+      "sub": "motion_blur",
+      "arm": "v1",
+      "xyz": 0.25286614894866943,
+      "rot": 0.021125704050064087,
+      "all": 0.14106902480125427
+    },
+    {
+      "id": "clean_85c3af5bb68bc8ec5351f439",
+      "task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "clean",
+      "sub": "motion_blur",
+      "arm": "weighted",
+      "xyz": 0.21202082931995392,
+      "rot": 0.018974926322698593,
+      "all": 0.14668017625808716
+    },
+    {
+      "id": "clean_85c3af5bb68bc8ec5351f439",
+      "task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "clean",
+      "sub": "motion_blur",
+      "arm": "spatial",
+      "xyz": 0.1608773022890091,
+      "rot": 0.018323060125112534,
+      "all": 0.12221037596464157
+    },
+    {
+      "id": "d09f6ffb1b6e044de0e2a00c",
+      "task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "v1",
+      "xyz": 0.21912048757076263,
+      "rot": 0.03089449554681778,
+      "all": 0.3032214641571045
+    },
+    {
+      "id": "d09f6ffb1b6e044de0e2a00c",
+      "task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "weighted",
+      "xyz": 0.15928369760513306,
+      "rot": 0.03695768117904663,
+      "all": 0.26087382435798645
+    },
+    {
+      "id": "d09f6ffb1b6e044de0e2a00c",
+      "task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "spatial",
+      "xyz": 0.23176796734333038,
+      "rot": 0.046750783920288086,
+      "all": 0.22061105072498322
+    },
+    {
+      "id": "d5bb1b7dd92c8a2af097198f",
+      "task": "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "glass_blur",
+      "arm": "v1",
+      "xyz": 0.2220817655324936,
+      "rot": 0.013404786586761475,
+      "all": 0.1256464570760727
+    },
+    {
+      "id": "d5bb1b7dd92c8a2af097198f",
+      "task": "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "glass_blur",
+      "arm": "weighted",
+      "xyz": 0.16107693314552307,
+      "rot": 0.03394683450460434,
+      "all": 0.11159559339284897
+    },
+    {
+      "id": "d5bb1b7dd92c8a2af097198f",
+      "task": "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "glass_blur",
+      "arm": "spatial",
+      "xyz": 0.15823449194431305,
+      "rot": 0.01685529202222824,
+      "all": 0.11944419145584106
+    },
+    {
+      "id": "e67548ff2cbebe1ca8a7b35e",
+      "task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "table_texture",
+      "arm": "v1",
+      "xyz": 0.09848634898662567,
+      "rot": 0.06201537325978279,
+      "all": 0.10610467195510864
+    },
+    {
+      "id": "e67548ff2cbebe1ca8a7b35e",
+      "task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "table_texture",
+      "arm": "weighted",
+      "xyz": 0.08872076869010925,
+      "rot": 0.05945104360580444,
+      "all": 0.09405817091464996
+    },
+    {
+      "id": "e67548ff2cbebe1ca8a7b35e",
+      "task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "table_texture",
+      "arm": "spatial",
+      "xyz": 0.17247162759304047,
+      "rot": 0.05551508441567421,
+      "all": 0.19652804732322693
+    },
+    {
+      "id": "f02d68c51294f0479197a2f3",
+      "task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "table_texture",
+      "arm": "v1",
+      "xyz": 0.22709809243679047,
+      "rot": 0.03921259939670563,
+      "all": 0.138276144862175
+    },
+    {
+      "id": "f02d68c51294f0479197a2f3",
+      "task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "table_texture",
+      "arm": "weighted",
+      "xyz": 0.12961074709892273,
+      "rot": 0.03493858128786087,
+      "all": 0.18936869502067566
+    },
+    {
+      "id": "f02d68c51294f0479197a2f3",
+      "task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "table_texture",
+      "arm": "spatial",
+      "xyz": 0.07372457534074783,
+      "rot": 0.03547479212284088,
+      "all": 0.18960537016391754
+    },
+    {
+      "id": "fa87a1d88283b9c2853efbdd",
+      "task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "glass_blur",
+      "arm": "v1",
+      "xyz": 0.32559341192245483,
+      "rot": 0.0211589764803648,
+      "all": 0.19657300412654877
+    },
+    {
+      "id": "fa87a1d88283b9c2853efbdd",
+      "task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "glass_blur",
+      "arm": "weighted",
+      "xyz": 0.374313622713089,
+      "rot": 0.02067336067557335,
+      "all": 0.21674823760986328
+    },
+    {
+      "id": "fa87a1d88283b9c2853efbdd",
+      "task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "glass_blur",
+      "arm": "spatial",
+      "xyz": 0.2656104266643524,
+      "rot": 0.015136501751840115,
+      "all": 0.16821925342082977
+    },
+    {
+      "id": "18686c3762693988cb814119",
+      "task": "pick_up_the_black_bowl_next_to_the_plate_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "glass_blur",
+      "arm": "v1",
+      "xyz": 0.24972504377365112,
+      "rot": 0.026211490854620934,
+      "all": 0.1636141538619995
+    },
+    {
+      "id": "18686c3762693988cb814119",
+      "task": "pick_up_the_black_bowl_next_to_the_plate_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "glass_blur",
+      "arm": "weighted",
+      "xyz": 0.21918195486068726,
+      "rot": 0.022797923535108566,
+      "all": 0.1394910365343094
+    },
+    {
+      "id": "18686c3762693988cb814119",
+      "task": "pick_up_the_black_bowl_next_to_the_plate_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "glass_blur",
+      "arm": "spatial",
+      "xyz": 0.18183282017707825,
+      "rot": 0.038365453481674194,
+      "all": 0.14044368267059326
+    },
+    {
+      "id": "260f480dfa38ae5a1cfe6ab4",
+      "task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "v1",
+      "xyz": 0.2207247018814087,
+      "rot": 0.027596184983849525,
+      "all": 0.2908215820789337
+    },
+    {
+      "id": "260f480dfa38ae5a1cfe6ab4",
+      "task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "weighted",
+      "xyz": 0.15620295703411102,
+      "rot": 0.03278294578194618,
+      "all": 0.24365536868572235
+    },
+    {
+      "id": "260f480dfa38ae5a1cfe6ab4",
+      "task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "spatial",
+      "xyz": 0.22373199462890625,
+      "rot": 0.041986141353845596,
+      "all": 0.2161915898323059
+    },
+    {
+      "id": "3334a1f1c3a0672b17618b90",
+      "task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "glass_blur",
+      "arm": "v1",
+      "xyz": 0.33228933811187744,
+      "rot": 0.04890291392803192,
+      "all": 0.21098683774471283
+    },
+    {
+      "id": "3334a1f1c3a0672b17618b90",
+      "task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "glass_blur",
+      "arm": "weighted",
+      "xyz": 0.25233718752861023,
+      "rot": 0.0512673556804657,
+      "all": 0.20024213194847107
+    },
+    {
+      "id": "3334a1f1c3a0672b17618b90",
+      "task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "glass_blur",
+      "arm": "spatial",
+      "xyz": 0.2380252182483673,
+      "rot": 0.04690885543823242,
+      "all": 0.19278660416603088
+    },
+    {
+      "id": "3c22dc5799d7c86f110fd202",
+      "task": "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "table_texture",
+      "arm": "v1",
+      "xyz": 0.12782597541809082,
+      "rot": 0.05279519036412239,
+      "all": 0.12272590398788452
+    },
+    {
+      "id": "3c22dc5799d7c86f110fd202",
+      "task": "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "table_texture",
+      "arm": "weighted",
+      "xyz": 0.17598757147789001,
+      "rot": 0.043634042143821716,
+      "all": 0.208947092294693
+    },
+    {
+      "id": "3c22dc5799d7c86f110fd202",
+      "task": "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "table_texture",
+      "arm": "spatial",
+      "xyz": 0.1017429456114769,
+      "rot": 0.035907696932554245,
+      "all": 0.15242742002010345
+    },
+    {
+      "id": "4832622edb4a76f005547b05",
+      "task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "gaussian_blur",
+      "arm": "v1",
+      "xyz": 0.1639995276927948,
+      "rot": 0.017565889284014702,
+      "all": 0.10409491509199142
+    },
+    {
+      "id": "4832622edb4a76f005547b05",
+      "task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "gaussian_blur",
+      "arm": "weighted",
+      "xyz": 0.24912568926811218,
+      "rot": 0.019873997196555138,
+      "all": 0.1394936740398407
+    },
+    {
+      "id": "4832622edb4a76f005547b05",
+      "task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "gaussian_blur",
+      "arm": "spatial",
+      "xyz": 0.1754406988620758,
+      "rot": 0.015002078376710415,
+      "all": 0.10611945390701294
+    },
+    {
+      "id": "54a816350ae1424dc7fd668f",
+      "task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "table_texture",
+      "arm": "v1",
+      "xyz": 0.12375608831644058,
+      "rot": 0.0539802648127079,
+      "all": 0.1723855435848236
+    },
+    {
+      "id": "54a816350ae1424dc7fd668f",
+      "task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "table_texture",
+      "arm": "weighted",
+      "xyz": 0.11923108994960785,
+      "rot": 0.06100868433713913,
+      "all": 0.19841285049915314
+    },
+    {
+      "id": "54a816350ae1424dc7fd668f",
+      "task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "table_texture",
+      "arm": "spatial",
+      "xyz": 0.09476988762617111,
+      "rot": 0.04594624042510986,
+      "all": 0.16658489406108856
+    },
+    {
+      "id": "633f01dd7271d56b67fbfb82",
+      "task": "pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "table_texture",
+      "arm": "v1",
+      "xyz": 0.10177915543317795,
+      "rot": 0.04756959155201912,
+      "all": 0.12903888523578644
+    },
+    {
+      "id": "633f01dd7271d56b67fbfb82",
+      "task": "pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "table_texture",
+      "arm": "weighted",
+      "xyz": 0.13847289979457855,
+      "rot": 0.0649079978466034,
+      "all": 0.13526809215545654
+    },
+    {
+      "id": "633f01dd7271d56b67fbfb82",
+      "task": "pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "table_texture",
+      "arm": "spatial",
+      "xyz": 0.12965957820415497,
+      "rot": 0.06280869990587234,
+      "all": 0.13283269107341766
+    },
+    {
+      "id": "6c5e826a4b500e66715842b0",
+      "task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "v1",
+      "xyz": 0.25876715779304504,
+      "rot": 0.04493994638323784,
+      "all": 0.34743601083755493
+    },
+    {
+      "id": "6c5e826a4b500e66715842b0",
+      "task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "weighted",
+      "xyz": 0.19013074040412903,
+      "rot": 0.05878109484910965,
+      "all": 0.2888841927051544
+    },
+    {
+      "id": "6c5e826a4b500e66715842b0",
+      "task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "spatial",
+      "xyz": 0.16868892312049866,
+      "rot": 0.06310655921697617,
+      "all": 0.2680095434188843
+    },
+    {
+      "id": "7980e32cca8cc1820b8e9cbf",
+      "task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "v1",
+      "xyz": 0.23436814546585083,
+      "rot": 0.04141681641340256,
+      "all": 0.32456302642822266
+    },
+    {
+      "id": "7980e32cca8cc1820b8e9cbf",
+      "task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "weighted",
+      "xyz": 0.17813952267169952,
+      "rot": 0.04443873465061188,
+      "all": 0.28696393966674805
+    },
+    {
+      "id": "7980e32cca8cc1820b8e9cbf",
+      "task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "spatial",
+      "xyz": 0.21767769753932953,
+      "rot": 0.042913567274808884,
+      "all": 0.25408220291137695
+    },
+    {
+      "id": "800d8909fb4bc3cdd0ac8651",
+      "task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "scene_texture",
+      "arm": "v1",
+      "xyz": 0.1526089608669281,
+      "rot": 0.025922182947397232,
+      "all": 0.12357035279273987
+    },
+    {
+      "id": "800d8909fb4bc3cdd0ac8651",
+      "task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "scene_texture",
+      "arm": "weighted",
+      "xyz": 0.13294006884098053,
+      "rot": 0.03503067046403885,
+      "all": 0.11904445290565491
+    },
+    {
+      "id": "800d8909fb4bc3cdd0ac8651",
+      "task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "scene_texture",
+      "arm": "spatial",
+      "xyz": 0.14920251071453094,
+      "rot": 0.03198863938450813,
+      "all": 0.12470005452632904
+    },
+    {
+      "id": "86ea35158f8967fd47bbe6c8",
+      "task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "v1",
+      "xyz": 0.18798762559890747,
+      "rot": 0.06927936524152756,
+      "all": 0.20257972180843353
+    },
+    {
+      "id": "86ea35158f8967fd47bbe6c8",
+      "task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "weighted",
+      "xyz": 0.17811071872711182,
+      "rot": 0.07251325249671936,
+      "all": 0.15180625021457672
+    },
+    {
+      "id": "86ea35158f8967fd47bbe6c8",
+      "task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "spatial",
+      "xyz": 0.15953560173511505,
+      "rot": 0.063833087682724,
+      "all": 0.18551525473594666
+    },
+    {
+      "id": "95cbec413654751b1cde82b0",
+      "task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "v1",
+      "xyz": 0.25411444902420044,
+      "rot": 0.05565812811255455,
+      "all": 0.30799075961112976
+    },
+    {
+      "id": "95cbec413654751b1cde82b0",
+      "task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "weighted",
+      "xyz": 0.20923009514808655,
+      "rot": 0.04241379350423813,
+      "all": 0.23676598072052002
+    },
+    {
+      "id": "95cbec413654751b1cde82b0",
+      "task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "spatial",
+      "xyz": 0.23681852221488953,
+      "rot": 0.04218704253435135,
+      "all": 0.3126741051673889
+    },
+    {
+      "id": "a63ae211ace3f870deb4457c",
+      "task": "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "gaussian_blur",
+      "arm": "v1",
+      "xyz": 0.0796961635351181,
+      "rot": 0.027806665748357773,
+      "all": 0.05209948495030403
+    },
+    {
+      "id": "a63ae211ace3f870deb4457c",
+      "task": "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "gaussian_blur",
+      "arm": "weighted",
+      "xyz": 0.0839478150010109,
+      "rot": 0.04119432717561722,
+      "all": 0.09692053496837616
+    },
+    {
+      "id": "a63ae211ace3f870deb4457c",
+      "task": "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "gaussian_blur",
+      "arm": "spatial",
+      "xyz": 0.10658971220254898,
+      "rot": 0.03054162487387657,
+      "all": 0.1449127495288849
+    },
+    {
+      "id": "aa96bf31685d038f1ccca0b4",
+      "task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "glass_blur",
+      "arm": "v1",
+      "xyz": 0.19561071693897247,
+      "rot": 0.03425399586558342,
+      "all": 0.10213085263967514
+    },
+    {
+      "id": "aa96bf31685d038f1ccca0b4",
+      "task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "glass_blur",
+      "arm": "weighted",
+      "xyz": 0.11592645198106766,
+      "rot": 0.05040241405367851,
+      "all": 0.07335212081670761
+    },
+    {
+      "id": "aa96bf31685d038f1ccca0b4",
+      "task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "glass_blur",
+      "arm": "spatial",
+      "xyz": 0.13716663420200348,
+      "rot": 0.05015402287244797,
+      "all": 0.08240091055631638
+    },
+    {
+      "id": "b0aa244cf3afa8d4827c8f53",
+      "task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "motion_blur",
+      "arm": "v1",
+      "xyz": 0.11512795835733414,
+      "rot": 0.02072356827557087,
+      "all": 0.15943597257137299
+    },
+    {
+      "id": "b0aa244cf3afa8d4827c8f53",
+      "task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "motion_blur",
+      "arm": "weighted",
+      "xyz": 0.2828080952167511,
+      "rot": 0.02791273221373558,
+      "all": 0.21068359911441803
+    },
+    {
+      "id": "b0aa244cf3afa8d4827c8f53",
+      "task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "motion_blur",
+      "arm": "spatial",
+      "xyz": 0.18018865585327148,
+      "rot": 0.01223939098417759,
+      "all": 0.10623673349618912
+    },
+    {
+      "id": "c03dfc439bb66865a9f3a422",
+      "task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "table_texture",
+      "arm": "v1",
+      "xyz": 0.07234813272953033,
+      "rot": 0.037445068359375,
+      "all": 0.1182916983962059
+    },
+    {
+      "id": "c03dfc439bb66865a9f3a422",
+      "task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "table_texture",
+      "arm": "weighted",
+      "xyz": 0.08310793340206146,
+      "rot": 0.0373409129679203,
+      "all": 0.12302669137716293
+    },
+    {
+      "id": "c03dfc439bb66865a9f3a422",
+      "task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "table_texture",
+      "arm": "spatial",
+      "xyz": 0.05276457965373993,
+      "rot": 0.030034713447093964,
+      "all": 0.10687051713466644
+    },
+    {
+      "id": "c2ec56926e653213cfd2e324",
+      "task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "scene_texture",
+      "arm": "v1",
+      "xyz": 0.20246312022209167,
+      "rot": 0.051091961562633514,
+      "all": 0.1100199893116951
+    },
+    {
+      "id": "c2ec56926e653213cfd2e324",
+      "task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "scene_texture",
+      "arm": "weighted",
+      "xyz": 0.18771761655807495,
+      "rot": 0.04695145785808563,
+      "all": 0.14903706312179565
+    },
+    {
+      "id": "c2ec56926e653213cfd2e324",
+      "task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "scene_texture",
+      "arm": "spatial",
+      "xyz": 0.12110921740531921,
+      "rot": 0.05163876712322235,
+      "all": 0.11194237321615219
+    },
+    {
+      "id": "c799396aefd5984dc17e0980",
+      "task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "fog",
+      "arm": "v1",
+      "xyz": 0.11017436534166336,
+      "rot": 0.032414380460977554,
+      "all": 0.10659021139144897
+    },
+    {
+      "id": "c799396aefd5984dc17e0980",
+      "task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "fog",
+      "arm": "weighted",
+      "xyz": 0.08684111386537552,
+      "rot": 0.02397290989756584,
+      "all": 0.094597727060318
+    },
+    {
+      "id": "c799396aefd5984dc17e0980",
+      "task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "fog",
+      "arm": "spatial",
+      "xyz": 0.093974269926548,
+      "rot": 0.020345620810985565,
+      "all": 0.07249186187982559
+    },
+    {
+      "id": "clean_716b94a92dcadeb19bb4aef6",
+      "task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "factor": "clean",
+      "sub": "gaussian_blur",
+      "arm": "v1",
+      "xyz": 0.42952945828437805,
+      "rot": 0.02680070698261261,
+      "all": 0.23942525684833527
+    },
+    {
+      "id": "clean_716b94a92dcadeb19bb4aef6",
+      "task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "factor": "clean",
+      "sub": "gaussian_blur",
+      "arm": "weighted",
+      "xyz": 0.43976303935050964,
+      "rot": 0.034543875604867935,
+      "all": 0.25085654854774475
+    },
+    {
+      "id": "clean_716b94a92dcadeb19bb4aef6",
+      "task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "factor": "clean",
+      "sub": "gaussian_blur",
+      "arm": "spatial",
+      "xyz": 0.2546718418598175,
+      "rot": 0.04738254472613335,
+      "all": 0.1719089299440384
+    },
+    {
+      "id": "clean_9570527652e7369e8e55140d",
+      "task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "factor": "clean",
+      "sub": "gaussian_blur",
+      "arm": "v1",
+      "xyz": 0.24028794467449188,
+      "rot": 0.01800559274852276,
+      "all": 0.11384641379117966
+    },
+    {
+      "id": "clean_9570527652e7369e8e55140d",
+      "task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "factor": "clean",
+      "sub": "gaussian_blur",
+      "arm": "weighted",
+      "xyz": 0.31430792808532715,
+      "rot": 0.02048792503774166,
+      "all": 0.16179871559143066
+    },
+    {
+      "id": "clean_9570527652e7369e8e55140d",
+      "task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "factor": "clean",
+      "sub": "gaussian_blur",
+      "arm": "spatial",
+      "xyz": 0.14826947450637817,
+      "rot": 0.021044312044978142,
+      "all": 0.07597275823354721
+    },
+    {
+      "id": "d10a1668e6e30258ca64ba89",
+      "task": "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "zoom_blur",
+      "arm": "v1",
+      "xyz": 0.21369677782058716,
+      "rot": 0.0423809289932251,
+      "all": 0.1319177895784378
+    },
+    {
+      "id": "d10a1668e6e30258ca64ba89",
+      "task": "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "zoom_blur",
+      "arm": "weighted",
+      "xyz": 0.1589299887418747,
+      "rot": 0.05174233391880989,
+      "all": 0.12445130944252014
+    },
+    {
+      "id": "d10a1668e6e30258ca64ba89",
+      "task": "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "zoom_blur",
+      "arm": "spatial",
+      "xyz": 0.11331815272569656,
+      "rot": 0.048958271741867065,
+      "all": 0.1289898157119751
+    },
+    {
+      "id": "d620bf5c2a9ff266046162b6",
+      "task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "v1",
+      "xyz": 0.3239227533340454,
+      "rot": 0.03406504914164543,
+      "all": 0.2180086374282837
+    },
+    {
+      "id": "d620bf5c2a9ff266046162b6",
+      "task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "weighted",
+      "xyz": 0.18872010707855225,
+      "rot": 0.03527660667896271,
+      "all": 0.16173359751701355
+    },
+    {
+      "id": "d620bf5c2a9ff266046162b6",
+      "task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "spatial",
+      "xyz": 0.20000189542770386,
+      "rot": 0.041562750935554504,
+      "all": 0.15081527829170227
+    },
+    {
+      "id": "ea09068ddd4eeecc1bf0b4a1",
+      "task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "table_texture",
+      "arm": "v1",
+      "xyz": 0.13311351835727692,
+      "rot": 0.020154140889644623,
+      "all": 0.0875854417681694
+    },
+    {
+      "id": "ea09068ddd4eeecc1bf0b4a1",
+      "task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "table_texture",
+      "arm": "weighted",
+      "xyz": 0.11875685304403305,
+      "rot": 0.019420573487877846,
+      "all": 0.08926321566104889
+    },
+    {
+      "id": "ea09068ddd4eeecc1bf0b4a1",
+      "task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "table_texture",
+      "arm": "spatial",
+      "xyz": 0.10705680400133133,
+      "rot": 0.020599480718374252,
+      "all": 0.12219978868961334
+    },
+    {
+      "id": "f26adf752cc7294f4d63ddd0",
+      "task": "pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "glass_blur",
+      "arm": "v1",
+      "xyz": 0.06372109800577164,
+      "rot": 0.02683495171368122,
+      "all": 0.08581357449293137
+    },
+    {
+      "id": "f26adf752cc7294f4d63ddd0",
+      "task": "pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "glass_blur",
+      "arm": "weighted",
+      "xyz": 0.21317896246910095,
+      "rot": 0.01614677906036377,
+      "all": 0.1134738028049469
+    },
+    {
+      "id": "f26adf752cc7294f4d63ddd0",
+      "task": "pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "glass_blur",
+      "arm": "spatial",
+      "xyz": 0.21511182188987732,
+      "rot": 0.020999930799007416,
+      "all": 0.15904313325881958
+    },
+    {
+      "id": "fb2c93fc2cd4b6eca8912ca8",
+      "task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "scene_texture",
+      "arm": "v1",
+      "xyz": 0.1182340756058693,
+      "rot": 0.030269665643572807,
+      "all": 0.12179502844810486
+    },
+    {
+      "id": "fb2c93fc2cd4b6eca8912ca8",
+      "task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "scene_texture",
+      "arm": "weighted",
+      "xyz": 0.08034469187259674,
+      "rot": 0.036211784929037094,
+      "all": 0.0747545063495636
+    },
+    {
+      "id": "fb2c93fc2cd4b6eca8912ca8",
+      "task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "scene_texture",
+      "arm": "spatial",
+      "xyz": 0.10974065959453583,
+      "rot": 0.031726207584142685,
+      "all": 0.08618098497390747
+    },
+    {
+      "id": "1ac40af63b5cb206fa1a87ff",
+      "task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "motion_blur",
+      "arm": "v1",
+      "xyz": 0.2216894030570984,
+      "rot": 0.027101751416921616,
+      "all": 0.13117468357086182
+    },
+    {
+      "id": "1ac40af63b5cb206fa1a87ff",
+      "task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "motion_blur",
+      "arm": "weighted",
+      "xyz": 0.2637944519519806,
+      "rot": 0.022908935323357582,
+      "all": 0.12329088896512985
+    },
+    {
+      "id": "1ac40af63b5cb206fa1a87ff",
+      "task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "motion_blur",
+      "arm": "spatial",
+      "xyz": 0.28269684314727783,
+      "rot": 0.03660675510764122,
+      "all": 0.13724491000175476
+    },
+    {
+      "id": "28379ab819940b2bae111202",
+      "task": "pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "glass_blur",
+      "arm": "v1",
+      "xyz": 0.1504194140434265,
+      "rot": 0.022863971069455147,
+      "all": 0.08035819977521896
+    },
+    {
+      "id": "28379ab819940b2bae111202",
+      "task": "pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "glass_blur",
+      "arm": "weighted",
+      "xyz": 0.20239441096782684,
+      "rot": 0.022106796503067017,
+      "all": 0.10510917007923126
+    },
+    {
+      "id": "28379ab819940b2bae111202",
+      "task": "pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "glass_blur",
+      "arm": "spatial",
+      "xyz": 0.23298028111457825,
+      "rot": 0.025922367349267006,
+      "all": 0.17729876935482025
+    },
+    {
+      "id": "34e41085eb40929c9e32189e",
+      "task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "scene_texture",
+      "arm": "v1",
+      "xyz": 0.10490450263023376,
+      "rot": 0.07013070583343506,
+      "all": 0.11879712343215942
+    },
+    {
+      "id": "34e41085eb40929c9e32189e",
+      "task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "scene_texture",
+      "arm": "weighted",
+      "xyz": 0.15755946934223175,
+      "rot": 0.06199762597680092,
+      "all": 0.23754827678203583
+    },
+    {
+      "id": "34e41085eb40929c9e32189e",
+      "task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "scene_texture",
+      "arm": "spatial",
+      "xyz": 0.16665713489055634,
+      "rot": 0.06247761473059654,
+      "all": 0.21874666213989258
+    },
+    {
+      "id": "3d16d19504b303a732927434",
+      "task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "glass_blur",
+      "arm": "v1",
+      "xyz": 0.21245530247688293,
+      "rot": 0.029826108366250992,
+      "all": 0.10917368531227112
+    },
+    {
+      "id": "3d16d19504b303a732927434",
+      "task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "glass_blur",
+      "arm": "weighted",
+      "xyz": 0.22017282247543335,
+      "rot": 0.027681713923811913,
+      "all": 0.12686483561992645
+    },
+    {
+      "id": "3d16d19504b303a732927434",
+      "task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "glass_blur",
+      "arm": "spatial",
+      "xyz": 0.17528170347213745,
+      "rot": 0.029345307499170303,
+      "all": 0.0907033309340477
+    },
+    {
+      "id": "48c5f5e426f8006a5c08d586",
+      "task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "v1",
+      "xyz": 0.25782832503318787,
+      "rot": 0.05586610361933708,
+      "all": 0.3096281886100769
+    },
+    {
+      "id": "48c5f5e426f8006a5c08d586",
+      "task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "weighted",
+      "xyz": 0.21216249465942383,
+      "rot": 0.042156558483839035,
+      "all": 0.23910506069660187
+    },
+    {
+      "id": "48c5f5e426f8006a5c08d586",
+      "task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "spatial",
+      "xyz": 0.23967139422893524,
+      "rot": 0.042215075343847275,
+      "all": 0.3159988820552826
+    },
+    {
+      "id": "58374a4e57b5316b75daa5a8",
+      "task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "v1",
+      "xyz": 0.4324183762073517,
+      "rot": 0.008352258242666721,
+      "all": 0.23679415881633759
+    },
+    {
+      "id": "58374a4e57b5316b75daa5a8",
+      "task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "weighted",
+      "xyz": 0.38988611102104187,
+      "rot": 0.012288626283407211,
+      "all": 0.22006584703922272
+    },
+    {
+      "id": "58374a4e57b5316b75daa5a8",
+      "task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "spatial",
+      "xyz": 0.2174835503101349,
+      "rot": 0.012635625898838043,
+      "all": 0.12398260086774826
+    },
+    {
+      "id": "63bf3b8d60bbb2fdd492cb75",
+      "task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "scene_texture",
+      "arm": "v1",
+      "xyz": 0.21869003772735596,
+      "rot": 0.052201047539711,
+      "all": 0.3745703399181366
+    },
+    {
+      "id": "63bf3b8d60bbb2fdd492cb75",
+      "task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "scene_texture",
+      "arm": "weighted",
+      "xyz": 0.2001042366027832,
+      "rot": 0.06004912406206131,
+      "all": 0.3287857472896576
+    },
+    {
+      "id": "63bf3b8d60bbb2fdd492cb75",
+      "task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "scene_texture",
+      "arm": "spatial",
+      "xyz": 0.17392553389072418,
+      "rot": 0.05760979652404785,
+      "all": 0.3097229301929474
+    },
+    {
+      "id": "70df83d6d048882f8b83d81d",
+      "task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "table_texture",
+      "arm": "v1",
+      "xyz": 0.13364313542842865,
+      "rot": 0.033403076231479645,
+      "all": 0.13459379971027374
+    },
+    {
+      "id": "70df83d6d048882f8b83d81d",
+      "task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "table_texture",
+      "arm": "weighted",
+      "xyz": 0.09497693926095963,
+      "rot": 0.03277551755309105,
+      "all": 0.12777744233608246
+    },
+    {
+      "id": "70df83d6d048882f8b83d81d",
+      "task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "table_texture",
+      "arm": "spatial",
+      "xyz": 0.09051921963691711,
+      "rot": 0.01884671300649643,
+      "all": 0.14213700592517853
+    },
+    {
+      "id": "7a456242c9d69220ee747328",
+      "task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "glass_blur",
+      "arm": "v1",
+      "xyz": 0.2994099259376526,
+      "rot": 0.024192214012145996,
+      "all": 0.20751957595348358
+    },
+    {
+      "id": "7a456242c9d69220ee747328",
+      "task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "glass_blur",
+      "arm": "weighted",
+      "xyz": 0.2841354310512543,
+      "rot": 0.03553882613778114,
+      "all": 0.25089794397354126
+    },
+    {
+      "id": "7a456242c9d69220ee747328",
+      "task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "glass_blur",
+      "arm": "spatial",
+      "xyz": 0.1677974909543991,
+      "rot": 0.026811284944415092,
+      "all": 0.19739294052124023
+    },
+    {
+      "id": "812b5e0de96c5d3d3af052b6",
+      "task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "scene_texture",
+      "arm": "v1",
+      "xyz": 0.09603022038936615,
+      "rot": 0.056697648018598557,
+      "all": 0.11716486513614655
+    },
+    {
+      "id": "812b5e0de96c5d3d3af052b6",
+      "task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "scene_texture",
+      "arm": "weighted",
+      "xyz": 0.09371116012334824,
+      "rot": 0.05919421464204788,
+      "all": 0.10878302156925201
+    },
+    {
+      "id": "812b5e0de96c5d3d3af052b6",
+      "task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "scene_texture",
+      "arm": "spatial",
+      "xyz": 0.1496889293193817,
+      "rot": 0.06099488213658333,
+      "all": 0.18387624621391296
+    },
+    {
+      "id": "94221db7af991abeed5ea8f6",
+      "task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "glass_blur",
+      "arm": "v1",
+      "xyz": 0.25905585289001465,
+      "rot": 0.03529076650738716,
+      "all": 0.2931045889854431
+    },
+    {
+      "id": "94221db7af991abeed5ea8f6",
+      "task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "glass_blur",
+      "arm": "weighted",
+      "xyz": 0.38821500539779663,
+      "rot": 0.04289289191365242,
+      "all": 0.3011448085308075
+    },
+    {
+      "id": "94221db7af991abeed5ea8f6",
+      "task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "glass_blur",
+      "arm": "spatial",
+      "xyz": 0.34018072485923767,
+      "rot": 0.03210372477769852,
+      "all": 0.25546756386756897
+    },
+    {
+      "id": "9a2827472fab45e6e0abc9a7",
+      "task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "motion_blur",
+      "arm": "v1",
+      "xyz": 0.2256196141242981,
+      "rot": 0.020100971683859825,
+      "all": 0.17598135769367218
+    },
+    {
+      "id": "9a2827472fab45e6e0abc9a7",
+      "task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "motion_blur",
+      "arm": "weighted",
+      "xyz": 0.2615891695022583,
+      "rot": 0.01972878724336624,
+      "all": 0.14565324783325195
+    },
+    {
+      "id": "9a2827472fab45e6e0abc9a7",
+      "task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "motion_blur",
+      "arm": "spatial",
+      "xyz": 0.19014015793800354,
+      "rot": 0.026286115869879723,
+      "all": 0.1172347217798233
+    },
+    {
+      "id": "a6a44da460e4d03dcdc9c351",
+      "task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "v1",
+      "xyz": 0.23730209469795227,
+      "rot": 0.04155915230512619,
+      "all": 0.3268955647945404
+    },
+    {
+      "id": "a6a44da460e4d03dcdc9c351",
+      "task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "weighted",
+      "xyz": 0.17984968423843384,
+      "rot": 0.04434412345290184,
+      "all": 0.28660693764686584
+    },
+    {
+      "id": "a6a44da460e4d03dcdc9c351",
+      "task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "spatial",
+      "xyz": 0.2187618464231491,
+      "rot": 0.042831901460886,
+      "all": 0.25336650013923645
+    },
+    {
+      "id": "ab9c5902be6e729c218ff1a8",
+      "task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "v1",
+      "xyz": 0.2587546408176422,
+      "rot": 0.044942453503608704,
+      "all": 0.3474228084087372
+    },
+    {
+      "id": "ab9c5902be6e729c218ff1a8",
+      "task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "weighted",
+      "xyz": 0.19012829661369324,
+      "rot": 0.058777257800102234,
+      "all": 0.2887861728668213
+    },
+    {
+      "id": "ab9c5902be6e729c218ff1a8",
+      "task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "spatial",
+      "xyz": 0.16868524253368378,
+      "rot": 0.06310231983661652,
+      "all": 0.2680177092552185
+    },
+    {
+      "id": "b21a7534610471bc409b5a97",
+      "task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "v1",
+      "xyz": 0.2336069494485855,
+      "rot": 0.04136834666132927,
+      "all": 0.3249660134315491
+    },
+    {
+      "id": "b21a7534610471bc409b5a97",
+      "task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "weighted",
+      "xyz": 0.17723380029201508,
+      "rot": 0.044487062841653824,
+      "all": 0.2870355248451233
+    },
+    {
+      "id": "b21a7534610471bc409b5a97",
+      "task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "spatial",
+      "xyz": 0.21721862256526947,
+      "rot": 0.0429660826921463,
+      "all": 0.2543504238128662
+    },
+    {
+      "id": "c03e1a782928638880efb08d",
+      "task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "v1",
+      "xyz": 0.3558415174484253,
+      "rot": 0.04562152549624443,
+      "all": 0.2543206810951233
+    },
+    {
+      "id": "c03e1a782928638880efb08d",
+      "task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "weighted",
+      "xyz": 0.1264798939228058,
+      "rot": 0.024425847455859184,
+      "all": 0.15651866793632507
+    },
+    {
+      "id": "c03e1a782928638880efb08d",
+      "task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "spatial",
+      "xyz": 0.13377435505390167,
+      "rot": 0.026628144085407257,
+      "all": 0.13668705523014069
+    },
+    {
+      "id": "c31dbfc54953ebb8ad93b276",
+      "task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "zoom_blur",
+      "arm": "v1",
+      "xyz": 0.2347463220357895,
+      "rot": 0.0268965233117342,
+      "all": 0.11611182242631912
+    },
+    {
+      "id": "c31dbfc54953ebb8ad93b276",
+      "task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "zoom_blur",
+      "arm": "weighted",
+      "xyz": 0.17195367813110352,
+      "rot": 0.021555759012699127,
+      "all": 0.09981682151556015
+    },
+    {
+      "id": "c31dbfc54953ebb8ad93b276",
+      "task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "zoom_blur",
+      "arm": "spatial",
+      "xyz": 0.14371460676193237,
+      "rot": 0.017164520919322968,
+      "all": 0.07780919969081879
+    },
+    {
+      "id": "clean_25eefa3907243c5956889cfa",
+      "task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "clean",
+      "sub": "glass_blur",
+      "arm": "v1",
+      "xyz": 0.2568303346633911,
+      "rot": 0.022450894117355347,
+      "all": 0.16055543720722198
+    },
+    {
+      "id": "clean_25eefa3907243c5956889cfa",
+      "task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "clean",
+      "sub": "glass_blur",
+      "arm": "weighted",
+      "xyz": 0.2507443130016327,
+      "rot": 0.023643454536795616,
+      "all": 0.1592649668455124
+    },
+    {
+      "id": "clean_25eefa3907243c5956889cfa",
+      "task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "clean",
+      "sub": "glass_blur",
+      "arm": "spatial",
+      "xyz": 0.12482460588216782,
+      "rot": 0.01735663041472435,
+      "all": 0.0670095905661583
+    },
+    {
+      "id": "clean_74da4077f0571b787e7da5a7",
+      "task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "clean",
+      "sub": "motion_blur",
+      "arm": "v1",
+      "xyz": 0.3735247254371643,
+      "rot": 0.023940332233905792,
+      "all": 0.2183198481798172
+    },
+    {
+      "id": "clean_74da4077f0571b787e7da5a7",
+      "task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "clean",
+      "sub": "motion_blur",
+      "arm": "weighted",
+      "xyz": 0.34901922941207886,
+      "rot": 0.03043048270046711,
+      "all": 0.21579310297966003
+    },
+    {
+      "id": "clean_74da4077f0571b787e7da5a7",
+      "task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "clean",
+      "sub": "motion_blur",
+      "arm": "spatial",
+      "xyz": 0.2590811848640442,
+      "rot": 0.039434272795915604,
+      "all": 0.15464504063129425
+    },
+    {
+      "id": "clean_9bd7f4f1a5c801ca5cf925b0",
+      "task": "pick_up_the_black_bowl_next_to_the_plate_and_place_it_on_the_plate",
+      "factor": "clean",
+      "sub": "glass_blur",
+      "arm": "v1",
+      "xyz": 0.288798987865448,
+      "rot": 0.044670067727565765,
+      "all": 0.1627279818058014
+    },
+    {
+      "id": "clean_9bd7f4f1a5c801ca5cf925b0",
+      "task": "pick_up_the_black_bowl_next_to_the_plate_and_place_it_on_the_plate",
+      "factor": "clean",
+      "sub": "glass_blur",
+      "arm": "weighted",
+      "xyz": 0.30009540915489197,
+      "rot": 0.04108111560344696,
+      "all": 0.16596920788288116
+    },
+    {
+      "id": "clean_9bd7f4f1a5c801ca5cf925b0",
+      "task": "pick_up_the_black_bowl_next_to_the_plate_and_place_it_on_the_plate",
+      "factor": "clean",
+      "sub": "glass_blur",
+      "arm": "spatial",
+      "xyz": 0.20154128968715668,
+      "rot": 0.051232557743787766,
+      "all": 0.12791886925697327
+    },
+    {
+      "id": "d11a5908570c39a0bc352a5a",
+      "task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "glass_blur",
+      "arm": "v1",
+      "xyz": 0.23448430001735687,
+      "rot": 0.029771920293569565,
+      "all": 0.1507977843284607
+    },
+    {
+      "id": "d11a5908570c39a0bc352a5a",
+      "task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "glass_blur",
+      "arm": "weighted",
+      "xyz": 0.22846102714538574,
+      "rot": 0.031765736639499664,
+      "all": 0.14968426525592804
+    },
+    {
+      "id": "d11a5908570c39a0bc352a5a",
+      "task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "glass_blur",
+      "arm": "spatial",
+      "xyz": 0.19743338227272034,
+      "rot": 0.02474559098482132,
+      "all": 0.1337013840675354
+    },
+    {
+      "id": "db52f74d7afc5ee4e7baef3d",
+      "task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "scene_texture",
+      "arm": "v1",
+      "xyz": 0.13817761838436127,
+      "rot": 0.04577373340725899,
+      "all": 0.29782170057296753
+    },
+    {
+      "id": "db52f74d7afc5ee4e7baef3d",
+      "task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "scene_texture",
+      "arm": "weighted",
+      "xyz": 0.1339319348335266,
+      "rot": 0.042770206928253174,
+      "all": 0.31857830286026
+    },
+    {
+      "id": "db52f74d7afc5ee4e7baef3d",
+      "task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "scene_texture",
+      "arm": "spatial",
+      "xyz": 0.15432779490947723,
+      "rot": 0.04259674251079559,
+      "all": 0.30044347047805786
+    },
+    {
+      "id": "ea9df039791e3060e68ecb80",
+      "task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "table_texture",
+      "arm": "v1",
+      "xyz": 0.09536472707986832,
+      "rot": 0.042614780366420746,
+      "all": 0.22005701065063477
+    },
+    {
+      "id": "ea9df039791e3060e68ecb80",
+      "task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "table_texture",
+      "arm": "weighted",
+      "xyz": 0.09435594081878662,
+      "rot": 0.06053674966096878,
+      "all": 0.2801080346107483
+    },
+    {
+      "id": "ea9df039791e3060e68ecb80",
+      "task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "table_texture",
+      "arm": "spatial",
+      "xyz": 0.09156236052513123,
+      "rot": 0.044441308826208115,
+      "all": 0.2299533635377884
+    },
+    {
+      "id": "f769d77490544e345ff5b8f2",
+      "task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "table_texture",
+      "arm": "v1",
+      "xyz": 0.14076921343803406,
+      "rot": 0.044495467096567154,
+      "all": 0.3005371689796448
+    },
+    {
+      "id": "f769d77490544e345ff5b8f2",
+      "task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "table_texture",
+      "arm": "weighted",
+      "xyz": 0.13873735070228577,
+      "rot": 0.04246513545513153,
+      "all": 0.32259127497673035
+    },
+    {
+      "id": "f769d77490544e345ff5b8f2",
+      "task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "table_texture",
+      "arm": "spatial",
+      "xyz": 0.15041352808475494,
+      "rot": 0.038384344428777695,
+      "all": 0.2792595624923706
+    },
+    {
+      "id": "fefe134dc96bca5f4eee8b14",
+      "task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "gaussian_blur",
+      "arm": "v1",
+      "xyz": 0.15353380143642426,
+      "rot": 0.027669869363307953,
+      "all": 0.10465247184038162
+    },
+    {
+      "id": "fefe134dc96bca5f4eee8b14",
+      "task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "gaussian_blur",
+      "arm": "weighted",
+      "xyz": 0.21060270071029663,
+      "rot": 0.040565796196460724,
+      "all": 0.2458869218826294
+    },
+    {
+      "id": "fefe134dc96bca5f4eee8b14",
+      "task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "gaussian_blur",
+      "arm": "spatial",
+      "xyz": 0.13741753995418549,
+      "rot": 0.04115006700158119,
+      "all": 0.12410519272089005
+    },
+    {
+      "id": "1f80bb87b8b30a1a90c033fb",
+      "task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "table_texture",
+      "arm": "v1",
+      "xyz": 0.10167264938354492,
+      "rot": 0.04536838084459305,
+      "all": 0.08150734007358551
+    },
+    {
+      "id": "1f80bb87b8b30a1a90c033fb",
+      "task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "table_texture",
+      "arm": "weighted",
+      "xyz": 0.07629165798425674,
+      "rot": 0.03495343402028084,
+      "all": 0.10099458694458008
+    },
+    {
+      "id": "1f80bb87b8b30a1a90c033fb",
+      "task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "table_texture",
+      "arm": "spatial",
+      "xyz": 0.0874771773815155,
+      "rot": 0.03682902455329895,
+      "all": 0.08371175825595856
+    },
+    {
+      "id": "31ee3c9ef1bf8221f99a7bb4",
+      "task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "gaussian_blur",
+      "arm": "v1",
+      "xyz": 0.2128177434206009,
+      "rot": 0.03248945623636246,
+      "all": 0.10607562959194183
+    },
+    {
+      "id": "31ee3c9ef1bf8221f99a7bb4",
+      "task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "gaussian_blur",
+      "arm": "weighted",
+      "xyz": 0.21776914596557617,
+      "rot": 0.0370473712682724,
+      "all": 0.160374715924263
+    },
+    {
+      "id": "31ee3c9ef1bf8221f99a7bb4",
+      "task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "gaussian_blur",
+      "arm": "spatial",
+      "xyz": 0.14753085374832153,
+      "rot": 0.026221420615911484,
+      "all": 0.10144858062267303
+    },
+    {
+      "id": "34f60c2ad49319e81d18c70b",
+      "task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "scene_texture",
+      "arm": "v1",
+      "xyz": 0.15441220998764038,
+      "rot": 0.03995053097605705,
+      "all": 0.34041091799736023
+    },
+    {
+      "id": "34f60c2ad49319e81d18c70b",
+      "task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "scene_texture",
+      "arm": "weighted",
+      "xyz": 0.13409143686294556,
+      "rot": 0.039533715695142746,
+      "all": 0.3344007432460785
+    },
+    {
+      "id": "34f60c2ad49319e81d18c70b",
+      "task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "scene_texture",
+      "arm": "spatial",
+      "xyz": 0.13419896364212036,
+      "rot": 0.030515160411596298,
+      "all": 0.28953292965888977
+    },
+    {
+      "id": "44b86cc69b604627bf02d513",
+      "task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "v1",
+      "xyz": 0.28723016381263733,
+      "rot": 0.034861836582422256,
+      "all": 0.22931653261184692
+    },
+    {
+      "id": "44b86cc69b604627bf02d513",
+      "task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "weighted",
+      "xyz": 0.2682236433029175,
+      "rot": 0.03187740594148636,
+      "all": 0.23702843487262726
+    },
+    {
+      "id": "44b86cc69b604627bf02d513",
+      "task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "spatial",
+      "xyz": 0.14570483565330505,
+      "rot": 0.03643784299492836,
+      "all": 0.21186628937721252
+    },
+    {
+      "id": "4d8c976994c211cbd47334cc",
+      "task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "gaussian_blur",
+      "arm": "v1",
+      "xyz": 0.13608869910240173,
+      "rot": 0.04963216185569763,
+      "all": 0.10392319411039352
+    },
+    {
+      "id": "4d8c976994c211cbd47334cc",
+      "task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "gaussian_blur",
+      "arm": "weighted",
+      "xyz": 0.1500583291053772,
+      "rot": 0.049287401139736176,
+      "all": 0.10880996286869049
+    },
+    {
+      "id": "4d8c976994c211cbd47334cc",
+      "task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "gaussian_blur",
+      "arm": "spatial",
+      "xyz": 0.1387561857700348,
+      "rot": 0.0427301786839962,
+      "all": 0.10116174072027206
+    },
+    {
+      "id": "59e33e7a354085f721bae4a6",
+      "task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "table_texture",
+      "arm": "v1",
+      "xyz": 0.137203186750412,
+      "rot": 0.07380738109350204,
+      "all": 0.1624971628189087
+    },
+    {
+      "id": "59e33e7a354085f721bae4a6",
+      "task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "table_texture",
+      "arm": "weighted",
+      "xyz": 0.1152048408985138,
+      "rot": 0.0629223883152008,
+      "all": 0.12634068727493286
+    },
+    {
+      "id": "59e33e7a354085f721bae4a6",
+      "task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "table_texture",
+      "arm": "spatial",
+      "xyz": 0.0801396518945694,
+      "rot": 0.06097926199436188,
+      "all": 0.08742588758468628
+    },
+    {
+      "id": "6a3b246ac12849cbf06ba83c",
+      "task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "scene_texture",
+      "arm": "v1",
+      "xyz": 0.19025471806526184,
+      "rot": 0.07559261471033096,
+      "all": 0.16319048404693604
+    },
+    {
+      "id": "6a3b246ac12849cbf06ba83c",
+      "task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "scene_texture",
+      "arm": "weighted",
+      "xyz": 0.20729321241378784,
+      "rot": 0.06334414333105087,
+      "all": 0.13990314304828644
+    },
+    {
+      "id": "6a3b246ac12849cbf06ba83c",
+      "task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "scene_texture",
+      "arm": "spatial",
+      "xyz": 0.17465518414974213,
+      "rot": 0.05481591448187828,
+      "all": 0.12314349412918091
+    },
+    {
+      "id": "734d3d4af8d6b04b33187f95",
+      "task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "v1",
+      "xyz": 0.18798762559890747,
+      "rot": 0.06927936524152756,
+      "all": 0.20257972180843353
+    },
+    {
+      "id": "734d3d4af8d6b04b33187f95",
+      "task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "weighted",
+      "xyz": 0.17811071872711182,
+      "rot": 0.07251325249671936,
+      "all": 0.15180625021457672
+    },
+    {
+      "id": "734d3d4af8d6b04b33187f95",
+      "task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "spatial",
+      "xyz": 0.15953560173511505,
+      "rot": 0.063833087682724,
+      "all": 0.18551525473594666
+    },
+    {
+      "id": "7bb89a9650ff3abfe48cb96a",
+      "task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "v1",
+      "xyz": 0.25782832503318787,
+      "rot": 0.05586610361933708,
+      "all": 0.3096281886100769
+    },
+    {
+      "id": "7bb89a9650ff3abfe48cb96a",
+      "task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "weighted",
+      "xyz": 0.21216249465942383,
+      "rot": 0.042156558483839035,
+      "all": 0.23910506069660187
+    },
+    {
+      "id": "7bb89a9650ff3abfe48cb96a",
+      "task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "spatial",
+      "xyz": 0.23967139422893524,
+      "rot": 0.042215075343847275,
+      "all": 0.3159988820552826
+    },
+    {
+      "id": "83326bf78cf7e67f0fc7696c",
+      "task": "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "v1",
+      "xyz": 0.33632561564445496,
+      "rot": 0.0695713609457016,
+      "all": 0.2731603980064392
+    },
+    {
+      "id": "83326bf78cf7e67f0fc7696c",
+      "task": "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "weighted",
+      "xyz": 0.1893274188041687,
+      "rot": 0.0685451552271843,
+      "all": 0.18064425885677338
+    },
+    {
+      "id": "83326bf78cf7e67f0fc7696c",
+      "task": "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "spatial",
+      "xyz": 0.2788304090499878,
+      "rot": 0.08280149847269058,
+      "all": 0.27362364530563354
+    },
+    {
+      "id": "9483c62e9ccc44ccf351379b",
+      "task": "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "v1",
+      "xyz": 0.31993725895881653,
+      "rot": 0.06952577829360962,
+      "all": 0.2839299440383911
+    },
+    {
+      "id": "9483c62e9ccc44ccf351379b",
+      "task": "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "weighted",
+      "xyz": 0.1885838657617569,
+      "rot": 0.06942413002252579,
+      "all": 0.1769673228263855
+    },
+    {
+      "id": "9483c62e9ccc44ccf351379b",
+      "task": "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "spatial",
+      "xyz": 0.2713138461112976,
+      "rot": 0.07913438975811005,
+      "all": 0.2678810656070709
+    },
+    {
+      "id": "9b4fc8a339c2979d31daba94",
+      "task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "v1",
+      "xyz": 0.25782832503318787,
+      "rot": 0.05586610361933708,
+      "all": 0.3096281886100769
+    },
+    {
+      "id": "9b4fc8a339c2979d31daba94",
+      "task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "weighted",
+      "xyz": 0.21216249465942383,
+      "rot": 0.042156558483839035,
+      "all": 0.23910506069660187
+    },
+    {
+      "id": "9b4fc8a339c2979d31daba94",
+      "task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "spatial",
+      "xyz": 0.23967139422893524,
+      "rot": 0.042215075343847275,
+      "all": 0.3159988820552826
+    },
+    {
+      "id": "a7cce4f24d150da551883e11",
+      "task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "v1",
+      "xyz": 0.09231936931610107,
+      "rot": 0.06666607409715652,
+      "all": 0.2871243953704834
+    },
+    {
+      "id": "a7cce4f24d150da551883e11",
+      "task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "weighted",
+      "xyz": 0.13949720561504364,
+      "rot": 0.07194070518016815,
+      "all": 0.33138811588287354
+    },
+    {
+      "id": "a7cce4f24d150da551883e11",
+      "task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "spatial",
+      "xyz": 0.1378273218870163,
+      "rot": 0.06559129059314728,
+      "all": 0.28704962134361267
+    },
+    {
+      "id": "adbef345ee9c87c18c78f860",
+      "task": "pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "zoom_blur",
+      "arm": "v1",
+      "xyz": 0.10239266604185104,
+      "rot": 0.028222957625985146,
+      "all": 0.20945918560028076
+    },
+    {
+      "id": "adbef345ee9c87c18c78f860",
+      "task": "pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "zoom_blur",
+      "arm": "weighted",
+      "xyz": 0.15388208627700806,
+      "rot": 0.024202710017561913,
+      "all": 0.22571995854377747
+    },
+    {
+      "id": "adbef345ee9c87c18c78f860",
+      "task": "pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "zoom_blur",
+      "arm": "spatial",
+      "xyz": 0.1550150364637375,
+      "rot": 0.021631134673953056,
+      "all": 0.13517537713050842
+    },
+    {
+      "id": "b2590175d0f2a15c297828a5",
+      "task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "v1",
+      "xyz": 0.2437397688627243,
+      "rot": 0.03954145312309265,
+      "all": 0.2838784158229828
+    },
+    {
+      "id": "b2590175d0f2a15c297828a5",
+      "task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "weighted",
+      "xyz": 0.16139429807662964,
+      "rot": 0.04076473042368889,
+      "all": 0.24735796451568604
+    },
+    {
+      "id": "b2590175d0f2a15c297828a5",
+      "task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "spatial",
+      "xyz": 0.1857452243566513,
+      "rot": 0.03809693083167076,
+      "all": 0.2091115266084671
+    },
+    {
+      "id": "c1b468cf01e901553e96299c",
+      "task": "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "glass_blur",
+      "arm": "v1",
+      "xyz": 0.1934206485748291,
+      "rot": 0.02918284386396408,
+      "all": 0.09571992605924606
+    },
+    {
+      "id": "c1b468cf01e901553e96299c",
+      "task": "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "glass_blur",
+      "arm": "weighted",
+      "xyz": 0.20624378323554993,
+      "rot": 0.031654711812734604,
+      "all": 0.12485228478908539
+    },
+    {
+      "id": "c1b468cf01e901553e96299c",
+      "task": "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "sensor_noise",
+      "sub": "glass_blur",
+      "arm": "spatial",
+      "xyz": 0.19741247594356537,
+      "rot": 0.0198682751506567,
+      "all": 0.11564970016479492
+    },
+    {
+      "id": "c6224ce1f06d19c2455895e9",
+      "task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "v1",
+      "xyz": 0.34768664836883545,
+      "rot": 0.01677999272942543,
+      "all": 0.20249979197978973
+    },
+    {
+      "id": "c6224ce1f06d19c2455895e9",
+      "task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "weighted",
+      "xyz": 0.31609973311424255,
+      "rot": 0.009229092858731747,
+      "all": 0.18548943102359772
+    },
+    {
+      "id": "c6224ce1f06d19c2455895e9",
+      "task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "spatial",
+      "xyz": 0.2379973977804184,
+      "rot": 0.01616516523063183,
+      "all": 0.13287612795829773
+    },
+    {
+      "id": "clean_3adf13803680f268479750e9",
+      "task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "factor": "clean",
+      "sub": "glass_blur",
+      "arm": "v1",
+      "xyz": 0.3286656439304352,
+      "rot": 0.017570866271853447,
+      "all": 0.1949550360441208
+    },
+    {
+      "id": "clean_3adf13803680f268479750e9",
+      "task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "factor": "clean",
+      "sub": "glass_blur",
+      "arm": "weighted",
+      "xyz": 0.27767977118492126,
+      "rot": 0.011561617255210876,
+      "all": 0.17035983502864838
+    },
+    {
+      "id": "clean_3adf13803680f268479750e9",
+      "task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "factor": "clean",
+      "sub": "glass_blur",
+      "arm": "spatial",
+      "xyz": 0.21954751014709473,
+      "rot": 0.012815114110708237,
+      "all": 0.1216946542263031
+    },
+    {
+      "id": "clean_7b3a2104f946feffbf23f05a",
+      "task": "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "clean",
+      "sub": "gaussian_blur",
+      "arm": "v1",
+      "xyz": 0.22827842831611633,
+      "rot": 0.03097536414861679,
+      "all": 0.11142249405384064
+    },
+    {
+      "id": "clean_7b3a2104f946feffbf23f05a",
+      "task": "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "clean",
+      "sub": "gaussian_blur",
+      "arm": "weighted",
+      "xyz": 0.3060213029384613,
+      "rot": 0.03007691726088524,
+      "all": 0.18649674952030182
+    },
+    {
+      "id": "clean_7b3a2104f946feffbf23f05a",
+      "task": "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate",
+      "factor": "clean",
+      "sub": "gaussian_blur",
+      "arm": "spatial",
+      "xyz": 0.30934351682662964,
+      "rot": 0.0178127009421587,
+      "all": 0.16418954730033875
+    },
+    {
+      "id": "clean_9f0d3717f1f17095d5da34e7",
+      "task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "factor": "clean",
+      "sub": "glass_blur",
+      "arm": "v1",
+      "xyz": 0.2689366042613983,
+      "rot": 0.018704425543546677,
+      "all": 0.1467904895544052
+    },
+    {
+      "id": "clean_9f0d3717f1f17095d5da34e7",
+      "task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "factor": "clean",
+      "sub": "glass_blur",
+      "arm": "weighted",
+      "xyz": 0.2331361472606659,
+      "rot": 0.021028513088822365,
+      "all": 0.1330057978630066
+    },
+    {
+      "id": "clean_9f0d3717f1f17095d5da34e7",
+      "task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "factor": "clean",
+      "sub": "glass_blur",
+      "arm": "spatial",
+      "xyz": 0.15516363084316254,
+      "rot": 0.012505060993134975,
+      "all": 0.09572435915470123
+    },
+    {
+      "id": "d4009212e035c43e3f7076db",
+      "task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "scene_texture",
+      "arm": "v1",
+      "xyz": 0.13925722241401672,
+      "rot": 0.06757285445928574,
+      "all": 0.10135180503129959
+    },
+    {
+      "id": "d4009212e035c43e3f7076db",
+      "task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "scene_texture",
+      "arm": "weighted",
+      "xyz": 0.15095317363739014,
+      "rot": 0.05036117509007454,
+      "all": 0.11131799966096878
+    },
+    {
+      "id": "d4009212e035c43e3f7076db",
+      "task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "scene_texture",
+      "arm": "spatial",
+      "xyz": 0.12338398396968842,
+      "rot": 0.048239566385746,
+      "all": 0.09843765944242477
+    },
+    {
+      "id": "e3cb3b3fa84a3a4e2bd54c98",
+      "task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "v1",
+      "xyz": 0.2633361220359802,
+      "rot": 0.03650766238570213,
+      "all": 0.1310979276895523
+    },
+    {
+      "id": "e3cb3b3fa84a3a4e2bd54c98",
+      "task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "weighted",
+      "xyz": 0.21289390325546265,
+      "rot": 0.04409165680408478,
+      "all": 0.16085977852344513
+    },
+    {
+      "id": "e3cb3b3fa84a3a4e2bd54c98",
+      "task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "spatial",
+      "xyz": 0.2213657647371292,
+      "rot": 0.037534601986408234,
+      "all": 0.14766515791416168
+    },
+    {
+      "id": "eeefdf07e36e0b4cbea8ec39",
+      "task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "v1",
+      "xyz": 0.31681114435195923,
+      "rot": 0.027061423286795616,
+      "all": 0.25442081689834595
+    },
+    {
+      "id": "eeefdf07e36e0b4cbea8ec39",
+      "task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "weighted",
+      "xyz": 0.17676952481269836,
+      "rot": 0.0376674085855484,
+      "all": 0.09682826697826385
+    },
+    {
+      "id": "eeefdf07e36e0b4cbea8ec39",
+      "task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "spatial",
+      "xyz": 0.20688064396381378,
+      "rot": 0.03003857284784317,
+      "all": 0.1251528561115265
+    },
+    {
+      "id": "f839ded9ddcacca5f47d08ca",
+      "task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "scene_texture",
+      "arm": "v1",
+      "xyz": 0.1730126589536667,
+      "rot": 0.06428510695695877,
+      "all": 0.13984185457229614
+    },
+    {
+      "id": "f839ded9ddcacca5f47d08ca",
+      "task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "scene_texture",
+      "arm": "weighted",
+      "xyz": 0.1965399831533432,
+      "rot": 0.05643371865153313,
+      "all": 0.12338840216398239
+    },
+    {
+      "id": "f839ded9ddcacca5f47d08ca",
+      "task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "factor": "background",
+      "sub": "scene_texture",
+      "arm": "spatial",
+      "xyz": 0.15185074508190155,
+      "rot": 0.045430395752191544,
+      "all": 0.12345422804355621
+    },
+    {
+      "id": "ff1eb7e58555351a29bc38ef",
+      "task": "pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "v1",
+      "xyz": 0.30316174030303955,
+      "rot": 0.03709545359015465,
+      "all": 0.22634896636009216
+    },
+    {
+      "id": "ff1eb7e58555351a29bc38ef",
+      "task": "pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "weighted",
+      "xyz": 0.29046857357025146,
+      "rot": 0.02808511257171631,
+      "all": 0.23103487491607666
+    },
+    {
+      "id": "ff1eb7e58555351a29bc38ef",
+      "task": "pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate",
+      "factor": "lighting",
+      "sub": "light_asset",
+      "arm": "spatial",
+      "xyz": 0.27391567826271057,
+      "rot": 0.03274368867278099,
+      "all": 0.2209351658821106
+    }
+  ],
+  "geometry": [
+    {
+      "arm": "frozen",
+      "case": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "offset": [
+        -0.035,
+        -0.0,
+        -0.0
+      ],
+      "cos": -0.37790488881151535,
+      "ratio": 1.2431604521259976
+    },
+    {
+      "arm": "v1",
+      "case": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "offset": [
+        -0.035,
+        -0.0,
+        -0.0
+      ],
+      "cos": 0.9244584140840391,
+      "ratio": 3.7562238317506327
+    },
+    {
+      "arm": "weighted",
+      "case": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "offset": [
+        -0.035,
+        -0.0,
+        -0.0
+      ],
+      "cos": 0.8532380739117508,
+      "ratio": 3.607068742921494
+    },
+    {
+      "arm": "spatial",
+      "case": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "offset": [
+        -0.035,
+        -0.0,
+        -0.0
+      ],
+      "cos": 0.6436768890930625,
+      "ratio": 3.692313177139509
+    },
+    {
+      "arm": "frozen",
+      "case": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "offset": [
+        -0.02,
+        -0.0,
+        -0.0
+      ],
+      "cos": 0.26161494404672697,
+      "ratio": 2.2869791834403004
+    },
+    {
+      "arm": "v1",
+      "case": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "offset": [
+        -0.02,
+        -0.0,
+        -0.0
+      ],
+      "cos": 0.9245693803210264,
+      "ratio": 7.26039931141791
+    },
+    {
+      "arm": "weighted",
+      "case": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "offset": [
+        -0.02,
+        -0.0,
+        -0.0
+      ],
+      "cos": 0.8752106573881578,
+      "ratio": 8.43619853215952
+    },
+    {
+      "arm": "spatial",
+      "case": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "offset": [
+        -0.02,
+        -0.0,
+        -0.0
+      ],
+      "cos": 0.9172374128128163,
+      "ratio": 4.193246736912873
+    },
+    {
+      "arm": "frozen",
+      "case": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "offset": [
+        0.02,
+        0.0,
+        0.0
+      ],
+      "cos": -0.09040365843066915,
+      "ratio": 3.0474636702205897
+    },
+    {
+      "arm": "v1",
+      "case": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "offset": [
+        0.02,
+        0.0,
+        0.0
+      ],
+      "cos": -0.7597036603985882,
+      "ratio": 4.081262647901559
+    },
+    {
+      "arm": "weighted",
+      "case": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "offset": [
+        0.02,
+        0.0,
+        0.0
+      ],
+      "cos": -0.9174444973008564,
+      "ratio": 4.302055761002968
+    },
+    {
+      "arm": "spatial",
+      "case": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "offset": [
+        0.02,
+        0.0,
+        0.0
+      ],
+      "cos": -0.17608751267418987,
+      "ratio": 6.246125325248264
+    },
+    {
+      "arm": "frozen",
+      "case": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "offset": [
+        0.035,
+        0.0,
+        0.0
+      ],
+      "cos": -0.17591259338274157,
+      "ratio": 0.7107037518502581
+    },
+    {
+      "arm": "v1",
+      "case": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "offset": [
+        0.035,
+        0.0,
+        0.0
+      ],
+      "cos": -0.43824551249264754,
+      "ratio": 2.5545128753477204
+    },
+    {
+      "arm": "weighted",
+      "case": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "offset": [
+        0.035,
+        0.0,
+        0.0
+      ],
+      "cos": -0.11523965123377826,
+      "ratio": 1.8639253717979847
+    },
+    {
+      "arm": "spatial",
+      "case": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "offset": [
+        0.035,
+        0.0,
+        0.0
+      ],
+      "cos": -0.7658743655550223,
+      "ratio": 1.5204216752299096
+    },
+    {
+      "arm": "frozen",
+      "case": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "offset": [
+        -0.0,
+        -0.035,
+        -0.0
+      ],
+      "cos": 0.8924816999000844,
+      "ratio": 0.3664670778067652
+    },
+    {
+      "arm": "v1",
+      "case": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "offset": [
+        -0.0,
+        -0.035,
+        -0.0
+      ],
+      "cos": 0.5760674643716283,
+      "ratio": 0.9939536452009409
+    },
+    {
+      "arm": "weighted",
+      "case": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "offset": [
+        -0.0,
+        -0.035,
+        -0.0
+      ],
+      "cos": 0.6409362557301187,
+      "ratio": 1.5639075210669413
+    },
+    {
+      "arm": "spatial",
+      "case": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "offset": [
+        -0.0,
+        -0.035,
+        -0.0
+      ],
+      "cos": 0.7159483473580768,
+      "ratio": 2.686905009329185
+    },
+    {
+      "arm": "frozen",
+      "case": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "offset": [
+        -0.0,
+        -0.02,
+        -0.0
+      ],
+      "cos": 0.6398940284748968,
+      "ratio": 1.7616368829323192
+    },
+    {
+      "arm": "v1",
+      "case": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "offset": [
+        -0.0,
+        -0.02,
+        -0.0
+      ],
+      "cos": 0.5414661199506782,
+      "ratio": 3.08101437970492
+    },
+    {
+      "arm": "weighted",
+      "case": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "offset": [
+        -0.0,
+        -0.02,
+        -0.0
+      ],
+      "cos": 0.12195025824327375,
+      "ratio": 1.9067009909987773
+    },
+    {
+      "arm": "spatial",
+      "case": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "offset": [
+        -0.0,
+        -0.02,
+        -0.0
+      ],
+      "cos": 0.6701655412737789,
+      "ratio": 4.2425889519715945
+    },
+    {
+      "arm": "frozen",
+      "case": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "offset": [
+        0.0,
+        0.02,
+        0.0
+      ],
+      "cos": -0.630236542072703,
+      "ratio": 4.2146340010443035
+    },
+    {
+      "arm": "v1",
+      "case": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "offset": [
+        0.0,
+        0.02,
+        0.0
+      ],
+      "cos": 0.5794018823255098,
+      "ratio": 6.088096648150262
+    },
+    {
+      "arm": "weighted",
+      "case": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "offset": [
+        0.0,
+        0.02,
+        0.0
+      ],
+      "cos": 0.3668601482892397,
+      "ratio": 7.592350989200537
+    },
+    {
+      "arm": "spatial",
+      "case": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "offset": [
+        0.0,
+        0.02,
+        0.0
+      ],
+      "cos": -0.2644988087587438,
+      "ratio": 6.244234367892859
+    },
+    {
+      "arm": "frozen",
+      "case": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "offset": [
+        0.0,
+        0.035,
+        0.0
+      ],
+      "cos": -0.9526762693524422,
+      "ratio": 2.710048641399882
+    },
+    {
+      "arm": "v1",
+      "case": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "offset": [
+        0.0,
+        0.035,
+        0.0
+      ],
+      "cos": 0.6321144432555424,
+      "ratio": 2.7901319520016896
+    },
+    {
+      "arm": "weighted",
+      "case": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "offset": [
+        0.0,
+        0.035,
+        0.0
+      ],
+      "cos": 0.5202237709778971,
+      "ratio": 4.5509116988925395
+    },
+    {
+      "arm": "spatial",
+      "case": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "offset": [
+        0.0,
+        0.035,
+        0.0
+      ],
+      "cos": 0.06436974291441315,
+      "ratio": 3.862965532601203
+    },
+    {
+      "arm": "frozen",
+      "case": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "offset": [
+        -0.035,
+        -0.0,
+        -0.0
+      ],
+      "cos": 0.2348424600530066,
+      "ratio": 1.9588685460893351
+    },
+    {
+      "arm": "v1",
+      "case": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "offset": [
+        -0.035,
+        -0.0,
+        -0.0
+      ],
+      "cos": 0.6463273423681882,
+      "ratio": 0.6409515227407159
+    },
+    {
+      "arm": "weighted",
+      "case": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "offset": [
+        -0.035,
+        -0.0,
+        -0.0
+      ],
+      "cos": -0.40141984215848825,
+      "ratio": 1.7362305095721497
+    },
+    {
+      "arm": "spatial",
+      "case": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "offset": [
+        -0.035,
+        -0.0,
+        -0.0
+      ],
+      "cos": -0.7829070108835274,
+      "ratio": 0.9296459810808779
+    },
+    {
+      "arm": "frozen",
+      "case": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "offset": [
+        -0.02,
+        -0.0,
+        -0.0
+      ],
+      "cos": -0.8511884094624957,
+      "ratio": 2.1179016678466427
+    },
+    {
+      "arm": "v1",
+      "case": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "offset": [
+        -0.02,
+        -0.0,
+        -0.0
+      ],
+      "cos": 0.8215268170266058,
+      "ratio": 1.8996778874639533
+    },
+    {
+      "arm": "weighted",
+      "case": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "offset": [
+        -0.02,
+        -0.0,
+        -0.0
+      ],
+      "cos": 0.6648556582124371,
+      "ratio": 1.9016694276574113
+    },
+    {
+      "arm": "spatial",
+      "case": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "offset": [
+        -0.02,
+        -0.0,
+        -0.0
+      ],
+      "cos": -0.15285427249752406,
+      "ratio": 2.212732098886003
+    },
+    {
+      "arm": "frozen",
+      "case": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "offset": [
+        0.02,
+        0.0,
+        0.0
+      ],
+      "cos": -0.8859603440637107,
+      "ratio": 2.172237262021172
+    },
+    {
+      "arm": "v1",
+      "case": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "offset": [
+        0.02,
+        0.0,
+        0.0
+      ],
+      "cos": -0.7773865548322553,
+      "ratio": 6.683085113429655
+    },
+    {
+      "arm": "weighted",
+      "case": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "offset": [
+        0.02,
+        0.0,
+        0.0
+      ],
+      "cos": -0.88804125246114,
+      "ratio": 3.2284829763944
+    },
+    {
+      "arm": "spatial",
+      "case": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "offset": [
+        0.02,
+        0.0,
+        0.0
+      ],
+      "cos": -0.12763494375251108,
+      "ratio": 1.6268095000764926
+    },
+    {
+      "arm": "frozen",
+      "case": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "offset": [
+        0.035,
+        0.0,
+        0.0
+      ],
+      "cos": 0.0007194867775969859,
+      "ratio": 1.1274576186811658
+    },
+    {
+      "arm": "v1",
+      "case": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "offset": [
+        0.035,
+        0.0,
+        0.0
+      ],
+      "cos": -0.7941914753707606,
+      "ratio": 1.1627068476685336
+    },
+    {
+      "arm": "weighted",
+      "case": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "offset": [
+        0.035,
+        0.0,
+        0.0
+      ],
+      "cos": -0.0664986177761911,
+      "ratio": 0.6986202405832138
+    },
+    {
+      "arm": "spatial",
+      "case": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "offset": [
+        0.035,
+        0.0,
+        0.0
+      ],
+      "cos": 0.1855160862627925,
+      "ratio": 0.7546620177155543
+    },
+    {
+      "arm": "frozen",
+      "case": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "offset": [
+        -0.0,
+        -0.035,
+        -0.0
+      ],
+      "cos": 0.9647603821414861,
+      "ratio": 0.9520736123562316
+    },
+    {
+      "arm": "v1",
+      "case": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "offset": [
+        -0.0,
+        -0.035,
+        -0.0
+      ],
+      "cos": 0.40096275925819086,
+      "ratio": 2.8331222277921744
+    },
+    {
+      "arm": "weighted",
+      "case": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "offset": [
+        -0.0,
+        -0.035,
+        -0.0
+      ],
+      "cos": 0.8394158845772318,
+      "ratio": 2.0555396164579283
+    },
+    {
+      "arm": "spatial",
+      "case": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "offset": [
+        -0.0,
+        -0.035,
+        -0.0
+      ],
+      "cos": 0.7631737787727527,
+      "ratio": 1.8508117113265794
+    },
+    {
+      "arm": "frozen",
+      "case": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "offset": [
+        -0.0,
+        -0.02,
+        -0.0
+      ],
+      "cos": 0.8339361501705261,
+      "ratio": 2.866395935272902
+    },
+    {
+      "arm": "v1",
+      "case": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "offset": [
+        -0.0,
+        -0.02,
+        -0.0
+      ],
+      "cos": -0.11748506901802101,
+      "ratio": 2.601781673599331
+    },
+    {
+      "arm": "weighted",
+      "case": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "offset": [
+        -0.0,
+        -0.02,
+        -0.0
+      ],
+      "cos": -0.2224218651030741,
+      "ratio": 2.1484883501051497
+    },
+    {
+      "arm": "spatial",
+      "case": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "offset": [
+        -0.0,
+        -0.02,
+        -0.0
+      ],
+      "cos": -0.5023080763712671,
+      "ratio": 2.374268881857891
+    },
+    {
+      "arm": "frozen",
+      "case": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "offset": [
+        0.0,
+        0.02,
+        0.0
+      ],
+      "cos": -0.8414665606814548,
+      "ratio": 4.260710999156586
+    },
+    {
+      "arm": "v1",
+      "case": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "offset": [
+        0.0,
+        0.02,
+        0.0
+      ],
+      "cos": -0.7562800073078195,
+      "ratio": 2.2615686057867324
+    },
+    {
+      "arm": "weighted",
+      "case": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "offset": [
+        0.0,
+        0.02,
+        0.0
+      ],
+      "cos": -0.4630633783335869,
+      "ratio": 2.267481200283641
+    },
+    {
+      "arm": "spatial",
+      "case": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "offset": [
+        0.0,
+        0.02,
+        0.0
+      ],
+      "cos": -0.017189267745922013,
+      "ratio": 3.679966181332649
+    },
+    {
+      "arm": "frozen",
+      "case": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "offset": [
+        -0.035,
+        -0.0,
+        -0.0
+      ],
+      "cos": 0.2589185931890413,
+      "ratio": 3.1469466429901174
+    },
+    {
+      "arm": "v1",
+      "case": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "offset": [
+        -0.035,
+        -0.0,
+        -0.0
+      ],
+      "cos": -0.8372560905158524,
+      "ratio": 1.6160925583718273
+    },
+    {
+      "arm": "weighted",
+      "case": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "offset": [
+        -0.035,
+        -0.0,
+        -0.0
+      ],
+      "cos": -0.5732169600570827,
+      "ratio": 1.9185758062223224
+    },
+    {
+      "arm": "spatial",
+      "case": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "offset": [
+        -0.035,
+        -0.0,
+        -0.0
+      ],
+      "cos": -0.8616200162351532,
+      "ratio": 2.0191786544086656
+    },
+    {
+      "arm": "frozen",
+      "case": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "offset": [
+        -0.02,
+        -0.0,
+        -0.0
+      ],
+      "cos": 0.7876525486094225,
+      "ratio": 3.0386874450713974
+    },
+    {
+      "arm": "v1",
+      "case": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "offset": [
+        -0.02,
+        -0.0,
+        -0.0
+      ],
+      "cos": -0.7880161028102396,
+      "ratio": 2.208658680209353
+    },
+    {
+      "arm": "weighted",
+      "case": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "offset": [
+        -0.02,
+        -0.0,
+        -0.0
+      ],
+      "cos": -0.5696928674362773,
+      "ratio": 4.40851710714709
+    },
+    {
+      "arm": "spatial",
+      "case": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "offset": [
+        -0.02,
+        -0.0,
+        -0.0
+      ],
+      "cos": -0.8050975956083183,
+      "ratio": 2.5864243506092044
+    },
+    {
+      "arm": "frozen",
+      "case": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "offset": [
+        0.02,
+        0.0,
+        0.0
+      ],
+      "cos": -0.7021567600893184,
+      "ratio": 0.9885459206504076
+    },
+    {
+      "arm": "v1",
+      "case": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "offset": [
+        0.02,
+        0.0,
+        0.0
+      ],
+      "cos": -0.37839808786445245,
+      "ratio": 2.3054910822550068
+    },
+    {
+      "arm": "weighted",
+      "case": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "offset": [
+        0.02,
+        0.0,
+        0.0
+      ],
+      "cos": 0.5120468385042308,
+      "ratio": 2.946434169860384
+    },
+    {
+      "arm": "spatial",
+      "case": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "offset": [
+        0.02,
+        0.0,
+        0.0
+      ],
+      "cos": 0.5602648567556124,
+      "ratio": 1.661388203418632
+    },
+    {
+      "arm": "frozen",
+      "case": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "offset": [
+        0.035,
+        0.0,
+        0.0
+      ],
+      "cos": -0.5251304377235166,
+      "ratio": 1.308204020735284
+    },
+    {
+      "arm": "v1",
+      "case": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "offset": [
+        0.035,
+        0.0,
+        0.0
+      ],
+      "cos": 0.5106773037588043,
+      "ratio": 0.8714874407825791
+    },
+    {
+      "arm": "weighted",
+      "case": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "offset": [
+        0.035,
+        0.0,
+        0.0
+      ],
+      "cos": -0.16448108474203946,
+      "ratio": 1.2115983026022106
+    },
+    {
+      "arm": "spatial",
+      "case": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "offset": [
+        0.035,
+        0.0,
+        0.0
+      ],
+      "cos": 0.8208196746362035,
+      "ratio": 0.8922539118954632
+    },
+    {
+      "arm": "frozen",
+      "case": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "offset": [
+        -0.0,
+        -0.02,
+        -0.0
+      ],
+      "cos": 0.6868348364190325,
+      "ratio": 2.0147699861711197
+    },
+    {
+      "arm": "v1",
+      "case": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "offset": [
+        -0.0,
+        -0.02,
+        -0.0
+      ],
+      "cos": -0.6088644573565262,
+      "ratio": 2.225151285417879
+    },
+    {
+      "arm": "weighted",
+      "case": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "offset": [
+        -0.0,
+        -0.02,
+        -0.0
+      ],
+      "cos": 0.09473222768358827,
+      "ratio": 1.0432665235772636
+    },
+    {
+      "arm": "spatial",
+      "case": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "offset": [
+        -0.0,
+        -0.02,
+        -0.0
+      ],
+      "cos": 0.3259781382913758,
+      "ratio": 1.357071846655703
+    },
+    {
+      "arm": "frozen",
+      "case": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "offset": [
+        0.0,
+        0.02,
+        0.0
+      ],
+      "cos": -0.52388620259956,
+      "ratio": 0.5354376509517934
+    },
+    {
+      "arm": "v1",
+      "case": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "offset": [
+        0.0,
+        0.02,
+        0.0
+      ],
+      "cos": -0.24458337751315504,
+      "ratio": 2.1662110461701665
+    },
+    {
+      "arm": "weighted",
+      "case": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "offset": [
+        0.0,
+        0.02,
+        0.0
+      ],
+      "cos": -0.1304040466552026,
+      "ratio": 2.844757400310853
+    },
+    {
+      "arm": "spatial",
+      "case": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "offset": [
+        0.0,
+        0.02,
+        0.0
+      ],
+      "cos": -0.7699336526808529,
+      "ratio": 2.318364940467788
+    },
+    {
+      "arm": "frozen",
+      "case": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "offset": [
+        0.0,
+        0.035,
+        0.0
+      ],
+      "cos": -0.794095115589929,
+      "ratio": 1.1691990707267763
+    },
+    {
+      "arm": "v1",
+      "case": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "offset": [
+        0.0,
+        0.035,
+        0.0
+      ],
+      "cos": -0.17810940489271293,
+      "ratio": 0.8871015161022405
+    },
+    {
+      "arm": "weighted",
+      "case": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "offset": [
+        0.0,
+        0.035,
+        0.0
+      ],
+      "cos": 0.35031068070374854,
+      "ratio": 2.440559225353265
+    },
+    {
+      "arm": "spatial",
+      "case": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "offset": [
+        0.0,
+        0.035,
+        0.0
+      ],
+      "cos": -0.5775010628024447,
+      "ratio": 1.4021202921466764
+    },
+    {
+      "arm": "frozen",
+      "case": "pick_up_the_black_bowl_next_to_the_plate_and_place_it_on_the_plate",
+      "offset": [
+        -0.035,
+        -0.0,
+        -0.0
+      ],
+      "cos": 0.8568288470586876,
+      "ratio": 1.3570044721488155
+    },
+    {
+      "arm": "v1",
+      "case": "pick_up_the_black_bowl_next_to_the_plate_and_place_it_on_the_plate",
+      "offset": [
+        -0.035,
+        -0.0,
+        -0.0
+      ],
+      "cos": -0.8306710688920351,
+      "ratio": 0.8741857749825436
+    },
+    {
+      "arm": "weighted",
+      "case": "pick_up_the_black_bowl_next_to_the_plate_and_place_it_on_the_plate",
+      "offset": [
+        -0.035,
+        -0.0,
+        -0.0
+      ],
+      "cos": -0.21399462017322757,
+      "ratio": 1.8204384615922962
+    },
+    {
+      "arm": "spatial",
+      "case": "pick_up_the_black_bowl_next_to_the_plate_and_place_it_on_the_plate",
+      "offset": [
+        -0.035,
+        -0.0,
+        -0.0
+      ],
+      "cos": -0.17030966485420798,
+      "ratio": 0.5910412541288715
+    },
+    {
+      "arm": "frozen",
+      "case": "pick_up_the_black_bowl_next_to_the_plate_and_place_it_on_the_plate",
+      "offset": [
+        -0.02,
+        -0.0,
+        -0.0
+      ],
+      "cos": 0.7135049253051254,
+      "ratio": 2.695314027234257
+    },
+    {
+      "arm": "v1",
+      "case": "pick_up_the_black_bowl_next_to_the_plate_and_place_it_on_the_plate",
+      "offset": [
+        -0.02,
+        -0.0,
+        -0.0
+      ],
+      "cos": -0.9635030730720048,
+      "ratio": 0.8259766734723522
+    },
+    {
+      "arm": "weighted",
+      "case": "pick_up_the_black_bowl_next_to_the_plate_and_place_it_on_the_plate",
+      "offset": [
+        -0.02,
+        -0.0,
+        -0.0
+      ],
+      "cos": -0.7670739842446843,
+      "ratio": 1.6034564002546623
+    },
+    {
+      "arm": "spatial",
+      "case": "pick_up_the_black_bowl_next_to_the_plate_and_place_it_on_the_plate",
+      "offset": [
+        -0.02,
+        -0.0,
+        -0.0
+      ],
+      "cos": -0.4414280098645884,
+      "ratio": 1.086350809728426
+    },
+    {
+      "arm": "frozen",
+      "case": "pick_up_the_black_bowl_next_to_the_plate_and_place_it_on_the_plate",
+      "offset": [
+        0.0,
+        0.02,
+        0.0
+      ],
+      "cos": 0.10806251011051775,
+      "ratio": 2.1759612484678432
+    },
+    {
+      "arm": "v1",
+      "case": "pick_up_the_black_bowl_next_to_the_plate_and_place_it_on_the_plate",
+      "offset": [
+        0.0,
+        0.02,
+        0.0
+      ],
+      "cos": 0.41505566052256077,
+      "ratio": 1.7825622110667634
+    },
+    {
+      "arm": "weighted",
+      "case": "pick_up_the_black_bowl_next_to_the_plate_and_place_it_on_the_plate",
+      "offset": [
+        0.0,
+        0.02,
+        0.0
+      ],
+      "cos": -0.9372715722354186,
+      "ratio": 2.242261730022374
+    },
+    {
+      "arm": "spatial",
+      "case": "pick_up_the_black_bowl_next_to_the_plate_and_place_it_on_the_plate",
+      "offset": [
+        0.0,
+        0.02,
+        0.0
+      ],
+      "cos": 0.10713547710845393,
+      "ratio": 1.434827037083887
+    },
+    {
+      "arm": "frozen",
+      "case": "pick_up_the_black_bowl_next_to_the_plate_and_place_it_on_the_plate",
+      "offset": [
+        0.0,
+        0.035,
+        0.0
+      ],
+      "cos": 0.3867313836014678,
+      "ratio": 1.786778441446207
+    },
+    {
+      "arm": "v1",
+      "case": "pick_up_the_black_bowl_next_to_the_plate_and_place_it_on_the_plate",
+      "offset": [
+        0.0,
+        0.035,
+        0.0
+      ],
+      "cos": 0.4095047056233573,
+      "ratio": 1.2994176574744485
+    },
+    {
+      "arm": "weighted",
+      "case": "pick_up_the_black_bowl_next_to_the_plate_and_place_it_on_the_plate",
+      "offset": [
+        0.0,
+        0.035,
+        0.0
+      ],
+      "cos": -0.3953435777180514,
+      "ratio": 1.2187585234293812
+    },
+    {
+      "arm": "spatial",
+      "case": "pick_up_the_black_bowl_next_to_the_plate_and_place_it_on_the_plate",
+      "offset": [
+        0.0,
+        0.035,
+        0.0
+      ],
+      "cos": 0.07593960318118412,
+      "ratio": 1.6602780137268902
+    },
+    {
+      "arm": "frozen",
+      "case": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "offset": [
+        -0.035,
+        -0.0,
+        -0.0
+      ],
+      "cos": -0.015008146011434213,
+      "ratio": 2.9030808379842457
+    },
+    {
+      "arm": "v1",
+      "case": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "offset": [
+        -0.035,
+        -0.0,
+        -0.0
+      ],
+      "cos": -0.08688957089803341,
+      "ratio": 3.5970947571135428
+    },
+    {
+      "arm": "weighted",
+      "case": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "offset": [
+        -0.035,
+        -0.0,
+        -0.0
+      ],
+      "cos": -0.2602474326236731,
+      "ratio": 4.653266497887766
+    },
+    {
+      "arm": "spatial",
+      "case": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "offset": [
+        -0.035,
+        -0.0,
+        -0.0
+      ],
+      "cos": -0.663806235898676,
+      "ratio": 3.5419287425119133
+    },
+    {
+      "arm": "frozen",
+      "case": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "offset": [
+        -0.02,
+        -0.0,
+        -0.0
+      ],
+      "cos": 0.37597647846457594,
+      "ratio": 5.335979908437959
+    },
+    {
+      "arm": "v1",
+      "case": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "offset": [
+        -0.02,
+        -0.0,
+        -0.0
+      ],
+      "cos": -0.40933851963067674,
+      "ratio": 5.409615859118825
+    },
+    {
+      "arm": "weighted",
+      "case": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "offset": [
+        -0.02,
+        -0.0,
+        -0.0
+      ],
+      "cos": -0.1945980989313917,
+      "ratio": 4.330215602896664
+    },
+    {
+      "arm": "spatial",
+      "case": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "offset": [
+        -0.02,
+        -0.0,
+        -0.0
+      ],
+      "cos": -0.5501629059859108,
+      "ratio": 3.715769201331317
+    },
+    {
+      "arm": "frozen",
+      "case": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "offset": [
+        -0.0,
+        -0.035,
+        -0.0
+      ],
+      "cos": 0.9811883792798748,
+      "ratio": 2.6793639573966566
+    },
+    {
+      "arm": "v1",
+      "case": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "offset": [
+        -0.0,
+        -0.035,
+        -0.0
+      ],
+      "cos": 0.5431437006138368,
+      "ratio": 3.525126406023942
+    },
+    {
+      "arm": "weighted",
+      "case": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "offset": [
+        -0.0,
+        -0.035,
+        -0.0
+      ],
+      "cos": 0.18842210260364897,
+      "ratio": 3.463011767084088
+    },
+    {
+      "arm": "spatial",
+      "case": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "offset": [
+        -0.0,
+        -0.035,
+        -0.0
+      ],
+      "cos": 0.4524097667820722,
+      "ratio": 2.686315561967119
+    },
+    {
+      "arm": "frozen",
+      "case": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "offset": [
+        -0.0,
+        -0.02,
+        -0.0
+      ],
+      "cos": 0.7439799140986684,
+      "ratio": 3.84966470281903
+    },
+    {
+      "arm": "v1",
+      "case": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "offset": [
+        -0.0,
+        -0.02,
+        -0.0
+      ],
+      "cos": 0.5394722609479005,
+      "ratio": 6.052032485301685
+    },
+    {
+      "arm": "weighted",
+      "case": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "offset": [
+        -0.0,
+        -0.02,
+        -0.0
+      ],
+      "cos": 0.20366616695654724,
+      "ratio": 8.567696064282233
+    },
+    {
+      "arm": "spatial",
+      "case": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "offset": [
+        -0.0,
+        -0.02,
+        -0.0
+      ],
+      "cos": 0.2606648146238307,
+      "ratio": 7.356624304880429
+    },
+    {
+      "arm": "frozen",
+      "case": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "offset": [
+        0.0,
+        0.02,
+        0.0
+      ],
+      "cos": -0.6097097915588546,
+      "ratio": 2.247514575607458
+    },
+    {
+      "arm": "v1",
+      "case": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "offset": [
+        0.0,
+        0.02,
+        0.0
+      ],
+      "cos": -0.49652869830897806,
+      "ratio": 6.397799402155467
+    },
+    {
+      "arm": "weighted",
+      "case": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "offset": [
+        0.0,
+        0.02,
+        0.0
+      ],
+      "cos": -0.611181084267547,
+      "ratio": 6.659566610718581
+    },
+    {
+      "arm": "spatial",
+      "case": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "offset": [
+        0.0,
+        0.02,
+        0.0
+      ],
+      "cos": -0.36079264976965686,
+      "ratio": 2.247877232617995
+    },
+    {
+      "arm": "frozen",
+      "case": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "offset": [
+        0.0,
+        0.035,
+        0.0
+      ],
+      "cos": -0.9281653780416002,
+      "ratio": 2.782930859418103
+    },
+    {
+      "arm": "v1",
+      "case": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "offset": [
+        0.0,
+        0.035,
+        0.0
+      ],
+      "cos": -0.5691588804793584,
+      "ratio": 2.9886773653538876
+    },
+    {
+      "arm": "weighted",
+      "case": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "offset": [
+        0.0,
+        0.035,
+        0.0
+      ],
+      "cos": -0.27740820764711793,
+      "ratio": 4.129018528002886
+    },
+    {
+      "arm": "spatial",
+      "case": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "offset": [
+        0.0,
+        0.035,
+        0.0
+      ],
+      "cos": -0.3293925837018828,
+      "ratio": 2.249707707272693
+    }
+  ]
+}
