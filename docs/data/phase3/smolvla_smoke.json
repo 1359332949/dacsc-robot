@@ -61,5 +61,12 @@
     "steps": 280,
     "seconds": 204,
     "note": "LIBERO-plus task0 is perturbation, not vanilla base"
+  },
+  "official_vanilla_bridge": {
+    "task0_success": 0,
+    "task0_n": 1,
+    "steps": 280,
+    "seconds": 189.9,
+    "note": "vanilla task map bridge; still below baseline"
   }
 }

@@ -148,3 +148,39 @@ This does **not** invalidate the hook result; it confirms the asset/benchmark
 mismatch. To compare with the community 83% one must install vanilla LIBERO (or
 write a base-task bridge that preserves vanilla task IDs), not just symlink
 init files.
+
+## 8. Official vanilla-task bridge result
+
+A `sitecustomize.py` bridge replaced LIBERO-plus `libero_spatial` task map with
+the 10 vanilla base tasks and their base init files. Official `lerobot-eval`
+then ran task 0 end-to-end:
+
+```text
+policy: HuggingFaceVLA/smolvla_libero
+env: LiberoEnv, control_mode=relative, 256x256, 280 steps
+task 0: 0/1
+eval time: 189.9 s
+```
+
+This is still below any acceptable Clean baseline. Together with the custom-env
+results:
+
+```text
+custom E=1,  num_steps=10: 3/10
+custom E=10, num_steps=1:  1/10
+custom E=8:                4/10
+official vanilla task 0:  0/1
+```
+
+The official eval infrastructure now runs, but the checkpoint does not reproduce
+the community LIBERO-Spatial Clean claim in this environment. Do **not** start
+SigLIP layer sweep or V1 cross-backbone experiments.
+
+## 9. Latest experimental conclusions (Phase 3)
+
+- SmolVLA weight integrity and SigLIP hook contract are verified.
+- The blocker is the eval/checkpoint protocol, not a missing layer.
+- Hand-written and official-vanilla paths both fail Clean parity.
+- The only defensible next step is to reproduce the exact community eval asset
+  set (vanilla LIBERO + its init files), not to tune the method on a broken
+  baseline.
