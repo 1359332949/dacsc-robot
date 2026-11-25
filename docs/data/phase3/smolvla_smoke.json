@@ -1,0 +1,52 @@
+{
+  "status": "blocked_no_egress",
+  "reason": "server has no outbound access to huggingface.co, pypi.org, or github.com",
+  "disk_free_gb": 35,
+  "gpu": "NVIDIA GeForce RTX 3090 24576 MiB",
+  "python_system": "3.11.12",
+  "corp_venv_python": "3.10",
+  "installed_in_corp_venv": {
+    "torch": "2.5.1+cu121",
+    "transformers": "4.44.2",
+    "safetensors": "0.8.0",
+    "huggingface_hub": "0.24.6",
+    "lerobot": null,
+    "accelerate": null,
+    "torchvision": null,
+    "diffusers": null,
+    "datasets": null,
+    "draccus": null,
+    "av": null
+  },
+  "checkpoint_candidates": {
+    "HuggingFaceVLA/smolvla_libero": {
+      "model_safetensors_bytes": 1218047032,
+      "input_images": ["observation.images.image", "observation.images.image2"],
+      "resolution": [3, 256, 256],
+      "state_dim": 8,
+      "action_dim": 7,
+      "chunk_size": 50,
+      "n_action_steps": 1,
+      "vlm": "HuggingFaceTB/SmolVLM2-500M-Instruct"
+    },
+    "lerobot/smolvla_libero": {
+      "model_safetensors_bytes": 906712520,
+      "input_images": ["observation.images.camera1", "observation.images.camera2"],
+      "resolution": [3, 256, 256],
+      "state_dim": 8,
+      "action_dim": 7,
+      "chunk_size": 50,
+      "n_action_steps": 50,
+      "vlm": "HuggingFaceTB/SmolVLM2-500M-Video-Instruct"
+    }
+  },
+  "siglip_config_from_smolvlm2_500m_video": {
+    "hidden_size": 768,
+    "image_size": 512,
+    "patch_size": 16,
+    "num_attention_heads": 12,
+    "depth_in_vlm_config": "not exposed; requires lerobot/transformers instantiation to confirm"
+  },
+  "smoke": null,
+  "note": "No environment or checkpoint is installed on the server; do not fabricate smoke numbers."
+}
