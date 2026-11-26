@@ -1,0 +1,96 @@
+{
+  "postchecks": {
+    "status": "PASS",
+    "episodes": 40,
+    "verified_pairs": 20,
+    "same_cases_except_severity_5_to_3": true,
+    "only_base_parameterization_changed": true,
+    "operator_common_statistics_glass_code_byte_identical_to_severity5": true,
+    "calibration_hash_unchanged": true,
+    "all_initial_physical_and_RGB_exact": true,
+    "all_flow_rng_prefixes_exact": true,
+    "all_raw_starts_and_flow_rng_match_severity5": true,
+    "all_action_frames_finite": true,
+    "independent_counts_match_report": true,
+    "no_new_clean_or_other_domain_episodes": true,
+    "no_formal_main_table_started": true,
+    "timestamp": "2026-11-26T16:20:59.839060+08:00"
+  },
+  "evidence_receipt": {
+    "sha256": "89467054d6acf8ec7d6a6fb7134843cffaa895331f91f1ba6c802c2ceda76bb4",
+    "bytes": 4792538
+  },
+  "existing_lighting_pair_audit": {
+    "counts": {
+      "clean_init1": 7,
+      "lighting_init1": 8,
+      "rescued_by_lighting": 1,
+      "harmed_by_lighting": 0
+    },
+    "same_initial_physics": true,
+    "diagnostic_only_no_method_selection": true,
+    "rows": [
+      {
+        "task": 0,
+        "clean": true,
+        "lighting": true
+      },
+      {
+        "task": 1,
+        "clean": true,
+        "lighting": true
+      },
+      {
+        "task": 2,
+        "clean": true,
+        "lighting": true
+      },
+      {
+        "task": 3,
+        "clean": false,
+        "lighting": true
+      },
+      {
+        "task": 4,
+        "clean": true,
+        "lighting": true
+      },
+      {
+        "task": 5,
+        "clean": false,
+        "lighting": false
+      },
+      {
+        "task": 6,
+        "clean": false,
+        "lighting": false
+      },
+      {
+        "task": 7,
+        "clean": true,
+        "lighting": true
+      },
+      {
+        "task": 8,
+        "clean": true,
+        "lighting": true
+      },
+      {
+        "task": 9,
+        "clean": true,
+        "lighting": true
+      }
+    ]
+  },
+  "paper_receipt": {
+    "arxiv_id": "2610.07946v1",
+    "title": "Adapting Vision-Language-Action Models to Unknown Visual Disruptions During Execution",
+    "fetch": "direct curl HTTPS, HTTP 200",
+    "html_sha256": "07b366b6eae3e1e7972b86df6168f0c96caa6b8ad94e9ac715a777d7dab770dc",
+    "verified_sections": [
+      "Appendix A Table 2",
+      "Appendix I Table 13"
+    ],
+    "protocol_note": "Main evaluation starts corruption mid-episode, but Table13 includes replan0 onset; Table2 gives Plus levels3,5,7. Our Spatial/E1 diagnostic is not a matched SALT comparison."
+  }
+}

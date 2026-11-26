@@ -1,0 +1,695 @@
+{
+  "schema": "smolvla_phase3b_severity3_v1",
+  "protocol": {
+    "model": "native upstream SmolVLA, BF16 vision, FP32 operator then BF16, CPU normalization",
+    "E": 1,
+    "H": 50,
+    "Euler": 10,
+    "max_steps": 220,
+    "warmup": 10,
+    "alpha": 0.75,
+    "layer": 3,
+    "reference": "unchanged init0 full-trajectory outer9 / inner8+1 task LOTO",
+    "environment": "unchanged Vanilla base; official Plus BDDL scene selectors bridged onto Vanilla base",
+    "sensor": "official Plus function severity3/10, both cameras from first policy observation",
+    "pairing": "exact initial state/RGB and Torch CPU/CUDA common-prefix RNG hashes",
+    "comparison_scope": "exploratory one policy seed; not SALT-matched protocol or a noninferiority test",
+    "blind_access": false,
+    "main_table_autostart": false,
+    "scope": "same previously accessed development conditions, new dose; not held-out confirmation",
+    "only_scientific_change": "sensor function argument 5 -> 3",
+    "same_case_ids_for_corruption_seeds": true,
+    "policy_seed": 0,
+    "arms": [
+      "frozen",
+      "v1"
+    ]
+  },
+  "groups": {
+    "motion_blur": {
+      "n": 4,
+      "frozen": 0,
+      "v1": 1,
+      "rescued": 1,
+      "harmed": 0,
+      "net": 1,
+      "delta_pp": 25.0,
+      "mcnemar_exact_two_sided": 1.0,
+      "task_cluster_bootstrap95_pp": [
+        0.0,
+        75.0
+      ],
+      "active_fraction_episode_macro": {
+        "frozen": [
+          0.6038781571794639,
+          0.23204309407790952
+        ],
+        "v1": [
+          0.5984871352318408,
+          0.22434855480813487
+        ]
+      }
+    },
+    "gaussian_blur": {
+      "n": 4,
+      "frozen": 1,
+      "v1": 0,
+      "rescued": 0,
+      "harmed": 1,
+      "net": -1,
+      "delta_pp": -25.0,
+      "mcnemar_exact_two_sided": 1.0,
+      "task_cluster_bootstrap95_pp": [
+        -75.0,
+        0.0
+      ],
+      "active_fraction_episode_macro": {
+        "frozen": [
+          0.8293276067649265,
+          0.3981948485703228
+        ],
+        "v1": [
+          0.8277654676952145,
+          0.3898955472491004
+        ]
+      }
+    },
+    "zoom_blur": {
+      "n": 4,
+      "frozen": 0,
+      "v1": 1,
+      "rescued": 1,
+      "harmed": 0,
+      "net": 1,
+      "delta_pp": 25.0,
+      "mcnemar_exact_two_sided": 1.0,
+      "task_cluster_bootstrap95_pp": [
+        0.0,
+        75.0
+      ],
+      "active_fraction_episode_macro": {
+        "frozen": [
+          0.6683667930012399,
+          0.24884144864468416
+        ],
+        "v1": [
+          0.6590507397553789,
+          0.19276523307932655
+        ]
+      }
+    },
+    "fog": {
+      "n": 4,
+      "frozen": 2,
+      "v1": 3,
+      "rescued": 1,
+      "harmed": 0,
+      "net": 1,
+      "delta_pp": 25.0,
+      "mcnemar_exact_two_sided": 1.0,
+      "task_cluster_bootstrap95_pp": [
+        0.0,
+        75.0
+      ],
+      "active_fraction_episode_macro": {
+        "frozen": [
+          0.7043719653087722,
+          0.19072298773085108
+        ],
+        "v1": [
+          0.7074188617430487,
+          0.18586358082894266
+        ]
+      }
+    },
+    "glass_blur": {
+      "n": 4,
+      "frozen": 0,
+      "v1": 0,
+      "rescued": 0,
+      "harmed": 0,
+      "net": 0,
+      "delta_pp": 0.0,
+      "mcnemar_exact_two_sided": 1.0,
+      "task_cluster_bootstrap95_pp": [
+        0.0,
+        0.0
+      ],
+      "active_fraction_episode_macro": {
+        "frozen": [
+          0.6913737174462189,
+          0.21381984534250065
+        ],
+        "v1": [
+          0.6887310794131322,
+          0.20648822782730514
+        ]
+      }
+    },
+    "Sensor20": {
+      "n": 20,
+      "frozen": 3,
+      "v1": 5,
+      "rescued": 3,
+      "harmed": 1,
+      "net": 2,
+      "delta_pp": 10.0,
+      "mcnemar_exact_two_sided": 0.625,
+      "task_cluster_bootstrap95_pp": [
+        0.0,
+        25.0
+      ],
+      "active_fraction_episode_macro": {
+        "frozen": [
+          0.6994636479401243,
+          0.25672444487325363
+        ],
+        "v1": [
+          0.696290656767723,
+          0.23987222875856196
+        ]
+      }
+    }
+  },
+  "cases": [
+    {
+      "case_id": "t00_motion_blur_i1",
+      "task_id": 0,
+      "family": "motion_blur",
+      "init_index": 1,
+      "frozen": false,
+      "v1": true,
+      "steps": [
+        220,
+        94
+      ]
+    },
+    {
+      "case_id": "t00_gaussian_blur_i1",
+      "task_id": 0,
+      "family": "gaussian_blur",
+      "init_index": 1,
+      "frozen": true,
+      "v1": false,
+      "steps": [
+        74,
+        220
+      ]
+    },
+    {
+      "case_id": "t01_gaussian_blur_i1",
+      "task_id": 1,
+      "family": "gaussian_blur",
+      "init_index": 1,
+      "frozen": false,
+      "v1": false,
+      "steps": [
+        220,
+        220
+      ]
+    },
+    {
+      "case_id": "t01_zoom_blur_i1",
+      "task_id": 1,
+      "family": "zoom_blur",
+      "init_index": 1,
+      "frozen": false,
+      "v1": false,
+      "steps": [
+        220,
+        220
+      ]
+    },
+    {
+      "case_id": "t02_zoom_blur_i1",
+      "task_id": 2,
+      "family": "zoom_blur",
+      "init_index": 1,
+      "frozen": false,
+      "v1": true,
+      "steps": [
+        220,
+        124
+      ]
+    },
+    {
+      "case_id": "t02_fog_i1",
+      "task_id": 2,
+      "family": "fog",
+      "init_index": 1,
+      "frozen": true,
+      "v1": true,
+      "steps": [
+        111,
+        107
+      ]
+    },
+    {
+      "case_id": "t03_fog_i1",
+      "task_id": 3,
+      "family": "fog",
+      "init_index": 1,
+      "frozen": true,
+      "v1": true,
+      "steps": [
+        82,
+        91
+      ]
+    },
+    {
+      "case_id": "t03_glass_blur_i1",
+      "task_id": 3,
+      "family": "glass_blur",
+      "init_index": 1,
+      "frozen": false,
+      "v1": false,
+      "steps": [
+        220,
+        220
+      ]
+    },
+    {
+      "case_id": "t04_glass_blur_i1",
+      "task_id": 4,
+      "family": "glass_blur",
+      "init_index": 1,
+      "frozen": false,
+      "v1": false,
+      "steps": [
+        220,
+        220
+      ]
+    },
+    {
+      "case_id": "t04_motion_blur_i1",
+      "task_id": 4,
+      "family": "motion_blur",
+      "init_index": 1,
+      "frozen": false,
+      "v1": false,
+      "steps": [
+        220,
+        220
+      ]
+    },
+    {
+      "case_id": "t05_motion_blur_i1",
+      "task_id": 5,
+      "family": "motion_blur",
+      "init_index": 1,
+      "frozen": false,
+      "v1": false,
+      "steps": [
+        220,
+        220
+      ]
+    },
+    {
+      "case_id": "t05_gaussian_blur_i1",
+      "task_id": 5,
+      "family": "gaussian_blur",
+      "init_index": 1,
+      "frozen": false,
+      "v1": false,
+      "steps": [
+        220,
+        220
+      ]
+    },
+    {
+      "case_id": "t06_gaussian_blur_i1",
+      "task_id": 6,
+      "family": "gaussian_blur",
+      "init_index": 1,
+      "frozen": false,
+      "v1": false,
+      "steps": [
+        220,
+        220
+      ]
+    },
+    {
+      "case_id": "t06_zoom_blur_i1",
+      "task_id": 6,
+      "family": "zoom_blur",
+      "init_index": 1,
+      "frozen": false,
+      "v1": false,
+      "steps": [
+        220,
+        220
+      ]
+    },
+    {
+      "case_id": "t07_zoom_blur_i1",
+      "task_id": 7,
+      "family": "zoom_blur",
+      "init_index": 1,
+      "frozen": false,
+      "v1": false,
+      "steps": [
+        220,
+        220
+      ]
+    },
+    {
+      "case_id": "t07_fog_i1",
+      "task_id": 7,
+      "family": "fog",
+      "init_index": 1,
+      "frozen": false,
+      "v1": false,
+      "steps": [
+        220,
+        220
+      ]
+    },
+    {
+      "case_id": "t08_fog_i1",
+      "task_id": 8,
+      "family": "fog",
+      "init_index": 1,
+      "frozen": false,
+      "v1": true,
+      "steps": [
+        220,
+        100
+      ]
+    },
+    {
+      "case_id": "t08_glass_blur_i1",
+      "task_id": 8,
+      "family": "glass_blur",
+      "init_index": 1,
+      "frozen": false,
+      "v1": false,
+      "steps": [
+        220,
+        220
+      ]
+    },
+    {
+      "case_id": "t09_glass_blur_i1",
+      "task_id": 9,
+      "family": "glass_blur",
+      "init_index": 1,
+      "frozen": false,
+      "v1": false,
+      "steps": [
+        220,
+        220
+      ]
+    },
+    {
+      "case_id": "t09_motion_blur_i1",
+      "task_id": 9,
+      "family": "motion_blur",
+      "init_index": 1,
+      "frozen": false,
+      "v1": false,
+      "steps": [
+        220,
+        220
+      ]
+    }
+  ],
+  "decision": "exploratory_positive_net_needs_review",
+  "calib_sha256": "e573729434d6cdba404d887dc3f685d33b6c67fd6901cd487c512a18fa0ef606",
+  "manifest_sha256": "9b2a9698c45e23345c6a396f8f973784a0cbff836f37acd1bb9a4bde882c67d6",
+  "preflight": {
+    "status": "PASS",
+    "conditions": [
+      {
+        "case_id": "t00_motion_blur_i1",
+        "raw_start_matches_severity5": true,
+        "severity5_parameterization_bit_exact": true,
+        "severity3_matches_official_function_both_views": true,
+        "both_views_changed": true,
+        "severity3_differs_from_severity5": true,
+        "outer_numpy_rng_preserved": true
+      },
+      {
+        "case_id": "t00_gaussian_blur_i1",
+        "raw_start_matches_severity5": true,
+        "severity5_parameterization_bit_exact": true,
+        "severity3_matches_official_function_both_views": true,
+        "both_views_changed": true,
+        "severity3_differs_from_severity5": true,
+        "outer_numpy_rng_preserved": true
+      },
+      {
+        "case_id": "t01_gaussian_blur_i1",
+        "raw_start_matches_severity5": true,
+        "severity5_parameterization_bit_exact": true,
+        "severity3_matches_official_function_both_views": true,
+        "both_views_changed": true,
+        "severity3_differs_from_severity5": true,
+        "outer_numpy_rng_preserved": true
+      },
+      {
+        "case_id": "t01_zoom_blur_i1",
+        "raw_start_matches_severity5": true,
+        "severity5_parameterization_bit_exact": true,
+        "severity3_matches_official_function_both_views": true,
+        "both_views_changed": true,
+        "severity3_differs_from_severity5": true,
+        "outer_numpy_rng_preserved": true
+      },
+      {
+        "case_id": "t02_zoom_blur_i1",
+        "raw_start_matches_severity5": true,
+        "severity5_parameterization_bit_exact": true,
+        "severity3_matches_official_function_both_views": true,
+        "both_views_changed": true,
+        "severity3_differs_from_severity5": true,
+        "outer_numpy_rng_preserved": true
+      },
+      {
+        "case_id": "t02_fog_i1",
+        "raw_start_matches_severity5": true,
+        "severity5_parameterization_bit_exact": true,
+        "severity3_matches_official_function_both_views": true,
+        "both_views_changed": true,
+        "severity3_differs_from_severity5": true,
+        "outer_numpy_rng_preserved": true
+      },
+      {
+        "case_id": "t03_fog_i1",
+        "raw_start_matches_severity5": true,
+        "severity5_parameterization_bit_exact": true,
+        "severity3_matches_official_function_both_views": true,
+        "both_views_changed": true,
+        "severity3_differs_from_severity5": true,
+        "outer_numpy_rng_preserved": true
+      },
+      {
+        "case_id": "t03_glass_blur_i1",
+        "raw_start_matches_severity5": true,
+        "severity5_parameterization_bit_exact": true,
+        "severity3_matches_official_function_both_views": true,
+        "both_views_changed": true,
+        "severity3_differs_from_severity5": true,
+        "outer_numpy_rng_preserved": true
+      },
+      {
+        "case_id": "t04_glass_blur_i1",
+        "raw_start_matches_severity5": true,
+        "severity5_parameterization_bit_exact": true,
+        "severity3_matches_official_function_both_views": true,
+        "both_views_changed": true,
+        "severity3_differs_from_severity5": true,
+        "outer_numpy_rng_preserved": true
+      },
+      {
+        "case_id": "t04_motion_blur_i1",
+        "raw_start_matches_severity5": true,
+        "severity5_parameterization_bit_exact": true,
+        "severity3_matches_official_function_both_views": true,
+        "both_views_changed": true,
+        "severity3_differs_from_severity5": true,
+        "outer_numpy_rng_preserved": true
+      },
+      {
+        "case_id": "t05_motion_blur_i1",
+        "raw_start_matches_severity5": true,
+        "severity5_parameterization_bit_exact": true,
+        "severity3_matches_official_function_both_views": true,
+        "both_views_changed": true,
+        "severity3_differs_from_severity5": true,
+        "outer_numpy_rng_preserved": true
+      },
+      {
+        "case_id": "t05_gaussian_blur_i1",
+        "raw_start_matches_severity5": true,
+        "severity5_parameterization_bit_exact": true,
+        "severity3_matches_official_function_both_views": true,
+        "both_views_changed": true,
+        "severity3_differs_from_severity5": true,
+        "outer_numpy_rng_preserved": true
+      },
+      {
+        "case_id": "t06_gaussian_blur_i1",
+        "raw_start_matches_severity5": true,
+        "severity5_parameterization_bit_exact": true,
+        "severity3_matches_official_function_both_views": true,
+        "both_views_changed": true,
+        "severity3_differs_from_severity5": true,
+        "outer_numpy_rng_preserved": true
+      },
+      {
+        "case_id": "t06_zoom_blur_i1",
+        "raw_start_matches_severity5": true,
+        "severity5_parameterization_bit_exact": true,
+        "severity3_matches_official_function_both_views": true,
+        "both_views_changed": true,
+        "severity3_differs_from_severity5": true,
+        "outer_numpy_rng_preserved": true
+      },
+      {
+        "case_id": "t07_zoom_blur_i1",
+        "raw_start_matches_severity5": true,
+        "severity5_parameterization_bit_exact": true,
+        "severity3_matches_official_function_both_views": true,
+        "both_views_changed": true,
+        "severity3_differs_from_severity5": true,
+        "outer_numpy_rng_preserved": true
+      },
+      {
+        "case_id": "t07_fog_i1",
+        "raw_start_matches_severity5": true,
+        "severity5_parameterization_bit_exact": true,
+        "severity3_matches_official_function_both_views": true,
+        "both_views_changed": true,
+        "severity3_differs_from_severity5": true,
+        "outer_numpy_rng_preserved": true
+      },
+      {
+        "case_id": "t08_fog_i1",
+        "raw_start_matches_severity5": true,
+        "severity5_parameterization_bit_exact": true,
+        "severity3_matches_official_function_both_views": true,
+        "both_views_changed": true,
+        "severity3_differs_from_severity5": true,
+        "outer_numpy_rng_preserved": true
+      },
+      {
+        "case_id": "t08_glass_blur_i1",
+        "raw_start_matches_severity5": true,
+        "severity5_parameterization_bit_exact": true,
+        "severity3_matches_official_function_both_views": true,
+        "both_views_changed": true,
+        "severity3_differs_from_severity5": true,
+        "outer_numpy_rng_preserved": true
+      },
+      {
+        "case_id": "t09_glass_blur_i1",
+        "raw_start_matches_severity5": true,
+        "severity5_parameterization_bit_exact": true,
+        "severity3_matches_official_function_both_views": true,
+        "both_views_changed": true,
+        "severity3_differs_from_severity5": true,
+        "outer_numpy_rng_preserved": true
+      },
+      {
+        "case_id": "t09_motion_blur_i1",
+        "raw_start_matches_severity5": true,
+        "severity5_parameterization_bit_exact": true,
+        "severity3_matches_official_function_both_views": true,
+        "both_views_changed": true,
+        "severity3_differs_from_severity5": true,
+        "outer_numpy_rng_preserved": true
+      }
+    ],
+    "native_alpha0_exact_families": [
+      "motion_blur",
+      "gaussian_blur",
+      "zoom_blur",
+      "fog",
+      "glass_blur"
+    ],
+    "glass_original_oracle_reused_checks": 40,
+    "all_twenty_initial_states_and_pixels_match_severity5": true
+  },
+  "paired_checks": {
+    "pairs": 20,
+    "initial_physical_and_RGB_exact": true,
+    "flow_rng_prefix_exact": true,
+    "raw_starts_and_flow_rng_match_severity5": true,
+    "finite_actions": true
+  },
+  "limitations": [
+    "one policy seed and four conditions per family; development dose diagnostic, no fresh confirmation",
+    "severity3 does not guarantee leaving the floor; zero outcomes do not establish equivalence",
+    "nominal exact McNemar ignores task dependence; bootstrap only ten task clusters; zero-difference intervals may degenerate",
+    "neither dose outcome identifies SSL-vs-VLM pretraining as a cause; no domain-specific lighting exception",
+    "not a SALT matched comparison; original severity5 and Lighting/Clean harms remain reported",
+    "Motion, Zoom and Glass Frozen remain 0/4 at severity3; the diagnostic did not fully leave the floor",
+    "Sensor20 task-bootstrap interval [0,25] includes no gain; nominal McNemar p=.625 is not confirmation",
+    "Posthoc mixed Shift40 reuses previous Lighting/Background; it is not a newly run contemporaneous 40-condition evaluation"
+  ],
+  "human_verdict": "HOLD: weak positive diagnostic signal; no confirmed cross-backbone improvement; no automatic main table",
+  "postchecks": {
+    "status": "PASS",
+    "episodes": 40,
+    "verified_pairs": 20,
+    "same_cases_except_severity_5_to_3": true,
+    "only_base_parameterization_changed": true,
+    "operator_common_statistics_glass_code_byte_identical_to_severity5": true,
+    "calibration_hash_unchanged": true,
+    "all_initial_physical_and_RGB_exact": true,
+    "all_flow_rng_prefixes_exact": true,
+    "all_raw_starts_and_flow_rng_match_severity5": true,
+    "all_action_frames_finite": true,
+    "independent_counts_match_report": true,
+    "no_new_clean_or_other_domain_episodes": true,
+    "no_formal_main_table_started": true,
+    "timestamp": "2026-11-26T16:20:59.839060+08:00"
+  },
+  "posthoc_mixed_shift40": {
+    "n": 40,
+    "frozen": 15,
+    "v1": 15,
+    "rescued": 5,
+    "harmed": 5,
+    "net": 0,
+    "delta_pp": 0.0,
+    "mcnemar_exact_two_sided": 1.0,
+    "task_cluster_bootstrap95_pp": [
+      -15.0,
+      15.0
+    ],
+    "active_fraction_episode_macro": {
+      "frozen": [
+        0.6875505774900754,
+        0.2855040559150931
+      ],
+      "v1": [
+        0.6863661142224303,
+        0.2782829609686005
+      ]
+    },
+    "role": "posthoc_descriptive_recomposition_not_new_contemporaneous_40_condition_trial",
+    "composition": "new severity3 Sensor20 + existing Lighting10 + existing Background10",
+    "no_new_episodes": true,
+    "source_and_method_unchanged": true
+  },
+  "paper_receipt": {
+    "arxiv_id": "2610.07946v1",
+    "title": "Adapting Vision-Language-Action Models to Unknown Visual Disruptions During Execution",
+    "fetch": "direct curl HTTPS, HTTP 200",
+    "html_sha256": "07b366b6eae3e1e7972b86df6168f0c96caa6b8ad94e9ac715a777d7dab770dc",
+    "verified_sections": [
+      "Appendix A Table 2",
+      "Appendix I Table 13"
+    ],
+    "protocol_note": "Main evaluation starts corruption mid-episode, but Table13 includes replan0 onset; Table2 gives Plus levels3,5,7. Our Spatial/E1 diagnostic is not a matched SALT comparison."
+  },
+  "execution": {
+    "episodes": 40,
+    "verified_pairs": 20,
+    "minutes": 29.31672065705061,
+    "source_commit": "5bd0e53",
+    "evidence_sha256": "89467054d6acf8ec7d6a6fb7134843cffaa895331f91f1ba6c802c2ceda76bb4",
+    "formal_main_table_started": false
+  }
+}
