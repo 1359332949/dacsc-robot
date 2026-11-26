@@ -100,7 +100,16 @@ def main(a):
         / "libero_spatial"
         / (task + ".pruned_init")
     )
-    initial = torch.load(ip, map_location="cpu", weights_only=False)[0]
+    init_states = torch.load(ip, map_location="cpu", weights_only=False)
+    if not 0 <= a.init_index < len(init_states):
+        raise ValueError(f"init index {a.init_index} outside asset with {len(init_states)} states")
+    initial = init_states[a.init_index]
+    stem = f"{a.pipeline}_{a.assets}_t{a.task}"
+    if a.init_index != 0:
+        stem += f"_i{a.init_index}"
+    # Refuse existing evidence before any rollout or image write.
+    assert not (a.out / (stem + ".json")).exists()
+    assert not (a.out / (stem + "_initial.npz")).exists()
     if a.assets == "vanilla":
         suite = benchmark.get_benchmark_dict()["libero_spatial"]()
         assert suite.get_num_tasks() == 10
@@ -152,9 +161,8 @@ def main(a):
         success = False
         actions = hashlib.sha256()
         sourcehash = ah(env.sim.get_state().flatten())
-        (a.out / f"{a.pipeline}_{a.assets}_t{a.task}_initial.npz").write_bytes(b"")
         np.savez_compressed(
-            a.out / f"{a.pipeline}_{a.assets}_t{a.task}_initial.npz",
+            a.out / (stem + "_initial.npz"),
             agent=obs["agentview_image"],
             wrist=obs["robot0_eye_in_hand_image"],
             state=np.concatenate(
@@ -262,7 +270,7 @@ def main(a):
         asset_tree=a.assets,
         task_id=a.task,
         task=task,
-        init_index=0,
+        init_index=a.init_index,
         seed=seed,
         success=success,
         steps=steps,
@@ -284,7 +292,7 @@ def main(a):
         trace=trace,
         actions_sha256=actions.hexdigest(),
     )
-    f = a.out / f"{a.pipeline}_{a.assets}_t{a.task}.json"
+    f = a.out / (stem + ".json")
     assert not f.exists()
     f.write_text(json.dumps(row, indent=2) + "\n")
     print(
@@ -311,6 +319,7 @@ if __name__ == "__main__":
     p.add_argument("--pipeline", choices=("modern", "legacy"), required=True)
     p.add_argument("--assets", choices=("vanilla", "plus"), required=True)
     p.add_argument("--task", type=int, required=True)
+    p.add_argument("--init-index", type=int, default=0)
     p.add_argument(
         "--scene-patch", choices=("none", "identity", "textures", "camera", "both"), default="none"
     )
