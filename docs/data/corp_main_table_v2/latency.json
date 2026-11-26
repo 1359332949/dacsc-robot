@@ -1,0 +1,199 @@
+{
+  "rows": [
+    {
+      "arm": "frozen",
+      "round": 0,
+      "ms": 63.35236196173355,
+      "peak_allocated_mib": 230.80615234375,
+      "peak_reserved_mib": 256.0
+    },
+    {
+      "arm": "pixel_align",
+      "round": 0,
+      "ms": 45.40073900716379,
+      "peak_allocated_mib": 231.09375,
+      "peak_reserved_mib": 256.0
+    },
+    {
+      "arm": "deep_block12",
+      "round": 0,
+      "ms": 44.99893798492849,
+      "peak_allocated_mib": 230.806640625,
+      "peak_reserved_mib": 256.0
+    },
+    {
+      "arm": "actmad_inspired_viewwise_v2",
+      "round": 0,
+      "ms": 232.15918795904145,
+      "peak_allocated_mib": 1144.861328125,
+      "peak_reserved_mib": 1374.0
+    },
+    {
+      "arm": "ours_v1",
+      "round": 0,
+      "ms": 45.30379798961803,
+      "peak_allocated_mib": 262.806640625,
+      "peak_reserved_mib": 1374.0
+    },
+    {
+      "arm": "pixel_align",
+      "round": 1,
+      "ms": 45.72738299611956,
+      "peak_allocated_mib": 263.09375,
+      "peak_reserved_mib": 1374.0
+    },
+    {
+      "arm": "deep_block12",
+      "round": 1,
+      "ms": 45.32538203056902,
+      "peak_allocated_mib": 262.806640625,
+      "peak_reserved_mib": 1374.0
+    },
+    {
+      "arm": "actmad_inspired_viewwise_v2",
+      "round": 1,
+      "ms": 244.5613630115986,
+      "peak_allocated_mib": 1144.166015625,
+      "peak_reserved_mib": 1374.0
+    },
+    {
+      "arm": "ours_v1",
+      "round": 1,
+      "ms": 45.65546999219805,
+      "peak_allocated_mib": 262.806640625,
+      "peak_reserved_mib": 1374.0
+    },
+    {
+      "arm": "frozen",
+      "round": 1,
+      "ms": 45.15835898928344,
+      "peak_allocated_mib": 262.806640625,
+      "peak_reserved_mib": 1374.0
+    },
+    {
+      "arm": "deep_block12",
+      "round": 2,
+      "ms": 44.830983970314264,
+      "peak_allocated_mib": 262.806640625,
+      "peak_reserved_mib": 1374.0
+    },
+    {
+      "arm": "actmad_inspired_viewwise_v2",
+      "round": 2,
+      "ms": 243.75582003267482,
+      "peak_allocated_mib": 1144.166015625,
+      "peak_reserved_mib": 1374.0
+    },
+    {
+      "arm": "ours_v1",
+      "round": 2,
+      "ms": 45.17618101090193,
+      "peak_allocated_mib": 262.806640625,
+      "peak_reserved_mib": 1374.0
+    },
+    {
+      "arm": "frozen",
+      "round": 2,
+      "ms": 44.562821043655276,
+      "peak_allocated_mib": 262.806640625,
+      "peak_reserved_mib": 1374.0
+    },
+    {
+      "arm": "pixel_align",
+      "round": 2,
+      "ms": 46.3363200542517,
+      "peak_allocated_mib": 263.09375,
+      "peak_reserved_mib": 1374.0
+    },
+    {
+      "arm": "actmad_inspired_viewwise_v2",
+      "round": 3,
+      "ms": 243.4208879712969,
+      "peak_allocated_mib": 1144.166015625,
+      "peak_reserved_mib": 1374.0
+    },
+    {
+      "arm": "ours_v1",
+      "round": 3,
+      "ms": 45.565639971755445,
+      "peak_allocated_mib": 262.806640625,
+      "peak_reserved_mib": 1374.0
+    },
+    {
+      "arm": "frozen",
+      "round": 3,
+      "ms": 44.49140396900475,
+      "peak_allocated_mib": 262.806640625,
+      "peak_reserved_mib": 1374.0
+    },
+    {
+      "arm": "pixel_align",
+      "round": 3,
+      "ms": 45.672765001654625,
+      "peak_allocated_mib": 263.09375,
+      "peak_reserved_mib": 1374.0
+    },
+    {
+      "arm": "deep_block12",
+      "round": 3,
+      "ms": 46.10175400739536,
+      "peak_allocated_mib": 262.806640625,
+      "peak_reserved_mib": 1374.0
+    },
+    {
+      "arm": "ours_v1",
+      "round": 4,
+      "ms": 45.30254303244874,
+      "peak_allocated_mib": 262.806640625,
+      "peak_reserved_mib": 1374.0
+    },
+    {
+      "arm": "frozen",
+      "round": 4,
+      "ms": 44.65953295584768,
+      "peak_allocated_mib": 262.806640625,
+      "peak_reserved_mib": 1374.0
+    },
+    {
+      "arm": "pixel_align",
+      "round": 4,
+      "ms": 45.775434002280235,
+      "peak_allocated_mib": 263.09375,
+      "peak_reserved_mib": 1374.0
+    },
+    {
+      "arm": "deep_block12",
+      "round": 4,
+      "ms": 44.9027229915373,
+      "peak_allocated_mib": 262.806640625,
+      "peak_reserved_mib": 1374.0
+    },
+    {
+      "arm": "actmad_inspired_viewwise_v2",
+      "round": 4,
+      "ms": 251.6467859968543,
+      "peak_allocated_mib": 1144.166015625,
+      "peak_reserved_mib": 1374.0
+    }
+  ],
+  "median_ms": {
+    "frozen": 44.65953295584768,
+    "pixel_align": 45.72738299611956,
+    "deep_block12": 44.99893798492849,
+    "actmad_inspired_viewwise_v2": 243.75582003267482,
+    "ours_v1": 45.30379798961803
+  },
+  "relative": {
+    "frozen": 1.0,
+    "pixel_align": 1.0239109092638206,
+    "deep_block12": 1.00759983382308,
+    "actmad_inspired_viewwise_v2": 5.458091562974074,
+    "ours_v1": 1.014426148038926
+  },
+  "scope": "CUDA-synchronized steady replan; ActMAD includes 4-frame SGD+parameter-step diagnostic+prediction, excludes episode construction/prefill/close",
+  "rounds": 5,
+  "H": 12,
+  "E": 12,
+  "Euler_steps": 10,
+  "all_arms_episodically_restored": true
+}

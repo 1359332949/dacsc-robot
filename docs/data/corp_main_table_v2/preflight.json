@@ -1,0 +1,120 @@
+{
+  "status": "PASS",
+  "suites": {
+    "spatial": [
+      {
+        "factor": "clean",
+        "case_id": "clean_25eefa3907243c5956889cfa",
+        "native_action_exact": true,
+        "alpha0_both_layers_exact": true,
+        "clean_base_language": "pick up the black bowl in the top drawer of the wooden cabinet and place it on the plate",
+        "true_sub_group": "clean"
+      },
+      {
+        "factor": "sensor_bilateral",
+        "case_id": "05a2e087b49114ba4a11204b",
+        "native_action_exact": true,
+        "alpha0_both_layers_exact": true,
+        "clean_base_language": "pick up the black bowl on the cookie box and place it on the plate",
+        "true_sub_group": "motion_blur"
+      },
+      {
+        "factor": "lighting",
+        "case_id": "260f480dfa38ae5a1cfe6ab4",
+        "native_action_exact": true,
+        "alpha0_both_layers_exact": true,
+        "clean_base_language": "pick up the black bowl from table center and place it on the plate",
+        "true_sub_group": "light_asset"
+      },
+      {
+        "factor": "background",
+        "case_id": "1f80bb87b8b30a1a90c033fb",
+        "native_action_exact": true,
+        "alpha0_both_layers_exact": true,
+        "clean_base_language": "pick up the black bowl between the plate and the ramekin and place it on the plate",
+        "true_sub_group": "table_texture"
+      }
+    ],
+    "object": [
+      {
+        "factor": "clean",
+        "case_id": "fa71a3014103ba7b2c6255db",
+        "native_action_exact": true,
+        "alpha0_both_layers_exact": true,
+        "clean_base_language": "pick up the alphabet soup and place it in the basket",
+        "true_sub_group": "clean"
+      },
+      {
+        "factor": "sensor_bilateral",
+        "case_id": "676320f707279edc9d6bd6ea",
+        "native_action_exact": true,
+        "alpha0_both_layers_exact": true,
+        "clean_base_language": "pick up the alphabet soup and place it in the basket",
+        "true_sub_group": "gaussian_blur"
+      },
+      {
+        "factor": "lighting",
+        "case_id": "76236d0cc832a99f253d27a4",
+        "native_action_exact": true,
+        "alpha0_both_layers_exact": true,
+        "clean_base_language": "pick up the alphabet soup and place it in the basket",
+        "true_sub_group": "light_asset"
+      },
+      {
+        "factor": "background",
+        "case_id": "a2368070f8edb738244a036c",
+        "native_action_exact": true,
+        "alpha0_both_layers_exact": true,
+        "clean_base_language": "pick up the alphabet soup and place it in the basket",
+        "true_sub_group": "table_texture"
+      }
+    ]
+  },
+  "adapter": {
+    "spatial": {
+      "actmad_action_change_l2": 0.018239479511976242,
+      "four_losses": [
+        0.19843018054962158,
+        0.19810062646865845,
+        0.19747667014598846,
+        0.1965917944908142
+      ],
+      "reset_and_close_exact": true
+    },
+    "object": {
+      "actmad_action_change_l2": 0.03115619532763958,
+      "four_losses": [
+        0.3061615824699402,
+        0.30558449029922485,
+        0.30449384450912476,
+        0.3029513359069824
+      ],
+      "reset_and_close_exact": true
+    }
+  },
+  "view_major_frames": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "glass_float_pixels_and_rng_exact_levels": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
+  ],
+  "layer_indices": {
+    "ours": 2,
+    "deep": 11
+  },
+  "H": 12,
+  "E": 12,
+  "Euler_steps": 10
+}

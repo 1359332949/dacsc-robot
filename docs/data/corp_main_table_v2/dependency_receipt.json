@@ -1,0 +1,492 @@
+{
+  "resolved_modules": {
+    "dacsc": null,
+    "dacsc.corp_main_support": "/hy-tmp/patch-diag/runs/corp_main_table_v2/source_code/dacsc/corp_main_support.py",
+    "dacsc.baselines_tta": "/hy-tmp/patch-diag/dacsc/baselines_tta.py",
+    "dacsc.single_block_probe": "/hy-tmp/patch-diag/dacsc/single_block_probe.py",
+    "dacsc.static_visual_v2": "/hy-tmp/patch-diag/dacsc/static_visual_v2.py",
+    "dacsc.plus_glass_exact": "/hy-tmp/patch-diag/dacsc/plus_glass_exact.py"
+  },
+  "python_sources": [
+    {
+      "path": "/hy-tmp/patch-diag/repos/CoRP/corp/.___init__.py",
+      "sha256": "338a0f867ddcf3db87d9e71d8624b84fe7e0ddbeefd6455ab543a6740f6d63ee"
+    },
+    {
+      "path": "/hy-tmp/patch-diag/repos/CoRP/corp/._action_generator.py",
+      "sha256": "338a0f867ddcf3db87d9e71d8624b84fe7e0ddbeefd6455ab543a6740f6d63ee"
+    },
+    {
+      "path": "/hy-tmp/patch-diag/repos/CoRP/corp/._checkpoint.py",
+      "sha256": "338a0f867ddcf3db87d9e71d8624b84fe7e0ddbeefd6455ab543a6740f6d63ee"
+    },
+    {
+      "path": "/hy-tmp/patch-diag/repos/CoRP/corp/._policy.py",
+      "sha256": "338a0f867ddcf3db87d9e71d8624b84fe7e0ddbeefd6455ab543a6740f6d63ee"
+    },
+    {
+      "path": "/hy-tmp/patch-diag/repos/CoRP/corp/._preprocessing.py",
+      "sha256": "338a0f867ddcf3db87d9e71d8624b84fe7e0ddbeefd6455ab543a6740f6d63ee"
+    },
+    {
+      "path": "/hy-tmp/patch-diag/repos/CoRP/corp/__init__.py",
+      "sha256": "76d782742ba3ef0345555c583f40fa20f9ad820b995086b3da115922dd7b6d64"
+    },
+    {
+      "path": "/hy-tmp/patch-diag/repos/CoRP/corp/_vendor/.___init__.py",
+      "sha256": "338a0f867ddcf3db87d9e71d8624b84fe7e0ddbeefd6455ab543a6740f6d63ee"
+    },
+    {
+      "path": "/hy-tmp/patch-diag/repos/CoRP/corp/_vendor/._dinov2.py",
+      "sha256": "338a0f867ddcf3db87d9e71d8624b84fe7e0ddbeefd6455ab543a6740f6d63ee"
+    },
+    {
+      "path": "/hy-tmp/patch-diag/repos/CoRP/corp/_vendor/__init__.py",
+      "sha256": "4d233304842131bef8801826a8803193ab148b3c753e9d8d2a09138a5d0096bf"
+    },
+    {
+      "path": "/hy-tmp/patch-diag/repos/CoRP/corp/_vendor/dinov2.py",
+      "sha256": "c8b267ebbdd13b4188a51b862901eada4e45d1f90962198a140bfb679cfcd43d"
+    },
+    {
+      "path": "/hy-tmp/patch-diag/repos/CoRP/corp/action_generator.py",
+      "sha256": "9bc64e228f934e8fcf5b927669b3a6c0cf4300735b7e973150436eeef3a289d9"
+    },
+    {
+      "path": "/hy-tmp/patch-diag/repos/CoRP/corp/checkpoint.py",
+      "sha256": "f07fae21599f54f157e9630f28d0af20b1db226ffc611878bd7ab90e53e1ce10"
+    },
+    {
+      "path": "/hy-tmp/patch-diag/repos/CoRP/corp/policy.py",
+      "sha256": "5f9867ce199d4916cb8907278321dbaf14ad79defd6ab5a01fcf56ace4016eac"
+    },
+    {
+      "path": "/hy-tmp/patch-diag/repos/CoRP/corp/preprocessing.py",
+      "sha256": "5a869a4726de857752c1120edd87d8dc3e8e155d2e8b9ce56f16721fc1a947fd"
+    },
+    {
+      "path": "/hy-tmp/patch-diag/repos/CoRP/corp/representation/.___init__.py",
+      "sha256": "338a0f867ddcf3db87d9e71d8624b84fe7e0ddbeefd6455ab543a6740f6d63ee"
+    },
+    {
+      "path": "/hy-tmp/patch-diag/repos/CoRP/corp/representation/._cross_attention_resampler.py",
+      "sha256": "338a0f867ddcf3db87d9e71d8624b84fe7e0ddbeefd6455ab543a6740f6d63ee"
+    },
+    {
+      "path": "/hy-tmp/patch-diag/repos/CoRP/corp/representation/._extractor.py",
+      "sha256": "338a0f867ddcf3db87d9e71d8624b84fe7e0ddbeefd6455ab543a6740f6d63ee"
+    },
+    {
+      "path": "/hy-tmp/patch-diag/repos/CoRP/corp/representation/._language_encoder.py",
+      "sha256": "338a0f867ddcf3db87d9e71d8624b84fe7e0ddbeefd6455ab543a6740f6d63ee"
+    },
+    {
+      "path": "/hy-tmp/patch-diag/repos/CoRP/corp/representation/._state_encoder.py",
+      "sha256": "338a0f867ddcf3db87d9e71d8624b84fe7e0ddbeefd6455ab543a6740f6d63ee"
+    },
+    {
+      "path": "/hy-tmp/patch-diag/repos/CoRP/corp/representation/._visual_encoder.py",
+      "sha256": "338a0f867ddcf3db87d9e71d8624b84fe7e0ddbeefd6455ab543a6740f6d63ee"
+    },
+    {
+      "path": "/hy-tmp/patch-diag/repos/CoRP/corp/representation/__init__.py",
+      "sha256": "9f68cb18670fbd1634fe8d8f8cd65228f428da13d11893eda86f9249f62a74de"
+    },
+    {
+      "path": "/hy-tmp/patch-diag/repos/CoRP/corp/representation/cross_attention_resampler.py",
+      "sha256": "4e86fae7523c5c1a8c6da2bccdbc54cba2fbea8d914fe8eb13202209f51e1fa1"
+    },
+    {
+      "path": "/hy-tmp/patch-diag/repos/CoRP/corp/representation/extractor.py",
+      "sha256": "385c66cf90ad294210ea84418ca2c83726eac7dadc5d3bf4ffc0a42035377e34"
+    },
+    {
+      "path": "/hy-tmp/patch-diag/repos/CoRP/corp/representation/language_encoder.py",
+      "sha256": "177f68878c2ed421dcfcdda0c5e0ef3eb57a5d7635f3bbfd1f769ff8211c4365"
+    },
+    {
+      "path": "/hy-tmp/patch-diag/repos/CoRP/corp/representation/state_encoder.py",
+      "sha256": "cb6f4be3d443c0e1adfe2c6d974301373ebc75f1da51728889fa6c0050e6a973"
+    },
+    {
+      "path": "/hy-tmp/patch-diag/repos/CoRP/corp/representation/visual_encoder.py",
+      "sha256": "f8bf4d32bb42f18a961109e41901cc0ddb98fc9a420943101c2675aa293beec4"
+    },
+    {
+      "path": "/hy-tmp/patch-diag/repos/CoRP/scripts/._evaluate_libero.py",
+      "sha256": "338a0f867ddcf3db87d9e71d8624b84fe7e0ddbeefd6455ab543a6740f6d63ee"
+    },
+    {
+      "path": "/hy-tmp/patch-diag/repos/CoRP/scripts/._smoke_test.py",
+      "sha256": "338a0f867ddcf3db87d9e71d8624b84fe7e0ddbeefd6455ab543a6740f6d63ee"
+    },
+    {
+      "path": "/hy-tmp/patch-diag/repos/CoRP/scripts/evaluate_libero.py",
+      "sha256": "8ec144c71cfcd3c0cab9d1b505d432062424487970575a4ff83c2bd0613d066a"
+    },
+    {
+      "path": "/hy-tmp/patch-diag/repos/CoRP/scripts/smoke_test.py",
+      "sha256": "f8e8f42f61c32c16d020902f5a865767c6d22004c6263069a55e6c71e8b5993a"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/configs/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/libero/__init__.py",
+      "sha256": "dbdfb0aa59bda922a1b95e14b0c621db5ae9542810aeb3298b4d5e9fd549bb46"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/libero/assets/scenes/change_name.py",
+      "sha256": "df8e2ed20a280593bd12c348a0f08b2d12c3604e2123f32fce869f73ee723bc6"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/libero/assets/scenes/check_png.py",
+      "sha256": "a55c223b91421ee03206d40d28e35631e2fb92db1fd3b98b588e38c5881a8bbe"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/libero/benchmark/__init__.py",
+      "sha256": "70ed74d8a05cdc0808d0347536781e4a0e3d8fec45437f06e7b570f84b94e4e9"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/libero/benchmark/libero_suite_task_map.py",
+      "sha256": "41640d2f542169b400be7e94249e3b1f862e7500745dc318bab49b19576b31ac"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/libero/benchmark/mu_creation.py",
+      "sha256": "1aca2195e1b5ffb91ff22becb08763a060697584d887dd65fa1bc40ec99558fa"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/libero/envs/__init__.py",
+      "sha256": "2b82b83c092339cf9b7881d762c8357010a42073e18c99f8f044b3ab9cd31df5"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/libero/envs/arenas/__init__.py",
+      "sha256": "a148bff0a3b0eb37b1d9d22579fbf3b05c7a26753ea026f5621576aa3f82fcb1"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/libero/envs/arenas/coffee_table_arena.py",
+      "sha256": "a1321848013495e1194c495eecb6c9da36e2260ce64ec636aea6f404e35abc04"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/libero/envs/arenas/empty_arena.py",
+      "sha256": "1032b22ff518a37dd94609a525291082e1ac7151abc2d509e76b588625437260"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/libero/envs/arenas/kitchen_arena.py",
+      "sha256": "fab3692ad931ce3e910b318626cd3d1f8c67a0100fbdb9fb28b6118fe42ec8f1"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/libero/envs/arenas/living_room_arena.py",
+      "sha256": "8267ca85d85a4b83815543f1f5405002da81b0462259c1ca45a146b612277581"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/libero/envs/arenas/study_arena.py",
+      "sha256": "274c663111069f77795151667e962afaa78ab43ea45d206f6b202c8cfba40387"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/libero/envs/arenas/style.py",
+      "sha256": "0e3960b691dd2c36b3bc0920d83d37bc9edcb69b29d101459944fa5bad6f01c4"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/libero/envs/arenas/table_arena.py",
+      "sha256": "a47a23d3736d35b34b279f90f267f9f3fa2426431a96c8f038d18ed44cc9a834"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/libero/envs/base_object.py",
+      "sha256": "88ee0d4b2a39f39437d97fb12ec08831cb5064e23a7456d2f882e3baab246f1a"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/libero/envs/bddl_base_domain.py",
+      "sha256": "c2411809bc7b49cbaac8a677c8eea1fa9861539a5bf517c3b56a5e78065fd4e8"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/libero/envs/bddl_utils.py",
+      "sha256": "f8148a5054e7818cee1ceddda300ff9f15272f8e6600389abd38f102e477cd8c"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/libero/envs/env_wrapper.py",
+      "sha256": "d3d3ddfa861fbdece477004532155be93250f9785e6e580ab9618a9daf8d7c27"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/libero/envs/object_states/__init__.py",
+      "sha256": "1fb9ad68a61066a7a4986f3f5f8610ba4d725b290e3d8944ab628d3e9f8a2d9f"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/libero/envs/object_states/base_object_states.py",
+      "sha256": "ca6f53123336b6487bdb4feb02534ddb3a0627a4b847fe89da4460520ef01366"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/libero/envs/objects/__init__.py",
+      "sha256": "79437c02c9fe8077ef2eb246a6f7fe60e166dece8c66be548ea22b881f831956"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/libero/envs/objects/articulated_objects.py",
+      "sha256": "f5187b0381d69a2a8736c1dcb646e5fa7c138a42950f92e30c21c2efaed52faa"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/libero/envs/objects/custom_objects.py",
+      "sha256": "30551a907a53ffa2af8fd76c61167e0972dbe3a273a6f0068aa99ada885f648e"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/libero/envs/objects/google_scanned_objects.py",
+      "sha256": "626e25dfa8b102f7f7b406ef6a997003f1308b48cf52e7c22762e9eb86a1ec4c"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/libero/envs/objects/hope_objects.py",
+      "sha256": "70ee607faf5dca4f69c5db96fbf79080990b7c39a0f08d99b074c67f0acbd62d"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/libero/envs/objects/site_object.py",
+      "sha256": "4907bf2550945c395b85fd92725763ada4da533ad50966eb179e637dabeeebf6"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/libero/envs/objects/target_zones.py",
+      "sha256": "49a14627103648fbb620c3a6c1ae14f52fae6e2f4db81b0074e602f01aaf7205"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/libero/envs/objects/turbosquid_objects.py",
+      "sha256": "4de4205eabb588600fd9669f6ee6e2ef12e47e13d9b421257215d34f836f9804"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/libero/envs/predicates/__init__.py",
+      "sha256": "e059a52d635ae4bdfe0e4bd6f0a0ca9b53a04444b39b53664fffb38d0838679e"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/libero/envs/predicates/base_predicates.py",
+      "sha256": "319137e95330dbb22a266a8dceb8110f18413c2bf17461550222228c4bc310a1"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/libero/envs/problems/__init__.py",
+      "sha256": "2d1980568bf81fe7c27f62ed59a2c0376722f726654eb07ced6ea8c6bce017bc"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/libero/envs/problems/libero_coffee_table_manipulation.py",
+      "sha256": "a05e5f00f706fe12776c42030fc048192e2dc8873504e374ea4ec362a1014713"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/libero/envs/problems/libero_floor_manipulation.py",
+      "sha256": "78dc749046cd3dfcbbb4f714abefd9c6e18bc3d19f84a2be46387e82c04f5c34"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/libero/envs/problems/libero_kitchen_tabletop_manipulation.py",
+      "sha256": "7b8b2cd98ac778620c497251d99fe63cfecfeaafd31eb8adcf9d9e86eb23860e"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/libero/envs/problems/libero_living_room_tabletop_manipulation.py",
+      "sha256": "f1feac4c0f2f75f5d29a304d56e0c553824d3c5591d9ee0a65d19cf98cdf175f"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/libero/envs/problems/libero_study_tabletop_manipulation.py",
+      "sha256": "b94754ffd74a236c64c049c806d129a8556162c6b5146fc3660f2c2130fc25a4"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/libero/envs/problems/libero_tabletop_manipulation.py",
+      "sha256": "6f97cfbaaea1fed9c7ba2711b75558ae97d3559d5199d15edeef0ff38648b0ba"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/libero/envs/regions/__init__.py",
+      "sha256": "c1259231f5f2bf1499b684187c733db30503a6cc864de30df2513665f59c876f"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/libero/envs/regions/base_region_sampler.py",
+      "sha256": "08c12685b443d723bdffc3e1820cfb1a9b54eeda54a261ccaeacb7f04f9ab88d"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/libero/envs/regions/object_property_sampler.py",
+      "sha256": "051fbce5a9aadcdf26bd42b447c1b677e610e0e539132807a3ffb578b6feab60"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/libero/envs/regions/workspace_region_sampler.py",
+      "sha256": "66b8ce7f7eb18e316fdc1a44a4210ee0a25a24e9a9d49be88dde970960a58b75"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/libero/envs/robots/__init__.py",
+      "sha256": "9a73aa9ea03903b1f653c475523eb471ad7cc2a1cccf9b0ed781f1f54e6813e4"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/libero/envs/robots/mounted_panda.py",
+      "sha256": "4e566d72262a45fca93609092fcfd9b8e4ad3360dc0fc24f59416eaa738144e7"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/libero/envs/robots/new_init.py",
+      "sha256": "e353ad811ae7d1e02bea163c1b216e723f503c5e03714a6d8e014271ec79eec7"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/libero/envs/robots/new_register.py",
+      "sha256": "3c0afe7fc1bc3d55f114106e9f0184d8f52b74b9a45236b5293c253b55135e5d"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/libero/envs/robots/on_the_ground_panda.py",
+      "sha256": "8e58f81760f11bbeb23cd165fabe37eaef024348cdf547fc9c84ca861a437a5a"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/libero/envs/textures.py",
+      "sha256": "bcc631c6da38a148db316862d847222361ddc0416277dd6c860c70a3c437bf17"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/libero/envs/utils.py",
+      "sha256": "81813480479dbd7fd938479dcdc17c258608b3ea4efdefc3e13aff100a89fd6a"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/libero/envs/venv.py",
+      "sha256": "a970353a592190152f313424738b05457f8e10cbafc7303c756b85aa9425d1e7"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/libero/utils/__init__.py",
+      "sha256": "fb382c7a116e6b9da49c6b8c53209f7a2825a12a640f3b007b663435ae19ce46"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/libero/utils/bddl_generation_utils.py",
+      "sha256": "2ff3fe4d5c72358970f6e3a1f38ceabe6098b92949d5fc8b1c209db74085eca8"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/libero/utils/dataset_utils.py",
+      "sha256": "e082f99790ebaabb65b762fb59727b93f3ca7addb3b0d3fea56dfe9cec97c81a"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/libero/utils/download_utils.py",
+      "sha256": "614d4233e633bd3ba98377bcad90f38f70b5b8218b1825dda2b943d4ba302dbc"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/libero/utils/log_utils.py",
+      "sha256": "b1e0e938dba6c5d6273b4aee3c7489a486ee53b1e450e3efba8601547402d8e1"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/libero/utils/mu_utils.py",
+      "sha256": "98fd321045dc5687722c89a79e64a7a3583b47cbed948aebfac98e3243d18bc9"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/libero/utils/object_utils.py",
+      "sha256": "e001887c73726b4ae87e6f2c4931135cc4e60d707b2dc668bb77360bef9b00b6"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/libero/utils/task_generation_utils.py",
+      "sha256": "262c952f6484bbc2f39ee33e634662ed47b8e564509df737a3dbad01cb23301a"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/libero/utils/time_utils.py",
+      "sha256": "b853805998ca83717dbf14e3d7e4e724fc3979b9ca18a3bd6c9bd25d8d7029de"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/libero/utils/utils.py",
+      "sha256": "30e78e4f05a9ef25d6ccf55e3d7ab5739b39f58c098a9ab91b78fb57919ea6ba"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/libero/utils/video_utils.py",
+      "sha256": "bf049b7541a2df044f0338d00c8b005e4bc24cc79d698cc4683c457bac2ffc90"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/lifelong/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/lifelong/algos/__init__.py",
+      "sha256": "aea46b63109260d82db6e3f16fff06c6238cf313c19e247454c3e21835276228"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/lifelong/algos/agem.py",
+      "sha256": "56730a8b23e23fc6279753910a259b303c5aa4cc7ac773d366500843ee260aad"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/lifelong/algos/base.py",
+      "sha256": "2cdf82c29af629df4c6625c74a45a7b7b36b6f605d0d8d4659f76811fc4c6658"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/lifelong/algos/er.py",
+      "sha256": "ba5c1e8d852e55c9a7a5b20805d4a9158998cb358b93c0faed62ccf9b72824bc"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/lifelong/algos/ewc.py",
+      "sha256": "56eb3e8ee6885aa858aea021d8d05d710f5639b7ecfb78a1a18058dd7858825b"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/lifelong/algos/multitask.py",
+      "sha256": "0b309a8ed8d62adb917caa465ac7f3ab6cba32451dd19b3987eeea57eca4c9b2"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/lifelong/algos/packnet.py",
+      "sha256": "34e6c7f42d781fae2f824068d9a5121971a7e1feba2e05a292e893e48e88a226"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/lifelong/algos/single_task.py",
+      "sha256": "d76a8ee4ff570ed491cc5f5939b725690f4a5f18a597a739bdd922ad0ab6f99f"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/lifelong/datasets.py",
+      "sha256": "084b54d78bac4383e64d5ca8b944e3ebf005bf84ca6ff76153be37fa80bf671a"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/lifelong/evaluate.py",
+      "sha256": "84dea8f168406884e460acd5df9d2dcab5802e297b9a7b4333a5c17fcb24b50f"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/lifelong/init_path.py",
+      "sha256": "4cbdf2d2a452956db9d0d028211a35795c91e571a62669c8abeaf1fc0fdc038e"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/lifelong/main.py",
+      "sha256": "90bf55a80edaf13856615d5483cbb6ad6f4973bce4dc2ca8915a956bf52841b2"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/lifelong/metric.py",
+      "sha256": "4fe37407f23cd9c1ceb4c93670f308d2fed6d34b2c2139d86123702c849cabcb"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/lifelong/models/__init__.py",
+      "sha256": "fde5734e188b4322492696fb5b026e88c10cbf7bf89fa5ffadbc12abf684c6d8"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/lifelong/models/base_policy.py",
+      "sha256": "eece2b35bdcdee639ad012e13e1f56783fb6108146dc110c168c069913936363"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/lifelong/models/bc_rnn_policy.py",
+      "sha256": "c0d12743e4ad31a19747fee526c8493f6b1fbf7e8af39afe93fe0c88a6aa88f3"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/lifelong/models/bc_transformer_policy.py",
+      "sha256": "41c98aa445432eca58b31293148dd20b726e95f34d3cfb55f4358e0af63016e9"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/lifelong/models/bc_vilt_policy.py",
+      "sha256": "a87a8f5bc72d505bbd21d4c87c171632f494e5036c0b79a048e4cf6b6bca1465"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/lifelong/models/modules/data_augmentation.py",
+      "sha256": "b950cd11385d2004bc53475590b6de3f4055d54dbe9ddbe6f6b310820eff5461"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/lifelong/models/modules/language_modules.py",
+      "sha256": "0bed095e3acfe7405712840db5aed93f95563e579325bad96641a0a10c3beda1"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/lifelong/models/modules/rgb_modules.py",
+      "sha256": "d99f0ec64eef3de0f6b28cbd4f30b6ea8a5e1d4322657124dd867b1906c6d325"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/lifelong/models/modules/transformer_modules.py",
+      "sha256": "62f5beee1e69fbf5e7d4ce3d8dc0bd93ad08c44683fdbd2416a5fadf81332411"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/lifelong/models/policy_head.py",
+      "sha256": "8a5ad5890e84c700d26bfde58c6de833107e6ceab832494ce803ae47a027d4e0"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/lifelong/utils.py",
+      "sha256": "d1df48c6984a2938d60eebf70ba1c61cd2ea512e859fa0ed11abfc550beee3f1"
+    },
+    {
+      "path": "/hy-tmp/LIBERO-plus/libero/randomizer/bddl_operators.py",
+      "sha256": "e4f275a40b4017badf5d1d11b151c8e2811bf66dfaa01ae86d7514c8f15d6fc8"
+    }
+  ],
+  "resolved_modules_main_script_path": {
+    "dacsc.corp_main_support": "/hy-tmp/patch-diag/runs/corp_main_table_v2/source_code/dacsc/corp_main_support.py",
+    "dacsc.baselines_tta": "/hy-tmp/patch-diag/runs/corp_main_table_v2/source_code/dacsc/baselines_tta.py",
+    "dacsc.single_block_probe": "/hy-tmp/patch-diag/runs/corp_main_table_v2/source_code/dacsc/single_block_probe.py",
+    "dacsc.static_visual_v2": "/hy-tmp/patch-diag/runs/corp_main_table_v2/source_code/dacsc/static_visual_v2.py",
+    "dacsc.plus_glass_exact": "/hy-tmp/patch-diag/runs/corp_main_table_v2/source_code/dacsc/plus_glass_exact.py"
+  },
+  "note": "Main scripts explicitly prepend source_code. Initial diagnostic from python stdin had cwd priority and is preserved above for transparency."
+}

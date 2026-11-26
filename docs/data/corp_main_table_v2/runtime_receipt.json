@@ -1,0 +1,19 @@
+{
+  "packages": {
+    "torch": "2.5.1+cu121",
+    "torchvision": "no installed distribution metadata",
+    "numpy": "1.26.4",
+    "scipy": "1.15.3",
+    "numba": "0.68.1",
+    "mujoco": "3.3.0",
+    "robosuite": "1.4.1",
+    "transformers": "4.44.2",
+    "timm": "no installed distribution metadata",
+    "Pillow": "12.3.0",
+    "glfw": "2.11.0"
+  },
+  "python": "3.10.12",
+  "platform": "Linux-5.15.0-203-generic-x86_64-with-glibc2.35",
+  "gpu": "NVIDIA GeForce RTX 3090, 595.99.02, 24576 MiB",
+  "invocation": "source env.sh; python -u source_code/scripts/run_corp_main_table_campaign.py --out /hy-tmp/patch-diag/runs/corp_main_table_v2"
+}
