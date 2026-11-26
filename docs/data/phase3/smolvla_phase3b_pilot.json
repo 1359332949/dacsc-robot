@@ -1,0 +1,1888 @@
+{
+  "schema": "smolvla_phase3b_pilot_v1",
+  "protocol": {
+    "model": "native upstream SmolVLA, BF16 vision, FP32 operator then BF16, CPU normalization",
+    "E": 1,
+    "H": 50,
+    "Euler": 10,
+    "max_steps": 220,
+    "warmup": 10,
+    "alpha": 0.75,
+    "layer": 3,
+    "reference": "unchanged init0 full-trajectory outer9 / inner8+1 task LOTO",
+    "environment": "unchanged Vanilla base; official Plus BDDL scene selectors bridged onto Vanilla base",
+    "sensor": "official Plus severity5 (10-level scale); both cameras every policy step from t0; independent deterministic view seeds",
+    "pairing": "exact initial state/RGB and Torch CPU/CUDA common-prefix RNG hashes",
+    "comparison_scope": "exploratory one policy seed; not SALT-matched protocol or a noninferiority test",
+    "blind_access": false,
+    "main_table_autostart": false
+  },
+  "groups": {
+    "Clean": {
+      "n": 10,
+      "frozen": 8,
+      "v1": 8,
+      "rescued": 0,
+      "harmed": 0,
+      "net": 0,
+      "delta_pp": 0.0,
+      "mcnemar_exact_two_sided": 1.0,
+      "task_cluster_bootstrap95_pp": [
+        0.0,
+        0.0
+      ],
+      "active_fraction_episode_macro": {
+        "frozen": [
+          0.06354444452865618,
+          0.04988775551607539
+        ],
+        "v1": [
+          0.06331129391919113,
+          0.05155574000011691
+        ]
+      }
+    },
+    "Sensor": {
+      "n": 20,
+      "frozen": 2,
+      "v1": 2,
+      "rescued": 1,
+      "harmed": 1,
+      "net": 0,
+      "delta_pp": 0.0,
+      "mcnemar_exact_two_sided": 1.0,
+      "task_cluster_bootstrap95_pp": [
+        -15.0,
+        15.0
+      ],
+      "active_fraction_episode_macro": {
+        "frozen": [
+          0.758742210080938,
+          0.3176459918075404
+        ],
+        "v1": [
+          0.7555163099257263,
+          0.30429510975740365
+        ]
+      }
+    },
+    "Lighting": {
+      "n": 10,
+      "frozen": 8,
+      "v1": 5,
+      "rescued": 0,
+      "harmed": 3,
+      "net": -3,
+      "delta_pp": -30.0,
+      "mcnemar_exact_two_sided": 0.25,
+      "task_cluster_bootstrap95_pp": [
+        -60.0,
+        0.0
+      ],
+      "active_fraction_episode_macro": {
+        "frozen": [
+          0.6306219926293742,
+          0.2417016665331378
+        ],
+        "v1": [
+          0.6342635431985943,
+          0.2443982932730679
+        ]
+      }
+    },
+    "Background": {
+      "n": 10,
+      "frozen": 4,
+      "v1": 5,
+      "rescued": 2,
+      "harmed": 1,
+      "net": 1,
+      "delta_pp": 10.0,
+      "mcnemar_exact_two_sided": 1.0,
+      "task_cluster_bootstrap95_pp": [
+        -20.0,
+        40.0
+      ],
+      "active_fraction_episode_macro": {
+        "frozen": [
+          0.7206530214506781,
+          0.38686566738072736
+        ],
+        "v1": [
+          0.7186196001556809,
+          0.38898909308421037
+        ]
+      }
+    },
+    "motion_blur": {
+      "n": 4,
+      "frozen": 0,
+      "v1": 0,
+      "rescued": 0,
+      "harmed": 0,
+      "net": 0,
+      "delta_pp": 0.0,
+      "mcnemar_exact_two_sided": 1.0,
+      "task_cluster_bootstrap95_pp": [
+        0.0,
+        0.0
+      ],
+      "active_fraction_episode_macro": {
+        "frozen": [
+          0.6801979965107008,
+          0.30048532958396457
+        ],
+        "v1": [
+          0.6771736112507907,
+          0.2899044237184254
+        ]
+      }
+    },
+    "gaussian_blur": {
+      "n": 4,
+      "frozen": 0,
+      "v1": 0,
+      "rescued": 0,
+      "harmed": 0,
+      "net": 0,
+      "delta_pp": 0.0,
+      "mcnemar_exact_two_sided": 1.0,
+      "task_cluster_bootstrap95_pp": [
+        0.0,
+        0.0
+      ],
+      "active_fraction_episode_macro": {
+        "frozen": [
+          0.8713630634275349,
+          0.4663263627751307
+        ],
+        "v1": [
+          0.8723351866684177,
+          0.47297734526748003
+        ]
+      }
+    },
+    "zoom_blur": {
+      "n": 4,
+      "frozen": 0,
+      "v1": 0,
+      "rescued": 0,
+      "harmed": 0,
+      "net": 0,
+      "delta_pp": 0.0,
+      "mcnemar_exact_two_sided": 1.0,
+      "task_cluster_bootstrap95_pp": [
+        0.0,
+        0.0
+      ],
+      "active_fraction_episode_macro": {
+        "frozen": [
+          0.6913840759206902,
+          0.2863932370462201
+        ],
+        "v1": [
+          0.6865530502389778,
+          0.22303356421603399
+        ]
+      }
+    },
+    "glass_blur": {
+      "n": 4,
+      "frozen": 0,
+      "v1": 0,
+      "rescued": 0,
+      "harmed": 0,
+      "net": 0,
+      "delta_pp": 0.0,
+      "mcnemar_exact_two_sided": 1.0,
+      "task_cluster_bootstrap95_pp": [
+        0.0,
+        0.0
+      ],
+      "active_fraction_episode_macro": {
+        "frozen": [
+          0.7504661070352251,
+          0.25275213889438997
+        ],
+        "v1": [
+          0.75092775428837,
+          0.25562707951123065
+        ]
+      }
+    },
+    "fog": {
+      "n": 4,
+      "frozen": 2,
+      "v1": 2,
+      "rescued": 1,
+      "harmed": 1,
+      "net": 0,
+      "delta_pp": 0.0,
+      "mcnemar_exact_two_sided": 1.0,
+      "task_cluster_bootstrap95_pp": [
+        -75.0,
+        75.0
+      ],
+      "active_fraction_episode_macro": {
+        "frozen": [
+          0.8002998075105391,
+          0.28227289073799666
+        ],
+        "v1": [
+          0.7905919471820751,
+          0.27993313607384823
+        ]
+      }
+    },
+    "table_texture": {
+      "n": 5,
+      "frozen": 1,
+      "v1": 2,
+      "rescued": 1,
+      "harmed": 0,
+      "net": 1,
+      "delta_pp": 20.0,
+      "mcnemar_exact_two_sided": 1.0,
+      "task_cluster_bootstrap95_pp": [
+        0.0,
+        60.0
+      ],
+      "active_fraction_episode_macro": {
+        "frozen": [
+          0.7362408335091257,
+          0.43420192695326276
+        ],
+        "v1": [
+          0.7329207427093707,
+          0.43581481336077965
+        ]
+      }
+    },
+    "scene_texture": {
+      "n": 5,
+      "frozen": 3,
+      "v1": 3,
+      "rescued": 1,
+      "harmed": 1,
+      "net": 0,
+      "delta_pp": 0.0,
+      "mcnemar_exact_two_sided": 1.0,
+      "task_cluster_bootstrap95_pp": [
+        -60.0,
+        60.0
+      ],
+      "active_fraction_episode_macro": {
+        "frozen": [
+          0.7050652093922307,
+          0.3395294078081919
+        ],
+        "v1": [
+          0.7043184576019913,
+          0.3421633728076411
+        ]
+      }
+    },
+    "Shift40": {
+      "n": 40,
+      "frozen": 14,
+      "v1": 12,
+      "rescued": 3,
+      "harmed": 5,
+      "net": -2,
+      "delta_pp": -5.0,
+      "mcnemar_exact_two_sided": 0.7265625,
+      "task_cluster_bootstrap95_pp": [
+        -20.0,
+        7.5
+      ],
+      "active_fraction_episode_macro": {
+        "frozen": [
+          0.7171898585604822,
+          0.3159648293822365
+        ],
+        "v1": [
+          0.7159789408014319,
+          0.3104944014680215
+        ]
+      }
+    },
+    "All50": {
+      "n": 50,
+      "frozen": 22,
+      "v1": 20,
+      "rescued": 3,
+      "harmed": 5,
+      "net": -2,
+      "delta_pp": -4.0,
+      "mcnemar_exact_two_sided": 0.7265625,
+      "task_cluster_bootstrap95_pp": [
+        -16.0,
+        6.0
+      ],
+      "active_fraction_episode_macro": {
+        "frozen": [
+          0.5864607757541171,
+          0.2627494146090043
+        ],
+        "v1": [
+          0.5854454114249837,
+          0.2587066691744406
+        ]
+      }
+    },
+    "Clean20_development_init1_init2": {
+      "n": 20,
+      "frozen": 15,
+      "v1": 14,
+      "rescued": 0,
+      "harmed": 1,
+      "net": -1,
+      "delta_pp": -5.0,
+      "mcnemar_exact_two_sided": 1.0,
+      "task_cluster_bootstrap95_pp": [
+        -15.0,
+        0.0
+      ],
+      "active_fraction_episode_macro": {
+        "frozen": [
+          0.06504210073278426,
+          0.04971800895941856
+        ],
+        "v1": [
+          0.06433073902655558,
+          0.051664139771424936
+        ]
+      }
+    }
+  },
+  "pairs": [
+    {
+      "case_id": "t00_clean_i2",
+      "task_id": 0,
+      "group": "Clean",
+      "subgroup": "Clean",
+      "init_index": 2,
+      "frozen": false,
+      "v1": false,
+      "steps": [
+        220,
+        220
+      ],
+      "active": [
+        [
+          0.026994555701755664,
+          0.05865885592277416
+        ],
+        [
+          0.028426847312684085,
+          0.054012785685799
+        ]
+      ],
+      "start_exact": true,
+      "rng_prefix_exact": true
+    },
+    {
+      "case_id": "t00_motion_blur_i1",
+      "task_id": 0,
+      "group": "Sensor",
+      "subgroup": "motion_blur",
+      "init_index": 1,
+      "frozen": false,
+      "v1": false,
+      "steps": [
+        220,
+        220
+      ],
+      "active": [
+        [
+          0.6675248780033806,
+          0.19417614225636828
+        ],
+        [
+          0.6688328791748394,
+          0.19614110440015792
+        ]
+      ],
+      "start_exact": true,
+      "rng_prefix_exact": true
+    },
+    {
+      "case_id": "t00_gaussian_blur_i1",
+      "task_id": 0,
+      "group": "Sensor",
+      "subgroup": "gaussian_blur",
+      "init_index": 1,
+      "frozen": false,
+      "v1": false,
+      "steps": [
+        220,
+        220
+      ],
+      "active": [
+        [
+          0.8644235516136343,
+          0.4055930504744703
+        ],
+        [
+          0.8672762973742052,
+          0.4082386459816586
+        ]
+      ],
+      "start_exact": true,
+      "rng_prefix_exact": true
+    },
+    {
+      "case_id": "t00_light_asset_i1",
+      "task_id": 0,
+      "group": "Lighting",
+      "subgroup": "light_asset",
+      "init_index": 1,
+      "frozen": true,
+      "v1": false,
+      "steps": [
+        103,
+        220
+      ],
+      "active": [
+        [
+          0.6878160591264373,
+          0.24654885518898084
+        ],
+        [
+          0.6783440080556002,
+          0.25910275409167466
+        ]
+      ],
+      "start_exact": true,
+      "rng_prefix_exact": true
+    },
+    {
+      "case_id": "t00_table_texture_i1",
+      "task_id": 0,
+      "group": "Background",
+      "subgroup": "table_texture",
+      "init_index": 1,
+      "frozen": false,
+      "v1": false,
+      "steps": [
+        220,
+        220
+      ],
+      "active": [
+        [
+          0.6027876607396386,
+          0.24975734623995693
+        ],
+        [
+          0.5965790927410126,
+          0.2601266646249728
+        ]
+      ],
+      "start_exact": true,
+      "rng_prefix_exact": true
+    },
+    {
+      "case_id": "t01_clean_i2",
+      "task_id": 1,
+      "group": "Clean",
+      "subgroup": "Clean",
+      "init_index": 2,
+      "frozen": true,
+      "v1": true,
+      "steps": [
+        111,
+        112
+      ],
+      "active": [
+        [
+          0.06406015590638728,
+          0.009935717235805953
+        ],
+        [
+          0.06466239027213305,
+          0.009719122311383086
+        ]
+      ],
+      "start_exact": true,
+      "rng_prefix_exact": true
+    },
+    {
+      "case_id": "t01_gaussian_blur_i1",
+      "task_id": 1,
+      "group": "Sensor",
+      "subgroup": "gaussian_blur",
+      "init_index": 1,
+      "frozen": false,
+      "v1": false,
+      "steps": [
+        220,
+        220
+      ],
+      "active": [
+        [
+          0.8757102454250509,
+          0.4540246324105696
+        ],
+        [
+          0.8770300838080319,
+          0.462186328524893
+        ]
+      ],
+      "start_exact": true,
+      "rng_prefix_exact": true
+    },
+    {
+      "case_id": "t01_zoom_blur_i1",
+      "task_id": 1,
+      "group": "Sensor",
+      "subgroup": "zoom_blur",
+      "init_index": 1,
+      "frozen": false,
+      "v1": false,
+      "steps": [
+        220,
+        220
+      ],
+      "active": [
+        [
+          0.6739997836676511,
+          0.3166311637921767
+        ],
+        [
+          0.6746330700137398,
+          0.3042376984249462
+        ]
+      ],
+      "start_exact": true,
+      "rng_prefix_exact": true
+    },
+    {
+      "case_id": "t01_light_asset_i1",
+      "task_id": 1,
+      "group": "Lighting",
+      "subgroup": "light_asset",
+      "init_index": 1,
+      "frozen": true,
+      "v1": true,
+      "steps": [
+        113,
+        115
+      ],
+      "active": [
+        [
+          0.6969487661808993,
+          0.227553470867925
+        ],
+        [
+          0.6964787343273993,
+          0.2260529954796252
+        ]
+      ],
+      "start_exact": true,
+      "rng_prefix_exact": true
+    },
+    {
+      "case_id": "t01_table_texture_i1",
+      "task_id": 1,
+      "group": "Background",
+      "subgroup": "table_texture",
+      "init_index": 1,
+      "frozen": true,
+      "v1": true,
+      "steps": [
+        117,
+        112
+      ],
+      "active": [
+        [
+          0.7955506785303099,
+          0.47453704807493424
+        ],
+        [
+          0.7916666875992503,
+          0.4761672363217388
+        ]
+      ],
+      "start_exact": true,
+      "rng_prefix_exact": true
+    },
+    {
+      "case_id": "t02_clean_i2",
+      "task_id": 2,
+      "group": "Clean",
+      "subgroup": "Clean",
+      "init_index": 2,
+      "frozen": true,
+      "v1": true,
+      "steps": [
+        95,
+        94
+      ],
+      "active": [
+        [
+          0.03597861947981935,
+          0.011101974006497154
+        ],
+        [
+          0.03672152156248055,
+          0.011386303511012266
+        ]
+      ],
+      "start_exact": true,
+      "rng_prefix_exact": true
+    },
+    {
+      "case_id": "t02_zoom_blur_i1",
+      "task_id": 2,
+      "group": "Sensor",
+      "subgroup": "zoom_blur",
+      "init_index": 1,
+      "frozen": false,
+      "v1": false,
+      "steps": [
+        220,
+        220
+      ],
+      "active": [
+        [
+          0.674254280870611,
+          0.26993963779373603
+        ],
+        [
+          0.6759529078548605,
+          0.2012606584890322
+        ]
+      ],
+      "start_exact": true,
+      "rng_prefix_exact": true
+    },
+    {
+      "case_id": "t02_fog_i1",
+      "task_id": 2,
+      "group": "Sensor",
+      "subgroup": "fog",
+      "init_index": 1,
+      "frozen": true,
+      "v1": true,
+      "steps": [
+        113,
+        104
+      ],
+      "active": [
+        [
+          0.7810541338625208,
+          0.25227001164339286
+        ],
+        [
+          0.7821139039901587,
+          0.25851363129913807
+        ]
+      ],
+      "start_exact": true,
+      "rng_prefix_exact": true
+    },
+    {
+      "case_id": "t02_light_asset_i1",
+      "task_id": 2,
+      "group": "Lighting",
+      "subgroup": "light_asset",
+      "init_index": 1,
+      "frozen": true,
+      "v1": true,
+      "steps": [
+        100,
+        100
+      ],
+      "active": [
+        [
+          0.6221224164962769,
+          0.1701171923428774
+        ],
+        [
+          0.6229166823625565,
+          0.1696093800663948
+        ]
+      ],
+      "start_exact": true,
+      "rng_prefix_exact": true
+    },
+    {
+      "case_id": "t02_table_texture_i1",
+      "task_id": 2,
+      "group": "Background",
+      "subgroup": "table_texture",
+      "init_index": 1,
+      "frozen": false,
+      "v1": false,
+      "steps": [
+        220,
+        220
+      ],
+      "active": [
+        [
+          0.7985973206433383,
+          0.5045277141711929
+        ],
+        [
+          0.7941347268494693,
+          0.5045868995514783
+        ]
+      ],
+      "start_exact": true,
+      "rng_prefix_exact": true
+    },
+    {
+      "case_id": "t03_clean_i2",
+      "task_id": 3,
+      "group": "Clean",
+      "subgroup": "Clean",
+      "init_index": 2,
+      "frozen": true,
+      "v1": true,
+      "steps": [
+        84,
+        74
+      ],
+      "active": [
+        [
+          0.04352678705583371,
+          0.006184895999640936
+        ],
+        [
+          0.043549410243694846,
+          0.007390202886764766
+        ]
+      ],
+      "start_exact": true,
+      "rng_prefix_exact": true
+    },
+    {
+      "case_id": "t03_fog_i1",
+      "task_id": 3,
+      "group": "Sensor",
+      "subgroup": "fog",
+      "init_index": 1,
+      "frozen": true,
+      "v1": false,
+      "steps": [
+        85,
+        220
+      ],
+      "active": [
+        [
+          0.7839767343857709,
+          0.27426471429712634
+        ],
+        [
+          0.7732481276447123,
+          0.3024443756450306
+        ]
+      ],
+      "start_exact": true,
+      "rng_prefix_exact": true
+    },
+    {
+      "case_id": "t03_glass_blur_i1",
+      "task_id": 3,
+      "group": "Sensor",
+      "subgroup": "glass_blur",
+      "init_index": 1,
+      "frozen": false,
+      "v1": false,
+      "steps": [
+        220,
+        220
+      ],
+      "active": [
+        [
+          0.7356475109403784,
+          0.2126657257025892
+        ],
+        [
+          0.7373816509138454,
+          0.21880919113755226
+        ]
+      ],
+      "start_exact": true,
+      "rng_prefix_exact": true
+    },
+    {
+      "case_id": "t03_light_asset_i1",
+      "task_id": 3,
+      "group": "Lighting",
+      "subgroup": "light_asset",
+      "init_index": 1,
+      "frozen": true,
+      "v1": false,
+      "steps": [
+        93,
+        220
+      ],
+      "active": [
+        [
+          0.5913978693305805,
+          0.18901210190147483
+        ],
+        [
+          0.5745324538512664,
+          0.20250355648723514
+        ]
+      ],
+      "start_exact": true,
+      "rng_prefix_exact": true
+    },
+    {
+      "case_id": "t03_table_texture_i1",
+      "task_id": 3,
+      "group": "Background",
+      "subgroup": "table_texture",
+      "init_index": 1,
+      "frozen": false,
+      "v1": false,
+      "steps": [
+        220,
+        220
+      ],
+      "active": [
+        [
+          0.7059481745416468,
+          0.452539071847092
+        ],
+        [
+          0.7070194341919639,
+          0.44628907414999874
+        ]
+      ],
+      "start_exact": true,
+      "rng_prefix_exact": true
+    },
+    {
+      "case_id": "t04_clean_i2",
+      "task_id": 4,
+      "group": "Clean",
+      "subgroup": "Clean",
+      "init_index": 2,
+      "frozen": true,
+      "v1": true,
+      "steps": [
+        132,
+        131
+      ],
+      "active": [
+        [
+          0.1247731251642108,
+          0.16342132716354998
+        ],
+        [
+          0.1226145075420842,
+          0.1729285984321405
+        ]
+      ],
+      "start_exact": true,
+      "rng_prefix_exact": true
+    },
+    {
+      "case_id": "t04_glass_blur_i1",
+      "task_id": 4,
+      "group": "Sensor",
+      "subgroup": "glass_blur",
+      "init_index": 1,
+      "frozen": false,
+      "v1": false,
+      "steps": [
+        220,
+        220
+      ],
+      "active": [
+        [
+          0.7572680142792788,
+          0.2791074911979112
+        ],
+        [
+          0.7595644132657484,
+          0.2823449443687092
+        ]
+      ],
+      "start_exact": true,
+      "rng_prefix_exact": true
+    },
+    {
+      "case_id": "t04_motion_blur_i1",
+      "task_id": 4,
+      "group": "Sensor",
+      "subgroup": "motion_blur",
+      "init_index": 1,
+      "frozen": false,
+      "v1": false,
+      "steps": [
+        220,
+        220
+      ],
+      "active": [
+        [
+          0.6898082600398497,
+          0.3530776604332707
+        ],
+        [
+          0.6881747364997863,
+          0.34114584238691764
+        ]
+      ],
+      "start_exact": true,
+      "rng_prefix_exact": true
+    },
+    {
+      "case_id": "t04_light_asset_i1",
+      "task_id": 4,
+      "group": "Lighting",
+      "subgroup": "light_asset",
+      "init_index": 1,
+      "frozen": true,
+      "v1": true,
+      "steps": [
+        133,
+        138
+      ],
+      "active": [
+        [
+          0.7352952921300903,
+          0.3756755258803977
+        ],
+        [
+          0.735554442025613,
+          0.36876321897126624
+        ]
+      ],
+      "start_exact": true,
+      "rng_prefix_exact": true
+    },
+    {
+      "case_id": "t04_scene_texture_i1",
+      "task_id": 4,
+      "group": "Background",
+      "subgroup": "scene_texture",
+      "init_index": 1,
+      "frozen": true,
+      "v1": true,
+      "steps": [
+        142,
+        160
+      ],
+      "active": [
+        [
+          0.7800396311451012,
+          0.389891440179986
+        ],
+        [
+          0.7805257372558116,
+          0.39325359240174296
+        ]
+      ],
+      "start_exact": true,
+      "rng_prefix_exact": true
+    },
+    {
+      "case_id": "t05_clean_i2",
+      "task_id": 5,
+      "group": "Clean",
+      "subgroup": "Clean",
+      "init_index": 2,
+      "frozen": false,
+      "v1": false,
+      "steps": [
+        220,
+        220
+      ],
+      "active": [
+        [
+          0.03257575864395635,
+          0.1466500987764448
+        ],
+        [
+          0.028699101257899946,
+          0.1572028924076056
+        ]
+      ],
+      "start_exact": true,
+      "rng_prefix_exact": true
+    },
+    {
+      "case_id": "t05_motion_blur_i1",
+      "task_id": 5,
+      "group": "Sensor",
+      "subgroup": "motion_blur",
+      "init_index": 1,
+      "frozen": false,
+      "v1": false,
+      "steps": [
+        220,
+        220
+      ],
+      "active": [
+        [
+          0.6703480319543318,
+          0.39158973389051177
+        ],
+        [
+          0.6624230777675455,
+          0.3569128897379745
+        ]
+      ],
+      "start_exact": true,
+      "rng_prefix_exact": true
+    },
+    {
+      "case_id": "t05_gaussian_blur_i1",
+      "task_id": 5,
+      "group": "Sensor",
+      "subgroup": "gaussian_blur",
+      "init_index": 1,
+      "frozen": false,
+      "v1": false,
+      "steps": [
+        220,
+        220
+      ],
+      "active": [
+        [
+          0.8807055102153258,
+          0.5473662594502623
+        ],
+        [
+          0.8796224141662771,
+          0.5438092039390043
+        ]
+      ],
+      "start_exact": true,
+      "rng_prefix_exact": true
+    },
+    {
+      "case_id": "t05_light_asset_i1",
+      "task_id": 5,
+      "group": "Lighting",
+      "subgroup": "light_asset",
+      "init_index": 1,
+      "frozen": false,
+      "v1": false,
+      "steps": [
+        220,
+        220
+      ],
+      "active": [
+        [
+          0.6972893205556002,
+          0.37840318273414264
+        ],
+        [
+          0.6998579726977782,
+          0.3730054542422295
+        ]
+      ],
+      "start_exact": true,
+      "rng_prefix_exact": true
+    },
+    {
+      "case_id": "t05_scene_texture_i1",
+      "task_id": 5,
+      "group": "Background",
+      "subgroup": "scene_texture",
+      "init_index": 1,
+      "frozen": false,
+      "v1": true,
+      "steps": [
+        220,
+        116
+      ],
+      "active": [
+        [
+          0.6722715637900613,
+          0.38956558866934343
+        ],
+        [
+          0.6782956395683617,
+          0.378659313095027
+        ]
+      ],
+      "start_exact": true,
+      "rng_prefix_exact": true
+    },
+    {
+      "case_id": "t06_clean_i2",
+      "task_id": 6,
+      "group": "Clean",
+      "subgroup": "Clean",
+      "init_index": 2,
+      "frozen": true,
+      "v1": true,
+      "steps": [
+        108,
+        109
+      ],
+      "active": [
+        [
+          0.07717255225267124,
+          0.014696663218610748
+        ],
+        [
+          0.07694237595509498,
+          0.014322917120223608
+        ]
+      ],
+      "start_exact": true,
+      "rng_prefix_exact": true
+    },
+    {
+      "case_id": "t06_gaussian_blur_i1",
+      "task_id": 6,
+      "group": "Sensor",
+      "subgroup": "gaussian_blur",
+      "init_index": 1,
+      "frozen": false,
+      "v1": false,
+      "steps": [
+        220,
+        220
+      ],
+      "active": [
+        [
+          0.8646129464561289,
+          0.45832150876522065
+        ],
+        [
+          0.8654119513251565,
+          0.47767520262436436
+        ]
+      ],
+      "start_exact": true,
+      "rng_prefix_exact": true
+    },
+    {
+      "case_id": "t06_zoom_blur_i1",
+      "task_id": 6,
+      "group": "Sensor",
+      "subgroup": "zoom_blur",
+      "init_index": 1,
+      "frozen": false,
+      "v1": false,
+      "steps": [
+        220,
+        220
+      ],
+      "active": [
+        [
+          0.6920928253368898,
+          0.2753018548542803
+        ],
+        [
+          0.6984493572603573,
+          0.17998935112899
+        ]
+      ],
+      "start_exact": true,
+      "rng_prefix_exact": true
+    },
+    {
+      "case_id": "t06_light_asset_i1",
+      "task_id": 6,
+      "group": "Lighting",
+      "subgroup": "light_asset",
+      "init_index": 1,
+      "frozen": false,
+      "v1": false,
+      "steps": [
+        220,
+        220
+      ],
+      "active": [
+        [
+          0.6843395084142685,
+          0.2620087672363628
+        ],
+        [
+          0.685410767251795,
+          0.2670158703218807
+        ]
+      ],
+      "start_exact": true,
+      "rng_prefix_exact": true
+    },
+    {
+      "case_id": "t06_scene_texture_i1",
+      "task_id": 6,
+      "group": "Background",
+      "subgroup": "scene_texture",
+      "init_index": 1,
+      "frozen": false,
+      "v1": false,
+      "steps": [
+        220,
+        220
+      ],
+      "active": [
+        [
+          0.7639441484754735,
+          0.4587890764529055
+        ],
+        [
+          0.7671342540871013,
+          0.44981061789122495
+        ]
+      ],
+      "start_exact": true,
+      "rng_prefix_exact": true
+    },
+    {
+      "case_id": "t07_clean_i2",
+      "task_id": 7,
+      "group": "Clean",
+      "subgroup": "Clean",
+      "init_index": 2,
+      "frozen": true,
+      "v1": true,
+      "steps": [
+        106,
+        109
+      ],
+      "active": [
+        [
+          0.07952535630397077,
+          0.015354756771077244
+        ],
+        [
+          0.08000048027809607,
+          0.019244553373887315
+        ]
+      ],
+      "start_exact": true,
+      "rng_prefix_exact": true
+    },
+    {
+      "case_id": "t07_zoom_blur_i1",
+      "task_id": 7,
+      "group": "Sensor",
+      "subgroup": "zoom_blur",
+      "init_index": 1,
+      "frozen": false,
+      "v1": false,
+      "steps": [
+        220,
+        220
+      ],
+      "active": [
+        [
+          0.7251894138076088,
+          0.28370029174468736
+        ],
+        [
+          0.6971768658269536,
+          0.2066465488211675
+        ]
+      ],
+      "start_exact": true,
+      "rng_prefix_exact": true
+    },
+    {
+      "case_id": "t07_fog_i1",
+      "task_id": 7,
+      "group": "Sensor",
+      "subgroup": "fog",
+      "init_index": 1,
+      "frozen": false,
+      "v1": true,
+      "steps": [
+        220,
+        175
+      ],
+      "active": [
+        [
+          0.8537287126887928,
+          0.31033381643620406
+        ],
+        [
+          0.8348288893699646,
+          0.2706175676413945
+        ]
+      ],
+      "start_exact": true,
+      "rng_prefix_exact": true
+    },
+    {
+      "case_id": "t07_light_asset_i1",
+      "task_id": 7,
+      "group": "Lighting",
+      "subgroup": "light_asset",
+      "init_index": 1,
+      "frozen": true,
+      "v1": false,
+      "steps": [
+        106,
+        220
+      ],
+      "active": [
+        [
+          0.18227938900016388,
+          0.04196147920282663
+        ],
+        [
+          0.23841738501055673,
+          0.04809422483138571
+        ]
+      ],
+      "start_exact": true,
+      "rng_prefix_exact": true
+    },
+    {
+      "case_id": "t07_scene_texture_i1",
+      "task_id": 7,
+      "group": "Background",
+      "subgroup": "scene_texture",
+      "init_index": 1,
+      "frozen": true,
+      "v1": true,
+      "steps": [
+        147,
+        139
+      ],
+      "active": [
+        [
+          0.6302349238979573,
+          0.18126417777570739
+        ],
+        [
+          0.6300116378626377,
+          0.1725213625769821
+        ]
+      ],
+      "start_exact": true,
+      "rng_prefix_exact": true
+    },
+    {
+      "case_id": "t08_clean_i2",
+      "task_id": 8,
+      "group": "Clean",
+      "subgroup": "Clean",
+      "init_index": 2,
+      "frozen": true,
+      "v1": true,
+      "steps": [
+        105,
+        104
+      ],
+      "active": [
+        [
+          0.03294890961121945,
+          0.03368055655155331
+        ],
+        [
+          0.031938602726978176,
+          0.030348558590048924
+        ]
+      ],
+      "start_exact": true,
+      "rng_prefix_exact": true
+    },
+    {
+      "case_id": "t08_fog_i1",
+      "task_id": 8,
+      "group": "Sensor",
+      "subgroup": "fog",
+      "init_index": 1,
+      "frozen": false,
+      "v1": false,
+      "steps": [
+        220,
+        220
+      ],
+      "active": [
+        [
+          0.782439649105072,
+          0.2922230205752633
+        ],
+        [
+          0.7721768677234649,
+          0.28815696970982985
+        ]
+      ],
+      "start_exact": true,
+      "rng_prefix_exact": true
+    },
+    {
+      "case_id": "t08_glass_blur_i1",
+      "task_id": 8,
+      "group": "Sensor",
+      "subgroup": "glass_blur",
+      "init_index": 1,
+      "frozen": false,
+      "v1": false,
+      "steps": [
+        220,
+        220
+      ],
+      "active": [
+        [
+          0.7400627572428097,
+          0.25840436497872527
+        ],
+        [
+          0.739541922103275,
+          0.26028646684505724
+        ]
+      ],
+      "start_exact": true,
+      "rng_prefix_exact": true
+    },
+    {
+      "case_id": "t08_light_asset_i1",
+      "task_id": 8,
+      "group": "Lighting",
+      "subgroup": "light_asset",
+      "init_index": 1,
+      "frozen": true,
+      "v1": true,
+      "steps": [
+        96,
+        110
+      ],
+      "active": [
+        [
+          0.6814778838306665,
+          0.2354600753945609
+        ],
+        [
+          0.6795691473917528,
+          0.2487334350293333
+        ]
+      ],
+      "start_exact": true,
+      "rng_prefix_exact": true
+    },
+    {
+      "case_id": "t08_table_texture_i1",
+      "task_id": 8,
+      "group": "Background",
+      "subgroup": "table_texture",
+      "init_index": 1,
+      "frozen": false,
+      "v1": true,
+      "steps": [
+        220,
+        216
+      ],
+      "active": [
+        [
+          0.7783203330906955,
+          0.4896484544331377
+        ],
+        [
+          0.7752037721651571,
+          0.49190419215570996
+        ]
+      ],
+      "start_exact": true,
+      "rng_prefix_exact": true
+    },
+    {
+      "case_id": "t09_clean_i2",
+      "task_id": 9,
+      "group": "Clean",
+      "subgroup": "Clean",
+      "init_index": 2,
+      "frozen": true,
+      "v1": true,
+      "steps": [
+        130,
+        128
+      ],
+      "active": [
+        [
+          0.11788862516673712,
+          0.0391927095147996
+        ],
+        [
+          0.11955770204076543,
+          0.039001465682304115
+        ]
+      ],
+      "start_exact": true,
+      "rng_prefix_exact": true
+    },
+    {
+      "case_id": "t09_glass_blur_i1",
+      "task_id": 9,
+      "group": "Sensor",
+      "subgroup": "glass_blur",
+      "init_index": 1,
+      "frozen": false,
+      "v1": false,
+      "steps": [
+        220,
+        220
+      ],
+      "active": [
+        [
+          0.7688861456784335,
+          0.26083097369833425
+        ],
+        [
+          0.7672230308706111,
+          0.2610677156936039
+        ]
+      ],
+      "start_exact": true,
+      "rng_prefix_exact": true
+    },
+    {
+      "case_id": "t09_motion_blur_i1",
+      "task_id": 9,
+      "group": "Sensor",
+      "subgroup": "motion_blur",
+      "init_index": 1,
+      "frozen": false,
+      "v1": false,
+      "steps": [
+        220,
+        220
+      ],
+      "active": [
+        [
+          0.6931108160452409,
+          0.26309778175570747
+        ],
+        [
+          0.6892637515609915,
+          0.2654178583486514
+        ]
+      ],
+      "start_exact": true,
+      "rng_prefix_exact": true
+    },
+    {
+      "case_id": "t09_light_asset_i1",
+      "task_id": 9,
+      "group": "Lighting",
+      "subgroup": "light_asset",
+      "init_index": 1,
+      "frozen": true,
+      "v1": true,
+      "steps": [
+        147,
+        132
+      ],
+      "active": [
+        [
+          0.7272534212287591,
+          0.2902760145818295
+        ],
+        [
+          0.7315538390116259,
+          0.28110204320965393
+        ]
+      ],
+      "start_exact": true,
+      "rng_prefix_exact": true
+    },
+    {
+      "case_id": "t09_scene_texture_i1",
+      "task_id": 9,
+      "group": "Background",
+      "subgroup": "scene_texture",
+      "init_index": 1,
+      "frozen": true,
+      "v1": false,
+      "steps": [
+        133,
+        220
+      ],
+      "active": [
+        [
+          0.6788357796525597,
+          0.2781367559630172
+        ],
+        [
+          0.6656250192360444,
+          0.3165719780732285
+        ]
+      ],
+      "start_exact": true,
+      "rng_prefix_exact": true
+    }
+  ],
+  "calib_sha256": "e573729434d6cdba404d887dc3f685d33b6c67fd6901cd487c512a18fa0ef606",
+  "manifest_sha256": "a72d9213d5a244b4b67e4105fa801926429f399124c99fe65b0a0a588bcc5ec6",
+  "preflight": {
+    "status": "PASS",
+    "physical_assets": [
+      {
+        "id": "t00_light_asset_i1",
+        "physics_camera_exact": true,
+        "initial_state_exact": true,
+        "image_MAE": [
+          44.25623575846354,
+          48.18043009440104
+        ]
+      },
+      {
+        "id": "t00_table_texture_i1",
+        "physics_camera_exact": true,
+        "initial_state_exact": true,
+        "image_MAE": [
+          40.562469482421875,
+          50.63055419921875
+        ]
+      },
+      {
+        "id": "t01_light_asset_i1",
+        "physics_camera_exact": true,
+        "initial_state_exact": true,
+        "image_MAE": [
+          44.28480021158854,
+          51.33179219563802
+        ]
+      },
+      {
+        "id": "t01_table_texture_i1",
+        "physics_camera_exact": true,
+        "initial_state_exact": true,
+        "image_MAE": [
+          59.1619618733724,
+          81.4928487141927
+        ]
+      },
+      {
+        "id": "t02_light_asset_i1",
+        "physics_camera_exact": true,
+        "initial_state_exact": true,
+        "image_MAE": [
+          40.61707051595052,
+          43.774566650390625
+        ]
+      },
+      {
+        "id": "t02_table_texture_i1",
+        "physics_camera_exact": true,
+        "initial_state_exact": true,
+        "image_MAE": [
+          68.28548177083333,
+          84.71237691243489
+        ]
+      },
+      {
+        "id": "t03_light_asset_i1",
+        "physics_camera_exact": true,
+        "initial_state_exact": true,
+        "image_MAE": [
+          40.78435262044271,
+          43.480183919270836
+        ]
+      },
+      {
+        "id": "t03_table_texture_i1",
+        "physics_camera_exact": true,
+        "initial_state_exact": true,
+        "image_MAE": [
+          55.46675109863281,
+          72.56253051757812
+        ]
+      },
+      {
+        "id": "t04_light_asset_i1",
+        "physics_camera_exact": true,
+        "initial_state_exact": true,
+        "image_MAE": [
+          43.76436869303385,
+          51.139556884765625
+        ]
+      },
+      {
+        "id": "t04_scene_texture_i1",
+        "physics_camera_exact": true,
+        "initial_state_exact": true,
+        "image_MAE": [
+          25.645482381184895,
+          15.917561848958334
+        ]
+      },
+      {
+        "id": "t05_light_asset_i1",
+        "physics_camera_exact": true,
+        "initial_state_exact": true,
+        "image_MAE": [
+          44.38233439127604,
+          49.27985127766927
+        ]
+      },
+      {
+        "id": "t05_scene_texture_i1",
+        "physics_camera_exact": true,
+        "initial_state_exact": true,
+        "image_MAE": [
+          30.224461873372395,
+          33.443267822265625
+        ]
+      },
+      {
+        "id": "t06_light_asset_i1",
+        "physics_camera_exact": true,
+        "initial_state_exact": true,
+        "image_MAE": [
+          44.235382080078125,
+          50.59405517578125
+        ]
+      },
+      {
+        "id": "t06_scene_texture_i1",
+        "physics_camera_exact": true,
+        "initial_state_exact": true,
+        "image_MAE": [
+          33.51923116048177,
+          36.38961283365885
+        ]
+      },
+      {
+        "id": "t07_light_asset_i1",
+        "physics_camera_exact": true,
+        "initial_state_exact": true,
+        "image_MAE": [
+          6.726216634114583,
+          9.651723225911459
+        ]
+      },
+      {
+        "id": "t07_scene_texture_i1",
+        "physics_camera_exact": true,
+        "initial_state_exact": true,
+        "image_MAE": [
+          9.173136393229166,
+          7.840433756510417
+        ]
+      },
+      {
+        "id": "t08_light_asset_i1",
+        "physics_camera_exact": true,
+        "initial_state_exact": true,
+        "image_MAE": [
+          44.01726786295573,
+          50.9742431640625
+        ]
+      },
+      {
+        "id": "t08_table_texture_i1",
+        "physics_camera_exact": true,
+        "initial_state_exact": true,
+        "image_MAE": [
+          63.88298543294271,
+          87.44416809082031
+        ]
+      },
+      {
+        "id": "t09_light_asset_i1",
+        "physics_camera_exact": true,
+        "initial_state_exact": true,
+        "image_MAE": [
+          45.19818115234375,
+          51.23670959472656
+        ]
+      },
+      {
+        "id": "t09_scene_texture_i1",
+        "physics_camera_exact": true,
+        "initial_state_exact": true,
+        "image_MAE": [
+          35.203948974609375,
+          36.77282206217448
+        ]
+      }
+    ],
+    "sensor": [
+      {
+        "family": "motion_blur",
+        "both_views_changed": true,
+        "reproducible": true,
+        "numpy_rng_preserved": true
+      },
+      {
+        "family": "gaussian_blur",
+        "both_views_changed": true,
+        "reproducible": true,
+        "numpy_rng_preserved": true
+      },
+      {
+        "family": "zoom_blur",
+        "both_views_changed": true,
+        "reproducible": true,
+        "numpy_rng_preserved": true
+      },
+      {
+        "family": "fog",
+        "both_views_changed": true,
+        "reproducible": true,
+        "numpy_rng_preserved": true
+      },
+      {
+        "family": "glass_blur",
+        "both_views_changed": true,
+        "reproducible": true,
+        "numpy_rng_preserved": true
+      }
+    ],
+    "native_alpha0_action_exact": true,
+    "identity_conditions": [
+      "Clean",
+      "motion_blur",
+      "gaussian_blur",
+      "zoom_blur",
+      "fog",
+      "glass_blur"
+    ],
+    "script_sha256": "76af183eeba1d969d984a68594fa302fecd48c120e0faf9095db083b47328678"
+  },
+  "decision": "NO-GO: Shift40 net -2 (3 rescues / 5 harms); no formal main table or ActMAD expansion",
+  "limitations": [
+    "one policy seed; tiny subgroup counts; task bootstrap has only ten clusters",
+    "Clean20 cannot establish a 1\u20132pp noninferiority margin; Phase3A reproduced harm retained",
+    "official Plus scene selectors on reproduced Vanilla base; not unmodified full Plus evaluator",
+    "Plus severity5 is on its ten-level corruption scale; not a matched SALT leaderboard",
+    "all conditions development-only, not untouched confirmation",
+    "Nominal exact McNemar p-values do not adjust within-task dependence or multiplicity; task bootstrap uses only ten clusters",
+    "Degenerate [0,0] bootstrap intervals when observed paired differences are all zero do not establish population equivalence",
+    "Motion/Gaussian/Zoom/Glass each 0/4 for both arms: severe floor in this tiny pilot, not evidence of safety or universality",
+    "Sensor severity=5 is the function argument on Plus ten-level scale, not official task difficulty_level=5; not a controlled SALT reproduction"
+  ],
+  "autogenerated_decision": "exploratory result for review; no automatic formal-table launch",
+  "promotion_gate": {
+    "shift40_positive_net": false,
+    "clean20_noninferiority_established": false,
+    "formal_main_table_started": false,
+    "threshold_source": "user requested clear Shift40 positive net before expansion"
+  },
+  "execution": {
+    "completed_episodes": 100,
+    "verified_pairs": 50,
+    "main_campaign_minutes_approx": 65.07819990771628,
+    "retained_completed_arms_hash_exact": 53,
+    "exact_cpu_glass_validation_checks": 40,
+    "exact_cpu_glass_median_speedup": 113.58731672952578,
+    "source_commits": [
+      "acd56b6",
+      "8cc6f5a"
+    ],
+    "evidence_archive_sha256": "dd581dc96bc65142891f1141f4945f33d78d3f63d034659e42b829c0ffc1fa79",
+    "scientific_parameters_changed": false,
+    "cpu_acceleration_is_not_a_method_component": true
+  },
+  "postchecks": {
+    "status": "PASS",
+    "episodes": 100,
+    "verified_pairs": 50,
+    "retained_completed_arms_hash_exact": 53,
+    "all_action_frames_finite": true,
+    "all_initial_physical_and_RGB_exact": true,
+    "all_flow_rng_prefixes_exact": true,
+    "independent_counts_match_report": true,
+    "source_original_and_accelerated_hashes_unchanged": true,
+    "all_scene_and_texture_hashes_unchanged": true,
+    "calibration_hash_unchanged": true,
+    "formal_main_table_started": false,
+    "timestamp": "2026-11-26T15:13:32.555634+08:00"
+  }
+}

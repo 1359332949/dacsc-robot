@@ -1,0 +1,922 @@
+{
+  "source_audit": {
+    "case_selection_unchanged_during_preflight": true,
+    "native_default_styles_unchanged": true,
+    "source_snapshot_sha256_verified": true,
+    "phase3a_common_and_hook_byte_identical": true
+  },
+  "runtime_receipt": {
+    "checkpoint_sha256": "71d9563c8295284acba8fc2d5c19de000d6fe9ba58a406832af7ef3d221ed52f",
+    "versions": {
+      "torch": "2.10.0",
+      "transformers": "4.57.6",
+      "numpy": "1.26.4",
+      "huggingface_hub": "0.35.3"
+    },
+    "captured_at_utc": "2026-11-26T06:08:02.735742+00:00"
+  },
+  "asset_receipt": {
+    "source_class_and_style_sha256": {
+      "/hy-tmp/LIBERO-plus/libero/libero/envs/arenas/style.py": "0e3960b691dd2c36b3bc0920d83d37bc9edcb69b29d101459944fa5bad6f01c4",
+      "/hy-tmp/LIBERO-plus/libero/libero/envs/problems/libero_tabletop_manipulation.py": "6f97cfbaaea1fed9c7ba2711b75558ae97d3559d5199d15edeef0ff38648b0ba"
+    },
+    "scene_and_resolved_texture_files": [
+      {
+        "path": "/hy-tmp/LIBERO-plus/libero/libero/assets/scenes/lights/tabletop_light_sync_modified_120.xml",
+        "bytes": 8449,
+        "sha256": "58682765adb0a091114a861647a433beed4f06020a0ed0300d3fe93b58eb5faf"
+      },
+      {
+        "path": "/hy-tmp/LIBERO-plus/libero/libero/assets/scenes/lights/tabletop_light_sync_modified_144.xml",
+        "bytes": 8439,
+        "sha256": "13281d01c93cd95e048c8f1fbd61576d6e22c474dde70d4ae7b854a82522359a"
+      },
+      {
+        "path": "/hy-tmp/LIBERO-plus/libero/libero/assets/scenes/lights/tabletop_light_sync_modified_170.xml",
+        "bytes": 8437,
+        "sha256": "4eba7d8c28aad2613108f80ee12745efd47680b6211e18e6fe35b2826105f36f"
+      },
+      {
+        "path": "/hy-tmp/LIBERO-plus/libero/libero/assets/scenes/lights/tabletop_light_sync_modified_224.xml",
+        "bytes": 8447,
+        "sha256": "76509dafbce5ef6e16cd56969e3eebdc0a67184b255cfdccdf43a6e6f9a828af"
+      },
+      {
+        "path": "/hy-tmp/LIBERO-plus/libero/libero/assets/scenes/lights/tabletop_light_sync_modified_300.xml",
+        "bytes": 8437,
+        "sha256": "b2d06d8bb53167eac79bbd140fe8eb300eb722f84394faf0093cc54395716bff"
+      },
+      {
+        "path": "/hy-tmp/LIBERO-plus/libero/libero/assets/scenes/lights/tabletop_light_sync_modified_326.xml",
+        "bytes": 8449,
+        "sha256": "fc7b5d1c0c6cd2f57031c110c6e7eb8f8cec551046a182f96a4c219d1ccdbd2b"
+      },
+      {
+        "path": "/hy-tmp/LIBERO-plus/libero/libero/assets/scenes/lights/tabletop_light_sync_modified_356.xml",
+        "bytes": 8447,
+        "sha256": "26d9f29ff24c8affac388910761116ea9f64bb9fcb2ed16a9bf84468e9266e7c"
+      },
+      {
+        "path": "/hy-tmp/LIBERO-plus/libero/libero/assets/scenes/lights/tabletop_light_sync_modified_401.xml",
+        "bytes": 8441,
+        "sha256": "1d453b5acf5b20746f8eed09ff3ed4e1db8b42acb5f5a7fc2e4180172e31cdc8"
+      },
+      {
+        "path": "/hy-tmp/LIBERO-plus/libero/libero/assets/scenes/lights/tabletop_light_sync_modified_455.xml",
+        "bytes": 8451,
+        "sha256": "becf7a10e2c69a9ca3c40886632bde0c1dc2bc0456c68718d8b0bb169dd5a568"
+      },
+      {
+        "path": "/hy-tmp/LIBERO-plus/libero/libero/assets/scenes/lights/tabletop_light_sync_modified_514.xml",
+        "bytes": 8439,
+        "sha256": "ad5902b0fefe5081c835d6d7588a7a0ac4a53a31f6365efd795f0176513dee7f"
+      },
+      {
+        "path": "/hy-tmp/LIBERO-plus/libero/libero/assets/scenes/ph/Bricks02_NRM_6K.png",
+        "bytes": 437539,
+        "sha256": "08f9c223185a0f6b8a3843bbbb1d5f75e0e3cf6ffed7bf4832049a725dd70628"
+      },
+      {
+        "path": "/hy-tmp/LIBERO-plus/libero/libero/assets/scenes/ph/CliffDesert006_AO_HIRES.png",
+        "bytes": 171812,
+        "sha256": "5c51ba4522a2306d76472fd73340465098f9c63424bf7fc1166cb3083b611caf"
+      },
+      {
+        "path": "/hy-tmp/LIBERO-plus/libero/libero/assets/scenes/ph/CliffDesert006_DISP_VAR1_HIRES.png",
+        "bytes": 138390,
+        "sha256": "7a16dcc01a7d492a3781985c19d990c9f0c6b71816f470e90f732b70edf83d90"
+      },
+      {
+        "path": "/hy-tmp/LIBERO-plus/libero/libero/assets/scenes/ph/Cobblestone01_COL_VAR2_6K.png",
+        "bytes": 444896,
+        "sha256": "d12365f3e7c257cfcf51641f8df2b81b1654012103c14bfcac0c9374c52a42f0"
+      },
+      {
+        "path": "/hy-tmp/LIBERO-plus/libero/libero/assets/scenes/ph/WoodFine001_GLOSS_6K.png",
+        "bytes": 152574,
+        "sha256": "f95d06084aa2d9c29e3fc514e4930a241cbd2f1a66e289024fd67c2cd6afe745"
+      },
+      {
+        "path": "/hy-tmp/LIBERO-plus/libero/libero/assets/scenes/phs/CarbonFiber001_GLOSS_6K.png",
+        "bytes": 123537,
+        "sha256": "1b579cab641a257c25c96f0ed7389b7f39f8901f9433eb6acf9c0979980cfe5b"
+      },
+      {
+        "path": "/hy-tmp/LIBERO-plus/libero/libero/assets/scenes/phs/FabricLeatherBlack001_REFL_6K.png",
+        "bytes": 96906,
+        "sha256": "b8e6cb47caecdc74b51a226a1bd2ace625705ca2187a716dcbff4766e810bc5d"
+      },
+      {
+        "path": "/hy-tmp/LIBERO-plus/libero/libero/assets/scenes/phs/FabricLinen001_REFL_6K.png",
+        "bytes": 61941,
+        "sha256": "24143224bdf88cd37bce3d1d1cb44ad704e933b5f05415c59d2e52e48acc8fc3"
+      },
+      {
+        "path": "/hy-tmp/LIBERO-plus/libero/libero/assets/scenes/phs/FabricModeledWool001_REFL_3K.png",
+        "bytes": 77435,
+        "sha256": "6ab02bebf6adc99e77e88ce2408f1168e3ef5e02fa1d7b0ed58cb02ca2f0945f"
+      },
+      {
+        "path": "/hy-tmp/LIBERO-plus/libero/libero/assets/scenes/phs/FabricWeaveRug001_GLOSS_6K.png",
+        "bytes": 137755,
+        "sha256": "ecc4c8c92d9e238a1c932cd890a0e9c2e17125d67d032c7ac66e1da90cb35e8c"
+      },
+      {
+        "path": "/hy-tmp/LIBERO-plus/libero/libero/assets/scenes/tabletop250/tabletop_table_CarbonFiber001_GLOSS_6K.xml",
+        "bytes": 8447,
+        "sha256": "39e28fbec63d44b2336d336962b0623f2ba6d284ab0e69a1934c04100d9495e8"
+      },
+      {
+        "path": "/hy-tmp/LIBERO-plus/libero/libero/assets/scenes/tabletop250/tabletop_table_FabricLeatherBlack001_REFL_6K.xml",
+        "bytes": 8453,
+        "sha256": "1db86f7012cd89c193d03e9b06aea30199d047f82cb4efbdfaf7a873201c733e"
+      },
+      {
+        "path": "/hy-tmp/LIBERO-plus/libero/libero/assets/scenes/tabletop250/tabletop_table_FabricLinen001_REFL_6K.xml",
+        "bytes": 8446,
+        "sha256": "42e16f4330fd8036df3d9e148bb3ee3e7e1ee5a8a57164baa92f3378c50efe3b"
+      },
+      {
+        "path": "/hy-tmp/LIBERO-plus/libero/libero/assets/scenes/tabletop250/tabletop_table_FabricModeledWool001_REFL_3K.xml",
+        "bytes": 8452,
+        "sha256": "41a0e05d8eaff42575818087f8bc8ef067d535c60d2f210d0e3cdd37692b5f0e"
+      },
+      {
+        "path": "/hy-tmp/LIBERO-plus/libero/libero/assets/scenes/tabletop250/tabletop_table_FabricWeaveRug001_GLOSS_6K.xml",
+        "bytes": 8450,
+        "sha256": "f59e8887bec5d921e4afdde79e99dd6ae70e6bea7bac28f5762dfa929161e1f4"
+      },
+      {
+        "path": "/hy-tmp/LIBERO-plus/libero/libero/assets/scenes/tabletop_table_Bricks02_NRM_6K.xml",
+        "bytes": 8435,
+        "sha256": "44a4402106f156d3e766c0f895b2d9a0ce3a0bec2b9f32120681088205962326"
+      },
+      {
+        "path": "/hy-tmp/LIBERO-plus/libero/libero/assets/scenes/tabletop_table_CliffDesert006_AO_HIRES.xml",
+        "bytes": 8443,
+        "sha256": "dbab68c6cc518c7fa71d45ff7967a60e804d7cf5b95d64d0b97026721936bdec"
+      },
+      {
+        "path": "/hy-tmp/LIBERO-plus/libero/libero/assets/scenes/tabletop_table_CliffDesert006_DISP_VAR1_HIRES.xml",
+        "bytes": 8450,
+        "sha256": "cda7cc4006aaa55c6c2113f546bcdc5fd491f1c1e7bddab67d4e36c8af1ff860"
+      },
+      {
+        "path": "/hy-tmp/LIBERO-plus/libero/libero/assets/scenes/tabletop_table_Cobblestone01_COL_VAR2_6K.xml",
+        "bytes": 8445,
+        "sha256": "d613eb39c9695a9d1144081425f70f54cd5cb639826e22afc9c3cac0fa33469e"
+      },
+      {
+        "path": "/hy-tmp/LIBERO-plus/libero/libero/assets/scenes/tabletop_table_WoodFine001_GLOSS_6K.xml",
+        "bytes": 8440,
+        "sha256": "bbc132df914a4b3ef64a985fd8403b2b2dd39265aad0f944f470627d5e9ada80"
+      },
+      {
+        "path": "/hy-tmp/LIBERO-plus/libero/libero/assets/scenes/textures/light-gray-floor-tile.png",
+        "bytes": 204900,
+        "sha256": "b19e581b8035c14b8a52daea5c12fdd4980467373a309babc1831ed8a09d03bf"
+      },
+      {
+        "path": "/hy-tmp/LIBERO-plus/libero/libero/assets/scenes/textures/light-gray-plaster.png",
+        "bytes": 516639,
+        "sha256": "d0bdaf13b44ab6ef3122451f6b3853e40bdf20bb9be7662649683ba525dfe191"
+      },
+      {
+        "path": "/hy-tmp/LIBERO-plus/libero/libero/assets/scenes/textures/martin_novak_wood_table.png",
+        "bytes": 940180,
+        "sha256": "9d714fbf44d4d44f279761c0ddd0b2fd7271446cdbb85fcbef8677fe5f929850"
+      },
+      {
+        "path": "/hy-tmp/LIBERO-plus/libero/libero/assets/textures/canvas_sky_blue.png",
+        "bytes": 595327,
+        "sha256": "5f56b536a3247ff2c0fcbcbab17baa768ed812e7e523a633311b961871e87490"
+      },
+      {
+        "path": "/hy-tmp/LIBERO-plus/libero/libero/assets/textures/dark_gray_plaster.png",
+        "bytes": 101534,
+        "sha256": "420c9ef8e2a0c713b7a225d0505ef53783fd9ca69abb2aa70dde969691c4bd92"
+      },
+      {
+        "path": "/hy-tmp/LIBERO-plus/libero/libero/assets/textures/gray_ceramic_tile.png",
+        "bytes": 435890,
+        "sha256": "93a1c2b647f31aded62b4125439e17aa1a55c8f4e77820909d9a1c235f6c7315"
+      },
+      {
+        "path": "/hy-tmp/LIBERO-plus/libero/libero/assets/textures/gray_wall.png",
+        "bytes": 167095,
+        "sha256": "fcac8598e8b558d8edbf26ff71e97bc72d799df3a3331a973067d21c8fcffcb6"
+      },
+      {
+        "path": "/hy-tmp/LIBERO-plus/libero/libero/assets/textures/light-gray-floor-tile.png",
+        "bytes": 195997,
+        "sha256": "01c8407d093dc2121cdb42a4b3bbf2b89953431ee039d50f03d46197438ef8f1"
+      },
+      {
+        "path": "/hy-tmp/LIBERO-plus/libero/libero/assets/textures/light_blue_wall.png",
+        "bytes": 180284,
+        "sha256": "0e53979a16a1464ba0ba693e38cf71fb541875a5529e00853ed9b3c739687df2"
+      },
+      {
+        "path": "/hy-tmp/LIBERO-plus/libero/libero/assets/textures/martin_novak_wood_table.png",
+        "bytes": 189464,
+        "sha256": "833ccf460b3ce1f4564283ffe0b0b4a6790a3bb0bc2618d3e27a2b2501ae10a9"
+      }
+    ]
+  },
+  "glass_exact_receipt": {
+    "status": "PASS",
+    "checks": [
+      {
+        "name": "task0_agentview_image",
+        "severity": 5,
+        "shape": [
+          256,
+          256,
+          3
+        ],
+        "seed": 2026112600,
+        "float_output_bit_exact": true,
+        "uint8_output_bit_exact": true,
+        "rng_state_exact": true,
+        "original_seconds": 1.5603050180361606,
+        "accelerated_seconds": 0.01579414797015488
+      },
+      {
+        "name": "task0_robot0_eye_in_hand_image",
+        "severity": 5,
+        "shape": [
+          256,
+          256,
+          3
+        ],
+        "seed": 2026112601,
+        "float_output_bit_exact": true,
+        "uint8_output_bit_exact": true,
+        "rng_state_exact": true,
+        "original_seconds": 1.5660194059601054,
+        "accelerated_seconds": 0.014729993999935687
+      },
+      {
+        "name": "task1_agentview_image",
+        "severity": 5,
+        "shape": [
+          256,
+          256,
+          3
+        ],
+        "seed": 2026112602,
+        "float_output_bit_exact": true,
+        "uint8_output_bit_exact": true,
+        "rng_state_exact": true,
+        "original_seconds": 1.5563814949709922,
+        "accelerated_seconds": 0.01490686199394986
+      },
+      {
+        "name": "task1_robot0_eye_in_hand_image",
+        "severity": 5,
+        "shape": [
+          256,
+          256,
+          3
+        ],
+        "seed": 2026112603,
+        "float_output_bit_exact": true,
+        "uint8_output_bit_exact": true,
+        "rng_state_exact": true,
+        "original_seconds": 1.5642605859902687,
+        "accelerated_seconds": 0.016767079010605812
+      },
+      {
+        "name": "task2_agentview_image",
+        "severity": 5,
+        "shape": [
+          256,
+          256,
+          3
+        ],
+        "seed": 2026112604,
+        "float_output_bit_exact": true,
+        "uint8_output_bit_exact": true,
+        "rng_state_exact": true,
+        "original_seconds": 1.5586246460443363,
+        "accelerated_seconds": 0.013101909018587321
+      },
+      {
+        "name": "task2_robot0_eye_in_hand_image",
+        "severity": 5,
+        "shape": [
+          256,
+          256,
+          3
+        ],
+        "seed": 2026112605,
+        "float_output_bit_exact": true,
+        "uint8_output_bit_exact": true,
+        "rng_state_exact": true,
+        "original_seconds": 1.5600180909968913,
+        "accelerated_seconds": 0.01585348998196423
+      },
+      {
+        "name": "task3_agentview_image",
+        "severity": 5,
+        "shape": [
+          256,
+          256,
+          3
+        ],
+        "seed": 2026112606,
+        "float_output_bit_exact": true,
+        "uint8_output_bit_exact": true,
+        "rng_state_exact": true,
+        "original_seconds": 1.5686977239674889,
+        "accelerated_seconds": 0.018537527008447796
+      },
+      {
+        "name": "task3_robot0_eye_in_hand_image",
+        "severity": 5,
+        "shape": [
+          256,
+          256,
+          3
+        ],
+        "seed": 2026112607,
+        "float_output_bit_exact": true,
+        "uint8_output_bit_exact": true,
+        "rng_state_exact": true,
+        "original_seconds": 1.554999345971737,
+        "accelerated_seconds": 0.012781707977410406
+      },
+      {
+        "name": "task4_agentview_image",
+        "severity": 5,
+        "shape": [
+          256,
+          256,
+          3
+        ],
+        "seed": 2026112608,
+        "float_output_bit_exact": true,
+        "uint8_output_bit_exact": true,
+        "rng_state_exact": true,
+        "original_seconds": 1.6035262980149128,
+        "accelerated_seconds": 0.015372192952781916
+      },
+      {
+        "name": "task4_robot0_eye_in_hand_image",
+        "severity": 5,
+        "shape": [
+          256,
+          256,
+          3
+        ],
+        "seed": 2026112609,
+        "float_output_bit_exact": true,
+        "uint8_output_bit_exact": true,
+        "rng_state_exact": true,
+        "original_seconds": 1.5548940220032819,
+        "accelerated_seconds": 0.01689140102826059
+      },
+      {
+        "name": "task5_agentview_image",
+        "severity": 5,
+        "shape": [
+          256,
+          256,
+          3
+        ],
+        "seed": 2026112610,
+        "float_output_bit_exact": true,
+        "uint8_output_bit_exact": true,
+        "rng_state_exact": true,
+        "original_seconds": 1.5704690880374983,
+        "accelerated_seconds": 0.013217120023909956
+      },
+      {
+        "name": "task5_robot0_eye_in_hand_image",
+        "severity": 5,
+        "shape": [
+          256,
+          256,
+          3
+        ],
+        "seed": 2026112611,
+        "float_output_bit_exact": true,
+        "uint8_output_bit_exact": true,
+        "rng_state_exact": true,
+        "original_seconds": 1.6546443010447547,
+        "accelerated_seconds": 0.014881860988680273
+      },
+      {
+        "name": "task6_agentview_image",
+        "severity": 5,
+        "shape": [
+          256,
+          256,
+          3
+        ],
+        "seed": 2026112612,
+        "float_output_bit_exact": true,
+        "uint8_output_bit_exact": true,
+        "rng_state_exact": true,
+        "original_seconds": 1.5468096749973483,
+        "accelerated_seconds": 0.016949117998592556
+      },
+      {
+        "name": "task6_robot0_eye_in_hand_image",
+        "severity": 5,
+        "shape": [
+          256,
+          256,
+          3
+        ],
+        "seed": 2026112613,
+        "float_output_bit_exact": true,
+        "uint8_output_bit_exact": true,
+        "rng_state_exact": true,
+        "original_seconds": 1.56968210299965,
+        "accelerated_seconds": 0.01347885699942708
+      },
+      {
+        "name": "task7_agentview_image",
+        "severity": 5,
+        "shape": [
+          256,
+          256,
+          3
+        ],
+        "seed": 2026112614,
+        "float_output_bit_exact": true,
+        "uint8_output_bit_exact": true,
+        "rng_state_exact": true,
+        "original_seconds": 1.5830125970533118,
+        "accelerated_seconds": 0.014733654970768839
+      },
+      {
+        "name": "task7_robot0_eye_in_hand_image",
+        "severity": 5,
+        "shape": [
+          256,
+          256,
+          3
+        ],
+        "seed": 2026112615,
+        "float_output_bit_exact": true,
+        "uint8_output_bit_exact": true,
+        "rng_state_exact": true,
+        "original_seconds": 1.6213450590148568,
+        "accelerated_seconds": 0.016867350961547345
+      },
+      {
+        "name": "task8_agentview_image",
+        "severity": 5,
+        "shape": [
+          256,
+          256,
+          3
+        ],
+        "seed": 2026112616,
+        "float_output_bit_exact": true,
+        "uint8_output_bit_exact": true,
+        "rng_state_exact": true,
+        "original_seconds": 1.6085913329734467,
+        "accelerated_seconds": 0.013200122979469597
+      },
+      {
+        "name": "task8_robot0_eye_in_hand_image",
+        "severity": 5,
+        "shape": [
+          256,
+          256,
+          3
+        ],
+        "seed": 2026112617,
+        "float_output_bit_exact": true,
+        "uint8_output_bit_exact": true,
+        "rng_state_exact": true,
+        "original_seconds": 1.6091158089693636,
+        "accelerated_seconds": 0.015164247015491128
+      },
+      {
+        "name": "task9_agentview_image",
+        "severity": 5,
+        "shape": [
+          256,
+          256,
+          3
+        ],
+        "seed": 2026112618,
+        "float_output_bit_exact": true,
+        "uint8_output_bit_exact": true,
+        "rng_state_exact": true,
+        "original_seconds": 1.6104682760196738,
+        "accelerated_seconds": 0.017054541036486626
+      },
+      {
+        "name": "task9_robot0_eye_in_hand_image",
+        "severity": 5,
+        "shape": [
+          256,
+          256,
+          3
+        ],
+        "seed": 2026112619,
+        "float_output_bit_exact": true,
+        "uint8_output_bit_exact": true,
+        "rng_state_exact": true,
+        "original_seconds": 1.5661303640226834,
+        "accelerated_seconds": 0.013263207976706326
+      },
+      {
+        "name": "random224",
+        "severity": 1,
+        "shape": [
+          224,
+          224,
+          3
+        ],
+        "seed": 2026112620,
+        "float_output_bit_exact": true,
+        "uint8_output_bit_exact": true,
+        "rng_state_exact": true,
+        "original_seconds": 2.2196262379875407,
+        "accelerated_seconds": 0.009758143976796418
+      },
+      {
+        "name": "random256",
+        "severity": 1,
+        "shape": [
+          256,
+          256,
+          3
+        ],
+        "seed": 2026112621,
+        "float_output_bit_exact": true,
+        "uint8_output_bit_exact": true,
+        "rng_state_exact": true,
+        "original_seconds": 2.423236506001558,
+        "accelerated_seconds": 0.013150718994438648
+      },
+      {
+        "name": "random224",
+        "severity": 2,
+        "shape": [
+          224,
+          224,
+          3
+        ],
+        "seed": 2026112622,
+        "float_output_bit_exact": true,
+        "uint8_output_bit_exact": true,
+        "rng_state_exact": true,
+        "original_seconds": 1.8201619290048257,
+        "accelerated_seconds": 0.009143954957835376
+      },
+      {
+        "name": "random256",
+        "severity": 2,
+        "shape": [
+          256,
+          256,
+          3
+        ],
+        "seed": 2026112623,
+        "float_output_bit_exact": true,
+        "uint8_output_bit_exact": true,
+        "rng_state_exact": true,
+        "original_seconds": 2.403242557949852,
+        "accelerated_seconds": 0.014572626037988812
+      },
+      {
+        "name": "random224",
+        "severity": 3,
+        "shape": [
+          224,
+          224,
+          3
+        ],
+        "seed": 2026112624,
+        "float_output_bit_exact": true,
+        "uint8_output_bit_exact": true,
+        "rng_state_exact": true,
+        "original_seconds": 1.8120121979736723,
+        "accelerated_seconds": 0.010007091972511262
+      },
+      {
+        "name": "random256",
+        "severity": 3,
+        "shape": [
+          256,
+          256,
+          3
+        ],
+        "seed": 2026112625,
+        "float_output_bit_exact": true,
+        "uint8_output_bit_exact": true,
+        "rng_state_exact": true,
+        "original_seconds": 2.3750838119885884,
+        "accelerated_seconds": 0.01419566199183464
+      },
+      {
+        "name": "random224",
+        "severity": 4,
+        "shape": [
+          224,
+          224,
+          3
+        ],
+        "seed": 2026112626,
+        "float_output_bit_exact": true,
+        "uint8_output_bit_exact": true,
+        "rng_state_exact": true,
+        "original_seconds": 1.2161563640111126,
+        "accelerated_seconds": 0.01040433399612084
+      },
+      {
+        "name": "random256",
+        "severity": 4,
+        "shape": [
+          256,
+          256,
+          3
+        ],
+        "seed": 2026112627,
+        "float_output_bit_exact": true,
+        "uint8_output_bit_exact": true,
+        "rng_state_exact": true,
+        "original_seconds": 1.5946626880322583,
+        "accelerated_seconds": 0.014184147003106773
+      },
+      {
+        "name": "random224",
+        "severity": 5,
+        "shape": [
+          224,
+          224,
+          3
+        ],
+        "seed": 2026112628,
+        "float_output_bit_exact": true,
+        "uint8_output_bit_exact": true,
+        "rng_state_exact": true,
+        "original_seconds": 1.194682568020653,
+        "accelerated_seconds": 0.010411274037323892
+      },
+      {
+        "name": "random256",
+        "severity": 5,
+        "shape": [
+          256,
+          256,
+          3
+        ],
+        "seed": 2026112629,
+        "float_output_bit_exact": true,
+        "uint8_output_bit_exact": true,
+        "rng_state_exact": true,
+        "original_seconds": 1.5625603270018473,
+        "accelerated_seconds": 0.015315348049625754
+      },
+      {
+        "name": "random224",
+        "severity": 6,
+        "shape": [
+          224,
+          224,
+          3
+        ],
+        "seed": 2026112630,
+        "float_output_bit_exact": true,
+        "uint8_output_bit_exact": true,
+        "rng_state_exact": true,
+        "original_seconds": 1.1963494620285928,
+        "accelerated_seconds": 0.01019502803683281
+      },
+      {
+        "name": "random256",
+        "severity": 6,
+        "shape": [
+          256,
+          256,
+          3
+        ],
+        "seed": 2026112631,
+        "float_output_bit_exact": true,
+        "uint8_output_bit_exact": true,
+        "rng_state_exact": true,
+        "original_seconds": 1.5592428490053862,
+        "accelerated_seconds": 0.013401009957306087
+      },
+      {
+        "name": "random224",
+        "severity": 7,
+        "shape": [
+          224,
+          224,
+          3
+        ],
+        "seed": 2026112632,
+        "float_output_bit_exact": true,
+        "uint8_output_bit_exact": true,
+        "rng_state_exact": true,
+        "original_seconds": 1.1756413070252165,
+        "accelerated_seconds": 0.00963750301161781
+      },
+      {
+        "name": "random256",
+        "severity": 7,
+        "shape": [
+          256,
+          256,
+          3
+        ],
+        "seed": 2026112633,
+        "float_output_bit_exact": true,
+        "uint8_output_bit_exact": true,
+        "rng_state_exact": true,
+        "original_seconds": 1.5497820890159346,
+        "accelerated_seconds": 0.012638738960959017
+      },
+      {
+        "name": "random224",
+        "severity": 8,
+        "shape": [
+          224,
+          224,
+          3
+        ],
+        "seed": 2026112634,
+        "float_output_bit_exact": true,
+        "uint8_output_bit_exact": true,
+        "rng_state_exact": true,
+        "original_seconds": 1.2046766290441155,
+        "accelerated_seconds": 0.009998108027502894
+      },
+      {
+        "name": "random256",
+        "severity": 8,
+        "shape": [
+          256,
+          256,
+          3
+        ],
+        "seed": 2026112635,
+        "float_output_bit_exact": true,
+        "uint8_output_bit_exact": true,
+        "rng_state_exact": true,
+        "original_seconds": 1.538558209023904,
+        "accelerated_seconds": 0.013287378998938948
+      },
+      {
+        "name": "random224",
+        "severity": 9,
+        "shape": [
+          224,
+          224,
+          3
+        ],
+        "seed": 2026112636,
+        "float_output_bit_exact": true,
+        "uint8_output_bit_exact": true,
+        "rng_state_exact": true,
+        "original_seconds": 0.5799276580219157,
+        "accelerated_seconds": 0.011705131037160754
+      },
+      {
+        "name": "random256",
+        "severity": 9,
+        "shape": [
+          256,
+          256,
+          3
+        ],
+        "seed": 2026112637,
+        "float_output_bit_exact": true,
+        "uint8_output_bit_exact": true,
+        "rng_state_exact": true,
+        "original_seconds": 0.7811095610377379,
+        "accelerated_seconds": 0.015225528040900826
+      },
+      {
+        "name": "random224",
+        "severity": 10,
+        "shape": [
+          224,
+          224,
+          3
+        ],
+        "seed": 2026112638,
+        "float_output_bit_exact": true,
+        "uint8_output_bit_exact": true,
+        "rng_state_exact": true,
+        "original_seconds": 0.5756862959824502,
+        "accelerated_seconds": 0.01263692497741431
+      },
+      {
+        "name": "random256",
+        "severity": 10,
+        "shape": [
+          256,
+          256,
+          3
+        ],
+        "seed": 2026112639,
+        "float_output_bit_exact": true,
+        "uint8_output_bit_exact": true,
+        "rng_state_exact": true,
+        "original_seconds": 0.7678613169700839,
+        "accelerated_seconds": 0.019483046024106443
+      }
+    ],
+    "accelerator_sha256": "f7737aadd9794acfecb7068672171444d74edd81f5876026a8a6f08ca4c271c1",
+    "oracle": "verbatim official Plus AST, including aliased pixel assignment; both floating outputs and RNG states exact",
+    "median_speedup": 113.58731672952578
+  },
+  "execution_addendum": {
+    "timestamp": "2026-11-26T14:42:16.462001+08:00",
+    "reason": "official glass loop took 901 seconds per episode; CPU-only integer acceleration bit-exact in 40 oracle checks",
+    "scientific_parameters_changed": false,
+    "cases_or_outcomes_filtered": false,
+    "model_references_operator_unchanged": true,
+    "completed_arms_reused": {
+      "t00_clean_i2_frozen.json": "30b9aa82f6ace13f8d37a2c111593c8b7a5c61edcf6058cd22d9ca502e9c8967",
+      "t00_clean_i2_v1.json": "6df26b35154578f7f73bafd58826173642fa0f7b60c87cef3c453f8d7676ef7a",
+      "t00_gaussian_blur_i1_frozen.json": "25a6070c7b68c54f7cae7f6391cd7b71a8450db591e60aa7ff837d3c80108809",
+      "t00_gaussian_blur_i1_v1.json": "18c6d0e862d8dc43d52dd0cd43b6f27e969f7b8087c186ab046fcb3b3e3c699b",
+      "t00_light_asset_i1_frozen.json": "37b7fa7918dba4a2f98ab11ea211f370657d96291a28804e089b81e6981c5d38",
+      "t00_light_asset_i1_v1.json": "85dc67908c4cf11c539196c7cb1e336ed43df74508aa3d2dbe0876b680b237a2",
+      "t00_motion_blur_i1_frozen.json": "292207986cf76a2c84f1dda9b1b637965566c78b63867e28981e7d5b7e94611d",
+      "t00_motion_blur_i1_v1.json": "8b37540e157e329d23b4f8e92d7e0f9074dc936c3da259d0289dac33dd5b0b7e",
+      "t00_table_texture_i1_frozen.json": "c4975d36f64c72924657b734c39770ea442b227468757252cae8a1779423adb5",
+      "t00_table_texture_i1_v1.json": "6fd8559cefac59ed4937cf200f0106d35fbfae80eb90eff546198df1997ad493",
+      "t01_clean_i2_frozen.json": "0323062d3be8d411b6461876c74a8f2029aa8da4d9a0e68c5fcba6136672e79e",
+      "t01_clean_i2_v1.json": "3fd232cc6ef8ddee21ecfc296b0202e3d03ca4d4a8fc8ec9a1fbe82cc87f0f60",
+      "t01_gaussian_blur_i1_frozen.json": "4fe663c403b39c4c56439c72707b63453fd55a98740bfceaaa335d655b3dd872",
+      "t01_gaussian_blur_i1_v1.json": "56d9cc0fdec34613ef3f3a1de2a72ae66ce0f7bd6e02788ed5c4f47ef221a0c5",
+      "t01_light_asset_i1_frozen.json": "2c29f3bd5457a6edeeaf65ff0e5f5f545f949f3b7cff46b69de1aa71c89f2973",
+      "t01_light_asset_i1_v1.json": "d6ab2f011b8fd70c581b5250e07bdc96d87b99a1a33909c5c06017c2f85762fe",
+      "t01_table_texture_i1_frozen.json": "40f558be8ddd7563d0b18088da2dd9d070dfd75b939f52ef04530c298f99b3a9",
+      "t01_table_texture_i1_v1.json": "34d20df79017f1850c666cdb669407e84cc4188efda77e0dba270cab825bb86a",
+      "t01_zoom_blur_i1_frozen.json": "411797fdefd05e0d992fa3362ff83d738ab589761dbfe724aae559f5400f7619",
+      "t01_zoom_blur_i1_v1.json": "574860b75e8db09aa69064f85eb2624c3501755b18af616a6c67bb664247bc1f",
+      "t02_clean_i2_frozen.json": "75c26e7e3053fc74c8a34fe3813416e88d7c377845045d5493c1abde74b59382",
+      "t02_clean_i2_v1.json": "5d79c29b2eaed6794774dc04878b09ff0a69e615a34fc621871d6e0aa3f4fbe1",
+      "t02_fog_i1_frozen.json": "07f4232dd1e634be817b889f6de609ee0bc529caa832be5d553cee62d4d16571",
+      "t02_fog_i1_v1.json": "883d0a337e890358ffcf32660143f51d010e33a4238d6aead2c8ae7cad226efc",
+      "t02_light_asset_i1_frozen.json": "cc92882566d010351f9e7edb9e148e0d077b794f84dc5be7131e966bd2fabf4a",
+      "t02_light_asset_i1_v1.json": "772987181bf7e041d956327629b363a3560da300e4fb49e08fa814ec8c2190f6",
+      "t02_table_texture_i1_frozen.json": "b4d59996e3fb8a1574dd60a53856b1ccd0d1ee48617dc5f0e6a3d8cf7123711e",
+      "t02_table_texture_i1_v1.json": "17ea24934142d948c722ef3e17c0d25719065f846c18d1dd08b856246f63e96e",
+      "t02_zoom_blur_i1_frozen.json": "719997c5df913979a432098ec5e1964789e86f0ba49f3e086d03951e2c3d68fe",
+      "t02_zoom_blur_i1_v1.json": "3e804a0b38f06b9fe9a13495f5c92a4d723fc16378949ff1a50c793eb7f0109d",
+      "t03_clean_i2_frozen.json": "2a18b1d526643ef7e648c63f0f7ab0cdbc7b411ad5004505a4addae7cb2ba62b",
+      "t03_clean_i2_v1.json": "a0070edf95e53364717567c0da89cdc42a6519cc6f29c12af4ab819fd95a3f78",
+      "t03_fog_i1_frozen.json": "f7acfd950c410cde5e4b379c70cbab136bd8280fa94b56907c05db7479a599f3",
+      "t03_fog_i1_v1.json": "2a21f9f98be956e1ab8fc4723a410746887337f7d41c92ca9d1fea11ac53efe2",
+      "t03_glass_blur_i1_v1.json": "484757ed9bcd120c406477e872481f4a3cfbf37e2bc4c12b6b35e01ceb73d034",
+      "t03_light_asset_i1_frozen.json": "e0cb2f5251911c7b48609a49b99a00c8212d9a9a23790667e7756f3918e6a761",
+      "t03_light_asset_i1_v1.json": "9b6123a33f0c40a5d962ceaa5dcbefa7b2b5e5204eafcbad981af2f647a954ea",
+      "t03_table_texture_i1_frozen.json": "a0edb757e749f13d3ad506c11df642f70349e5ccf3b9b9a5347c0dd51b4f81d6",
+      "t03_table_texture_i1_v1.json": "3a2a0db888520b457e2728bcfe81ee3d819353fd847a431be59a7677d2cda4f4",
+      "t04_clean_i2_frozen.json": "0103d5613dffe8fde99b6d9ad3be7e32fe7753d7d2e5fe204ce1e106cf911427",
+      "t04_clean_i2_v1.json": "07a764de906cf315d508949cfe2002ee6eb8385c6cadf267c32b9aa89cbc2156",
+      "t04_light_asset_i1_frozen.json": "1878cf3fbfe9c30132065458b570d3d04e97e9d21e94e6a3990109b6fed0ef43",
+      "t04_light_asset_i1_v1.json": "c89cb82a1da63b027af6074f6d2b929b109a8d5b483e72362034d55715458d49",
+      "t04_motion_blur_i1_frozen.json": "720ead0cf12d7f2eb89b8ee59213eebf00e17d786aa75f8c50243967820f3d18",
+      "t04_motion_blur_i1_v1.json": "567121264f81fa96992abdf3e736b793bae97b8e7a4952484bb650c109d25455",
+      "t04_scene_texture_i1_frozen.json": "73fa44a32a845e92983e9ffb710f9ff7ae615789469e5717174e4e72fa46260a",
+      "t04_scene_texture_i1_v1.json": "f223fdabaf088490f7be3ec0b3fda833fc436ebf3cd438cc7443ab9f64b4b10a",
+      "t05_gaussian_blur_i1_frozen.json": "34d05ec81e051b96a2bc8b6c95ae3cbd240406d9fcf24e20c5477126f8ccc91d",
+      "t05_gaussian_blur_i1_v1.json": "8f4e24054686ffd42f5733e72503898d64ffeb977a4cc559670ff3e10016af81",
+      "t05_light_asset_i1_frozen.json": "05ba6afc0e0a4060176bd8b2367cf226105c4277cbf644a3308ccfd8ce730d85",
+      "t05_light_asset_i1_v1.json": "a4b8d9c42701a20dcdfda63bdf9e9708496f938d42c4faef0e9fb66f6030e6db",
+      "t05_motion_blur_i1_frozen.json": "da9c44cfb562cfd32f9ddda375c1e00978820938b20cf17e6cbb23e5ea568a5f",
+      "t06_zoom_blur_i1_frozen.json": "f6499d7af8780e7c435c209cb67fe383d0a2e998f755048a81c43592adb651e2"
+    },
+    "interrupted_incomplete_episodes_not_counted": true,
+    "new_scheduling": "claim queue, expensive glass first; order uses family/completion only, never outcomes",
+    "new_source_sha256": {
+      "dacsc/plus_glass_exact.py": "f7737aadd9794acfecb7068672171444d74edd81f5876026a8a6f08ca4c271c1",
+      "scripts/check_plus_glass_exact.py": "77ac532c305a4a75d5da9e2abf87b04ce62d48c122b6c1f777e1280864650e23",
+      "scripts/resume_smolvla_phase3b_exact.py": "dbadf314fde40a3c10274ad9974d6a0fbf7f9d6451fd605173b1177f736e182c"
+    }
+  },
+  "postchecks": {
+    "status": "PASS",
+    "episodes": 100,
+    "verified_pairs": 50,
+    "retained_completed_arms_hash_exact": 53,
+    "all_action_frames_finite": true,
+    "all_initial_physical_and_RGB_exact": true,
+    "all_flow_rng_prefixes_exact": true,
+    "independent_counts_match_report": true,
+    "source_original_and_accelerated_hashes_unchanged": true,
+    "all_scene_and_texture_hashes_unchanged": true,
+    "calibration_hash_unchanged": true,
+    "formal_main_table_started": false,
+    "timestamp": "2026-11-26T15:13:32.555634+08:00"
+  },
+  "evidence_receipt": {
+    "archive_sha256": "dd581dc96bc65142891f1141f4945f33d78d3f63d034659e42b829c0ffc1fa79",
+    "bytes": 3213207
+  }
+}
