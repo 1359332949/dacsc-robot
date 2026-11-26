@@ -1,0 +1,8876 @@
+{
+  "schema": "smolvla_unified_diag_v1",
+  "cases": [
+    {
+      "task_id": 0,
+      "base_task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "language": "pick up the black bowl between the plate and the ramekin and place it on the plate",
+      "policy_seed": 0,
+      "role": "development; previously accessed official pool; NOT independent confirmation",
+      "id": "t00_clean_i2",
+      "group": "Clean",
+      "subgroup": "Clean",
+      "init_index": 2
+    },
+    {
+      "task_id": 0,
+      "base_task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "language": "pick up the black bowl between the plate and the ramekin and place it on the plate",
+      "policy_seed": 0,
+      "role": "development; previously accessed official pool; NOT independent confirmation",
+      "id": "t00_motion_blur_i1",
+      "group": "Sensor",
+      "subgroup": "motion_blur",
+      "init_index": 1,
+      "severity": 3
+    },
+    {
+      "task_id": 0,
+      "base_task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "language": "pick up the black bowl between the plate and the ramekin and place it on the plate",
+      "policy_seed": 0,
+      "role": "development; previously accessed official pool; NOT independent confirmation",
+      "id": "t00_gaussian_blur_i1",
+      "group": "Sensor",
+      "subgroup": "gaussian_blur",
+      "init_index": 1,
+      "severity": 3
+    },
+    {
+      "task_id": 0,
+      "base_task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "language": "pick up the black bowl between the plate and the ramekin and place it on the plate",
+      "policy_seed": 0,
+      "role": "development; previously accessed official pool; NOT independent confirmation",
+      "id": "t00_light_asset_i1",
+      "group": "Lighting",
+      "subgroup": "light_asset",
+      "init_index": 1,
+      "bddl": "libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate_light_50.bddl",
+      "bddl_sha256": "ed5cf38905f9db5484277efc8cb25b2e24b2acf0d1e3108ef7a0bdd0c5c91855",
+      "dev_case_id": "6b142b87741e2537ff1f11b4",
+      "official_class": "Libero_Tabletop_Manipulation_tabletop_light_sync_modified_120",
+      "scene_settings": {
+        "scene_xml": "scenes/lights/tabletop_light_sync_modified_120.xml",
+        "scene_properties": {
+          "floor_style": "light-gray",
+          "wall_style": "light-gray-plaster"
+        }
+      },
+      "scene_sha256": "58682765adb0a091114a861647a433beed4f06020a0ed0300d3fe93b58eb5faf"
+    },
+    {
+      "task_id": 0,
+      "base_task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "language": "pick up the black bowl between the plate and the ramekin and place it on the plate",
+      "policy_seed": 0,
+      "role": "development; previously accessed official pool; NOT independent confirmation",
+      "id": "t00_table_texture_i1",
+      "group": "Background",
+      "subgroup": "table_texture",
+      "init_index": 1,
+      "bddl": "libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate_table_12.bddl",
+      "bddl_sha256": "d7990d85e6ca77eec5b023d0833aa1a81f3d745cfc49ec3bbeb21ff044c6062e",
+      "dev_case_id": "1f80bb87b8b30a1a90c033fb",
+      "official_class": "Libero_Tabletop_Manipulation_tabletop_table_CarbonFiber001_GLOSS_6K",
+      "scene_settings": {
+        "scene_xml": "scenes/tabletop250/tabletop_table_CarbonFiber001_GLOSS_6K.xml",
+        "scene_properties": {
+          "floor_style": "light-gray",
+          "wall_style": "light-gray-plaster"
+        }
+      },
+      "scene_sha256": "39e28fbec63d44b2336d336962b0623f2ba6d284ab0e69a1934c04100d9495e8"
+    },
+    {
+      "task_id": 1,
+      "base_task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "language": "pick up the black bowl next to the ramekin and place it on the plate",
+      "policy_seed": 0,
+      "role": "development; previously accessed official pool; NOT independent confirmation",
+      "id": "t01_clean_i2",
+      "group": "Clean",
+      "subgroup": "Clean",
+      "init_index": 2
+    },
+    {
+      "task_id": 1,
+      "base_task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "language": "pick up the black bowl next to the ramekin and place it on the plate",
+      "policy_seed": 0,
+      "role": "development; previously accessed official pool; NOT independent confirmation",
+      "id": "t01_gaussian_blur_i1",
+      "group": "Sensor",
+      "subgroup": "gaussian_blur",
+      "init_index": 1,
+      "severity": 3
+    },
+    {
+      "task_id": 1,
+      "base_task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "language": "pick up the black bowl next to the ramekin and place it on the plate",
+      "policy_seed": 0,
+      "role": "development; previously accessed official pool; NOT independent confirmation",
+      "id": "t01_zoom_blur_i1",
+      "group": "Sensor",
+      "subgroup": "zoom_blur",
+      "init_index": 1,
+      "severity": 3
+    },
+    {
+      "task_id": 1,
+      "base_task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "language": "pick up the black bowl next to the ramekin and place it on the plate",
+      "policy_seed": 0,
+      "role": "development; previously accessed official pool; NOT independent confirmation",
+      "id": "t01_light_asset_i1",
+      "group": "Lighting",
+      "subgroup": "light_asset",
+      "init_index": 1,
+      "bddl": "libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate_light_50.bddl",
+      "bddl_sha256": "76e44f8cfcf7984ae5aff7dd00e82c4ab2e7a6e83a1f3cef0cb434c12194747d",
+      "dev_case_id": "48c5f5e426f8006a5c08d586",
+      "official_class": "Libero_Tabletop_Manipulation_tabletop_light_sync_modified_300",
+      "scene_settings": {
+        "scene_xml": "scenes/lights/tabletop_light_sync_modified_300.xml",
+        "scene_properties": {
+          "floor_style": "light-gray",
+          "wall_style": "light-gray-plaster"
+        }
+      },
+      "scene_sha256": "b2d06d8bb53167eac79bbd140fe8eb300eb722f84394faf0093cc54395716bff"
+    },
+    {
+      "task_id": 1,
+      "base_task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "language": "pick up the black bowl next to the ramekin and place it on the plate",
+      "policy_seed": 0,
+      "role": "development; previously accessed official pool; NOT independent confirmation",
+      "id": "t01_table_texture_i1",
+      "group": "Background",
+      "subgroup": "table_texture",
+      "init_index": 1,
+      "bddl": "libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate_table_9.bddl",
+      "bddl_sha256": "424c5234cbfb3af1af85bbd625fad1591c380ffbc971353eab4047fa0570b51f",
+      "dev_case_id": "59e33e7a354085f721bae4a6",
+      "official_class": "Libero_Tabletop_Manipulation_tabletop_table_FabricLeatherBlack001_REFL_6K",
+      "scene_settings": {
+        "scene_xml": "scenes/tabletop250/tabletop_table_FabricLeatherBlack001_REFL_6K.xml",
+        "scene_properties": {
+          "floor_style": "light-gray",
+          "wall_style": "light-gray-plaster"
+        }
+      },
+      "scene_sha256": "1db86f7012cd89c193d03e9b06aea30199d047f82cb4efbdfaf7a873201c733e"
+    },
+    {
+      "task_id": 2,
+      "base_task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "language": "pick up the black bowl from table center and place it on the plate",
+      "policy_seed": 0,
+      "role": "development; previously accessed official pool; NOT independent confirmation",
+      "id": "t02_clean_i2",
+      "group": "Clean",
+      "subgroup": "Clean",
+      "init_index": 2
+    },
+    {
+      "task_id": 2,
+      "base_task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "language": "pick up the black bowl from table center and place it on the plate",
+      "policy_seed": 0,
+      "role": "development; previously accessed official pool; NOT independent confirmation",
+      "id": "t02_zoom_blur_i1",
+      "group": "Sensor",
+      "subgroup": "zoom_blur",
+      "init_index": 1,
+      "severity": 3
+    },
+    {
+      "task_id": 2,
+      "base_task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "language": "pick up the black bowl from table center and place it on the plate",
+      "policy_seed": 0,
+      "role": "development; previously accessed official pool; NOT independent confirmation",
+      "id": "t02_fog_i1",
+      "group": "Sensor",
+      "subgroup": "fog",
+      "init_index": 1,
+      "severity": 3
+    },
+    {
+      "task_id": 2,
+      "base_task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "language": "pick up the black bowl from table center and place it on the plate",
+      "policy_seed": 0,
+      "role": "development; previously accessed official pool; NOT independent confirmation",
+      "id": "t02_light_asset_i1",
+      "group": "Lighting",
+      "subgroup": "light_asset",
+      "init_index": 1,
+      "bddl": "libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate_light_28.bddl",
+      "bddl_sha256": "445292287e74e8e5638971efb3f0bb6363dc0e0a237ea539bc224367ce47647e",
+      "dev_case_id": "260f480dfa38ae5a1cfe6ab4",
+      "official_class": "Libero_Tabletop_Manipulation_tabletop_light_sync_modified_326",
+      "scene_settings": {
+        "scene_xml": "scenes/lights/tabletop_light_sync_modified_326.xml",
+        "scene_properties": {
+          "floor_style": "light-gray",
+          "wall_style": "light-gray-plaster"
+        }
+      },
+      "scene_sha256": "fc7b5d1c0c6cd2f57031c110c6e7eb8f8cec551046a182f96a4c219d1ccdbd2b"
+    },
+    {
+      "task_id": 2,
+      "base_task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "language": "pick up the black bowl from table center and place it on the plate",
+      "policy_seed": 0,
+      "role": "development; previously accessed official pool; NOT independent confirmation",
+      "id": "t02_table_texture_i1",
+      "group": "Background",
+      "subgroup": "table_texture",
+      "init_index": 1,
+      "bddl": "libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate_table_5.bddl",
+      "bddl_sha256": "98743f3aceacf7ed935a4406c1799ae30dfcde5c1acd52c06d9cbb711ee3a015",
+      "dev_case_id": "0148badb05249d5c6f02efea",
+      "official_class": "Libero_Tabletop_Manipulation_tabletop_table_FabricLinen001_REFL_6K",
+      "scene_settings": {
+        "scene_xml": "scenes/tabletop250/tabletop_table_FabricLinen001_REFL_6K.xml",
+        "scene_properties": {
+          "floor_style": "light-gray",
+          "wall_style": "light-gray-plaster"
+        }
+      },
+      "scene_sha256": "42e16f4330fd8036df3d9e148bb3ee3e7e1ee5a8a57164baa92f3378c50efe3b"
+    },
+    {
+      "task_id": 3,
+      "base_task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "language": "pick up the black bowl on the cookie box and place it on the plate",
+      "policy_seed": 0,
+      "role": "development; previously accessed official pool; NOT independent confirmation",
+      "id": "t03_clean_i2",
+      "group": "Clean",
+      "subgroup": "Clean",
+      "init_index": 2
+    },
+    {
+      "task_id": 3,
+      "base_task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "language": "pick up the black bowl on the cookie box and place it on the plate",
+      "policy_seed": 0,
+      "role": "development; previously accessed official pool; NOT independent confirmation",
+      "id": "t03_fog_i1",
+      "group": "Sensor",
+      "subgroup": "fog",
+      "init_index": 1,
+      "severity": 3
+    },
+    {
+      "task_id": 3,
+      "base_task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "language": "pick up the black bowl on the cookie box and place it on the plate",
+      "policy_seed": 0,
+      "role": "development; previously accessed official pool; NOT independent confirmation",
+      "id": "t03_glass_blur_i1",
+      "group": "Sensor",
+      "subgroup": "glass_blur",
+      "init_index": 1,
+      "severity": 3
+    },
+    {
+      "task_id": 3,
+      "base_task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "language": "pick up the black bowl on the cookie box and place it on the plate",
+      "policy_seed": 0,
+      "role": "development; previously accessed official pool; NOT independent confirmation",
+      "id": "t03_light_asset_i1",
+      "group": "Lighting",
+      "subgroup": "light_asset",
+      "init_index": 1,
+      "bddl": "libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_light_21.bddl",
+      "bddl_sha256": "6d461011524d86653baf392253cd9f3b3a1b20d60d316ebea5d4c4aad751d346",
+      "dev_case_id": "c03e1a782928638880efb08d",
+      "official_class": "Libero_Tabletop_Manipulation_tabletop_light_sync_modified_455",
+      "scene_settings": {
+        "scene_xml": "scenes/lights/tabletop_light_sync_modified_455.xml",
+        "scene_properties": {
+          "floor_style": "light-gray",
+          "wall_style": "light-gray-plaster"
+        }
+      },
+      "scene_sha256": "becf7a10e2c69a9ca3c40886632bde0c1dc2bc0456c68718d8b0bb169dd5a568"
+    },
+    {
+      "task_id": 3,
+      "base_task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "language": "pick up the black bowl on the cookie box and place it on the plate",
+      "policy_seed": 0,
+      "role": "development; previously accessed official pool; NOT independent confirmation",
+      "id": "t03_table_texture_i1",
+      "group": "Background",
+      "subgroup": "table_texture",
+      "init_index": 1,
+      "bddl": "libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_table_11.bddl",
+      "bddl_sha256": "7aa14622e482c4f9a88e11c22637ece309d6708db3cb2138e6c01a18686de9da",
+      "dev_case_id": "e67548ff2cbebe1ca8a7b35e",
+      "official_class": "Libero_Tabletop_Manipulation_tabletop_table_FabricWeaveRug001_GLOSS_6K",
+      "scene_settings": {
+        "scene_xml": "scenes/tabletop250/tabletop_table_FabricWeaveRug001_GLOSS_6K.xml",
+        "scene_properties": {
+          "floor_style": "light-gray",
+          "wall_style": "light-gray-plaster"
+        }
+      },
+      "scene_sha256": "f59e8887bec5d921e4afdde79e99dd6ae70e6bea7bac28f5762dfa929161e1f4"
+    },
+    {
+      "task_id": 4,
+      "base_task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+      "language": "pick up the black bowl in the top drawer of the wooden cabinet and place it on the plate",
+      "policy_seed": 0,
+      "role": "development; previously accessed official pool; NOT independent confirmation",
+      "id": "t04_clean_i2",
+      "group": "Clean",
+      "subgroup": "Clean",
+      "init_index": 2
+    },
+    {
+      "task_id": 4,
+      "base_task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+      "language": "pick up the black bowl in the top drawer of the wooden cabinet and place it on the plate",
+      "policy_seed": 0,
+      "role": "development; previously accessed official pool; NOT independent confirmation",
+      "id": "t04_glass_blur_i1",
+      "group": "Sensor",
+      "subgroup": "glass_blur",
+      "init_index": 1,
+      "severity": 3
+    },
+    {
+      "task_id": 4,
+      "base_task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+      "language": "pick up the black bowl in the top drawer of the wooden cabinet and place it on the plate",
+      "policy_seed": 0,
+      "role": "development; previously accessed official pool; NOT independent confirmation",
+      "id": "t04_motion_blur_i1",
+      "group": "Sensor",
+      "subgroup": "motion_blur",
+      "init_index": 1,
+      "severity": 3
+    },
+    {
+      "task_id": 4,
+      "base_task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+      "language": "pick up the black bowl in the top drawer of the wooden cabinet and place it on the plate",
+      "policy_seed": 0,
+      "role": "development; previously accessed official pool; NOT independent confirmation",
+      "id": "t04_light_asset_i1",
+      "group": "Lighting",
+      "subgroup": "light_asset",
+      "init_index": 1,
+      "bddl": "libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate_light_12.bddl",
+      "bddl_sha256": "3d695605a5143a606fa2557f3a613e25e967161931dd49fc11df2678effbbeeb",
+      "dev_case_id": "734d3d4af8d6b04b33187f95",
+      "official_class": "Libero_Tabletop_Manipulation_tabletop_light_sync_modified_401",
+      "scene_settings": {
+        "scene_xml": "scenes/lights/tabletop_light_sync_modified_401.xml",
+        "scene_properties": {
+          "floor_style": "light-gray",
+          "wall_style": "light-gray-plaster"
+        }
+      },
+      "scene_sha256": "1d453b5acf5b20746f8eed09ff3ed4e1db8b42acb5f5a7fc2e4180172e31cdc8"
+    },
+    {
+      "task_id": 4,
+      "base_task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+      "language": "pick up the black bowl in the top drawer of the wooden cabinet and place it on the plate",
+      "policy_seed": 0,
+      "role": "development; previously accessed official pool; NOT independent confirmation",
+      "id": "t04_scene_texture_i1",
+      "group": "Background",
+      "subgroup": "scene_texture",
+      "init_index": 1,
+      "bddl": "libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate_tb_1.bddl",
+      "bddl_sha256": "b52e3befa52d1556c3d16b76567cac4571145c82d7b3ef84f055e544aedddf57",
+      "dev_case_id": "c71fb60309bb3abd27edef73",
+      "official_class": "Libero_Tabletop_Manipulation_tabletop_table_Cobblestone01_COL_VAR2_6K_Wall_dark_gray_plaster",
+      "scene_settings": {
+        "scene_xml": "scenes/tabletop_table_Cobblestone01_COL_VAR2_6K.xml",
+        "scene_properties": {
+          "floor_style": "light-gray",
+          "wall_style": "dark-gray-plaster"
+        }
+      },
+      "scene_sha256": "d613eb39c9695a9d1144081425f70f54cd5cb639826e22afc9c3cac0fa33469e"
+    },
+    {
+      "task_id": 5,
+      "base_task": "pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate",
+      "language": "pick up the black bowl on the ramekin and place it on the plate",
+      "policy_seed": 0,
+      "role": "development; previously accessed official pool; NOT independent confirmation",
+      "id": "t05_clean_i2",
+      "group": "Clean",
+      "subgroup": "Clean",
+      "init_index": 2
+    },
+    {
+      "task_id": 5,
+      "base_task": "pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate",
+      "language": "pick up the black bowl on the ramekin and place it on the plate",
+      "policy_seed": 0,
+      "role": "development; previously accessed official pool; NOT independent confirmation",
+      "id": "t05_motion_blur_i1",
+      "group": "Sensor",
+      "subgroup": "motion_blur",
+      "init_index": 1,
+      "severity": 3
+    },
+    {
+      "task_id": 5,
+      "base_task": "pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate",
+      "language": "pick up the black bowl on the ramekin and place it on the plate",
+      "policy_seed": 0,
+      "role": "development; previously accessed official pool; NOT independent confirmation",
+      "id": "t05_gaussian_blur_i1",
+      "group": "Sensor",
+      "subgroup": "gaussian_blur",
+      "init_index": 1,
+      "severity": 3
+    },
+    {
+      "task_id": 5,
+      "base_task": "pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate",
+      "language": "pick up the black bowl on the ramekin and place it on the plate",
+      "policy_seed": 0,
+      "role": "development; previously accessed official pool; NOT independent confirmation",
+      "id": "t05_light_asset_i1",
+      "group": "Lighting",
+      "subgroup": "light_asset",
+      "init_index": 1,
+      "bddl": "libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate_light_15.bddl",
+      "bddl_sha256": "ea3b1f7a75d638cbaf972d9403c0df3b625e3f29a839d6f668829c5f64b0d085",
+      "dev_case_id": "36f206329f1c1c5275cdfc66",
+      "official_class": "Libero_Tabletop_Manipulation_tabletop_light_sync_modified_224",
+      "scene_settings": {
+        "scene_xml": "scenes/lights/tabletop_light_sync_modified_224.xml",
+        "scene_properties": {
+          "floor_style": "light-gray",
+          "wall_style": "light-gray-plaster"
+        }
+      },
+      "scene_sha256": "76509dafbce5ef6e16cd56969e3eebdc0a67184b255cfdccdf43a6e6f9a828af"
+    },
+    {
+      "task_id": 5,
+      "base_task": "pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate",
+      "language": "pick up the black bowl on the ramekin and place it on the plate",
+      "policy_seed": 0,
+      "role": "development; previously accessed official pool; NOT independent confirmation",
+      "id": "t05_scene_texture_i1",
+      "group": "Background",
+      "subgroup": "scene_texture",
+      "init_index": 1,
+      "bddl": "libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate_tb_17.bddl",
+      "bddl_sha256": "386873311c415dc41f09f2e5dbdbdb166eb943c031ea36304ef7682abd871275",
+      "dev_case_id": "19e130adbbfed3d5a48b12a8",
+      "official_class": "Libero_Tabletop_Manipulation_tabletop_table_CliffDesert006_DISP_VAR1_HIRES_Wall_gray",
+      "scene_settings": {
+        "scene_xml": "scenes/tabletop_table_CliffDesert006_DISP_VAR1_HIRES.xml",
+        "scene_properties": {
+          "floor_style": "light-gray",
+          "wall_style": "gray"
+        }
+      },
+      "scene_sha256": "cda7cc4006aaa55c6c2113f546bcdc5fd491f1c1e7bddab67d4e36c8af1ff860"
+    },
+    {
+      "task_id": 6,
+      "base_task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "language": "pick up the black bowl next to the cookie box and place it on the plate",
+      "policy_seed": 0,
+      "role": "development; previously accessed official pool; NOT independent confirmation",
+      "id": "t06_clean_i2",
+      "group": "Clean",
+      "subgroup": "Clean",
+      "init_index": 2
+    },
+    {
+      "task_id": 6,
+      "base_task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "language": "pick up the black bowl next to the cookie box and place it on the plate",
+      "policy_seed": 0,
+      "role": "development; previously accessed official pool; NOT independent confirmation",
+      "id": "t06_gaussian_blur_i1",
+      "group": "Sensor",
+      "subgroup": "gaussian_blur",
+      "init_index": 1,
+      "severity": 3
+    },
+    {
+      "task_id": 6,
+      "base_task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "language": "pick up the black bowl next to the cookie box and place it on the plate",
+      "policy_seed": 0,
+      "role": "development; previously accessed official pool; NOT independent confirmation",
+      "id": "t06_zoom_blur_i1",
+      "group": "Sensor",
+      "subgroup": "zoom_blur",
+      "init_index": 1,
+      "severity": 3
+    },
+    {
+      "task_id": 6,
+      "base_task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "language": "pick up the black bowl next to the cookie box and place it on the plate",
+      "policy_seed": 0,
+      "role": "development; previously accessed official pool; NOT independent confirmation",
+      "id": "t06_light_asset_i1",
+      "group": "Lighting",
+      "subgroup": "light_asset",
+      "init_index": 1,
+      "bddl": "libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate_light_26.bddl",
+      "bddl_sha256": "e3e2d76e5325d2851d48a9adadc46cb7f4bd2427eadf5e63cb3d71bc95dfeaf7",
+      "dev_case_id": "32c1ebe6e4d6cb178bfb0a0b",
+      "official_class": "Libero_Tabletop_Manipulation_tabletop_light_sync_modified_144",
+      "scene_settings": {
+        "scene_xml": "scenes/lights/tabletop_light_sync_modified_144.xml",
+        "scene_properties": {
+          "floor_style": "light-gray",
+          "wall_style": "light-gray-plaster"
+        }
+      },
+      "scene_sha256": "13281d01c93cd95e048c8f1fbd61576d6e22c474dde70d4ae7b854a82522359a"
+    },
+    {
+      "task_id": 6,
+      "base_task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "language": "pick up the black bowl next to the cookie box and place it on the plate",
+      "policy_seed": 0,
+      "role": "development; previously accessed official pool; NOT independent confirmation",
+      "id": "t06_scene_texture_i1",
+      "group": "Background",
+      "subgroup": "scene_texture",
+      "init_index": 1,
+      "bddl": "libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate_tb_2.bddl",
+      "bddl_sha256": "7acd3853dd268da050b1ba73e563a220f206e1920bd55fee795f3df1314c144c",
+      "dev_case_id": "34f60c2ad49319e81d18c70b",
+      "official_class": "Libero_Tabletop_Manipulation_tabletop_table_Bricks02_NRM_6K_Wall_gray_ceramic",
+      "scene_settings": {
+        "scene_xml": "scenes/tabletop_table_Bricks02_NRM_6K.xml",
+        "scene_properties": {
+          "floor_style": "light-gray",
+          "wall_style": "gray-ceramic"
+        }
+      },
+      "scene_sha256": "44a4402106f156d3e766c0f895b2d9a0ce3a0bec2b9f32120681088205962326"
+    },
+    {
+      "task_id": 7,
+      "base_task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "language": "pick up the black bowl on the stove and place it on the plate",
+      "policy_seed": 0,
+      "role": "development; previously accessed official pool; NOT independent confirmation",
+      "id": "t07_clean_i2",
+      "group": "Clean",
+      "subgroup": "Clean",
+      "init_index": 2
+    },
+    {
+      "task_id": 7,
+      "base_task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "language": "pick up the black bowl on the stove and place it on the plate",
+      "policy_seed": 0,
+      "role": "development; previously accessed official pool; NOT independent confirmation",
+      "id": "t07_zoom_blur_i1",
+      "group": "Sensor",
+      "subgroup": "zoom_blur",
+      "init_index": 1,
+      "severity": 3
+    },
+    {
+      "task_id": 7,
+      "base_task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "language": "pick up the black bowl on the stove and place it on the plate",
+      "policy_seed": 0,
+      "role": "development; previously accessed official pool; NOT independent confirmation",
+      "id": "t07_fog_i1",
+      "group": "Sensor",
+      "subgroup": "fog",
+      "init_index": 1,
+      "severity": 3
+    },
+    {
+      "task_id": 7,
+      "base_task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "language": "pick up the black bowl on the stove and place it on the plate",
+      "policy_seed": 0,
+      "role": "development; previously accessed official pool; NOT independent confirmation",
+      "id": "t07_light_asset_i1",
+      "group": "Lighting",
+      "subgroup": "light_asset",
+      "init_index": 1,
+      "bddl": "libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate_light_37.bddl",
+      "bddl_sha256": "82a8e7f0b2fa89a14546a4218caa6781812705dbfb6cf314e7161e0b3381cfa2",
+      "dev_case_id": "58374a4e57b5316b75daa5a8",
+      "official_class": "Libero_Tabletop_Manipulation_tabletop_light_sync_modified_514",
+      "scene_settings": {
+        "scene_xml": "scenes/lights/tabletop_light_sync_modified_514.xml",
+        "scene_properties": {
+          "floor_style": "light-gray",
+          "wall_style": "light-gray-plaster"
+        }
+      },
+      "scene_sha256": "ad5902b0fefe5081c835d6d7588a7a0ac4a53a31f6365efd795f0176513dee7f"
+    },
+    {
+      "task_id": 7,
+      "base_task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "language": "pick up the black bowl on the stove and place it on the plate",
+      "policy_seed": 0,
+      "role": "development; previously accessed official pool; NOT independent confirmation",
+      "id": "t07_scene_texture_i1",
+      "group": "Background",
+      "subgroup": "scene_texture",
+      "init_index": 1,
+      "bddl": "libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate_tb_20.bddl",
+      "bddl_sha256": "deb9a336c9a0d70a124227dedadd551e6b892a8bc00586fcd362d6eae187ad7a",
+      "dev_case_id": "451d4d5283da4bf94b611a95",
+      "official_class": "Libero_Tabletop_Manipulation_tabletop_table_WoodFine001_GLOSS_6K_Wall_light_blue",
+      "scene_settings": {
+        "scene_xml": "scenes/tabletop_table_WoodFine001_GLOSS_6K.xml",
+        "scene_properties": {
+          "floor_style": "light-gray",
+          "wall_style": "light-blue"
+        }
+      },
+      "scene_sha256": "bbc132df914a4b3ef64a985fd8403b2b2dd39265aad0f944f470627d5e9ada80"
+    },
+    {
+      "task_id": 8,
+      "base_task": "pick_up_the_black_bowl_next_to_the_plate_and_place_it_on_the_plate",
+      "language": "pick up the black bowl next to the plate and place it on the plate",
+      "policy_seed": 0,
+      "role": "development; previously accessed official pool; NOT independent confirmation",
+      "id": "t08_clean_i2",
+      "group": "Clean",
+      "subgroup": "Clean",
+      "init_index": 2
+    },
+    {
+      "task_id": 8,
+      "base_task": "pick_up_the_black_bowl_next_to_the_plate_and_place_it_on_the_plate",
+      "language": "pick up the black bowl next to the plate and place it on the plate",
+      "policy_seed": 0,
+      "role": "development; previously accessed official pool; NOT independent confirmation",
+      "id": "t08_fog_i1",
+      "group": "Sensor",
+      "subgroup": "fog",
+      "init_index": 1,
+      "severity": 3
+    },
+    {
+      "task_id": 8,
+      "base_task": "pick_up_the_black_bowl_next_to_the_plate_and_place_it_on_the_plate",
+      "language": "pick up the black bowl next to the plate and place it on the plate",
+      "policy_seed": 0,
+      "role": "development; previously accessed official pool; NOT independent confirmation",
+      "id": "t08_glass_blur_i1",
+      "group": "Sensor",
+      "subgroup": "glass_blur",
+      "init_index": 1,
+      "severity": 3
+    },
+    {
+      "task_id": 8,
+      "base_task": "pick_up_the_black_bowl_next_to_the_plate_and_place_it_on_the_plate",
+      "language": "pick up the black bowl next to the plate and place it on the plate",
+      "policy_seed": 0,
+      "role": "development; previously accessed official pool; NOT independent confirmation",
+      "id": "t08_light_asset_i1",
+      "group": "Lighting",
+      "subgroup": "light_asset",
+      "init_index": 1,
+      "bddl": "libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_next_to_the_plate_and_place_it_on_the_plate_light_11.bddl",
+      "bddl_sha256": "0d73085c5f5b39134d6a2d4136dd8e9bdf75c924f576b685b884eadbc9319918",
+      "dev_case_id": "4dfb95e2a8d148b52ea21f18",
+      "official_class": "Libero_Tabletop_Manipulation_tabletop_light_sync_modified_356",
+      "scene_settings": {
+        "scene_xml": "scenes/lights/tabletop_light_sync_modified_356.xml",
+        "scene_properties": {
+          "floor_style": "light-gray",
+          "wall_style": "light-gray-plaster"
+        }
+      },
+      "scene_sha256": "26d9f29ff24c8affac388910761116ea9f64bb9fcb2ed16a9bf84468e9266e7c"
+    },
+    {
+      "task_id": 8,
+      "base_task": "pick_up_the_black_bowl_next_to_the_plate_and_place_it_on_the_plate",
+      "language": "pick up the black bowl next to the plate and place it on the plate",
+      "policy_seed": 0,
+      "role": "development; previously accessed official pool; NOT independent confirmation",
+      "id": "t08_table_texture_i1",
+      "group": "Background",
+      "subgroup": "table_texture",
+      "init_index": 1,
+      "bddl": "libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_next_to_the_plate_and_place_it_on_the_plate_table_1.bddl",
+      "bddl_sha256": "8fd213a1fae415951129150053fb811401770a1ab1552ebd0f5fcc2a18cf4e4d",
+      "dev_case_id": "05f7d8f8b9e140d46dcbf95e",
+      "official_class": "Libero_Tabletop_Manipulation_tabletop_table_FabricModeledWool001_REFL_3K",
+      "scene_settings": {
+        "scene_xml": "scenes/tabletop250/tabletop_table_FabricModeledWool001_REFL_3K.xml",
+        "scene_properties": {
+          "floor_style": "light-gray",
+          "wall_style": "light-gray-plaster"
+        }
+      },
+      "scene_sha256": "41a0e05d8eaff42575818087f8bc8ef067d535c60d2f210d0e3cdd37692b5f0e"
+    },
+    {
+      "task_id": 9,
+      "base_task": "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate",
+      "language": "pick up the black bowl on the wooden cabinet and place it on the plate",
+      "policy_seed": 0,
+      "role": "development; previously accessed official pool; NOT independent confirmation",
+      "id": "t09_clean_i2",
+      "group": "Clean",
+      "subgroup": "Clean",
+      "init_index": 2
+    },
+    {
+      "task_id": 9,
+      "base_task": "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate",
+      "language": "pick up the black bowl on the wooden cabinet and place it on the plate",
+      "policy_seed": 0,
+      "role": "development; previously accessed official pool; NOT independent confirmation",
+      "id": "t09_glass_blur_i1",
+      "group": "Sensor",
+      "subgroup": "glass_blur",
+      "init_index": 1,
+      "severity": 3
+    },
+    {
+      "task_id": 9,
+      "base_task": "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate",
+      "language": "pick up the black bowl on the wooden cabinet and place it on the plate",
+      "policy_seed": 0,
+      "role": "development; previously accessed official pool; NOT independent confirmation",
+      "id": "t09_motion_blur_i1",
+      "group": "Sensor",
+      "subgroup": "motion_blur",
+      "init_index": 1,
+      "severity": 3
+    },
+    {
+      "task_id": 9,
+      "base_task": "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate",
+      "language": "pick up the black bowl on the wooden cabinet and place it on the plate",
+      "policy_seed": 0,
+      "role": "development; previously accessed official pool; NOT independent confirmation",
+      "id": "t09_light_asset_i1",
+      "group": "Lighting",
+      "subgroup": "light_asset",
+      "init_index": 1,
+      "bddl": "libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate_light_5.bddl",
+      "bddl_sha256": "7c8029a55c08beb91f0c409da213770b8c97f06e9aad0fc0121f5801a1de9ff4",
+      "dev_case_id": "83326bf78cf7e67f0fc7696c",
+      "official_class": "Libero_Tabletop_Manipulation_tabletop_light_sync_modified_170",
+      "scene_settings": {
+        "scene_xml": "scenes/lights/tabletop_light_sync_modified_170.xml",
+        "scene_properties": {
+          "floor_style": "light-gray",
+          "wall_style": "light-gray-plaster"
+        }
+      },
+      "scene_sha256": "4eba7d8c28aad2613108f80ee12745efd47680b6211e18e6fe35b2826105f36f"
+    },
+    {
+      "task_id": 9,
+      "base_task": "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate",
+      "language": "pick up the black bowl on the wooden cabinet and place it on the plate",
+      "policy_seed": 0,
+      "role": "development; previously accessed official pool; NOT independent confirmation",
+      "id": "t09_scene_texture_i1",
+      "group": "Background",
+      "subgroup": "scene_texture",
+      "init_index": 1,
+      "bddl": "libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate_tb_2.bddl",
+      "bddl_sha256": "ddd6a3de2ed1e95b58b0187813c488b8a86b428a72bd4b556d0be2fd6697e0de",
+      "dev_case_id": "127d45f4df2db7bc96805eba",
+      "official_class": "Libero_Tabletop_Manipulation_tabletop_table_CliffDesert006_AO_HIRES_Wall_canvas",
+      "scene_settings": {
+        "scene_xml": "scenes/tabletop_table_CliffDesert006_AO_HIRES.xml",
+        "scene_properties": {
+          "floor_style": "light-gray",
+          "wall_style": "canvas"
+        }
+      },
+      "scene_sha256": "dbab68c6cc518c7fa71d45ff7967a60e804d7cf5b95d64d0b97026721936bdec"
+    }
+  ],
+  "calib_sha256": "e573729434d6cdba404d887dc3f685d33b6c67fd6901cd487c512a18fa0ef606",
+  "source_gate_sha256": "b046038cbbaee77fe23a4d20d639b5c54f8728b1ff27444aa0a57977737655c1",
+  "source_gate_scores_sha256": "b1aeb695fbbed08cf5b8c567ea5e025b3cc109756dfceb1e7669f178cba59e5e",
+  "previous_manifest_sha256": "a72d9213d5a244b4b67e4105fa801926429f399124c99fe65b0a0a588bcc5ec6",
+  "severity3_manifest_sha256": "9b2a9698c45e23345c6a396f8f973784a0cbff836f37acd1bb9a4bde882c67d6",
+  "source_sha256": {
+    "scripts/phase3_smolvla_unified_diag.py": "f0597abe16b618621e70c49cd11e40fdf39814087b4c318bf7141340c88b4652",
+    "scripts/phase3_smolvla_shift.py": "6774b71d8be173de9fb52610ec47ba7ed6e52fc39027ac394051cf8ba062d0ae",
+    "scripts/phase3_smolvla_common.py": "791b234f2cc8faed224c38e9290bfc8370e2a4b49e9b1c00bb4f57ab635df0a0",
+    "dacsc/smolvla_v1_hook.py": "1aa2fe3879c54f91601e2e615fce1828e59088ce14596c113cb096e9bc9eb629",
+    "dacsc/static_visual_v2.py": "cfd502ea2804c8c1440e564850acb12d8bf3bfba3eafb66442af33997c16960e",
+    "dacsc/plus_glass_exact.py": "f7737aadd9794acfecb7068672171444d74edd81f5876026a8a6f08ca4c271c1"
+  },
+  "protocol": {
+    "scope": "50 previously accessed development observations; t=0 only; zero environment steps after reset; not a success-rate experiment",
+    "candidate_configs": [
+      {
+        "layer": 3,
+        "alpha": 0.25
+      },
+      {
+        "layer": 3,
+        "alpha": 0.5
+      },
+      {
+        "layer": 3,
+        "alpha": 0.75
+      },
+      {
+        "layer": 6,
+        "alpha": 0.25
+      },
+      {
+        "layer": 6,
+        "alpha": 0.5
+      },
+      {
+        "layer": 6,
+        "alpha": 0.75
+      }
+    ],
+    "gate": {
+      "0": {
+        "threshold": 0.4818388819694519,
+        "source_frames": 1229,
+        "outer_tasks": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "source_crossfit_exceedance": 0.05044751986861229,
+        "folds": {
+          "1": {
+            "fit_tasks": [
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "2": [
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9
+              ],
+              "3": [
+                2,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9
+              ],
+              "4": [
+                2,
+                3,
+                5,
+                6,
+                7,
+                8,
+                9
+              ],
+              "5": [
+                2,
+                3,
+                4,
+                6,
+                7,
+                8,
+                9
+              ],
+              "6": [
+                2,
+                3,
+                4,
+                5,
+                7,
+                8,
+                9
+              ],
+              "7": [
+                2,
+                3,
+                4,
+                5,
+                6,
+                8,
+                9
+              ],
+              "8": [
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                9
+              ],
+              "9": [
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8
+              ]
+            },
+            "frames": 110
+          },
+          "2": {
+            "fit_tasks": [
+              1,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "1": [
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9
+              ],
+              "3": [
+                1,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9
+              ],
+              "4": [
+                1,
+                3,
+                5,
+                6,
+                7,
+                8,
+                9
+              ],
+              "5": [
+                1,
+                3,
+                4,
+                6,
+                7,
+                8,
+                9
+              ],
+              "6": [
+                1,
+                3,
+                4,
+                5,
+                7,
+                8,
+                9
+              ],
+              "7": [
+                1,
+                3,
+                4,
+                5,
+                6,
+                8,
+                9
+              ],
+              "8": [
+                1,
+                3,
+                4,
+                5,
+                6,
+                7,
+                9
+              ],
+              "9": [
+                1,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8
+              ]
+            },
+            "frames": 220
+          },
+          "3": {
+            "fit_tasks": [
+              1,
+              2,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "1": [
+                2,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9
+              ],
+              "2": [
+                1,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9
+              ],
+              "4": [
+                1,
+                2,
+                5,
+                6,
+                7,
+                8,
+                9
+              ],
+              "5": [
+                1,
+                2,
+                4,
+                6,
+                7,
+                8,
+                9
+              ],
+              "6": [
+                1,
+                2,
+                4,
+                5,
+                7,
+                8,
+                9
+              ],
+              "7": [
+                1,
+                2,
+                4,
+                5,
+                6,
+                8,
+                9
+              ],
+              "8": [
+                1,
+                2,
+                4,
+                5,
+                6,
+                7,
+                9
+              ],
+              "9": [
+                1,
+                2,
+                4,
+                5,
+                6,
+                7,
+                8
+              ]
+            },
+            "frames": 87
+          },
+          "4": {
+            "fit_tasks": [
+              1,
+              2,
+              3,
+              5,
+              6,
+              7,
+              8,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "1": [
+                2,
+                3,
+                5,
+                6,
+                7,
+                8,
+                9
+              ],
+              "2": [
+                1,
+                3,
+                5,
+                6,
+                7,
+                8,
+                9
+              ],
+              "3": [
+                1,
+                2,
+                5,
+                6,
+                7,
+                8,
+                9
+              ],
+              "5": [
+                1,
+                2,
+                3,
+                6,
+                7,
+                8,
+                9
+              ],
+              "6": [
+                1,
+                2,
+                3,
+                5,
+                7,
+                8,
+                9
+              ],
+              "7": [
+                1,
+                2,
+                3,
+                5,
+                6,
+                8,
+                9
+              ],
+              "8": [
+                1,
+                2,
+                3,
+                5,
+                6,
+                7,
+                9
+              ],
+              "9": [
+                1,
+                2,
+                3,
+                5,
+                6,
+                7,
+                8
+              ]
+            },
+            "frames": 127
+          },
+          "5": {
+            "fit_tasks": [
+              1,
+              2,
+              3,
+              4,
+              6,
+              7,
+              8,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "1": [
+                2,
+                3,
+                4,
+                6,
+                7,
+                8,
+                9
+              ],
+              "2": [
+                1,
+                3,
+                4,
+                6,
+                7,
+                8,
+                9
+              ],
+              "3": [
+                1,
+                2,
+                4,
+                6,
+                7,
+                8,
+                9
+              ],
+              "4": [
+                1,
+                2,
+                3,
+                6,
+                7,
+                8,
+                9
+              ],
+              "6": [
+                1,
+                2,
+                3,
+                4,
+                7,
+                8,
+                9
+              ],
+              "7": [
+                1,
+                2,
+                3,
+                4,
+                6,
+                8,
+                9
+              ],
+              "8": [
+                1,
+                2,
+                3,
+                4,
+                6,
+                7,
+                9
+              ],
+              "9": [
+                1,
+                2,
+                3,
+                4,
+                6,
+                7,
+                8
+              ]
+            },
+            "frames": 220
+          },
+          "6": {
+            "fit_tasks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              7,
+              8,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "1": [
+                2,
+                3,
+                4,
+                5,
+                7,
+                8,
+                9
+              ],
+              "2": [
+                1,
+                3,
+                4,
+                5,
+                7,
+                8,
+                9
+              ],
+              "3": [
+                1,
+                2,
+                4,
+                5,
+                7,
+                8,
+                9
+              ],
+              "4": [
+                1,
+                2,
+                3,
+                5,
+                7,
+                8,
+                9
+              ],
+              "5": [
+                1,
+                2,
+                3,
+                4,
+                7,
+                8,
+                9
+              ],
+              "7": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                8,
+                9
+              ],
+              "8": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                7,
+                9
+              ],
+              "9": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                7,
+                8
+              ]
+            },
+            "frames": 129
+          },
+          "7": {
+            "fit_tasks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              8,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "1": [
+                2,
+                3,
+                4,
+                5,
+                6,
+                8,
+                9
+              ],
+              "2": [
+                1,
+                3,
+                4,
+                5,
+                6,
+                8,
+                9
+              ],
+              "3": [
+                1,
+                2,
+                4,
+                5,
+                6,
+                8,
+                9
+              ],
+              "4": [
+                1,
+                2,
+                3,
+                5,
+                6,
+                8,
+                9
+              ],
+              "5": [
+                1,
+                2,
+                3,
+                4,
+                6,
+                8,
+                9
+              ],
+              "6": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                8,
+                9
+              ],
+              "8": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                9
+              ],
+              "9": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                8
+              ]
+            },
+            "frames": 112
+          },
+          "8": {
+            "fit_tasks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "1": [
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                9
+              ],
+              "2": [
+                1,
+                3,
+                4,
+                5,
+                6,
+                7,
+                9
+              ],
+              "3": [
+                1,
+                2,
+                4,
+                5,
+                6,
+                7,
+                9
+              ],
+              "4": [
+                1,
+                2,
+                3,
+                5,
+                6,
+                7,
+                9
+              ],
+              "5": [
+                1,
+                2,
+                3,
+                4,
+                6,
+                7,
+                9
+              ],
+              "6": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                7,
+                9
+              ],
+              "7": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                9
+              ],
+              "9": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7
+              ]
+            },
+            "frames": 101
+          },
+          "9": {
+            "fit_tasks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8
+            ],
+            "channel_threshold_inner7": {
+              "1": [
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8
+              ],
+              "2": [
+                1,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8
+              ],
+              "3": [
+                1,
+                2,
+                4,
+                5,
+                6,
+                7,
+                8
+              ],
+              "4": [
+                1,
+                2,
+                3,
+                5,
+                6,
+                7,
+                8
+              ],
+              "5": [
+                1,
+                2,
+                3,
+                4,
+                6,
+                7,
+                8
+              ],
+              "6": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                7,
+                8
+              ],
+              "7": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                8
+              ],
+              "8": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7
+              ]
+            },
+            "frames": 123
+          }
+        }
+      },
+      "1": {
+        "threshold": 0.49253326654434204,
+        "source_frames": 1202,
+        "outer_tasks": [
+          0,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "source_crossfit_exceedance": 0.05074875056743622,
+        "folds": {
+          "0": {
+            "fit_tasks": [
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "2": [
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9
+              ],
+              "3": [
+                2,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9
+              ],
+              "4": [
+                2,
+                3,
+                5,
+                6,
+                7,
+                8,
+                9
+              ],
+              "5": [
+                2,
+                3,
+                4,
+                6,
+                7,
+                8,
+                9
+              ],
+              "6": [
+                2,
+                3,
+                4,
+                5,
+                7,
+                8,
+                9
+              ],
+              "7": [
+                2,
+                3,
+                4,
+                5,
+                6,
+                8,
+                9
+              ],
+              "8": [
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                9
+              ],
+              "9": [
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8
+              ]
+            },
+            "frames": 83
+          },
+          "2": {
+            "fit_tasks": [
+              0,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9
+              ],
+              "3": [
+                0,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9
+              ],
+              "4": [
+                0,
+                3,
+                5,
+                6,
+                7,
+                8,
+                9
+              ],
+              "5": [
+                0,
+                3,
+                4,
+                6,
+                7,
+                8,
+                9
+              ],
+              "6": [
+                0,
+                3,
+                4,
+                5,
+                7,
+                8,
+                9
+              ],
+              "7": [
+                0,
+                3,
+                4,
+                5,
+                6,
+                8,
+                9
+              ],
+              "8": [
+                0,
+                3,
+                4,
+                5,
+                6,
+                7,
+                9
+              ],
+              "9": [
+                0,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8
+              ]
+            },
+            "frames": 220
+          },
+          "3": {
+            "fit_tasks": [
+              0,
+              2,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                2,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9
+              ],
+              "2": [
+                0,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9
+              ],
+              "4": [
+                0,
+                2,
+                5,
+                6,
+                7,
+                8,
+                9
+              ],
+              "5": [
+                0,
+                2,
+                4,
+                6,
+                7,
+                8,
+                9
+              ],
+              "6": [
+                0,
+                2,
+                4,
+                5,
+                7,
+                8,
+                9
+              ],
+              "7": [
+                0,
+                2,
+                4,
+                5,
+                6,
+                8,
+                9
+              ],
+              "8": [
+                0,
+                2,
+                4,
+                5,
+                6,
+                7,
+                9
+              ],
+              "9": [
+                0,
+                2,
+                4,
+                5,
+                6,
+                7,
+                8
+              ]
+            },
+            "frames": 87
+          },
+          "4": {
+            "fit_tasks": [
+              0,
+              2,
+              3,
+              5,
+              6,
+              7,
+              8,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                2,
+                3,
+                5,
+                6,
+                7,
+                8,
+                9
+              ],
+              "2": [
+                0,
+                3,
+                5,
+                6,
+                7,
+                8,
+                9
+              ],
+              "3": [
+                0,
+                2,
+                5,
+                6,
+                7,
+                8,
+                9
+              ],
+              "5": [
+                0,
+                2,
+                3,
+                6,
+                7,
+                8,
+                9
+              ],
+              "6": [
+                0,
+                2,
+                3,
+                5,
+                7,
+                8,
+                9
+              ],
+              "7": [
+                0,
+                2,
+                3,
+                5,
+                6,
+                8,
+                9
+              ],
+              "8": [
+                0,
+                2,
+                3,
+                5,
+                6,
+                7,
+                9
+              ],
+              "9": [
+                0,
+                2,
+                3,
+                5,
+                6,
+                7,
+                8
+              ]
+            },
+            "frames": 127
+          },
+          "5": {
+            "fit_tasks": [
+              0,
+              2,
+              3,
+              4,
+              6,
+              7,
+              8,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                2,
+                3,
+                4,
+                6,
+                7,
+                8,
+                9
+              ],
+              "2": [
+                0,
+                3,
+                4,
+                6,
+                7,
+                8,
+                9
+              ],
+              "3": [
+                0,
+                2,
+                4,
+                6,
+                7,
+                8,
+                9
+              ],
+              "4": [
+                0,
+                2,
+                3,
+                6,
+                7,
+                8,
+                9
+              ],
+              "6": [
+                0,
+                2,
+                3,
+                4,
+                7,
+                8,
+                9
+              ],
+              "7": [
+                0,
+                2,
+                3,
+                4,
+                6,
+                8,
+                9
+              ],
+              "8": [
+                0,
+                2,
+                3,
+                4,
+                6,
+                7,
+                9
+              ],
+              "9": [
+                0,
+                2,
+                3,
+                4,
+                6,
+                7,
+                8
+              ]
+            },
+            "frames": 220
+          },
+          "6": {
+            "fit_tasks": [
+              0,
+              2,
+              3,
+              4,
+              5,
+              7,
+              8,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                2,
+                3,
+                4,
+                5,
+                7,
+                8,
+                9
+              ],
+              "2": [
+                0,
+                3,
+                4,
+                5,
+                7,
+                8,
+                9
+              ],
+              "3": [
+                0,
+                2,
+                4,
+                5,
+                7,
+                8,
+                9
+              ],
+              "4": [
+                0,
+                2,
+                3,
+                5,
+                7,
+                8,
+                9
+              ],
+              "5": [
+                0,
+                2,
+                3,
+                4,
+                7,
+                8,
+                9
+              ],
+              "7": [
+                0,
+                2,
+                3,
+                4,
+                5,
+                8,
+                9
+              ],
+              "8": [
+                0,
+                2,
+                3,
+                4,
+                5,
+                7,
+                9
+              ],
+              "9": [
+                0,
+                2,
+                3,
+                4,
+                5,
+                7,
+                8
+              ]
+            },
+            "frames": 129
+          },
+          "7": {
+            "fit_tasks": [
+              0,
+              2,
+              3,
+              4,
+              5,
+              6,
+              8,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                2,
+                3,
+                4,
+                5,
+                6,
+                8,
+                9
+              ],
+              "2": [
+                0,
+                3,
+                4,
+                5,
+                6,
+                8,
+                9
+              ],
+              "3": [
+                0,
+                2,
+                4,
+                5,
+                6,
+                8,
+                9
+              ],
+              "4": [
+                0,
+                2,
+                3,
+                5,
+                6,
+                8,
+                9
+              ],
+              "5": [
+                0,
+                2,
+                3,
+                4,
+                6,
+                8,
+                9
+              ],
+              "6": [
+                0,
+                2,
+                3,
+                4,
+                5,
+                8,
+                9
+              ],
+              "8": [
+                0,
+                2,
+                3,
+                4,
+                5,
+                6,
+                9
+              ],
+              "9": [
+                0,
+                2,
+                3,
+                4,
+                5,
+                6,
+                8
+              ]
+            },
+            "frames": 112
+          },
+          "8": {
+            "fit_tasks": [
+              0,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                9
+              ],
+              "2": [
+                0,
+                3,
+                4,
+                5,
+                6,
+                7,
+                9
+              ],
+              "3": [
+                0,
+                2,
+                4,
+                5,
+                6,
+                7,
+                9
+              ],
+              "4": [
+                0,
+                2,
+                3,
+                5,
+                6,
+                7,
+                9
+              ],
+              "5": [
+                0,
+                2,
+                3,
+                4,
+                6,
+                7,
+                9
+              ],
+              "6": [
+                0,
+                2,
+                3,
+                4,
+                5,
+                7,
+                9
+              ],
+              "7": [
+                0,
+                2,
+                3,
+                4,
+                5,
+                6,
+                9
+              ],
+              "9": [
+                0,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7
+              ]
+            },
+            "frames": 101
+          },
+          "9": {
+            "fit_tasks": [
+              0,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8
+              ],
+              "2": [
+                0,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8
+              ],
+              "3": [
+                0,
+                2,
+                4,
+                5,
+                6,
+                7,
+                8
+              ],
+              "4": [
+                0,
+                2,
+                3,
+                5,
+                6,
+                7,
+                8
+              ],
+              "5": [
+                0,
+                2,
+                3,
+                4,
+                6,
+                7,
+                8
+              ],
+              "6": [
+                0,
+                2,
+                3,
+                4,
+                5,
+                7,
+                8
+              ],
+              "7": [
+                0,
+                2,
+                3,
+                4,
+                5,
+                6,
+                8
+              ],
+              "8": [
+                0,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7
+              ]
+            },
+            "frames": 123
+          }
+        }
+      },
+      "2": {
+        "threshold": 0.5353164672851562,
+        "source_frames": 1092,
+        "outer_tasks": [
+          0,
+          1,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "source_crossfit_exceedance": 0.05036630108952522,
+        "folds": {
+          "0": {
+            "fit_tasks": [
+              1,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "1": [
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9
+              ],
+              "3": [
+                1,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9
+              ],
+              "4": [
+                1,
+                3,
+                5,
+                6,
+                7,
+                8,
+                9
+              ],
+              "5": [
+                1,
+                3,
+                4,
+                6,
+                7,
+                8,
+                9
+              ],
+              "6": [
+                1,
+                3,
+                4,
+                5,
+                7,
+                8,
+                9
+              ],
+              "7": [
+                1,
+                3,
+                4,
+                5,
+                6,
+                8,
+                9
+              ],
+              "8": [
+                1,
+                3,
+                4,
+                5,
+                6,
+                7,
+                9
+              ],
+              "9": [
+                1,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8
+              ]
+            },
+            "frames": 83
+          },
+          "1": {
+            "fit_tasks": [
+              0,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9
+              ],
+              "3": [
+                0,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9
+              ],
+              "4": [
+                0,
+                3,
+                5,
+                6,
+                7,
+                8,
+                9
+              ],
+              "5": [
+                0,
+                3,
+                4,
+                6,
+                7,
+                8,
+                9
+              ],
+              "6": [
+                0,
+                3,
+                4,
+                5,
+                7,
+                8,
+                9
+              ],
+              "7": [
+                0,
+                3,
+                4,
+                5,
+                6,
+                8,
+                9
+              ],
+              "8": [
+                0,
+                3,
+                4,
+                5,
+                6,
+                7,
+                9
+              ],
+              "9": [
+                0,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8
+              ]
+            },
+            "frames": 110
+          },
+          "3": {
+            "fit_tasks": [
+              0,
+              1,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                1,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9
+              ],
+              "1": [
+                0,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9
+              ],
+              "4": [
+                0,
+                1,
+                5,
+                6,
+                7,
+                8,
+                9
+              ],
+              "5": [
+                0,
+                1,
+                4,
+                6,
+                7,
+                8,
+                9
+              ],
+              "6": [
+                0,
+                1,
+                4,
+                5,
+                7,
+                8,
+                9
+              ],
+              "7": [
+                0,
+                1,
+                4,
+                5,
+                6,
+                8,
+                9
+              ],
+              "8": [
+                0,
+                1,
+                4,
+                5,
+                6,
+                7,
+                9
+              ],
+              "9": [
+                0,
+                1,
+                4,
+                5,
+                6,
+                7,
+                8
+              ]
+            },
+            "frames": 87
+          },
+          "4": {
+            "fit_tasks": [
+              0,
+              1,
+              3,
+              5,
+              6,
+              7,
+              8,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                1,
+                3,
+                5,
+                6,
+                7,
+                8,
+                9
+              ],
+              "1": [
+                0,
+                3,
+                5,
+                6,
+                7,
+                8,
+                9
+              ],
+              "3": [
+                0,
+                1,
+                5,
+                6,
+                7,
+                8,
+                9
+              ],
+              "5": [
+                0,
+                1,
+                3,
+                6,
+                7,
+                8,
+                9
+              ],
+              "6": [
+                0,
+                1,
+                3,
+                5,
+                7,
+                8,
+                9
+              ],
+              "7": [
+                0,
+                1,
+                3,
+                5,
+                6,
+                8,
+                9
+              ],
+              "8": [
+                0,
+                1,
+                3,
+                5,
+                6,
+                7,
+                9
+              ],
+              "9": [
+                0,
+                1,
+                3,
+                5,
+                6,
+                7,
+                8
+              ]
+            },
+            "frames": 127
+          },
+          "5": {
+            "fit_tasks": [
+              0,
+              1,
+              3,
+              4,
+              6,
+              7,
+              8,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                1,
+                3,
+                4,
+                6,
+                7,
+                8,
+                9
+              ],
+              "1": [
+                0,
+                3,
+                4,
+                6,
+                7,
+                8,
+                9
+              ],
+              "3": [
+                0,
+                1,
+                4,
+                6,
+                7,
+                8,
+                9
+              ],
+              "4": [
+                0,
+                1,
+                3,
+                6,
+                7,
+                8,
+                9
+              ],
+              "6": [
+                0,
+                1,
+                3,
+                4,
+                7,
+                8,
+                9
+              ],
+              "7": [
+                0,
+                1,
+                3,
+                4,
+                6,
+                8,
+                9
+              ],
+              "8": [
+                0,
+                1,
+                3,
+                4,
+                6,
+                7,
+                9
+              ],
+              "9": [
+                0,
+                1,
+                3,
+                4,
+                6,
+                7,
+                8
+              ]
+            },
+            "frames": 220
+          },
+          "6": {
+            "fit_tasks": [
+              0,
+              1,
+              3,
+              4,
+              5,
+              7,
+              8,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                1,
+                3,
+                4,
+                5,
+                7,
+                8,
+                9
+              ],
+              "1": [
+                0,
+                3,
+                4,
+                5,
+                7,
+                8,
+                9
+              ],
+              "3": [
+                0,
+                1,
+                4,
+                5,
+                7,
+                8,
+                9
+              ],
+              "4": [
+                0,
+                1,
+                3,
+                5,
+                7,
+                8,
+                9
+              ],
+              "5": [
+                0,
+                1,
+                3,
+                4,
+                7,
+                8,
+                9
+              ],
+              "7": [
+                0,
+                1,
+                3,
+                4,
+                5,
+                8,
+                9
+              ],
+              "8": [
+                0,
+                1,
+                3,
+                4,
+                5,
+                7,
+                9
+              ],
+              "9": [
+                0,
+                1,
+                3,
+                4,
+                5,
+                7,
+                8
+              ]
+            },
+            "frames": 129
+          },
+          "7": {
+            "fit_tasks": [
+              0,
+              1,
+              3,
+              4,
+              5,
+              6,
+              8,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                1,
+                3,
+                4,
+                5,
+                6,
+                8,
+                9
+              ],
+              "1": [
+                0,
+                3,
+                4,
+                5,
+                6,
+                8,
+                9
+              ],
+              "3": [
+                0,
+                1,
+                4,
+                5,
+                6,
+                8,
+                9
+              ],
+              "4": [
+                0,
+                1,
+                3,
+                5,
+                6,
+                8,
+                9
+              ],
+              "5": [
+                0,
+                1,
+                3,
+                4,
+                6,
+                8,
+                9
+              ],
+              "6": [
+                0,
+                1,
+                3,
+                4,
+                5,
+                8,
+                9
+              ],
+              "8": [
+                0,
+                1,
+                3,
+                4,
+                5,
+                6,
+                9
+              ],
+              "9": [
+                0,
+                1,
+                3,
+                4,
+                5,
+                6,
+                8
+              ]
+            },
+            "frames": 112
+          },
+          "8": {
+            "fit_tasks": [
+              0,
+              1,
+              3,
+              4,
+              5,
+              6,
+              7,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                1,
+                3,
+                4,
+                5,
+                6,
+                7,
+                9
+              ],
+              "1": [
+                0,
+                3,
+                4,
+                5,
+                6,
+                7,
+                9
+              ],
+              "3": [
+                0,
+                1,
+                4,
+                5,
+                6,
+                7,
+                9
+              ],
+              "4": [
+                0,
+                1,
+                3,
+                5,
+                6,
+                7,
+                9
+              ],
+              "5": [
+                0,
+                1,
+                3,
+                4,
+                6,
+                7,
+                9
+              ],
+              "6": [
+                0,
+                1,
+                3,
+                4,
+                5,
+                7,
+                9
+              ],
+              "7": [
+                0,
+                1,
+                3,
+                4,
+                5,
+                6,
+                9
+              ],
+              "9": [
+                0,
+                1,
+                3,
+                4,
+                5,
+                6,
+                7
+              ]
+            },
+            "frames": 101
+          },
+          "9": {
+            "fit_tasks": [
+              0,
+              1,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                1,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8
+              ],
+              "1": [
+                0,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8
+              ],
+              "3": [
+                0,
+                1,
+                4,
+                5,
+                6,
+                7,
+                8
+              ],
+              "4": [
+                0,
+                1,
+                3,
+                5,
+                6,
+                7,
+                8
+              ],
+              "5": [
+                0,
+                1,
+                3,
+                4,
+                6,
+                7,
+                8
+              ],
+              "6": [
+                0,
+                1,
+                3,
+                4,
+                5,
+                7,
+                8
+              ],
+              "7": [
+                0,
+                1,
+                3,
+                4,
+                5,
+                6,
+                8
+              ],
+              "8": [
+                0,
+                1,
+                3,
+                4,
+                5,
+                6,
+                7
+              ]
+            },
+            "frames": 123
+          }
+        }
+      },
+      "3": {
+        "threshold": 0.4856468737125397,
+        "source_frames": 1225,
+        "outer_tasks": [
+          0,
+          1,
+          2,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "source_crossfit_exceedance": 0.05061224475502968,
+        "folds": {
+          "0": {
+            "fit_tasks": [
+              1,
+              2,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "1": [
+                2,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9
+              ],
+              "2": [
+                1,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9
+              ],
+              "4": [
+                1,
+                2,
+                5,
+                6,
+                7,
+                8,
+                9
+              ],
+              "5": [
+                1,
+                2,
+                4,
+                6,
+                7,
+                8,
+                9
+              ],
+              "6": [
+                1,
+                2,
+                4,
+                5,
+                7,
+                8,
+                9
+              ],
+              "7": [
+                1,
+                2,
+                4,
+                5,
+                6,
+                8,
+                9
+              ],
+              "8": [
+                1,
+                2,
+                4,
+                5,
+                6,
+                7,
+                9
+              ],
+              "9": [
+                1,
+                2,
+                4,
+                5,
+                6,
+                7,
+                8
+              ]
+            },
+            "frames": 83
+          },
+          "1": {
+            "fit_tasks": [
+              0,
+              2,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                2,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9
+              ],
+              "2": [
+                0,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9
+              ],
+              "4": [
+                0,
+                2,
+                5,
+                6,
+                7,
+                8,
+                9
+              ],
+              "5": [
+                0,
+                2,
+                4,
+                6,
+                7,
+                8,
+                9
+              ],
+              "6": [
+                0,
+                2,
+                4,
+                5,
+                7,
+                8,
+                9
+              ],
+              "7": [
+                0,
+                2,
+                4,
+                5,
+                6,
+                8,
+                9
+              ],
+              "8": [
+                0,
+                2,
+                4,
+                5,
+                6,
+                7,
+                9
+              ],
+              "9": [
+                0,
+                2,
+                4,
+                5,
+                6,
+                7,
+                8
+              ]
+            },
+            "frames": 110
+          },
+          "2": {
+            "fit_tasks": [
+              0,
+              1,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                1,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9
+              ],
+              "1": [
+                0,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9
+              ],
+              "4": [
+                0,
+                1,
+                5,
+                6,
+                7,
+                8,
+                9
+              ],
+              "5": [
+                0,
+                1,
+                4,
+                6,
+                7,
+                8,
+                9
+              ],
+              "6": [
+                0,
+                1,
+                4,
+                5,
+                7,
+                8,
+                9
+              ],
+              "7": [
+                0,
+                1,
+                4,
+                5,
+                6,
+                8,
+                9
+              ],
+              "8": [
+                0,
+                1,
+                4,
+                5,
+                6,
+                7,
+                9
+              ],
+              "9": [
+                0,
+                1,
+                4,
+                5,
+                6,
+                7,
+                8
+              ]
+            },
+            "frames": 220
+          },
+          "4": {
+            "fit_tasks": [
+              0,
+              1,
+              2,
+              5,
+              6,
+              7,
+              8,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                1,
+                2,
+                5,
+                6,
+                7,
+                8,
+                9
+              ],
+              "1": [
+                0,
+                2,
+                5,
+                6,
+                7,
+                8,
+                9
+              ],
+              "2": [
+                0,
+                1,
+                5,
+                6,
+                7,
+                8,
+                9
+              ],
+              "5": [
+                0,
+                1,
+                2,
+                6,
+                7,
+                8,
+                9
+              ],
+              "6": [
+                0,
+                1,
+                2,
+                5,
+                7,
+                8,
+                9
+              ],
+              "7": [
+                0,
+                1,
+                2,
+                5,
+                6,
+                8,
+                9
+              ],
+              "8": [
+                0,
+                1,
+                2,
+                5,
+                6,
+                7,
+                9
+              ],
+              "9": [
+                0,
+                1,
+                2,
+                5,
+                6,
+                7,
+                8
+              ]
+            },
+            "frames": 127
+          },
+          "5": {
+            "fit_tasks": [
+              0,
+              1,
+              2,
+              4,
+              6,
+              7,
+              8,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                1,
+                2,
+                4,
+                6,
+                7,
+                8,
+                9
+              ],
+              "1": [
+                0,
+                2,
+                4,
+                6,
+                7,
+                8,
+                9
+              ],
+              "2": [
+                0,
+                1,
+                4,
+                6,
+                7,
+                8,
+                9
+              ],
+              "4": [
+                0,
+                1,
+                2,
+                6,
+                7,
+                8,
+                9
+              ],
+              "6": [
+                0,
+                1,
+                2,
+                4,
+                7,
+                8,
+                9
+              ],
+              "7": [
+                0,
+                1,
+                2,
+                4,
+                6,
+                8,
+                9
+              ],
+              "8": [
+                0,
+                1,
+                2,
+                4,
+                6,
+                7,
+                9
+              ],
+              "9": [
+                0,
+                1,
+                2,
+                4,
+                6,
+                7,
+                8
+              ]
+            },
+            "frames": 220
+          },
+          "6": {
+            "fit_tasks": [
+              0,
+              1,
+              2,
+              4,
+              5,
+              7,
+              8,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                1,
+                2,
+                4,
+                5,
+                7,
+                8,
+                9
+              ],
+              "1": [
+                0,
+                2,
+                4,
+                5,
+                7,
+                8,
+                9
+              ],
+              "2": [
+                0,
+                1,
+                4,
+                5,
+                7,
+                8,
+                9
+              ],
+              "4": [
+                0,
+                1,
+                2,
+                5,
+                7,
+                8,
+                9
+              ],
+              "5": [
+                0,
+                1,
+                2,
+                4,
+                7,
+                8,
+                9
+              ],
+              "7": [
+                0,
+                1,
+                2,
+                4,
+                5,
+                8,
+                9
+              ],
+              "8": [
+                0,
+                1,
+                2,
+                4,
+                5,
+                7,
+                9
+              ],
+              "9": [
+                0,
+                1,
+                2,
+                4,
+                5,
+                7,
+                8
+              ]
+            },
+            "frames": 129
+          },
+          "7": {
+            "fit_tasks": [
+              0,
+              1,
+              2,
+              4,
+              5,
+              6,
+              8,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                1,
+                2,
+                4,
+                5,
+                6,
+                8,
+                9
+              ],
+              "1": [
+                0,
+                2,
+                4,
+                5,
+                6,
+                8,
+                9
+              ],
+              "2": [
+                0,
+                1,
+                4,
+                5,
+                6,
+                8,
+                9
+              ],
+              "4": [
+                0,
+                1,
+                2,
+                5,
+                6,
+                8,
+                9
+              ],
+              "5": [
+                0,
+                1,
+                2,
+                4,
+                6,
+                8,
+                9
+              ],
+              "6": [
+                0,
+                1,
+                2,
+                4,
+                5,
+                8,
+                9
+              ],
+              "8": [
+                0,
+                1,
+                2,
+                4,
+                5,
+                6,
+                9
+              ],
+              "9": [
+                0,
+                1,
+                2,
+                4,
+                5,
+                6,
+                8
+              ]
+            },
+            "frames": 112
+          },
+          "8": {
+            "fit_tasks": [
+              0,
+              1,
+              2,
+              4,
+              5,
+              6,
+              7,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                1,
+                2,
+                4,
+                5,
+                6,
+                7,
+                9
+              ],
+              "1": [
+                0,
+                2,
+                4,
+                5,
+                6,
+                7,
+                9
+              ],
+              "2": [
+                0,
+                1,
+                4,
+                5,
+                6,
+                7,
+                9
+              ],
+              "4": [
+                0,
+                1,
+                2,
+                5,
+                6,
+                7,
+                9
+              ],
+              "5": [
+                0,
+                1,
+                2,
+                4,
+                6,
+                7,
+                9
+              ],
+              "6": [
+                0,
+                1,
+                2,
+                4,
+                5,
+                7,
+                9
+              ],
+              "7": [
+                0,
+                1,
+                2,
+                4,
+                5,
+                6,
+                9
+              ],
+              "9": [
+                0,
+                1,
+                2,
+                4,
+                5,
+                6,
+                7
+              ]
+            },
+            "frames": 101
+          },
+          "9": {
+            "fit_tasks": [
+              0,
+              1,
+              2,
+              4,
+              5,
+              6,
+              7,
+              8
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                1,
+                2,
+                4,
+                5,
+                6,
+                7,
+                8
+              ],
+              "1": [
+                0,
+                2,
+                4,
+                5,
+                6,
+                7,
+                8
+              ],
+              "2": [
+                0,
+                1,
+                4,
+                5,
+                6,
+                7,
+                8
+              ],
+              "4": [
+                0,
+                1,
+                2,
+                5,
+                6,
+                7,
+                8
+              ],
+              "5": [
+                0,
+                1,
+                2,
+                4,
+                6,
+                7,
+                8
+              ],
+              "6": [
+                0,
+                1,
+                2,
+                4,
+                5,
+                7,
+                8
+              ],
+              "7": [
+                0,
+                1,
+                2,
+                4,
+                5,
+                6,
+                8
+              ],
+              "8": [
+                0,
+                1,
+                2,
+                4,
+                5,
+                6,
+                7
+              ]
+            },
+            "frames": 123
+          }
+        }
+      },
+      "4": {
+        "threshold": 0.487897127866745,
+        "source_frames": 1185,
+        "outer_tasks": [
+          0,
+          1,
+          2,
+          3,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "source_crossfit_exceedance": 0.050632912665605545,
+        "folds": {
+          "0": {
+            "fit_tasks": [
+              1,
+              2,
+              3,
+              5,
+              6,
+              7,
+              8,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "1": [
+                2,
+                3,
+                5,
+                6,
+                7,
+                8,
+                9
+              ],
+              "2": [
+                1,
+                3,
+                5,
+                6,
+                7,
+                8,
+                9
+              ],
+              "3": [
+                1,
+                2,
+                5,
+                6,
+                7,
+                8,
+                9
+              ],
+              "5": [
+                1,
+                2,
+                3,
+                6,
+                7,
+                8,
+                9
+              ],
+              "6": [
+                1,
+                2,
+                3,
+                5,
+                7,
+                8,
+                9
+              ],
+              "7": [
+                1,
+                2,
+                3,
+                5,
+                6,
+                8,
+                9
+              ],
+              "8": [
+                1,
+                2,
+                3,
+                5,
+                6,
+                7,
+                9
+              ],
+              "9": [
+                1,
+                2,
+                3,
+                5,
+                6,
+                7,
+                8
+              ]
+            },
+            "frames": 83
+          },
+          "1": {
+            "fit_tasks": [
+              0,
+              2,
+              3,
+              5,
+              6,
+              7,
+              8,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                2,
+                3,
+                5,
+                6,
+                7,
+                8,
+                9
+              ],
+              "2": [
+                0,
+                3,
+                5,
+                6,
+                7,
+                8,
+                9
+              ],
+              "3": [
+                0,
+                2,
+                5,
+                6,
+                7,
+                8,
+                9
+              ],
+              "5": [
+                0,
+                2,
+                3,
+                6,
+                7,
+                8,
+                9
+              ],
+              "6": [
+                0,
+                2,
+                3,
+                5,
+                7,
+                8,
+                9
+              ],
+              "7": [
+                0,
+                2,
+                3,
+                5,
+                6,
+                8,
+                9
+              ],
+              "8": [
+                0,
+                2,
+                3,
+                5,
+                6,
+                7,
+                9
+              ],
+              "9": [
+                0,
+                2,
+                3,
+                5,
+                6,
+                7,
+                8
+              ]
+            },
+            "frames": 110
+          },
+          "2": {
+            "fit_tasks": [
+              0,
+              1,
+              3,
+              5,
+              6,
+              7,
+              8,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                1,
+                3,
+                5,
+                6,
+                7,
+                8,
+                9
+              ],
+              "1": [
+                0,
+                3,
+                5,
+                6,
+                7,
+                8,
+                9
+              ],
+              "3": [
+                0,
+                1,
+                5,
+                6,
+                7,
+                8,
+                9
+              ],
+              "5": [
+                0,
+                1,
+                3,
+                6,
+                7,
+                8,
+                9
+              ],
+              "6": [
+                0,
+                1,
+                3,
+                5,
+                7,
+                8,
+                9
+              ],
+              "7": [
+                0,
+                1,
+                3,
+                5,
+                6,
+                8,
+                9
+              ],
+              "8": [
+                0,
+                1,
+                3,
+                5,
+                6,
+                7,
+                9
+              ],
+              "9": [
+                0,
+                1,
+                3,
+                5,
+                6,
+                7,
+                8
+              ]
+            },
+            "frames": 220
+          },
+          "3": {
+            "fit_tasks": [
+              0,
+              1,
+              2,
+              5,
+              6,
+              7,
+              8,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                1,
+                2,
+                5,
+                6,
+                7,
+                8,
+                9
+              ],
+              "1": [
+                0,
+                2,
+                5,
+                6,
+                7,
+                8,
+                9
+              ],
+              "2": [
+                0,
+                1,
+                5,
+                6,
+                7,
+                8,
+                9
+              ],
+              "5": [
+                0,
+                1,
+                2,
+                6,
+                7,
+                8,
+                9
+              ],
+              "6": [
+                0,
+                1,
+                2,
+                5,
+                7,
+                8,
+                9
+              ],
+              "7": [
+                0,
+                1,
+                2,
+                5,
+                6,
+                8,
+                9
+              ],
+              "8": [
+                0,
+                1,
+                2,
+                5,
+                6,
+                7,
+                9
+              ],
+              "9": [
+                0,
+                1,
+                2,
+                5,
+                6,
+                7,
+                8
+              ]
+            },
+            "frames": 87
+          },
+          "5": {
+            "fit_tasks": [
+              0,
+              1,
+              2,
+              3,
+              6,
+              7,
+              8,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                1,
+                2,
+                3,
+                6,
+                7,
+                8,
+                9
+              ],
+              "1": [
+                0,
+                2,
+                3,
+                6,
+                7,
+                8,
+                9
+              ],
+              "2": [
+                0,
+                1,
+                3,
+                6,
+                7,
+                8,
+                9
+              ],
+              "3": [
+                0,
+                1,
+                2,
+                6,
+                7,
+                8,
+                9
+              ],
+              "6": [
+                0,
+                1,
+                2,
+                3,
+                7,
+                8,
+                9
+              ],
+              "7": [
+                0,
+                1,
+                2,
+                3,
+                6,
+                8,
+                9
+              ],
+              "8": [
+                0,
+                1,
+                2,
+                3,
+                6,
+                7,
+                9
+              ],
+              "9": [
+                0,
+                1,
+                2,
+                3,
+                6,
+                7,
+                8
+              ]
+            },
+            "frames": 220
+          },
+          "6": {
+            "fit_tasks": [
+              0,
+              1,
+              2,
+              3,
+              5,
+              7,
+              8,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                1,
+                2,
+                3,
+                5,
+                7,
+                8,
+                9
+              ],
+              "1": [
+                0,
+                2,
+                3,
+                5,
+                7,
+                8,
+                9
+              ],
+              "2": [
+                0,
+                1,
+                3,
+                5,
+                7,
+                8,
+                9
+              ],
+              "3": [
+                0,
+                1,
+                2,
+                5,
+                7,
+                8,
+                9
+              ],
+              "5": [
+                0,
+                1,
+                2,
+                3,
+                7,
+                8,
+                9
+              ],
+              "7": [
+                0,
+                1,
+                2,
+                3,
+                5,
+                8,
+                9
+              ],
+              "8": [
+                0,
+                1,
+                2,
+                3,
+                5,
+                7,
+                9
+              ],
+              "9": [
+                0,
+                1,
+                2,
+                3,
+                5,
+                7,
+                8
+              ]
+            },
+            "frames": 129
+          },
+          "7": {
+            "fit_tasks": [
+              0,
+              1,
+              2,
+              3,
+              5,
+              6,
+              8,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                1,
+                2,
+                3,
+                5,
+                6,
+                8,
+                9
+              ],
+              "1": [
+                0,
+                2,
+                3,
+                5,
+                6,
+                8,
+                9
+              ],
+              "2": [
+                0,
+                1,
+                3,
+                5,
+                6,
+                8,
+                9
+              ],
+              "3": [
+                0,
+                1,
+                2,
+                5,
+                6,
+                8,
+                9
+              ],
+              "5": [
+                0,
+                1,
+                2,
+                3,
+                6,
+                8,
+                9
+              ],
+              "6": [
+                0,
+                1,
+                2,
+                3,
+                5,
+                8,
+                9
+              ],
+              "8": [
+                0,
+                1,
+                2,
+                3,
+                5,
+                6,
+                9
+              ],
+              "9": [
+                0,
+                1,
+                2,
+                3,
+                5,
+                6,
+                8
+              ]
+            },
+            "frames": 112
+          },
+          "8": {
+            "fit_tasks": [
+              0,
+              1,
+              2,
+              3,
+              5,
+              6,
+              7,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                1,
+                2,
+                3,
+                5,
+                6,
+                7,
+                9
+              ],
+              "1": [
+                0,
+                2,
+                3,
+                5,
+                6,
+                7,
+                9
+              ],
+              "2": [
+                0,
+                1,
+                3,
+                5,
+                6,
+                7,
+                9
+              ],
+              "3": [
+                0,
+                1,
+                2,
+                5,
+                6,
+                7,
+                9
+              ],
+              "5": [
+                0,
+                1,
+                2,
+                3,
+                6,
+                7,
+                9
+              ],
+              "6": [
+                0,
+                1,
+                2,
+                3,
+                5,
+                7,
+                9
+              ],
+              "7": [
+                0,
+                1,
+                2,
+                3,
+                5,
+                6,
+                9
+              ],
+              "9": [
+                0,
+                1,
+                2,
+                3,
+                5,
+                6,
+                7
+              ]
+            },
+            "frames": 101
+          },
+          "9": {
+            "fit_tasks": [
+              0,
+              1,
+              2,
+              3,
+              5,
+              6,
+              7,
+              8
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                1,
+                2,
+                3,
+                5,
+                6,
+                7,
+                8
+              ],
+              "1": [
+                0,
+                2,
+                3,
+                5,
+                6,
+                7,
+                8
+              ],
+              "2": [
+                0,
+                1,
+                3,
+                5,
+                6,
+                7,
+                8
+              ],
+              "3": [
+                0,
+                1,
+                2,
+                5,
+                6,
+                7,
+                8
+              ],
+              "5": [
+                0,
+                1,
+                2,
+                3,
+                6,
+                7,
+                8
+              ],
+              "6": [
+                0,
+                1,
+                2,
+                3,
+                5,
+                7,
+                8
+              ],
+              "7": [
+                0,
+                1,
+                2,
+                3,
+                5,
+                6,
+                8
+              ],
+              "8": [
+                0,
+                1,
+                2,
+                3,
+                5,
+                6,
+                7
+              ]
+            },
+            "frames": 123
+          }
+        }
+      },
+      "5": {
+        "threshold": 0.4652538299560547,
+        "source_frames": 1092,
+        "outer_tasks": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          6,
+          7,
+          8,
+          9
+        ],
+        "source_crossfit_exceedance": 0.05036630108952522,
+        "folds": {
+          "0": {
+            "fit_tasks": [
+              1,
+              2,
+              3,
+              4,
+              6,
+              7,
+              8,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "1": [
+                2,
+                3,
+                4,
+                6,
+                7,
+                8,
+                9
+              ],
+              "2": [
+                1,
+                3,
+                4,
+                6,
+                7,
+                8,
+                9
+              ],
+              "3": [
+                1,
+                2,
+                4,
+                6,
+                7,
+                8,
+                9
+              ],
+              "4": [
+                1,
+                2,
+                3,
+                6,
+                7,
+                8,
+                9
+              ],
+              "6": [
+                1,
+                2,
+                3,
+                4,
+                7,
+                8,
+                9
+              ],
+              "7": [
+                1,
+                2,
+                3,
+                4,
+                6,
+                8,
+                9
+              ],
+              "8": [
+                1,
+                2,
+                3,
+                4,
+                6,
+                7,
+                9
+              ],
+              "9": [
+                1,
+                2,
+                3,
+                4,
+                6,
+                7,
+                8
+              ]
+            },
+            "frames": 83
+          },
+          "1": {
+            "fit_tasks": [
+              0,
+              2,
+              3,
+              4,
+              6,
+              7,
+              8,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                2,
+                3,
+                4,
+                6,
+                7,
+                8,
+                9
+              ],
+              "2": [
+                0,
+                3,
+                4,
+                6,
+                7,
+                8,
+                9
+              ],
+              "3": [
+                0,
+                2,
+                4,
+                6,
+                7,
+                8,
+                9
+              ],
+              "4": [
+                0,
+                2,
+                3,
+                6,
+                7,
+                8,
+                9
+              ],
+              "6": [
+                0,
+                2,
+                3,
+                4,
+                7,
+                8,
+                9
+              ],
+              "7": [
+                0,
+                2,
+                3,
+                4,
+                6,
+                8,
+                9
+              ],
+              "8": [
+                0,
+                2,
+                3,
+                4,
+                6,
+                7,
+                9
+              ],
+              "9": [
+                0,
+                2,
+                3,
+                4,
+                6,
+                7,
+                8
+              ]
+            },
+            "frames": 110
+          },
+          "2": {
+            "fit_tasks": [
+              0,
+              1,
+              3,
+              4,
+              6,
+              7,
+              8,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                1,
+                3,
+                4,
+                6,
+                7,
+                8,
+                9
+              ],
+              "1": [
+                0,
+                3,
+                4,
+                6,
+                7,
+                8,
+                9
+              ],
+              "3": [
+                0,
+                1,
+                4,
+                6,
+                7,
+                8,
+                9
+              ],
+              "4": [
+                0,
+                1,
+                3,
+                6,
+                7,
+                8,
+                9
+              ],
+              "6": [
+                0,
+                1,
+                3,
+                4,
+                7,
+                8,
+                9
+              ],
+              "7": [
+                0,
+                1,
+                3,
+                4,
+                6,
+                8,
+                9
+              ],
+              "8": [
+                0,
+                1,
+                3,
+                4,
+                6,
+                7,
+                9
+              ],
+              "9": [
+                0,
+                1,
+                3,
+                4,
+                6,
+                7,
+                8
+              ]
+            },
+            "frames": 220
+          },
+          "3": {
+            "fit_tasks": [
+              0,
+              1,
+              2,
+              4,
+              6,
+              7,
+              8,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                1,
+                2,
+                4,
+                6,
+                7,
+                8,
+                9
+              ],
+              "1": [
+                0,
+                2,
+                4,
+                6,
+                7,
+                8,
+                9
+              ],
+              "2": [
+                0,
+                1,
+                4,
+                6,
+                7,
+                8,
+                9
+              ],
+              "4": [
+                0,
+                1,
+                2,
+                6,
+                7,
+                8,
+                9
+              ],
+              "6": [
+                0,
+                1,
+                2,
+                4,
+                7,
+                8,
+                9
+              ],
+              "7": [
+                0,
+                1,
+                2,
+                4,
+                6,
+                8,
+                9
+              ],
+              "8": [
+                0,
+                1,
+                2,
+                4,
+                6,
+                7,
+                9
+              ],
+              "9": [
+                0,
+                1,
+                2,
+                4,
+                6,
+                7,
+                8
+              ]
+            },
+            "frames": 87
+          },
+          "4": {
+            "fit_tasks": [
+              0,
+              1,
+              2,
+              3,
+              6,
+              7,
+              8,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                1,
+                2,
+                3,
+                6,
+                7,
+                8,
+                9
+              ],
+              "1": [
+                0,
+                2,
+                3,
+                6,
+                7,
+                8,
+                9
+              ],
+              "2": [
+                0,
+                1,
+                3,
+                6,
+                7,
+                8,
+                9
+              ],
+              "3": [
+                0,
+                1,
+                2,
+                6,
+                7,
+                8,
+                9
+              ],
+              "6": [
+                0,
+                1,
+                2,
+                3,
+                7,
+                8,
+                9
+              ],
+              "7": [
+                0,
+                1,
+                2,
+                3,
+                6,
+                8,
+                9
+              ],
+              "8": [
+                0,
+                1,
+                2,
+                3,
+                6,
+                7,
+                9
+              ],
+              "9": [
+                0,
+                1,
+                2,
+                3,
+                6,
+                7,
+                8
+              ]
+            },
+            "frames": 127
+          },
+          "6": {
+            "fit_tasks": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              7,
+              8,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                1,
+                2,
+                3,
+                4,
+                7,
+                8,
+                9
+              ],
+              "1": [
+                0,
+                2,
+                3,
+                4,
+                7,
+                8,
+                9
+              ],
+              "2": [
+                0,
+                1,
+                3,
+                4,
+                7,
+                8,
+                9
+              ],
+              "3": [
+                0,
+                1,
+                2,
+                4,
+                7,
+                8,
+                9
+              ],
+              "4": [
+                0,
+                1,
+                2,
+                3,
+                7,
+                8,
+                9
+              ],
+              "7": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                8,
+                9
+              ],
+              "8": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                7,
+                9
+              ],
+              "9": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                7,
+                8
+              ]
+            },
+            "frames": 129
+          },
+          "7": {
+            "fit_tasks": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              6,
+              8,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                1,
+                2,
+                3,
+                4,
+                6,
+                8,
+                9
+              ],
+              "1": [
+                0,
+                2,
+                3,
+                4,
+                6,
+                8,
+                9
+              ],
+              "2": [
+                0,
+                1,
+                3,
+                4,
+                6,
+                8,
+                9
+              ],
+              "3": [
+                0,
+                1,
+                2,
+                4,
+                6,
+                8,
+                9
+              ],
+              "4": [
+                0,
+                1,
+                2,
+                3,
+                6,
+                8,
+                9
+              ],
+              "6": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                8,
+                9
+              ],
+              "8": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                6,
+                9
+              ],
+              "9": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                6,
+                8
+              ]
+            },
+            "frames": 112
+          },
+          "8": {
+            "fit_tasks": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              6,
+              7,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                1,
+                2,
+                3,
+                4,
+                6,
+                7,
+                9
+              ],
+              "1": [
+                0,
+                2,
+                3,
+                4,
+                6,
+                7,
+                9
+              ],
+              "2": [
+                0,
+                1,
+                3,
+                4,
+                6,
+                7,
+                9
+              ],
+              "3": [
+                0,
+                1,
+                2,
+                4,
+                6,
+                7,
+                9
+              ],
+              "4": [
+                0,
+                1,
+                2,
+                3,
+                6,
+                7,
+                9
+              ],
+              "6": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                7,
+                9
+              ],
+              "7": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                6,
+                9
+              ],
+              "9": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                6,
+                7
+              ]
+            },
+            "frames": 101
+          },
+          "9": {
+            "fit_tasks": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              6,
+              7,
+              8
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                1,
+                2,
+                3,
+                4,
+                6,
+                7,
+                8
+              ],
+              "1": [
+                0,
+                2,
+                3,
+                4,
+                6,
+                7,
+                8
+              ],
+              "2": [
+                0,
+                1,
+                3,
+                4,
+                6,
+                7,
+                8
+              ],
+              "3": [
+                0,
+                1,
+                2,
+                4,
+                6,
+                7,
+                8
+              ],
+              "4": [
+                0,
+                1,
+                2,
+                3,
+                6,
+                7,
+                8
+              ],
+              "6": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                7,
+                8
+              ],
+              "7": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                6,
+                8
+              ],
+              "8": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                6,
+                7
+              ]
+            },
+            "frames": 123
+          }
+        }
+      },
+      "6": {
+        "threshold": 0.4918006956577301,
+        "source_frames": 1183,
+        "outer_tasks": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          7,
+          8,
+          9
+        ],
+        "source_crossfit_exceedance": 0.0507185123860836,
+        "folds": {
+          "0": {
+            "fit_tasks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              7,
+              8,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "1": [
+                2,
+                3,
+                4,
+                5,
+                7,
+                8,
+                9
+              ],
+              "2": [
+                1,
+                3,
+                4,
+                5,
+                7,
+                8,
+                9
+              ],
+              "3": [
+                1,
+                2,
+                4,
+                5,
+                7,
+                8,
+                9
+              ],
+              "4": [
+                1,
+                2,
+                3,
+                5,
+                7,
+                8,
+                9
+              ],
+              "5": [
+                1,
+                2,
+                3,
+                4,
+                7,
+                8,
+                9
+              ],
+              "7": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                8,
+                9
+              ],
+              "8": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                7,
+                9
+              ],
+              "9": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                7,
+                8
+              ]
+            },
+            "frames": 83
+          },
+          "1": {
+            "fit_tasks": [
+              0,
+              2,
+              3,
+              4,
+              5,
+              7,
+              8,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                2,
+                3,
+                4,
+                5,
+                7,
+                8,
+                9
+              ],
+              "2": [
+                0,
+                3,
+                4,
+                5,
+                7,
+                8,
+                9
+              ],
+              "3": [
+                0,
+                2,
+                4,
+                5,
+                7,
+                8,
+                9
+              ],
+              "4": [
+                0,
+                2,
+                3,
+                5,
+                7,
+                8,
+                9
+              ],
+              "5": [
+                0,
+                2,
+                3,
+                4,
+                7,
+                8,
+                9
+              ],
+              "7": [
+                0,
+                2,
+                3,
+                4,
+                5,
+                8,
+                9
+              ],
+              "8": [
+                0,
+                2,
+                3,
+                4,
+                5,
+                7,
+                9
+              ],
+              "9": [
+                0,
+                2,
+                3,
+                4,
+                5,
+                7,
+                8
+              ]
+            },
+            "frames": 110
+          },
+          "2": {
+            "fit_tasks": [
+              0,
+              1,
+              3,
+              4,
+              5,
+              7,
+              8,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                1,
+                3,
+                4,
+                5,
+                7,
+                8,
+                9
+              ],
+              "1": [
+                0,
+                3,
+                4,
+                5,
+                7,
+                8,
+                9
+              ],
+              "3": [
+                0,
+                1,
+                4,
+                5,
+                7,
+                8,
+                9
+              ],
+              "4": [
+                0,
+                1,
+                3,
+                5,
+                7,
+                8,
+                9
+              ],
+              "5": [
+                0,
+                1,
+                3,
+                4,
+                7,
+                8,
+                9
+              ],
+              "7": [
+                0,
+                1,
+                3,
+                4,
+                5,
+                8,
+                9
+              ],
+              "8": [
+                0,
+                1,
+                3,
+                4,
+                5,
+                7,
+                9
+              ],
+              "9": [
+                0,
+                1,
+                3,
+                4,
+                5,
+                7,
+                8
+              ]
+            },
+            "frames": 220
+          },
+          "3": {
+            "fit_tasks": [
+              0,
+              1,
+              2,
+              4,
+              5,
+              7,
+              8,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                1,
+                2,
+                4,
+                5,
+                7,
+                8,
+                9
+              ],
+              "1": [
+                0,
+                2,
+                4,
+                5,
+                7,
+                8,
+                9
+              ],
+              "2": [
+                0,
+                1,
+                4,
+                5,
+                7,
+                8,
+                9
+              ],
+              "4": [
+                0,
+                1,
+                2,
+                5,
+                7,
+                8,
+                9
+              ],
+              "5": [
+                0,
+                1,
+                2,
+                4,
+                7,
+                8,
+                9
+              ],
+              "7": [
+                0,
+                1,
+                2,
+                4,
+                5,
+                8,
+                9
+              ],
+              "8": [
+                0,
+                1,
+                2,
+                4,
+                5,
+                7,
+                9
+              ],
+              "9": [
+                0,
+                1,
+                2,
+                4,
+                5,
+                7,
+                8
+              ]
+            },
+            "frames": 87
+          },
+          "4": {
+            "fit_tasks": [
+              0,
+              1,
+              2,
+              3,
+              5,
+              7,
+              8,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                1,
+                2,
+                3,
+                5,
+                7,
+                8,
+                9
+              ],
+              "1": [
+                0,
+                2,
+                3,
+                5,
+                7,
+                8,
+                9
+              ],
+              "2": [
+                0,
+                1,
+                3,
+                5,
+                7,
+                8,
+                9
+              ],
+              "3": [
+                0,
+                1,
+                2,
+                5,
+                7,
+                8,
+                9
+              ],
+              "5": [
+                0,
+                1,
+                2,
+                3,
+                7,
+                8,
+                9
+              ],
+              "7": [
+                0,
+                1,
+                2,
+                3,
+                5,
+                8,
+                9
+              ],
+              "8": [
+                0,
+                1,
+                2,
+                3,
+                5,
+                7,
+                9
+              ],
+              "9": [
+                0,
+                1,
+                2,
+                3,
+                5,
+                7,
+                8
+              ]
+            },
+            "frames": 127
+          },
+          "5": {
+            "fit_tasks": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              7,
+              8,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                1,
+                2,
+                3,
+                4,
+                7,
+                8,
+                9
+              ],
+              "1": [
+                0,
+                2,
+                3,
+                4,
+                7,
+                8,
+                9
+              ],
+              "2": [
+                0,
+                1,
+                3,
+                4,
+                7,
+                8,
+                9
+              ],
+              "3": [
+                0,
+                1,
+                2,
+                4,
+                7,
+                8,
+                9
+              ],
+              "4": [
+                0,
+                1,
+                2,
+                3,
+                7,
+                8,
+                9
+              ],
+              "7": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                8,
+                9
+              ],
+              "8": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                7,
+                9
+              ],
+              "9": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                7,
+                8
+              ]
+            },
+            "frames": 220
+          },
+          "7": {
+            "fit_tasks": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              8,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                8,
+                9
+              ],
+              "1": [
+                0,
+                2,
+                3,
+                4,
+                5,
+                8,
+                9
+              ],
+              "2": [
+                0,
+                1,
+                3,
+                4,
+                5,
+                8,
+                9
+              ],
+              "3": [
+                0,
+                1,
+                2,
+                4,
+                5,
+                8,
+                9
+              ],
+              "4": [
+                0,
+                1,
+                2,
+                3,
+                5,
+                8,
+                9
+              ],
+              "5": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                8,
+                9
+              ],
+              "8": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                9
+              ],
+              "9": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                8
+              ]
+            },
+            "frames": 112
+          },
+          "8": {
+            "fit_tasks": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              7,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                7,
+                9
+              ],
+              "1": [
+                0,
+                2,
+                3,
+                4,
+                5,
+                7,
+                9
+              ],
+              "2": [
+                0,
+                1,
+                3,
+                4,
+                5,
+                7,
+                9
+              ],
+              "3": [
+                0,
+                1,
+                2,
+                4,
+                5,
+                7,
+                9
+              ],
+              "4": [
+                0,
+                1,
+                2,
+                3,
+                5,
+                7,
+                9
+              ],
+              "5": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                7,
+                9
+              ],
+              "7": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                9
+              ],
+              "9": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                7
+              ]
+            },
+            "frames": 101
+          },
+          "9": {
+            "fit_tasks": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              7,
+              8
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                7,
+                8
+              ],
+              "1": [
+                0,
+                2,
+                3,
+                4,
+                5,
+                7,
+                8
+              ],
+              "2": [
+                0,
+                1,
+                3,
+                4,
+                5,
+                7,
+                8
+              ],
+              "3": [
+                0,
+                1,
+                2,
+                4,
+                5,
+                7,
+                8
+              ],
+              "4": [
+                0,
+                1,
+                2,
+                3,
+                5,
+                7,
+                8
+              ],
+              "5": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                7,
+                8
+              ],
+              "7": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                8
+              ],
+              "8": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                7
+              ]
+            },
+            "frames": 123
+          }
+        }
+      },
+      "7": {
+        "threshold": 0.4957592189311981,
+        "source_frames": 1200,
+        "outer_tasks": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          8,
+          9
+        ],
+        "source_crossfit_exceedance": 0.05000000074505806,
+        "folds": {
+          "0": {
+            "fit_tasks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              8,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "1": [
+                2,
+                3,
+                4,
+                5,
+                6,
+                8,
+                9
+              ],
+              "2": [
+                1,
+                3,
+                4,
+                5,
+                6,
+                8,
+                9
+              ],
+              "3": [
+                1,
+                2,
+                4,
+                5,
+                6,
+                8,
+                9
+              ],
+              "4": [
+                1,
+                2,
+                3,
+                5,
+                6,
+                8,
+                9
+              ],
+              "5": [
+                1,
+                2,
+                3,
+                4,
+                6,
+                8,
+                9
+              ],
+              "6": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                8,
+                9
+              ],
+              "8": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                9
+              ],
+              "9": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                8
+              ]
+            },
+            "frames": 83
+          },
+          "1": {
+            "fit_tasks": [
+              0,
+              2,
+              3,
+              4,
+              5,
+              6,
+              8,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                2,
+                3,
+                4,
+                5,
+                6,
+                8,
+                9
+              ],
+              "2": [
+                0,
+                3,
+                4,
+                5,
+                6,
+                8,
+                9
+              ],
+              "3": [
+                0,
+                2,
+                4,
+                5,
+                6,
+                8,
+                9
+              ],
+              "4": [
+                0,
+                2,
+                3,
+                5,
+                6,
+                8,
+                9
+              ],
+              "5": [
+                0,
+                2,
+                3,
+                4,
+                6,
+                8,
+                9
+              ],
+              "6": [
+                0,
+                2,
+                3,
+                4,
+                5,
+                8,
+                9
+              ],
+              "8": [
+                0,
+                2,
+                3,
+                4,
+                5,
+                6,
+                9
+              ],
+              "9": [
+                0,
+                2,
+                3,
+                4,
+                5,
+                6,
+                8
+              ]
+            },
+            "frames": 110
+          },
+          "2": {
+            "fit_tasks": [
+              0,
+              1,
+              3,
+              4,
+              5,
+              6,
+              8,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                1,
+                3,
+                4,
+                5,
+                6,
+                8,
+                9
+              ],
+              "1": [
+                0,
+                3,
+                4,
+                5,
+                6,
+                8,
+                9
+              ],
+              "3": [
+                0,
+                1,
+                4,
+                5,
+                6,
+                8,
+                9
+              ],
+              "4": [
+                0,
+                1,
+                3,
+                5,
+                6,
+                8,
+                9
+              ],
+              "5": [
+                0,
+                1,
+                3,
+                4,
+                6,
+                8,
+                9
+              ],
+              "6": [
+                0,
+                1,
+                3,
+                4,
+                5,
+                8,
+                9
+              ],
+              "8": [
+                0,
+                1,
+                3,
+                4,
+                5,
+                6,
+                9
+              ],
+              "9": [
+                0,
+                1,
+                3,
+                4,
+                5,
+                6,
+                8
+              ]
+            },
+            "frames": 220
+          },
+          "3": {
+            "fit_tasks": [
+              0,
+              1,
+              2,
+              4,
+              5,
+              6,
+              8,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                1,
+                2,
+                4,
+                5,
+                6,
+                8,
+                9
+              ],
+              "1": [
+                0,
+                2,
+                4,
+                5,
+                6,
+                8,
+                9
+              ],
+              "2": [
+                0,
+                1,
+                4,
+                5,
+                6,
+                8,
+                9
+              ],
+              "4": [
+                0,
+                1,
+                2,
+                5,
+                6,
+                8,
+                9
+              ],
+              "5": [
+                0,
+                1,
+                2,
+                4,
+                6,
+                8,
+                9
+              ],
+              "6": [
+                0,
+                1,
+                2,
+                4,
+                5,
+                8,
+                9
+              ],
+              "8": [
+                0,
+                1,
+                2,
+                4,
+                5,
+                6,
+                9
+              ],
+              "9": [
+                0,
+                1,
+                2,
+                4,
+                5,
+                6,
+                8
+              ]
+            },
+            "frames": 87
+          },
+          "4": {
+            "fit_tasks": [
+              0,
+              1,
+              2,
+              3,
+              5,
+              6,
+              8,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                1,
+                2,
+                3,
+                5,
+                6,
+                8,
+                9
+              ],
+              "1": [
+                0,
+                2,
+                3,
+                5,
+                6,
+                8,
+                9
+              ],
+              "2": [
+                0,
+                1,
+                3,
+                5,
+                6,
+                8,
+                9
+              ],
+              "3": [
+                0,
+                1,
+                2,
+                5,
+                6,
+                8,
+                9
+              ],
+              "5": [
+                0,
+                1,
+                2,
+                3,
+                6,
+                8,
+                9
+              ],
+              "6": [
+                0,
+                1,
+                2,
+                3,
+                5,
+                8,
+                9
+              ],
+              "8": [
+                0,
+                1,
+                2,
+                3,
+                5,
+                6,
+                9
+              ],
+              "9": [
+                0,
+                1,
+                2,
+                3,
+                5,
+                6,
+                8
+              ]
+            },
+            "frames": 127
+          },
+          "5": {
+            "fit_tasks": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              6,
+              8,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                1,
+                2,
+                3,
+                4,
+                6,
+                8,
+                9
+              ],
+              "1": [
+                0,
+                2,
+                3,
+                4,
+                6,
+                8,
+                9
+              ],
+              "2": [
+                0,
+                1,
+                3,
+                4,
+                6,
+                8,
+                9
+              ],
+              "3": [
+                0,
+                1,
+                2,
+                4,
+                6,
+                8,
+                9
+              ],
+              "4": [
+                0,
+                1,
+                2,
+                3,
+                6,
+                8,
+                9
+              ],
+              "6": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                8,
+                9
+              ],
+              "8": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                6,
+                9
+              ],
+              "9": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                6,
+                8
+              ]
+            },
+            "frames": 220
+          },
+          "6": {
+            "fit_tasks": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              8,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                8,
+                9
+              ],
+              "1": [
+                0,
+                2,
+                3,
+                4,
+                5,
+                8,
+                9
+              ],
+              "2": [
+                0,
+                1,
+                3,
+                4,
+                5,
+                8,
+                9
+              ],
+              "3": [
+                0,
+                1,
+                2,
+                4,
+                5,
+                8,
+                9
+              ],
+              "4": [
+                0,
+                1,
+                2,
+                3,
+                5,
+                8,
+                9
+              ],
+              "5": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                8,
+                9
+              ],
+              "8": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                9
+              ],
+              "9": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                8
+              ]
+            },
+            "frames": 129
+          },
+          "8": {
+            "fit_tasks": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                9
+              ],
+              "1": [
+                0,
+                2,
+                3,
+                4,
+                5,
+                6,
+                9
+              ],
+              "2": [
+                0,
+                1,
+                3,
+                4,
+                5,
+                6,
+                9
+              ],
+              "3": [
+                0,
+                1,
+                2,
+                4,
+                5,
+                6,
+                9
+              ],
+              "4": [
+                0,
+                1,
+                2,
+                3,
+                5,
+                6,
+                9
+              ],
+              "5": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                6,
+                9
+              ],
+              "6": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                9
+              ],
+              "9": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6
+              ]
+            },
+            "frames": 101
+          },
+          "9": {
+            "fit_tasks": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              8
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                8
+              ],
+              "1": [
+                0,
+                2,
+                3,
+                4,
+                5,
+                6,
+                8
+              ],
+              "2": [
+                0,
+                1,
+                3,
+                4,
+                5,
+                6,
+                8
+              ],
+              "3": [
+                0,
+                1,
+                2,
+                4,
+                5,
+                6,
+                8
+              ],
+              "4": [
+                0,
+                1,
+                2,
+                3,
+                5,
+                6,
+                8
+              ],
+              "5": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                6,
+                8
+              ],
+              "6": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                8
+              ],
+              "8": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6
+              ]
+            },
+            "frames": 123
+          }
+        }
+      },
+      "8": {
+        "threshold": 0.4804219603538513,
+        "source_frames": 1211,
+        "outer_tasks": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          9
+        ],
+        "source_crossfit_exceedance": 0.05037159472703934,
+        "folds": {
+          "0": {
+            "fit_tasks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "1": [
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                9
+              ],
+              "2": [
+                1,
+                3,
+                4,
+                5,
+                6,
+                7,
+                9
+              ],
+              "3": [
+                1,
+                2,
+                4,
+                5,
+                6,
+                7,
+                9
+              ],
+              "4": [
+                1,
+                2,
+                3,
+                5,
+                6,
+                7,
+                9
+              ],
+              "5": [
+                1,
+                2,
+                3,
+                4,
+                6,
+                7,
+                9
+              ],
+              "6": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                7,
+                9
+              ],
+              "7": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                9
+              ],
+              "9": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7
+              ]
+            },
+            "frames": 83
+          },
+          "1": {
+            "fit_tasks": [
+              0,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                9
+              ],
+              "2": [
+                0,
+                3,
+                4,
+                5,
+                6,
+                7,
+                9
+              ],
+              "3": [
+                0,
+                2,
+                4,
+                5,
+                6,
+                7,
+                9
+              ],
+              "4": [
+                0,
+                2,
+                3,
+                5,
+                6,
+                7,
+                9
+              ],
+              "5": [
+                0,
+                2,
+                3,
+                4,
+                6,
+                7,
+                9
+              ],
+              "6": [
+                0,
+                2,
+                3,
+                4,
+                5,
+                7,
+                9
+              ],
+              "7": [
+                0,
+                2,
+                3,
+                4,
+                5,
+                6,
+                9
+              ],
+              "9": [
+                0,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7
+              ]
+            },
+            "frames": 110
+          },
+          "2": {
+            "fit_tasks": [
+              0,
+              1,
+              3,
+              4,
+              5,
+              6,
+              7,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                1,
+                3,
+                4,
+                5,
+                6,
+                7,
+                9
+              ],
+              "1": [
+                0,
+                3,
+                4,
+                5,
+                6,
+                7,
+                9
+              ],
+              "3": [
+                0,
+                1,
+                4,
+                5,
+                6,
+                7,
+                9
+              ],
+              "4": [
+                0,
+                1,
+                3,
+                5,
+                6,
+                7,
+                9
+              ],
+              "5": [
+                0,
+                1,
+                3,
+                4,
+                6,
+                7,
+                9
+              ],
+              "6": [
+                0,
+                1,
+                3,
+                4,
+                5,
+                7,
+                9
+              ],
+              "7": [
+                0,
+                1,
+                3,
+                4,
+                5,
+                6,
+                9
+              ],
+              "9": [
+                0,
+                1,
+                3,
+                4,
+                5,
+                6,
+                7
+              ]
+            },
+            "frames": 220
+          },
+          "3": {
+            "fit_tasks": [
+              0,
+              1,
+              2,
+              4,
+              5,
+              6,
+              7,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                1,
+                2,
+                4,
+                5,
+                6,
+                7,
+                9
+              ],
+              "1": [
+                0,
+                2,
+                4,
+                5,
+                6,
+                7,
+                9
+              ],
+              "2": [
+                0,
+                1,
+                4,
+                5,
+                6,
+                7,
+                9
+              ],
+              "4": [
+                0,
+                1,
+                2,
+                5,
+                6,
+                7,
+                9
+              ],
+              "5": [
+                0,
+                1,
+                2,
+                4,
+                6,
+                7,
+                9
+              ],
+              "6": [
+                0,
+                1,
+                2,
+                4,
+                5,
+                7,
+                9
+              ],
+              "7": [
+                0,
+                1,
+                2,
+                4,
+                5,
+                6,
+                9
+              ],
+              "9": [
+                0,
+                1,
+                2,
+                4,
+                5,
+                6,
+                7
+              ]
+            },
+            "frames": 87
+          },
+          "4": {
+            "fit_tasks": [
+              0,
+              1,
+              2,
+              3,
+              5,
+              6,
+              7,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                1,
+                2,
+                3,
+                5,
+                6,
+                7,
+                9
+              ],
+              "1": [
+                0,
+                2,
+                3,
+                5,
+                6,
+                7,
+                9
+              ],
+              "2": [
+                0,
+                1,
+                3,
+                5,
+                6,
+                7,
+                9
+              ],
+              "3": [
+                0,
+                1,
+                2,
+                5,
+                6,
+                7,
+                9
+              ],
+              "5": [
+                0,
+                1,
+                2,
+                3,
+                6,
+                7,
+                9
+              ],
+              "6": [
+                0,
+                1,
+                2,
+                3,
+                5,
+                7,
+                9
+              ],
+              "7": [
+                0,
+                1,
+                2,
+                3,
+                5,
+                6,
+                9
+              ],
+              "9": [
+                0,
+                1,
+                2,
+                3,
+                5,
+                6,
+                7
+              ]
+            },
+            "frames": 127
+          },
+          "5": {
+            "fit_tasks": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              6,
+              7,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                1,
+                2,
+                3,
+                4,
+                6,
+                7,
+                9
+              ],
+              "1": [
+                0,
+                2,
+                3,
+                4,
+                6,
+                7,
+                9
+              ],
+              "2": [
+                0,
+                1,
+                3,
+                4,
+                6,
+                7,
+                9
+              ],
+              "3": [
+                0,
+                1,
+                2,
+                4,
+                6,
+                7,
+                9
+              ],
+              "4": [
+                0,
+                1,
+                2,
+                3,
+                6,
+                7,
+                9
+              ],
+              "6": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                7,
+                9
+              ],
+              "7": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                6,
+                9
+              ],
+              "9": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                6,
+                7
+              ]
+            },
+            "frames": 220
+          },
+          "6": {
+            "fit_tasks": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              7,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                7,
+                9
+              ],
+              "1": [
+                0,
+                2,
+                3,
+                4,
+                5,
+                7,
+                9
+              ],
+              "2": [
+                0,
+                1,
+                3,
+                4,
+                5,
+                7,
+                9
+              ],
+              "3": [
+                0,
+                1,
+                2,
+                4,
+                5,
+                7,
+                9
+              ],
+              "4": [
+                0,
+                1,
+                2,
+                3,
+                5,
+                7,
+                9
+              ],
+              "5": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                7,
+                9
+              ],
+              "7": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                9
+              ],
+              "9": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                7
+              ]
+            },
+            "frames": 129
+          },
+          "7": {
+            "fit_tasks": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              9
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                9
+              ],
+              "1": [
+                0,
+                2,
+                3,
+                4,
+                5,
+                6,
+                9
+              ],
+              "2": [
+                0,
+                1,
+                3,
+                4,
+                5,
+                6,
+                9
+              ],
+              "3": [
+                0,
+                1,
+                2,
+                4,
+                5,
+                6,
+                9
+              ],
+              "4": [
+                0,
+                1,
+                2,
+                3,
+                5,
+                6,
+                9
+              ],
+              "5": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                6,
+                9
+              ],
+              "6": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                9
+              ],
+              "9": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6
+              ]
+            },
+            "frames": 112
+          },
+          "9": {
+            "fit_tasks": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7
+              ],
+              "1": [
+                0,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7
+              ],
+              "2": [
+                0,
+                1,
+                3,
+                4,
+                5,
+                6,
+                7
+              ],
+              "3": [
+                0,
+                1,
+                2,
+                4,
+                5,
+                6,
+                7
+              ],
+              "4": [
+                0,
+                1,
+                2,
+                3,
+                5,
+                6,
+                7
+              ],
+              "5": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                6,
+                7
+              ],
+              "6": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                7
+              ],
+              "7": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6
+              ]
+            },
+            "frames": 123
+          }
+        }
+      },
+      "9": {
+        "threshold": 0.46721982955932617,
+        "source_frames": 1189,
+        "outer_tasks": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "source_crossfit_exceedance": 0.050462573766708374,
+        "folds": {
+          "0": {
+            "fit_tasks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8
+            ],
+            "channel_threshold_inner7": {
+              "1": [
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8
+              ],
+              "2": [
+                1,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8
+              ],
+              "3": [
+                1,
+                2,
+                4,
+                5,
+                6,
+                7,
+                8
+              ],
+              "4": [
+                1,
+                2,
+                3,
+                5,
+                6,
+                7,
+                8
+              ],
+              "5": [
+                1,
+                2,
+                3,
+                4,
+                6,
+                7,
+                8
+              ],
+              "6": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                7,
+                8
+              ],
+              "7": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                8
+              ],
+              "8": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7
+              ]
+            },
+            "frames": 83
+          },
+          "1": {
+            "fit_tasks": [
+              0,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8
+              ],
+              "2": [
+                0,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8
+              ],
+              "3": [
+                0,
+                2,
+                4,
+                5,
+                6,
+                7,
+                8
+              ],
+              "4": [
+                0,
+                2,
+                3,
+                5,
+                6,
+                7,
+                8
+              ],
+              "5": [
+                0,
+                2,
+                3,
+                4,
+                6,
+                7,
+                8
+              ],
+              "6": [
+                0,
+                2,
+                3,
+                4,
+                5,
+                7,
+                8
+              ],
+              "7": [
+                0,
+                2,
+                3,
+                4,
+                5,
+                6,
+                8
+              ],
+              "8": [
+                0,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7
+              ]
+            },
+            "frames": 110
+          },
+          "2": {
+            "fit_tasks": [
+              0,
+              1,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                1,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8
+              ],
+              "1": [
+                0,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8
+              ],
+              "3": [
+                0,
+                1,
+                4,
+                5,
+                6,
+                7,
+                8
+              ],
+              "4": [
+                0,
+                1,
+                3,
+                5,
+                6,
+                7,
+                8
+              ],
+              "5": [
+                0,
+                1,
+                3,
+                4,
+                6,
+                7,
+                8
+              ],
+              "6": [
+                0,
+                1,
+                3,
+                4,
+                5,
+                7,
+                8
+              ],
+              "7": [
+                0,
+                1,
+                3,
+                4,
+                5,
+                6,
+                8
+              ],
+              "8": [
+                0,
+                1,
+                3,
+                4,
+                5,
+                6,
+                7
+              ]
+            },
+            "frames": 220
+          },
+          "3": {
+            "fit_tasks": [
+              0,
+              1,
+              2,
+              4,
+              5,
+              6,
+              7,
+              8
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                1,
+                2,
+                4,
+                5,
+                6,
+                7,
+                8
+              ],
+              "1": [
+                0,
+                2,
+                4,
+                5,
+                6,
+                7,
+                8
+              ],
+              "2": [
+                0,
+                1,
+                4,
+                5,
+                6,
+                7,
+                8
+              ],
+              "4": [
+                0,
+                1,
+                2,
+                5,
+                6,
+                7,
+                8
+              ],
+              "5": [
+                0,
+                1,
+                2,
+                4,
+                6,
+                7,
+                8
+              ],
+              "6": [
+                0,
+                1,
+                2,
+                4,
+                5,
+                7,
+                8
+              ],
+              "7": [
+                0,
+                1,
+                2,
+                4,
+                5,
+                6,
+                8
+              ],
+              "8": [
+                0,
+                1,
+                2,
+                4,
+                5,
+                6,
+                7
+              ]
+            },
+            "frames": 87
+          },
+          "4": {
+            "fit_tasks": [
+              0,
+              1,
+              2,
+              3,
+              5,
+              6,
+              7,
+              8
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                1,
+                2,
+                3,
+                5,
+                6,
+                7,
+                8
+              ],
+              "1": [
+                0,
+                2,
+                3,
+                5,
+                6,
+                7,
+                8
+              ],
+              "2": [
+                0,
+                1,
+                3,
+                5,
+                6,
+                7,
+                8
+              ],
+              "3": [
+                0,
+                1,
+                2,
+                5,
+                6,
+                7,
+                8
+              ],
+              "5": [
+                0,
+                1,
+                2,
+                3,
+                6,
+                7,
+                8
+              ],
+              "6": [
+                0,
+                1,
+                2,
+                3,
+                5,
+                7,
+                8
+              ],
+              "7": [
+                0,
+                1,
+                2,
+                3,
+                5,
+                6,
+                8
+              ],
+              "8": [
+                0,
+                1,
+                2,
+                3,
+                5,
+                6,
+                7
+              ]
+            },
+            "frames": 127
+          },
+          "5": {
+            "fit_tasks": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              6,
+              7,
+              8
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                1,
+                2,
+                3,
+                4,
+                6,
+                7,
+                8
+              ],
+              "1": [
+                0,
+                2,
+                3,
+                4,
+                6,
+                7,
+                8
+              ],
+              "2": [
+                0,
+                1,
+                3,
+                4,
+                6,
+                7,
+                8
+              ],
+              "3": [
+                0,
+                1,
+                2,
+                4,
+                6,
+                7,
+                8
+              ],
+              "4": [
+                0,
+                1,
+                2,
+                3,
+                6,
+                7,
+                8
+              ],
+              "6": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                7,
+                8
+              ],
+              "7": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                6,
+                8
+              ],
+              "8": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                6,
+                7
+              ]
+            },
+            "frames": 220
+          },
+          "6": {
+            "fit_tasks": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              7,
+              8
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                7,
+                8
+              ],
+              "1": [
+                0,
+                2,
+                3,
+                4,
+                5,
+                7,
+                8
+              ],
+              "2": [
+                0,
+                1,
+                3,
+                4,
+                5,
+                7,
+                8
+              ],
+              "3": [
+                0,
+                1,
+                2,
+                4,
+                5,
+                7,
+                8
+              ],
+              "4": [
+                0,
+                1,
+                2,
+                3,
+                5,
+                7,
+                8
+              ],
+              "5": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                7,
+                8
+              ],
+              "7": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                8
+              ],
+              "8": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                7
+              ]
+            },
+            "frames": 129
+          },
+          "7": {
+            "fit_tasks": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              8
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                8
+              ],
+              "1": [
+                0,
+                2,
+                3,
+                4,
+                5,
+                6,
+                8
+              ],
+              "2": [
+                0,
+                1,
+                3,
+                4,
+                5,
+                6,
+                8
+              ],
+              "3": [
+                0,
+                1,
+                2,
+                4,
+                5,
+                6,
+                8
+              ],
+              "4": [
+                0,
+                1,
+                2,
+                3,
+                5,
+                6,
+                8
+              ],
+              "5": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                6,
+                8
+              ],
+              "6": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                8
+              ],
+              "8": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6
+              ]
+            },
+            "frames": 112
+          },
+          "8": {
+            "fit_tasks": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7
+            ],
+            "channel_threshold_inner7": {
+              "0": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7
+              ],
+              "1": [
+                0,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7
+              ],
+              "2": [
+                0,
+                1,
+                3,
+                4,
+                5,
+                6,
+                7
+              ],
+              "3": [
+                0,
+                1,
+                2,
+                4,
+                5,
+                6,
+                7
+              ],
+              "4": [
+                0,
+                1,
+                2,
+                3,
+                5,
+                6,
+                7
+              ],
+              "5": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                6,
+                7
+              ],
+              "6": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                7
+              ],
+              "7": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6
+              ]
+            },
+            "frames": 101
+          }
+        }
+      }
+    },
+    "clean_reference": "Frozen, same task/init/physics/state/language/flow RNG; used only in action-distance evaluation",
+    "model": "unchanged native BF16, load_vlm_weights=True, CPU pixel normalization, H50 E1 Euler10",
+    "sensor": "bilateral severity3 from first policy observation; unchanged case IDs and independent view seeds",
+    "calibration": "unchanged init0 outer9/inner8+1; scalar deep gate adds nested8/7 source-only calibration",
+    "gate_compute": "unadapted Layer12 first; separate Layer3-adapted forward if accepted; no same-pass retroactive hook",
+    "blind_access": false,
+    "closed_loop_autostart": false
+  }
+}

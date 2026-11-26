@@ -1,0 +1,7 @@
+{
+  "status": "PASS",
+  "archive_sha256": "6ccdb5d31411844416e3db7d8cb6d956dfef4135a24c943275893b24b105752e",
+  "all_50_raw_cases_and_10_source_moments_and_calibration_and_gate_score_hashes_match": true,
+  "all_50_historical_first_actions_rechecked": true,
+  "repository_source_matches_frozen_run_hashes": true
+}

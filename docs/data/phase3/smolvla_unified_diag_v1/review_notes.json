@@ -1,0 +1,14 @@
+{
+  "scope": "t=0 exploratory diagnosis only; no new closed-loop success counts",
+  "supported_hypothesis": "source-calibrated Layer12 moment gate separates most of these appearance groups at first observation; worth a fixed-parameter closed-loop test",
+  "unproven_hypothesis": "smaller Layer3 alpha monotonically reduces Clean action drift; observed response is nonmonotonic",
+  "limits": [
+    "Clean Frozen is a reference, not expert ground-truth action; moving toward it need not increase success",
+    "Blocking old harm cases at t=0 is not evidence that their entire new rollout would be rescued",
+    "Both current non-Lighting prior harm cases remain accepted by the gate; not a universal harm detector",
+    "Layer12 residual-output moments are not the complete visual-language/action interface; no pretraining causal conclusion",
+    "Deep-first shallow intervention needs another visual pass; original V1 latency cannot be reused for the gated method",
+    "The old SmolVLA closed-loop negatives and CoRP main tables remain unchanged",
+    "A later closed-loop probe pass must not advance actor queues/state or consume execution flow RNG; the current t=0 experiment resets and re-pairs RNG for every prediction."
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "status": "PASS",
+  "alpha0_checks": [
+    {
+      "case_id": "t00_clean_i2",
+      "group": "Clean",
+      "layer": 3,
+      "alpha0_action_bit_exact": true
+    },
+    {
+      "case_id": "t00_clean_i2",
+      "group": "Clean",
+      "layer": 6,
+      "alpha0_action_bit_exact": true
+    },
+    {
+      "case_id": "t00_motion_blur_i1",
+      "group": "Sensor",
+      "layer": 3,
+      "alpha0_action_bit_exact": true
+    },
+    {
+      "case_id": "t00_motion_blur_i1",
+      "group": "Sensor",
+      "layer": 6,
+      "alpha0_action_bit_exact": true
+    },
+    {
+      "case_id": "t00_light_asset_i1",
+      "group": "Lighting",
+      "layer": 3,
+      "alpha0_action_bit_exact": true
+    },
+    {
+      "case_id": "t00_light_asset_i1",
+      "group": "Lighting",
+      "layer": 6,
+      "alpha0_action_bit_exact": true
+    },
+    {
+      "case_id": "t00_table_texture_i1",
+      "group": "Background",
+      "layer": 3,
+      "alpha0_action_bit_exact": true
+    },
+    {
+      "case_id": "t00_table_texture_i1",
+      "group": "Background",
+      "layer": 6,
+      "alpha0_action_bit_exact": true
+    }
+  ],
+  "model_weights_unchanged": true,
+  "historical_50_frozen_and_v1_t0_actions_bit_exact": true,
+  "paired_counterfactual_physics_and_rng": true,
+  "vision_dtype": "torch.bfloat16",
+  "no_cls_1024_patches": true,
+  "two_serial_cameras": true
+}

@@ -1,0 +1,8 @@
+{
+  "archive": "smolvla_unified_diag_v1_evidence.tar.gz",
+  "sha256": "6ccdb5d31411844416e3db7d8cb6d956dfef4135a24c943275893b24b105752e",
+  "bytes": 60072037,
+  "conditions": 50,
+  "closed_loop_episodes": 0,
+  "includes": "all per-case actions/statistics, source-only gate folds/scores, exact code, source init0 moments/calibration and historical first-frame receipts; weights excluded"
+}

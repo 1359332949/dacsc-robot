@@ -1,0 +1,46 @@
+{
+  "status": "PASS",
+  "conditions": 50,
+  "closed_loop_episodes": 0,
+  "source_calibration_sha256_unchanged": true,
+  "all_50_native_frozen_and_v1_first_actions_bit_exact": true,
+  "model_parameters_unchanged": true,
+  "source_only_nested_9_8_7_folds_and_quantiles_verified": true,
+  "all_raw_hashes_gate_decisions_and_action_distances_rechecked": true,
+  "alpha0_real_model_checks": 8,
+  "gate_stats": {
+    "Clean": {
+      "n": 10,
+      "accepted": 0,
+      "previously_harmed": 0,
+      "previous_harms_gate_would_accept": 0,
+      "previously_rescued": 0,
+      "previous_rescues_gate_would_accept": 0
+    },
+    "Lighting": {
+      "n": 10,
+      "accepted": 0,
+      "previously_harmed": 3,
+      "previous_harms_gate_would_accept": 0,
+      "previously_rescued": 0,
+      "previous_rescues_gate_would_accept": 0
+    },
+    "Background": {
+      "n": 10,
+      "accepted": 9,
+      "previously_harmed": 1,
+      "previous_harms_gate_would_accept": 1,
+      "previously_rescued": 2,
+      "previous_rescues_gate_would_accept": 2
+    },
+    "Sensor": {
+      "n": 20,
+      "accepted": 20,
+      "previously_harmed": 1,
+      "previous_harms_gate_would_accept": 1,
+      "previously_rescued": 3,
+      "previous_rescues_gate_would_accept": 3
+    }
+  },
+  "seconds": 513.997211299953
+}

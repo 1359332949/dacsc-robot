@@ -1,0 +1,9 @@
+{
+  "primary_arxiv_html_sha256": {
+    "2607.24611.html": "96e333e065dfcc1e08c66eb0e1d987be4efd53904e9334bcb97f727134715afa",
+    "2610.07946.html": "9ecd5195b54f57eda660ecd3bcef7c4f8b2a598659f239975df8381c655f7fbb",
+    "2610.19892.html": "a05d61a8e805144bbcabd60231a657d7b2d916a37c6e9c98d1913eaf5029d5f4",
+    "SALT_2610.07946v1.html": "07b366b6eae3e1e7972b86df6168f0c96caa6b8ad94e9ac715a777d7dab770dc"
+  },
+  "checked": "SALT source-task crossfit temporal-cosine gate; MLLM representation limits; TADD is video action recognition, not VLA"
+}
