@@ -1,3 +1,5 @@
+> **2026-11-26 后续诊断已更新：** 真正vanilla+固定社区旧版API的十任务Clean为8/10；LeRobot0.4.4为6/10；官方真vanilla task0成功1/1。旧桥接导致247个GLFW探测进程递归，已按范围修复。Plus基础BDDL/init虽与vanilla相同，但默认纹理分辨率/相机参数不同；不能用桥接后的低分代表vanilla。原始记录保留，以下是旧条件的历史报告；下一步与详细证据见 `SMOLVLA_REPRODUCTION_DIAGNOSIS_V1.md`。尚无第二底座TTA结果。
+
 # Phase 3: SmolVLA-450M forward hook + 10-game Clean smoke
 
 Status: **forward hook validated; Clean smoke FAILED; do not start V1 transfer.**

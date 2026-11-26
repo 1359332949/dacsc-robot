@@ -1,0 +1,352 @@
+{
+  "status": "FROZEN_BASELINE_DIAGNOSIS_COMPLETE",
+  "canonical_tasks": [
+    "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+    "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+    "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+    "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+    "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+    "pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate",
+    "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+    "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+    "pick_up_the_black_bowl_next_to_the_plate_and_place_it_on_the_plate",
+    "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate"
+  ],
+  "checkpoint_hub_revision": "6721902bc4d61e50a3bfdb11dfb4cb626f05d102",
+  "checkpoint_sha256": "71d9563c8295284acba8fc2d5c19de000d6fe9ba58a406832af7ef3d221ed52f",
+  "vanilla_commit": "8f1084e3132a39270c3a13ebe37270a43ece2a01",
+  "legacy_lerobot_commit": "483be9aac217c2d8ef16982490f22b2ad091ab46",
+  "gate": ">=7/10 startup smoke, not formal SR replication",
+  "profiles": {
+    "modern": {
+      "success": 6,
+      "n": 10,
+      "passed": false,
+      "task_results": [
+        {
+          "task_id": 0,
+          "task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+          "success": true,
+          "steps": 72,
+          "seed": 0
+        },
+        {
+          "task_id": 1,
+          "task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+          "success": true,
+          "steps": 111,
+          "seed": 10
+        },
+        {
+          "task_id": 2,
+          "task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+          "success": true,
+          "steps": 95,
+          "seed": 20
+        },
+        {
+          "task_id": 3,
+          "task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+          "success": true,
+          "steps": 83,
+          "seed": 30
+        },
+        {
+          "task_id": 4,
+          "task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+          "success": false,
+          "steps": 280,
+          "seed": 40
+        },
+        {
+          "task_id": 5,
+          "task": "pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate",
+          "success": false,
+          "steps": 280,
+          "seed": 50
+        },
+        {
+          "task_id": 6,
+          "task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+          "success": true,
+          "steps": 100,
+          "seed": 60
+        },
+        {
+          "task_id": 7,
+          "task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+          "success": false,
+          "steps": 280,
+          "seed": 70
+        },
+        {
+          "task_id": 8,
+          "task": "pick_up_the_black_bowl_next_to_the_plate_and_place_it_on_the_plate",
+          "success": true,
+          "steps": 96,
+          "seed": 80
+        },
+        {
+          "task_id": 9,
+          "task": "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate",
+          "success": false,
+          "steps": 280,
+          "seed": 90
+        }
+      ]
+    },
+    "legacy": {
+      "success": 8,
+      "n": 10,
+      "passed": true,
+      "task_results": [
+        {
+          "task_id": 0,
+          "task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+          "success": true,
+          "steps": 71,
+          "seed": 0
+        },
+        {
+          "task_id": 1,
+          "task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+          "success": true,
+          "steps": 106,
+          "seed": 10
+        },
+        {
+          "task_id": 2,
+          "task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+          "success": true,
+          "steps": 94,
+          "seed": 20
+        },
+        {
+          "task_id": 3,
+          "task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+          "success": true,
+          "steps": 89,
+          "seed": 30
+        },
+        {
+          "task_id": 4,
+          "task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+          "success": false,
+          "steps": 280,
+          "seed": 40
+        },
+        {
+          "task_id": 5,
+          "task": "pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate",
+          "success": true,
+          "steps": 108,
+          "seed": 50
+        },
+        {
+          "task_id": 6,
+          "task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+          "success": true,
+          "steps": 105,
+          "seed": 60
+        },
+        {
+          "task_id": 7,
+          "task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+          "success": false,
+          "steps": 280,
+          "seed": 70
+        },
+        {
+          "task_id": 8,
+          "task": "pick_up_the_black_bowl_next_to_the_plate_and_place_it_on_the_plate",
+          "success": true,
+          "steps": 103,
+          "seed": 80
+        },
+        {
+          "task_id": 9,
+          "task": "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate",
+          "success": true,
+          "steps": 115,
+          "seed": 90
+        }
+      ]
+    }
+  },
+  "control_plus": {
+    "success": false,
+    "steps": 280
+  },
+  "scene_probes": {
+    "identity": {
+      "success": false,
+      "steps": 280,
+      "settled_state": "5d2ba3509dd236350d175ca1590a6d4df1667c465a7e101482a020e29bb98e21"
+    },
+    "camera": {
+      "success": false,
+      "steps": 280,
+      "settled_state": "5d2ba3509dd236350d175ca1590a6d4df1667c465a7e101482a020e29bb98e21"
+    },
+    "textures": {
+      "success": true,
+      "steps": 69,
+      "settled_state": "5d2ba3509dd236350d175ca1590a6d4df1667c465a7e101482a020e29bb98e21"
+    },
+    "both": {
+      "success": true,
+      "steps": 68,
+      "settled_state": "5d2ba3509dd236350d175ca1590a6d4df1667c465a7e101482a020e29bb98e21"
+    }
+  },
+  "official_true_vanilla": {
+    "success": 1,
+    "n": 1,
+    "seconds": 62.45128655433655
+  },
+  "render_audit": {
+    "cam_pos": {
+      "shape_same": false,
+      "equal": false,
+      "max_abs": null
+    },
+    "cam_quat": {
+      "shape_same": false,
+      "equal": false,
+      "max_abs": null
+    },
+    "cam_fovy": {
+      "shape_same": false,
+      "equal": false,
+      "max_abs": null
+    },
+    "light_pos": {
+      "shape_same": true,
+      "equal": true,
+      "max_abs": 0.0
+    },
+    "light_dir": {
+      "shape_same": true,
+      "equal": true,
+      "max_abs": 0.0
+    },
+    "light_diffuse": {
+      "shape_same": true,
+      "equal": true,
+      "max_abs": 0.0
+    },
+    "light_ambient": {
+      "shape_same": true,
+      "equal": true,
+      "max_abs": 0.0
+    },
+    "light_specular": {
+      "shape_same": true,
+      "equal": true,
+      "max_abs": 0.0
+    },
+    "light_castshadow": {
+      "shape_same": true,
+      "equal": true,
+      "max_abs": 0.0
+    },
+    "geom_rgba": {
+      "shape_same": true,
+      "equal": true,
+      "max_abs": 0.0
+    },
+    "geom_size": {
+      "shape_same": true,
+      "equal": true,
+      "max_abs": 0.0
+    },
+    "geom_pos": {
+      "shape_same": true,
+      "equal": true,
+      "max_abs": 0.0
+    },
+    "geom_quat": {
+      "shape_same": true,
+      "equal": true,
+      "max_abs": 0.0
+    },
+    "mat_rgba": {
+      "shape_same": true,
+      "equal": true,
+      "max_abs": 0.0
+    },
+    "tex_data": {
+      "shape_same": false,
+      "equal": false,
+      "max_abs": null
+    },
+    "tex_adr": {
+      "shape_same": true,
+      "equal": false,
+      "max_abs": 9049947.0
+    },
+    "tex_height": {
+      "shape_same": true,
+      "equal": false,
+      "max_abs": 758.0
+    },
+    "tex_width": {
+      "shape_same": true,
+      "equal": false,
+      "max_abs": 758.0
+    },
+    "tex_nchannel": {
+      "shape_same": true,
+      "equal": true,
+      "max_abs": 0.0
+    },
+    "mat_texid": {
+      "shape_same": true,
+      "equal": true,
+      "max_abs": 0.0
+    },
+    "body_mass": {
+      "shape_same": true,
+      "equal": true,
+      "max_abs": 0.0
+    },
+    "geom_friction": {
+      "shape_same": true,
+      "equal": true,
+      "max_abs": 0.0
+    },
+    "qpos": {
+      "shape_same": true,
+      "equal": true,
+      "max_abs": 0.0
+    },
+    "qvel": {
+      "shape_same": true,
+      "equal": true,
+      "max_abs": 0.0
+    },
+    "agent": {
+      "shape_same": true,
+      "equal": false,
+      "max_abs": 55.0
+    },
+    "wrist": {
+      "shape_same": true,
+      "equal": false,
+      "max_abs": 3.0
+    }
+  },
+  "probe_cleanup": {
+    "kind": "scoped_legacy_glfw_probe_cleanup",
+    "unique_pids": 247,
+    "sitecustomize_before_sha256": "5957332f81daa73e03ecb103e5cc5c67a865656fdb2c0f735301894628116c4a",
+    "sitecustomize_after_sha256": "37be7fd1ed0b3025f3edc04fc77bcfb0e4728ebd96eb9206c27ef9641cc9bbe1"
+  },
+  "calibration_audit": {
+    "saved_bad_max_error": 0.0,
+    "saved_correct_max_error": 0.30977898836135864,
+    "correct_median": 0.043676067143678665,
+    "saved_median": 0.027942275628447533
+  },
+  "evidence_sha256": "4f29ea8665eff5c48ab6e369eae979fb0a0fa40900959128704ea4781acf447f"
+}
