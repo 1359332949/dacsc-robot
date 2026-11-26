@@ -33,6 +33,45 @@ GROUPS = ('Clean', 'Lighting', 'Background', 'Sensor', 'Shift40', 'All50',
           'table_texture', 'scene_texture', *base.FAMILIES)
 
 
+def render_state(suite):
+    """SimState alone omits the actual camera/geometry/light render transforms."""
+    d, m = suite._env.sim.data, suite._env.sim.model
+    h = hashlib.sha256()
+    for owner, names in ((d, ('geom_xpos', 'geom_xmat', 'cam_xpos', 'cam_xmat', 'light_xpos', 'light_xdir', 'mocap_pos', 'mocap_quat')),
+                         (m, ('geom_rgba', 'light_pos', 'light_dir', 'light_diffuse', 'light_ambient', 'light_specular'))):
+        for name in names:
+            if hasattr(owner, name):
+                h.update(name.encode())
+                h.update(base.array_hash(np.asarray(getattr(owner, name))).encode())
+    return h.hexdigest()
+
+
+def canonical_rgb(raw, key, cache, audit):
+    """Pair-local raw RGB reuse only at identical full physical/render state.
+
+    Same pre-existing CoRP rounding bound: <=64 pixels/view, <=1 uint8 LSB.
+    Outside that numerical allowance stop and retain a diagnostic, never hide it.
+    """
+    if key not in cache:
+        cache[key] = tuple(np.array(raw[k], copy=True) for k in base.KEYS)
+        return raw
+    result = dict(raw)
+    for name, reference in zip(base.KEYS, cache[key]):
+        current = np.asarray(raw[name])
+        assert current.shape == reference.shape and current.dtype == reference.dtype == np.uint8
+        if not np.array_equal(current, reference):
+            delta = np.abs(current.astype(np.int16) - reference.astype(np.int16))
+            pixels, maximum = int((delta.max(-1) > 0).sum()), int(delta.max())
+            event = dict(step=key[0], view=name, pixels=pixels, max_lsb=maximum,
+                         physical_hash=key[1], render_hash=key[-1], native_sha256=base.array_hash(current),
+                         canonical_sha256=base.array_hash(reference))
+            audit.append(event)
+            if pixels > 64 or maximum > 1:
+                raise AssertionError(f'paired RGB outside pre-existing numerical bound: {event}')
+            result[name] = reference
+    return result
+
+
 def read(p):
     return json.loads(Path(p).read_text())
 
@@ -64,7 +103,7 @@ def prepare(out):
         assert base.sha(value['path']) == value['sha256']
     write(out / 'weights_receipt.json', weights)
     source = out / 'source_code'
-    m = dict(schema='smolvla_deepgate_closedloop_v1', cases=cases + [extra], arms=list(ARMS),
+    m = dict(schema='smolvla_deepgate_closedloop_v2_renderpair', cases=cases + [extra], arms=list(ARMS),
         calib_sha256=base.sha(CALIB), source_gate_sha256=base.sha(out / 'source_gate.json'),
         diagnostic_manifest_sha256=base.sha(DIAG / 'manifest.json'),
         corruption_source_sha256=base.sha(base.PLUS / 'libero/libero/envs/env_wrapper.py'),
@@ -78,7 +117,7 @@ def prepare(out):
             calibration='unchanged init0 target-task LOTO; gate copied from edbac60 nested9/8/7 source-only fit',
             environment='native Vanilla base with existing audited official Plus scene selectors; EGL env.noise=0',
             sensor='same 20 bilateral severity3 cases, independent view seeds, t0 through entire episode',
-            pairing='same initial state/RGB; identical CPU/CUDA RNG prefixes; compare RGB whenever physical state matches',
+            pairing='same initial physical/render state and RGB; identical CPU/CUDA RNG prefixes; pair-local raw RGB canonicalization only when full physical AND render state match, <=64 pixels/view and <=1 uint8 LSB; otherwise abort',
             scope='one-policy-seed exploratory development pilot, not independent confirmation or a SALT reproduction',
             blind_access=False, main_expansion_autostart=False))
     m['fingerprint'] = hashlib.sha256(json.dumps(m, sort_keys=True).encode()).hexdigest()
@@ -242,13 +281,34 @@ def preflight(out):
         adapter.close()
     assert versions == [p._version for p in actor._model.parameters()]
     assert all(not p.requires_grad and p.grad is None for p in actor._model.parameters())
+    # The image guard must preserve identity, repair a single rounding LSB,
+    # reject a substantive mismatch, and never reuse another state's image.
+    raw = {k: np.full((256, 256, 3), 100, dtype=np.uint8) for k in base.KEYS}
+    cache, events = {}, []
+    key = (0, 'state', 'eef', 'quat', 'gripper', 'render')
+    assert canonical_rgb(raw, key, cache, events) is raw
+    small = {k: v.copy() for k, v in raw.items()}
+    small[base.KEYS[0]][0, 0, 0] += 1
+    repaired = canonical_rgb(small, key, cache, events)
+    assert np.array_equal(repaired[base.KEYS[0]], raw[base.KEYS[0]]) and len(events) == 1
+    different = (*key[:-1], 'different_render')
+    assert canonical_rgb(small, different, cache, events) is small
+    large = {k: v.copy() for k, v in raw.items()}
+    large[base.KEYS[0]][0, 0, 0] += 10
+    try:
+        canonical_rgb(large, key, cache, events)
+    except AssertionError:
+        pass
+    else:
+        raise AssertionError('RGB mismatch guard failed to reject substantive change')
     native_files = [inspect.getfile(type(actor)), inspect.getfile(type(actor._model.model)),
                     inspect.getfile(type(actor._model.model.vlm_with_expert)), inspect.getfile(type(adapter.vision))]
     write(out / 'preflight.json', dict(status='PASS', conditions=checks, branch_checks=branches,
         source_fingerprint=m['fingerprint'], no_decoder_rerun=True, frozen_and_v1_forced_branch_actions_bit_exact=True,
         dynamic_off_on_off_three_step_queue_and_rng_exact=True, weights_unchanged=True, all_frozen=True,
         actual_encoder_calls_reject=2, actual_encoder_calls_accept=4, connector_calls=2, vlm_prefill=1, flow_steps=10,
-        native_sources={p: base.sha(p) for p in native_files}))
+        native_sources={p: base.sha(p) for p in native_files},
+        bounded_rgb_guard_identity_one_lsb_repair_large_change_reject_and_state_isolation=True))
 
 
 def latency(out):
@@ -314,23 +374,30 @@ def latency(out):
         instrumentation='no call-count mocks or full cache-pixel checks during timing; same actual evaluation adapter'))
 
 
-def rollout(actor, case, arm, refs, threshold, funcs):
+def rollout(actor, case, arm, refs, threshold, funcs, pixel_cache):
     suite, spec, raw = base.setup(case)
-    start = base.snapshot(suite, raw)
-    observed = base.perturb(raw, case, 0, funcs)
-    observed_start = base.snapshot(suite, observed)
+    start = None
+    observed_start = None
     actor.reset(0)
     seed_torch(0)
     versions = [p._version for p in actor._model.parameters()]
     adapter = SmolVLADeepGate(actor._model, refs, threshold) if arm != 'frozen' else None
     trace = []
+    roundings = []
     ah = hashlib.sha256()
     began = time.monotonic()
     try:
         success = False
         for step in range(220):
-            obs = observed if step == 0 else base.perturb(raw, case, step, funcs)
-            frame = dict(step=step, snapshot=base.snapshot(suite, obs), rng_before=rng_hash())
+            raw_state = base.snapshot(suite, raw)
+            render = render_state(suite)
+            key = (step, *(raw_state[k] for k in ('sim', 'eef', 'quat', 'gripper')), render)
+            raw = canonical_rgb(raw, key, pixel_cache, roundings)
+            obs = base.perturb(raw, case, step, funcs)
+            if step == 0:
+                start = base.snapshot(suite, raw)
+                observed_start = base.snapshot(suite, obs)
+            frame = dict(step=step, snapshot=base.snapshot(suite, obs), render_state=render, rng_before=rng_hash())
             if adapter:
                 adapter.begin()
             action = actor.act(obs)
@@ -350,7 +417,7 @@ def rollout(actor, case, arm, refs, threshold, funcs):
         return dict(case_id=case['id'], arm=arm, task_id=case['task_id'], group=case['group'], subgroup=case['subgroup'],
             scored=case['scored'], init_index=case['init_index'], policy_seed=0, environment_seed=spec.seed,
             success=success, steps=len(trace), seconds=time.monotonic() - began, start=start,
-            observed_start=observed_start, trace=trace, action_sha256=ah.hexdigest(),
+            observed_start=observed_start, trace=trace, action_sha256=ah.hexdigest(), rounding_events=roundings,
             weights_frozen_and_versions_unchanged=True, finite_actions=True)
     finally:
         if adapter:
@@ -362,17 +429,22 @@ def paired_check(rows):
     f, g = rows['frozen'], rows[ARMS[1]]
     assert f['start'] == g['start'] and f['observed_start'] == g['observed_start']
     identical_state_frames = 0
+    physical_equal_render_different = 0
     for a, b in zip(f['trace'], g['trace']):
         assert a['step'] == b['step'] and a['rng_before'] == b['rng_before'] and a['rng_after'] == b['rng_after']
         assert b['gate']['decision_rule'] == 'source'
-        same_state = all(a['snapshot'][k] == b['snapshot'][k] for k in ('sim', 'eef', 'quat', 'gripper'))
+        same_physical = all(a['snapshot'][k] == b['snapshot'][k] for k in ('sim', 'eef', 'quat', 'gripper'))
+        same_state = same_physical and a['render_state'] == b['render_state']
+        physical_equal_render_different += int(same_physical and not same_state)
         if same_state:
             assert a['snapshot'] == b['snapshot'], 'same physical state rendered different paired RGB'
             identical_state_frames += 1
             if not b['gate']['accepted']:
                 assert a['action'] == b['action'], 'reject drifted from Frozen at identical input'
     return dict(initial_state_and_two_view_pixels_exact=True, common_prefix_cpu_cuda_rng_exact=True,
-                identical_physical_state_rgb_checks=identical_state_frames, reject_at_equal_input_action_exact=True)
+                identical_physical_render_state_rgb_checks=identical_state_frames,
+                physical_equal_render_different_frames=physical_equal_render_different,
+                reject_at_equal_input_action_exact=True)
 
 
 def worker(out, shard):
@@ -393,9 +465,9 @@ def worker(out, shard):
             continue
         refs = reference_for(CALIB, case['task_id'])
         tau = gates[str(case['task_id'])]['threshold']
-        rows = {}
+        rows, pixel_cache = {}, {}
         for arm in (ARMS if index % 2 == 0 else ARMS[::-1]):
-            rows[arm] = rollout(actor, case, arm, refs, tau, funcs)
+            rows[arm] = rollout(actor, case, arm, refs, tau, funcs, pixel_cache)
             print('ARM_DONE', case['id'], arm, rows[arm]['success'], rows[arm]['steps'], flush=True)
         check = paired_check(rows)
         write(p, dict(fingerprint=m['fingerprint'], case=case, arms=rows, pairing=check))
@@ -486,7 +558,8 @@ def report(out):
         '- 完全复制edbac60总闸与原始校准包，未重新选阈值/步长。检测对两眼对称，G取原始Layer12双眼均值；修正只在Layer3、alpha=.75。',
         '- 第一遍仅计算未干预视觉；拒绝时缓存复用，接受时仅多跑两路视觉编码。connector每眼一次，原生VLM prefix一次、Flow10一次；模型参数与版本保持冻结。',
         '- 开跑前全部50首帧优化实现与edbac60动作逐位相同；强制开/关两分支对照原V1/Frozen；off→on→off连续重规划的动作、队列和RNG逐位一致。实际调用计数排除了重复LLM/Flow。',
-        '- 五十组同期初始物理状态/双目像素严格配对；共同步CPU/CUDA RNG前后均匹配。轨迹分歧后不要求不同状态的像素相同，同物理状态仍逐步核对像素。',
+        '- 五十组同期初始物理状态/双目像素严格配对；共同步CPU/CUDA RNG前后均匹配。只有完整物理和相机/几何/灯光渲染状态均匹配才允许共享原始RGB；沿用既有CoRP数值界限（每眼≤64像素、≤1灰度LSB），每次替换保留原/标准哈希与差异量。界限外继续中止，不同状态不复用。',
+        '- 原逐字节渲染检查试跑在一个Clean配对被拦停，单进程动作回放与模型复现均一致；原试跑归档排除，正式批次在本修订配对协议下全部重跑。未改门控阈值、alpha、模型或条件。',
         '- 放行率分别给出按步与按局平均；早成功的局数步数更少，因此不混淆两个统计口径。源95%按帧拟合，不是整局95%不误触发。',
         '- 这是单种子开发诊断，保留全部失败与误伤。与旧V1只作历史参照，不冒称本轮三臂同期对比；不能把域分组AUROC当作适配收益预测准确率。',
         '- 未访问Blind/Held-out，未扩跑其他套件。SmolVLA闭环结果不证明CoRP加同一总闸也有效。', '',
