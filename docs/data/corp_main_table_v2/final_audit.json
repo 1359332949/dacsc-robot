@@ -1,0 +1,44 @@
+{
+  "status": "PASS",
+  "jobs": 600,
+  "episodes": 3000,
+  "all_source_and_calibration_hashes_unchanged": true,
+  "evaluation_and_dependency_files_verified": 278,
+  "source_episodes": 10,
+  "source_chunks": 101,
+  "source_block3_and_action_replay_bit_exact": true,
+  "object_calibration_frames": 0,
+  "suites": {
+    "spatial": {
+      "jobs": 300,
+      "episodes": 1500,
+      "success_counts": {
+        "frozen": 177,
+        "pixel_align": 156,
+        "deep_block12": 171,
+        "actmad_inspired_viewwise_v2": 169,
+        "ours_v1": 192
+      },
+      "paired_raw_hashes_verified": true,
+      "rounding_events_within_limits": 12,
+      "actmad_updates": 4139,
+      "actmad_zero_parameter_steps": 0
+    },
+    "object": {
+      "jobs": 300,
+      "episodes": 1500,
+      "success_counts": {
+        "frozen": 177,
+        "pixel_align": 178,
+        "deep_block12": 164,
+        "actmad_inspired_viewwise_v2": 181,
+        "ours_v1": 188
+      },
+      "paired_raw_hashes_verified": true,
+      "rounding_events_within_limits": 7,
+      "actmad_updates": 4434,
+      "actmad_zero_parameter_steps": 0
+    }
+  },
+  "runtime_note": "Weight restoration and action finiteness were asserted inside each actual episode; this audit additionally verifies saved assertions, pairing hashes, fingerprints and independent count totals."
+}

@@ -1,0 +1,6 @@
+{
+  "status": "PASS",
+  "archive_sha256": "181c06ab0da5509e2bc229d8cb14dd406f19042a8046645c94f28f1ca22a5903",
+  "all_600_archived_jobs_match_report_raw_hashes": true,
+  "supplemental_inputs_archive_sha256": "500888d896493f6837bac1ea729a287d87a444d9c926de6211e27ffeb4eed1c1"
+}
