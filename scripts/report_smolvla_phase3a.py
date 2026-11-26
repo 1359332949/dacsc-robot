@@ -45,6 +45,14 @@ def main(a):
                          'activation_macro_by_view':np.mean([r['active'] for r in scans if r['layer']==l],axis=0).tolist()}
                    for l in (3,6,9,12)}
     gate=(harmed==0 and v1>=frozen)
+    postchecks={}
+    if (root/'oracle_tests.log').exists():
+        log=(root/'oracle_tests.log').read_text()
+        postchecks['original_v1_oracle_tests_passed']=('Ran 2 tests' in log and '\nOK' in log)
+    if (root/'replay_task0.json').exists():
+        replay=json.loads((root/'replay_task0.json').read_text())
+        postchecks['harmed_case_replay']={k:v for k,v in replay.items() if k!='rows'}
+        postchecks['harmed_case_replay']['outcomes']=[{k:r[k] for k in ('mode','success','steps')} for r in replay['rows']]
     summary={'schema':'smolvla_phase3a_v1','protocol':protocol,'status':'completed',
        'clean_guard':{'n':10,'frozen_successes':frozen,'v1_successes':v1,'rescued':rescued,'harmed':harmed,
                       'net':rescued-harmed,'mcnemar_exact_p':p,'observed_zero_harm_gate':gate,
@@ -53,8 +61,8 @@ def main(a):
                                   for i,arm in enumerate(('frozen','v1'))},
        'cases':cases,'clean_t0_layer_scan':layer_summary,'alpha0_exact_action_checks':40+len(pre['alpha0_full_action_identity_layers']),
        'preflight':pre,'latency':latency,'calibration':{'sha256':h,'total_frames':sum(s['steps'] for s in source),
-                  'source_outcomes_not_filtered':True,'source_task_frames':{str(s['task_id']):s['steps'] for s in source}},
-       'durations':status['durations'],'phase3b_autostarted':False,
+                  'source_outcomes_not_filtered':True,'source_successes':sum(s['success'] for s in source),'source_task_frames':{str(s['task_id']):s['steps'] for s in source}},
+       'durations':status['durations'],'phase3b_autostarted':False,'postchecks':postchecks,
        'decision':'Clean guard passed for this pilot; requires user review before main table' if gate else 'NO-GO: Clean guard harmed a previously successful case; do not launch main table',
        'limitations':['one policy seed, ten previously examined init1 states; no population zero-risk claim',
              'scan measures Clean t0 drift, not physical geometry sensitivity or shifted-domain repair',
@@ -67,7 +75,7 @@ def main(a):
           '- 使用已复现的兼容环境，原版 ro boeval 的 SmolVLA.load / act / 输入归一化 / 动作后处理，以及原版 suite.reset / step。外层仅选择指定init、控制配对RNG和注册hook。未修改上游源码或权重。',
           '- 原始Hub配置load_vlm_weights=True，视觉BF16；hook内mean/std/d2/gain/out均FP32，返回BF16。无CLS，完整1024patch；四层均校验每次replan恰好两次串行调用，真实像素输入顺序已核对。',
           '- 模型保持原生n_action_steps=1、Euler10、chunk50；EGL、env.noise=0、settling10、max220。没有套用CoRP H=E12。',
-          '- 每个回合在环境reset/settling后显式重置Torch CPU和CUDA seed0。两臂首帧物理state/RGB逐位一致，所有共同replan的RNG状态hash前缀相同。',
+          '- 环境Python/NumPy/libc srand及上游env.seed固定为task ID；每个回合在环境reset/settling后显式重置Torch CPU和CUDA seed0。两臂首帧物理state/RGB逐位一致，所有共同replan的RNG状态hash前缀相同。',
           '- source仅十任务init0全部实际Frozen轨迹，包含失败轨迹、不按成功筛选；全轨迹帧等权，与冻结V1定义一致。目标任务T的mu/ss来自其他9任务，tau由这9任务内部8+1留任务评分后取95%分位。',
           '- **init1此前已被诊断访问**，本轮称“校准状态不重叠的开发Clean”，不能称未见/独立确认。每任务source/guard的实际初始模拟状态hash亦不同；不打开Blind/Held-out清单。',
           f"- 校准共 {sum(s['steps'] for s in source)} 个实际replan；文件 spatial_init0_calib.npz，SHA {h}。",'',
@@ -76,7 +84,7 @@ def main(a):
     for c in cases:
         f,v=c['rows'];rates=v['mean_activation_by_view']
         text.append(f"| {c['task_id']} | {int(f['success'])} | {int(v['success'])} | {int(c['rescued'])}/{int(c['harmed'])} | {100*rates[0]:.1f}% / {100*rates[1]:.1f}% |")
-    text += ['',f"精确McNemar p={p:.6g}。本轮只有一个策略种子、10个任务/状态；即使零误伤，也只能说本样本未观察到误伤。",'',
+    text += ['',f"精确McNemar p={p:.6g}。本轮只有一个策略种子、10个任务/状态；即使零误伤，也只能说本样本未观察到误伤。 Frozen宏平均激活率：主眼{100*summary['activation_macro_by_view']['frozen'][0]:.2f}%、腕眼{100*summary['activation_macro_by_view']['frozen'][1]:.2f}%；V1：主眼{100*summary['activation_macro_by_view']['v1'][0]:.2f}%、腕眼{100*summary['activation_macro_by_view']['v1'][1]:.2f}%。",'',
       '## 3. 浅/深层单层扫查','',
       '固定alpha=.75，四层分别独立干预，同一缓存Clean t0和同一随机数；不是多层叠加，不据此挑选新主方法。这里只测动作漂移，不能称为真实移物体的几何保真或三域修复。', '',
       '| 层 | XYZ平均漂移L2 | Rotation平均漂移L2 | 动作平均漂移L2 |','|---:|---:|---:|---:|']
@@ -92,6 +100,14 @@ def main(a):
        '## 5. 推进边界','',summary['decision'],
        'SALT原文Appendix B.6 Table13确实从首个replan施扰，但其LIBERO10使用H50/E8（Table17）。本轮Spatial/E1和Clean护栏不构成同协议对比；后续主表需先锁任务套件、执行频率、双视角扰动定义、严重度、同时Frozen、多种子及source-data预算。',
        'SALT来源：https://arxiv.org/html/2610.07946v1 。不把离线Clean漂移或启动成功率当成TTA闭环收益。','']
+    if postchecks:
+        text += ['## 补充复核（不并入主批次计数）','']
+        if postchecks.get('original_v1_oracle_tests_passed'):
+            text += ['另两项独立oracle测试通过：直接执行冻结CoRP V1源码中的align/fit/score；串行BF16视角输出与原FP32公式再转BF16逐位相同，全轨迹LOTO的mu/ss/tau也逐位相同。加上原六项共八项测试。没有修改本轮算法或调参。','']
+        if 'harmed_case_replay' in postchecks:
+            rr=postchecks['harmed_case_replay']
+            text += [f"仅对首个误伤task0额外回放一次，动作/初始状态/RNG/步数/成败全部精确复现：{rr['all_fields_exact']}。",
+                     '该回放属于诊断复核，不是新的独立样本，不替换原结果。','']
     (root/'PHASE3_SMOLVLA_V1_PILOT.md').write_text('\n'.join(text).replace('ro boeval','roboeval'))
     print(json.dumps(summary['clean_guard']),flush=True)
 

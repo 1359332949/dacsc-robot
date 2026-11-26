@@ -1,0 +1,719 @@
+{
+  "schema": "smolvla_phase3a_v1",
+  "protocol": {
+    "candidate": "SigLIP layer3, alpha.75, bounded scale[.5,2], nested95%LOTO, noEMA",
+    "source": {
+      "tasks": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "init": 0,
+      "success_filter": false,
+      "layers": [
+        3,
+        6,
+        9,
+        12
+      ]
+    },
+    "guard": {
+      "tasks": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "init": 1,
+      "arms": [
+        "frozen",
+        "v1"
+      ],
+      "policy_seed": 0,
+      "role": "previously examined development Clean, calibration-state-disjoint, NOT untouched confirmation"
+    },
+    "scan": {
+      "layers": [
+        3,
+        6,
+        9,
+        12
+      ],
+      "alpha": 0.75,
+      "scope": "cached t0 Clean action drift and identity, not physical geometry/shift success"
+    },
+    "rng": "external Torch CPU/CUDA reset after upstream environment reset; common-prefix RNG hashes asserted",
+    "model": {
+      "revision": "6721902bc4d61e50a3bfdb11dfb4cb626f05d102",
+      "load_vlm_weights": true,
+      "vision_dtype": "BF16",
+      "operator_dtype": "FP32 then BF16",
+      "n_action_steps": 1,
+      "chunk_size": 50,
+      "Euler_steps": 10
+    },
+    "environment": {
+      "suite": "vanilla libero_spatial",
+      "renderer": "EGL",
+      "noise": 0,
+      "max_steps": 220,
+      "settling": 10
+    },
+    "latency": {
+      "rounds": 5,
+      "interleaved": true,
+      "gpu_isolated_after_rollouts": true
+    },
+    "main_table_autostart": false,
+    "blind_or_heldout_manifests_accessed": false,
+    "source_sha256": {
+      "phase3_smolvla_pilot.py": "bc2428c9acefba9fa9c4fb2ef14ff5d854583549787389695ba31acd3a5a8b1b",
+      "phase3_smolvla_common.py": "791b234f2cc8faed224c38e9290bfc8370e2a4b49e9b1c00bb4f57ab635df0a0",
+      "phase3_build_smolvla_calib.py": "d4c16d67a1c75ca41550f0fbb036c2ef1efabfa2e38876693a9ddc1a0ea63d98",
+      "dacsc/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "dacsc/smolvla_v1_hook.py": "1aa2fe3879c54f91601e2e615fce1828e59088ce14596c113cb096e9bc9eb629",
+      "tests/test_smolvla_v1_hook.py": "03e73909dbfd1f8b97366e10d241eff8c8f6dfa0e5cfcbcda50609ef23f95274"
+    }
+  },
+  "status": "completed",
+  "clean_guard": {
+    "n": 10,
+    "frozen_successes": 7,
+    "v1_successes": 6,
+    "rescued": 0,
+    "harmed": 1,
+    "net": -1,
+    "mcnemar_exact_p": 1.0,
+    "observed_zero_harm_gate": false,
+    "role": "previously examined DEVELOPMENT Clean, not independent unseen confirmation"
+  },
+  "activation_macro_by_view": {
+    "frozen": [
+      0.06653975693691234,
+      0.04954826240276173
+    ],
+    "v1": [
+      0.06535018413392,
+      0.051772539542732955
+    ]
+  },
+  "cases": [
+    {
+      "task_id": 0,
+      "task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+      "rows": [
+        {
+          "mode": "frozen",
+          "success": true,
+          "steps": 137,
+          "seconds": 97.10592005902436,
+          "mean_activation_by_view": [
+            0.025404882155032487,
+            0.024967686298650003
+          ],
+          "mean_gain_abs_by_view": [
+            0.0005144880783750955,
+            0.0009575502831301053
+          ]
+        },
+        {
+          "mode": "v1",
+          "success": false,
+          "steps": 220,
+          "seconds": 152.94049028900918,
+          "mean_activation_by_view": [
+            0.026343513995578344,
+            0.05250947130103172
+          ],
+          "mean_gain_abs_by_view": [
+            0.0005361706905453254,
+            0.0028858125649507695
+          ]
+        }
+      ],
+      "rescued": false,
+      "harmed": true,
+      "initial_state_and_rgb_exact": true,
+      "rng_prefix_exact": true
+    },
+    {
+      "task_id": 1,
+      "task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+      "rows": [
+        {
+          "mode": "frozen",
+          "success": true,
+          "steps": 103,
+          "seconds": 73.50046182400547,
+          "mean_activation_by_view": [
+            0.04759557181698026,
+            0.008533070638133846
+          ],
+          "mean_gain_abs_by_view": [
+            0.0009058493104603965,
+            0.0002576967092784454
+          ]
+        },
+        {
+          "mode": "v1",
+          "success": true,
+          "steps": 103,
+          "seconds": 83.0577482630033,
+          "mean_activation_by_view": [
+            0.04798746099062626,
+            0.008495145888764013
+          ],
+          "mean_gain_abs_by_view": [
+            0.0009100803630980347,
+            0.0002567079132788722
+          ]
+        }
+      ],
+      "rescued": false,
+      "harmed": false,
+      "initial_state_and_rgb_exact": true,
+      "rng_prefix_exact": true
+    },
+    {
+      "task_id": 2,
+      "task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+      "rows": [
+        {
+          "mode": "frozen",
+          "success": true,
+          "steps": 107,
+          "seconds": 74.3366159540019,
+          "mean_activation_by_view": [
+            0.04186137178129403,
+            0.012631425698218153
+          ],
+          "mean_gain_abs_by_view": [
+            0.0008044050668886315,
+            0.00042346432584823373
+          ]
+        },
+        {
+          "mode": "v1",
+          "success": true,
+          "steps": 106,
+          "seconds": 72.04326457600109,
+          "mean_activation_by_view": [
+            0.04315300796286396,
+            0.012971698411933656
+          ],
+          "mean_gain_abs_by_view": [
+            0.000803417350395631,
+            0.0004346058998858355
+          ]
+        }
+      ],
+      "rescued": false,
+      "harmed": false,
+      "initial_state_and_rgb_exact": true,
+      "rng_prefix_exact": true
+    },
+    {
+      "task_id": 3,
+      "task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+      "rows": [
+        {
+          "mode": "frozen",
+          "success": false,
+          "steps": 220,
+          "seconds": 153.75316036498407,
+          "mean_activation_by_view": [
+            0.06084280488165942,
+            0.01861979221840474
+          ],
+          "mean_gain_abs_by_view": [
+            0.001364540804537352,
+            0.0008443396371810443
+          ]
+        },
+        {
+          "mode": "v1",
+          "success": false,
+          "steps": 220,
+          "seconds": 153.14046180603327,
+          "mean_activation_by_view": [
+            0.05470525727353313,
+            0.021448864186690612
+          ],
+          "mean_gain_abs_by_view": [
+            0.001255985344918868,
+            0.0010307336500111639
+          ]
+        }
+      ],
+      "rescued": false,
+      "harmed": false,
+      "initial_state_and_rgb_exact": true,
+      "rng_prefix_exact": true
+    },
+    {
+      "task_id": 4,
+      "task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+      "rows": [
+        {
+          "mode": "frozen",
+          "success": true,
+          "steps": 151,
+          "seconds": 104.93347020004876,
+          "mean_activation_by_view": [
+            0.13400248753906085,
+            0.14579884488357614
+          ],
+          "mean_gain_abs_by_view": [
+            0.003702128671467403,
+            0.0073911160629995115
+          ]
+        },
+        {
+          "mode": "v1",
+          "success": true,
+          "steps": 142,
+          "seconds": 98.1892127749743,
+          "mean_activation_by_view": [
+            0.13436216682615415,
+            0.14274318129952315
+          ],
+          "mean_gain_abs_by_view": [
+            0.003680060143766164,
+            0.007250798030647377
+          ]
+        }
+      ],
+      "rescued": false,
+      "harmed": false,
+      "initial_state_and_rgb_exact": true,
+      "rng_prefix_exact": true
+    },
+    {
+      "task_id": 5,
+      "task": "pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate",
+      "rows": [
+        {
+          "mode": "frozen",
+          "success": false,
+          "steps": 220,
+          "seconds": 154.01705348695396,
+          "mean_activation_by_view": [
+            0.03351680967025459,
+            0.1483664807440205
+          ],
+          "mean_gain_abs_by_view": [
+            0.0006271623763578562,
+            0.008462751788597829
+          ]
+        },
+        {
+          "mode": "v1",
+          "success": false,
+          "steps": 220,
+          "seconds": 152.59413921798114,
+          "mean_activation_by_view": [
+            0.03262902552007951,
+            0.14698153807442974
+          ],
+          "mean_gain_abs_by_view": [
+            0.0006112150585977361,
+            0.008436219309739748
+          ]
+        }
+      ],
+      "rescued": false,
+      "harmed": false,
+      "initial_state_and_rgb_exact": true,
+      "rng_prefix_exact": true
+    },
+    {
+      "task_id": 6,
+      "task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+      "rows": [
+        {
+          "mode": "frozen",
+          "success": false,
+          "steps": 220,
+          "seconds": 150.42682558798697,
+          "mean_activation_by_view": [
+            0.0641867915337736,
+            0.05743371372068809
+          ],
+          "mean_gain_abs_by_view": [
+            0.00126143998561681,
+            0.002639717780489677
+          ]
+        },
+        {
+          "mode": "v1",
+          "success": false,
+          "steps": 220,
+          "seconds": 148.90019503200892,
+          "mean_activation_by_view": [
+            0.060209518755701456,
+            0.057759234304963186
+          ],
+          "mean_gain_abs_by_view": [
+            0.0012054007304620675,
+            0.0027196399015503464
+          ]
+        }
+      ],
+      "rescued": false,
+      "harmed": false,
+      "initial_state_and_rgb_exact": true,
+      "rng_prefix_exact": true
+    },
+    {
+      "task_id": 7,
+      "task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+      "rows": [
+        {
+          "mode": "frozen",
+          "success": true,
+          "steps": 110,
+          "seconds": 76.04175502498401,
+          "mean_activation_by_view": [
+            0.11352983323687857,
+            0.019767992950933563
+          ],
+          "mean_gain_abs_by_view": [
+            0.003882331828671423,
+            0.0007129803923651872
+          ]
+        },
+        {
+          "mode": "v1",
+          "success": true,
+          "steps": 106,
+          "seconds": 73.3612779820105,
+          "mean_activation_by_view": [
+            0.11377260623113164,
+            0.016619988586446095
+          ],
+          "mean_gain_abs_by_view": [
+            0.003942280486094291,
+            0.0005440715468629829
+          ]
+        }
+      ],
+      "rescued": false,
+      "harmed": false,
+      "initial_state_and_rgb_exact": true,
+      "rng_prefix_exact": true
+    },
+    {
+      "task_id": 8,
+      "task": "pick_up_the_black_bowl_next_to_the_plate_and_place_it_on_the_plate",
+      "rows": [
+        {
+          "mode": "frozen",
+          "success": true,
+          "steps": 94,
+          "seconds": 62.99225486803334,
+          "mean_activation_by_view": [
+            0.03143007624299919,
+            0.03158244759369483
+          ],
+          "mean_gain_abs_by_view": [
+            0.0006052752208408027,
+            0.0016882223879950656
+          ]
+        },
+        {
+          "mode": "v1",
+          "success": true,
+          "steps": 95,
+          "seconds": 63.36367444397183,
+          "mean_activation_by_view": [
+            0.0318256588603713,
+            0.03189418939873576
+          ],
+          "mean_gain_abs_by_view": [
+            0.0006101176259873778,
+            0.0017180059469721622
+          ]
+        }
+      ],
+      "rescued": false,
+      "harmed": false,
+      "initial_state_and_rgb_exact": true,
+      "rng_prefix_exact": true
+    },
+    {
+      "task_id": 9,
+      "task": "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate",
+      "rows": [
+        {
+          "mode": "frozen",
+          "success": true,
+          "steps": 128,
+          "seconds": 85.67241811798885,
+          "mean_activation_by_view": [
+            0.11302694051119033,
+            0.02778116928129748
+          ],
+          "mean_gain_abs_by_view": [
+            0.003107830487579122,
+            0.0010430595725381409
+          ]
+        },
+        {
+          "mode": "v1",
+          "success": true,
+          "steps": 130,
+          "seconds": 88.62407579901628,
+          "mean_activation_by_view": [
+            0.10851362492316044,
+            0.026302083974811607
+          ],
+          "mean_gain_abs_by_view": [
+            0.002988142937493439,
+            0.0010277525480397833
+          ]
+        }
+      ],
+      "rescued": false,
+      "harmed": false,
+      "initial_state_and_rgb_exact": true,
+      "rng_prefix_exact": true
+    }
+  ],
+  "clean_t0_layer_scan": {
+    "3": {
+      "xyz_drift_mean": 0.008241655002348126,
+      "rotation_drift_mean": 0.0006718899981933646,
+      "action_drift_mean": 0.00829134127125144,
+      "activation_macro_by_view": [
+        0.07630208507180214,
+        0.009765625279396773
+      ]
+    },
+    "6": {
+      "xyz_drift_mean": 0.010201352834701537,
+      "rotation_drift_mean": 0.0011057268449803815,
+      "action_drift_mean": 0.010394760593771934,
+      "activation_macro_by_view": [
+        0.07174479365348815,
+        0.03242187593132258
+      ]
+    },
+    "9": {
+      "xyz_drift_mean": 0.018655496928840876,
+      "rotation_drift_mean": 0.0017248175863642246,
+      "action_drift_mean": 0.018815340287983418,
+      "activation_macro_by_view": [
+        0.07148437798023224,
+        0.0412760429084301
+      ]
+    },
+    "12": {
+      "xyz_drift_mean": 0.022611341485753656,
+      "rotation_drift_mean": 0.0018016569316387176,
+      "action_drift_mean": 0.022848816029727458,
+      "activation_macro_by_view": [
+        0.054427084140479566,
+        0.035286459233611824
+      ]
+    }
+  },
+  "alpha0_exact_action_checks": 44,
+  "preflight": {
+    "status": "PASS",
+    "layers": [
+      3,
+      6,
+      9,
+      12
+    ],
+    "two_calls_per_layer": true,
+    "shape": [
+      1,
+      1024,
+      768
+    ],
+    "no_cls": true,
+    "native_view_order_verified": true,
+    "alpha0_full_action_identity_layers": [
+      3,
+      6,
+      9,
+      12
+    ],
+    "vision_dtype": "torch.bfloat16",
+    "load_vlm_weights": true,
+    "n_action_steps": 1,
+    "Euler_steps": 10,
+    "policy_seed_control": "external Torch CPU/CUDA reset before each episode"
+  },
+  "latency": {
+    "scope": "end-to-end native act, CUDA synchronized, no environment step; V1 includes diagnostic moment capture",
+    "warmup_pairs": 2,
+    "interleaved_rounds": 5,
+    "rows": [
+      {
+        "arm": "frozen",
+        "ms": 608.1379770184867,
+        "peak_allocated_mb": 1206.865234375,
+        "peak_reserved_mb": 2178.0,
+        "round": 0
+      },
+      {
+        "arm": "v1",
+        "ms": 607.2881969739683,
+        "peak_allocated_mb": 1206.87890625,
+        "peak_reserved_mb": 2178.0,
+        "round": 0
+      },
+      {
+        "arm": "v1",
+        "ms": 607.2394980001263,
+        "peak_allocated_mb": 1206.87890625,
+        "peak_reserved_mb": 2178.0,
+        "round": 1
+      },
+      {
+        "arm": "frozen",
+        "ms": 597.7198639884591,
+        "peak_allocated_mb": 1206.865234375,
+        "peak_reserved_mb": 2178.0,
+        "round": 1
+      },
+      {
+        "arm": "frozen",
+        "ms": 606.852927012369,
+        "peak_allocated_mb": 1206.865234375,
+        "peak_reserved_mb": 2178.0,
+        "round": 2
+      },
+      {
+        "arm": "v1",
+        "ms": 610.3801249992102,
+        "peak_allocated_mb": 1206.87890625,
+        "peak_reserved_mb": 2178.0,
+        "round": 2
+      },
+      {
+        "arm": "v1",
+        "ms": 606.7974289762788,
+        "peak_allocated_mb": 1206.87890625,
+        "peak_reserved_mb": 2178.0,
+        "round": 3
+      },
+      {
+        "arm": "frozen",
+        "ms": 608.8929980178364,
+        "peak_allocated_mb": 1206.865234375,
+        "peak_reserved_mb": 2178.0,
+        "round": 3
+      },
+      {
+        "arm": "frozen",
+        "ms": 608.1359469681047,
+        "peak_allocated_mb": 1206.865234375,
+        "peak_reserved_mb": 2178.0,
+        "round": 4
+      },
+      {
+        "arm": "v1",
+        "ms": 605.2625029697083,
+        "peak_allocated_mb": 1206.87890625,
+        "peak_reserved_mb": 2178.0,
+        "round": 4
+      }
+    ],
+    "median_ms": {
+      "frozen": 608.1359469681047,
+      "v1": 607.2394980001263
+    },
+    "relative_median": 0.9985259069580615
+  },
+  "calibration": {
+    "sha256": "e573729434d6cdba404d887dc3f685d33b6c67fd6901cd487c512a18fa0ef606",
+    "total_frames": 1312,
+    "source_outcomes_not_filtered": true,
+    "source_successes": 8,
+    "source_task_frames": {
+      "0": 83,
+      "1": 110,
+      "2": 220,
+      "3": 87,
+      "4": 127,
+      "5": 220,
+      "6": 129,
+      "7": 112,
+      "8": 101,
+      "9": 123
+    }
+  },
+  "durations": {
+    "calibration": 344.3316132889595,
+    "fit": 14.01543407898862,
+    "guard": 706.7339297449798,
+    "latency": 28.02924132096814
+  },
+  "phase3b_autostarted": false,
+  "postchecks": {
+    "original_v1_oracle_tests_passed": true,
+    "harmed_case_replay": {
+      "scope": "single post-pilot diagnostic replay, not additional independent scoring",
+      "repeat_count": 1,
+      "matches_original": [
+        {
+          "success": true,
+          "steps": true,
+          "start": true,
+          "actions_sha256": true,
+          "rng_before_replans": true
+        },
+        {
+          "success": true,
+          "steps": true,
+          "start": true,
+          "actions_sha256": true,
+          "rng_before_replans": true
+        }
+      ],
+      "all_fields_exact": true,
+      "outcomes": [
+        {
+          "mode": "frozen",
+          "success": true,
+          "steps": 137
+        },
+        {
+          "mode": "v1",
+          "success": false,
+          "steps": 220
+        }
+      ]
+    }
+  },
+  "decision": "NO-GO: Clean guard harmed a previously successful case; do not launch main table",
+  "limitations": [
+    "one policy seed, ten previously examined init1 states; no population zero-risk claim",
+    "scan measures Clean t0 drift, not physical geometry sensitivity or shifted-domain repair",
+    "95% nested-source threshold does not guarantee 5% activation on held-task Clean",
+    "SALT Table13 uses LIBERO10 H50/E8; this Spatial E1 pilot is not a direct SALT comparison"
+  ],
+  "candidate_status": "NO_GO_CLEAN_HARM",
+  "artifacts": {
+    "local_directory": "/Users/wentiliangkaihua/Documents/ChatGPT/\u4e13\u5229\u8bba\u6587/remote_artifacts/smolvla_phase3a_v1",
+    "archive": "smolvla_phase3a_v1_evidence.tar.gz",
+    "archive_sha256": "a76a718c56e2ac8c9925ed27b7d40df4d5ff2052b524c60fa18369ad9c8c3573",
+    "core_implementation_commit": "850dcac"
+  }
+}
