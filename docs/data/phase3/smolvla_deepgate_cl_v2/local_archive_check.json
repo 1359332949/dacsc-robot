@@ -1,0 +1,7 @@
+{
+  "status": "PASS",
+  "archive_sha256": "8af7aa181d8119a3c204bee82af9189ab8d9071a2ad1471935e8c1a937aef53e",
+  "all_51_raw_pair_hashes_match_exported_report": true,
+  "main_episodes": 100,
+  "supplemental_episodes": 2
+}

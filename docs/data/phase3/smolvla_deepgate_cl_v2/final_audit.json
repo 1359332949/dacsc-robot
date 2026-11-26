@@ -1,0 +1,470 @@
+{
+  "status": "PASS",
+  "main_conditions": 50,
+  "main_episodes": 100,
+  "supplemental_episodes": 2,
+  "atomic_pairs": 51,
+  "all_replans_checked": 16777,
+  "source_and_weights_and_calibration_hashes_unchanged": true,
+  "all_raw_hashes_actions_rng_gate_decisions_and_counts_verified": true,
+  "same_physical_render_input_checks": 1648,
+  "physical_equal_render_different_frames": 0,
+  "canonicalization_events": 45,
+  "max_canonical_pixels": 10,
+  "max_canonical_lsb": 1,
+  "historical_frozen_actions_exact": 35,
+  "historical_frozen_success_agreement": 48,
+  "historical_frozen_cases": [
+    {
+      "case_id": "t00_clean_i2",
+      "old_success": false,
+      "current_success": false,
+      "actions_bit_exact": true,
+      "first_action_difference_step": null,
+      "initial_pixels_and_state_equal": true,
+      "observed_initial_pixels_equal": true
+    },
+    {
+      "case_id": "t00_motion_blur_i1",
+      "old_success": false,
+      "current_success": false,
+      "actions_bit_exact": true,
+      "first_action_difference_step": null,
+      "initial_pixels_and_state_equal": true,
+      "observed_initial_pixels_equal": true
+    },
+    {
+      "case_id": "t00_gaussian_blur_i1",
+      "old_success": true,
+      "current_success": true,
+      "actions_bit_exact": false,
+      "first_action_difference_step": 15,
+      "initial_pixels_and_state_equal": true,
+      "observed_initial_pixels_equal": true
+    },
+    {
+      "case_id": "t00_light_asset_i1",
+      "old_success": true,
+      "current_success": true,
+      "actions_bit_exact": true,
+      "first_action_difference_step": null,
+      "initial_pixels_and_state_equal": true,
+      "observed_initial_pixels_equal": true
+    },
+    {
+      "case_id": "t00_table_texture_i1",
+      "old_success": false,
+      "current_success": false,
+      "actions_bit_exact": true,
+      "first_action_difference_step": null,
+      "initial_pixels_and_state_equal": true,
+      "observed_initial_pixels_equal": true
+    },
+    {
+      "case_id": "t01_clean_i2",
+      "old_success": true,
+      "current_success": true,
+      "actions_bit_exact": true,
+      "first_action_difference_step": null,
+      "initial_pixels_and_state_equal": true,
+      "observed_initial_pixels_equal": true
+    },
+    {
+      "case_id": "t01_gaussian_blur_i1",
+      "old_success": false,
+      "current_success": false,
+      "actions_bit_exact": true,
+      "first_action_difference_step": null,
+      "initial_pixels_and_state_equal": true,
+      "observed_initial_pixels_equal": true
+    },
+    {
+      "case_id": "t01_zoom_blur_i1",
+      "old_success": false,
+      "current_success": false,
+      "actions_bit_exact": false,
+      "first_action_difference_step": 148,
+      "initial_pixels_and_state_equal": true,
+      "observed_initial_pixels_equal": true
+    },
+    {
+      "case_id": "t01_light_asset_i1",
+      "old_success": true,
+      "current_success": true,
+      "actions_bit_exact": true,
+      "first_action_difference_step": null,
+      "initial_pixels_and_state_equal": true,
+      "observed_initial_pixels_equal": true
+    },
+    {
+      "case_id": "t01_table_texture_i1",
+      "old_success": true,
+      "current_success": true,
+      "actions_bit_exact": true,
+      "first_action_difference_step": null,
+      "initial_pixels_and_state_equal": true,
+      "observed_initial_pixels_equal": true
+    },
+    {
+      "case_id": "t02_clean_i2",
+      "old_success": true,
+      "current_success": true,
+      "actions_bit_exact": true,
+      "first_action_difference_step": null,
+      "initial_pixels_and_state_equal": true,
+      "observed_initial_pixels_equal": true
+    },
+    {
+      "case_id": "t02_zoom_blur_i1",
+      "old_success": false,
+      "current_success": true,
+      "actions_bit_exact": false,
+      "first_action_difference_step": 25,
+      "initial_pixels_and_state_equal": true,
+      "observed_initial_pixels_equal": true
+    },
+    {
+      "case_id": "t02_fog_i1",
+      "old_success": true,
+      "current_success": true,
+      "actions_bit_exact": true,
+      "first_action_difference_step": null,
+      "initial_pixels_and_state_equal": true,
+      "observed_initial_pixels_equal": true
+    },
+    {
+      "case_id": "t02_light_asset_i1",
+      "old_success": true,
+      "current_success": true,
+      "actions_bit_exact": false,
+      "first_action_difference_step": 5,
+      "initial_pixels_and_state_equal": true,
+      "observed_initial_pixels_equal": true
+    },
+    {
+      "case_id": "t02_table_texture_i1",
+      "old_success": false,
+      "current_success": false,
+      "actions_bit_exact": true,
+      "first_action_difference_step": null,
+      "initial_pixels_and_state_equal": true,
+      "observed_initial_pixels_equal": true
+    },
+    {
+      "case_id": "t03_clean_i2",
+      "old_success": true,
+      "current_success": true,
+      "actions_bit_exact": true,
+      "first_action_difference_step": null,
+      "initial_pixels_and_state_equal": true,
+      "observed_initial_pixels_equal": true
+    },
+    {
+      "case_id": "t03_fog_i1",
+      "old_success": true,
+      "current_success": true,
+      "actions_bit_exact": false,
+      "first_action_difference_step": 17,
+      "initial_pixels_and_state_equal": true,
+      "observed_initial_pixels_equal": true
+    },
+    {
+      "case_id": "t03_glass_blur_i1",
+      "old_success": false,
+      "current_success": false,
+      "actions_bit_exact": true,
+      "first_action_difference_step": null,
+      "initial_pixels_and_state_equal": true,
+      "observed_initial_pixels_equal": true
+    },
+    {
+      "case_id": "t03_light_asset_i1",
+      "old_success": true,
+      "current_success": true,
+      "actions_bit_exact": true,
+      "first_action_difference_step": null,
+      "initial_pixels_and_state_equal": true,
+      "observed_initial_pixels_equal": true
+    },
+    {
+      "case_id": "t03_table_texture_i1",
+      "old_success": false,
+      "current_success": false,
+      "actions_bit_exact": true,
+      "first_action_difference_step": null,
+      "initial_pixels_and_state_equal": true,
+      "observed_initial_pixels_equal": true
+    },
+    {
+      "case_id": "t04_clean_i2",
+      "old_success": true,
+      "current_success": true,
+      "actions_bit_exact": true,
+      "first_action_difference_step": null,
+      "initial_pixels_and_state_equal": true,
+      "observed_initial_pixels_equal": true
+    },
+    {
+      "case_id": "t04_glass_blur_i1",
+      "old_success": false,
+      "current_success": false,
+      "actions_bit_exact": true,
+      "first_action_difference_step": null,
+      "initial_pixels_and_state_equal": true,
+      "observed_initial_pixels_equal": true
+    },
+    {
+      "case_id": "t04_motion_blur_i1",
+      "old_success": false,
+      "current_success": false,
+      "actions_bit_exact": true,
+      "first_action_difference_step": null,
+      "initial_pixels_and_state_equal": true,
+      "observed_initial_pixels_equal": true
+    },
+    {
+      "case_id": "t04_light_asset_i1",
+      "old_success": true,
+      "current_success": true,
+      "actions_bit_exact": true,
+      "first_action_difference_step": null,
+      "initial_pixels_and_state_equal": true,
+      "observed_initial_pixels_equal": true
+    },
+    {
+      "case_id": "t04_scene_texture_i1",
+      "old_success": true,
+      "current_success": true,
+      "actions_bit_exact": true,
+      "first_action_difference_step": null,
+      "initial_pixels_and_state_equal": true,
+      "observed_initial_pixels_equal": true
+    },
+    {
+      "case_id": "t05_clean_i2",
+      "old_success": false,
+      "current_success": false,
+      "actions_bit_exact": true,
+      "first_action_difference_step": null,
+      "initial_pixels_and_state_equal": true,
+      "observed_initial_pixels_equal": true
+    },
+    {
+      "case_id": "t05_motion_blur_i1",
+      "old_success": false,
+      "current_success": false,
+      "actions_bit_exact": false,
+      "first_action_difference_step": 12,
+      "initial_pixels_and_state_equal": true,
+      "observed_initial_pixels_equal": true
+    },
+    {
+      "case_id": "t05_gaussian_blur_i1",
+      "old_success": false,
+      "current_success": false,
+      "actions_bit_exact": true,
+      "first_action_difference_step": null,
+      "initial_pixels_and_state_equal": true,
+      "observed_initial_pixels_equal": true
+    },
+    {
+      "case_id": "t05_light_asset_i1",
+      "old_success": false,
+      "current_success": false,
+      "actions_bit_exact": true,
+      "first_action_difference_step": null,
+      "initial_pixels_and_state_equal": true,
+      "observed_initial_pixels_equal": true
+    },
+    {
+      "case_id": "t05_scene_texture_i1",
+      "old_success": false,
+      "current_success": false,
+      "actions_bit_exact": true,
+      "first_action_difference_step": null,
+      "initial_pixels_and_state_equal": true,
+      "observed_initial_pixels_equal": true
+    },
+    {
+      "case_id": "t06_clean_i2",
+      "old_success": true,
+      "current_success": true,
+      "actions_bit_exact": true,
+      "first_action_difference_step": null,
+      "initial_pixels_and_state_equal": true,
+      "observed_initial_pixels_equal": true
+    },
+    {
+      "case_id": "t06_gaussian_blur_i1",
+      "old_success": false,
+      "current_success": false,
+      "actions_bit_exact": true,
+      "first_action_difference_step": null,
+      "initial_pixels_and_state_equal": true,
+      "observed_initial_pixels_equal": true
+    },
+    {
+      "case_id": "t06_zoom_blur_i1",
+      "old_success": false,
+      "current_success": false,
+      "actions_bit_exact": false,
+      "first_action_difference_step": 11,
+      "initial_pixels_and_state_equal": true,
+      "observed_initial_pixels_equal": true
+    },
+    {
+      "case_id": "t06_light_asset_i1",
+      "old_success": false,
+      "current_success": false,
+      "actions_bit_exact": false,
+      "first_action_difference_step": 7,
+      "initial_pixels_and_state_equal": true,
+      "observed_initial_pixels_equal": true
+    },
+    {
+      "case_id": "t06_scene_texture_i1",
+      "old_success": false,
+      "current_success": false,
+      "actions_bit_exact": true,
+      "first_action_difference_step": null,
+      "initial_pixels_and_state_equal": true,
+      "observed_initial_pixels_equal": true
+    },
+    {
+      "case_id": "t07_clean_i2",
+      "old_success": true,
+      "current_success": true,
+      "actions_bit_exact": false,
+      "first_action_difference_step": 25,
+      "initial_pixels_and_state_equal": true,
+      "observed_initial_pixels_equal": true
+    },
+    {
+      "case_id": "t07_zoom_blur_i1",
+      "old_success": false,
+      "current_success": false,
+      "actions_bit_exact": false,
+      "first_action_difference_step": 53,
+      "initial_pixels_and_state_equal": true,
+      "observed_initial_pixels_equal": true
+    },
+    {
+      "case_id": "t07_fog_i1",
+      "old_success": false,
+      "current_success": false,
+      "actions_bit_exact": false,
+      "first_action_difference_step": 65,
+      "initial_pixels_and_state_equal": true,
+      "observed_initial_pixels_equal": true
+    },
+    {
+      "case_id": "t07_light_asset_i1",
+      "old_success": true,
+      "current_success": true,
+      "actions_bit_exact": false,
+      "first_action_difference_step": 30,
+      "initial_pixels_and_state_equal": true,
+      "observed_initial_pixels_equal": true
+    },
+    {
+      "case_id": "t07_scene_texture_i1",
+      "old_success": true,
+      "current_success": true,
+      "actions_bit_exact": false,
+      "first_action_difference_step": 29,
+      "initial_pixels_and_state_equal": true,
+      "observed_initial_pixels_equal": true
+    },
+    {
+      "case_id": "t08_clean_i2",
+      "old_success": true,
+      "current_success": true,
+      "actions_bit_exact": false,
+      "first_action_difference_step": 10,
+      "initial_pixels_and_state_equal": true,
+      "observed_initial_pixels_equal": true
+    },
+    {
+      "case_id": "t08_fog_i1",
+      "old_success": false,
+      "current_success": false,
+      "actions_bit_exact": true,
+      "first_action_difference_step": null,
+      "initial_pixels_and_state_equal": true,
+      "observed_initial_pixels_equal": true
+    },
+    {
+      "case_id": "t08_glass_blur_i1",
+      "old_success": false,
+      "current_success": false,
+      "actions_bit_exact": true,
+      "first_action_difference_step": null,
+      "initial_pixels_and_state_equal": true,
+      "observed_initial_pixels_equal": true
+    },
+    {
+      "case_id": "t08_light_asset_i1",
+      "old_success": true,
+      "current_success": true,
+      "actions_bit_exact": true,
+      "first_action_difference_step": null,
+      "initial_pixels_and_state_equal": true,
+      "observed_initial_pixels_equal": true
+    },
+    {
+      "case_id": "t08_table_texture_i1",
+      "old_success": false,
+      "current_success": true,
+      "actions_bit_exact": false,
+      "first_action_difference_step": 4,
+      "initial_pixels_and_state_equal": true,
+      "observed_initial_pixels_equal": true
+    },
+    {
+      "case_id": "t09_clean_i2",
+      "old_success": true,
+      "current_success": true,
+      "actions_bit_exact": true,
+      "first_action_difference_step": null,
+      "initial_pixels_and_state_equal": true,
+      "observed_initial_pixels_equal": true
+    },
+    {
+      "case_id": "t09_glass_blur_i1",
+      "old_success": false,
+      "current_success": false,
+      "actions_bit_exact": true,
+      "first_action_difference_step": null,
+      "initial_pixels_and_state_equal": true,
+      "observed_initial_pixels_equal": true
+    },
+    {
+      "case_id": "t09_motion_blur_i1",
+      "old_success": false,
+      "current_success": false,
+      "actions_bit_exact": true,
+      "first_action_difference_step": null,
+      "initial_pixels_and_state_equal": true,
+      "observed_initial_pixels_equal": true
+    },
+    {
+      "case_id": "t09_light_asset_i1",
+      "old_success": true,
+      "current_success": true,
+      "actions_bit_exact": true,
+      "first_action_difference_step": null,
+      "initial_pixels_and_state_equal": true,
+      "observed_initial_pixels_equal": true
+    },
+    {
+      "case_id": "t09_scene_texture_i1",
+      "old_success": true,
+      "current_success": true,
+      "actions_bit_exact": true,
+      "first_action_difference_step": null,
+      "initial_pixels_and_state_equal": true,
+      "observed_initial_pixels_equal": true
+    }
+  ],
+  "historical_note": "Cross-run renderer/numerical trajectory sensitivity retained; the current concurrent paired baseline is authoritative. Old excluded attempt and old V1 are not mixed into current statistical comparisons."
+}

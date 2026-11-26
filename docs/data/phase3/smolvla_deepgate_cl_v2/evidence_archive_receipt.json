@@ -1,0 +1,9 @@
+{
+  "archive": "smolvla_deepgate_cl_v2_evidence.tar.gz",
+  "sha256": "8af7aa181d8119a3c204bee82af9189ab8d9071a2ad1471935e8c1a937aef53e",
+  "bytes": 8257042,
+  "pairs": 51,
+  "main_episodes": 100,
+  "supplemental_episodes": 2,
+  "contents": "complete paired traces, source snapshots, original and audited reports, calibration, fixed gate, preflight, latency, runtime and numerical-render recovery receipts; pretrained weights/full assets excluded"
+}

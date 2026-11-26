@@ -1,0 +1,28 @@
+{
+  "observed_failure": "strict same-SimState RGB equality at t01_clean_i2 under four-worker evaluation",
+  "raw_discrepancy_magnitude": "not retained in aborted worker; do not assert measured LSB/pixel magnitude",
+  "isolated_action_replay": {
+    "case": "t01_clean_i2",
+    "same_actions_replayed_twice": true,
+    "steps": 111,
+    "same_physics": true,
+    "all_state_hashes_equal": true,
+    "pixel_differences": []
+  },
+  "isolated_real_model_replay": {
+    "case": "t01_clean_i2",
+    "model_camera_light_texture_arrays_equal": true,
+    "equal_state_frames": 111,
+    "differences": [],
+    "successes": {
+      "frozen": true,
+      "deep_gate_L3_a0.75": true
+    },
+    "steps": {
+      "frozen": 111,
+      "deep_gate_L3_a0.75": 111
+    }
+  },
+  "old_complete_pairs_excluded": 4,
+  "recovery": "fresh full run; include explicit geometry/camera/light transforms in state key; pair-local raw-image equality guard reuses pre-existing CoRP <=64 pixels/view <=1 LSB bound, logs every event and aborts beyond bounds; method, source threshold and alpha unchanged"
+}

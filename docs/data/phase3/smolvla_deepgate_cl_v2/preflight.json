@@ -1,0 +1,906 @@
+{
+  "status": "PASS",
+  "conditions": [
+    {
+      "case_id": "t00_clean_i2",
+      "scored": true,
+      "optimized_action_exact_to_t0_diagnostic": true,
+      "accepted": false,
+      "call_counts": {
+        "encoder": 2,
+        "connector": 2,
+        "flow_noise": 1,
+        "denoise": 10,
+        "vlm_prefill": 1,
+        "expert_suffix": 10
+      },
+      "same_flow_rng": true
+    },
+    {
+      "case_id": "t00_motion_blur_i1",
+      "scored": true,
+      "optimized_action_exact_to_t0_diagnostic": true,
+      "accepted": true,
+      "call_counts": {
+        "encoder": 4,
+        "connector": 2,
+        "flow_noise": 1,
+        "denoise": 10,
+        "vlm_prefill": 1,
+        "expert_suffix": 10
+      },
+      "same_flow_rng": true
+    },
+    {
+      "case_id": "t00_gaussian_blur_i1",
+      "scored": true,
+      "optimized_action_exact_to_t0_diagnostic": true,
+      "accepted": true,
+      "call_counts": {
+        "encoder": 4,
+        "connector": 2,
+        "flow_noise": 1,
+        "denoise": 10,
+        "vlm_prefill": 1,
+        "expert_suffix": 10
+      },
+      "same_flow_rng": true
+    },
+    {
+      "case_id": "t00_light_asset_i1",
+      "scored": true,
+      "optimized_action_exact_to_t0_diagnostic": true,
+      "accepted": false,
+      "call_counts": {
+        "encoder": 2,
+        "connector": 2,
+        "flow_noise": 1,
+        "denoise": 10,
+        "vlm_prefill": 1,
+        "expert_suffix": 10
+      },
+      "same_flow_rng": true
+    },
+    {
+      "case_id": "t00_table_texture_i1",
+      "scored": true,
+      "optimized_action_exact_to_t0_diagnostic": true,
+      "accepted": true,
+      "call_counts": {
+        "encoder": 4,
+        "connector": 2,
+        "flow_noise": 1,
+        "denoise": 10,
+        "vlm_prefill": 1,
+        "expert_suffix": 10
+      },
+      "same_flow_rng": true
+    },
+    {
+      "case_id": "t01_clean_i2",
+      "scored": true,
+      "optimized_action_exact_to_t0_diagnostic": true,
+      "accepted": false,
+      "call_counts": {
+        "encoder": 2,
+        "connector": 2,
+        "flow_noise": 1,
+        "denoise": 10,
+        "vlm_prefill": 1,
+        "expert_suffix": 10
+      },
+      "same_flow_rng": true
+    },
+    {
+      "case_id": "t01_gaussian_blur_i1",
+      "scored": true,
+      "optimized_action_exact_to_t0_diagnostic": true,
+      "accepted": true,
+      "call_counts": {
+        "encoder": 4,
+        "connector": 2,
+        "flow_noise": 1,
+        "denoise": 10,
+        "vlm_prefill": 1,
+        "expert_suffix": 10
+      },
+      "same_flow_rng": true
+    },
+    {
+      "case_id": "t01_zoom_blur_i1",
+      "scored": true,
+      "optimized_action_exact_to_t0_diagnostic": true,
+      "accepted": true,
+      "call_counts": {
+        "encoder": 4,
+        "connector": 2,
+        "flow_noise": 1,
+        "denoise": 10,
+        "vlm_prefill": 1,
+        "expert_suffix": 10
+      },
+      "same_flow_rng": true
+    },
+    {
+      "case_id": "t01_light_asset_i1",
+      "scored": true,
+      "optimized_action_exact_to_t0_diagnostic": true,
+      "accepted": false,
+      "call_counts": {
+        "encoder": 2,
+        "connector": 2,
+        "flow_noise": 1,
+        "denoise": 10,
+        "vlm_prefill": 1,
+        "expert_suffix": 10
+      },
+      "same_flow_rng": true
+    },
+    {
+      "case_id": "t01_table_texture_i1",
+      "scored": true,
+      "optimized_action_exact_to_t0_diagnostic": true,
+      "accepted": true,
+      "call_counts": {
+        "encoder": 4,
+        "connector": 2,
+        "flow_noise": 1,
+        "denoise": 10,
+        "vlm_prefill": 1,
+        "expert_suffix": 10
+      },
+      "same_flow_rng": true
+    },
+    {
+      "case_id": "t02_clean_i2",
+      "scored": true,
+      "optimized_action_exact_to_t0_diagnostic": true,
+      "accepted": false,
+      "call_counts": {
+        "encoder": 2,
+        "connector": 2,
+        "flow_noise": 1,
+        "denoise": 10,
+        "vlm_prefill": 1,
+        "expert_suffix": 10
+      },
+      "same_flow_rng": true
+    },
+    {
+      "case_id": "t02_zoom_blur_i1",
+      "scored": true,
+      "optimized_action_exact_to_t0_diagnostic": true,
+      "accepted": true,
+      "call_counts": {
+        "encoder": 4,
+        "connector": 2,
+        "flow_noise": 1,
+        "denoise": 10,
+        "vlm_prefill": 1,
+        "expert_suffix": 10
+      },
+      "same_flow_rng": true
+    },
+    {
+      "case_id": "t02_fog_i1",
+      "scored": true,
+      "optimized_action_exact_to_t0_diagnostic": true,
+      "accepted": true,
+      "call_counts": {
+        "encoder": 4,
+        "connector": 2,
+        "flow_noise": 1,
+        "denoise": 10,
+        "vlm_prefill": 1,
+        "expert_suffix": 10
+      },
+      "same_flow_rng": true
+    },
+    {
+      "case_id": "t02_light_asset_i1",
+      "scored": true,
+      "optimized_action_exact_to_t0_diagnostic": true,
+      "accepted": false,
+      "call_counts": {
+        "encoder": 2,
+        "connector": 2,
+        "flow_noise": 1,
+        "denoise": 10,
+        "vlm_prefill": 1,
+        "expert_suffix": 10
+      },
+      "same_flow_rng": true
+    },
+    {
+      "case_id": "t02_table_texture_i1",
+      "scored": true,
+      "optimized_action_exact_to_t0_diagnostic": true,
+      "accepted": true,
+      "call_counts": {
+        "encoder": 4,
+        "connector": 2,
+        "flow_noise": 1,
+        "denoise": 10,
+        "vlm_prefill": 1,
+        "expert_suffix": 10
+      },
+      "same_flow_rng": true
+    },
+    {
+      "case_id": "t03_clean_i2",
+      "scored": true,
+      "optimized_action_exact_to_t0_diagnostic": true,
+      "accepted": false,
+      "call_counts": {
+        "encoder": 2,
+        "connector": 2,
+        "flow_noise": 1,
+        "denoise": 10,
+        "vlm_prefill": 1,
+        "expert_suffix": 10
+      },
+      "same_flow_rng": true
+    },
+    {
+      "case_id": "t03_fog_i1",
+      "scored": true,
+      "optimized_action_exact_to_t0_diagnostic": true,
+      "accepted": true,
+      "call_counts": {
+        "encoder": 4,
+        "connector": 2,
+        "flow_noise": 1,
+        "denoise": 10,
+        "vlm_prefill": 1,
+        "expert_suffix": 10
+      },
+      "same_flow_rng": true
+    },
+    {
+      "case_id": "t03_glass_blur_i1",
+      "scored": true,
+      "optimized_action_exact_to_t0_diagnostic": true,
+      "accepted": true,
+      "call_counts": {
+        "encoder": 4,
+        "connector": 2,
+        "flow_noise": 1,
+        "denoise": 10,
+        "vlm_prefill": 1,
+        "expert_suffix": 10
+      },
+      "same_flow_rng": true
+    },
+    {
+      "case_id": "t03_light_asset_i1",
+      "scored": true,
+      "optimized_action_exact_to_t0_diagnostic": true,
+      "accepted": false,
+      "call_counts": {
+        "encoder": 2,
+        "connector": 2,
+        "flow_noise": 1,
+        "denoise": 10,
+        "vlm_prefill": 1,
+        "expert_suffix": 10
+      },
+      "same_flow_rng": true
+    },
+    {
+      "case_id": "t03_table_texture_i1",
+      "scored": true,
+      "optimized_action_exact_to_t0_diagnostic": true,
+      "accepted": true,
+      "call_counts": {
+        "encoder": 4,
+        "connector": 2,
+        "flow_noise": 1,
+        "denoise": 10,
+        "vlm_prefill": 1,
+        "expert_suffix": 10
+      },
+      "same_flow_rng": true
+    },
+    {
+      "case_id": "t04_clean_i2",
+      "scored": true,
+      "optimized_action_exact_to_t0_diagnostic": true,
+      "accepted": false,
+      "call_counts": {
+        "encoder": 2,
+        "connector": 2,
+        "flow_noise": 1,
+        "denoise": 10,
+        "vlm_prefill": 1,
+        "expert_suffix": 10
+      },
+      "same_flow_rng": true
+    },
+    {
+      "case_id": "t04_glass_blur_i1",
+      "scored": true,
+      "optimized_action_exact_to_t0_diagnostic": true,
+      "accepted": true,
+      "call_counts": {
+        "encoder": 4,
+        "connector": 2,
+        "flow_noise": 1,
+        "denoise": 10,
+        "vlm_prefill": 1,
+        "expert_suffix": 10
+      },
+      "same_flow_rng": true
+    },
+    {
+      "case_id": "t04_motion_blur_i1",
+      "scored": true,
+      "optimized_action_exact_to_t0_diagnostic": true,
+      "accepted": true,
+      "call_counts": {
+        "encoder": 4,
+        "connector": 2,
+        "flow_noise": 1,
+        "denoise": 10,
+        "vlm_prefill": 1,
+        "expert_suffix": 10
+      },
+      "same_flow_rng": true
+    },
+    {
+      "case_id": "t04_light_asset_i1",
+      "scored": true,
+      "optimized_action_exact_to_t0_diagnostic": true,
+      "accepted": false,
+      "call_counts": {
+        "encoder": 2,
+        "connector": 2,
+        "flow_noise": 1,
+        "denoise": 10,
+        "vlm_prefill": 1,
+        "expert_suffix": 10
+      },
+      "same_flow_rng": true
+    },
+    {
+      "case_id": "t04_scene_texture_i1",
+      "scored": true,
+      "optimized_action_exact_to_t0_diagnostic": true,
+      "accepted": true,
+      "call_counts": {
+        "encoder": 4,
+        "connector": 2,
+        "flow_noise": 1,
+        "denoise": 10,
+        "vlm_prefill": 1,
+        "expert_suffix": 10
+      },
+      "same_flow_rng": true
+    },
+    {
+      "case_id": "t05_clean_i2",
+      "scored": true,
+      "optimized_action_exact_to_t0_diagnostic": true,
+      "accepted": false,
+      "call_counts": {
+        "encoder": 2,
+        "connector": 2,
+        "flow_noise": 1,
+        "denoise": 10,
+        "vlm_prefill": 1,
+        "expert_suffix": 10
+      },
+      "same_flow_rng": true
+    },
+    {
+      "case_id": "t05_motion_blur_i1",
+      "scored": true,
+      "optimized_action_exact_to_t0_diagnostic": true,
+      "accepted": true,
+      "call_counts": {
+        "encoder": 4,
+        "connector": 2,
+        "flow_noise": 1,
+        "denoise": 10,
+        "vlm_prefill": 1,
+        "expert_suffix": 10
+      },
+      "same_flow_rng": true
+    },
+    {
+      "case_id": "t05_gaussian_blur_i1",
+      "scored": true,
+      "optimized_action_exact_to_t0_diagnostic": true,
+      "accepted": true,
+      "call_counts": {
+        "encoder": 4,
+        "connector": 2,
+        "flow_noise": 1,
+        "denoise": 10,
+        "vlm_prefill": 1,
+        "expert_suffix": 10
+      },
+      "same_flow_rng": true
+    },
+    {
+      "case_id": "t05_light_asset_i1",
+      "scored": true,
+      "optimized_action_exact_to_t0_diagnostic": true,
+      "accepted": false,
+      "call_counts": {
+        "encoder": 2,
+        "connector": 2,
+        "flow_noise": 1,
+        "denoise": 10,
+        "vlm_prefill": 1,
+        "expert_suffix": 10
+      },
+      "same_flow_rng": true
+    },
+    {
+      "case_id": "t05_scene_texture_i1",
+      "scored": true,
+      "optimized_action_exact_to_t0_diagnostic": true,
+      "accepted": true,
+      "call_counts": {
+        "encoder": 4,
+        "connector": 2,
+        "flow_noise": 1,
+        "denoise": 10,
+        "vlm_prefill": 1,
+        "expert_suffix": 10
+      },
+      "same_flow_rng": true
+    },
+    {
+      "case_id": "t06_clean_i2",
+      "scored": true,
+      "optimized_action_exact_to_t0_diagnostic": true,
+      "accepted": false,
+      "call_counts": {
+        "encoder": 2,
+        "connector": 2,
+        "flow_noise": 1,
+        "denoise": 10,
+        "vlm_prefill": 1,
+        "expert_suffix": 10
+      },
+      "same_flow_rng": true
+    },
+    {
+      "case_id": "t06_gaussian_blur_i1",
+      "scored": true,
+      "optimized_action_exact_to_t0_diagnostic": true,
+      "accepted": true,
+      "call_counts": {
+        "encoder": 4,
+        "connector": 2,
+        "flow_noise": 1,
+        "denoise": 10,
+        "vlm_prefill": 1,
+        "expert_suffix": 10
+      },
+      "same_flow_rng": true
+    },
+    {
+      "case_id": "t06_zoom_blur_i1",
+      "scored": true,
+      "optimized_action_exact_to_t0_diagnostic": true,
+      "accepted": true,
+      "call_counts": {
+        "encoder": 4,
+        "connector": 2,
+        "flow_noise": 1,
+        "denoise": 10,
+        "vlm_prefill": 1,
+        "expert_suffix": 10
+      },
+      "same_flow_rng": true
+    },
+    {
+      "case_id": "t06_light_asset_i1",
+      "scored": true,
+      "optimized_action_exact_to_t0_diagnostic": true,
+      "accepted": false,
+      "call_counts": {
+        "encoder": 2,
+        "connector": 2,
+        "flow_noise": 1,
+        "denoise": 10,
+        "vlm_prefill": 1,
+        "expert_suffix": 10
+      },
+      "same_flow_rng": true
+    },
+    {
+      "case_id": "t06_scene_texture_i1",
+      "scored": true,
+      "optimized_action_exact_to_t0_diagnostic": true,
+      "accepted": true,
+      "call_counts": {
+        "encoder": 4,
+        "connector": 2,
+        "flow_noise": 1,
+        "denoise": 10,
+        "vlm_prefill": 1,
+        "expert_suffix": 10
+      },
+      "same_flow_rng": true
+    },
+    {
+      "case_id": "t07_clean_i2",
+      "scored": true,
+      "optimized_action_exact_to_t0_diagnostic": true,
+      "accepted": false,
+      "call_counts": {
+        "encoder": 2,
+        "connector": 2,
+        "flow_noise": 1,
+        "denoise": 10,
+        "vlm_prefill": 1,
+        "expert_suffix": 10
+      },
+      "same_flow_rng": true
+    },
+    {
+      "case_id": "t07_zoom_blur_i1",
+      "scored": true,
+      "optimized_action_exact_to_t0_diagnostic": true,
+      "accepted": true,
+      "call_counts": {
+        "encoder": 4,
+        "connector": 2,
+        "flow_noise": 1,
+        "denoise": 10,
+        "vlm_prefill": 1,
+        "expert_suffix": 10
+      },
+      "same_flow_rng": true
+    },
+    {
+      "case_id": "t07_fog_i1",
+      "scored": true,
+      "optimized_action_exact_to_t0_diagnostic": true,
+      "accepted": true,
+      "call_counts": {
+        "encoder": 4,
+        "connector": 2,
+        "flow_noise": 1,
+        "denoise": 10,
+        "vlm_prefill": 1,
+        "expert_suffix": 10
+      },
+      "same_flow_rng": true
+    },
+    {
+      "case_id": "t07_light_asset_i1",
+      "scored": true,
+      "optimized_action_exact_to_t0_diagnostic": true,
+      "accepted": false,
+      "call_counts": {
+        "encoder": 2,
+        "connector": 2,
+        "flow_noise": 1,
+        "denoise": 10,
+        "vlm_prefill": 1,
+        "expert_suffix": 10
+      },
+      "same_flow_rng": true
+    },
+    {
+      "case_id": "t07_scene_texture_i1",
+      "scored": true,
+      "optimized_action_exact_to_t0_diagnostic": true,
+      "accepted": false,
+      "call_counts": {
+        "encoder": 2,
+        "connector": 2,
+        "flow_noise": 1,
+        "denoise": 10,
+        "vlm_prefill": 1,
+        "expert_suffix": 10
+      },
+      "same_flow_rng": true
+    },
+    {
+      "case_id": "t08_clean_i2",
+      "scored": true,
+      "optimized_action_exact_to_t0_diagnostic": true,
+      "accepted": false,
+      "call_counts": {
+        "encoder": 2,
+        "connector": 2,
+        "flow_noise": 1,
+        "denoise": 10,
+        "vlm_prefill": 1,
+        "expert_suffix": 10
+      },
+      "same_flow_rng": true
+    },
+    {
+      "case_id": "t08_fog_i1",
+      "scored": true,
+      "optimized_action_exact_to_t0_diagnostic": true,
+      "accepted": true,
+      "call_counts": {
+        "encoder": 4,
+        "connector": 2,
+        "flow_noise": 1,
+        "denoise": 10,
+        "vlm_prefill": 1,
+        "expert_suffix": 10
+      },
+      "same_flow_rng": true
+    },
+    {
+      "case_id": "t08_glass_blur_i1",
+      "scored": true,
+      "optimized_action_exact_to_t0_diagnostic": true,
+      "accepted": true,
+      "call_counts": {
+        "encoder": 4,
+        "connector": 2,
+        "flow_noise": 1,
+        "denoise": 10,
+        "vlm_prefill": 1,
+        "expert_suffix": 10
+      },
+      "same_flow_rng": true
+    },
+    {
+      "case_id": "t08_light_asset_i1",
+      "scored": true,
+      "optimized_action_exact_to_t0_diagnostic": true,
+      "accepted": false,
+      "call_counts": {
+        "encoder": 2,
+        "connector": 2,
+        "flow_noise": 1,
+        "denoise": 10,
+        "vlm_prefill": 1,
+        "expert_suffix": 10
+      },
+      "same_flow_rng": true
+    },
+    {
+      "case_id": "t08_table_texture_i1",
+      "scored": true,
+      "optimized_action_exact_to_t0_diagnostic": true,
+      "accepted": true,
+      "call_counts": {
+        "encoder": 4,
+        "connector": 2,
+        "flow_noise": 1,
+        "denoise": 10,
+        "vlm_prefill": 1,
+        "expert_suffix": 10
+      },
+      "same_flow_rng": true
+    },
+    {
+      "case_id": "t09_clean_i2",
+      "scored": true,
+      "optimized_action_exact_to_t0_diagnostic": true,
+      "accepted": false,
+      "call_counts": {
+        "encoder": 2,
+        "connector": 2,
+        "flow_noise": 1,
+        "denoise": 10,
+        "vlm_prefill": 1,
+        "expert_suffix": 10
+      },
+      "same_flow_rng": true
+    },
+    {
+      "case_id": "t09_glass_blur_i1",
+      "scored": true,
+      "optimized_action_exact_to_t0_diagnostic": true,
+      "accepted": true,
+      "call_counts": {
+        "encoder": 4,
+        "connector": 2,
+        "flow_noise": 1,
+        "denoise": 10,
+        "vlm_prefill": 1,
+        "expert_suffix": 10
+      },
+      "same_flow_rng": true
+    },
+    {
+      "case_id": "t09_motion_blur_i1",
+      "scored": true,
+      "optimized_action_exact_to_t0_diagnostic": true,
+      "accepted": true,
+      "call_counts": {
+        "encoder": 4,
+        "connector": 2,
+        "flow_noise": 1,
+        "denoise": 10,
+        "vlm_prefill": 1,
+        "expert_suffix": 10
+      },
+      "same_flow_rng": true
+    },
+    {
+      "case_id": "t09_light_asset_i1",
+      "scored": true,
+      "optimized_action_exact_to_t0_diagnostic": true,
+      "accepted": false,
+      "call_counts": {
+        "encoder": 2,
+        "connector": 2,
+        "flow_noise": 1,
+        "denoise": 10,
+        "vlm_prefill": 1,
+        "expert_suffix": 10
+      },
+      "same_flow_rng": true
+    },
+    {
+      "case_id": "t09_scene_texture_i1",
+      "scored": true,
+      "optimized_action_exact_to_t0_diagnostic": true,
+      "accepted": true,
+      "call_counts": {
+        "encoder": 4,
+        "connector": 2,
+        "flow_noise": 1,
+        "denoise": 10,
+        "vlm_prefill": 1,
+        "expert_suffix": 10
+      },
+      "same_flow_rng": true
+    },
+    {
+      "case_id": "t00_clean_i1_supplement",
+      "scored": false,
+      "optimized_action_exact_to_t0_diagnostic": null,
+      "accepted": false,
+      "call_counts": {
+        "encoder": 2,
+        "connector": 2,
+        "flow_noise": 1,
+        "denoise": 10,
+        "vlm_prefill": 1,
+        "expert_suffix": 10
+      },
+      "same_flow_rng": true
+    }
+  ],
+  "branch_checks": [
+    {
+      "group": "Clean",
+      "forced_reject_equals_native": true,
+      "forced_accept_equals_v1": true,
+      "native_counts": {
+        "encoder": 2,
+        "connector": 2,
+        "flow_noise": 1,
+        "denoise": 10,
+        "vlm_prefill": 1,
+        "expert_suffix": 10
+      },
+      "reject_counts": {
+        "encoder": 2,
+        "connector": 2,
+        "flow_noise": 1,
+        "denoise": 10,
+        "vlm_prefill": 1,
+        "expert_suffix": 10
+      },
+      "accept_counts": {
+        "encoder": 4,
+        "connector": 2,
+        "flow_noise": 1,
+        "denoise": 10,
+        "vlm_prefill": 1,
+        "expert_suffix": 10
+      }
+    },
+    {
+      "group": "Sensor",
+      "forced_reject_equals_native": true,
+      "forced_accept_equals_v1": true,
+      "native_counts": {
+        "encoder": 2,
+        "connector": 2,
+        "flow_noise": 1,
+        "denoise": 10,
+        "vlm_prefill": 1,
+        "expert_suffix": 10
+      },
+      "reject_counts": {
+        "encoder": 2,
+        "connector": 2,
+        "flow_noise": 1,
+        "denoise": 10,
+        "vlm_prefill": 1,
+        "expert_suffix": 10
+      },
+      "accept_counts": {
+        "encoder": 4,
+        "connector": 2,
+        "flow_noise": 1,
+        "denoise": 10,
+        "vlm_prefill": 1,
+        "expert_suffix": 10
+      }
+    },
+    {
+      "group": "Lighting",
+      "forced_reject_equals_native": true,
+      "forced_accept_equals_v1": true,
+      "native_counts": {
+        "encoder": 2,
+        "connector": 2,
+        "flow_noise": 1,
+        "denoise": 10,
+        "vlm_prefill": 1,
+        "expert_suffix": 10
+      },
+      "reject_counts": {
+        "encoder": 2,
+        "connector": 2,
+        "flow_noise": 1,
+        "denoise": 10,
+        "vlm_prefill": 1,
+        "expert_suffix": 10
+      },
+      "accept_counts": {
+        "encoder": 4,
+        "connector": 2,
+        "flow_noise": 1,
+        "denoise": 10,
+        "vlm_prefill": 1,
+        "expert_suffix": 10
+      }
+    },
+    {
+      "group": "Background",
+      "forced_reject_equals_native": true,
+      "forced_accept_equals_v1": true,
+      "native_counts": {
+        "encoder": 2,
+        "connector": 2,
+        "flow_noise": 1,
+        "denoise": 10,
+        "vlm_prefill": 1,
+        "expert_suffix": 10
+      },
+      "reject_counts": {
+        "encoder": 2,
+        "connector": 2,
+        "flow_noise": 1,
+        "denoise": 10,
+        "vlm_prefill": 1,
+        "expert_suffix": 10
+      },
+      "accept_counts": {
+        "encoder": 4,
+        "connector": 2,
+        "flow_noise": 1,
+        "denoise": 10,
+        "vlm_prefill": 1,
+        "expert_suffix": 10
+      }
+    }
+  ],
+  "source_fingerprint": "314de9198b38791ae67a5ffa2ac163964bd7da84fd649f068d6c096a54c577a6",
+  "no_decoder_rerun": true,
+  "frozen_and_v1_forced_branch_actions_bit_exact": true,
+  "dynamic_off_on_off_three_step_queue_and_rng_exact": true,
+  "weights_unchanged": true,
+  "all_frozen": true,
+  "actual_encoder_calls_reject": 2,
+  "actual_encoder_calls_accept": 4,
+  "connector_calls": 2,
+  "vlm_prefill": 1,
+  "flow_steps": 10,
+  "native_sources": {
+    "/hy-tmp/upstream_repro/harness_pkg/roboeval/policies/smolvla.py": "749fc880851a791c2c01f89b853fc7a4384dfc882b93f81ab617bd932de97d4b",
+    "/hy-tmp/lerobot_community_revision/lerobot/common/policies/smolvla/modeling_smolvla.py": "66b69b8fa8ae7f2a53d514b8366d17498804452a5d62cf168a4bd018a37caf7c",
+    "/hy-tmp/lerobot_community_revision/lerobot/common/policies/smolvla/smolvlm_with_expert.py": "10a3c3cd28a7526dd55681a0d5c74631284f3c1dfa4d9ad3a9194ee1dfc6b6a3",
+    "/hy-tmp/smolvla_venv/lib/python3.10/site-packages/transformers/models/smolvlm/modeling_smolvlm.py": "2ea6741e7861d53c751a9c66960963bff81d3b6650df0ea99ca5ca9e3a3f90fb"
+  },
+  "bounded_rgb_guard_identity_one_lsb_repair_large_change_reject_and_state_isolation": true
+}

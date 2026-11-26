@@ -1,0 +1,4202 @@
+{
+  "schema": "smolvla_deepgate_closedloop_v1",
+  "protocol": {
+    "main_conditions": 50,
+    "main_episodes": 100,
+    "supplemental_conditions": 1,
+    "supplemental_episodes": 2,
+    "policy_seed": 0,
+    "workers": 4,
+    "H": 50,
+    "E": 1,
+    "Euler_steps": 10,
+    "max_steps": 220,
+    "vision": "unchanged native BF16, no CLS, two serial cameras, original CPU pixel division",
+    "model": "load_vlm_weights=True; all parameters frozen, unchanged versions",
+    "method": "unchanged edbac60 source gate G at raw layer12; same scalar decision for both views; raw reuse or layer3 alpha=.75 second vision pass",
+    "execution": "native actor.act once; connector once per camera; native VLM prefix once and Flow10 once; no detector RNG draw or queue advance",
+    "calibration": "unchanged init0 target-task LOTO; gate copied from edbac60 nested9/8/7 source-only fit",
+    "environment": "native Vanilla base with existing audited official Plus scene selectors; EGL env.noise=0",
+    "sensor": "same 20 bilateral severity3 cases, independent view seeds, t0 through entire episode",
+    "pairing": "same initial physical/render state and RGB; identical CPU/CUDA RNG prefixes; pair-local raw RGB canonicalization only when full physical AND render state match, <=64 pixels/view and <=1 uint8 LSB; otherwise abort",
+    "scope": "one-policy-seed exploratory development pilot, not independent confirmation or a SALT reproduction",
+    "blind_access": false,
+    "main_expansion_autostart": false
+  },
+  "fingerprint": "314de9198b38791ae67a5ffa2ac163964bd7da84fd649f068d6c096a54c577a6",
+  "calib_sha256": "e573729434d6cdba404d887dc3f685d33b6c67fd6901cd487c512a18fa0ef606",
+  "source_gate_sha256": "b046038cbbaee77fe23a4d20d639b5c54f8728b1ff27444aa0a57977737655c1",
+  "groups": {
+    "Clean": {
+      "n": 10,
+      "frozen": 8,
+      "deepgate": 8,
+      "rescued": 0,
+      "harmed": 0,
+      "net": 0,
+      "delta_pp": 0.0,
+      "mcnemar_exact_two_sided": 1.0,
+      "task_cluster_bootstrap95_pp": [
+        0.0,
+        0.0
+      ],
+      "task_clusters": 10,
+      "gate": {
+        "accepted_replans": 13,
+        "total_replans": 1301,
+        "micro_rate": 0.009992313604919293,
+        "episode_macro_rate": 0.010738199756793819,
+        "episodes_ever_accepted": 4,
+        "first_observation_accepted": 0
+      }
+    },
+    "Lighting": {
+      "n": 10,
+      "frozen": 8,
+      "deepgate": 8,
+      "rescued": 0,
+      "harmed": 0,
+      "net": 0,
+      "delta_pp": 0.0,
+      "mcnemar_exact_two_sided": 1.0,
+      "task_cluster_bootstrap95_pp": [
+        0.0,
+        0.0
+      ],
+      "task_clusters": 10,
+      "gate": {
+        "accepted_replans": 240,
+        "total_replans": 1339,
+        "micro_rate": 0.17923823749066467,
+        "episode_macro_rate": 0.13768962715771227,
+        "episodes_ever_accepted": 8,
+        "first_observation_accepted": 0
+      }
+    },
+    "Background": {
+      "n": 10,
+      "frozen": 5,
+      "deepgate": 5,
+      "rescued": 1,
+      "harmed": 1,
+      "net": 0,
+      "delta_pp": 0.0,
+      "mcnemar_exact_two_sided": 1.0,
+      "task_cluster_bootstrap95_pp": [
+        -30.0,
+        30.0
+      ],
+      "task_clusters": 10,
+      "gate": {
+        "accepted_replans": 1572,
+        "total_replans": 1739,
+        "micro_rate": 0.9039677975848188,
+        "episode_macro_rate": 0.9059156785243744,
+        "episodes_ever_accepted": 10,
+        "first_observation_accepted": 9
+      }
+    },
+    "Sensor": {
+      "n": 20,
+      "frozen": 4,
+      "deepgate": 6,
+      "rescued": 2,
+      "harmed": 0,
+      "net": 2,
+      "delta_pp": 10.0,
+      "mcnemar_exact_two_sided": 0.5,
+      "task_cluster_bootstrap95_pp": [
+        0.0,
+        25.0
+      ],
+      "task_clusters": 10,
+      "gate": {
+        "accepted_replans": 3732,
+        "total_replans": 3744,
+        "micro_rate": 0.9967948717948718,
+        "episode_macro_rate": 0.9941164930837303,
+        "episodes_ever_accepted": 20,
+        "first_observation_accepted": 20
+      }
+    },
+    "Shift40": {
+      "n": 40,
+      "frozen": 17,
+      "deepgate": 19,
+      "rescued": 3,
+      "harmed": 1,
+      "net": 2,
+      "delta_pp": 5.0,
+      "mcnemar_exact_two_sided": 0.625,
+      "task_cluster_bootstrap95_pp": [
+        -5.0,
+        15.0
+      ],
+      "task_clusters": 10,
+      "gate": {
+        "accepted_replans": 5544,
+        "total_replans": 6822,
+        "micro_rate": 0.8126649076517151,
+        "episode_macro_rate": 0.7579595729623867,
+        "episodes_ever_accepted": 38,
+        "first_observation_accepted": 29
+      }
+    },
+    "All50": {
+      "n": 50,
+      "frozen": 25,
+      "deepgate": 27,
+      "rescued": 3,
+      "harmed": 1,
+      "net": 2,
+      "delta_pp": 4.0,
+      "mcnemar_exact_two_sided": 0.625,
+      "task_cluster_bootstrap95_pp": [
+        -4.0,
+        12.0
+      ],
+      "task_clusters": 10,
+      "gate": {
+        "accepted_replans": 5557,
+        "total_replans": 8123,
+        "micro_rate": 0.6841068570725102,
+        "episode_macro_rate": 0.6085152983212682,
+        "episodes_ever_accepted": 42,
+        "first_observation_accepted": 29
+      }
+    },
+    "table_texture": {
+      "n": 5,
+      "frozen": 2,
+      "deepgate": 2,
+      "rescued": 0,
+      "harmed": 0,
+      "net": 0,
+      "delta_pp": 0.0,
+      "mcnemar_exact_two_sided": 1.0,
+      "task_cluster_bootstrap95_pp": [
+        0.0,
+        0.0
+      ],
+      "task_clusters": 5,
+      "gate": {
+        "accepted_replans": 823,
+        "total_replans": 885,
+        "micro_rate": 0.9299435028248587,
+        "episode_macro_rate": 0.9402371541501976,
+        "episodes_ever_accepted": 5,
+        "first_observation_accepted": 5
+      }
+    },
+    "scene_texture": {
+      "n": 5,
+      "frozen": 3,
+      "deepgate": 3,
+      "rescued": 1,
+      "harmed": 1,
+      "net": 0,
+      "delta_pp": 0.0,
+      "mcnemar_exact_two_sided": 1.0,
+      "task_cluster_bootstrap95_pp": [
+        -60.0,
+        60.0
+      ],
+      "task_clusters": 5,
+      "gate": {
+        "accepted_replans": 749,
+        "total_replans": 854,
+        "micro_rate": 0.8770491803278688,
+        "episode_macro_rate": 0.8715942028985507,
+        "episodes_ever_accepted": 5,
+        "first_observation_accepted": 4
+      }
+    },
+    "motion_blur": {
+      "n": 4,
+      "frozen": 0,
+      "deepgate": 1,
+      "rescued": 1,
+      "harmed": 0,
+      "net": 1,
+      "delta_pp": 25.0,
+      "mcnemar_exact_two_sided": 1.0,
+      "task_cluster_bootstrap95_pp": [
+        0.0,
+        75.0
+      ],
+      "task_clusters": 4,
+      "gate": {
+        "accepted_replans": 740,
+        "total_replans": 749,
+        "micro_rate": 0.9879839786381842,
+        "episode_macro_rate": 0.9763917262512768,
+        "episodes_ever_accepted": 4,
+        "first_observation_accepted": 4
+      }
+    },
+    "gaussian_blur": {
+      "n": 4,
+      "frozen": 1,
+      "deepgate": 1,
+      "rescued": 0,
+      "harmed": 0,
+      "net": 0,
+      "delta_pp": 0.0,
+      "mcnemar_exact_two_sided": 1.0,
+      "task_cluster_bootstrap95_pp": [
+        0.0,
+        0.0
+      ],
+      "task_clusters": 4,
+      "gate": {
+        "accepted_replans": 813,
+        "total_replans": 813,
+        "micro_rate": 1.0,
+        "episode_macro_rate": 1.0,
+        "episodes_ever_accepted": 4,
+        "first_observation_accepted": 4
+      }
+    },
+    "zoom_blur": {
+      "n": 4,
+      "frozen": 1,
+      "deepgate": 1,
+      "rescued": 0,
+      "harmed": 0,
+      "net": 0,
+      "delta_pp": 0.0,
+      "mcnemar_exact_two_sided": 1.0,
+      "task_cluster_bootstrap95_pp": [
+        0.0,
+        0.0
+      ],
+      "task_clusters": 4,
+      "gate": {
+        "accepted_replans": 784,
+        "total_replans": 784,
+        "micro_rate": 1.0,
+        "episode_macro_rate": 1.0,
+        "episodes_ever_accepted": 4,
+        "first_observation_accepted": 4
+      }
+    },
+    "fog": {
+      "n": 4,
+      "frozen": 2,
+      "deepgate": 3,
+      "rescued": 1,
+      "harmed": 0,
+      "net": 1,
+      "delta_pp": 25.0,
+      "mcnemar_exact_two_sided": 1.0,
+      "task_cluster_bootstrap95_pp": [
+        0.0,
+        75.0
+      ],
+      "task_clusters": 4,
+      "gate": {
+        "accepted_replans": 515,
+        "total_replans": 518,
+        "micro_rate": 0.9942084942084942,
+        "episode_macro_rate": 0.9941907391673747,
+        "episodes_ever_accepted": 4,
+        "first_observation_accepted": 4
+      }
+    },
+    "glass_blur": {
+      "n": 4,
+      "frozen": 0,
+      "deepgate": 0,
+      "rescued": 0,
+      "harmed": 0,
+      "net": 0,
+      "delta_pp": 0.0,
+      "mcnemar_exact_two_sided": 1.0,
+      "task_cluster_bootstrap95_pp": [
+        0.0,
+        0.0
+      ],
+      "task_clusters": 4,
+      "gate": {
+        "accepted_replans": 880,
+        "total_replans": 880,
+        "micro_rate": 1.0,
+        "episode_macro_rate": 1.0,
+        "episodes_ever_accepted": 4,
+        "first_observation_accepted": 4
+      }
+    }
+  },
+  "supplemental_task0_clean_init1": {
+    "n": 1,
+    "frozen": 1,
+    "deepgate": 1,
+    "rescued": 0,
+    "harmed": 0,
+    "net": 0,
+    "delta_pp": 0.0,
+    "mcnemar_exact_two_sided": 1.0,
+    "task_cluster_bootstrap95_pp": [
+      0.0,
+      0.0
+    ],
+    "task_clusters": 1,
+    "gate": {
+      "accepted_replans": 0,
+      "total_replans": 137,
+      "micro_rate": 0.0,
+      "episode_macro_rate": 0.0,
+      "episodes_ever_accepted": 0,
+      "first_observation_accepted": 0
+    }
+  },
+  "cases": [
+    {
+      "case": {
+        "task_id": 0,
+        "base_task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+        "language": "pick up the black bowl between the plate and the ramekin and place it on the plate",
+        "policy_seed": 0,
+        "role": "development; previously accessed official pool; NOT independent confirmation",
+        "id": "t00_clean_i2",
+        "group": "Clean",
+        "subgroup": "Clean",
+        "init_index": 2,
+        "scored": true
+      },
+      "frozen": false,
+      "deepgate": false,
+      "steps": {
+        "frozen": 220,
+        "deep_gate_L3_a0.75": 220
+      },
+      "pairing": {
+        "initial_state_and_two_view_pixels_exact": true,
+        "common_prefix_cpu_cuda_rng_exact": true,
+        "identical_physical_render_state_rgb_checks": 220,
+        "physical_equal_render_different_frames": 0,
+        "reject_at_equal_input_action_exact": true
+      },
+      "first_gate_step": null,
+      "gate_score_minmax": [
+        0.20017726719379425,
+        0.43665941059589386
+      ]
+    },
+    {
+      "case": {
+        "task_id": 0,
+        "base_task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+        "language": "pick up the black bowl between the plate and the ramekin and place it on the plate",
+        "policy_seed": 0,
+        "role": "development; previously accessed official pool; NOT independent confirmation",
+        "id": "t00_motion_blur_i1",
+        "group": "Sensor",
+        "subgroup": "motion_blur",
+        "init_index": 1,
+        "severity": 3,
+        "scored": true
+      },
+      "frozen": false,
+      "deepgate": true,
+      "steps": {
+        "frozen": 220,
+        "deep_gate_L3_a0.75": 89
+      },
+      "pairing": {
+        "initial_state_and_two_view_pixels_exact": true,
+        "common_prefix_cpu_cuda_rng_exact": true,
+        "identical_physical_render_state_rgb_checks": 1,
+        "physical_equal_render_different_frames": 0,
+        "reject_at_equal_input_action_exact": true
+      },
+      "first_gate_step": 0,
+      "gate_score_minmax": [
+        0.38654717057943344,
+        0.9202187657356262
+      ]
+    },
+    {
+      "case": {
+        "task_id": 0,
+        "base_task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+        "language": "pick up the black bowl between the plate and the ramekin and place it on the plate",
+        "policy_seed": 0,
+        "role": "development; previously accessed official pool; NOT independent confirmation",
+        "id": "t00_gaussian_blur_i1",
+        "group": "Sensor",
+        "subgroup": "gaussian_blur",
+        "init_index": 1,
+        "severity": 3,
+        "scored": true
+      },
+      "frozen": true,
+      "deepgate": true,
+      "steps": {
+        "frozen": 74,
+        "deep_gate_L3_a0.75": 153
+      },
+      "pairing": {
+        "initial_state_and_two_view_pixels_exact": true,
+        "common_prefix_cpu_cuda_rng_exact": true,
+        "identical_physical_render_state_rgb_checks": 1,
+        "physical_equal_render_different_frames": 0,
+        "reject_at_equal_input_action_exact": true
+      },
+      "first_gate_step": 0,
+      "gate_score_minmax": [
+        0.9747187793254852,
+        1.6022217869758606
+      ]
+    },
+    {
+      "case": {
+        "task_id": 0,
+        "base_task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+        "language": "pick up the black bowl between the plate and the ramekin and place it on the plate",
+        "policy_seed": 0,
+        "role": "development; previously accessed official pool; NOT independent confirmation",
+        "id": "t00_light_asset_i1",
+        "group": "Lighting",
+        "subgroup": "light_asset",
+        "init_index": 1,
+        "bddl": "libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate_light_50.bddl",
+        "bddl_sha256": "ed5cf38905f9db5484277efc8cb25b2e24b2acf0d1e3108ef7a0bdd0c5c91855",
+        "dev_case_id": "6b142b87741e2537ff1f11b4",
+        "official_class": "Libero_Tabletop_Manipulation_tabletop_light_sync_modified_120",
+        "scene_settings": {
+          "scene_xml": "scenes/lights/tabletop_light_sync_modified_120.xml",
+          "scene_properties": {
+            "floor_style": "light-gray",
+            "wall_style": "light-gray-plaster"
+          }
+        },
+        "scene_sha256": "58682765adb0a091114a861647a433beed4f06020a0ed0300d3fe93b58eb5faf",
+        "scored": true
+      },
+      "frozen": true,
+      "deepgate": true,
+      "steps": {
+        "frozen": 103,
+        "deep_gate_L3_a0.75": 105
+      },
+      "pairing": {
+        "initial_state_and_two_view_pixels_exact": true,
+        "common_prefix_cpu_cuda_rng_exact": true,
+        "identical_physical_render_state_rgb_checks": 4,
+        "physical_equal_render_different_frames": 0,
+        "reject_at_equal_input_action_exact": true
+      },
+      "first_gate_step": 3,
+      "gate_score_minmax": [
+        0.32065168023109436,
+        0.5428179204463959
+      ]
+    },
+    {
+      "case": {
+        "task_id": 0,
+        "base_task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+        "language": "pick up the black bowl between the plate and the ramekin and place it on the plate",
+        "policy_seed": 0,
+        "role": "development; previously accessed official pool; NOT independent confirmation",
+        "id": "t00_table_texture_i1",
+        "group": "Background",
+        "subgroup": "table_texture",
+        "init_index": 1,
+        "bddl": "libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate_table_12.bddl",
+        "bddl_sha256": "d7990d85e6ca77eec5b023d0833aa1a81f3d745cfc49ec3bbeb21ff044c6062e",
+        "dev_case_id": "1f80bb87b8b30a1a90c033fb",
+        "official_class": "Libero_Tabletop_Manipulation_tabletop_table_CarbonFiber001_GLOSS_6K",
+        "scene_settings": {
+          "scene_xml": "scenes/tabletop250/tabletop_table_CarbonFiber001_GLOSS_6K.xml",
+          "scene_properties": {
+            "floor_style": "light-gray",
+            "wall_style": "light-gray-plaster"
+          }
+        },
+        "scene_sha256": "39e28fbec63d44b2336d336962b0623f2ba6d284ab0e69a1934c04100d9495e8",
+        "scored": true
+      },
+      "frozen": false,
+      "deepgate": false,
+      "steps": {
+        "frozen": 220,
+        "deep_gate_L3_a0.75": 220
+      },
+      "pairing": {
+        "initial_state_and_two_view_pixels_exact": true,
+        "common_prefix_cpu_cuda_rng_exact": true,
+        "identical_physical_render_state_rgb_checks": 1,
+        "physical_equal_render_different_frames": 0,
+        "reject_at_equal_input_action_exact": true
+      },
+      "first_gate_step": 0,
+      "gate_score_minmax": [
+        0.4288967400789261,
+        0.7790150344371796
+      ]
+    },
+    {
+      "case": {
+        "task_id": 1,
+        "base_task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+        "language": "pick up the black bowl next to the ramekin and place it on the plate",
+        "policy_seed": 0,
+        "role": "development; previously accessed official pool; NOT independent confirmation",
+        "id": "t01_clean_i2",
+        "group": "Clean",
+        "subgroup": "Clean",
+        "init_index": 2,
+        "scored": true
+      },
+      "frozen": true,
+      "deepgate": true,
+      "steps": {
+        "frozen": 111,
+        "deep_gate_L3_a0.75": 111
+      },
+      "pairing": {
+        "initial_state_and_two_view_pixels_exact": true,
+        "common_prefix_cpu_cuda_rng_exact": true,
+        "identical_physical_render_state_rgb_checks": 111,
+        "physical_equal_render_different_frames": 0,
+        "reject_at_equal_input_action_exact": true
+      },
+      "first_gate_step": null,
+      "gate_score_minmax": [
+        0.18254408240318298,
+        0.33425451815128326
+      ]
+    },
+    {
+      "case": {
+        "task_id": 1,
+        "base_task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+        "language": "pick up the black bowl next to the ramekin and place it on the plate",
+        "policy_seed": 0,
+        "role": "development; previously accessed official pool; NOT independent confirmation",
+        "id": "t01_gaussian_blur_i1",
+        "group": "Sensor",
+        "subgroup": "gaussian_blur",
+        "init_index": 1,
+        "severity": 3,
+        "scored": true
+      },
+      "frozen": false,
+      "deepgate": false,
+      "steps": {
+        "frozen": 220,
+        "deep_gate_L3_a0.75": 220
+      },
+      "pairing": {
+        "initial_state_and_two_view_pixels_exact": true,
+        "common_prefix_cpu_cuda_rng_exact": true,
+        "identical_physical_render_state_rgb_checks": 1,
+        "physical_equal_render_different_frames": 0,
+        "reject_at_equal_input_action_exact": true
+      },
+      "first_gate_step": 0,
+      "gate_score_minmax": [
+        1.2431059777736664,
+        1.7993071973323822
+      ]
+    },
+    {
+      "case": {
+        "task_id": 1,
+        "base_task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+        "language": "pick up the black bowl next to the ramekin and place it on the plate",
+        "policy_seed": 0,
+        "role": "development; previously accessed official pool; NOT independent confirmation",
+        "id": "t01_zoom_blur_i1",
+        "group": "Sensor",
+        "subgroup": "zoom_blur",
+        "init_index": 1,
+        "severity": 3,
+        "scored": true
+      },
+      "frozen": false,
+      "deepgate": false,
+      "steps": {
+        "frozen": 220,
+        "deep_gate_L3_a0.75": 220
+      },
+      "pairing": {
+        "initial_state_and_two_view_pixels_exact": true,
+        "common_prefix_cpu_cuda_rng_exact": true,
+        "identical_physical_render_state_rgb_checks": 1,
+        "physical_equal_render_different_frames": 0,
+        "reject_at_equal_input_action_exact": true
+      },
+      "first_gate_step": 0,
+      "gate_score_minmax": [
+        1.5409003496170044,
+        2.123582422733307
+      ]
+    },
+    {
+      "case": {
+        "task_id": 1,
+        "base_task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+        "language": "pick up the black bowl next to the ramekin and place it on the plate",
+        "policy_seed": 0,
+        "role": "development; previously accessed official pool; NOT independent confirmation",
+        "id": "t01_light_asset_i1",
+        "group": "Lighting",
+        "subgroup": "light_asset",
+        "init_index": 1,
+        "bddl": "libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate_light_50.bddl",
+        "bddl_sha256": "76e44f8cfcf7984ae5aff7dd00e82c4ab2e7a6e83a1f3cef0cb434c12194747d",
+        "dev_case_id": "48c5f5e426f8006a5c08d586",
+        "official_class": "Libero_Tabletop_Manipulation_tabletop_light_sync_modified_300",
+        "scene_settings": {
+          "scene_xml": "scenes/lights/tabletop_light_sync_modified_300.xml",
+          "scene_properties": {
+            "floor_style": "light-gray",
+            "wall_style": "light-gray-plaster"
+          }
+        },
+        "scene_sha256": "b2d06d8bb53167eac79bbd140fe8eb300eb722f84394faf0093cc54395716bff",
+        "scored": true
+      },
+      "frozen": true,
+      "deepgate": true,
+      "steps": {
+        "frozen": 113,
+        "deep_gate_L3_a0.75": 113
+      },
+      "pairing": {
+        "initial_state_and_two_view_pixels_exact": true,
+        "common_prefix_cpu_cuda_rng_exact": true,
+        "identical_physical_render_state_rgb_checks": 113,
+        "physical_equal_render_different_frames": 0,
+        "reject_at_equal_input_action_exact": true
+      },
+      "first_gate_step": null,
+      "gate_score_minmax": [
+        0.23242905735969543,
+        0.4436335563659668
+      ]
+    },
+    {
+      "case": {
+        "task_id": 1,
+        "base_task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+        "language": "pick up the black bowl next to the ramekin and place it on the plate",
+        "policy_seed": 0,
+        "role": "development; previously accessed official pool; NOT independent confirmation",
+        "id": "t01_table_texture_i1",
+        "group": "Background",
+        "subgroup": "table_texture",
+        "init_index": 1,
+        "bddl": "libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate_table_9.bddl",
+        "bddl_sha256": "424c5234cbfb3af1af85bbd625fad1591c380ffbc971353eab4047fa0570b51f",
+        "dev_case_id": "59e33e7a354085f721bae4a6",
+        "official_class": "Libero_Tabletop_Manipulation_tabletop_table_FabricLeatherBlack001_REFL_6K",
+        "scene_settings": {
+          "scene_xml": "scenes/tabletop250/tabletop_table_FabricLeatherBlack001_REFL_6K.xml",
+          "scene_properties": {
+            "floor_style": "light-gray",
+            "wall_style": "light-gray-plaster"
+          }
+        },
+        "scene_sha256": "1db86f7012cd89c193d03e9b06aea30199d047f82cb4efbdfaf7a873201c733e",
+        "scored": true
+      },
+      "frozen": true,
+      "deepgate": true,
+      "steps": {
+        "frozen": 117,
+        "deep_gate_L3_a0.75": 110
+      },
+      "pairing": {
+        "initial_state_and_two_view_pixels_exact": true,
+        "common_prefix_cpu_cuda_rng_exact": true,
+        "identical_physical_render_state_rgb_checks": 1,
+        "physical_equal_render_different_frames": 0,
+        "reject_at_equal_input_action_exact": true
+      },
+      "first_gate_step": 0,
+      "gate_score_minmax": [
+        0.44608859717845917,
+        0.7747035622596741
+      ]
+    },
+    {
+      "case": {
+        "task_id": 2,
+        "base_task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+        "language": "pick up the black bowl from table center and place it on the plate",
+        "policy_seed": 0,
+        "role": "development; previously accessed official pool; NOT independent confirmation",
+        "id": "t02_clean_i2",
+        "group": "Clean",
+        "subgroup": "Clean",
+        "init_index": 2,
+        "scored": true
+      },
+      "frozen": true,
+      "deepgate": true,
+      "steps": {
+        "frozen": 95,
+        "deep_gate_L3_a0.75": 95
+      },
+      "pairing": {
+        "initial_state_and_two_view_pixels_exact": true,
+        "common_prefix_cpu_cuda_rng_exact": true,
+        "identical_physical_render_state_rgb_checks": 95,
+        "physical_equal_render_different_frames": 0,
+        "reject_at_equal_input_action_exact": true
+      },
+      "first_gate_step": null,
+      "gate_score_minmax": [
+        0.15744158625602722,
+        0.4567289799451828
+      ]
+    },
+    {
+      "case": {
+        "task_id": 2,
+        "base_task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+        "language": "pick up the black bowl from table center and place it on the plate",
+        "policy_seed": 0,
+        "role": "development; previously accessed official pool; NOT independent confirmation",
+        "id": "t02_zoom_blur_i1",
+        "group": "Sensor",
+        "subgroup": "zoom_blur",
+        "init_index": 1,
+        "severity": 3,
+        "scored": true
+      },
+      "frozen": true,
+      "deepgate": true,
+      "steps": {
+        "frozen": 204,
+        "deep_gate_L3_a0.75": 124
+      },
+      "pairing": {
+        "initial_state_and_two_view_pixels_exact": true,
+        "common_prefix_cpu_cuda_rng_exact": true,
+        "identical_physical_render_state_rgb_checks": 1,
+        "physical_equal_render_different_frames": 0,
+        "reject_at_equal_input_action_exact": true
+      },
+      "first_gate_step": 0,
+      "gate_score_minmax": [
+        1.3152685165405273,
+        2.235158681869507
+      ]
+    },
+    {
+      "case": {
+        "task_id": 2,
+        "base_task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+        "language": "pick up the black bowl from table center and place it on the plate",
+        "policy_seed": 0,
+        "role": "development; previously accessed official pool; NOT independent confirmation",
+        "id": "t02_fog_i1",
+        "group": "Sensor",
+        "subgroup": "fog",
+        "init_index": 1,
+        "severity": 3,
+        "scored": true
+      },
+      "frozen": true,
+      "deepgate": true,
+      "steps": {
+        "frozen": 111,
+        "deep_gate_L3_a0.75": 107
+      },
+      "pairing": {
+        "initial_state_and_two_view_pixels_exact": true,
+        "common_prefix_cpu_cuda_rng_exact": true,
+        "identical_physical_render_state_rgb_checks": 1,
+        "physical_equal_render_different_frames": 0,
+        "reject_at_equal_input_action_exact": true
+      },
+      "first_gate_step": 0,
+      "gate_score_minmax": [
+        0.47829167544841766,
+        1.1457501649856567
+      ]
+    },
+    {
+      "case": {
+        "task_id": 2,
+        "base_task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+        "language": "pick up the black bowl from table center and place it on the plate",
+        "policy_seed": 0,
+        "role": "development; previously accessed official pool; NOT independent confirmation",
+        "id": "t02_light_asset_i1",
+        "group": "Lighting",
+        "subgroup": "light_asset",
+        "init_index": 1,
+        "bddl": "libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate_light_28.bddl",
+        "bddl_sha256": "445292287e74e8e5638971efb3f0bb6363dc0e0a237ea539bc224367ce47647e",
+        "dev_case_id": "260f480dfa38ae5a1cfe6ab4",
+        "official_class": "Libero_Tabletop_Manipulation_tabletop_light_sync_modified_326",
+        "scene_settings": {
+          "scene_xml": "scenes/lights/tabletop_light_sync_modified_326.xml",
+          "scene_properties": {
+            "floor_style": "light-gray",
+            "wall_style": "light-gray-plaster"
+          }
+        },
+        "scene_sha256": "fc7b5d1c0c6cd2f57031c110c6e7eb8f8cec551046a182f96a4c219d1ccdbd2b",
+        "scored": true
+      },
+      "frozen": true,
+      "deepgate": true,
+      "steps": {
+        "frozen": 98,
+        "deep_gate_L3_a0.75": 98
+      },
+      "pairing": {
+        "initial_state_and_two_view_pixels_exact": true,
+        "common_prefix_cpu_cuda_rng_exact": true,
+        "identical_physical_render_state_rgb_checks": 98,
+        "physical_equal_render_different_frames": 0,
+        "reject_at_equal_input_action_exact": true
+      },
+      "first_gate_step": null,
+      "gate_score_minmax": [
+        0.22687839716672897,
+        0.5086459070444107
+      ]
+    },
+    {
+      "case": {
+        "task_id": 2,
+        "base_task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+        "language": "pick up the black bowl from table center and place it on the plate",
+        "policy_seed": 0,
+        "role": "development; previously accessed official pool; NOT independent confirmation",
+        "id": "t02_table_texture_i1",
+        "group": "Background",
+        "subgroup": "table_texture",
+        "init_index": 1,
+        "bddl": "libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate_table_5.bddl",
+        "bddl_sha256": "98743f3aceacf7ed935a4406c1799ae30dfcde5c1acd52c06d9cbb711ee3a015",
+        "dev_case_id": "0148badb05249d5c6f02efea",
+        "official_class": "Libero_Tabletop_Manipulation_tabletop_table_FabricLinen001_REFL_6K",
+        "scene_settings": {
+          "scene_xml": "scenes/tabletop250/tabletop_table_FabricLinen001_REFL_6K.xml",
+          "scene_properties": {
+            "floor_style": "light-gray",
+            "wall_style": "light-gray-plaster"
+          }
+        },
+        "scene_sha256": "42e16f4330fd8036df3d9e148bb3ee3e7e1ee5a8a57164baa92f3378c50efe3b",
+        "scored": true
+      },
+      "frozen": false,
+      "deepgate": false,
+      "steps": {
+        "frozen": 220,
+        "deep_gate_L3_a0.75": 220
+      },
+      "pairing": {
+        "initial_state_and_two_view_pixels_exact": true,
+        "common_prefix_cpu_cuda_rng_exact": true,
+        "identical_physical_render_state_rgb_checks": 1,
+        "physical_equal_render_different_frames": 0,
+        "reject_at_equal_input_action_exact": true
+      },
+      "first_gate_step": 0,
+      "gate_score_minmax": [
+        0.49637454748153687,
+        0.8790947198867798
+      ]
+    },
+    {
+      "case": {
+        "task_id": 3,
+        "base_task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+        "language": "pick up the black bowl on the cookie box and place it on the plate",
+        "policy_seed": 0,
+        "role": "development; previously accessed official pool; NOT independent confirmation",
+        "id": "t03_clean_i2",
+        "group": "Clean",
+        "subgroup": "Clean",
+        "init_index": 2,
+        "scored": true
+      },
+      "frozen": true,
+      "deepgate": true,
+      "steps": {
+        "frozen": 84,
+        "deep_gate_L3_a0.75": 83
+      },
+      "pairing": {
+        "initial_state_and_two_view_pixels_exact": true,
+        "common_prefix_cpu_cuda_rng_exact": true,
+        "identical_physical_render_state_rgb_checks": 48,
+        "physical_equal_render_different_frames": 0,
+        "reject_at_equal_input_action_exact": true
+      },
+      "first_gate_step": 47,
+      "gate_score_minmax": [
+        0.17261216044425964,
+        0.5052978843450546
+      ]
+    },
+    {
+      "case": {
+        "task_id": 3,
+        "base_task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+        "language": "pick up the black bowl on the cookie box and place it on the plate",
+        "policy_seed": 0,
+        "role": "development; previously accessed official pool; NOT independent confirmation",
+        "id": "t03_fog_i1",
+        "group": "Sensor",
+        "subgroup": "fog",
+        "init_index": 1,
+        "severity": 3,
+        "scored": true
+      },
+      "frozen": true,
+      "deepgate": true,
+      "steps": {
+        "frozen": 92,
+        "deep_gate_L3_a0.75": 91
+      },
+      "pairing": {
+        "initial_state_and_two_view_pixels_exact": true,
+        "common_prefix_cpu_cuda_rng_exact": true,
+        "identical_physical_render_state_rgb_checks": 1,
+        "physical_equal_render_different_frames": 0,
+        "reject_at_equal_input_action_exact": true
+      },
+      "first_gate_step": 0,
+      "gate_score_minmax": [
+        0.5329717397689819,
+        1.2130218744277954
+      ]
+    },
+    {
+      "case": {
+        "task_id": 3,
+        "base_task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+        "language": "pick up the black bowl on the cookie box and place it on the plate",
+        "policy_seed": 0,
+        "role": "development; previously accessed official pool; NOT independent confirmation",
+        "id": "t03_glass_blur_i1",
+        "group": "Sensor",
+        "subgroup": "glass_blur",
+        "init_index": 1,
+        "severity": 3,
+        "scored": true
+      },
+      "frozen": false,
+      "deepgate": false,
+      "steps": {
+        "frozen": 220,
+        "deep_gate_L3_a0.75": 220
+      },
+      "pairing": {
+        "initial_state_and_two_view_pixels_exact": true,
+        "common_prefix_cpu_cuda_rng_exact": true,
+        "identical_physical_render_state_rgb_checks": 1,
+        "physical_equal_render_different_frames": 0,
+        "reject_at_equal_input_action_exact": true
+      },
+      "first_gate_step": 0,
+      "gate_score_minmax": [
+        1.4031829684972763,
+        2.2639591693878174
+      ]
+    },
+    {
+      "case": {
+        "task_id": 3,
+        "base_task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+        "language": "pick up the black bowl on the cookie box and place it on the plate",
+        "policy_seed": 0,
+        "role": "development; previously accessed official pool; NOT independent confirmation",
+        "id": "t03_light_asset_i1",
+        "group": "Lighting",
+        "subgroup": "light_asset",
+        "init_index": 1,
+        "bddl": "libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_light_21.bddl",
+        "bddl_sha256": "6d461011524d86653baf392253cd9f3b3a1b20d60d316ebea5d4c4aad751d346",
+        "dev_case_id": "c03e1a782928638880efb08d",
+        "official_class": "Libero_Tabletop_Manipulation_tabletop_light_sync_modified_455",
+        "scene_settings": {
+          "scene_xml": "scenes/lights/tabletop_light_sync_modified_455.xml",
+          "scene_properties": {
+            "floor_style": "light-gray",
+            "wall_style": "light-gray-plaster"
+          }
+        },
+        "scene_sha256": "becf7a10e2c69a9ca3c40886632bde0c1dc2bc0456c68718d8b0bb169dd5a568",
+        "scored": true
+      },
+      "frozen": true,
+      "deepgate": true,
+      "steps": {
+        "frozen": 93,
+        "deep_gate_L3_a0.75": 94
+      },
+      "pairing": {
+        "initial_state_and_two_view_pixels_exact": true,
+        "common_prefix_cpu_cuda_rng_exact": true,
+        "identical_physical_render_state_rgb_checks": 3,
+        "physical_equal_render_different_frames": 0,
+        "reject_at_equal_input_action_exact": true
+      },
+      "first_gate_step": 2,
+      "gate_score_minmax": [
+        0.2465880960226059,
+        0.5369657129049301
+      ]
+    },
+    {
+      "case": {
+        "task_id": 3,
+        "base_task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+        "language": "pick up the black bowl on the cookie box and place it on the plate",
+        "policy_seed": 0,
+        "role": "development; previously accessed official pool; NOT independent confirmation",
+        "id": "t03_table_texture_i1",
+        "group": "Background",
+        "subgroup": "table_texture",
+        "init_index": 1,
+        "bddl": "libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate_table_11.bddl",
+        "bddl_sha256": "7aa14622e482c4f9a88e11c22637ece309d6708db3cb2138e6c01a18686de9da",
+        "dev_case_id": "e67548ff2cbebe1ca8a7b35e",
+        "official_class": "Libero_Tabletop_Manipulation_tabletop_table_FabricWeaveRug001_GLOSS_6K",
+        "scene_settings": {
+          "scene_xml": "scenes/tabletop250/tabletop_table_FabricWeaveRug001_GLOSS_6K.xml",
+          "scene_properties": {
+            "floor_style": "light-gray",
+            "wall_style": "light-gray-plaster"
+          }
+        },
+        "scene_sha256": "f59e8887bec5d921e4afdde79e99dd6ae70e6bea7bac28f5762dfa929161e1f4",
+        "scored": true
+      },
+      "frozen": false,
+      "deepgate": false,
+      "steps": {
+        "frozen": 220,
+        "deep_gate_L3_a0.75": 220
+      },
+      "pairing": {
+        "initial_state_and_two_view_pixels_exact": true,
+        "common_prefix_cpu_cuda_rng_exact": true,
+        "identical_physical_render_state_rgb_checks": 1,
+        "physical_equal_render_different_frames": 0,
+        "reject_at_equal_input_action_exact": true
+      },
+      "first_gate_step": 0,
+      "gate_score_minmax": [
+        0.393779993057251,
+        0.7539382874965668
+      ]
+    },
+    {
+      "case": {
+        "task_id": 4,
+        "base_task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+        "language": "pick up the black bowl in the top drawer of the wooden cabinet and place it on the plate",
+        "policy_seed": 0,
+        "role": "development; previously accessed official pool; NOT independent confirmation",
+        "id": "t04_clean_i2",
+        "group": "Clean",
+        "subgroup": "Clean",
+        "init_index": 2,
+        "scored": true
+      },
+      "frozen": true,
+      "deepgate": true,
+      "steps": {
+        "frozen": 132,
+        "deep_gate_L3_a0.75": 127
+      },
+      "pairing": {
+        "initial_state_and_two_view_pixels_exact": true,
+        "common_prefix_cpu_cuda_rng_exact": true,
+        "identical_physical_render_state_rgb_checks": 44,
+        "physical_equal_render_different_frames": 0,
+        "reject_at_equal_input_action_exact": true
+      },
+      "first_gate_step": 43,
+      "gate_score_minmax": [
+        0.21842169761657715,
+        0.5873189568519592
+      ]
+    },
+    {
+      "case": {
+        "task_id": 4,
+        "base_task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+        "language": "pick up the black bowl in the top drawer of the wooden cabinet and place it on the plate",
+        "policy_seed": 0,
+        "role": "development; previously accessed official pool; NOT independent confirmation",
+        "id": "t04_glass_blur_i1",
+        "group": "Sensor",
+        "subgroup": "glass_blur",
+        "init_index": 1,
+        "severity": 3,
+        "scored": true
+      },
+      "frozen": false,
+      "deepgate": false,
+      "steps": {
+        "frozen": 220,
+        "deep_gate_L3_a0.75": 220
+      },
+      "pairing": {
+        "initial_state_and_two_view_pixels_exact": true,
+        "common_prefix_cpu_cuda_rng_exact": true,
+        "identical_physical_render_state_rgb_checks": 1,
+        "physical_equal_render_different_frames": 0,
+        "reject_at_equal_input_action_exact": true
+      },
+      "first_gate_step": 0,
+      "gate_score_minmax": [
+        1.4013275802135468,
+        2.3723536133766174
+      ]
+    },
+    {
+      "case": {
+        "task_id": 4,
+        "base_task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+        "language": "pick up the black bowl in the top drawer of the wooden cabinet and place it on the plate",
+        "policy_seed": 0,
+        "role": "development; previously accessed official pool; NOT independent confirmation",
+        "id": "t04_motion_blur_i1",
+        "group": "Sensor",
+        "subgroup": "motion_blur",
+        "init_index": 1,
+        "severity": 3,
+        "scored": true
+      },
+      "frozen": false,
+      "deepgate": false,
+      "steps": {
+        "frozen": 220,
+        "deep_gate_L3_a0.75": 220
+      },
+      "pairing": {
+        "initial_state_and_two_view_pixels_exact": true,
+        "common_prefix_cpu_cuda_rng_exact": true,
+        "identical_physical_render_state_rgb_checks": 1,
+        "physical_equal_render_different_frames": 0,
+        "reject_at_equal_input_action_exact": true
+      },
+      "first_gate_step": 0,
+      "gate_score_minmax": [
+        0.4863430857658386,
+        1.4490680694580078
+      ]
+    },
+    {
+      "case": {
+        "task_id": 4,
+        "base_task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+        "language": "pick up the black bowl in the top drawer of the wooden cabinet and place it on the plate",
+        "policy_seed": 0,
+        "role": "development; previously accessed official pool; NOT independent confirmation",
+        "id": "t04_light_asset_i1",
+        "group": "Lighting",
+        "subgroup": "light_asset",
+        "init_index": 1,
+        "bddl": "libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate_light_12.bddl",
+        "bddl_sha256": "3d695605a5143a606fa2557f3a613e25e967161931dd49fc11df2678effbbeeb",
+        "dev_case_id": "734d3d4af8d6b04b33187f95",
+        "official_class": "Libero_Tabletop_Manipulation_tabletop_light_sync_modified_401",
+        "scene_settings": {
+          "scene_xml": "scenes/lights/tabletop_light_sync_modified_401.xml",
+          "scene_properties": {
+            "floor_style": "light-gray",
+            "wall_style": "light-gray-plaster"
+          }
+        },
+        "scene_sha256": "1d453b5acf5b20746f8eed09ff3ed4e1db8b42acb5f5a7fc2e4180172e31cdc8",
+        "scored": true
+      },
+      "frozen": true,
+      "deepgate": true,
+      "steps": {
+        "frozen": 133,
+        "deep_gate_L3_a0.75": 135
+      },
+      "pairing": {
+        "initial_state_and_two_view_pixels_exact": true,
+        "common_prefix_cpu_cuda_rng_exact": true,
+        "identical_physical_render_state_rgb_checks": 17,
+        "physical_equal_render_different_frames": 0,
+        "reject_at_equal_input_action_exact": true
+      },
+      "first_gate_step": 16,
+      "gate_score_minmax": [
+        0.33412136137485504,
+        0.6006012558937073
+      ]
+    },
+    {
+      "case": {
+        "task_id": 4,
+        "base_task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+        "language": "pick up the black bowl in the top drawer of the wooden cabinet and place it on the plate",
+        "policy_seed": 0,
+        "role": "development; previously accessed official pool; NOT independent confirmation",
+        "id": "t04_scene_texture_i1",
+        "group": "Background",
+        "subgroup": "scene_texture",
+        "init_index": 1,
+        "bddl": "libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate_tb_1.bddl",
+        "bddl_sha256": "b52e3befa52d1556c3d16b76567cac4571145c82d7b3ef84f055e544aedddf57",
+        "dev_case_id": "c71fb60309bb3abd27edef73",
+        "official_class": "Libero_Tabletop_Manipulation_tabletop_table_Cobblestone01_COL_VAR2_6K_Wall_dark_gray_plaster",
+        "scene_settings": {
+          "scene_xml": "scenes/tabletop_table_Cobblestone01_COL_VAR2_6K.xml",
+          "scene_properties": {
+            "floor_style": "light-gray",
+            "wall_style": "dark-gray-plaster"
+          }
+        },
+        "scene_sha256": "d613eb39c9695a9d1144081425f70f54cd5cb639826e22afc9c3cac0fa33469e",
+        "scored": true
+      },
+      "frozen": true,
+      "deepgate": true,
+      "steps": {
+        "frozen": 142,
+        "deep_gate_L3_a0.75": 160
+      },
+      "pairing": {
+        "initial_state_and_two_view_pixels_exact": true,
+        "common_prefix_cpu_cuda_rng_exact": true,
+        "identical_physical_render_state_rgb_checks": 1,
+        "physical_equal_render_different_frames": 0,
+        "reject_at_equal_input_action_exact": true
+      },
+      "first_gate_step": 0,
+      "gate_score_minmax": [
+        0.5904493778944016,
+        1.0856241881847382
+      ]
+    },
+    {
+      "case": {
+        "task_id": 5,
+        "base_task": "pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate",
+        "language": "pick up the black bowl on the ramekin and place it on the plate",
+        "policy_seed": 0,
+        "role": "development; previously accessed official pool; NOT independent confirmation",
+        "id": "t05_clean_i2",
+        "group": "Clean",
+        "subgroup": "Clean",
+        "init_index": 2,
+        "scored": true
+      },
+      "frozen": false,
+      "deepgate": false,
+      "steps": {
+        "frozen": 220,
+        "deep_gate_L3_a0.75": 220
+      },
+      "pairing": {
+        "initial_state_and_two_view_pixels_exact": true,
+        "common_prefix_cpu_cuda_rng_exact": true,
+        "identical_physical_render_state_rgb_checks": 220,
+        "physical_equal_render_different_frames": 0,
+        "reject_at_equal_input_action_exact": true
+      },
+      "first_gate_step": 219,
+      "gate_score_minmax": [
+        0.21442916244268417,
+        0.5153419971466064
+      ]
+    },
+    {
+      "case": {
+        "task_id": 5,
+        "base_task": "pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate",
+        "language": "pick up the black bowl on the ramekin and place it on the plate",
+        "policy_seed": 0,
+        "role": "development; previously accessed official pool; NOT independent confirmation",
+        "id": "t05_motion_blur_i1",
+        "group": "Sensor",
+        "subgroup": "motion_blur",
+        "init_index": 1,
+        "severity": 3,
+        "scored": true
+      },
+      "frozen": false,
+      "deepgate": false,
+      "steps": {
+        "frozen": 220,
+        "deep_gate_L3_a0.75": 220
+      },
+      "pairing": {
+        "initial_state_and_two_view_pixels_exact": true,
+        "common_prefix_cpu_cuda_rng_exact": true,
+        "identical_physical_render_state_rgb_checks": 1,
+        "physical_equal_render_different_frames": 0,
+        "reject_at_equal_input_action_exact": true
+      },
+      "first_gate_step": 0,
+      "gate_score_minmax": [
+        0.5499204993247986,
+        1.0222711861133575
+      ]
+    },
+    {
+      "case": {
+        "task_id": 5,
+        "base_task": "pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate",
+        "language": "pick up the black bowl on the ramekin and place it on the plate",
+        "policy_seed": 0,
+        "role": "development; previously accessed official pool; NOT independent confirmation",
+        "id": "t05_gaussian_blur_i1",
+        "group": "Sensor",
+        "subgroup": "gaussian_blur",
+        "init_index": 1,
+        "severity": 3,
+        "scored": true
+      },
+      "frozen": false,
+      "deepgate": false,
+      "steps": {
+        "frozen": 220,
+        "deep_gate_L3_a0.75": 220
+      },
+      "pairing": {
+        "initial_state_and_two_view_pixels_exact": true,
+        "common_prefix_cpu_cuda_rng_exact": true,
+        "identical_physical_render_state_rgb_checks": 1,
+        "physical_equal_render_different_frames": 0,
+        "reject_at_equal_input_action_exact": true
+      },
+      "first_gate_step": 0,
+      "gate_score_minmax": [
+        1.1688059568405151,
+        1.7465215623378754
+      ]
+    },
+    {
+      "case": {
+        "task_id": 5,
+        "base_task": "pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate",
+        "language": "pick up the black bowl on the ramekin and place it on the plate",
+        "policy_seed": 0,
+        "role": "development; previously accessed official pool; NOT independent confirmation",
+        "id": "t05_light_asset_i1",
+        "group": "Lighting",
+        "subgroup": "light_asset",
+        "init_index": 1,
+        "bddl": "libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate_light_15.bddl",
+        "bddl_sha256": "ea3b1f7a75d638cbaf972d9403c0df3b625e3f29a839d6f668829c5f64b0d085",
+        "dev_case_id": "36f206329f1c1c5275cdfc66",
+        "official_class": "Libero_Tabletop_Manipulation_tabletop_light_sync_modified_224",
+        "scene_settings": {
+          "scene_xml": "scenes/lights/tabletop_light_sync_modified_224.xml",
+          "scene_properties": {
+            "floor_style": "light-gray",
+            "wall_style": "light-gray-plaster"
+          }
+        },
+        "scene_sha256": "76509dafbce5ef6e16cd56969e3eebdc0a67184b255cfdccdf43a6e6f9a828af",
+        "scored": true
+      },
+      "frozen": false,
+      "deepgate": false,
+      "steps": {
+        "frozen": 220,
+        "deep_gate_L3_a0.75": 220
+      },
+      "pairing": {
+        "initial_state_and_two_view_pixels_exact": true,
+        "common_prefix_cpu_cuda_rng_exact": true,
+        "identical_physical_render_state_rgb_checks": 31,
+        "physical_equal_render_different_frames": 0,
+        "reject_at_equal_input_action_exact": true
+      },
+      "first_gate_step": 30,
+      "gate_score_minmax": [
+        0.3346634805202484,
+        0.7101559042930603
+      ]
+    },
+    {
+      "case": {
+        "task_id": 5,
+        "base_task": "pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate",
+        "language": "pick up the black bowl on the ramekin and place it on the plate",
+        "policy_seed": 0,
+        "role": "development; previously accessed official pool; NOT independent confirmation",
+        "id": "t05_scene_texture_i1",
+        "group": "Background",
+        "subgroup": "scene_texture",
+        "init_index": 1,
+        "bddl": "libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate_tb_17.bddl",
+        "bddl_sha256": "386873311c415dc41f09f2e5dbdbdb166eb943c031ea36304ef7682abd871275",
+        "dev_case_id": "19e130adbbfed3d5a48b12a8",
+        "official_class": "Libero_Tabletop_Manipulation_tabletop_table_CliffDesert006_DISP_VAR1_HIRES_Wall_gray",
+        "scene_settings": {
+          "scene_xml": "scenes/tabletop_table_CliffDesert006_DISP_VAR1_HIRES.xml",
+          "scene_properties": {
+            "floor_style": "light-gray",
+            "wall_style": "gray"
+          }
+        },
+        "scene_sha256": "cda7cc4006aaa55c6c2113f546bcdc5fd491f1c1e7bddab67d4e36c8af1ff860",
+        "scored": true
+      },
+      "frozen": false,
+      "deepgate": true,
+      "steps": {
+        "frozen": 220,
+        "deep_gate_L3_a0.75": 116
+      },
+      "pairing": {
+        "initial_state_and_two_view_pixels_exact": true,
+        "common_prefix_cpu_cuda_rng_exact": true,
+        "identical_physical_render_state_rgb_checks": 1,
+        "physical_equal_render_different_frames": 0,
+        "reject_at_equal_input_action_exact": true
+      },
+      "first_gate_step": 0,
+      "gate_score_minmax": [
+        0.5119087547063828,
+        0.9315862357616425
+      ]
+    },
+    {
+      "case": {
+        "task_id": 6,
+        "base_task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+        "language": "pick up the black bowl next to the cookie box and place it on the plate",
+        "policy_seed": 0,
+        "role": "development; previously accessed official pool; NOT independent confirmation",
+        "id": "t06_clean_i2",
+        "group": "Clean",
+        "subgroup": "Clean",
+        "init_index": 2,
+        "scored": true
+      },
+      "frozen": true,
+      "deepgate": true,
+      "steps": {
+        "frozen": 108,
+        "deep_gate_L3_a0.75": 108
+      },
+      "pairing": {
+        "initial_state_and_two_view_pixels_exact": true,
+        "common_prefix_cpu_cuda_rng_exact": true,
+        "identical_physical_render_state_rgb_checks": 108,
+        "physical_equal_render_different_frames": 0,
+        "reject_at_equal_input_action_exact": true
+      },
+      "first_gate_step": null,
+      "gate_score_minmax": [
+        0.1924196556210518,
+        0.47991834580898285
+      ]
+    },
+    {
+      "case": {
+        "task_id": 6,
+        "base_task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+        "language": "pick up the black bowl next to the cookie box and place it on the plate",
+        "policy_seed": 0,
+        "role": "development; previously accessed official pool; NOT independent confirmation",
+        "id": "t06_gaussian_blur_i1",
+        "group": "Sensor",
+        "subgroup": "gaussian_blur",
+        "init_index": 1,
+        "severity": 3,
+        "scored": true
+      },
+      "frozen": false,
+      "deepgate": false,
+      "steps": {
+        "frozen": 220,
+        "deep_gate_L3_a0.75": 220
+      },
+      "pairing": {
+        "initial_state_and_two_view_pixels_exact": true,
+        "common_prefix_cpu_cuda_rng_exact": true,
+        "identical_physical_render_state_rgb_checks": 1,
+        "physical_equal_render_different_frames": 0,
+        "reject_at_equal_input_action_exact": true
+      },
+      "first_gate_step": 0,
+      "gate_score_minmax": [
+        0.9842605590820312,
+        1.6465240716934204
+      ]
+    },
+    {
+      "case": {
+        "task_id": 6,
+        "base_task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+        "language": "pick up the black bowl next to the cookie box and place it on the plate",
+        "policy_seed": 0,
+        "role": "development; previously accessed official pool; NOT independent confirmation",
+        "id": "t06_zoom_blur_i1",
+        "group": "Sensor",
+        "subgroup": "zoom_blur",
+        "init_index": 1,
+        "severity": 3,
+        "scored": true
+      },
+      "frozen": false,
+      "deepgate": false,
+      "steps": {
+        "frozen": 220,
+        "deep_gate_L3_a0.75": 220
+      },
+      "pairing": {
+        "initial_state_and_two_view_pixels_exact": true,
+        "common_prefix_cpu_cuda_rng_exact": true,
+        "identical_physical_render_state_rgb_checks": 1,
+        "physical_equal_render_different_frames": 0,
+        "reject_at_equal_input_action_exact": true
+      },
+      "first_gate_step": 0,
+      "gate_score_minmax": [
+        1.0143288224935532,
+        1.8489751815795898
+      ]
+    },
+    {
+      "case": {
+        "task_id": 6,
+        "base_task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+        "language": "pick up the black bowl next to the cookie box and place it on the plate",
+        "policy_seed": 0,
+        "role": "development; previously accessed official pool; NOT independent confirmation",
+        "id": "t06_light_asset_i1",
+        "group": "Lighting",
+        "subgroup": "light_asset",
+        "init_index": 1,
+        "bddl": "libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate_light_26.bddl",
+        "bddl_sha256": "e3e2d76e5325d2851d48a9adadc46cb7f4bd2427eadf5e63cb3d71bc95dfeaf7",
+        "dev_case_id": "32c1ebe6e4d6cb178bfb0a0b",
+        "official_class": "Libero_Tabletop_Manipulation_tabletop_light_sync_modified_144",
+        "scene_settings": {
+          "scene_xml": "scenes/lights/tabletop_light_sync_modified_144.xml",
+          "scene_properties": {
+            "floor_style": "light-gray",
+            "wall_style": "light-gray-plaster"
+          }
+        },
+        "scene_sha256": "13281d01c93cd95e048c8f1fbd61576d6e22c474dde70d4ae7b854a82522359a",
+        "scored": true
+      },
+      "frozen": false,
+      "deepgate": false,
+      "steps": {
+        "frozen": 220,
+        "deep_gate_L3_a0.75": 220
+      },
+      "pairing": {
+        "initial_state_and_two_view_pixels_exact": true,
+        "common_prefix_cpu_cuda_rng_exact": true,
+        "identical_physical_render_state_rgb_checks": 39,
+        "physical_equal_render_different_frames": 0,
+        "reject_at_equal_input_action_exact": true
+      },
+      "first_gate_step": 38,
+      "gate_score_minmax": [
+        0.2724600285291672,
+        0.6324695646762848
+      ]
+    },
+    {
+      "case": {
+        "task_id": 6,
+        "base_task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+        "language": "pick up the black bowl next to the cookie box and place it on the plate",
+        "policy_seed": 0,
+        "role": "development; previously accessed official pool; NOT independent confirmation",
+        "id": "t06_scene_texture_i1",
+        "group": "Background",
+        "subgroup": "scene_texture",
+        "init_index": 1,
+        "bddl": "libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate_tb_2.bddl",
+        "bddl_sha256": "7acd3853dd268da050b1ba73e563a220f206e1920bd55fee795f3df1314c144c",
+        "dev_case_id": "34f60c2ad49319e81d18c70b",
+        "official_class": "Libero_Tabletop_Manipulation_tabletop_table_Bricks02_NRM_6K_Wall_gray_ceramic",
+        "scene_settings": {
+          "scene_xml": "scenes/tabletop_table_Bricks02_NRM_6K.xml",
+          "scene_properties": {
+            "floor_style": "light-gray",
+            "wall_style": "gray-ceramic"
+          }
+        },
+        "scene_sha256": "44a4402106f156d3e766c0f895b2d9a0ce3a0bec2b9f32120681088205962326",
+        "scored": true
+      },
+      "frozen": false,
+      "deepgate": false,
+      "steps": {
+        "frozen": 220,
+        "deep_gate_L3_a0.75": 220
+      },
+      "pairing": {
+        "initial_state_and_two_view_pixels_exact": true,
+        "common_prefix_cpu_cuda_rng_exact": true,
+        "identical_physical_render_state_rgb_checks": 1,
+        "physical_equal_render_different_frames": 0,
+        "reject_at_equal_input_action_exact": true
+      },
+      "first_gate_step": 0,
+      "gate_score_minmax": [
+        0.6362855136394501,
+        1.3136886954307556
+      ]
+    },
+    {
+      "case": {
+        "task_id": 7,
+        "base_task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+        "language": "pick up the black bowl on the stove and place it on the plate",
+        "policy_seed": 0,
+        "role": "development; previously accessed official pool; NOT independent confirmation",
+        "id": "t07_clean_i2",
+        "group": "Clean",
+        "subgroup": "Clean",
+        "init_index": 2,
+        "scored": true
+      },
+      "frozen": true,
+      "deepgate": true,
+      "steps": {
+        "frozen": 105,
+        "deep_gate_L3_a0.75": 105
+      },
+      "pairing": {
+        "initial_state_and_two_view_pixels_exact": true,
+        "common_prefix_cpu_cuda_rng_exact": true,
+        "identical_physical_render_state_rgb_checks": 105,
+        "physical_equal_render_different_frames": 0,
+        "reject_at_equal_input_action_exact": true
+      },
+      "first_gate_step": null,
+      "gate_score_minmax": [
+        0.15990251302719116,
+        0.4350692480802536
+      ]
+    },
+    {
+      "case": {
+        "task_id": 7,
+        "base_task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+        "language": "pick up the black bowl on the stove and place it on the plate",
+        "policy_seed": 0,
+        "role": "development; previously accessed official pool; NOT independent confirmation",
+        "id": "t07_zoom_blur_i1",
+        "group": "Sensor",
+        "subgroup": "zoom_blur",
+        "init_index": 1,
+        "severity": 3,
+        "scored": true
+      },
+      "frozen": false,
+      "deepgate": false,
+      "steps": {
+        "frozen": 220,
+        "deep_gate_L3_a0.75": 220
+      },
+      "pairing": {
+        "initial_state_and_two_view_pixels_exact": true,
+        "common_prefix_cpu_cuda_rng_exact": true,
+        "identical_physical_render_state_rgb_checks": 1,
+        "physical_equal_render_different_frames": 0,
+        "reject_at_equal_input_action_exact": true
+      },
+      "first_gate_step": 0,
+      "gate_score_minmax": [
+        1.1998174786567688,
+        2.1115506291389465
+      ]
+    },
+    {
+      "case": {
+        "task_id": 7,
+        "base_task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+        "language": "pick up the black bowl on the stove and place it on the plate",
+        "policy_seed": 0,
+        "role": "development; previously accessed official pool; NOT independent confirmation",
+        "id": "t07_fog_i1",
+        "group": "Sensor",
+        "subgroup": "fog",
+        "init_index": 1,
+        "severity": 3,
+        "scored": true
+      },
+      "frozen": false,
+      "deepgate": false,
+      "steps": {
+        "frozen": 220,
+        "deep_gate_L3_a0.75": 220
+      },
+      "pairing": {
+        "initial_state_and_two_view_pixels_exact": true,
+        "common_prefix_cpu_cuda_rng_exact": true,
+        "identical_physical_render_state_rgb_checks": 1,
+        "physical_equal_render_different_frames": 0,
+        "reject_at_equal_input_action_exact": true
+      },
+      "first_gate_step": 0,
+      "gate_score_minmax": [
+        0.4439470171928406,
+        1.161324679851532
+      ]
+    },
+    {
+      "case": {
+        "task_id": 7,
+        "base_task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+        "language": "pick up the black bowl on the stove and place it on the plate",
+        "policy_seed": 0,
+        "role": "development; previously accessed official pool; NOT independent confirmation",
+        "id": "t07_light_asset_i1",
+        "group": "Lighting",
+        "subgroup": "light_asset",
+        "init_index": 1,
+        "bddl": "libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate_light_37.bddl",
+        "bddl_sha256": "82a8e7f0b2fa89a14546a4218caa6781812705dbfb6cf314e7161e0b3381cfa2",
+        "dev_case_id": "58374a4e57b5316b75daa5a8",
+        "official_class": "Libero_Tabletop_Manipulation_tabletop_light_sync_modified_514",
+        "scene_settings": {
+          "scene_xml": "scenes/lights/tabletop_light_sync_modified_514.xml",
+          "scene_properties": {
+            "floor_style": "light-gray",
+            "wall_style": "light-gray-plaster"
+          }
+        },
+        "scene_sha256": "ad5902b0fefe5081c835d6d7588a7a0ac4a53a31f6365efd795f0176513dee7f",
+        "scored": true
+      },
+      "frozen": true,
+      "deepgate": true,
+      "steps": {
+        "frozen": 108,
+        "deep_gate_L3_a0.75": 117
+      },
+      "pairing": {
+        "initial_state_and_two_view_pixels_exact": true,
+        "common_prefix_cpu_cuda_rng_exact": true,
+        "identical_physical_render_state_rgb_checks": 2,
+        "physical_equal_render_different_frames": 0,
+        "reject_at_equal_input_action_exact": true
+      },
+      "first_gate_step": 1,
+      "gate_score_minmax": [
+        0.2621678411960602,
+        0.6275400817394257
+      ]
+    },
+    {
+      "case": {
+        "task_id": 7,
+        "base_task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+        "language": "pick up the black bowl on the stove and place it on the plate",
+        "policy_seed": 0,
+        "role": "development; previously accessed official pool; NOT independent confirmation",
+        "id": "t07_scene_texture_i1",
+        "group": "Background",
+        "subgroup": "scene_texture",
+        "init_index": 1,
+        "bddl": "libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate_tb_20.bddl",
+        "bddl_sha256": "deb9a336c9a0d70a124227dedadd551e6b892a8bc00586fcd362d6eae187ad7a",
+        "dev_case_id": "451d4d5283da4bf94b611a95",
+        "official_class": "Libero_Tabletop_Manipulation_tabletop_table_WoodFine001_GLOSS_6K_Wall_light_blue",
+        "scene_settings": {
+          "scene_xml": "scenes/tabletop_table_WoodFine001_GLOSS_6K.xml",
+          "scene_properties": {
+            "floor_style": "light-gray",
+            "wall_style": "light-blue"
+          }
+        },
+        "scene_sha256": "bbc132df914a4b3ef64a985fd8403b2b2dd39265aad0f944f470627d5e9ada80",
+        "scored": true
+      },
+      "frozen": true,
+      "deepgate": true,
+      "steps": {
+        "frozen": 158,
+        "deep_gate_L3_a0.75": 138
+      },
+      "pairing": {
+        "initial_state_and_two_view_pixels_exact": true,
+        "common_prefix_cpu_cuda_rng_exact": true,
+        "identical_physical_render_state_rgb_checks": 3,
+        "physical_equal_render_different_frames": 0,
+        "reject_at_equal_input_action_exact": true
+      },
+      "first_gate_step": 2,
+      "gate_score_minmax": [
+        0.3595718890428543,
+        0.7215155959129333
+      ]
+    },
+    {
+      "case": {
+        "task_id": 8,
+        "base_task": "pick_up_the_black_bowl_next_to_the_plate_and_place_it_on_the_plate",
+        "language": "pick up the black bowl next to the plate and place it on the plate",
+        "policy_seed": 0,
+        "role": "development; previously accessed official pool; NOT independent confirmation",
+        "id": "t08_clean_i2",
+        "group": "Clean",
+        "subgroup": "Clean",
+        "init_index": 2,
+        "scored": true
+      },
+      "frozen": true,
+      "deepgate": true,
+      "steps": {
+        "frozen": 105,
+        "deep_gate_L3_a0.75": 105
+      },
+      "pairing": {
+        "initial_state_and_two_view_pixels_exact": true,
+        "common_prefix_cpu_cuda_rng_exact": true,
+        "identical_physical_render_state_rgb_checks": 105,
+        "physical_equal_render_different_frames": 0,
+        "reject_at_equal_input_action_exact": true
+      },
+      "first_gate_step": null,
+      "gate_score_minmax": [
+        0.18155205249786377,
+        0.38320593535900116
+      ]
+    },
+    {
+      "case": {
+        "task_id": 8,
+        "base_task": "pick_up_the_black_bowl_next_to_the_plate_and_place_it_on_the_plate",
+        "language": "pick up the black bowl next to the plate and place it on the plate",
+        "policy_seed": 0,
+        "role": "development; previously accessed official pool; NOT independent confirmation",
+        "id": "t08_fog_i1",
+        "group": "Sensor",
+        "subgroup": "fog",
+        "init_index": 1,
+        "severity": 3,
+        "scored": true
+      },
+      "frozen": false,
+      "deepgate": true,
+      "steps": {
+        "frozen": 220,
+        "deep_gate_L3_a0.75": 100
+      },
+      "pairing": {
+        "initial_state_and_two_view_pixels_exact": true,
+        "common_prefix_cpu_cuda_rng_exact": true,
+        "identical_physical_render_state_rgb_checks": 1,
+        "physical_equal_render_different_frames": 0,
+        "reject_at_equal_input_action_exact": true
+      },
+      "first_gate_step": 0,
+      "gate_score_minmax": [
+        0.5031565576791763,
+        1.0888064503669739
+      ]
+    },
+    {
+      "case": {
+        "task_id": 8,
+        "base_task": "pick_up_the_black_bowl_next_to_the_plate_and_place_it_on_the_plate",
+        "language": "pick up the black bowl next to the plate and place it on the plate",
+        "policy_seed": 0,
+        "role": "development; previously accessed official pool; NOT independent confirmation",
+        "id": "t08_glass_blur_i1",
+        "group": "Sensor",
+        "subgroup": "glass_blur",
+        "init_index": 1,
+        "severity": 3,
+        "scored": true
+      },
+      "frozen": false,
+      "deepgate": false,
+      "steps": {
+        "frozen": 220,
+        "deep_gate_L3_a0.75": 220
+      },
+      "pairing": {
+        "initial_state_and_two_view_pixels_exact": true,
+        "common_prefix_cpu_cuda_rng_exact": true,
+        "identical_physical_render_state_rgb_checks": 1,
+        "physical_equal_render_different_frames": 0,
+        "reject_at_equal_input_action_exact": true
+      },
+      "first_gate_step": 0,
+      "gate_score_minmax": [
+        1.3811076283454895,
+        2.1906208395957947
+      ]
+    },
+    {
+      "case": {
+        "task_id": 8,
+        "base_task": "pick_up_the_black_bowl_next_to_the_plate_and_place_it_on_the_plate",
+        "language": "pick up the black bowl next to the plate and place it on the plate",
+        "policy_seed": 0,
+        "role": "development; previously accessed official pool; NOT independent confirmation",
+        "id": "t08_light_asset_i1",
+        "group": "Lighting",
+        "subgroup": "light_asset",
+        "init_index": 1,
+        "bddl": "libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_next_to_the_plate_and_place_it_on_the_plate_light_11.bddl",
+        "bddl_sha256": "0d73085c5f5b39134d6a2d4136dd8e9bdf75c924f576b685b884eadbc9319918",
+        "dev_case_id": "4dfb95e2a8d148b52ea21f18",
+        "official_class": "Libero_Tabletop_Manipulation_tabletop_light_sync_modified_356",
+        "scene_settings": {
+          "scene_xml": "scenes/lights/tabletop_light_sync_modified_356.xml",
+          "scene_properties": {
+            "floor_style": "light-gray",
+            "wall_style": "light-gray-plaster"
+          }
+        },
+        "scene_sha256": "26d9f29ff24c8affac388910761116ea9f64bb9fcb2ed16a9bf84468e9266e7c",
+        "scored": true
+      },
+      "frozen": true,
+      "deepgate": true,
+      "steps": {
+        "frozen": 96,
+        "deep_gate_L3_a0.75": 96
+      },
+      "pairing": {
+        "initial_state_and_two_view_pixels_exact": true,
+        "common_prefix_cpu_cuda_rng_exact": true,
+        "identical_physical_render_state_rgb_checks": 27,
+        "physical_equal_render_different_frames": 0,
+        "reject_at_equal_input_action_exact": true
+      },
+      "first_gate_step": 26,
+      "gate_score_minmax": [
+        0.28722473233938217,
+        0.5636626183986664
+      ]
+    },
+    {
+      "case": {
+        "task_id": 8,
+        "base_task": "pick_up_the_black_bowl_next_to_the_plate_and_place_it_on_the_plate",
+        "language": "pick up the black bowl next to the plate and place it on the plate",
+        "policy_seed": 0,
+        "role": "development; previously accessed official pool; NOT independent confirmation",
+        "id": "t08_table_texture_i1",
+        "group": "Background",
+        "subgroup": "table_texture",
+        "init_index": 1,
+        "bddl": "libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_next_to_the_plate_and_place_it_on_the_plate_table_1.bddl",
+        "bddl_sha256": "8fd213a1fae415951129150053fb811401770a1ab1552ebd0f5fcc2a18cf4e4d",
+        "dev_case_id": "05f7d8f8b9e140d46dcbf95e",
+        "official_class": "Libero_Tabletop_Manipulation_tabletop_table_FabricModeledWool001_REFL_3K",
+        "scene_settings": {
+          "scene_xml": "scenes/tabletop250/tabletop_table_FabricModeledWool001_REFL_3K.xml",
+          "scene_properties": {
+            "floor_style": "light-gray",
+            "wall_style": "light-gray-plaster"
+          }
+        },
+        "scene_sha256": "41a0e05d8eaff42575818087f8bc8ef067d535c60d2f210d0e3cdd37692b5f0e",
+        "scored": true
+      },
+      "frozen": true,
+      "deepgate": true,
+      "steps": {
+        "frozen": 88,
+        "deep_gate_L3_a0.75": 115
+      },
+      "pairing": {
+        "initial_state_and_two_view_pixels_exact": true,
+        "common_prefix_cpu_cuda_rng_exact": true,
+        "identical_physical_render_state_rgb_checks": 1,
+        "physical_equal_render_different_frames": 0,
+        "reject_at_equal_input_action_exact": true
+      },
+      "first_gate_step": 0,
+      "gate_score_minmax": [
+        0.420815572142601,
+        0.8033958077430725
+      ]
+    },
+    {
+      "case": {
+        "task_id": 9,
+        "base_task": "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate",
+        "language": "pick up the black bowl on the wooden cabinet and place it on the plate",
+        "policy_seed": 0,
+        "role": "development; previously accessed official pool; NOT independent confirmation",
+        "id": "t09_clean_i2",
+        "group": "Clean",
+        "subgroup": "Clean",
+        "init_index": 2,
+        "scored": true
+      },
+      "frozen": true,
+      "deepgate": true,
+      "steps": {
+        "frozen": 130,
+        "deep_gate_L3_a0.75": 127
+      },
+      "pairing": {
+        "initial_state_and_two_view_pixels_exact": true,
+        "common_prefix_cpu_cuda_rng_exact": true,
+        "identical_physical_render_state_rgb_checks": 83,
+        "physical_equal_render_different_frames": 0,
+        "reject_at_equal_input_action_exact": true
+      },
+      "first_gate_step": 82,
+      "gate_score_minmax": [
+        0.1800181344151497,
+        0.4878350496292114
+      ]
+    },
+    {
+      "case": {
+        "task_id": 9,
+        "base_task": "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate",
+        "language": "pick up the black bowl on the wooden cabinet and place it on the plate",
+        "policy_seed": 0,
+        "role": "development; previously accessed official pool; NOT independent confirmation",
+        "id": "t09_glass_blur_i1",
+        "group": "Sensor",
+        "subgroup": "glass_blur",
+        "init_index": 1,
+        "severity": 3,
+        "scored": true
+      },
+      "frozen": false,
+      "deepgate": false,
+      "steps": {
+        "frozen": 220,
+        "deep_gate_L3_a0.75": 220
+      },
+      "pairing": {
+        "initial_state_and_two_view_pixels_exact": true,
+        "common_prefix_cpu_cuda_rng_exact": true,
+        "identical_physical_render_state_rgb_checks": 1,
+        "physical_equal_render_different_frames": 0,
+        "reject_at_equal_input_action_exact": true
+      },
+      "first_gate_step": 0,
+      "gate_score_minmax": [
+        1.4700264632701874,
+        2.726489543914795
+      ]
+    },
+    {
+      "case": {
+        "task_id": 9,
+        "base_task": "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate",
+        "language": "pick up the black bowl on the wooden cabinet and place it on the plate",
+        "policy_seed": 0,
+        "role": "development; previously accessed official pool; NOT independent confirmation",
+        "id": "t09_motion_blur_i1",
+        "group": "Sensor",
+        "subgroup": "motion_blur",
+        "init_index": 1,
+        "severity": 3,
+        "scored": true
+      },
+      "frozen": false,
+      "deepgate": false,
+      "steps": {
+        "frozen": 220,
+        "deep_gate_L3_a0.75": 220
+      },
+      "pairing": {
+        "initial_state_and_two_view_pixels_exact": true,
+        "common_prefix_cpu_cuda_rng_exact": true,
+        "identical_physical_render_state_rgb_checks": 1,
+        "physical_equal_render_different_frames": 0,
+        "reject_at_equal_input_action_exact": true
+      },
+      "first_gate_step": 0,
+      "gate_score_minmax": [
+        0.470631867647171,
+        1.4768574237823486
+      ]
+    },
+    {
+      "case": {
+        "task_id": 9,
+        "base_task": "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate",
+        "language": "pick up the black bowl on the wooden cabinet and place it on the plate",
+        "policy_seed": 0,
+        "role": "development; previously accessed official pool; NOT independent confirmation",
+        "id": "t09_light_asset_i1",
+        "group": "Lighting",
+        "subgroup": "light_asset",
+        "init_index": 1,
+        "bddl": "libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate_light_5.bddl",
+        "bddl_sha256": "7c8029a55c08beb91f0c409da213770b8c97f06e9aad0fc0121f5801a1de9ff4",
+        "dev_case_id": "83326bf78cf7e67f0fc7696c",
+        "official_class": "Libero_Tabletop_Manipulation_tabletop_light_sync_modified_170",
+        "scene_settings": {
+          "scene_xml": "scenes/lights/tabletop_light_sync_modified_170.xml",
+          "scene_properties": {
+            "floor_style": "light-gray",
+            "wall_style": "light-gray-plaster"
+          }
+        },
+        "scene_sha256": "4eba7d8c28aad2613108f80ee12745efd47680b6211e18e6fe35b2826105f36f",
+        "scored": true
+      },
+      "frozen": true,
+      "deepgate": true,
+      "steps": {
+        "frozen": 147,
+        "deep_gate_L3_a0.75": 141
+      },
+      "pairing": {
+        "initial_state_and_two_view_pixels_exact": true,
+        "common_prefix_cpu_cuda_rng_exact": true,
+        "identical_physical_render_state_rgb_checks": 6,
+        "physical_equal_render_different_frames": 0,
+        "reject_at_equal_input_action_exact": true
+      },
+      "first_gate_step": 5,
+      "gate_score_minmax": [
+        0.2766822800040245,
+        0.5328218042850494
+      ]
+    },
+    {
+      "case": {
+        "task_id": 9,
+        "base_task": "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate",
+        "language": "pick up the black bowl on the wooden cabinet and place it on the plate",
+        "policy_seed": 0,
+        "role": "development; previously accessed official pool; NOT independent confirmation",
+        "id": "t09_scene_texture_i1",
+        "group": "Background",
+        "subgroup": "scene_texture",
+        "init_index": 1,
+        "bddl": "libero/libero/bddl_files/libero_spatial/pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate_tb_2.bddl",
+        "bddl_sha256": "ddd6a3de2ed1e95b58b0187813c488b8a86b428a72bd4b556d0be2fd6697e0de",
+        "dev_case_id": "127d45f4df2db7bc96805eba",
+        "official_class": "Libero_Tabletop_Manipulation_tabletop_table_CliffDesert006_AO_HIRES_Wall_canvas",
+        "scene_settings": {
+          "scene_xml": "scenes/tabletop_table_CliffDesert006_AO_HIRES.xml",
+          "scene_properties": {
+            "floor_style": "light-gray",
+            "wall_style": "canvas"
+          }
+        },
+        "scene_sha256": "dbab68c6cc518c7fa71d45ff7967a60e804d7cf5b95d64d0b97026721936bdec",
+        "scored": true
+      },
+      "frozen": true,
+      "deepgate": false,
+      "steps": {
+        "frozen": 133,
+        "deep_gate_L3_a0.75": 220
+      },
+      "pairing": {
+        "initial_state_and_two_view_pixels_exact": true,
+        "common_prefix_cpu_cuda_rng_exact": true,
+        "identical_physical_render_state_rgb_checks": 1,
+        "physical_equal_render_different_frames": 0,
+        "reject_at_equal_input_action_exact": true
+      },
+      "first_gate_step": 0,
+      "gate_score_minmax": [
+        0.4052664637565613,
+        0.902175173163414
+      ]
+    },
+    {
+      "case": {
+        "task_id": 0,
+        "base_task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+        "language": "pick up the black bowl between the plate and the ramekin and place it on the plate",
+        "policy_seed": 0,
+        "role": "development; previously accessed official pool; NOT independent confirmation",
+        "id": "t00_clean_i1_supplement",
+        "group": "Clean",
+        "subgroup": "Clean",
+        "init_index": 1,
+        "scored": false
+      },
+      "frozen": true,
+      "deepgate": true,
+      "steps": {
+        "frozen": 137,
+        "deep_gate_L3_a0.75": 137
+      },
+      "pairing": {
+        "initial_state_and_two_view_pixels_exact": true,
+        "common_prefix_cpu_cuda_rng_exact": true,
+        "identical_physical_render_state_rgb_checks": 137,
+        "physical_equal_render_different_frames": 0,
+        "reject_at_equal_input_action_exact": true
+      },
+      "first_gate_step": null,
+      "gate_score_minmax": [
+        0.21324004232883453,
+        0.4269319921731949
+      ]
+    }
+  ],
+  "preflight": {
+    "status": "PASS",
+    "conditions": [
+      {
+        "case_id": "t00_clean_i2",
+        "scored": true,
+        "optimized_action_exact_to_t0_diagnostic": true,
+        "accepted": false,
+        "call_counts": {
+          "encoder": 2,
+          "connector": 2,
+          "flow_noise": 1,
+          "denoise": 10,
+          "vlm_prefill": 1,
+          "expert_suffix": 10
+        },
+        "same_flow_rng": true
+      },
+      {
+        "case_id": "t00_motion_blur_i1",
+        "scored": true,
+        "optimized_action_exact_to_t0_diagnostic": true,
+        "accepted": true,
+        "call_counts": {
+          "encoder": 4,
+          "connector": 2,
+          "flow_noise": 1,
+          "denoise": 10,
+          "vlm_prefill": 1,
+          "expert_suffix": 10
+        },
+        "same_flow_rng": true
+      },
+      {
+        "case_id": "t00_gaussian_blur_i1",
+        "scored": true,
+        "optimized_action_exact_to_t0_diagnostic": true,
+        "accepted": true,
+        "call_counts": {
+          "encoder": 4,
+          "connector": 2,
+          "flow_noise": 1,
+          "denoise": 10,
+          "vlm_prefill": 1,
+          "expert_suffix": 10
+        },
+        "same_flow_rng": true
+      },
+      {
+        "case_id": "t00_light_asset_i1",
+        "scored": true,
+        "optimized_action_exact_to_t0_diagnostic": true,
+        "accepted": false,
+        "call_counts": {
+          "encoder": 2,
+          "connector": 2,
+          "flow_noise": 1,
+          "denoise": 10,
+          "vlm_prefill": 1,
+          "expert_suffix": 10
+        },
+        "same_flow_rng": true
+      },
+      {
+        "case_id": "t00_table_texture_i1",
+        "scored": true,
+        "optimized_action_exact_to_t0_diagnostic": true,
+        "accepted": true,
+        "call_counts": {
+          "encoder": 4,
+          "connector": 2,
+          "flow_noise": 1,
+          "denoise": 10,
+          "vlm_prefill": 1,
+          "expert_suffix": 10
+        },
+        "same_flow_rng": true
+      },
+      {
+        "case_id": "t01_clean_i2",
+        "scored": true,
+        "optimized_action_exact_to_t0_diagnostic": true,
+        "accepted": false,
+        "call_counts": {
+          "encoder": 2,
+          "connector": 2,
+          "flow_noise": 1,
+          "denoise": 10,
+          "vlm_prefill": 1,
+          "expert_suffix": 10
+        },
+        "same_flow_rng": true
+      },
+      {
+        "case_id": "t01_gaussian_blur_i1",
+        "scored": true,
+        "optimized_action_exact_to_t0_diagnostic": true,
+        "accepted": true,
+        "call_counts": {
+          "encoder": 4,
+          "connector": 2,
+          "flow_noise": 1,
+          "denoise": 10,
+          "vlm_prefill": 1,
+          "expert_suffix": 10
+        },
+        "same_flow_rng": true
+      },
+      {
+        "case_id": "t01_zoom_blur_i1",
+        "scored": true,
+        "optimized_action_exact_to_t0_diagnostic": true,
+        "accepted": true,
+        "call_counts": {
+          "encoder": 4,
+          "connector": 2,
+          "flow_noise": 1,
+          "denoise": 10,
+          "vlm_prefill": 1,
+          "expert_suffix": 10
+        },
+        "same_flow_rng": true
+      },
+      {
+        "case_id": "t01_light_asset_i1",
+        "scored": true,
+        "optimized_action_exact_to_t0_diagnostic": true,
+        "accepted": false,
+        "call_counts": {
+          "encoder": 2,
+          "connector": 2,
+          "flow_noise": 1,
+          "denoise": 10,
+          "vlm_prefill": 1,
+          "expert_suffix": 10
+        },
+        "same_flow_rng": true
+      },
+      {
+        "case_id": "t01_table_texture_i1",
+        "scored": true,
+        "optimized_action_exact_to_t0_diagnostic": true,
+        "accepted": true,
+        "call_counts": {
+          "encoder": 4,
+          "connector": 2,
+          "flow_noise": 1,
+          "denoise": 10,
+          "vlm_prefill": 1,
+          "expert_suffix": 10
+        },
+        "same_flow_rng": true
+      },
+      {
+        "case_id": "t02_clean_i2",
+        "scored": true,
+        "optimized_action_exact_to_t0_diagnostic": true,
+        "accepted": false,
+        "call_counts": {
+          "encoder": 2,
+          "connector": 2,
+          "flow_noise": 1,
+          "denoise": 10,
+          "vlm_prefill": 1,
+          "expert_suffix": 10
+        },
+        "same_flow_rng": true
+      },
+      {
+        "case_id": "t02_zoom_blur_i1",
+        "scored": true,
+        "optimized_action_exact_to_t0_diagnostic": true,
+        "accepted": true,
+        "call_counts": {
+          "encoder": 4,
+          "connector": 2,
+          "flow_noise": 1,
+          "denoise": 10,
+          "vlm_prefill": 1,
+          "expert_suffix": 10
+        },
+        "same_flow_rng": true
+      },
+      {
+        "case_id": "t02_fog_i1",
+        "scored": true,
+        "optimized_action_exact_to_t0_diagnostic": true,
+        "accepted": true,
+        "call_counts": {
+          "encoder": 4,
+          "connector": 2,
+          "flow_noise": 1,
+          "denoise": 10,
+          "vlm_prefill": 1,
+          "expert_suffix": 10
+        },
+        "same_flow_rng": true
+      },
+      {
+        "case_id": "t02_light_asset_i1",
+        "scored": true,
+        "optimized_action_exact_to_t0_diagnostic": true,
+        "accepted": false,
+        "call_counts": {
+          "encoder": 2,
+          "connector": 2,
+          "flow_noise": 1,
+          "denoise": 10,
+          "vlm_prefill": 1,
+          "expert_suffix": 10
+        },
+        "same_flow_rng": true
+      },
+      {
+        "case_id": "t02_table_texture_i1",
+        "scored": true,
+        "optimized_action_exact_to_t0_diagnostic": true,
+        "accepted": true,
+        "call_counts": {
+          "encoder": 4,
+          "connector": 2,
+          "flow_noise": 1,
+          "denoise": 10,
+          "vlm_prefill": 1,
+          "expert_suffix": 10
+        },
+        "same_flow_rng": true
+      },
+      {
+        "case_id": "t03_clean_i2",
+        "scored": true,
+        "optimized_action_exact_to_t0_diagnostic": true,
+        "accepted": false,
+        "call_counts": {
+          "encoder": 2,
+          "connector": 2,
+          "flow_noise": 1,
+          "denoise": 10,
+          "vlm_prefill": 1,
+          "expert_suffix": 10
+        },
+        "same_flow_rng": true
+      },
+      {
+        "case_id": "t03_fog_i1",
+        "scored": true,
+        "optimized_action_exact_to_t0_diagnostic": true,
+        "accepted": true,
+        "call_counts": {
+          "encoder": 4,
+          "connector": 2,
+          "flow_noise": 1,
+          "denoise": 10,
+          "vlm_prefill": 1,
+          "expert_suffix": 10
+        },
+        "same_flow_rng": true
+      },
+      {
+        "case_id": "t03_glass_blur_i1",
+        "scored": true,
+        "optimized_action_exact_to_t0_diagnostic": true,
+        "accepted": true,
+        "call_counts": {
+          "encoder": 4,
+          "connector": 2,
+          "flow_noise": 1,
+          "denoise": 10,
+          "vlm_prefill": 1,
+          "expert_suffix": 10
+        },
+        "same_flow_rng": true
+      },
+      {
+        "case_id": "t03_light_asset_i1",
+        "scored": true,
+        "optimized_action_exact_to_t0_diagnostic": true,
+        "accepted": false,
+        "call_counts": {
+          "encoder": 2,
+          "connector": 2,
+          "flow_noise": 1,
+          "denoise": 10,
+          "vlm_prefill": 1,
+          "expert_suffix": 10
+        },
+        "same_flow_rng": true
+      },
+      {
+        "case_id": "t03_table_texture_i1",
+        "scored": true,
+        "optimized_action_exact_to_t0_diagnostic": true,
+        "accepted": true,
+        "call_counts": {
+          "encoder": 4,
+          "connector": 2,
+          "flow_noise": 1,
+          "denoise": 10,
+          "vlm_prefill": 1,
+          "expert_suffix": 10
+        },
+        "same_flow_rng": true
+      },
+      {
+        "case_id": "t04_clean_i2",
+        "scored": true,
+        "optimized_action_exact_to_t0_diagnostic": true,
+        "accepted": false,
+        "call_counts": {
+          "encoder": 2,
+          "connector": 2,
+          "flow_noise": 1,
+          "denoise": 10,
+          "vlm_prefill": 1,
+          "expert_suffix": 10
+        },
+        "same_flow_rng": true
+      },
+      {
+        "case_id": "t04_glass_blur_i1",
+        "scored": true,
+        "optimized_action_exact_to_t0_diagnostic": true,
+        "accepted": true,
+        "call_counts": {
+          "encoder": 4,
+          "connector": 2,
+          "flow_noise": 1,
+          "denoise": 10,
+          "vlm_prefill": 1,
+          "expert_suffix": 10
+        },
+        "same_flow_rng": true
+      },
+      {
+        "case_id": "t04_motion_blur_i1",
+        "scored": true,
+        "optimized_action_exact_to_t0_diagnostic": true,
+        "accepted": true,
+        "call_counts": {
+          "encoder": 4,
+          "connector": 2,
+          "flow_noise": 1,
+          "denoise": 10,
+          "vlm_prefill": 1,
+          "expert_suffix": 10
+        },
+        "same_flow_rng": true
+      },
+      {
+        "case_id": "t04_light_asset_i1",
+        "scored": true,
+        "optimized_action_exact_to_t0_diagnostic": true,
+        "accepted": false,
+        "call_counts": {
+          "encoder": 2,
+          "connector": 2,
+          "flow_noise": 1,
+          "denoise": 10,
+          "vlm_prefill": 1,
+          "expert_suffix": 10
+        },
+        "same_flow_rng": true
+      },
+      {
+        "case_id": "t04_scene_texture_i1",
+        "scored": true,
+        "optimized_action_exact_to_t0_diagnostic": true,
+        "accepted": true,
+        "call_counts": {
+          "encoder": 4,
+          "connector": 2,
+          "flow_noise": 1,
+          "denoise": 10,
+          "vlm_prefill": 1,
+          "expert_suffix": 10
+        },
+        "same_flow_rng": true
+      },
+      {
+        "case_id": "t05_clean_i2",
+        "scored": true,
+        "optimized_action_exact_to_t0_diagnostic": true,
+        "accepted": false,
+        "call_counts": {
+          "encoder": 2,
+          "connector": 2,
+          "flow_noise": 1,
+          "denoise": 10,
+          "vlm_prefill": 1,
+          "expert_suffix": 10
+        },
+        "same_flow_rng": true
+      },
+      {
+        "case_id": "t05_motion_blur_i1",
+        "scored": true,
+        "optimized_action_exact_to_t0_diagnostic": true,
+        "accepted": true,
+        "call_counts": {
+          "encoder": 4,
+          "connector": 2,
+          "flow_noise": 1,
+          "denoise": 10,
+          "vlm_prefill": 1,
+          "expert_suffix": 10
+        },
+        "same_flow_rng": true
+      },
+      {
+        "case_id": "t05_gaussian_blur_i1",
+        "scored": true,
+        "optimized_action_exact_to_t0_diagnostic": true,
+        "accepted": true,
+        "call_counts": {
+          "encoder": 4,
+          "connector": 2,
+          "flow_noise": 1,
+          "denoise": 10,
+          "vlm_prefill": 1,
+          "expert_suffix": 10
+        },
+        "same_flow_rng": true
+      },
+      {
+        "case_id": "t05_light_asset_i1",
+        "scored": true,
+        "optimized_action_exact_to_t0_diagnostic": true,
+        "accepted": false,
+        "call_counts": {
+          "encoder": 2,
+          "connector": 2,
+          "flow_noise": 1,
+          "denoise": 10,
+          "vlm_prefill": 1,
+          "expert_suffix": 10
+        },
+        "same_flow_rng": true
+      },
+      {
+        "case_id": "t05_scene_texture_i1",
+        "scored": true,
+        "optimized_action_exact_to_t0_diagnostic": true,
+        "accepted": true,
+        "call_counts": {
+          "encoder": 4,
+          "connector": 2,
+          "flow_noise": 1,
+          "denoise": 10,
+          "vlm_prefill": 1,
+          "expert_suffix": 10
+        },
+        "same_flow_rng": true
+      },
+      {
+        "case_id": "t06_clean_i2",
+        "scored": true,
+        "optimized_action_exact_to_t0_diagnostic": true,
+        "accepted": false,
+        "call_counts": {
+          "encoder": 2,
+          "connector": 2,
+          "flow_noise": 1,
+          "denoise": 10,
+          "vlm_prefill": 1,
+          "expert_suffix": 10
+        },
+        "same_flow_rng": true
+      },
+      {
+        "case_id": "t06_gaussian_blur_i1",
+        "scored": true,
+        "optimized_action_exact_to_t0_diagnostic": true,
+        "accepted": true,
+        "call_counts": {
+          "encoder": 4,
+          "connector": 2,
+          "flow_noise": 1,
+          "denoise": 10,
+          "vlm_prefill": 1,
+          "expert_suffix": 10
+        },
+        "same_flow_rng": true
+      },
+      {
+        "case_id": "t06_zoom_blur_i1",
+        "scored": true,
+        "optimized_action_exact_to_t0_diagnostic": true,
+        "accepted": true,
+        "call_counts": {
+          "encoder": 4,
+          "connector": 2,
+          "flow_noise": 1,
+          "denoise": 10,
+          "vlm_prefill": 1,
+          "expert_suffix": 10
+        },
+        "same_flow_rng": true
+      },
+      {
+        "case_id": "t06_light_asset_i1",
+        "scored": true,
+        "optimized_action_exact_to_t0_diagnostic": true,
+        "accepted": false,
+        "call_counts": {
+          "encoder": 2,
+          "connector": 2,
+          "flow_noise": 1,
+          "denoise": 10,
+          "vlm_prefill": 1,
+          "expert_suffix": 10
+        },
+        "same_flow_rng": true
+      },
+      {
+        "case_id": "t06_scene_texture_i1",
+        "scored": true,
+        "optimized_action_exact_to_t0_diagnostic": true,
+        "accepted": true,
+        "call_counts": {
+          "encoder": 4,
+          "connector": 2,
+          "flow_noise": 1,
+          "denoise": 10,
+          "vlm_prefill": 1,
+          "expert_suffix": 10
+        },
+        "same_flow_rng": true
+      },
+      {
+        "case_id": "t07_clean_i2",
+        "scored": true,
+        "optimized_action_exact_to_t0_diagnostic": true,
+        "accepted": false,
+        "call_counts": {
+          "encoder": 2,
+          "connector": 2,
+          "flow_noise": 1,
+          "denoise": 10,
+          "vlm_prefill": 1,
+          "expert_suffix": 10
+        },
+        "same_flow_rng": true
+      },
+      {
+        "case_id": "t07_zoom_blur_i1",
+        "scored": true,
+        "optimized_action_exact_to_t0_diagnostic": true,
+        "accepted": true,
+        "call_counts": {
+          "encoder": 4,
+          "connector": 2,
+          "flow_noise": 1,
+          "denoise": 10,
+          "vlm_prefill": 1,
+          "expert_suffix": 10
+        },
+        "same_flow_rng": true
+      },
+      {
+        "case_id": "t07_fog_i1",
+        "scored": true,
+        "optimized_action_exact_to_t0_diagnostic": true,
+        "accepted": true,
+        "call_counts": {
+          "encoder": 4,
+          "connector": 2,
+          "flow_noise": 1,
+          "denoise": 10,
+          "vlm_prefill": 1,
+          "expert_suffix": 10
+        },
+        "same_flow_rng": true
+      },
+      {
+        "case_id": "t07_light_asset_i1",
+        "scored": true,
+        "optimized_action_exact_to_t0_diagnostic": true,
+        "accepted": false,
+        "call_counts": {
+          "encoder": 2,
+          "connector": 2,
+          "flow_noise": 1,
+          "denoise": 10,
+          "vlm_prefill": 1,
+          "expert_suffix": 10
+        },
+        "same_flow_rng": true
+      },
+      {
+        "case_id": "t07_scene_texture_i1",
+        "scored": true,
+        "optimized_action_exact_to_t0_diagnostic": true,
+        "accepted": false,
+        "call_counts": {
+          "encoder": 2,
+          "connector": 2,
+          "flow_noise": 1,
+          "denoise": 10,
+          "vlm_prefill": 1,
+          "expert_suffix": 10
+        },
+        "same_flow_rng": true
+      },
+      {
+        "case_id": "t08_clean_i2",
+        "scored": true,
+        "optimized_action_exact_to_t0_diagnostic": true,
+        "accepted": false,
+        "call_counts": {
+          "encoder": 2,
+          "connector": 2,
+          "flow_noise": 1,
+          "denoise": 10,
+          "vlm_prefill": 1,
+          "expert_suffix": 10
+        },
+        "same_flow_rng": true
+      },
+      {
+        "case_id": "t08_fog_i1",
+        "scored": true,
+        "optimized_action_exact_to_t0_diagnostic": true,
+        "accepted": true,
+        "call_counts": {
+          "encoder": 4,
+          "connector": 2,
+          "flow_noise": 1,
+          "denoise": 10,
+          "vlm_prefill": 1,
+          "expert_suffix": 10
+        },
+        "same_flow_rng": true
+      },
+      {
+        "case_id": "t08_glass_blur_i1",
+        "scored": true,
+        "optimized_action_exact_to_t0_diagnostic": true,
+        "accepted": true,
+        "call_counts": {
+          "encoder": 4,
+          "connector": 2,
+          "flow_noise": 1,
+          "denoise": 10,
+          "vlm_prefill": 1,
+          "expert_suffix": 10
+        },
+        "same_flow_rng": true
+      },
+      {
+        "case_id": "t08_light_asset_i1",
+        "scored": true,
+        "optimized_action_exact_to_t0_diagnostic": true,
+        "accepted": false,
+        "call_counts": {
+          "encoder": 2,
+          "connector": 2,
+          "flow_noise": 1,
+          "denoise": 10,
+          "vlm_prefill": 1,
+          "expert_suffix": 10
+        },
+        "same_flow_rng": true
+      },
+      {
+        "case_id": "t08_table_texture_i1",
+        "scored": true,
+        "optimized_action_exact_to_t0_diagnostic": true,
+        "accepted": true,
+        "call_counts": {
+          "encoder": 4,
+          "connector": 2,
+          "flow_noise": 1,
+          "denoise": 10,
+          "vlm_prefill": 1,
+          "expert_suffix": 10
+        },
+        "same_flow_rng": true
+      },
+      {
+        "case_id": "t09_clean_i2",
+        "scored": true,
+        "optimized_action_exact_to_t0_diagnostic": true,
+        "accepted": false,
+        "call_counts": {
+          "encoder": 2,
+          "connector": 2,
+          "flow_noise": 1,
+          "denoise": 10,
+          "vlm_prefill": 1,
+          "expert_suffix": 10
+        },
+        "same_flow_rng": true
+      },
+      {
+        "case_id": "t09_glass_blur_i1",
+        "scored": true,
+        "optimized_action_exact_to_t0_diagnostic": true,
+        "accepted": true,
+        "call_counts": {
+          "encoder": 4,
+          "connector": 2,
+          "flow_noise": 1,
+          "denoise": 10,
+          "vlm_prefill": 1,
+          "expert_suffix": 10
+        },
+        "same_flow_rng": true
+      },
+      {
+        "case_id": "t09_motion_blur_i1",
+        "scored": true,
+        "optimized_action_exact_to_t0_diagnostic": true,
+        "accepted": true,
+        "call_counts": {
+          "encoder": 4,
+          "connector": 2,
+          "flow_noise": 1,
+          "denoise": 10,
+          "vlm_prefill": 1,
+          "expert_suffix": 10
+        },
+        "same_flow_rng": true
+      },
+      {
+        "case_id": "t09_light_asset_i1",
+        "scored": true,
+        "optimized_action_exact_to_t0_diagnostic": true,
+        "accepted": false,
+        "call_counts": {
+          "encoder": 2,
+          "connector": 2,
+          "flow_noise": 1,
+          "denoise": 10,
+          "vlm_prefill": 1,
+          "expert_suffix": 10
+        },
+        "same_flow_rng": true
+      },
+      {
+        "case_id": "t09_scene_texture_i1",
+        "scored": true,
+        "optimized_action_exact_to_t0_diagnostic": true,
+        "accepted": true,
+        "call_counts": {
+          "encoder": 4,
+          "connector": 2,
+          "flow_noise": 1,
+          "denoise": 10,
+          "vlm_prefill": 1,
+          "expert_suffix": 10
+        },
+        "same_flow_rng": true
+      },
+      {
+        "case_id": "t00_clean_i1_supplement",
+        "scored": false,
+        "optimized_action_exact_to_t0_diagnostic": null,
+        "accepted": false,
+        "call_counts": {
+          "encoder": 2,
+          "connector": 2,
+          "flow_noise": 1,
+          "denoise": 10,
+          "vlm_prefill": 1,
+          "expert_suffix": 10
+        },
+        "same_flow_rng": true
+      }
+    ],
+    "branch_checks": [
+      {
+        "group": "Clean",
+        "forced_reject_equals_native": true,
+        "forced_accept_equals_v1": true,
+        "native_counts": {
+          "encoder": 2,
+          "connector": 2,
+          "flow_noise": 1,
+          "denoise": 10,
+          "vlm_prefill": 1,
+          "expert_suffix": 10
+        },
+        "reject_counts": {
+          "encoder": 2,
+          "connector": 2,
+          "flow_noise": 1,
+          "denoise": 10,
+          "vlm_prefill": 1,
+          "expert_suffix": 10
+        },
+        "accept_counts": {
+          "encoder": 4,
+          "connector": 2,
+          "flow_noise": 1,
+          "denoise": 10,
+          "vlm_prefill": 1,
+          "expert_suffix": 10
+        }
+      },
+      {
+        "group": "Sensor",
+        "forced_reject_equals_native": true,
+        "forced_accept_equals_v1": true,
+        "native_counts": {
+          "encoder": 2,
+          "connector": 2,
+          "flow_noise": 1,
+          "denoise": 10,
+          "vlm_prefill": 1,
+          "expert_suffix": 10
+        },
+        "reject_counts": {
+          "encoder": 2,
+          "connector": 2,
+          "flow_noise": 1,
+          "denoise": 10,
+          "vlm_prefill": 1,
+          "expert_suffix": 10
+        },
+        "accept_counts": {
+          "encoder": 4,
+          "connector": 2,
+          "flow_noise": 1,
+          "denoise": 10,
+          "vlm_prefill": 1,
+          "expert_suffix": 10
+        }
+      },
+      {
+        "group": "Lighting",
+        "forced_reject_equals_native": true,
+        "forced_accept_equals_v1": true,
+        "native_counts": {
+          "encoder": 2,
+          "connector": 2,
+          "flow_noise": 1,
+          "denoise": 10,
+          "vlm_prefill": 1,
+          "expert_suffix": 10
+        },
+        "reject_counts": {
+          "encoder": 2,
+          "connector": 2,
+          "flow_noise": 1,
+          "denoise": 10,
+          "vlm_prefill": 1,
+          "expert_suffix": 10
+        },
+        "accept_counts": {
+          "encoder": 4,
+          "connector": 2,
+          "flow_noise": 1,
+          "denoise": 10,
+          "vlm_prefill": 1,
+          "expert_suffix": 10
+        }
+      },
+      {
+        "group": "Background",
+        "forced_reject_equals_native": true,
+        "forced_accept_equals_v1": true,
+        "native_counts": {
+          "encoder": 2,
+          "connector": 2,
+          "flow_noise": 1,
+          "denoise": 10,
+          "vlm_prefill": 1,
+          "expert_suffix": 10
+        },
+        "reject_counts": {
+          "encoder": 2,
+          "connector": 2,
+          "flow_noise": 1,
+          "denoise": 10,
+          "vlm_prefill": 1,
+          "expert_suffix": 10
+        },
+        "accept_counts": {
+          "encoder": 4,
+          "connector": 2,
+          "flow_noise": 1,
+          "denoise": 10,
+          "vlm_prefill": 1,
+          "expert_suffix": 10
+        }
+      }
+    ],
+    "source_fingerprint": "314de9198b38791ae67a5ffa2ac163964bd7da84fd649f068d6c096a54c577a6",
+    "no_decoder_rerun": true,
+    "frozen_and_v1_forced_branch_actions_bit_exact": true,
+    "dynamic_off_on_off_three_step_queue_and_rng_exact": true,
+    "weights_unchanged": true,
+    "all_frozen": true,
+    "actual_encoder_calls_reject": 2,
+    "actual_encoder_calls_accept": 4,
+    "connector_calls": 2,
+    "vlm_prefill": 1,
+    "flow_steps": 10,
+    "native_sources": {
+      "/hy-tmp/upstream_repro/harness_pkg/roboeval/policies/smolvla.py": "749fc880851a791c2c01f89b853fc7a4384dfc882b93f81ab617bd932de97d4b",
+      "/hy-tmp/lerobot_community_revision/lerobot/common/policies/smolvla/modeling_smolvla.py": "66b69b8fa8ae7f2a53d514b8366d17498804452a5d62cf168a4bd018a37caf7c",
+      "/hy-tmp/lerobot_community_revision/lerobot/common/policies/smolvla/smolvlm_with_expert.py": "10a3c3cd28a7526dd55681a0d5c74631284f3c1dfa4d9ad3a9194ee1dfc6b6a3",
+      "/hy-tmp/smolvla_venv/lib/python3.10/site-packages/transformers/models/smolvlm/modeling_smolvlm.py": "2ea6741e7861d53c751a9c66960963bff81d3b6650df0ea99ca5ca9e3a3f90fb"
+    },
+    "bounded_rgb_guard_identity_one_lsb_repair_large_change_reject_and_state_isolation": true
+  },
+  "latency": {
+    "rounds": 5,
+    "rows": [
+      {
+        "group": "Clean",
+        "case_id": "t00_clean_i2",
+        "arm": "frozen",
+        "round": 0,
+        "ms": 598.4541749930941,
+        "peak_allocated_mib": 1207.076171875,
+        "peak_reserved_mib": 2178.0,
+        "gate_accepted": null
+      },
+      {
+        "group": "Clean",
+        "case_id": "t00_clean_i2",
+        "arm": "deep_gate_L3_a0.75",
+        "round": 0,
+        "ms": 603.1382959918119,
+        "peak_allocated_mib": 1207.97998046875,
+        "peak_reserved_mib": 2178.0,
+        "gate_accepted": false
+      },
+      {
+        "group": "Lighting",
+        "case_id": "t00_light_asset_i1",
+        "arm": "frozen",
+        "round": 0,
+        "ms": 601.6979509731755,
+        "peak_allocated_mib": 1207.076171875,
+        "peak_reserved_mib": 2178.0,
+        "gate_accepted": null
+      },
+      {
+        "group": "Lighting",
+        "case_id": "t00_light_asset_i1",
+        "arm": "deep_gate_L3_a0.75",
+        "round": 0,
+        "ms": 602.7689019683748,
+        "peak_allocated_mib": 1207.97998046875,
+        "peak_reserved_mib": 2178.0,
+        "gate_accepted": false
+      },
+      {
+        "group": "Background",
+        "case_id": "t00_table_texture_i1",
+        "arm": "frozen",
+        "round": 0,
+        "ms": 602.1934839664027,
+        "peak_allocated_mib": 1207.076171875,
+        "peak_reserved_mib": 2178.0,
+        "gate_accepted": null
+      },
+      {
+        "group": "Background",
+        "case_id": "t00_table_texture_i1",
+        "arm": "deep_gate_L3_a0.75",
+        "round": 0,
+        "ms": 622.6855320273899,
+        "peak_allocated_mib": 1208.50830078125,
+        "peak_reserved_mib": 2178.0,
+        "gate_accepted": true
+      },
+      {
+        "group": "Sensor",
+        "case_id": "t00_motion_blur_i1",
+        "arm": "frozen",
+        "round": 0,
+        "ms": 600.1046239980496,
+        "peak_allocated_mib": 1207.076171875,
+        "peak_reserved_mib": 2178.0,
+        "gate_accepted": null
+      },
+      {
+        "group": "Sensor",
+        "case_id": "t00_motion_blur_i1",
+        "arm": "deep_gate_L3_a0.75",
+        "round": 0,
+        "ms": 623.2394509715959,
+        "peak_allocated_mib": 1208.50830078125,
+        "peak_reserved_mib": 2178.0,
+        "gate_accepted": true
+      },
+      {
+        "group": "Clean",
+        "case_id": "t00_clean_i2",
+        "arm": "deep_gate_L3_a0.75",
+        "round": 1,
+        "ms": 603.7526010186411,
+        "peak_allocated_mib": 1207.97998046875,
+        "peak_reserved_mib": 2178.0,
+        "gate_accepted": false
+      },
+      {
+        "group": "Lighting",
+        "case_id": "t00_light_asset_i1",
+        "arm": "frozen",
+        "round": 1,
+        "ms": 608.6594960070215,
+        "peak_allocated_mib": 1207.076171875,
+        "peak_reserved_mib": 2178.0,
+        "gate_accepted": null
+      },
+      {
+        "group": "Lighting",
+        "case_id": "t00_light_asset_i1",
+        "arm": "deep_gate_L3_a0.75",
+        "round": 1,
+        "ms": 605.5446759564802,
+        "peak_allocated_mib": 1207.97998046875,
+        "peak_reserved_mib": 2178.0,
+        "gate_accepted": false
+      },
+      {
+        "group": "Background",
+        "case_id": "t00_table_texture_i1",
+        "arm": "frozen",
+        "round": 1,
+        "ms": 606.4030150300823,
+        "peak_allocated_mib": 1207.076171875,
+        "peak_reserved_mib": 2178.0,
+        "gate_accepted": null
+      },
+      {
+        "group": "Background",
+        "case_id": "t00_table_texture_i1",
+        "arm": "deep_gate_L3_a0.75",
+        "round": 1,
+        "ms": 625.9134490392171,
+        "peak_allocated_mib": 1208.50830078125,
+        "peak_reserved_mib": 2178.0,
+        "gate_accepted": true
+      },
+      {
+        "group": "Sensor",
+        "case_id": "t00_motion_blur_i1",
+        "arm": "frozen",
+        "round": 1,
+        "ms": 600.6862220237963,
+        "peak_allocated_mib": 1207.076171875,
+        "peak_reserved_mib": 2178.0,
+        "gate_accepted": null
+      },
+      {
+        "group": "Sensor",
+        "case_id": "t00_motion_blur_i1",
+        "arm": "deep_gate_L3_a0.75",
+        "round": 1,
+        "ms": 622.8593030245975,
+        "peak_allocated_mib": 1208.50830078125,
+        "peak_reserved_mib": 2178.0,
+        "gate_accepted": true
+      },
+      {
+        "group": "Clean",
+        "case_id": "t00_clean_i2",
+        "arm": "frozen",
+        "round": 1,
+        "ms": 601.2640739791095,
+        "peak_allocated_mib": 1207.076171875,
+        "peak_reserved_mib": 2178.0,
+        "gate_accepted": null
+      },
+      {
+        "group": "Lighting",
+        "case_id": "t00_light_asset_i1",
+        "arm": "frozen",
+        "round": 2,
+        "ms": 601.3741880306043,
+        "peak_allocated_mib": 1207.076171875,
+        "peak_reserved_mib": 2178.0,
+        "gate_accepted": null
+      },
+      {
+        "group": "Lighting",
+        "case_id": "t00_light_asset_i1",
+        "arm": "deep_gate_L3_a0.75",
+        "round": 2,
+        "ms": 598.8831020076759,
+        "peak_allocated_mib": 1207.97998046875,
+        "peak_reserved_mib": 2178.0,
+        "gate_accepted": false
+      },
+      {
+        "group": "Background",
+        "case_id": "t00_table_texture_i1",
+        "arm": "frozen",
+        "round": 2,
+        "ms": 601.937667990569,
+        "peak_allocated_mib": 1207.076171875,
+        "peak_reserved_mib": 2178.0,
+        "gate_accepted": null
+      },
+      {
+        "group": "Background",
+        "case_id": "t00_table_texture_i1",
+        "arm": "deep_gate_L3_a0.75",
+        "round": 2,
+        "ms": 620.2080520452,
+        "peak_allocated_mib": 1208.50830078125,
+        "peak_reserved_mib": 2178.0,
+        "gate_accepted": true
+      },
+      {
+        "group": "Sensor",
+        "case_id": "t00_motion_blur_i1",
+        "arm": "frozen",
+        "round": 2,
+        "ms": 602.8634560061619,
+        "peak_allocated_mib": 1207.076171875,
+        "peak_reserved_mib": 2178.0,
+        "gate_accepted": null
+      },
+      {
+        "group": "Sensor",
+        "case_id": "t00_motion_blur_i1",
+        "arm": "deep_gate_L3_a0.75",
+        "round": 2,
+        "ms": 624.0708850091323,
+        "peak_allocated_mib": 1208.50830078125,
+        "peak_reserved_mib": 2178.0,
+        "gate_accepted": true
+      },
+      {
+        "group": "Clean",
+        "case_id": "t00_clean_i2",
+        "arm": "frozen",
+        "round": 2,
+        "ms": 599.1933529730886,
+        "peak_allocated_mib": 1207.076171875,
+        "peak_reserved_mib": 2178.0,
+        "gate_accepted": null
+      },
+      {
+        "group": "Clean",
+        "case_id": "t00_clean_i2",
+        "arm": "deep_gate_L3_a0.75",
+        "round": 2,
+        "ms": 601.1198430205695,
+        "peak_allocated_mib": 1207.97998046875,
+        "peak_reserved_mib": 2178.0,
+        "gate_accepted": false
+      },
+      {
+        "group": "Lighting",
+        "case_id": "t00_light_asset_i1",
+        "arm": "deep_gate_L3_a0.75",
+        "round": 3,
+        "ms": 602.319592027925,
+        "peak_allocated_mib": 1207.97998046875,
+        "peak_reserved_mib": 2178.0,
+        "gate_accepted": false
+      },
+      {
+        "group": "Background",
+        "case_id": "t00_table_texture_i1",
+        "arm": "frozen",
+        "round": 3,
+        "ms": 599.2439250112511,
+        "peak_allocated_mib": 1207.076171875,
+        "peak_reserved_mib": 2178.0,
+        "gate_accepted": null
+      },
+      {
+        "group": "Background",
+        "case_id": "t00_table_texture_i1",
+        "arm": "deep_gate_L3_a0.75",
+        "round": 3,
+        "ms": 625.4582260153256,
+        "peak_allocated_mib": 1208.50830078125,
+        "peak_reserved_mib": 2178.0,
+        "gate_accepted": true
+      },
+      {
+        "group": "Sensor",
+        "case_id": "t00_motion_blur_i1",
+        "arm": "frozen",
+        "round": 3,
+        "ms": 599.8067689943127,
+        "peak_allocated_mib": 1207.076171875,
+        "peak_reserved_mib": 2178.0,
+        "gate_accepted": null
+      },
+      {
+        "group": "Sensor",
+        "case_id": "t00_motion_blur_i1",
+        "arm": "deep_gate_L3_a0.75",
+        "round": 3,
+        "ms": 620.2293490059674,
+        "peak_allocated_mib": 1208.50830078125,
+        "peak_reserved_mib": 2178.0,
+        "gate_accepted": true
+      },
+      {
+        "group": "Clean",
+        "case_id": "t00_clean_i2",
+        "arm": "frozen",
+        "round": 3,
+        "ms": 600.667712977156,
+        "peak_allocated_mib": 1207.076171875,
+        "peak_reserved_mib": 2178.0,
+        "gate_accepted": null
+      },
+      {
+        "group": "Clean",
+        "case_id": "t00_clean_i2",
+        "arm": "deep_gate_L3_a0.75",
+        "round": 3,
+        "ms": 602.0746469730511,
+        "peak_allocated_mib": 1207.97998046875,
+        "peak_reserved_mib": 2178.0,
+        "gate_accepted": false
+      },
+      {
+        "group": "Lighting",
+        "case_id": "t00_light_asset_i1",
+        "arm": "frozen",
+        "round": 3,
+        "ms": 604.6265019685961,
+        "peak_allocated_mib": 1207.076171875,
+        "peak_reserved_mib": 2178.0,
+        "gate_accepted": null
+      },
+      {
+        "group": "Background",
+        "case_id": "t00_table_texture_i1",
+        "arm": "frozen",
+        "round": 4,
+        "ms": 603.4191640210338,
+        "peak_allocated_mib": 1207.076171875,
+        "peak_reserved_mib": 2178.0,
+        "gate_accepted": null
+      },
+      {
+        "group": "Background",
+        "case_id": "t00_table_texture_i1",
+        "arm": "deep_gate_L3_a0.75",
+        "round": 4,
+        "ms": 620.4483440378681,
+        "peak_allocated_mib": 1208.50830078125,
+        "peak_reserved_mib": 2178.0,
+        "gate_accepted": true
+      },
+      {
+        "group": "Sensor",
+        "case_id": "t00_motion_blur_i1",
+        "arm": "frozen",
+        "round": 4,
+        "ms": 601.271461986471,
+        "peak_allocated_mib": 1207.076171875,
+        "peak_reserved_mib": 2178.0,
+        "gate_accepted": null
+      },
+      {
+        "group": "Sensor",
+        "case_id": "t00_motion_blur_i1",
+        "arm": "deep_gate_L3_a0.75",
+        "round": 4,
+        "ms": 620.9408299764618,
+        "peak_allocated_mib": 1208.50830078125,
+        "peak_reserved_mib": 2178.0,
+        "gate_accepted": true
+      },
+      {
+        "group": "Clean",
+        "case_id": "t00_clean_i2",
+        "arm": "frozen",
+        "round": 4,
+        "ms": 598.5106709995307,
+        "peak_allocated_mib": 1207.076171875,
+        "peak_reserved_mib": 2178.0,
+        "gate_accepted": null
+      },
+      {
+        "group": "Clean",
+        "case_id": "t00_clean_i2",
+        "arm": "deep_gate_L3_a0.75",
+        "round": 4,
+        "ms": 602.0404979935847,
+        "peak_allocated_mib": 1207.97998046875,
+        "peak_reserved_mib": 2178.0,
+        "gate_accepted": false
+      },
+      {
+        "group": "Lighting",
+        "case_id": "t00_light_asset_i1",
+        "arm": "frozen",
+        "round": 4,
+        "ms": 600.8169960114174,
+        "peak_allocated_mib": 1207.076171875,
+        "peak_reserved_mib": 2178.0,
+        "gate_accepted": null
+      },
+      {
+        "group": "Lighting",
+        "case_id": "t00_light_asset_i1",
+        "arm": "deep_gate_L3_a0.75",
+        "round": 4,
+        "ms": 600.9752720128745,
+        "peak_allocated_mib": 1207.97998046875,
+        "peak_reserved_mib": 2178.0,
+        "gate_accepted": false
+      }
+    ],
+    "groups": {
+      "Clean": {
+        "median_ms": {
+          "frozen": 599.1933529730886,
+          "deep_gate_L3_a0.75": 602.0746469730511
+        },
+        "relative": 1.0048086214335756,
+        "peak_allocated_mib": {
+          "frozen": 1207.076171875,
+          "deep_gate_L3_a0.75": 1207.97998046875
+        },
+        "gate_decisions": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ]
+      },
+      "Lighting": {
+        "median_ms": {
+          "frozen": 601.6979509731755,
+          "deep_gate_L3_a0.75": 602.319592027925
+        },
+        "relative": 1.0010331447094742,
+        "peak_allocated_mib": {
+          "frozen": 1207.076171875,
+          "deep_gate_L3_a0.75": 1207.97998046875
+        },
+        "gate_decisions": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ]
+      },
+      "Background": {
+        "median_ms": {
+          "frozen": 602.1934839664027,
+          "deep_gate_L3_a0.75": 622.6855320273899
+        },
+        "relative": 1.034029009955429,
+        "peak_allocated_mib": {
+          "frozen": 1207.076171875,
+          "deep_gate_L3_a0.75": 1208.50830078125
+        },
+        "gate_decisions": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      "Sensor": {
+        "median_ms": {
+          "frozen": 600.6862220237963,
+          "deep_gate_L3_a0.75": 622.8593030245975
+        },
+        "relative": 1.036912917573,
+        "peak_allocated_mib": {
+          "frozen": 1207.076171875,
+          "deep_gate_L3_a0.75": 1208.50830078125
+        },
+        "gate_decisions": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ]
+      }
+    },
+    "scope": "end-to-end native actor.act including CPU preprocessing, device transfer, actual gate/stats, connectors, one VLM prefix and Flow10; synchronized CUDA; episode reset/seeding/adapter construction excluded",
+    "representative_selection": "first manifest case per category, before current outcomes; actual gate decision, never forced",
+    "instrumentation": "no call-count mocks or full cache-pixel checks during timing; same actual evaluation adapter"
+  },
+  "raw_sha256": {
+    "t00_clean_i2": "88a8ed9df5dbe76632b4db9c763ba021af4abeb73f3c41a775289fce9f26d141",
+    "t00_motion_blur_i1": "86eaf5b962a86a3849243f0151ff6fd5d1a735c59fb4d98aab9d1aa689d5441b",
+    "t00_gaussian_blur_i1": "117a3cdc5097084bc3377ceeb08dfa705854488c8362b468529ea3e32b4627a1",
+    "t00_light_asset_i1": "26c5deb289324de25051cf9aed9613ee6cccc80ce88caea8bb11014b403efd65",
+    "t00_table_texture_i1": "ff51b8d914053814fb4d6dc24ca434af23b45d8a1c8b8802d169d2a0e3faf8bf",
+    "t01_clean_i2": "e38d4ba9a1a4a6b8a31a4e2c310cc4639b7846b509f8f79ae085d3c287d3019c",
+    "t01_gaussian_blur_i1": "9082ca72b9c8bd9fa231656e96773b4d577d883dfa97d2d56ef68696c09506bb",
+    "t01_zoom_blur_i1": "bdac21856fb65d1e85ee4c5ad6bf135ec7b610e0947e34df0975fe0f5a4411ab",
+    "t01_light_asset_i1": "f0b2beaef0fc91c4c1af7a2f83fa8bc8184dd1a327d0b4f6bd2d7fe1b5ab27a6",
+    "t01_table_texture_i1": "f4f0e7bd29b6dee6fb766efe8c9f6e892584416440916b430db5e521033b0ed9",
+    "t02_clean_i2": "1ee078b602ff69cc2f828b9fdddb2838c40f4896b0566ab0071c16aa37b60d6c",
+    "t02_zoom_blur_i1": "f263802bf8b93228492909437d923d0f308875db9cca23ba442151b26059405e",
+    "t02_fog_i1": "3ae508a6b258000198a5a22ec5b9bdfa11b7aaa76aed866572132f5df60e33b2",
+    "t02_light_asset_i1": "645ae0f14b0675055d0c55c1b24558b452f1ff65f7aed72a55d64aa9cd91f5b8",
+    "t02_table_texture_i1": "36ee914378ade0c579ba60a350e2481c0dfbcecf3142298843e532bf95717c9d",
+    "t03_clean_i2": "48e71d274935150ce7d66ef0a287a0f1dac366c0cbb3eacd95bf07230c1de8d6",
+    "t03_fog_i1": "7801a0ae56324a2304055c02fe4479e9cf95d7ab382805ede161481fd292add3",
+    "t03_glass_blur_i1": "c937f0dd87c6619b8715ceebc61483b31dd82702d2ee22dea6c760867fe19f67",
+    "t03_light_asset_i1": "45e176d32d7e09afb603377518a6ad43099146a3926d95101dfd6e93002250bd",
+    "t03_table_texture_i1": "15a10b25ec982e2c97cdcbc3e16948e9a9036d0beb08f5f040b7593bfe7be989",
+    "t04_clean_i2": "08100bec0d399f0a7271f940311e62d1f6837fcadf0561b2b6713039e9e9756d",
+    "t04_glass_blur_i1": "7e763c5254df7f2dce8452205db6ea110647a6119c7d31e0cb1522a204765f77",
+    "t04_motion_blur_i1": "90a0831d4688c1c86052b38134b32e31ff91e3e1c66e6617b964e377dcea2aed",
+    "t04_light_asset_i1": "c50b07f70bc67a71333bbf46b884acd00e7f7354a7d2490fb98bbfce9ea6f326",
+    "t04_scene_texture_i1": "b7ec7400c4a6854beb35d814fc8c34bef37c2a10a2e84a08e513d13271bf6689",
+    "t05_clean_i2": "716499ef2d2d41be8de51a0ca987df65d1a2e96384ab1f2f9748fa71048175cd",
+    "t05_motion_blur_i1": "997c2267b687e99afe1861ab3a1589305165758716efc04034346aded91958d3",
+    "t05_gaussian_blur_i1": "fe92f891b89a3b5cdca3adc0c20dd1b6c87522f441cc857d722badcd9d1692e5",
+    "t05_light_asset_i1": "060c54a730d72a858599b27bb64d79f61b13cbd05bb9f65f1facc5c20932a5ff",
+    "t05_scene_texture_i1": "5322e5fa902b928906b68827c702c22e8aa6209c6f2c3417d100492df081ebb8",
+    "t06_clean_i2": "377e18f024ec965a114455f58709f65016961807d16d45d0c0cac58fae8e91ff",
+    "t06_gaussian_blur_i1": "0b791277ffb8a302a846f3dacde71a418c8388c1e645710593a285bd5e7e2c02",
+    "t06_zoom_blur_i1": "221ac6c614f67229aa204ddc2768e680d88debe9175133864e581864446d2e11",
+    "t06_light_asset_i1": "13c41949a1ae8f3a9c035993a099e143e7dda8ba6d5f482695a3b049e744bc59",
+    "t06_scene_texture_i1": "7b32e50f4e906c7b7dc154053d5e44d9966d8b8f5407cc51d93e28acf1b7b6f1",
+    "t07_clean_i2": "276e86bb994d10de8f86b4b7b1e5f7cf3861c06426000bc397a64ad6e0b7096f",
+    "t07_zoom_blur_i1": "7b1889272c9df048e6e759c7f4f412efebbd6eeba158c38f1064e6a6f203c38b",
+    "t07_fog_i1": "6bec282c7a087e5de5925a49ff4d20eda98a1c1402a1d157d6352db1e59ce1da",
+    "t07_light_asset_i1": "63f69b65118819fe81e91e17630a8792917c606c0f5ca6a0a5900aa96ce48db7",
+    "t07_scene_texture_i1": "7bf02daec0068f969967e95409345e16814d9dac369a4a99c58ac0dd8e71f9db",
+    "t08_clean_i2": "7fc7efdaa7ac2b39790c1e71e41dd8c62b3b93baf1dd891b2ee5459b935ab018",
+    "t08_fog_i1": "43b1d5f412a829967c8e0c1bcc4ca5dc604480a3c47f13ee5c5cf8fb4174c3d1",
+    "t08_glass_blur_i1": "1f414ad3c60ee1217dd0a445c820f56c8e8f5875f8001f57c8ea8232eaab87e8",
+    "t08_light_asset_i1": "ed04884332bf5f430179fcbc9ac6ef43da85ec587dbab3a9e9b4cbd5c8b0955e",
+    "t08_table_texture_i1": "8c2a11a9df14203bd5f2fe1e669d3f08319aad6e1ede739590f1a7f3b10f6a55",
+    "t09_clean_i2": "d6d2f23d1db643e0291b33d1f458d725963a13db51251072b1039656d70b61ca",
+    "t09_glass_blur_i1": "d983496cd7422f8349a814f18186bb4ce9b985fc97c3ed2caa8162178c33adb2",
+    "t09_motion_blur_i1": "196903b31a0023a2a9fd99a9721234ed072ac67f804c586d8a0c0761299878eb",
+    "t09_light_asset_i1": "399c8742bdbe89ac02b0b074e222cb9ca15bff98226d39f389e108a2cc0df4c0",
+    "t09_scene_texture_i1": "4b0e5212c1375b346c83c5898b94b6299296b29fc9a70157e42b0fda053b975f",
+    "t00_clean_i1_supplement": "fabbe0d2515a82117c686c9dcc0f146e403529b25e513956f9f1b2727a2367db"
+  },
+  "limitations": [
+    "one policy seed, fifty previously accessed development conditions, not untouched confirmation",
+    "nominal McNemar is not task-dependence or multiplicity adjusted; task bootstrap has only ten clusters",
+    "source gate is pointwise95, not trajectory-wise95; t0 zero activation does not guarantee zero later Clean activation",
+    "no concurrent unconditional V1 arm; old V1 results are descriptive historical context, not a new paired three-arm comparison",
+    "no result establishes pretraining causality, universal geometry preservation, or CoRP deep-gate performance",
+    "extra task0/init1 pair excluded from fifty-condition main table; all harms and paired discordances retained"
+  ],
+  "postchecks": {
+    "status": "PASS",
+    "main_conditions": 50,
+    "main_episodes": 100,
+    "supplemental_episodes": 2,
+    "atomic_pairs": 51,
+    "all_replans_checked": 16777,
+    "source_and_weights_and_calibration_hashes_unchanged": true,
+    "all_raw_hashes_actions_rng_gate_decisions_and_counts_verified": true,
+    "same_physical_render_input_checks": 1648,
+    "physical_equal_render_different_frames": 0,
+    "canonicalization_events": 45,
+    "max_canonical_pixels": 10,
+    "max_canonical_lsb": 1,
+    "historical_frozen_actions_exact": 35,
+    "historical_frozen_success_agreement": 48,
+    "historical_frozen_cases": [
+      {
+        "case_id": "t00_clean_i2",
+        "old_success": false,
+        "current_success": false,
+        "actions_bit_exact": true,
+        "first_action_difference_step": null,
+        "initial_pixels_and_state_equal": true,
+        "observed_initial_pixels_equal": true
+      },
+      {
+        "case_id": "t00_motion_blur_i1",
+        "old_success": false,
+        "current_success": false,
+        "actions_bit_exact": true,
+        "first_action_difference_step": null,
+        "initial_pixels_and_state_equal": true,
+        "observed_initial_pixels_equal": true
+      },
+      {
+        "case_id": "t00_gaussian_blur_i1",
+        "old_success": true,
+        "current_success": true,
+        "actions_bit_exact": false,
+        "first_action_difference_step": 15,
+        "initial_pixels_and_state_equal": true,
+        "observed_initial_pixels_equal": true
+      },
+      {
+        "case_id": "t00_light_asset_i1",
+        "old_success": true,
+        "current_success": true,
+        "actions_bit_exact": true,
+        "first_action_difference_step": null,
+        "initial_pixels_and_state_equal": true,
+        "observed_initial_pixels_equal": true
+      },
+      {
+        "case_id": "t00_table_texture_i1",
+        "old_success": false,
+        "current_success": false,
+        "actions_bit_exact": true,
+        "first_action_difference_step": null,
+        "initial_pixels_and_state_equal": true,
+        "observed_initial_pixels_equal": true
+      },
+      {
+        "case_id": "t01_clean_i2",
+        "old_success": true,
+        "current_success": true,
+        "actions_bit_exact": true,
+        "first_action_difference_step": null,
+        "initial_pixels_and_state_equal": true,
+        "observed_initial_pixels_equal": true
+      },
+      {
+        "case_id": "t01_gaussian_blur_i1",
+        "old_success": false,
+        "current_success": false,
+        "actions_bit_exact": true,
+        "first_action_difference_step": null,
+        "initial_pixels_and_state_equal": true,
+        "observed_initial_pixels_equal": true
+      },
+      {
+        "case_id": "t01_zoom_blur_i1",
+        "old_success": false,
+        "current_success": false,
+        "actions_bit_exact": false,
+        "first_action_difference_step": 148,
+        "initial_pixels_and_state_equal": true,
+        "observed_initial_pixels_equal": true
+      },
+      {
+        "case_id": "t01_light_asset_i1",
+        "old_success": true,
+        "current_success": true,
+        "actions_bit_exact": true,
+        "first_action_difference_step": null,
+        "initial_pixels_and_state_equal": true,
+        "observed_initial_pixels_equal": true
+      },
+      {
+        "case_id": "t01_table_texture_i1",
+        "old_success": true,
+        "current_success": true,
+        "actions_bit_exact": true,
+        "first_action_difference_step": null,
+        "initial_pixels_and_state_equal": true,
+        "observed_initial_pixels_equal": true
+      },
+      {
+        "case_id": "t02_clean_i2",
+        "old_success": true,
+        "current_success": true,
+        "actions_bit_exact": true,
+        "first_action_difference_step": null,
+        "initial_pixels_and_state_equal": true,
+        "observed_initial_pixels_equal": true
+      },
+      {
+        "case_id": "t02_zoom_blur_i1",
+        "old_success": false,
+        "current_success": true,
+        "actions_bit_exact": false,
+        "first_action_difference_step": 25,
+        "initial_pixels_and_state_equal": true,
+        "observed_initial_pixels_equal": true
+      },
+      {
+        "case_id": "t02_fog_i1",
+        "old_success": true,
+        "current_success": true,
+        "actions_bit_exact": true,
+        "first_action_difference_step": null,
+        "initial_pixels_and_state_equal": true,
+        "observed_initial_pixels_equal": true
+      },
+      {
+        "case_id": "t02_light_asset_i1",
+        "old_success": true,
+        "current_success": true,
+        "actions_bit_exact": false,
+        "first_action_difference_step": 5,
+        "initial_pixels_and_state_equal": true,
+        "observed_initial_pixels_equal": true
+      },
+      {
+        "case_id": "t02_table_texture_i1",
+        "old_success": false,
+        "current_success": false,
+        "actions_bit_exact": true,
+        "first_action_difference_step": null,
+        "initial_pixels_and_state_equal": true,
+        "observed_initial_pixels_equal": true
+      },
+      {
+        "case_id": "t03_clean_i2",
+        "old_success": true,
+        "current_success": true,
+        "actions_bit_exact": true,
+        "first_action_difference_step": null,
+        "initial_pixels_and_state_equal": true,
+        "observed_initial_pixels_equal": true
+      },
+      {
+        "case_id": "t03_fog_i1",
+        "old_success": true,
+        "current_success": true,
+        "actions_bit_exact": false,
+        "first_action_difference_step": 17,
+        "initial_pixels_and_state_equal": true,
+        "observed_initial_pixels_equal": true
+      },
+      {
+        "case_id": "t03_glass_blur_i1",
+        "old_success": false,
+        "current_success": false,
+        "actions_bit_exact": true,
+        "first_action_difference_step": null,
+        "initial_pixels_and_state_equal": true,
+        "observed_initial_pixels_equal": true
+      },
+      {
+        "case_id": "t03_light_asset_i1",
+        "old_success": true,
+        "current_success": true,
+        "actions_bit_exact": true,
+        "first_action_difference_step": null,
+        "initial_pixels_and_state_equal": true,
+        "observed_initial_pixels_equal": true
+      },
+      {
+        "case_id": "t03_table_texture_i1",
+        "old_success": false,
+        "current_success": false,
+        "actions_bit_exact": true,
+        "first_action_difference_step": null,
+        "initial_pixels_and_state_equal": true,
+        "observed_initial_pixels_equal": true
+      },
+      {
+        "case_id": "t04_clean_i2",
+        "old_success": true,
+        "current_success": true,
+        "actions_bit_exact": true,
+        "first_action_difference_step": null,
+        "initial_pixels_and_state_equal": true,
+        "observed_initial_pixels_equal": true
+      },
+      {
+        "case_id": "t04_glass_blur_i1",
+        "old_success": false,
+        "current_success": false,
+        "actions_bit_exact": true,
+        "first_action_difference_step": null,
+        "initial_pixels_and_state_equal": true,
+        "observed_initial_pixels_equal": true
+      },
+      {
+        "case_id": "t04_motion_blur_i1",
+        "old_success": false,
+        "current_success": false,
+        "actions_bit_exact": true,
+        "first_action_difference_step": null,
+        "initial_pixels_and_state_equal": true,
+        "observed_initial_pixels_equal": true
+      },
+      {
+        "case_id": "t04_light_asset_i1",
+        "old_success": true,
+        "current_success": true,
+        "actions_bit_exact": true,
+        "first_action_difference_step": null,
+        "initial_pixels_and_state_equal": true,
+        "observed_initial_pixels_equal": true
+      },
+      {
+        "case_id": "t04_scene_texture_i1",
+        "old_success": true,
+        "current_success": true,
+        "actions_bit_exact": true,
+        "first_action_difference_step": null,
+        "initial_pixels_and_state_equal": true,
+        "observed_initial_pixels_equal": true
+      },
+      {
+        "case_id": "t05_clean_i2",
+        "old_success": false,
+        "current_success": false,
+        "actions_bit_exact": true,
+        "first_action_difference_step": null,
+        "initial_pixels_and_state_equal": true,
+        "observed_initial_pixels_equal": true
+      },
+      {
+        "case_id": "t05_motion_blur_i1",
+        "old_success": false,
+        "current_success": false,
+        "actions_bit_exact": false,
+        "first_action_difference_step": 12,
+        "initial_pixels_and_state_equal": true,
+        "observed_initial_pixels_equal": true
+      },
+      {
+        "case_id": "t05_gaussian_blur_i1",
+        "old_success": false,
+        "current_success": false,
+        "actions_bit_exact": true,
+        "first_action_difference_step": null,
+        "initial_pixels_and_state_equal": true,
+        "observed_initial_pixels_equal": true
+      },
+      {
+        "case_id": "t05_light_asset_i1",
+        "old_success": false,
+        "current_success": false,
+        "actions_bit_exact": true,
+        "first_action_difference_step": null,
+        "initial_pixels_and_state_equal": true,
+        "observed_initial_pixels_equal": true
+      },
+      {
+        "case_id": "t05_scene_texture_i1",
+        "old_success": false,
+        "current_success": false,
+        "actions_bit_exact": true,
+        "first_action_difference_step": null,
+        "initial_pixels_and_state_equal": true,
+        "observed_initial_pixels_equal": true
+      },
+      {
+        "case_id": "t06_clean_i2",
+        "old_success": true,
+        "current_success": true,
+        "actions_bit_exact": true,
+        "first_action_difference_step": null,
+        "initial_pixels_and_state_equal": true,
+        "observed_initial_pixels_equal": true
+      },
+      {
+        "case_id": "t06_gaussian_blur_i1",
+        "old_success": false,
+        "current_success": false,
+        "actions_bit_exact": true,
+        "first_action_difference_step": null,
+        "initial_pixels_and_state_equal": true,
+        "observed_initial_pixels_equal": true
+      },
+      {
+        "case_id": "t06_zoom_blur_i1",
+        "old_success": false,
+        "current_success": false,
+        "actions_bit_exact": false,
+        "first_action_difference_step": 11,
+        "initial_pixels_and_state_equal": true,
+        "observed_initial_pixels_equal": true
+      },
+      {
+        "case_id": "t06_light_asset_i1",
+        "old_success": false,
+        "current_success": false,
+        "actions_bit_exact": false,
+        "first_action_difference_step": 7,
+        "initial_pixels_and_state_equal": true,
+        "observed_initial_pixels_equal": true
+      },
+      {
+        "case_id": "t06_scene_texture_i1",
+        "old_success": false,
+        "current_success": false,
+        "actions_bit_exact": true,
+        "first_action_difference_step": null,
+        "initial_pixels_and_state_equal": true,
+        "observed_initial_pixels_equal": true
+      },
+      {
+        "case_id": "t07_clean_i2",
+        "old_success": true,
+        "current_success": true,
+        "actions_bit_exact": false,
+        "first_action_difference_step": 25,
+        "initial_pixels_and_state_equal": true,
+        "observed_initial_pixels_equal": true
+      },
+      {
+        "case_id": "t07_zoom_blur_i1",
+        "old_success": false,
+        "current_success": false,
+        "actions_bit_exact": false,
+        "first_action_difference_step": 53,
+        "initial_pixels_and_state_equal": true,
+        "observed_initial_pixels_equal": true
+      },
+      {
+        "case_id": "t07_fog_i1",
+        "old_success": false,
+        "current_success": false,
+        "actions_bit_exact": false,
+        "first_action_difference_step": 65,
+        "initial_pixels_and_state_equal": true,
+        "observed_initial_pixels_equal": true
+      },
+      {
+        "case_id": "t07_light_asset_i1",
+        "old_success": true,
+        "current_success": true,
+        "actions_bit_exact": false,
+        "first_action_difference_step": 30,
+        "initial_pixels_and_state_equal": true,
+        "observed_initial_pixels_equal": true
+      },
+      {
+        "case_id": "t07_scene_texture_i1",
+        "old_success": true,
+        "current_success": true,
+        "actions_bit_exact": false,
+        "first_action_difference_step": 29,
+        "initial_pixels_and_state_equal": true,
+        "observed_initial_pixels_equal": true
+      },
+      {
+        "case_id": "t08_clean_i2",
+        "old_success": true,
+        "current_success": true,
+        "actions_bit_exact": false,
+        "first_action_difference_step": 10,
+        "initial_pixels_and_state_equal": true,
+        "observed_initial_pixels_equal": true
+      },
+      {
+        "case_id": "t08_fog_i1",
+        "old_success": false,
+        "current_success": false,
+        "actions_bit_exact": true,
+        "first_action_difference_step": null,
+        "initial_pixels_and_state_equal": true,
+        "observed_initial_pixels_equal": true
+      },
+      {
+        "case_id": "t08_glass_blur_i1",
+        "old_success": false,
+        "current_success": false,
+        "actions_bit_exact": true,
+        "first_action_difference_step": null,
+        "initial_pixels_and_state_equal": true,
+        "observed_initial_pixels_equal": true
+      },
+      {
+        "case_id": "t08_light_asset_i1",
+        "old_success": true,
+        "current_success": true,
+        "actions_bit_exact": true,
+        "first_action_difference_step": null,
+        "initial_pixels_and_state_equal": true,
+        "observed_initial_pixels_equal": true
+      },
+      {
+        "case_id": "t08_table_texture_i1",
+        "old_success": false,
+        "current_success": true,
+        "actions_bit_exact": false,
+        "first_action_difference_step": 4,
+        "initial_pixels_and_state_equal": true,
+        "observed_initial_pixels_equal": true
+      },
+      {
+        "case_id": "t09_clean_i2",
+        "old_success": true,
+        "current_success": true,
+        "actions_bit_exact": true,
+        "first_action_difference_step": null,
+        "initial_pixels_and_state_equal": true,
+        "observed_initial_pixels_equal": true
+      },
+      {
+        "case_id": "t09_glass_blur_i1",
+        "old_success": false,
+        "current_success": false,
+        "actions_bit_exact": true,
+        "first_action_difference_step": null,
+        "initial_pixels_and_state_equal": true,
+        "observed_initial_pixels_equal": true
+      },
+      {
+        "case_id": "t09_motion_blur_i1",
+        "old_success": false,
+        "current_success": false,
+        "actions_bit_exact": true,
+        "first_action_difference_step": null,
+        "initial_pixels_and_state_equal": true,
+        "observed_initial_pixels_equal": true
+      },
+      {
+        "case_id": "t09_light_asset_i1",
+        "old_success": true,
+        "current_success": true,
+        "actions_bit_exact": true,
+        "first_action_difference_step": null,
+        "initial_pixels_and_state_equal": true,
+        "observed_initial_pixels_equal": true
+      },
+      {
+        "case_id": "t09_scene_texture_i1",
+        "old_success": true,
+        "current_success": true,
+        "actions_bit_exact": true,
+        "first_action_difference_step": null,
+        "initial_pixels_and_state_equal": true,
+        "observed_initial_pixels_equal": true
+      }
+    ],
+    "historical_note": "Cross-run renderer/numerical trajectory sensitivity retained; the current concurrent paired baseline is authoritative. Old excluded attempt and old V1 are not mixed into current statistical comparisons."
+  },
+  "execution": {
+    "phase": "complete",
+    "main_episodes": 100,
+    "supplemental_episodes": 2,
+    "pairs": 51,
+    "seconds": 3379.0477537609986,
+    "fingerprint": "314de9198b38791ae67a5ffa2ac163964bd7da84fd649f068d6c096a54c577a6"
+  },
+  "renderer_recovery_review": {
+    "observed_failure": "strict same-SimState RGB equality at t01_clean_i2 under four-worker evaluation",
+    "raw_discrepancy_magnitude": "not retained in aborted worker; do not assert measured LSB/pixel magnitude",
+    "isolated_action_replay": {
+      "case": "t01_clean_i2",
+      "same_actions_replayed_twice": true,
+      "steps": 111,
+      "same_physics": true,
+      "all_state_hashes_equal": true,
+      "pixel_differences": []
+    },
+    "isolated_real_model_replay": {
+      "case": "t01_clean_i2",
+      "model_camera_light_texture_arrays_equal": true,
+      "equal_state_frames": 111,
+      "differences": [],
+      "successes": {
+        "frozen": true,
+        "deep_gate_L3_a0.75": true
+      },
+      "steps": {
+        "frozen": 111,
+        "deep_gate_L3_a0.75": 111
+      }
+    },
+    "old_complete_pairs_excluded": 4,
+    "recovery": "fresh full run; include explicit geometry/camera/light transforms in state key; pair-local raw-image equality guard reuses pre-existing CoRP <=64 pixels/view <=1 LSB bound, logs every event and aborts beyond bounds; method, source threshold and alpha unchanged"
+  }
+}

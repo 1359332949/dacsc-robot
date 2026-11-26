@@ -1,0 +1,482 @@
+{
+  "rounds": 5,
+  "rows": [
+    {
+      "group": "Clean",
+      "case_id": "t00_clean_i2",
+      "arm": "frozen",
+      "round": 0,
+      "ms": 598.4541749930941,
+      "peak_allocated_mib": 1207.076171875,
+      "peak_reserved_mib": 2178.0,
+      "gate_accepted": null
+    },
+    {
+      "group": "Clean",
+      "case_id": "t00_clean_i2",
+      "arm": "deep_gate_L3_a0.75",
+      "round": 0,
+      "ms": 603.1382959918119,
+      "peak_allocated_mib": 1207.97998046875,
+      "peak_reserved_mib": 2178.0,
+      "gate_accepted": false
+    },
+    {
+      "group": "Lighting",
+      "case_id": "t00_light_asset_i1",
+      "arm": "frozen",
+      "round": 0,
+      "ms": 601.6979509731755,
+      "peak_allocated_mib": 1207.076171875,
+      "peak_reserved_mib": 2178.0,
+      "gate_accepted": null
+    },
+    {
+      "group": "Lighting",
+      "case_id": "t00_light_asset_i1",
+      "arm": "deep_gate_L3_a0.75",
+      "round": 0,
+      "ms": 602.7689019683748,
+      "peak_allocated_mib": 1207.97998046875,
+      "peak_reserved_mib": 2178.0,
+      "gate_accepted": false
+    },
+    {
+      "group": "Background",
+      "case_id": "t00_table_texture_i1",
+      "arm": "frozen",
+      "round": 0,
+      "ms": 602.1934839664027,
+      "peak_allocated_mib": 1207.076171875,
+      "peak_reserved_mib": 2178.0,
+      "gate_accepted": null
+    },
+    {
+      "group": "Background",
+      "case_id": "t00_table_texture_i1",
+      "arm": "deep_gate_L3_a0.75",
+      "round": 0,
+      "ms": 622.6855320273899,
+      "peak_allocated_mib": 1208.50830078125,
+      "peak_reserved_mib": 2178.0,
+      "gate_accepted": true
+    },
+    {
+      "group": "Sensor",
+      "case_id": "t00_motion_blur_i1",
+      "arm": "frozen",
+      "round": 0,
+      "ms": 600.1046239980496,
+      "peak_allocated_mib": 1207.076171875,
+      "peak_reserved_mib": 2178.0,
+      "gate_accepted": null
+    },
+    {
+      "group": "Sensor",
+      "case_id": "t00_motion_blur_i1",
+      "arm": "deep_gate_L3_a0.75",
+      "round": 0,
+      "ms": 623.2394509715959,
+      "peak_allocated_mib": 1208.50830078125,
+      "peak_reserved_mib": 2178.0,
+      "gate_accepted": true
+    },
+    {
+      "group": "Clean",
+      "case_id": "t00_clean_i2",
+      "arm": "deep_gate_L3_a0.75",
+      "round": 1,
+      "ms": 603.7526010186411,
+      "peak_allocated_mib": 1207.97998046875,
+      "peak_reserved_mib": 2178.0,
+      "gate_accepted": false
+    },
+    {
+      "group": "Lighting",
+      "case_id": "t00_light_asset_i1",
+      "arm": "frozen",
+      "round": 1,
+      "ms": 608.6594960070215,
+      "peak_allocated_mib": 1207.076171875,
+      "peak_reserved_mib": 2178.0,
+      "gate_accepted": null
+    },
+    {
+      "group": "Lighting",
+      "case_id": "t00_light_asset_i1",
+      "arm": "deep_gate_L3_a0.75",
+      "round": 1,
+      "ms": 605.5446759564802,
+      "peak_allocated_mib": 1207.97998046875,
+      "peak_reserved_mib": 2178.0,
+      "gate_accepted": false
+    },
+    {
+      "group": "Background",
+      "case_id": "t00_table_texture_i1",
+      "arm": "frozen",
+      "round": 1,
+      "ms": 606.4030150300823,
+      "peak_allocated_mib": 1207.076171875,
+      "peak_reserved_mib": 2178.0,
+      "gate_accepted": null
+    },
+    {
+      "group": "Background",
+      "case_id": "t00_table_texture_i1",
+      "arm": "deep_gate_L3_a0.75",
+      "round": 1,
+      "ms": 625.9134490392171,
+      "peak_allocated_mib": 1208.50830078125,
+      "peak_reserved_mib": 2178.0,
+      "gate_accepted": true
+    },
+    {
+      "group": "Sensor",
+      "case_id": "t00_motion_blur_i1",
+      "arm": "frozen",
+      "round": 1,
+      "ms": 600.6862220237963,
+      "peak_allocated_mib": 1207.076171875,
+      "peak_reserved_mib": 2178.0,
+      "gate_accepted": null
+    },
+    {
+      "group": "Sensor",
+      "case_id": "t00_motion_blur_i1",
+      "arm": "deep_gate_L3_a0.75",
+      "round": 1,
+      "ms": 622.8593030245975,
+      "peak_allocated_mib": 1208.50830078125,
+      "peak_reserved_mib": 2178.0,
+      "gate_accepted": true
+    },
+    {
+      "group": "Clean",
+      "case_id": "t00_clean_i2",
+      "arm": "frozen",
+      "round": 1,
+      "ms": 601.2640739791095,
+      "peak_allocated_mib": 1207.076171875,
+      "peak_reserved_mib": 2178.0,
+      "gate_accepted": null
+    },
+    {
+      "group": "Lighting",
+      "case_id": "t00_light_asset_i1",
+      "arm": "frozen",
+      "round": 2,
+      "ms": 601.3741880306043,
+      "peak_allocated_mib": 1207.076171875,
+      "peak_reserved_mib": 2178.0,
+      "gate_accepted": null
+    },
+    {
+      "group": "Lighting",
+      "case_id": "t00_light_asset_i1",
+      "arm": "deep_gate_L3_a0.75",
+      "round": 2,
+      "ms": 598.8831020076759,
+      "peak_allocated_mib": 1207.97998046875,
+      "peak_reserved_mib": 2178.0,
+      "gate_accepted": false
+    },
+    {
+      "group": "Background",
+      "case_id": "t00_table_texture_i1",
+      "arm": "frozen",
+      "round": 2,
+      "ms": 601.937667990569,
+      "peak_allocated_mib": 1207.076171875,
+      "peak_reserved_mib": 2178.0,
+      "gate_accepted": null
+    },
+    {
+      "group": "Background",
+      "case_id": "t00_table_texture_i1",
+      "arm": "deep_gate_L3_a0.75",
+      "round": 2,
+      "ms": 620.2080520452,
+      "peak_allocated_mib": 1208.50830078125,
+      "peak_reserved_mib": 2178.0,
+      "gate_accepted": true
+    },
+    {
+      "group": "Sensor",
+      "case_id": "t00_motion_blur_i1",
+      "arm": "frozen",
+      "round": 2,
+      "ms": 602.8634560061619,
+      "peak_allocated_mib": 1207.076171875,
+      "peak_reserved_mib": 2178.0,
+      "gate_accepted": null
+    },
+    {
+      "group": "Sensor",
+      "case_id": "t00_motion_blur_i1",
+      "arm": "deep_gate_L3_a0.75",
+      "round": 2,
+      "ms": 624.0708850091323,
+      "peak_allocated_mib": 1208.50830078125,
+      "peak_reserved_mib": 2178.0,
+      "gate_accepted": true
+    },
+    {
+      "group": "Clean",
+      "case_id": "t00_clean_i2",
+      "arm": "frozen",
+      "round": 2,
+      "ms": 599.1933529730886,
+      "peak_allocated_mib": 1207.076171875,
+      "peak_reserved_mib": 2178.0,
+      "gate_accepted": null
+    },
+    {
+      "group": "Clean",
+      "case_id": "t00_clean_i2",
+      "arm": "deep_gate_L3_a0.75",
+      "round": 2,
+      "ms": 601.1198430205695,
+      "peak_allocated_mib": 1207.97998046875,
+      "peak_reserved_mib": 2178.0,
+      "gate_accepted": false
+    },
+    {
+      "group": "Lighting",
+      "case_id": "t00_light_asset_i1",
+      "arm": "deep_gate_L3_a0.75",
+      "round": 3,
+      "ms": 602.319592027925,
+      "peak_allocated_mib": 1207.97998046875,
+      "peak_reserved_mib": 2178.0,
+      "gate_accepted": false
+    },
+    {
+      "group": "Background",
+      "case_id": "t00_table_texture_i1",
+      "arm": "frozen",
+      "round": 3,
+      "ms": 599.2439250112511,
+      "peak_allocated_mib": 1207.076171875,
+      "peak_reserved_mib": 2178.0,
+      "gate_accepted": null
+    },
+    {
+      "group": "Background",
+      "case_id": "t00_table_texture_i1",
+      "arm": "deep_gate_L3_a0.75",
+      "round": 3,
+      "ms": 625.4582260153256,
+      "peak_allocated_mib": 1208.50830078125,
+      "peak_reserved_mib": 2178.0,
+      "gate_accepted": true
+    },
+    {
+      "group": "Sensor",
+      "case_id": "t00_motion_blur_i1",
+      "arm": "frozen",
+      "round": 3,
+      "ms": 599.8067689943127,
+      "peak_allocated_mib": 1207.076171875,
+      "peak_reserved_mib": 2178.0,
+      "gate_accepted": null
+    },
+    {
+      "group": "Sensor",
+      "case_id": "t00_motion_blur_i1",
+      "arm": "deep_gate_L3_a0.75",
+      "round": 3,
+      "ms": 620.2293490059674,
+      "peak_allocated_mib": 1208.50830078125,
+      "peak_reserved_mib": 2178.0,
+      "gate_accepted": true
+    },
+    {
+      "group": "Clean",
+      "case_id": "t00_clean_i2",
+      "arm": "frozen",
+      "round": 3,
+      "ms": 600.667712977156,
+      "peak_allocated_mib": 1207.076171875,
+      "peak_reserved_mib": 2178.0,
+      "gate_accepted": null
+    },
+    {
+      "group": "Clean",
+      "case_id": "t00_clean_i2",
+      "arm": "deep_gate_L3_a0.75",
+      "round": 3,
+      "ms": 602.0746469730511,
+      "peak_allocated_mib": 1207.97998046875,
+      "peak_reserved_mib": 2178.0,
+      "gate_accepted": false
+    },
+    {
+      "group": "Lighting",
+      "case_id": "t00_light_asset_i1",
+      "arm": "frozen",
+      "round": 3,
+      "ms": 604.6265019685961,
+      "peak_allocated_mib": 1207.076171875,
+      "peak_reserved_mib": 2178.0,
+      "gate_accepted": null
+    },
+    {
+      "group": "Background",
+      "case_id": "t00_table_texture_i1",
+      "arm": "frozen",
+      "round": 4,
+      "ms": 603.4191640210338,
+      "peak_allocated_mib": 1207.076171875,
+      "peak_reserved_mib": 2178.0,
+      "gate_accepted": null
+    },
+    {
+      "group": "Background",
+      "case_id": "t00_table_texture_i1",
+      "arm": "deep_gate_L3_a0.75",
+      "round": 4,
+      "ms": 620.4483440378681,
+      "peak_allocated_mib": 1208.50830078125,
+      "peak_reserved_mib": 2178.0,
+      "gate_accepted": true
+    },
+    {
+      "group": "Sensor",
+      "case_id": "t00_motion_blur_i1",
+      "arm": "frozen",
+      "round": 4,
+      "ms": 601.271461986471,
+      "peak_allocated_mib": 1207.076171875,
+      "peak_reserved_mib": 2178.0,
+      "gate_accepted": null
+    },
+    {
+      "group": "Sensor",
+      "case_id": "t00_motion_blur_i1",
+      "arm": "deep_gate_L3_a0.75",
+      "round": 4,
+      "ms": 620.9408299764618,
+      "peak_allocated_mib": 1208.50830078125,
+      "peak_reserved_mib": 2178.0,
+      "gate_accepted": true
+    },
+    {
+      "group": "Clean",
+      "case_id": "t00_clean_i2",
+      "arm": "frozen",
+      "round": 4,
+      "ms": 598.5106709995307,
+      "peak_allocated_mib": 1207.076171875,
+      "peak_reserved_mib": 2178.0,
+      "gate_accepted": null
+    },
+    {
+      "group": "Clean",
+      "case_id": "t00_clean_i2",
+      "arm": "deep_gate_L3_a0.75",
+      "round": 4,
+      "ms": 602.0404979935847,
+      "peak_allocated_mib": 1207.97998046875,
+      "peak_reserved_mib": 2178.0,
+      "gate_accepted": false
+    },
+    {
+      "group": "Lighting",
+      "case_id": "t00_light_asset_i1",
+      "arm": "frozen",
+      "round": 4,
+      "ms": 600.8169960114174,
+      "peak_allocated_mib": 1207.076171875,
+      "peak_reserved_mib": 2178.0,
+      "gate_accepted": null
+    },
+    {
+      "group": "Lighting",
+      "case_id": "t00_light_asset_i1",
+      "arm": "deep_gate_L3_a0.75",
+      "round": 4,
+      "ms": 600.9752720128745,
+      "peak_allocated_mib": 1207.97998046875,
+      "peak_reserved_mib": 2178.0,
+      "gate_accepted": false
+    }
+  ],
+  "groups": {
+    "Clean": {
+      "median_ms": {
+        "frozen": 599.1933529730886,
+        "deep_gate_L3_a0.75": 602.0746469730511
+      },
+      "relative": 1.0048086214335756,
+      "peak_allocated_mib": {
+        "frozen": 1207.076171875,
+        "deep_gate_L3_a0.75": 1207.97998046875
+      },
+      "gate_decisions": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ]
+    },
+    "Lighting": {
+      "median_ms": {
+        "frozen": 601.6979509731755,
+        "deep_gate_L3_a0.75": 602.319592027925
+      },
+      "relative": 1.0010331447094742,
+      "peak_allocated_mib": {
+        "frozen": 1207.076171875,
+        "deep_gate_L3_a0.75": 1207.97998046875
+      },
+      "gate_decisions": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ]
+    },
+    "Background": {
+      "median_ms": {
+        "frozen": 602.1934839664027,
+        "deep_gate_L3_a0.75": 622.6855320273899
+      },
+      "relative": 1.034029009955429,
+      "peak_allocated_mib": {
+        "frozen": 1207.076171875,
+        "deep_gate_L3_a0.75": 1208.50830078125
+      },
+      "gate_decisions": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    "Sensor": {
+      "median_ms": {
+        "frozen": 600.6862220237963,
+        "deep_gate_L3_a0.75": 622.8593030245975
+      },
+      "relative": 1.036912917573,
+      "peak_allocated_mib": {
+        "frozen": 1207.076171875,
+        "deep_gate_L3_a0.75": 1208.50830078125
+      },
+      "gate_decisions": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ]
+    }
+  },
+  "scope": "end-to-end native actor.act including CPU preprocessing, device transfer, actual gate/stats, connectors, one VLM prefix and Flow10; synchronized CUDA; episode reset/seeding/adapter construction excluded",
+  "representative_selection": "first manifest case per category, before current outcomes; actual gate decision, never forced",
+  "instrumentation": "no call-count mocks or full cache-pixel checks during timing; same actual evaluation adapter"
+}

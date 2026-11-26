@@ -1,0 +1,14 @@
+{
+  "python": "3.10.12",
+  "versions": {
+    "torch": "2.10.0",
+    "transformers": "4.57.6",
+    "numpy": "1.26.4",
+    "scipy": "no distribution metadata",
+    "mujoco": "no distribution metadata",
+    "robosuite": "no distribution metadata",
+    "Pillow": "12.3.0",
+    "numba": "no distribution metadata"
+  },
+  "gpu": "NVIDIA GeForce RTX 3090, 595.99.02, 24576 MiB"
+}
