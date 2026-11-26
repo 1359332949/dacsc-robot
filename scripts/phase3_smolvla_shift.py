@@ -84,12 +84,15 @@ def corruption_functions():
 
 def perturb(obs,case,step,funcs):
     if case['group']!='Sensor':return obs
+    severity=case.get('severity',5)
+    if type(severity) is not int or not 1<=severity<=10:
+        raise ValueError('official Plus severity must be an integer in [1,10]')
     from PIL import Image
     out=dict(obs)
     for view,key in enumerate(KEYS):
         image=np.asarray(obs[key]);assert image.dtype==np.uint8 and image.shape==(256,256,3)
         with isolated_seed(seed_for('phase3b',case['id'],step,view)):
-            changed=funcs[case['subgroup']](Image.fromarray(image),severity=5)
+            changed=funcs[case['subgroup']](Image.fromarray(image),severity=severity)
         changed=np.asarray(changed).astype(np.uint8)
         assert changed.shape==image.shape and np.isfinite(changed).all()
         out[key]=changed
