@@ -1,3 +1,5 @@
+> **2026-11-26 对照实现审计更新：** 本文旧 `actmad_true` 是自行移植版本，不能当作原版 ActMAD 的忠实复现；其多帧双相机排列存在已确认错误。修复后实现标识为 `actmad_inspired_viewwise_v2`，已通过真实模型执行链检查，但尚未重新取得闭环对比成绩。原数字保留作历史记录，不能据此主张优于原版 ActMAD。后续共享校准阈值另有公式问题，须分别追溯。见 `BASELINE_IMPLEMENTATION_AUDIT_V2.md`。
+
 # Phase 2A complete: libero_10 5-arm fair physical table
 
 ## Protocol

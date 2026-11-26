@@ -1,4 +1,7 @@
-"""Locked Clean reproduction: two replay anchors, then 30 new Spatial initial states.
+"""Historical handwritten campaign, superseded by the unmodified upstream evaluator.
+
+Originally planned two replay anchors then 30 initial states; stopped per user
+request after confirmed input/loading differences. Do not use as canonical repro.
 
 Runs on the GPU host; no TTA, no hyperparameter sweep, no Held-out/Blind access.
 """

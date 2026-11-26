@@ -1,3 +1,5 @@
+> **2026-11-26 对照命名更新：** 本文早期 ActMAD proxy/移植不能作为作者原版 ActMAD 的复现证据。请区分内部消融、明确移植与作者原版；相关实现审计见 `BASELINE_IMPLEMENTATION_AUDIT_V2.md`。历史数字不改写。
+
 # Phase 1 / 1.5 report: libero_10 smoke, shared calibration, sanity, Table 4
 
 ## 1. libero_10 Clean smoke (Phase 1)

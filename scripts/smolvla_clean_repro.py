@@ -1,4 +1,8 @@
-"""Frozen Clean diagnostic with source provenance; no TTA and no variant search."""
+"""Historical handwritten diagnostic, not the canonical upstream evaluator.
+
+Known input-rounding and model-construction differences were found on 2026-11-26.
+Use the unmodified upstream roboeval harness for new reproduction claims.
+"""
 
 import argparse, ctypes, hashlib, json, os, random, time
 import xml.etree.ElementTree as ET

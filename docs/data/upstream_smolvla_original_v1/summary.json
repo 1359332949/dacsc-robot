@@ -1,0 +1,224 @@
+{
+  "status": "native_baseline_smoke_passed_not_full_reproduction",
+  "date": "2026-11-26",
+  "source": {
+    "repository": "https://github.com/sim-too-real/roboeval",
+    "checkout_commit": "6e9d9daf1526ff344b3742b935fde167faeffb13",
+    "result_upload_commit": "89d52225d82d63613f40e5f4e29c81c74d950516",
+    "eval_core_unchanged_since_result_upload": true,
+    "installed_source_matches_checkout": true,
+    "git_status": ""
+  },
+  "checkpoint_revision": "6721902bc4d61e50a3bfdb11dfb4cb626f05d102",
+  "checkpoint_sha256": "71d9563c8295284acba8fc2d5c19de000d6fe9ba58a406832af7ef3d221ed52f",
+  "original_config": {
+    "load_vlm_weights": {
+      "handwritten_config": false,
+      "original_config": true
+    },
+    "vlm_model_name": {
+      "handwritten_config": "/hy-tmp/smolvlm2_local",
+      "original_config": "HuggingFaceTB/SmolVLM2-500M-Instruct"
+    }
+  },
+  "native_loader": {
+    "scope": "inspection of unchanged public loader, no rollout or adapter modifications",
+    "config_load_vlm_weights": true,
+    "vision_dtype": "torch.bfloat16",
+    "parameter_tensor_counts_by_dtype": {
+      "torch.float32": 48,
+      "torch.bfloat16": 746
+    },
+    "n_action_steps": 1,
+    "num_steps": 10,
+    "model_class": "lerobot.common.policies.smolvla.modeling_smolvla.SmolVLAPolicy"
+  },
+  "cohorts": {
+    "compatibility_runtime_native10": {
+      "successes": 9,
+      "episodes": 10,
+      "seconds": 835.8725570039824,
+      "runtime": {
+        "torch": {
+          "version": "2.10.0+cu128",
+          "file": "/hy-tmp/smolvla_venv/lib/python3.10/site-packages/torch/__init__.py"
+        },
+        "numpy": {
+          "version": "1.26.4",
+          "file": "/hy-tmp/smolvla_venv/lib/python3.10/site-packages/numpy/__init__.py"
+        },
+        "transformers": {
+          "version": "4.57.6",
+          "file": "/hy-tmp/smolvla_venv/lib/python3.10/site-packages/transformers/__init__.py"
+        },
+        "huggingface_hub": {
+          "version": "0.35.3",
+          "file": "/hy-tmp/smolvla_venv/lib/python3.10/site-packages/huggingface_hub/__init__.py"
+        },
+        "mujoco": {
+          "version": "3.2.7",
+          "file": "/hy-tmp/patch-diag/runs/repro_baseline_v2_20261126/author_audit/mujoco327/mujoco/__init__.py"
+        },
+        "lerobot": {
+          "version": "0.4.4",
+          "file": "/hy-tmp/lerobot_community_revision/lerobot/__init__.py"
+        }
+      },
+      "rows": [
+        {
+          "episode_id": "libero-spatial-t00-e000",
+          "task": "pick_up_the_black_bowl_between_the_plate_and_the_ramekin_and_place_it_on_the_plate",
+          "seed": 0,
+          "success": true,
+          "steps": 74,
+          "duration_s": 48.13691720098723
+        },
+        {
+          "episode_id": "libero-spatial-t01-e000",
+          "task": "pick_up_the_black_bowl_next_to_the_ramekin_and_place_it_on_the_plate",
+          "seed": 1,
+          "success": true,
+          "steps": 111,
+          "duration_s": 69.86567136202939
+        },
+        {
+          "episode_id": "libero-spatial-t02-e000",
+          "task": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+          "seed": 2,
+          "success": false,
+          "steps": 220,
+          "duration_s": 144.60367845499422
+        },
+        {
+          "episode_id": "libero-spatial-t03-e000",
+          "task": "pick_up_the_black_bowl_on_the_cookie_box_and_place_it_on_the_plate",
+          "seed": 3,
+          "success": true,
+          "steps": 94,
+          "duration_s": 62.665355825971346
+        },
+        {
+          "episode_id": "libero-spatial-t04-e000",
+          "task": "pick_up_the_black_bowl_in_the_top_drawer_of_the_wooden_cabinet_and_place_it_on_the_plate",
+          "seed": 4,
+          "success": true,
+          "steps": 132,
+          "duration_s": 92.63231066399021
+        },
+        {
+          "episode_id": "libero-spatial-t05-e000",
+          "task": "pick_up_the_black_bowl_on_the_ramekin_and_place_it_on_the_plate",
+          "seed": 5,
+          "success": true,
+          "steps": 89,
+          "duration_s": 60.357662938011345
+        },
+        {
+          "episode_id": "libero-spatial-t06-e000",
+          "task": "pick_up_the_black_bowl_next_to_the_cookie_box_and_place_it_on_the_plate",
+          "seed": 6,
+          "success": true,
+          "steps": 123,
+          "duration_s": 79.50303931802046
+        },
+        {
+          "episode_id": "libero-spatial-t07-e000",
+          "task": "pick_up_the_black_bowl_on_the_stove_and_place_it_on_the_plate",
+          "seed": 7,
+          "success": true,
+          "steps": 113,
+          "duration_s": 82.66244834702229
+        },
+        {
+          "episode_id": "libero-spatial-t08-e000",
+          "task": "pick_up_the_black_bowl_next_to_the_plate_and_place_it_on_the_plate",
+          "seed": 8,
+          "success": true,
+          "steps": 93,
+          "duration_s": 60.58867943595396
+        },
+        {
+          "episode_id": "libero-spatial-t09-e000",
+          "task": "pick_up_the_black_bowl_on_the_wooden_cabinet_and_place_it_on_the_plate",
+          "seed": 9,
+          "success": true,
+          "steps": 122,
+          "duration_s": 77.77574618096696
+        }
+      ]
+    },
+    "compatibility_runtime_separate_cli_preflight": {
+      "successes": 0,
+      "episodes": 1,
+      "steps": 220
+    },
+    "recorded_major_versions_separate_cli_preflight": {
+      "successes": 1,
+      "episodes": 1,
+      "steps": 70,
+      "python": "3.12.3",
+      "runtime": {
+        "torch": {
+          "version": "2.11.0+cu128",
+          "file": "/hy-tmp/upstream_repro/author_env/lib/python3.12/site-packages/torch/__init__.py"
+        },
+        "numpy": {
+          "version": "2.4.4",
+          "file": "/hy-tmp/upstream_repro/author_env/lib/python3.12/site-packages/numpy/__init__.py"
+        },
+        "transformers": {
+          "version": "5.6.0",
+          "file": "/hy-tmp/upstream_repro/author_env/lib/python3.12/site-packages/transformers/__init__.py"
+        },
+        "huggingface_hub": {
+          "version": "1.11.0",
+          "file": "/hy-tmp/upstream_repro/author_env/lib/python3.12/site-packages/huggingface_hub/__init__.py"
+        },
+        "mujoco": {
+          "version": "3.2.7",
+          "file": "/hy-tmp/upstream_repro/author_env/lib/python3.12/site-packages/mujoco/__init__.py"
+        },
+        "lerobot": {
+          "version": "0.1.0",
+          "file": "/hy-tmp/upstream_repro/author_env/lib/python3.12/site-packages/lerobot/__init__.py"
+        }
+      }
+    }
+  },
+  "handwritten_campaign": {
+    "planned": 30,
+    "completed_before_user_redirect": 20,
+    "successes_among_completed": 10,
+    "status": "stopped_per_user_request_switch_to_unmodified_upstream",
+    "use_as_final_30_case_score": false
+  },
+  "diagnostics": {
+    "same_model_image_difference_max": 5.960464477539063e-08,
+    "same_rng_action_difference_max": 0.007981866598129272,
+    "cpu_aligned_inputs_and_actions_exact_equal": true,
+    "original_vision_dtype": "torch.bfloat16",
+    "previous_handwritten_vision_dtype": "torch.float32",
+    "author_reset_seed_does_not_reset_torch_rng": true,
+    "matching_base_config_json_identical": true
+  },
+  "actmad_port": {
+    "implementation": "actmad_inspired_viewwise_v2",
+    "cpu_tests_passed": 3,
+    "real_corp_lifecycle_passed": true,
+    "closed_loop_gain_tested": false,
+    "original_actmad_faithful_reproduction": false
+  },
+  "limitations": [
+    "Ten task/init0 smoke only, not full 100-episode community reproduction",
+    "Separate cohorts must not be pooled or treated as method improvements",
+    "Native upstream model RNG behavior preserved; CLI seed does not control Torch action sampling",
+    "Compatibility runtime 9/10 is distinct from recorded-major-version runtime 1/1",
+    "Input and loading differences confirmed; no single-factor closed-loop causal attribution of score gap",
+    "No TTA benefit or independent Held-out/Blind result"
+  ],
+  "artifacts": {
+    "archive": "upstream_repro_evidence_v1_licensed.tar.gz",
+    "sha256": "298ba145c537252f49aeea57eb3b69522cede2f0f5e8fc14314af3ea86e36db2",
+    "local_directory": "/Users/wentiliangkaihua/Documents/ChatGPT/专利论文/remote_artifacts/upstream_smolvla_original_v1"
+  }
+}

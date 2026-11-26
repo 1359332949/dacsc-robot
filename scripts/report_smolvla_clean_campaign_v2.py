@@ -32,6 +32,7 @@ def main(a):
                'limitations': ['same ten previously examined tasks; not blind or cross-task confirmation',
                    'one policy seed per task; three initial states, not three policy seeds',
                    'not the full community 100-episode reproduction',
+                   'all states in this smoke are development-accessed and excluded from future untouched Clean claims',
                    'no TTA closed-loop success comparison in this campaign',
                    'ActMAD-inspired port remains different from original spatial L1 ActMAD']}
     a.output.mkdir(parents=True, exist_ok=True)
@@ -41,11 +42,11 @@ def main(a):
         f"真 vanilla LIBERO + 固定旧版 LeRobot，30 个额外初始状态的完整 Clean 闭环：{full['successes']}/30（{100*full['successes']/30:.1f}%）。",
         f"按10个任务聚类bootstrap的95%区间：[{100*interval[0]:.1f}%, {100*interval[1]:.1f}%]。这不是与社区成绩的显著性比较。", '',
         '## 协议与重放', '',
-        '- 固定 HuggingFaceVLA/smolvla_libero 权重，旧版LeRobot 483be9aa，真vanilla资产；EGL、FP32、env.noise=0。',
+        '- 固定 HuggingFaceVLA/smolvla_libero 权重，旧版LeRobot 483be9aa，真vanilla资产；EGL、视觉FP32且模型含BF16、env.noise=0；此构建路径尚不等同原版。',
         '- n_action_steps=1、Euler10、256像素、settling10、最多280步；没有TTA、参数更新或选参。CoRP的H=E=12没有强加给SmolVLA。',
         '- 十个任务各init1/2/3，环境/策略种子均为10*task_id；不是三个独立策略种子。',
         '- 先重放task0/init0成功和task4/init0失败，成功标记、步数、初始物理状态、两路RGB及完整动作hash均与旧记录一致，才展开30局。锚点不计入30局。',
-        '- 30个初始状态hash互异，每局788个权重张量核对匹配。没有访问保护的Blind/Held-out池。', '',
+        '- 每任务3个初始状态互异，每局788个权重张量核对匹配。没有打开封存Blind/Held-out清单；本轮所有状态记为已接触开发体检，不能再充当独立未见Clean。', '',
         '## 逐任务结果', '', '| Task ID | init1/2/3 成功数 |', '|---:|---:|']
     text += [f"| {t} | {by_task[str(t)]['successes']}/3 |" for t in range(10)]
     text += ['', '## ActMAD-inspired 对照修复', '',
