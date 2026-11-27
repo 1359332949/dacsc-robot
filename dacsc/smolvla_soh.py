@@ -52,21 +52,49 @@ class SOHModule(nn.Module):
 
     def __init__(
         self,
-        u_geo: torch.Tensor,
+        u_geo: torch.Tensor | None = None,
         dim: int = 768,
         rank: int = 16,
         num_bases: int = 8,
         z_dim: int = 128,
+        *,
+        v_basis: torch.Tensor | None = None,
+        eigenvalues: torch.Tensor | None = None,
+        damping_beta: float = 1.0,
     ):
         super().__init__()
-        if u_geo.ndim != 2 or u_geo.shape[0] != dim:
-            raise ValueError(f'u_geo must be [dim, k], got {tuple(u_geo.shape)}')
-        if u_geo.shape[1] == 0 or u_geo.shape[1] > dim:
-            raise ValueError('u_geo has invalid number of columns')
-        u_geo = u_geo.float()
-        if not torch.allclose(u_geo.T @ u_geo, torch.eye(u_geo.shape[1], device=u_geo.device, dtype=u_geo.dtype), atol=1e-4):
-            raise ValueError('u_geo columns must be orthonormal')
-        self.register_buffer('u_geo', u_geo.contiguous())
+        if u_geo is None and v_basis is None:
+            raise ValueError('provide u_geo (hard projection) or v_basis/eigenvalues (spectral damping)')
+        device = u_geo.device if u_geo is not None else v_basis.device
+        if u_geo is not None:
+            if u_geo.ndim != 2 or u_geo.shape[0] != dim:
+                raise ValueError(f'u_geo must be [dim, k], got {tuple(u_geo.shape)}')
+            if u_geo.shape[1] == 0 or u_geo.shape[1] > dim:
+                raise ValueError('u_geo has invalid number of columns')
+            u_geo = u_geo.float()
+            if not torch.allclose(u_geo.T @ u_geo, torch.eye(u_geo.shape[1], device=u_geo.device, dtype=u_geo.dtype), atol=1e-4):
+                raise ValueError('u_geo columns must be orthonormal')
+            self.register_buffer('u_geo', u_geo.contiguous())
+        else:
+            self.register_buffer('u_geo', torch.empty(0, device=device))
+        if v_basis is not None:
+            if eigenvalues is None:
+                raise ValueError('eigenvalues required with v_basis')
+            v_basis = v_basis.float()
+            eigenvalues = eigenvalues.float().clamp_min(0)
+            if v_basis.ndim != 2 or v_basis.shape[0] != dim or v_basis.shape[1] != dim:
+                raise ValueError(f'v_basis must be [{dim}, {dim}], got {tuple(v_basis.shape)}')
+            if eigenvalues.numel() != dim:
+                raise ValueError('eigenvalues must have dim entries')
+            if not torch.allclose(v_basis.T @ v_basis, torch.eye(dim, device=v_basis.device, dtype=v_basis.dtype), atol=1e-4):
+                raise ValueError('v_basis columns must be orthonormal')
+            mean = eigenvalues.mean().clamp_min(1e-12)
+            damping = 1.0 / (1.0 + float(damping_beta) * eigenvalues / mean)
+            self.register_buffer('v_basis', v_basis.contiguous())
+            self.register_buffer('damping', damping.contiguous())
+        else:
+            self.register_buffer('v_basis', torch.empty(0))
+            self.register_buffer('damping', torch.empty(0))
         self.dim = int(dim)
         self.rank = int(rank)
         self.num_bases = int(num_bases)
@@ -87,8 +115,10 @@ class SOHModule(nn.Module):
         self.scale = nn.Parameter(torch.zeros(1))
 
     def project_dom(self, x: torch.Tensor) -> torch.Tensor:
-        """Return ``x P_dom`` with ``P_dom = I - U_geo U_geo^T``."""
-        # x: [B, N, D]; u_geo: [D, k]; no D x D matrix is materialized.
+        """Apply hard P_dom or smooth spectral damping W_dom."""
+        if self.v_basis.numel() > 0:
+            # (x V) diag(1/(1+beta*lambda/mean(lambda))) V^T
+            return ((x @ self.v_basis) * self.damping[None, None, :]) @ self.v_basis.T
         return x - (x @ self.u_geo) @ self.u_geo.T
 
     @staticmethod

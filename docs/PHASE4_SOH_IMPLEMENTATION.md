@@ -1,9 +1,9 @@
 # Phase 4 SOH-VLA implementation status
 
-Status: **code fixed after audit; 9 tensor tests pass; Step-1 is now
-differentiable through the native Flow velocity, but the pre-registered
-"first 256 dims > 85% energy" gate FAILS (77.0%). Do not start Step-2 or
-Step-3 as if the assumption were confirmed.**
+Status: **code fixed after the second audit; Step-1 now uses only the real
+7-DOF action and two Flow times, but the pre-registered "first 256 dims > 85%
+energy" gate still FAILS (78.7%). Do not start Step-2 or Step-3 as if the
+assumption were confirmed.**
 
 ## Files
 
@@ -41,33 +41,37 @@ Old audited files were not modified.
 10. SOH report/latency/preflight use SOH-specific names and record checkpoint,
     subspace, and source hashes.
 
-## Step 1 result (source init0, actual native Flow gradient)
+## Step 1 result (source init0, actual native 7-DOF Flow gradient)
 
 ```text
 tasks: 10
 frames per task: 4
-valid camera gradients: 54
+Flow times per frame: 0.25 and 0.75
+valid camera gradients: 108
 mode: native_flow_velocity (all)
+real action slice: v_t[:, :10, :7]
 k = 256
 
 energy prefix:
-  16  = 0.2746
-  32  = 0.3648
-  64  = 0.4748
-  128 = 0.6113
-  256 = 0.7703
-  384 = 0.8664
-  512 = 0.9303
+  16  = 0.3155
+  32  = 0.4063
+  64  = 0.5105
+  128 = 0.6388
+  256 = 0.7866
+  384 = 0.8757
+  512 = 0.9350
 ```
 
 Pre-registered gate:
 
 ```text
-first 256 dims > 85% energy  -> FAIL (77.0%)
+first 256 dims > 85% energy  -> FAIL (78.7%)
 ```
 
-The 85% level is reached only at k≈384. Changing k after seeing the result
-would be a post-hoc choice; it is recorded, not silently applied.
+The 25 zero-padded max_action_dim slots were removed from the gradient, so this
+is the cleanest estimate so far. It is still not sparse enough for the original
+hard k=256 claim. Changing k after seeing the result would be post-hoc; it is
+recorded, not silently applied.
 
 ## Step 2 training status
 
@@ -100,8 +104,9 @@ python scripts/phase4_soh_subspace.py \
 | parameter budget <1.5M | PASS |
 | dual-view capture | PASS |
 | CUDA-generator perturbations | PASS |
-| Step-1 actual action/Flow gradient | PASS (differentiable) |
-| Step-1 256-dim >85% energy | **FAIL (77.0%)** |
+| Step-1 actual 7-DOF Flow gradient | PASS (differentiable, 108 camera gradients) |
+| Step-1 256-dim >85% energy | **FAIL (78.7%)** |
+| spectral W_dom implementation | implemented; k no longer hard-coded |
 | Step-2 training | not run |
 | Step-3 paired closed loop | not run |
 | Step-4 ablations | not run |

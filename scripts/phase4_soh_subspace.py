@@ -77,7 +77,7 @@ def _capture_views(actor, layer: int = 3):
     return handle, caps
 
 
-def flow_velocity_gradient(actor, batch, generator: torch.Generator):
+def flow_velocity_gradient(actor, batch, generator: torch.Generator, flow_time: float = 0.75):
     """Differentiate one native Flow velocity with respect to both Layer-3 views.
 
     This bypasses the policy's @torch.no_grad select_action wrapper: it calls
@@ -109,10 +109,13 @@ def flow_velocity_gradient(actor, batch, generator: torch.Generator):
             )
             shape = (state.shape[0], flow.config.chunk_size, flow.config.max_action_dim)
             noise = torch.randn(shape, generator=generator, device=state.device, dtype=torch.float32)
-            t = torch.full((state.shape[0],), 1.0, dtype=torch.float32, device=state.device)
+            t = torch.full((state.shape[0],), float(flow_time), dtype=torch.float32, device=state.device)
             v_t = flow.denoise_step(prefix_pad_masks, past_key_values, noise, t)
-            u = torch.randn(v_t.shape, generator=generator, device=v_t.device, dtype=v_t.dtype)
-            scalar = (v_t * u).sum()
+            # Only the first 10 chunk steps x 7 real LIBERO action dims.  The
+            # remaining 25 max_action_dim slots are cross-embodiment zero padding.
+            v_real = v_t[:, :10, :7]
+            u = torch.randn(v_real.shape, generator=generator, device=v_real.device, dtype=v_real.dtype)
+            scalar = (v_real * u).sum()
             grads = torch.autograd.grad(scalar, caps, allow_unused=False)
             if len(grads) != 2:
                 raise RuntimeError(f'expected two camera gradients, got {len(grads)}')
@@ -122,7 +125,7 @@ def flow_velocity_gradient(actor, batch, generator: torch.Generator):
         handle.remove()
 
 
-def action_layer3_gradient(actor, batch, generator: torch.Generator, layer: int = 3, fallback_layer: int = 12):
+def action_layer3_gradient(actor, batch, generator: torch.Generator, layer: int = 3, fallback_layer: int = 12, flow_time: float = 0.75):
     """Return g = d<u, a> / dX_layer, shape [1, 1024, 768].
 
     Primary path differentiates the frozen native action output.  If the
@@ -132,7 +135,7 @@ def action_layer3_gradient(actor, batch, generator: torch.Generator, layer: int 
     """
     model = actor._model
     try:
-        grads, mode = flow_velocity_gradient(actor, batch, generator)
+        grads, mode = flow_velocity_gradient(actor, batch, generator, flow_time=flow_time)
         # Symmetric dual-view accumulation: average their channel Gramians.
         return grads, mode
     except Exception as exc:
@@ -208,19 +211,20 @@ def main(args):
         if not batches:
             raise RuntimeError(f'no frames for task {task}')
         for frame_idx, batch in enumerate(batches):
-            grads, mode = action_layer3_gradient(actor, batch, gen)
-            gs = [g[0].float() if g.ndim == 3 else g.float() for g in grads]
-            for g in gs:
-                assert g.shape == (1024, 768), g.shape
-                if not torch.isfinite(g).all():
-                    raise ValueError(f'nonfinite Layer-3 gradient for task {task}')
-            grams.extend(g.T @ g for g in gs)
-            modes.extend([mode] * len(gs))
-            provenance.append({'task': task, 'task_name': spec.task, 'init_index': 0,
-                               'frame': frame_idx, 'gradient_mode': mode,
-                               'grad_shape': [list(g.shape) for g in gs]})
-            print(json.dumps({'task': task, 'frame': frame_idx, 'mode': mode,
-                              'grad_norm': [float(g.norm()) for g in gs]}), flush=True)
+            for flow_time in (0.25, 0.75):
+                grads, mode = action_layer3_gradient(actor, batch, gen, flow_time=flow_time)
+                gs = [g[0].float() if g.ndim == 3 else g.float() for g in grads]
+                for g in gs:
+                    assert g.shape == (1024, 768), g.shape
+                    if not torch.isfinite(g).all():
+                        raise ValueError(f'nonfinite Layer-3 gradient for task {task}')
+                grams.extend(g.T @ g for g in gs)
+                modes.extend([mode] * len(gs))
+                provenance.append({'task': task, 'task_name': spec.task, 'init_index': 0,
+                                   'frame': frame_idx, 'flow_time': flow_time, 'gradient_mode': mode,
+                                   'grad_shape': [list(g.shape) for g in gs]})
+                print(json.dumps({'task': task, 'frame': frame_idx, 'flow_time': flow_time,
+                                  'mode': mode, 'grad_norm': [float(g.norm()) for g in gs]}), flush=True)
 
     gram = torch.stack(grams).mean(0)
     eigval, eigvec = torch.linalg.eigh(gram)          # ascending
@@ -241,8 +245,11 @@ def main(args):
         'gradient_modes': modes,
         'k': k,
         'eigenvalues': eigval.cpu().numpy(),
+        'v_basis': eigvec.cpu().numpy(),
         'u_geo': u_geo.cpu().numpy(),
         'energy_prefix': energy,
+        'real_action_slice': 'v_t[:, :10, :7]',
+        'flow_times': [0.25, 0.75],
         'provenance': provenance,
         'warning': ('U_geo is a source-domain action-sensitivity estimate; it is not a physical guarantee and not a test-set fit.'
                     if all(m == 'native_flow_velocity' for m in modes) else
@@ -254,7 +261,7 @@ def main(args):
         raise FileExistsError(out)
     np.savez_compressed(out, **{k: v for k, v in result.items() if isinstance(v, np.ndarray)})
     (out.with_suffix('.json')).write_text(json.dumps({k: v for k, v in result.items() if k != 'eigenvalues'
-                                                      and k != 'u_geo' and k != 'provenance'}, indent=2) + '\n')
+                                                      and k != 'u_geo' and k != 'v_basis' and k != 'provenance'}, indent=2) + '\n')
     print('SUBSPACE_DONE', json.dumps({'out': str(out), 'k': k, 'energy': energy,
                                        'modes': modes}), flush=True)
 

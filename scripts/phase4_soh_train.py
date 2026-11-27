@@ -16,6 +16,7 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import random
 from pathlib import Path
 
 import numpy as np
@@ -25,6 +26,7 @@ import torch.nn.functional as F
 from phase3_smolvla_common import load_actor, seed_torch, setup_case, reference_for
 from dacsc.smolvla_soh import SOHModule, parameter_count
 from dacsc.smolvla_v1_hook import SmolVLAV1Hook
+from lerobot.common.policies.smolvla.modeling_smolvla import make_att_2d_masks
 
 
 def _layer_tensor(output):
@@ -80,7 +82,7 @@ def _capture_vision(vision, images, *, soh=None, fps=None):
         handles.append(vision.encoder.layers[11].register_forward_hook(l12))
     try:
         with torch.no_grad() if soh is None else torch.enable_grad():
-            outs = [vision(pixel_values=im, patch_attention_mask=None) for im in images]
+            outs = [vision(pixel_values=im.to(dtype=vision.dtype), patch_attention_mask=None) for im in images]
         if len(capture.get('l12', [])) != 2:
             raise RuntimeError(f'expected two camera captures, got {len(capture.get("l12", []))}')
         return outs, capture
@@ -135,6 +137,45 @@ def generic_perturb(images: torch.Tensor, gen: torch.Generator) -> torch.Tensor:
 
 
 
+
+def _flow_velocity(actor, batch, *, soh=None, fps=None, noise=None, flow_time: float = 0.5):
+    """Native single-step Flow velocity; optionally repair Layer 3 via SOH."""
+    policy = actor._model
+    flow = policy.model
+    vision = flow.vlm_with_expert.vlm.model.vision_model
+    images, img_masks = policy.prepare_images(batch)
+    state = policy.prepare_state(batch)
+    lang_tokens, lang_masks = policy.prepare_language(batch)
+    handle = None
+    if soh is not None:
+        handle, h12 = _soh_hooks(vision, soh, fps, {})
+    try:
+        context = torch.enable_grad() if soh is not None else torch.no_grad()
+        with context:
+            prefix_embs, prefix_pad_masks, prefix_att_masks = flow.embed_prefix(
+                images, img_masks, lang_tokens, lang_masks, state=state)
+            prefix_att_2d_masks = make_att_2d_masks(prefix_pad_masks, prefix_att_masks)
+            prefix_position_ids = torch.cumsum(prefix_pad_masks, dim=1) - 1
+            _, past_key_values = flow.vlm_with_expert.forward(
+                attention_mask=prefix_att_2d_masks,
+                position_ids=prefix_position_ids,
+                past_key_values=None,
+                inputs_embeds=[prefix_embs, None],
+                use_cache=flow.config.use_cache,
+                fill_kv_cache=True,
+            )
+            if noise is None:
+                shape = (state.shape[0], flow.config.chunk_size, flow.config.max_action_dim)
+                noise = torch.randn(shape, device=state.device, dtype=torch.float32)
+            t = torch.full((state.shape[0],), float(flow_time), dtype=torch.float32, device=state.device)
+            return flow.denoise_step(prefix_pad_masks, past_key_values, noise, t)
+    finally:
+        if handle is not None:
+            handle.remove()
+            h12.remove()
+
+
+
 def collect_frames(actor, task: int, frames_per_task: int):
     """Run one source init0 episode and sample Clean dual-camera batches."""
     suite, spec, obs = setup_case(task, 0)
@@ -166,7 +207,13 @@ def main(args):
     model.eval().requires_grad_(False)
     z = np.load(args.subspace)
     u_geo = torch.as_tensor(z['u_geo'], device='cuda', dtype=torch.float32)
-    soh = SOHModule(u_geo, rank=args.rank, num_bases=args.num_bases).cuda()
+    if 'v_basis' in z.files and 'eigenvalues' in z.files:
+        v_basis = torch.as_tensor(z['v_basis'], device='cuda', dtype=torch.float32)
+        eigenvalues = torch.as_tensor(z['eigenvalues'], device='cuda', dtype=torch.float32)
+        soh = SOHModule(v_basis=v_basis, eigenvalues=eigenvalues,
+                        rank=args.rank, num_bases=args.num_bases).cuda()
+    else:
+        soh = SOHModule(u_geo, rank=args.rank, num_bases=args.num_bases).cuda()
     opt = torch.optim.AdamW(soh.parameters(), lr=args.lr)
     print(json.dumps({'params': parameter_count(soh), 'u_geo': list(u_geo.shape)}), flush=True)
 
@@ -185,8 +232,11 @@ def main(args):
 
     for epoch in range(args.epochs):
         losses = []
-        for step in range(args.steps):
-            task, batch, _ = frames[step % len(frames)]
+        order = list(range(len(frames)))
+        random.shuffle(order)
+        steps_this_epoch = len(frames) if args.steps <= 0 else args.steps
+        for step in range(steps_this_epoch):
+            task, batch, _ = frames[order[step % len(order)]]
             gen = torch.Generator(device='cuda').manual_seed(args.seed + 1000 * epoch + step)
             clean_images, _ = model.prepare_images(batch)
             # Teacher: clean Layer-12 features, per camera.
@@ -210,6 +260,15 @@ def main(args):
             _, fixed = _capture_vision(vision, pert_images, soh=soh, fps=fps)
             pred = torch.cat([x.float() for x in fixed['l12']], dim=0)
             l_feat = F.mse_loss(pred, teacher) + (1.0 - F.cosine_similarity(pred.flatten(1), teacher.flatten(1), dim=1)).mean()
+            # Single-step 7-DOF native Flow velocity consistency.
+            # Teacher and student share the same noise and random time.
+            noise_shape = (batch['observation.state'].shape[0], model.model.config.chunk_size,
+                           model.model.config.max_action_dim)
+            noise = torch.randn(noise_shape, device='cuda', dtype=torch.float32)
+            flow_time = float(torch.empty(1, device='cuda').uniform_(0.1, 0.9, generator=gen).item())
+            v_clean = _flow_velocity(actor, batch, noise=noise, flow_time=flow_time)
+            v_fixed = _flow_velocity(actor, pert_batch, soh=soh, fps=fps, noise=noise, flow_time=flow_time)
+            l_act = F.mse_loss(v_fixed[:, :10, :7].float(), v_clean[:, :10, :7].float().detach())
             # Clean identity: 20% of updates use the clean image and *its own*
             # fingerprint; residual must vanish on Clean.
             if (step % 5) == 0:
@@ -224,7 +283,7 @@ def main(args):
                 l_id = sum(F.mse_loss(a.float(), b.float()) for a, b in zip(clean_fixed['l12'], clean['l12']))
             else:
                 l_id = pred.new_zeros(())
-            loss = l_feat + args.id_weight * l_id
+            loss = l_feat + args.act_weight * l_act + args.id_weight * l_id
             opt.zero_grad(set_to_none=True)
             loss.backward()
             torch.nn.utils.clip_grad_norm_(soh.parameters(), 1.0)
@@ -236,8 +295,15 @@ def main(args):
     out.parent.mkdir(parents=True, exist_ok=True)
     if out.exists():
         raise FileExistsError(out)
-    torch.save({'state_dict': soh.state_dict(), 'u_geo': u_geo.cpu(), 'rank': args.rank,
-                'num_bases': args.num_bases, 'schema': 'phase4_soh_ckpt_v1'}, out)
+    payload = {'state_dict': soh.state_dict(), 'rank': args.rank,
+               'num_bases': args.num_bases, 'schema': 'phase4_soh_ckpt_v1'}
+    if soh.v_basis.numel() > 0:
+        payload['v_basis'] = soh.v_basis.cpu()
+        if 'eigenvalues' in z.files:
+            payload['eigenvalues'] = torch.as_tensor(z['eigenvalues'], dtype=torch.float32)
+    else:
+        payload['u_geo'] = soh.u_geo.cpu()
+    torch.save(payload, out)
     (out.with_suffix('.json')).write_text(json.dumps({'schema': 'phase4_soh_train_receipt_v1',
         'params': parameter_count(soh), 'epochs': args.epochs, 'steps_per_epoch': args.steps,
         'tasks': args.tasks, 'seed': args.seed, 'losses_last_epoch': losses,
@@ -254,10 +320,11 @@ if __name__ == '__main__':
     p.add_argument('--tasks', type=int, default=10)
     p.add_argument('--frames-per-task', type=int, default=24)
     p.add_argument('--epochs', type=int, default=20)
-    p.add_argument('--steps', type=int, default=10)
+    p.add_argument('--steps', type=int, default=0)
     p.add_argument('--rank', type=int, default=16)
     p.add_argument('--num-bases', type=int, default=8)
     p.add_argument('--lr', type=float, default=3e-4)
     p.add_argument('--id-weight', type=float, default=1.0)
+    p.add_argument('--act-weight', type=float, default=0.5)
     p.add_argument('--seed', type=int, default=0)
     main(p.parse_args())

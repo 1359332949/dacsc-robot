@@ -86,3 +86,22 @@ def test_streaming_ema_updates_per_view():
     assert torch.equal(a.update_ema(1, x1), x1)
     assert torch.allclose(a.update_ema(0, torch.zeros_like(x0)), 0.8 * x0)
     assert torch.allclose(a.ema_fp[1], x1)
+
+
+def test_spectral_damping_is_smooth():
+    torch.manual_seed(4)
+    v, _ = torch.linalg.qr(torch.randn(768, 768))
+    eig = torch.logspace(-4, 4, 768)
+    m = SOHModule(None, v_basis=v, eigenvalues=eig, damping_beta=1.0)
+    x = torch.randn(1, 16, 768)
+    y = m.project_dom(x)
+    # Most sensitive direction (last, large eigenvalue) is strongly damped.
+    sensitive = v[:, -1][None, None, :]
+    assert (sensitive @ m.v_basis).abs().max() > 0.99
+    damped = m.project_dom(sensitive)
+    assert damped.norm() < 0.05 * sensitive.norm()
+    # Least sensitive direction is nearly preserved.
+    weak = v[:, 0][None, None, :]
+    kept = m.project_dom(weak)
+    assert torch.allclose(kept, weak, atol=1e-2)
+    assert torch.isfinite(y).all()

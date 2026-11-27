@@ -29,8 +29,14 @@ def load_soh(path: Path):
     payload = torch.load(path, map_location='cuda', weights_only=False)
     if payload.get('schema') != 'phase4_soh_ckpt_v1':
         raise ValueError('unexpected SOH checkpoint schema')
-    u_geo = payload['u_geo'].cuda().float()
-    soh = SOHModule(u_geo, rank=int(payload['rank']), num_bases=int(payload['num_bases'])).cuda()
+    if 'v_basis' in payload and 'eigenvalues' in payload:
+        v_basis = payload['v_basis'].cuda().float()
+        eigenvalues = payload['eigenvalues'].cuda().float()
+        soh = SOHModule(v_basis=v_basis, eigenvalues=eigenvalues,
+                        rank=int(payload['rank']), num_bases=int(payload['num_bases'])).cuda()
+    else:
+        u_geo = payload['u_geo'].cuda().float()
+        soh = SOHModule(u_geo, rank=int(payload['rank']), num_bases=int(payload['num_bases'])).cuda()
     soh.load_state_dict(payload['state_dict'])
     return soh.eval()
 
