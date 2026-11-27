@@ -359,3 +359,37 @@ better universal candidate. It does not yet make Background positive.
 No 3-seed closed-loop campaign was started; it should use this clean5 checkpoint
 if Background balance is the priority, or the 6-mode checkpoint if maximum
 Sensor gain is the priority.
+
+## Clean5 seed-0 closed-loop check
+
+30 pairs = 60 episodes (20 Sensor + 10 Background), 220 steps, ema_beta=0.0.
+
+| group | n | Frozen | SOH clean5 | rescued/harmed | net | p | task-cluster 95% CI pp |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Sensor | 20 | 4/20 | 6/20 | 3/1 | +2 | 0.625 | [-10.0, +30.0] |
+| Background | 10 | 4/10 | 4/10 | 1/1 | +0 | 1 | [-30.0, +30.0] |
+
+Sensor subgroups: fog +2, gaussian_blur -1, glass_blur 0, motion_blur +1,
+zoom_blur 0. Background: table_texture +1, scene_texture -1.
+
+Comparison with the 6-mode v2 seed-0 Sensor closed loop:
+
+| checkpoint | Sensor t0 xyz | Sensor closed loop | Background t0 xyz |
+|---|---:|---:|---:|
+| 6-mode v2 | +52.02% | 3/20 -> 9/20 | -5.27% |
+| clean5 | +45.33% | 4/20 -> 6/20 | +0.10% |
+
+The clean5 version fixes the Background t0 regression and does not harm
+Background in this small closed-loop check, but its Sensor closed-loop gain is
+much smaller than the 6-mode version. Therefore it is **not yet justified to
+call clean5 the final main version**; the tradeoff is real. A 3-seed campaign
+was not started because the version choice is unresolved.
+
+## Current decision
+
+* 6-mode: strongest Sensor evidence (t0 +52%, 9/20 closed loop) but negative
+  Background t0 and unknown Background closed loop.
+* clean5: Background-neutral (t0 +0.10%, 4/10 -> 4/10 closed loop) but Sensor
+  closed loop only 6/20.
+* Do not run 3 seeds until a version is selected; optionally measure 6-mode
+  Background closed loop first.

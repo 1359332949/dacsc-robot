@@ -1,0 +1,146 @@
+{
+  "pairs": 30,
+  "groups": {
+    "Sensor": {
+      "n": 20,
+      "frozen": 4,
+      "soh": 6,
+      "rescued": 3,
+      "harmed": 1,
+      "net": 2,
+      "p": 0.625,
+      "ci": [
+        -10.0,
+        30.0
+      ],
+      "gate_accepted": 3703,
+      "gate_total": 3733
+    },
+    "Background": {
+      "n": 10,
+      "frozen": 4,
+      "soh": 4,
+      "rescued": 1,
+      "harmed": 1,
+      "net": 0,
+      "p": 1.0,
+      "ci": [
+        -30.0,
+        30.0
+      ],
+      "gate_accepted": 1721,
+      "gate_total": 1902
+    }
+  },
+  "subgroups": {
+    "Sensor": {
+      "fog": {
+        "n": 4,
+        "frozen": 2,
+        "soh": 4,
+        "rescued": 2,
+        "harmed": 0,
+        "net": 2,
+        "p": 0.5,
+        "ci": [
+          0.0,
+          100.0
+        ],
+        "gate_accepted": 410,
+        "gate_total": 411
+      },
+      "gaussian_blur": {
+        "n": 4,
+        "frozen": 1,
+        "soh": 0,
+        "rescued": 0,
+        "harmed": 1,
+        "net": -1,
+        "p": 1.0,
+        "ci": [
+          -75.0,
+          0.0
+        ],
+        "gate_accepted": 880,
+        "gate_total": 880
+      },
+      "glass_blur": {
+        "n": 4,
+        "frozen": 0,
+        "soh": 0,
+        "rescued": 0,
+        "harmed": 0,
+        "net": 0,
+        "p": 1.0,
+        "ci": [
+          0.0,
+          0.0
+        ],
+        "gate_accepted": 880,
+        "gate_total": 880
+      },
+      "motion_blur": {
+        "n": 4,
+        "frozen": 0,
+        "soh": 1,
+        "rescued": 1,
+        "harmed": 0,
+        "net": 1,
+        "p": 1.0,
+        "ci": [
+          0.0,
+          75.0
+        ],
+        "gate_accepted": 758,
+        "gate_total": 787
+      },
+      "zoom_blur": {
+        "n": 4,
+        "frozen": 1,
+        "soh": 1,
+        "rescued": 0,
+        "harmed": 0,
+        "net": 0,
+        "p": 1.0,
+        "ci": [
+          0.0,
+          0.0
+        ],
+        "gate_accepted": 775,
+        "gate_total": 775
+      }
+    },
+    "Background": {
+      "scene_texture": {
+        "n": 5,
+        "frozen": 3,
+        "soh": 2,
+        "rescued": 0,
+        "harmed": 1,
+        "net": -1,
+        "p": 1.0,
+        "ci": [
+          -60.0,
+          0.0
+        ],
+        "gate_accepted": 816,
+        "gate_total": 926
+      },
+      "table_texture": {
+        "n": 5,
+        "frozen": 1,
+        "soh": 2,
+        "rescued": 1,
+        "harmed": 0,
+        "net": 1,
+        "p": 1.0,
+        "ci": [
+          0.0,
+          60.0
+        ],
+        "gate_accepted": 905,
+        "gate_total": 976
+      }
+    }
+  }
+}
