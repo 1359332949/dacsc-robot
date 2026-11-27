@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import os
 import json
 import time
 from pathlib import Path
@@ -23,7 +24,7 @@ from dacsc.smolvla_soh import SOHModule, SOHModuleV2, SmolVLASOHAdapter
 ROOT = Path('/hy-tmp/patch-diag')
 DIAG = ROOT / 'runs/phase3_smolvla_unified_diag_v1'
 CALIB = ROOT / 'runs/phase3_smolvla/spatial_init0_calib.npz'
-OUT = ROOT / 'runs/phase4_soh_clean5_eval'
+OUT = Path(os.environ.get('SOH_EVAL_OUT', str(ROOT / 'runs/phase4_soh_clean5_eval')))
 GROUPS = ('Sensor', 'Background')
 
 
@@ -42,20 +43,18 @@ def load_soh(path: Path):
     return m.eval()
 
 
-def manifest():
+def manifest(selected=GROUPS):
     m = json.loads((DIAG / 'manifest.json').read_text())
-    cases = [dict(c, scored=True) for c in m['cases'] if c['group'] in GROUPS]
-    assert sum(c['group'] == 'Sensor' for c in cases) == 20
-    assert sum(c['group'] == 'Background' for c in cases) == 10
+    cases = [dict(c, scored=True) for c in m['cases'] if c['group'] in selected]
     return m, cases
 
 
-def preflight(soh_path: Path):
-    m, cases = manifest()
+def preflight(soh_path: Path, groups=GROUPS):
+    m, cases = manifest(groups)
     actor = load_actor(); soh = load_soh(soh_path)
     funcs = dict(shift.corruption_functions(), glass_blur=base.glass_blur_exact)
     checks = []
-    for group in GROUPS:
+    for group in groups:
         c = next(x for x in cases if x['group'] == group)
         suite, _, raw = shift.setup(c)
         try:
@@ -89,8 +88,8 @@ def pair_check(rows):
     return dict(initial_state_and_two_view_pixels_exact=True, rng_prefix_exact=True)
 
 
-def worker(soh_path: Path, shard: int, seed: int):
-    m, cases = manifest()
+def worker(soh_path: Path, shard: int, seed: int, groups=GROUPS):
+    m, cases = manifest(groups)
     actor = load_actor(); soh = load_soh(soh_path)
     funcs = dict(shift.corruption_functions(), glass_blur=base.glass_blur_exact)
     original_seed = seed_torch
@@ -127,9 +126,10 @@ if __name__ == '__main__':
     p.add_argument('--soh', type=Path, required=True)
     p.add_argument('--shard', type=int, default=0)
     p.add_argument('--seed', type=int, default=0)
+    p.add_argument('--groups', nargs='+', choices=GROUPS, default=list(GROUPS))
     a = p.parse_args()
     OUT.mkdir(parents=True, exist_ok=True)
     if a.mode == 'preflight':
-        preflight(a.soh)
+        preflight(a.soh, a.groups)
     else:
-        worker(a.soh, a.shard, a.seed)
+        worker(a.soh, a.shard, a.seed, a.groups)

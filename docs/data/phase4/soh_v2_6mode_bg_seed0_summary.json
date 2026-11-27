@@ -1,0 +1,70 @@
+{
+  "pairs": 10,
+  "groups": {
+    "Sensor": {
+      "n": 0,
+      "frozen": 0,
+      "soh": 0,
+      "rescued": 0,
+      "harmed": 0,
+      "net": 0,
+      "p": 1.0,
+      "ci": [
+        NaN,
+        NaN
+      ],
+      "gate_accepted": 0,
+      "gate_total": 0
+    },
+    "Background": {
+      "n": 10,
+      "frozen": 4,
+      "soh": 3,
+      "rescued": 0,
+      "harmed": 1,
+      "net": -1,
+      "p": 1.0,
+      "ci": [
+        -30.0,
+        0.0
+      ],
+      "gate_accepted": 1690,
+      "gate_total": 1925
+    }
+  },
+  "subgroups": {
+    "Sensor": {},
+    "Background": {
+      "scene_texture": {
+        "n": 5,
+        "frozen": 3,
+        "soh": 2,
+        "rescued": 0,
+        "harmed": 1,
+        "net": -1,
+        "p": 1.0,
+        "ci": [
+          -60.0,
+          0.0
+        ],
+        "gate_accepted": 797,
+        "gate_total": 935
+      },
+      "table_texture": {
+        "n": 5,
+        "frozen": 1,
+        "soh": 1,
+        "rescued": 0,
+        "harmed": 0,
+        "net": 0,
+        "p": 1.0,
+        "ci": [
+          0.0,
+          0.0
+        ],
+        "gate_accepted": 893,
+        "gate_total": 990
+      }
+    }
+  }
+}

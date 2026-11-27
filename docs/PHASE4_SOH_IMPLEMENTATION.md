@@ -393,3 +393,21 @@ was not started because the version choice is unresolved.
   closed loop only 6/20.
 * Do not run 3 seeds until a version is selected; optionally measure 6-mode
   Background closed loop first.
+
+## Version decision after both Background closed-loop checks
+
+| version | Sensor 20 pairs | Background 10 pairs | total net |
+|---|---|---|---|
+| 6-mode v2 | Frozen 3 -> SOH 9 (net +6) | Frozen 4 -> SOH 3 (net -1) | **+5** |
+| clean5 | Frozen 4 -> SOH 6 (net +2) | Frozen 4 -> SOH 4 (net 0) | **+2** |
+
+6-mode Background: table_texture 1/5 -> 1/5, scene_texture 3/5 -> 2/5, one harm,
+no rescue; exact p=1, task-cluster CI [-30,+0] pp. This is a small negative,
+not a catastrophic harm, but it misses the strict "Background >=4/10" gate by
+one episode.
+
+Decision: 6-mode remains the stronger provisional main version on the combined
+30-pair seed-0 evidence (+5 vs +2), but its Background result is a documented
+limitation. Do not start the 3-seed campaign as if Background were safe; either
+accept the 1-episode Background harm as an explicit limitation, or test a
+generic random-cutout replacement for the old fixed-center mode 5.
