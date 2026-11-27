@@ -98,10 +98,10 @@ def _gaussian_kernel(size: int, sigma: float, device, dtype):
     return k[:, None] * k[None, :]
 
 
-def generic_perturb(images: torch.Tensor, gen: torch.Generator) -> torch.Tensor:
+def generic_perturb(images: torch.Tensor, gen: torch.Generator, num_modes: int = 6) -> torch.Tensor:
     """Apply one of four generic math perturbations; no benchmark asset used."""
     x = images.float()
-    mode = int(torch.randint(0, 6, (1,), generator=gen, device=x.device).item())
+    mode = int(torch.randint(0, int(num_modes), (1,), generator=gen, device=x.device).item())
     if mode == 0:
         # Random low-pass Fourier attenuation.
         b, c, h, w = x.shape
@@ -271,8 +271,8 @@ def main(args):
             # Student pass 1 on a generic perturbation.  Perturb raw [0,1]
             # camera tensors, then use the native image preparation path.
             pert_batch = dict(batch)
-            pert_batch['observation.images.image'] = generic_perturb(batch['observation.images.image'], gen)
-            pert_batch['observation.images.image2'] = generic_perturb(batch['observation.images.image2'], gen)
+            pert_batch['observation.images.image'] = generic_perturb(batch['observation.images.image'], gen, args.num_perturb_modes)
+            pert_batch['observation.images.image2'] = generic_perturb(batch['observation.images.image2'], gen, args.num_perturb_modes)
             pert_images, _ = model.prepare_images(pert_batch)
             _, raw = _capture_vision(vision, pert_images)
             refs = refs_by_task[task]
@@ -347,7 +347,8 @@ def main(args):
         'flow_loss': '7-DOF single-step native Flow velocity MSE',
         'act_weight': args.act_weight, 'id_weight': args.id_weight,
         'damping_beta': getattr(soh, 'damping_beta', 1.0),
-        'perturbations': 'generic FFT low-pass, Gaussian blur, colour/brightness, low-frequency noise blend'}, indent=2) + '\n')
+        'perturbations': 'generic FFT low-pass, Gaussian blur, colour/brightness, low-frequency noise blend, local displacement, peripheral procedural texture',
+        'num_perturb_modes': args.num_perturb_modes}, indent=2) + '\n')
     print('TRAIN_DONE', out, flush=True)
 
 
@@ -363,6 +364,7 @@ if __name__ == '__main__':
     p.add_argument('--rank', type=int, default=16)
     p.add_argument('--num-bases', type=int, default=8)
     p.add_argument('--v2', action='store_true')
+    p.add_argument('--num-perturb-modes', type=int, default=6)
     p.add_argument('--lr', type=float, default=1e-3)
     p.add_argument('--id-weight', type=float, default=0.5)
     p.add_argument('--act-weight', type=float, default=1.0)

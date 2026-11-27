@@ -308,3 +308,23 @@ Gate accepted 3498/3561 replans (98.56% episode-mean). This meets the pre-set
 computed in this report; it is a strong exploratory closed-loop signal, not a
 confirmatory result. Background is still unresolved, so no full 100-condition
 campaign yet.
+
+## SOH v2 real CUDA latency
+
+5 interleaved rounds, synchronized CUDA, adapter construction excluded:
+
+| group | Frozen median ms | SOH v2 median ms | relative | peak MiB Frozen/SOH |
+|---|---:|---:|---:|---:|
+| Clean | 576.47 | 577.99 | 1.0026x | 1215.5 / 1225.9 |
+| Sensor | 574.56 | 600.01 | 1.0443x | 1215.5 / 1230.9 |
+
+The v2 spatial conv and token gate therefore add ~4.4% on triggered Sensor
+replans and ~0.3% on rejected Clean replans, with ~15 MiB extra peak memory.
+
+## Clean-five perturbation ablation
+
+A 30-epoch `--num-perturb-modes 5` run (FFT low-pass, Gaussian blur, colour,
+low-frequency noise, local displacement; no fixed-center rainbow peripheral
+texture) was launched to test whether the Background regression was caused by
+the removed mode 6. Results are pending; this file will be updated only after
+the 50-case diagnostic completes.

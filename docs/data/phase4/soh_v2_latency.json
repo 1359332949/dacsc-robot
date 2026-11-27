@@ -1,0 +1,199 @@
+{
+  "schema": "phase4_soh_latency_v1",
+  "rounds": 5,
+  "rows": [
+    {
+      "group": "Clean",
+      "arm": "frozen",
+      "round": 0,
+      "ms": 1082.0888449670747,
+      "peak_mib": 1215.4765625
+    },
+    {
+      "group": "Clean",
+      "arm": "soh",
+      "round": 0,
+      "ms": 578.6644120234996,
+      "peak_mib": 1225.88037109375
+    },
+    {
+      "group": "Sensor",
+      "arm": "frozen",
+      "round": 0,
+      "ms": 576.6624379903078,
+      "peak_mib": 1215.4765625
+    },
+    {
+      "group": "Sensor",
+      "arm": "soh",
+      "round": 0,
+      "ms": 631.1635739984922,
+      "peak_mib": 1230.89111328125
+    },
+    {
+      "group": "Clean",
+      "arm": "soh",
+      "round": 1,
+      "ms": 582.8569319564849,
+      "peak_mib": 1225.90966796875
+    },
+    {
+      "group": "Clean",
+      "arm": "frozen",
+      "round": 1,
+      "ms": 576.4730810187757,
+      "peak_mib": 1215.505859375
+    },
+    {
+      "group": "Sensor",
+      "arm": "soh",
+      "round": 1,
+      "ms": 599.5429559843615,
+      "peak_mib": 1230.92041015625
+    },
+    {
+      "group": "Sensor",
+      "arm": "frozen",
+      "round": 1,
+      "ms": 580.6142679648474,
+      "peak_mib": 1215.53515625
+    },
+    {
+      "group": "Clean",
+      "arm": "frozen",
+      "round": 2,
+      "ms": 575.5297919968143,
+      "peak_mib": 1215.4765625
+    },
+    {
+      "group": "Clean",
+      "arm": "soh",
+      "round": 2,
+      "ms": 577.9909110278822,
+      "peak_mib": 1225.88037109375
+    },
+    {
+      "group": "Sensor",
+      "arm": "frozen",
+      "round": 2,
+      "ms": 574.3283450137824,
+      "peak_mib": 1215.4765625
+    },
+    {
+      "group": "Sensor",
+      "arm": "soh",
+      "round": 2,
+      "ms": 600.0125830178149,
+      "peak_mib": 1230.89111328125
+    },
+    {
+      "group": "Clean",
+      "arm": "soh",
+      "round": 3,
+      "ms": 577.678908011876,
+      "peak_mib": 1225.90966796875
+    },
+    {
+      "group": "Clean",
+      "arm": "frozen",
+      "round": 3,
+      "ms": 575.7612949819304,
+      "peak_mib": 1215.505859375
+    },
+    {
+      "group": "Sensor",
+      "arm": "soh",
+      "round": 3,
+      "ms": 597.0995749812573,
+      "peak_mib": 1230.92041015625
+    },
+    {
+      "group": "Sensor",
+      "arm": "frozen",
+      "round": 3,
+      "ms": 574.5582269737497,
+      "peak_mib": 1215.53515625
+    },
+    {
+      "group": "Clean",
+      "arm": "frozen",
+      "round": 4,
+      "ms": 578.2171220052987,
+      "peak_mib": 1215.53515625
+    },
+    {
+      "group": "Clean",
+      "arm": "soh",
+      "round": 4,
+      "ms": 577.7019310044125,
+      "peak_mib": 1225.93896484375
+    },
+    {
+      "group": "Sensor",
+      "arm": "frozen",
+      "round": 4,
+      "ms": 574.5026849908754,
+      "peak_mib": 1215.4765625
+    },
+    {
+      "group": "Sensor",
+      "arm": "soh",
+      "round": 4,
+      "ms": 601.4217750052921,
+      "peak_mib": 1230.89111328125
+    }
+  ],
+  "groups": {
+    "Clean": {
+      "frozen": {
+        "median_ms": 576.4730810187757,
+        "peak_mib": 1215.505859375,
+        "rows": [
+          1082.0888449670747,
+          576.4730810187757,
+          575.5297919968143,
+          575.7612949819304,
+          578.2171220052987
+        ]
+      },
+      "soh": {
+        "median_ms": 577.9909110278822,
+        "peak_mib": 1225.90966796875,
+        "rows": [
+          578.6644120234996,
+          582.8569319564849,
+          577.9909110278822,
+          577.678908011876,
+          577.7019310044125
+        ]
+      },
+      "relative": 1.0026329590384762
+    },
+    "Sensor": {
+      "frozen": {
+        "median_ms": 574.5582269737497,
+        "peak_mib": 1215.4765625,
+        "rows": [
+          576.6624379903078,
+          580.6142679648474,
+          574.3283450137824,
+          574.5582269737497,
+          574.5026849908754
+        ]
+      },
+      "soh": {
+        "median_ms": 600.0125830178149,
+        "peak_mib": 1230.89111328125,
+        "rows": [
+          631.1635739984922,
+          599.5429559843615,
+          600.0125830178149,
+          597.0995749812573,
+          601.4217750052921
+        ]
+      },
+      "relative": 1.0443024829322096
+    }
+  },
+  "scope": "end-to-end native actor.act including CPU preprocessing, device transfer, gate and SOH; synchronized CUDA; adapter construction excluded"
+}
