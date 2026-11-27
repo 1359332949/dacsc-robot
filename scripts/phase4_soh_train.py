@@ -1,0 +1,215 @@
+"""Step 2: offline meta-training of the SOH residual (feature/identity first).
+
+Training data are *only* source-domain Clean init0 frames plus generic
+mathematical perturbations implemented locally in this file.  No LIBERO-Plus
+code, texture, fog, glass or test background is imported.
+
+The freeze is strict: ``actor._model`` parameters are never updated; only
+``SOHModule`` parameters receive gradients.  The current script supports the
+feature-alignment and Clean-identity losses.  A single-step Flow-velocity loss
+requires an explicit native Flow hook and is intentionally not silently faked;
+add it only after the feature path and the paired closed-loop protocol are
+audited.
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import math
+from pathlib import Path
+
+import numpy as np
+import torch
+import torch.nn.functional as F
+
+from phase3_smolvla_common import load_actor, seed_torch, setup_case, reference_for
+from dacsc.smolvla_soh import SOHModule, parameter_count
+from dacsc.smolvla_v1_hook import SmolVLAV1Hook
+
+
+def _soh_hooks(vision, soh, fps, capture):
+    """Register a Layer-3 SOH hook and a Layer-12 capture hook."""
+    def l3(module, args, output):
+        x = output.last_hidden_state if hasattr(output, 'last_hidden_state') else output
+        fixed = soh(x, fps)
+        if hasattr(output, 'last_hidden_state'):
+            output.last_hidden_state = fixed
+            return output
+        return fixed
+
+    def l12(module, args, output):
+        x = output.last_hidden_state if hasattr(output, 'last_hidden_state') else output
+        capture['l12'] = x
+        return None
+
+    h3 = vision.encoder.layers[2].register_forward_hook(l3)
+    h12 = vision.encoder.layers[11].register_forward_hook(l12)
+    return h3, h12
+
+
+def _capture_vision(vision, images, *, soh=None, fps=None):
+    capture = {}
+    handles = []
+    if soh is not None:
+        h3, h12 = _soh_hooks(vision, soh, fps, capture)
+        handles.extend([h3, h12])
+    else:
+        def l3(module, args, output):
+            x = output.last_hidden_state if hasattr(output, 'last_hidden_state') else output
+            capture['l3'] = x.detach()
+            return None
+
+        def l12(module, args, output):
+            x = output.last_hidden_state if hasattr(output, 'last_hidden_state') else output
+            capture['l12'] = x.detach()
+            return None
+
+        handles.append(vision.encoder.layers[2].register_forward_hook(l3))
+        handles.append(vision.encoder.layers[11].register_forward_hook(l12))
+    try:
+        with torch.no_grad() if soh is None else torch.enable_grad():
+            outs = [vision(pixel_values=im, patch_attention_mask=None) for im in images]
+        return outs, capture
+    finally:
+        for h in handles:
+            h.remove()
+
+
+def _gaussian_kernel(size: int, sigma: float, device, dtype):
+    x = torch.arange(size, device=device, dtype=dtype) - (size - 1) / 2
+    k = torch.exp(-(x * x) / (2 * sigma * sigma))
+    k = k / k.sum()
+    return k[:, None] * k[None, :]
+
+
+def generic_perturb(images: torch.Tensor, gen: torch.Generator) -> torch.Tensor:
+    """Apply one of four generic math perturbations; no benchmark asset used."""
+    x = images.float()
+    mode = int(torch.randint(0, 4, (1,), generator=gen, device=x.device).item())
+    if mode == 0:
+        # Random low-pass Fourier attenuation.
+        b, c, h, w = x.shape
+        f = torch.fft.fftshift(torch.fft.fft2(x, dim=(-2, -1)))
+        yy, xx = torch.meshgrid(torch.linspace(-1, 1, h, device=x.device),
+                                torch.linspace(-1, 1, w, device=x.device), indexing='ij')
+        radius = float(torch.empty(1).uniform_(0.25, 0.85, generator=gen).item())
+        mask = (yy.square() + xx.square() <= radius * radius).float()[None, None]
+        x = torch.fft.ifft2(torch.fft.ifftshift(f * mask, dim=(-2, -1)), dim=(-2, -1)).real
+    elif mode == 1:
+        # Random Gaussian blur.
+        size = int(torch.randint(3, 15, (1,), generator=gen).item()) | 1
+        sigma = float(torch.empty(1).uniform_(0.5, 4.0, generator=gen).item())
+        k = _gaussian_kernel(size, sigma, x.device, x.dtype)[None, None]
+        x = F.conv2d(x, k.expand(x.shape[1], 1, size, size), padding=size // 2, groups=x.shape[1])
+    elif mode == 2:
+        # Random brightness/contrast/colour matrix.
+        b = x.mean(dim=(-2, -1), keepdim=True)
+        gain = float(torch.empty(1).uniform_(0.55, 1.45, generator=gen).item())
+        bias = float(torch.empty(1).uniform_(-0.15, 0.15, generator=gen).item())
+        x = (x - b) * gain + b + bias
+        mat = torch.eye(3, device=x.device, dtype=x.dtype)
+        mat = mat + 0.08 * torch.randn(3, 3, generator=gen, device=x.device, dtype=x.dtype)
+        x = torch.einsum('ij,bjhw->bihw', mat, x)
+    else:
+        # Random low-frequency bilinear noise blend.
+        b, c, h, w = x.shape
+        low = torch.randn(1, c, 8, 8, generator=gen, device=x.device, dtype=x.dtype)
+        low = F.interpolate(low, size=(h, w), mode='bilinear', align_corners=False)
+        alpha = float(torch.empty(1).uniform_(0.05, 0.35, generator=gen).item())
+        x = (1.0 - alpha) * x + alpha * low
+    return x.clamp(0.0, 1.0)
+
+
+def main(args):
+    seed_torch(args.seed)
+    actor = load_actor()
+    model = actor._model
+    vision = model.model.vlm_with_expert.vlm.model.vision_model
+    model.eval().requires_grad_(False)
+    z = np.load(args.subspace)
+    u_geo = torch.as_tensor(z['u_geo'], device='cuda', dtype=torch.float32)
+    soh = SOHModule(u_geo, rank=args.rank, num_bases=args.num_bases).cuda()
+    opt = torch.optim.AdamW(soh.parameters(), lr=args.lr)
+    print(json.dumps({'params': parameter_count(soh), 'u_geo': list(u_geo.shape)}), flush=True)
+
+    # Collect one Clean observation per source task.  No outcome filtering.
+    frames = []
+    refs_by_task = {}
+    for task in range(args.tasks):
+        suite, spec, obs = setup_case(task, 0)
+        try:
+            batch = actor._build_observation(obs)
+            frames.append((task, batch, spec.task))
+            refs_by_task[task] = reference_for(args.calib, task)
+        finally:
+            suite.close()
+
+    for epoch in range(args.epochs):
+        losses = []
+        for step in range(args.steps):
+            task, batch, _ = frames[step % len(frames)]
+            gen = torch.Generator(device='cuda').manual_seed(args.seed + 1000 * epoch + step)
+            clean_images, _ = model.prepare_images(batch)
+            # Teacher: clean Layer-12 features.
+            _, clean = _capture_vision(vision, clean_images)
+            teacher = clean['l12'].float().detach()
+            # Student pass 1 on a generic perturbation.  Perturb raw [0,1]
+            # camera tensors, then use the native image preparation path.
+            pert_batch = dict(batch)
+            pert_batch['observation.images.image'] = generic_perturb(batch['observation.images.image'], gen)
+            pert_batch['observation.images.image2'] = generic_perturb(batch['observation.images.image2'], gen)
+            pert_images, _ = model.prepare_images(pert_batch)
+            _, raw = _capture_vision(vision, pert_images)
+            refs = refs_by_task[task]
+            fps = []
+            for v in range(2):
+                fps.append(SOHModule.build_raw_fingerprint(
+                    raw['l3'], raw['l12'],
+                    (refs[3][0][v], refs[3][1][v]),
+                    (refs[12][0][v], refs[12][1][v]),
+                ))
+            _, fixed = _capture_vision(vision, pert_images, soh=soh, fps=fps)
+            pred = fixed['l12'].float()
+            l_feat = F.mse_loss(pred, teacher) + (1.0 - F.cosine_similarity(pred.flatten(1), teacher.flatten(1), dim=1)).mean()
+            # Clean identity: 20% of updates use the clean image; residual must vanish.
+            if (step % 5) == 0:
+                _, clean_fixed = _capture_vision(vision, clean_images, soh=soh, fps=fps)
+                l_id = F.mse_loss(clean_fixed['l12'].float(), clean['l12'].float())
+            else:
+                l_id = pred.new_zeros(())
+            loss = l_feat + args.id_weight * l_id
+            opt.zero_grad(set_to_none=True)
+            loss.backward()
+            torch.nn.utils.clip_grad_norm_(soh.parameters(), 1.0)
+            opt.step()
+            losses.append(float(loss.detach()))
+        print(json.dumps({'epoch': epoch, 'loss': float(np.mean(losses)), 'n': len(losses)}), flush=True)
+
+    out = Path(args.out)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    if out.exists():
+        raise FileExistsError(out)
+    torch.save({'state_dict': soh.state_dict(), 'u_geo': u_geo.cpu(), 'rank': args.rank,
+                'num_bases': args.num_bases, 'schema': 'phase4_soh_ckpt_v1'}, out)
+    (out.with_suffix('.json')).write_text(json.dumps({'schema': 'phase4_soh_train_receipt_v1',
+        'params': parameter_count(soh), 'epochs': args.epochs, 'steps_per_epoch': args.steps,
+        'tasks': args.tasks, 'seed': args.seed, 'losses_last_epoch': losses,
+        'flow_loss': 'not enabled in this offline feature/identity stage',
+        'perturbations': 'generic FFT low-pass, Gaussian blur, colour/brightness, low-frequency noise blend'}, indent=2) + '\n')
+    print('TRAIN_DONE', out, flush=True)
+
+
+if __name__ == '__main__':
+    p = argparse.ArgumentParser()
+    p.add_argument('--subspace', type=Path, default=Path('runs/phase4_soh/subspace_init0.npz'))
+    p.add_argument('--calib', type=Path, default=Path('runs/phase3_smolvla/spatial_init0_calib.npz'))
+    p.add_argument('--out', type=Path, default=Path('runs/phase4_soh/soh_ckpt.pt'))
+    p.add_argument('--tasks', type=int, default=10)
+    p.add_argument('--epochs', type=int, default=20)
+    p.add_argument('--steps', type=int, default=10)
+    p.add_argument('--rank', type=int, default=16)
+    p.add_argument('--num-bases', type=int, default=8)
+    p.add_argument('--lr', type=float, default=3e-4)
+    p.add_argument('--id-weight', type=float, default=1.0)
+    p.add_argument('--seed', type=int, default=0)
+    main(p.parse_args())

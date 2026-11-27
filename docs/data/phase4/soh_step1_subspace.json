@@ -1,0 +1,31 @@
+{
+  "schema": "phase4_soh_subspace_init0_v1",
+  "tasks": 10,
+  "init_index": 0,
+  "seed": 0,
+  "gradient_modes": [
+    "feature_projection_fallback",
+    "feature_projection_fallback",
+    "feature_projection_fallback",
+    "feature_projection_fallback",
+    "feature_projection_fallback",
+    "feature_projection_fallback",
+    "feature_projection_fallback",
+    "feature_projection_fallback",
+    "feature_projection_fallback",
+    "feature_projection_fallback"
+  ],
+  "k": 256,
+  "energy_prefix": {
+    "16": 0.5252597332000732,
+    "32": 0.6246978044509888,
+    "64": 0.7175272703170776,
+    "128": 0.809941291809082,
+    "256": 0.8998240232467651,
+    "384": 0.9462357759475708,
+    "512": 0.9736917614936829,
+    "768": 1.0
+  },
+  "warning": "FALLBACK: action Jacobian was not differentiable in this pinned checkpoint path; U_geo is a Layer-12 feature-projection proxy, not action sensitivity.",
+  "status": "fallback_proxy"
+}
