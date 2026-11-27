@@ -63,7 +63,10 @@ class SOHModule(nn.Module):
             raise ValueError(f'u_geo must be [dim, k], got {tuple(u_geo.shape)}')
         if u_geo.shape[1] == 0 or u_geo.shape[1] > dim:
             raise ValueError('u_geo has invalid number of columns')
-        self.register_buffer('u_geo', u_geo.float().contiguous())
+        u_geo = u_geo.float()
+        if not torch.allclose(u_geo.T @ u_geo, torch.eye(u_geo.shape[1], device=u_geo.device, dtype=u_geo.dtype), atol=1e-4):
+            raise ValueError('u_geo columns must be orthonormal')
+        self.register_buffer('u_geo', u_geo.contiguous())
         self.dim = int(dim)
         self.rank = int(rank)
         self.num_bases = int(num_bases)
@@ -212,6 +215,16 @@ class SmolVLASOHAdapter:
     def reset_episode(self):
         self.ema_fp = [None, None]
 
+    def update_ema(self, view: int, fp_now: torch.Tensor) -> torch.Tensor:
+        """Streaming per-camera EMA with a Step-0 first-frame initializer."""
+        if view not in (0, 1):
+            raise ValueError('view must be 0 or 1')
+        if self.ema_fp[view] is None:
+            self.ema_fp[view] = fp_now
+        else:
+            self.ema_fp[view] = self.ema_beta * self.ema_fp[view] + (1.0 - self.ema_beta) * fp_now
+        return self.ema_fp[view]
+
     def begin(self):
         if self.open:
             raise RuntimeError('unfinished SOH replan')
@@ -246,10 +259,11 @@ class SmolVLASOHAdapter:
 
         handle = self.vision.encoder.layers[2].register_forward_hook(l3_hook)
         try:
-            outputs = [
-                self.vision(pixel_values=im.to(dtype=self.vision.dtype), patch_attention_mask=None)
-                for im in images
-            ]
+            with torch.no_grad():
+                outputs = [
+                    self.vision(pixel_values=im.to(dtype=self.vision.dtype), patch_attention_mask=None)
+                    for im in images
+                ]
             if view_idx != 2:
                 raise RuntimeError('expected two SOH repair calls')
             return outputs
@@ -278,11 +292,7 @@ class SmolVLASOHAdapter:
                     (self.references[3][0][v], self.references[3][1][v]),
                     (self.references[12][0][v], self.references[12][1][v]),
                 )
-                if self.ema_fp[v] is None:
-                    self.ema_fp[v] = fp_now
-                else:
-                    self.ema_fp[v] = self.ema_beta * self.ema_fp[v] + (1.0 - self.ema_beta) * fp_now
-                fps.append(self.ema_fp[v])
+                fps.append(self.update_ema(v, fp_now))
             selected = None
             selected = self._pass2_soh(images, fps)
 

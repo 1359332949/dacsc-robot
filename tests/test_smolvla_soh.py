@@ -50,3 +50,39 @@ def test_fingerprint_shape_and_finiteness():
     fp = SOHModule.build_raw_fingerprint(p3, p12, ref3, ref12)
     assert fp.shape == (1, 768 * 5)
     assert torch.isfinite(fp).all()
+
+
+def test_u_geo_must_be_orthonormal():
+    bad = torch.randn(768, 8)
+    try:
+        SOHModule(bad)
+    except ValueError as e:
+        assert 'orthonormal' in str(e)
+    else:
+        raise AssertionError('non-orthonormal u_geo accepted')
+
+
+def test_fingerprint_views_are_not_overwritten():
+    """Two camera views must produce two distinct [1, 3840] fingerprints."""
+    torch.manual_seed(3)
+    p3 = [torch.randn(1, 1024, 768), 2.0 + torch.randn(1, 1024, 768)]
+    p12 = [torch.randn(1, 1024, 768), 3.0 + torch.randn(1, 1024, 768)]
+    ref3 = (torch.rand(768) + 0.5, torch.rand(768) + 0.5)
+    ref12 = (torch.rand(768) + 0.5, torch.rand(768) + 0.5)
+    a = SOHModule.build_raw_fingerprint(p3[0], p12[0], ref3, ref12)
+    b = SOHModule.build_raw_fingerprint(p3[1], p12[1], ref3, ref12)
+    assert a.shape == b.shape == (1, 3840)
+    assert not torch.allclose(a, b)
+
+
+def test_streaming_ema_updates_per_view():
+    from dacsc.smolvla_soh import SmolVLASOHAdapter
+    a = object.__new__(SmolVLASOHAdapter)
+    a.ema_beta = 0.8
+    a.ema_fp = [None, None]
+    x0 = torch.full((1, 3840), 1.0)
+    x1 = torch.full((1, 3840), 5.0)
+    assert torch.equal(a.update_ema(0, x0), x0)          # step-0 init
+    assert torch.equal(a.update_ema(1, x1), x1)
+    assert torch.allclose(a.update_ema(0, torch.zeros_like(x0)), 0.8 * x0)
+    assert torch.allclose(a.ema_fp[1], x1)

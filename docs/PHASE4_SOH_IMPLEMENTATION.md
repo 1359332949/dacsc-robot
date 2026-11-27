@@ -1,96 +1,107 @@
 # Phase 4 SOH-VLA implementation status
 
-Status: **code implemented and tensor-tested; Step-1 subspace estimate ran but
-fell back to a feature proxy.  Do not start Step-2 training or Step-3 closed-loop
-promotion from this fallback alone.**
+Status: **code fixed after audit; 9 tensor tests pass; Step-1 is now
+differentiable through the native Flow velocity, but the pre-registered
+"first 256 dims > 85% energy" gate FAILS (77.0%). Do not start Step-2 or
+Step-3 as if the assumption were confirmed.**
 
 ## Files
 
 | File | Role |
 |---|---|
 | `dacsc/smolvla_soh.py` | deep gate + orthogonal projection + streaming fingerprint + basis-mixed low-rank hypernetwork |
-| `scripts/phase4_soh_subspace.py` | Step 1: source init0 Layer-3 sensitivity estimate |
+| `scripts/phase4_soh_subspace.py` | Step 1: source init0 action-sensitivity estimate |
 | `scripts/phase4_soh_train.py` | Step 2: frozen-teacher offline meta-training (feature + identity; Flow loss not faked) |
-| `scripts/phase4_soh_closedloop.py` | Step 3 wrapper around the audited Phase-3 closed-loop harness |
-| `tests/test_smolvla_soh.py` | pure-tensor contract tests |
+| `scripts/phase4_soh_closedloop.py` | Step 3 wrapper with independent SOH preflight/worker/report |
+| `tests/test_smolvla_soh.py` | module, projection, fingerprint, EMA, orthonormality tests |
+| `tests/test_phase4_soh_train.py` | generic perturbation CPU/CUDA generator tests |
 
-Old audited files (`dacsc/smolvla_v1_hook.py`, `dacsc/smolvla_deepgate.py`,
-`scripts/phase3_smolvla_deepgate_closedloop.py`) were not modified.
+Old audited files were not modified.
 
-## Module contract
+## Bugs fixed after the first audit
 
-* `x3: [1, 1024, 768]` BF16 from SigLIP Layer 3.
-* `u_geo: [768, k]` orthonormal source basis; `P_dom = I - U_geo U_geo^T`.
-* `z = E_psi(raw_fp)`, `raw_fp: [1, 3840]`.
-* `A_t = sum_m w_m A^(m)`, `B_t = sum_m w_m B^(m)`.
-* `Delta X = GELU(X P_dom A_t) * gamma * B_t`; `X_fixed = X + s * Delta X P_dom`.
-* `s` is zero-initialized; at `s=0` the module is bit-identical to the frozen
-  network (tested).
-* Two cameras are serial: one fingerprint and one repair per camera per replan.
+1. `SOHModule.forward` now receives one per-view fingerprint, not the two-view
+   list.
+2. SigLIP layer output is unpacked with a tuple/dataclass helper; Layer-3 and
+   Layer-12 captures are kept **per view**, not overwritten by the second camera.
+3. Training perturbation tensors use the generator on the same device; CUDA
+   generators no longer touch CPU tensors.
+4. Clean identity uses the Clean image's own fingerprint, not the perturbed
+   fingerprint.
+5. Step-1 differentiates the native
+   `embed_prefix -> vlm_with_expert(fill_kv_cache) -> denoise_step` chain with
+   an explicit noise tensor. `select_action`'s `@torch.no_grad` is bypassed; the
+   fallback is no longer used in this run.
+6. Step-1 accumulates **both camera** Layer-3 gradients, not only the last view.
+7. Step-1 now samples multiple frames per source init0 trajectory.
+8. Closed-loop preflight is independent: reject bit-exact Frozen, accept finite,
+   encoder calls 2/4, parameter versions unchanged. It does not assert equality
+   with the old Alpha=.75 V1 branch.
+9. Worker launcher forwards `--soh`; prepare/report do not load CUDA.
+10. SOH report/latency/preflight use SOH-specific names and record checkpoint,
+    subspace, and source hashes.
 
-## Step 1 result (source init0, 10 tasks)
+## Step 1 result (source init0, actual native Flow gradient)
 
 ```text
+tasks: 10
+frames per task: 4
+valid camera gradients: 54
+mode: native_flow_velocity (all)
 k = 256
-energy prefix: 16=0.5253, 32=0.6247, 64=0.7175,
-               128=0.8099, 256=0.8998, 512=0.9737
-gradient mode: feature_projection_fallback (10/10)
+
+energy prefix:
+  16  = 0.2746
+  32  = 0.3648
+  64  = 0.4748
+  128 = 0.6113
+  256 = 0.7703
+  384 = 0.8664
+  512 = 0.9303
 ```
 
-The 256-dim prefix holds ~90% of the estimated Gram energy, which is
-consistent with a low-dimensional axis. **However**, the pinned checkout wraps
-the differentiable `select_action` path in `@torch.no_grad`; the attempted
-`predict_action_chunk` gradient still did not produce a differentiable action
-output. Therefore this Step-1 number is a **Layer-12 feature projection proxy,
-not an action Jacobian**. It cannot be used as the paper's "action-sensitivity"
-claim yet.
+Pre-registered gate:
+
+```text
+first 256 dims > 85% energy  -> FAIL (77.0%)
+```
+
+The 85% level is reached only at k≈384. Changing k after seeing the result
+would be a post-hoc choice; it is recorded, not silently applied.
 
 ## Step 2 training status
 
-Implemented:
-
-* frozen SmolVLA;
-* source init0 Clean frames only;
-* four generic perturbations (FFT low-pass, Gaussian blur, colour/brightness,
-  low-frequency noise blend);
-* `L_feat = MSE + cosine` at Layer 12;
-* clean identity penalty.
-
-Not enabled:
-
-* single-step Flow velocity loss `L_act`.  It must be added through an explicit
-  native Flow hook and audited; the script records this rather than faking it.
+Implemented: frozen SmolVLA, multiple source Clean frames, four generic
+perturbations, per-view feature/identity losses. The single-step Flow velocity
+loss `L_act` is still not enabled; the script records that fact rather than
+faking it.
 
 ## Step 3/4 status
 
-Not run.  The closed-loop wrapper exists, but launching it before the action
-Jacobian and the training protocol are valid would violate the stated
-acceptance gate.
+Not run. The closed-loop wrapper exists, but the Step-1 gate failed and Step-2
+has not produced a checkpoint.
 
 ## Reproduction commands
 
 ```bash
-# tensor contract tests
-python -m pytest -q tests/test_smolvla_soh.py
+python -m pytest -q tests/test_smolvla_soh.py tests/test_phase4_soh_train.py
 
-# Step 1
 python scripts/phase4_soh_subspace.py \
-  --out runs/phase4_soh/subspace_init0.npz --tasks 10 --k 256
-
-# Step 2 (after Step 1 is fixed)
-python scripts/phase4_soh_train.py \
-  --subspace runs/phase4_soh/subspace_init0.npz \
-  --out runs/phase4_soh/soh_ckpt.pt
+  --out runs/phase4_soh/subspace_init0.npz \
+  --tasks 10 --frames-per-task 4 --k 256
 ```
 
-## Honest acceptance status
+## Acceptance status
 
 | Gate | Status |
 |---|---|
 | zero-scale exact identity | PASS |
 | projection orthogonality | PASS |
-| parameter budget < 1.5M | PASS |
-| Step-1 action-sensitivity SVD | **BLOCKED / feature proxy only** |
+| parameter budget <1.5M | PASS |
+| dual-view capture | PASS |
+| CUDA-generator perturbations | PASS |
+| Step-1 actual action/Flow gradient | PASS (differentiable) |
+| Step-1 256-dim >85% energy | **FAIL (77.0%)** |
 | Step-2 training | not run |
 | Step-3 paired closed loop | not run |
 | Step-4 ablations | not run |

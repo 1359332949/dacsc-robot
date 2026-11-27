@@ -27,19 +27,33 @@ from dacsc.smolvla_soh import SOHModule, parameter_count
 from dacsc.smolvla_v1_hook import SmolVLAV1Hook
 
 
+def _layer_tensor(output):
+    if isinstance(output, tuple):
+        return output[0]
+    if hasattr(output, 'last_hidden_state'):
+        return output.last_hidden_state
+    return output
+
+
 def _soh_hooks(vision, soh, fps, capture):
-    """Register a Layer-3 SOH hook and a Layer-12 capture hook."""
+    """Register per-view Layer-3 SOH and Layer-12 capture hooks."""
+    view_idx = 0
+
     def l3(module, args, output):
-        x = output.last_hidden_state if hasattr(output, 'last_hidden_state') else output
-        fixed = soh(x, fps)
+        nonlocal view_idx
+        x = _layer_tensor(output)
+        fixed = soh(x, fps[view_idx])
+        view_idx += 1
+        if isinstance(output, tuple):
+            return (fixed, *output[1:])
         if hasattr(output, 'last_hidden_state'):
             output.last_hidden_state = fixed
             return output
         return fixed
 
     def l12(module, args, output):
-        x = output.last_hidden_state if hasattr(output, 'last_hidden_state') else output
-        capture['l12'] = x
+        x = _layer_tensor(output)
+        capture.setdefault('l12', []).append(x)
         return None
 
     h3 = vision.encoder.layers[2].register_forward_hook(l3)
@@ -55,13 +69,11 @@ def _capture_vision(vision, images, *, soh=None, fps=None):
         handles.extend([h3, h12])
     else:
         def l3(module, args, output):
-            x = output.last_hidden_state if hasattr(output, 'last_hidden_state') else output
-            capture['l3'] = x.detach()
+            capture.setdefault('l3', []).append(_layer_tensor(output).detach())
             return None
 
         def l12(module, args, output):
-            x = output.last_hidden_state if hasattr(output, 'last_hidden_state') else output
-            capture['l12'] = x.detach()
+            capture.setdefault('l12', []).append(_layer_tensor(output).detach())
             return None
 
         handles.append(vision.encoder.layers[2].register_forward_hook(l3))
@@ -69,6 +81,8 @@ def _capture_vision(vision, images, *, soh=None, fps=None):
     try:
         with torch.no_grad() if soh is None else torch.enable_grad():
             outs = [vision(pixel_values=im, patch_attention_mask=None) for im in images]
+        if len(capture.get('l12', [])) != 2:
+            raise RuntimeError(f'expected two camera captures, got {len(capture.get("l12", []))}')
         return outs, capture
     finally:
         for h in handles:
@@ -92,20 +106,20 @@ def generic_perturb(images: torch.Tensor, gen: torch.Generator) -> torch.Tensor:
         f = torch.fft.fftshift(torch.fft.fft2(x, dim=(-2, -1)))
         yy, xx = torch.meshgrid(torch.linspace(-1, 1, h, device=x.device),
                                 torch.linspace(-1, 1, w, device=x.device), indexing='ij')
-        radius = float(torch.empty(1).uniform_(0.25, 0.85, generator=gen).item())
+        radius = float(torch.empty(1, device=x.device).uniform_(0.25, 0.85, generator=gen).item())
         mask = (yy.square() + xx.square() <= radius * radius).float()[None, None]
         x = torch.fft.ifft2(torch.fft.ifftshift(f * mask, dim=(-2, -1)), dim=(-2, -1)).real
     elif mode == 1:
         # Random Gaussian blur.
-        size = int(torch.randint(3, 15, (1,), generator=gen).item()) | 1
-        sigma = float(torch.empty(1).uniform_(0.5, 4.0, generator=gen).item())
+        size = int(torch.randint(3, 15, (1,), generator=gen, device=x.device).item()) | 1
+        sigma = float(torch.empty(1, device=x.device).uniform_(0.5, 4.0, generator=gen).item())
         k = _gaussian_kernel(size, sigma, x.device, x.dtype)[None, None]
         x = F.conv2d(x, k.expand(x.shape[1], 1, size, size), padding=size // 2, groups=x.shape[1])
     elif mode == 2:
         # Random brightness/contrast/colour matrix.
         b = x.mean(dim=(-2, -1), keepdim=True)
-        gain = float(torch.empty(1).uniform_(0.55, 1.45, generator=gen).item())
-        bias = float(torch.empty(1).uniform_(-0.15, 0.15, generator=gen).item())
+        gain = float(torch.empty(1, device=x.device).uniform_(0.55, 1.45, generator=gen).item())
+        bias = float(torch.empty(1, device=x.device).uniform_(-0.15, 0.15, generator=gen).item())
         x = (x - b) * gain + b + bias
         mat = torch.eye(3, device=x.device, dtype=x.dtype)
         mat = mat + 0.08 * torch.randn(3, 3, generator=gen, device=x.device, dtype=x.dtype)
@@ -115,9 +129,33 @@ def generic_perturb(images: torch.Tensor, gen: torch.Generator) -> torch.Tensor:
         b, c, h, w = x.shape
         low = torch.randn(1, c, 8, 8, generator=gen, device=x.device, dtype=x.dtype)
         low = F.interpolate(low, size=(h, w), mode='bilinear', align_corners=False)
-        alpha = float(torch.empty(1).uniform_(0.05, 0.35, generator=gen).item())
+        alpha = float(torch.empty(1, device=x.device).uniform_(0.05, 0.35, generator=gen).item())
         x = (1.0 - alpha) * x + alpha * low
     return x.clamp(0.0, 1.0)
+
+
+
+def collect_frames(actor, task: int, frames_per_task: int):
+    """Run one source init0 episode and sample Clean dual-camera batches."""
+    suite, spec, obs = setup_case(task, 0)
+    frames = []
+    try:
+        actor.reset(0)
+        seed_torch(0)
+        for step in range(220):
+            if step % max(1, 220 // frames_per_task) == 0:
+                batch = actor._build_observation(obs)
+                frames.append({k: (v.detach().clone() if torch.is_tensor(v) else v)
+                               for k, v in batch.items()})
+            action = actor.act(obs)
+            result = suite.step(action)
+            obs = result.obs
+            if result.done or result.success:
+                break
+    finally:
+        suite.close()
+    return frames[:frames_per_task]
+
 
 
 def main(args):
@@ -132,17 +170,18 @@ def main(args):
     opt = torch.optim.AdamW(soh.parameters(), lr=args.lr)
     print(json.dumps({'params': parameter_count(soh), 'u_geo': list(u_geo.shape)}), flush=True)
 
-    # Collect one Clean observation per source task.  No outcome filtering.
+    # Collect several Clean frames from every source init0 trajectory.
     frames = []
     refs_by_task = {}
     for task in range(args.tasks):
-        suite, spec, obs = setup_case(task, 0)
-        try:
-            batch = actor._build_observation(obs)
-            frames.append((task, batch, spec.task))
-            refs_by_task[task] = reference_for(args.calib, task)
-        finally:
-            suite.close()
+        suite, spec, _ = setup_case(task, 0)
+        suite.close()
+        task_frames = collect_frames(actor, task, args.frames_per_task)
+        if not task_frames:
+            raise RuntimeError(f'no frames collected for task {task}')
+        frames.extend((task, b, spec.task) for b in task_frames)
+        refs_by_task[task] = reference_for(args.calib, task)
+        print(json.dumps({'collected_task': task, 'frames': len(task_frames)}), flush=True)
 
     for epoch in range(args.epochs):
         losses = []
@@ -150,9 +189,9 @@ def main(args):
             task, batch, _ = frames[step % len(frames)]
             gen = torch.Generator(device='cuda').manual_seed(args.seed + 1000 * epoch + step)
             clean_images, _ = model.prepare_images(batch)
-            # Teacher: clean Layer-12 features.
+            # Teacher: clean Layer-12 features, per camera.
             _, clean = _capture_vision(vision, clean_images)
-            teacher = clean['l12'].float().detach()
+            teacher = torch.cat([x.float() for x in clean['l12']], dim=0)
             # Student pass 1 on a generic perturbation.  Perturb raw [0,1]
             # camera tensors, then use the native image preparation path.
             pert_batch = dict(batch)
@@ -164,17 +203,25 @@ def main(args):
             fps = []
             for v in range(2):
                 fps.append(SOHModule.build_raw_fingerprint(
-                    raw['l3'], raw['l12'],
+                    raw['l3'][v], raw['l12'][v],
                     (refs[3][0][v], refs[3][1][v]),
                     (refs[12][0][v], refs[12][1][v]),
                 ))
             _, fixed = _capture_vision(vision, pert_images, soh=soh, fps=fps)
-            pred = fixed['l12'].float()
+            pred = torch.cat([x.float() for x in fixed['l12']], dim=0)
             l_feat = F.mse_loss(pred, teacher) + (1.0 - F.cosine_similarity(pred.flatten(1), teacher.flatten(1), dim=1)).mean()
-            # Clean identity: 20% of updates use the clean image; residual must vanish.
+            # Clean identity: 20% of updates use the clean image and *its own*
+            # fingerprint; residual must vanish on Clean.
             if (step % 5) == 0:
-                _, clean_fixed = _capture_vision(vision, clean_images, soh=soh, fps=fps)
-                l_id = F.mse_loss(clean_fixed['l12'].float(), clean['l12'].float())
+                clean_fps = []
+                for v in range(2):
+                    clean_fps.append(SOHModule.build_raw_fingerprint(
+                        clean['l3'][v], clean['l12'][v],
+                        (refs[3][0][v], refs[3][1][v]),
+                        (refs[12][0][v], refs[12][1][v]),
+                    ))
+                _, clean_fixed = _capture_vision(vision, clean_images, soh=soh, fps=clean_fps)
+                l_id = sum(F.mse_loss(a.float(), b.float()) for a, b in zip(clean_fixed['l12'], clean['l12']))
             else:
                 l_id = pred.new_zeros(())
             loss = l_feat + args.id_weight * l_id
@@ -205,6 +252,7 @@ if __name__ == '__main__':
     p.add_argument('--calib', type=Path, default=Path('runs/phase3_smolvla/spatial_init0_calib.npz'))
     p.add_argument('--out', type=Path, default=Path('runs/phase4_soh/soh_ckpt.pt'))
     p.add_argument('--tasks', type=int, default=10)
+    p.add_argument('--frames-per-task', type=int, default=24)
     p.add_argument('--epochs', type=int, default=20)
     p.add_argument('--steps', type=int, default=10)
     p.add_argument('--rank', type=int, default=16)
