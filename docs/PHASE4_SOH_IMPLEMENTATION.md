@@ -239,3 +239,40 @@ closed-loop bar. It also does not fix glass_blur.
 
 Decision: keep SOH as an exploratory Sensor candidate; do not launch the full
 100-condition campaign yet.
+
+## SOH v2: 3x3 low-rank spatial mixing + token gate + 6 perturbations
+
+v2 adds a depthwise 3x3 conv on the 32x32 low-rank bottleneck (16x9=144
+parameters) and a token-wise sigmoid gate; training used 30 epochs x 214 frames
+with two extra generic perturbations (local grid displacement and peripheral
+procedural texture). 9 tensor tests pass.
+
+Training curve:
+
+```text
+epoch 0 : loss 0.4491, l_feat 0.3579, l_act 0.0739
+epoch 29: loss 0.2090, l_feat 0.1790, l_act 0.0281
+b_basis norm: 10.9051
+scale: 1.1385
+```
+
+50-case t=0 diagnostic:
+
+| group | n | accepted | SOH xyz pooled% | SOH xyz mean% | SOH rot pooled% | SOH rot mean% | DeepGate xyz pooled% |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Clean | 10 | 0 | N/A | N/A | N/A | N/A | N/A |
+| Lighting | 10 | 0 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 |
+| Background | 10 | 9 | **-5.27** | **-7.87** | +14.45 | +11.63 | +5.17 |
+| Sensor | 20 | 20 | **+52.02** | **+37.96** | **+27.68** | **+19.52** | +12.05 |
+
+Interpretation:
+
+* v2 roughly doubles v1 Sensor XYZ gain (26.8% -> 52.0%);
+* v2 makes Background XYZ worse than Frozen (-5.27% pooled), despite the
+  token gate; the spatial conv helped blur/deblur but did not learn
+  foreground/background separation from the current generic perturbations;
+* Clean/Lighting still reject, so zero drift holds.
+
+Decision: v2 is a stronger Sensor engine, not a Background fix. Do not run the
+full campaign; the next Background step needs an explicit foreground mask/token
+supervision or a different synthetic perturbation, not simply more epochs.

@@ -1,0 +1,122 @@
+{
+  "schema": "phase4_soh_diag_summary_v1",
+  "groups": {
+    "Clean": {
+      "n": 10,
+      "soh_accepted": 0,
+      "soh_pooled_reduction_pct": {
+        "xyz": null,
+        "rotation": null,
+        "action7": null
+      },
+      "soh_mean_case_reduction_pct": {
+        "xyz": null,
+        "rotation": null,
+        "action7": null
+      },
+      "deepgate_pooled_reduction_pct": {
+        "xyz": null,
+        "rotation": null,
+        "action7": null
+      },
+      "deepgate_mean_case_reduction_pct": {
+        "xyz": null,
+        "rotation": null,
+        "action7": null
+      },
+      "frozen_mean_error": {
+        "xyz": 0.0,
+        "rotation": 0.0,
+        "action7": 0.0
+      }
+    },
+    "Lighting": {
+      "n": 10,
+      "soh_accepted": 0,
+      "soh_pooled_reduction_pct": {
+        "xyz": 0.0,
+        "rotation": 0.0,
+        "action7": 0.0
+      },
+      "soh_mean_case_reduction_pct": {
+        "xyz": 0.0,
+        "rotation": 0.0,
+        "action7": 0.0
+      },
+      "deepgate_pooled_reduction_pct": {
+        "xyz": 0.0,
+        "rotation": 0.0,
+        "action7": 0.0
+      },
+      "deepgate_mean_case_reduction_pct": {
+        "xyz": 0.0,
+        "rotation": 0.0,
+        "action7": 0.0
+      },
+      "frozen_mean_error": {
+        "xyz": 0.04492690833285451,
+        "rotation": 0.005119119893060997,
+        "action7": 0.04549836264923215
+      }
+    },
+    "Background": {
+      "n": 10,
+      "soh_accepted": 9,
+      "soh_pooled_reduction_pct": {
+        "xyz": -5.268746621278209,
+        "rotation": 14.44993373763388,
+        "action7": -4.997271132776926
+      },
+      "soh_mean_case_reduction_pct": {
+        "xyz": -7.874003319798736,
+        "rotation": 11.633587559994965,
+        "action7": -7.4500674155597455
+      },
+      "deepgate_pooled_reduction_pct": {
+        "xyz": 5.171497370666733,
+        "rotation": 5.57361850753183,
+        "action7": 4.405986527561367
+      },
+      "deepgate_mean_case_reduction_pct": {
+        "xyz": 1.9800859074867971,
+        "rotation": -0.7307873922533197,
+        "action7": 1.1683589013967441
+      },
+      "frozen_mean_error": {
+        "xyz": 0.07844468392431736,
+        "rotation": 0.006368302111513913,
+        "action7": 0.07915978617966175
+      }
+    },
+    "Sensor": {
+      "n": 20,
+      "soh_accepted": 20,
+      "soh_pooled_reduction_pct": {
+        "xyz": 52.017253083977735,
+        "rotation": 27.67844796984692,
+        "action7": 51.89416247519829
+      },
+      "soh_mean_case_reduction_pct": {
+        "xyz": 37.95988482264325,
+        "rotation": 19.520296821818455,
+        "action7": 38.33794537198412
+      },
+      "deepgate_pooled_reduction_pct": {
+        "xyz": 12.045397571504369,
+        "rotation": 2.125186456576844,
+        "action7": 12.010477789642493
+      },
+      "deepgate_mean_case_reduction_pct": {
+        "xyz": 7.051572110800573,
+        "rotation": -1.54099205214302,
+        "action7": 7.477745304774954
+      },
+      "frozen_mean_error": {
+        "xyz": 0.18133354429155588,
+        "rotation": 0.01294416857417673,
+        "action7": 0.18225589618086815
+      }
+    }
+  },
+  "scope": "t=0 only; 50 previously accessed development conditions; not a success rate; no closed loop"
+}

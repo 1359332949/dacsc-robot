@@ -24,7 +24,7 @@ import torch
 import torch.nn.functional as F
 
 from phase3_smolvla_common import load_actor, seed_torch, setup_case, reference_for
-from dacsc.smolvla_soh import SOHModule, parameter_count
+from dacsc.smolvla_soh import SOHModule, SOHModuleV2, parameter_count
 from dacsc.smolvla_v1_hook import SmolVLAV1Hook
 from lerobot.common.policies.smolvla.modeling_smolvla import make_att_2d_masks
 
@@ -101,7 +101,7 @@ def _gaussian_kernel(size: int, sigma: float, device, dtype):
 def generic_perturb(images: torch.Tensor, gen: torch.Generator) -> torch.Tensor:
     """Apply one of four generic math perturbations; no benchmark asset used."""
     x = images.float()
-    mode = int(torch.randint(0, 4, (1,), generator=gen, device=x.device).item())
+    mode = int(torch.randint(0, 6, (1,), generator=gen, device=x.device).item())
     if mode == 0:
         # Random low-pass Fourier attenuation.
         b, c, h, w = x.shape
@@ -126,13 +126,34 @@ def generic_perturb(images: torch.Tensor, gen: torch.Generator) -> torch.Tensor:
         mat = torch.eye(3, device=x.device, dtype=x.dtype)
         mat = mat + 0.08 * torch.randn(3, 3, generator=gen, device=x.device, dtype=x.dtype)
         x = torch.einsum('ij,bjhw->bihw', mat, x)
-    else:
+    elif mode == 3:
         # Random low-frequency bilinear noise blend.
         b, c, h, w = x.shape
         low = torch.rand(1, c, 8, 8, generator=gen, device=x.device, dtype=x.dtype)
         low = F.interpolate(low, size=(h, w), mode='bilinear', align_corners=False)
         alpha = float(torch.empty(1, device=x.device).uniform_(0.05, 0.35, generator=gen).item())
         x = (1.0 - alpha) * x + alpha * low
+    elif mode == 4:
+        # Generic local coordinate jitter (no benchmark corruption code).
+        b, c, h, w = x.shape
+        yy, xx = torch.meshgrid(torch.linspace(-1, 1, h, device=x.device),
+                                torch.linspace(-1, 1, w, device=x.device), indexing='ij')
+        grid = torch.stack([xx, yy], dim=-1)[None]
+        amp = float(torch.empty(1, device=x.device).uniform_(0.01, 0.06, generator=gen).item())
+        disp = torch.randn(1, h, w, 2, generator=gen, device=x.device, dtype=x.dtype)
+        disp = F.avg_pool2d(disp.permute(0, 3, 1, 2), 5, 1, 2).permute(0, 2, 3, 1)
+        x = F.grid_sample(x, (grid + amp * disp).clamp(-1, 1), align_corners=True, mode='bilinear')
+    else:
+        # Generic peripheral procedural texture blend: keep a random central
+        # region clean, replace only the outer ring with multi-frequency texture.
+        b, c, h, w = x.shape
+        tex = torch.rand(1, c, 8, 8, generator=gen, device=x.device, dtype=x.dtype)
+        tex = F.interpolate(tex, size=(h, w), mode='bilinear', align_corners=False)
+        yy, xx = torch.meshgrid(torch.linspace(-1, 1, h, device=x.device),
+                                torch.linspace(-1, 1, w, device=x.device), indexing='ij')
+        radius = float(torch.empty(1, device=x.device).uniform_(0.25, 0.65, generator=gen).item())
+        mask = ((yy.square() + xx.square()) > radius * radius).float()[None, None]
+        x = x * (1.0 - mask) + tex * mask
     return x.clamp(0.0, 1.0)
 
 
@@ -210,10 +231,12 @@ def main(args):
     if 'v_basis' in z.files and 'eigenvalues' in z.files:
         v_basis = torch.as_tensor(z['v_basis'], device='cuda', dtype=torch.float32)
         eigenvalues = torch.as_tensor(z['eigenvalues'], device='cuda', dtype=torch.float32)
-        soh = SOHModule(v_basis=v_basis, eigenvalues=eigenvalues,
-                        rank=args.rank, num_bases=args.num_bases).cuda()
+        cls = SOHModuleV2 if args.v2 else SOHModule
+        soh = cls(v_basis=v_basis, eigenvalues=eigenvalues,
+                  rank=args.rank, num_bases=args.num_bases).cuda()
     else:
-        soh = SOHModule(u_geo, rank=args.rank, num_bases=args.num_bases).cuda()
+        cls = SOHModuleV2 if args.v2 else SOHModule
+        soh = cls(u_geo, rank=args.rank, num_bases=args.num_bases).cuda()
     opt = torch.optim.AdamW(soh.parameters(), lr=args.lr)
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(opt, T_max=max(1, args.epochs))
     print(json.dumps({'params': parameter_count(soh), 'u_geo': list(u_geo.shape),
@@ -310,7 +333,7 @@ def main(args):
         raise FileExistsError(out)
     payload = {'state_dict': soh.state_dict(), 'rank': args.rank,
                'num_bases': args.num_bases, 'damping_beta': getattr(soh, 'damping_beta', 1.0),
-               'schema': 'phase4_soh_ckpt_v1'}
+               'arch': 'v2' if args.v2 else 'v1', 'schema': 'phase4_soh_ckpt_v1'}
     if soh.v_basis.numel() > 0:
         payload['v_basis'] = soh.v_basis.cpu()
         if 'eigenvalues' in z.files:
@@ -339,6 +362,7 @@ if __name__ == '__main__':
     p.add_argument('--steps', type=int, default=0)
     p.add_argument('--rank', type=int, default=16)
     p.add_argument('--num-bases', type=int, default=8)
+    p.add_argument('--v2', action='store_true')
     p.add_argument('--lr', type=float, default=1e-3)
     p.add_argument('--id-weight', type=float, default=0.5)
     p.add_argument('--act-weight', type=float, default=1.0)

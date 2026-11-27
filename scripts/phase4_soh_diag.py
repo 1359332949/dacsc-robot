@@ -14,7 +14,7 @@ import numpy as np
 import torch
 
 import phase3_smolvla_unified_diag as diag
-from dacsc.smolvla_soh import SOHModule, SmolVLASOHAdapter
+from dacsc.smolvla_soh import SOHModule, SOHModuleV2, SmolVLASOHAdapter
 from phase3_smolvla_common import reference_for, seed_torch
 
 
@@ -23,11 +23,13 @@ def _load_soh(path: Path):
     if p.get('schema') != 'phase4_soh_ckpt_v1':
         raise ValueError('bad SOH checkpoint')
     if 'v_basis' in p and 'eigenvalues' in p:
-        m = SOHModule(v_basis=p['v_basis'].cuda(), eigenvalues=p['eigenvalues'].cuda(),
+        cls = SOHModuleV2 if p.get('arch') == 'v2' else SOHModule
+        m = cls(v_basis=p['v_basis'].cuda(), eigenvalues=p['eigenvalues'].cuda(),
                       rank=int(p['rank']), num_bases=int(p['num_bases']),
                       damping_beta=float(p.get('damping_beta', 1.0))).cuda()
     else:
-        m = SOHModule(p['u_geo'].cuda(), rank=int(p['rank']), num_bases=int(p['num_bases'])).cuda()
+        cls = SOHModuleV2 if p.get('arch') == 'v2' else SOHModule
+        m = cls(p['u_geo'].cuda(), rank=int(p['rank']), num_bases=int(p['num_bases'])).cuda()
     m.load_state_dict(p['state_dict'])
     return m.eval()
 

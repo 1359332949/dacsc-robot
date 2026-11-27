@@ -98,6 +98,7 @@ class SOHModule(nn.Module):
         self.damping_beta = float(damping_beta)
         self.dim = int(dim)
         self.rank = int(rank)
+        self.z_dim = int(z_dim)
         self.num_bases = int(num_bases)
 
         # [d_mu3, d_sd3, hf3, d_mu12, d_sd12] = 5 * 768 = 3840
@@ -373,3 +374,49 @@ class SmolVLASOHAdapter:
 
 def parameter_count(module: nn.Module) -> int:
     return sum(p.numel() for p in module.parameters())
+
+
+class SOHModuleV2(SOHModule):
+    """SOH v2: low-rank bottleneck + 3x3 spatial mixing + token-wise gate.
+
+    Adds only ~5k parameters.  The residual remains exactly zero at init
+    because ``b_basis`` is zero; the spatial conv and token gate are inside the
+    residual path, not the identity path.
+    """
+
+    def __init__(self, *args, gate_hidden: int = 32, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.spatial = nn.Conv2d(self.rank, self.rank, 3, padding=1, groups=self.rank)
+        self.gate = nn.Sequential(
+            nn.Linear(self.rank + self.z_dim, gate_hidden),
+            nn.GELU(),
+            nn.Linear(gate_hidden, 1),
+        )
+
+    def forward(self, x3: torch.Tensor, raw_fp: torch.Tensor) -> torch.Tensor:
+        if x3.ndim != 3 or x3.shape[-1] != self.dim:
+            raise ValueError(f'x3 must be [B, N, {self.dim}], got {tuple(x3.shape)}')
+        if raw_fp.ndim != 2 or raw_fp.shape[0] != x3.shape[0] or raw_fp.shape[1] != self.dim * 5:
+            raise ValueError(f'raw_fp must be [B, {self.dim * 5}], got {tuple(raw_fp.shape)}')
+        if x3.shape[1] != 1024:
+            raise ValueError('SOH v2 expects 1024 SigLIP patches')
+        orig_dtype = x3.dtype
+        p = x3.float()
+        z = self.encoder(raw_fp.float())
+        w = F.softmax(self.head_w(z), dim=-1)
+        gamma = 1.0 + torch.tanh(self.head_gamma(z))
+        a_t = torch.einsum('bm,mdr->bdr', w, self.a_basis)
+        b_t = torch.einsum('bm,mrd->brd', w, self.b_basis)
+
+        x_dom = self.project_dom(p)
+        h = F.gelu(torch.bmm(x_dom, a_t)) * gamma[:, None, :]
+        # 1024 patches -> 32x32 grid; depthwise 3x3 gives local spatial mixing.
+        h_spatial = h.transpose(1, 2).reshape(x3.shape[0], self.rank, 32, 32)
+        h_spatial = F.gelu(self.spatial(h_spatial))
+        h = h_spatial.reshape(x3.shape[0], self.rank, 1024).transpose(1, 2)
+        # Token gate: each patch decides how much of its own repair to apply.
+        z_exp = z[:, None, :].expand(-1, 1024, -1)
+        gate_in = torch.cat([h, z_exp], dim=-1)
+        m = torch.sigmoid(self.gate(gate_in))                       # [B, N, 1]
+        delta = self.project_dom(torch.bmm(h * m, b_t))
+        return (p + self.scale * delta).to(orig_dtype)

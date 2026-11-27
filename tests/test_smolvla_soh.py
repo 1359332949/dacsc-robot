@@ -1,7 +1,7 @@
 """Pure-tensor contract tests for SOH-VLA; no simulator or checkpoint needed."""
 import torch
 
-from dacsc.smolvla_soh import SOHModule, parameter_count
+from dacsc.smolvla_soh import SOHModule, SOHModuleV2, parameter_count
 
 
 def _u_geo(dim=768, k=64):
@@ -109,3 +109,17 @@ def test_spectral_damping_is_smooth():
     kept = m.project_dom(weak)
     assert torch.allclose(kept, weak, atol=1e-2)
     assert torch.isfinite(y).all()
+
+
+def test_v2_zero_residual_and_spatial_gate():
+    torch.manual_seed(5)
+    v = _u_geo()
+    m = SOHModuleV2(v)
+    x = torch.randn(1, 1024, 768, dtype=torch.bfloat16)
+    fp = torch.randn(1, 768 * 5)
+    assert torch.equal(m(x, fp), x), 'v2 must start exactly at the frozen identity'
+    assert 1_000_000 < parameter_count(m) < 1_500_000
+    with torch.no_grad():
+        m.scale.fill_(1e-3)
+    y = m(x, fp)
+    assert y.shape == x.shape and y.dtype == x.dtype and torch.isfinite(y.float()).all()
