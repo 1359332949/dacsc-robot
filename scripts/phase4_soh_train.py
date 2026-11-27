@@ -264,7 +264,7 @@ def main(args):
             # Teacher and student share the same noise and random time.
             noise_shape = (batch['observation.state'].shape[0], model.model.config.chunk_size,
                            model.model.config.max_action_dim)
-            noise = torch.randn(noise_shape, device='cuda', dtype=torch.float32)
+            noise = torch.randn(noise_shape, generator=gen, device='cuda', dtype=torch.float32)
             flow_time = float(torch.empty(1, device='cuda').uniform_(0.1, 0.9, generator=gen).item())
             v_clean = _flow_velocity(actor, batch, noise=noise, flow_time=flow_time)
             v_fixed = _flow_velocity(actor, pert_batch, soh=soh, fps=fps, noise=noise, flow_time=flow_time)
@@ -296,7 +296,8 @@ def main(args):
     if out.exists():
         raise FileExistsError(out)
     payload = {'state_dict': soh.state_dict(), 'rank': args.rank,
-               'num_bases': args.num_bases, 'schema': 'phase4_soh_ckpt_v1'}
+               'num_bases': args.num_bases, 'damping_beta': getattr(soh, 'damping_beta', 1.0),
+               'schema': 'phase4_soh_ckpt_v1'}
     if soh.v_basis.numel() > 0:
         payload['v_basis'] = soh.v_basis.cpu()
         if 'eigenvalues' in z.files:
@@ -307,7 +308,9 @@ def main(args):
     (out.with_suffix('.json')).write_text(json.dumps({'schema': 'phase4_soh_train_receipt_v1',
         'params': parameter_count(soh), 'epochs': args.epochs, 'steps_per_epoch': args.steps,
         'tasks': args.tasks, 'seed': args.seed, 'losses_last_epoch': losses,
-        'flow_loss': 'not enabled in this offline feature/identity stage',
+        'flow_loss': '7-DOF single-step native Flow velocity MSE',
+        'act_weight': args.act_weight, 'id_weight': args.id_weight,
+        'damping_beta': getattr(soh, 'damping_beta', 1.0),
         'perturbations': 'generic FFT low-pass, Gaussian blur, colour/brightness, low-frequency noise blend'}, indent=2) + '\n')
     print('TRAIN_DONE', out, flush=True)
 

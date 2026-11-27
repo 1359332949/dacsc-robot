@@ -95,6 +95,7 @@ class SOHModule(nn.Module):
         else:
             self.register_buffer('v_basis', torch.empty(0))
             self.register_buffer('damping', torch.empty(0))
+        self.damping_beta = float(damping_beta)
         self.dim = int(dim)
         self.rank = int(rank)
         self.num_bases = int(num_bases)

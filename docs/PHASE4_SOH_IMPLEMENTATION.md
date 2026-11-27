@@ -124,3 +124,47 @@ python scripts/phase4_soh_subspace.py \
 | Step-2 full training | not run |
 | Step-3 paired closed loop | not run |
 | Step-4 ablations | not run |
+
+## First-round SOH t=0 diagnostic (1 epoch, not 20)
+
+Because the audit gate is still unresolved, only a **one-epoch** first-round
+checkpoint was trained (102 shuffled frames, loss 23.97; 1.216M parameters).
+This is not the requested 20-epoch run.
+
+Checkpoint receipt records:
+
+```text
+act_weight = 0.5
+flow_loss = 7-DOF single-step native Flow velocity MSE
+damping_beta = 1.0
+```
+
+The 50-case edbac60 t=0 diagnostic (`runs/phase4_soh_diag`) gave:
+
+| group | n | accepted | SOH xyz red% | SOH rot red% | DeepGate xyz red% | DeepGate rot red% |
+|---|---:|---:|---:|---:|---:|---:|
+| Clean | 10 | 0 | N/A | N/A | N/A | N/A |
+| Lighting | 10 | 0 | +0.00 | +0.00 | +0.00 | +0.00 |
+| Background | 10 | 9 | +0.21 | +3.96 | +1.98 | -0.73 |
+| Sensor | 20 | 20 | -0.86 | -1.38 | +7.05 | -1.54 |
+
+The target was +20% to +40% XYZ reduction on unseen Background/Sensor. The
+first round does not approach it: Background is roughly flat, and Sensor is
+worse than Frozen. Clean/Lighting are untouched because the gate rejected them.
+
+Decision: **do not start the 100-episode closed loop.** The next structural
+question is not a larger k; it is whether a per-patch low-rank channel operator
+is expressive enough. A spatial local-mixing / token-gating variant needs to be
+tested before more training compute is spent.
+
+## Honest status
+
+| Gate | Status |
+|---|---|
+| Step-1 actual 7-DOF Flow SVD | PASS (differentiable) |
+| Step-1 256-dim >85% energy | FAIL (78.7%) |
+| spectral W_dom | implemented |
+| 10 unit tests | PASS |
+| 1-epoch train smoke | PASS |
+| 50-case t=0 SOH diagnostic | **negative / below target** |
+| 100-episode closed loop | NOT RUN |

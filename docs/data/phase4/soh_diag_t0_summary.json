@@ -1,0 +1,82 @@
+{
+  "schema": "phase4_soh_diag_summary_v1",
+  "groups": {
+    "Clean": {
+      "n": 10,
+      "soh_accepted": 0,
+      "soh_mean_reduction_pct": {
+        "xyz": null,
+        "rotation": null,
+        "action7": null
+      },
+      "deepgate_mean_reduction_pct": {
+        "xyz": null,
+        "rotation": null,
+        "action7": null
+      },
+      "frozen_mean_error": {
+        "xyz": 0.0,
+        "rotation": 0.0,
+        "action7": 0.0
+      }
+    },
+    "Lighting": {
+      "n": 10,
+      "soh_accepted": 0,
+      "soh_mean_reduction_pct": {
+        "xyz": 0.0,
+        "rotation": 0.0,
+        "action7": 0.0
+      },
+      "deepgate_mean_reduction_pct": {
+        "xyz": 0.0,
+        "rotation": 0.0,
+        "action7": 0.0
+      },
+      "frozen_mean_error": {
+        "xyz": 0.04492690833285451,
+        "rotation": 0.005119119893060997,
+        "action7": 0.04549836264923215
+      }
+    },
+    "Background": {
+      "n": 10,
+      "soh_accepted": 9,
+      "soh_mean_reduction_pct": {
+        "xyz": 0.20924945906985126,
+        "rotation": 3.956283013362223,
+        "action7": 0.22525499959499048
+      },
+      "deepgate_mean_reduction_pct": {
+        "xyz": 1.9800859074867971,
+        "rotation": -0.7307873922533197,
+        "action7": 1.1683589013967441
+      },
+      "frozen_mean_error": {
+        "xyz": 0.07844468392431736,
+        "rotation": 0.006368302111513913,
+        "action7": 0.07915978617966175
+      }
+    },
+    "Sensor": {
+      "n": 20,
+      "soh_accepted": 20,
+      "soh_mean_reduction_pct": {
+        "xyz": -0.862335048600178,
+        "rotation": -1.3799136665522607,
+        "action7": -0.7709955442935674
+      },
+      "deepgate_mean_reduction_pct": {
+        "xyz": 7.051572110800573,
+        "rotation": -1.54099205214302,
+        "action7": 7.477745304774954
+      },
+      "frozen_mean_error": {
+        "xyz": 0.18133354429155588,
+        "rotation": 0.01294416857417673,
+        "action7": 0.18225589618086815
+      }
+    }
+  },
+  "scope": "t=0 only; 50 previously accessed development conditions; not a success rate; no closed loop"
+}
