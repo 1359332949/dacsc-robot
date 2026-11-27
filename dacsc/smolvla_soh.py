@@ -112,8 +112,8 @@ class SOHModule(nn.Module):
         self.head_w = nn.Linear(z_dim, num_bases)
         self.head_gamma = nn.Linear(z_dim, rank)
         self.a_basis = nn.Parameter(torch.randn(num_bases, dim, rank) * 0.02)
-        self.b_basis = nn.Parameter(torch.randn(num_bases, rank, dim) * 0.02)
-        self.scale = nn.Parameter(torch.zeros(1))
+        self.b_basis = nn.Parameter(torch.zeros(num_bases, rank, dim))
+        self.scale = nn.Parameter(torch.ones(1))
 
     def project_dom(self, x: torch.Tensor) -> torch.Tensor:
         """Apply hard P_dom or smooth spectral damping W_dom."""

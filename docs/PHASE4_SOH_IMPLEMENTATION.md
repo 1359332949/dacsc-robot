@@ -168,3 +168,40 @@ tested before more training compute is spent.
 | 1-epoch train smoke | PASS |
 | 50-case t=0 SOH diagnostic | **negative / below target** |
 | 100-episode closed loop | NOT RUN |
+
+## 20-epoch converged SOH t=0 diagnostic
+
+Training used the LoRA-style asymmetric zero init (`b_basis=0`, `scale=1`),
+normalized feature/action losses, `act_weight=1.0`, `id_weight=0.5`, and cosine
+LR 1e-3 -> 1e-4. 20 epochs x 102 shuffled frames completed.
+
+Training curve (mean per epoch):
+
+```text
+epoch 0 : loss 0.2765, l_feat 0.2351, l_act 0.0356, scale 1.0038
+epoch 10: loss 0.1801, l_feat 0.1537, l_act 0.0154, scale 1.0859
+epoch 19: loss 0.1574, l_feat 0.1413, l_act 0.0143, scale 1.1097
+b_basis norm final: 6.6416
+```
+
+50-case t=0 diagnostic (pooled and per-case means are both shown):
+
+| group | n | accepted | SOH xyz pooled% | SOH xyz mean% | SOH rot pooled% | SOH rot mean% | DeepGate xyz pooled% | DeepGate xyz mean% |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| Clean | 10 | 0 | N/A | N/A | N/A | N/A | N/A | N/A |
+| Lighting | 10 | 0 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 |
+| Background | 10 | 9 | +1.11 | +2.22 | +14.73 | +7.55 | +5.17 | +1.98 |
+| Sensor | 20 | 20 | **+26.82** | **+19.51** | +11.67 | +3.50 | +12.05 | +7.05 |
+
+This is the first positive SOH result:
+
+* Clean/Lighting remain zero-drift because the gate rejects them;
+* Sensor xyz pooled reduction is +26.8% (above the +20% target);
+* Background xyz is still nearly flat (+1.1%), while rotation improves +14.7%;
+* DeepGate pooled comparisons are from the same rows and the old edbac60
+  per-case numbers are not mixed with the new pooled definition.
+
+Decision: SOH is now a **conditional, sensor-driven candidate**, not a universal
+Background fix. The next test should be a limited paired closed-loop on the
+Sensor-heavy arm, not a full 100-episode campaign until the Background gap is
+understood.

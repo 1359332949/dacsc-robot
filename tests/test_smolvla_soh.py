@@ -9,14 +9,18 @@ def _u_geo(dim=768, k=64):
     return q
 
 
-def test_zero_scale_is_exact_identity():
+def test_lora_zero_init_is_exact_identity():
     torch.manual_seed(0)
     m = SOHModule(_u_geo())
+    assert torch.equal(m.b_basis, torch.zeros_like(m.b_basis))
+    assert float(m.scale) == 1.0
     x = torch.randn(1, 1024, 768, dtype=torch.bfloat16)
     fp = torch.randn(1, 768 * 5)
     y = m(x, fp)
     assert y.shape == x.shape and y.dtype == x.dtype
-    assert torch.equal(x, y), 'scale=0 must be bit-identical'
+    assert torch.equal(x, y), 'b_basis=0 must be bit-identical'
+    m.scale.data.zero_()
+    assert torch.equal(m(x, fp), x)
 
 
 def test_projection_kills_geo_and_keeps_complement():

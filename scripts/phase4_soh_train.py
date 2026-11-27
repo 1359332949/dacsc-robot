@@ -129,7 +129,7 @@ def generic_perturb(images: torch.Tensor, gen: torch.Generator) -> torch.Tensor:
     else:
         # Random low-frequency bilinear noise blend.
         b, c, h, w = x.shape
-        low = torch.randn(1, c, 8, 8, generator=gen, device=x.device, dtype=x.dtype)
+        low = torch.rand(1, c, 8, 8, generator=gen, device=x.device, dtype=x.dtype)
         low = F.interpolate(low, size=(h, w), mode='bilinear', align_corners=False)
         alpha = float(torch.empty(1, device=x.device).uniform_(0.05, 0.35, generator=gen).item())
         x = (1.0 - alpha) * x + alpha * low
@@ -215,7 +215,9 @@ def main(args):
     else:
         soh = SOHModule(u_geo, rank=args.rank, num_bases=args.num_bases).cuda()
     opt = torch.optim.AdamW(soh.parameters(), lr=args.lr)
-    print(json.dumps({'params': parameter_count(soh), 'u_geo': list(u_geo.shape)}), flush=True)
+    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(opt, T_max=max(1, args.epochs))
+    print(json.dumps({'params': parameter_count(soh), 'u_geo': list(u_geo.shape),
+                      'lr': args.lr, 'act_weight': args.act_weight, 'id_weight': args.id_weight}), flush=True)
 
     # Collect several Clean frames from every source init0 trajectory.
     frames = []
@@ -232,6 +234,7 @@ def main(args):
 
     for epoch in range(args.epochs):
         losses = []
+        parts = []
         order = list(range(len(frames)))
         random.shuffle(order)
         steps_this_epoch = len(frames) if args.steps <= 0 else args.steps
@@ -259,7 +262,7 @@ def main(args):
                 ))
             _, fixed = _capture_vision(vision, pert_images, soh=soh, fps=fps)
             pred = torch.cat([x.float() for x in fixed['l12']], dim=0)
-            l_feat = F.mse_loss(pred, teacher) + (1.0 - F.cosine_similarity(pred.flatten(1), teacher.flatten(1), dim=1)).mean()
+            l_feat = F.mse_loss(pred, teacher) / (teacher.var() + 1e-6) + (1.0 - F.cosine_similarity(pred.flatten(1), teacher.flatten(1), dim=1)).mean()
             # Single-step 7-DOF native Flow velocity consistency.
             # Teacher and student share the same noise and random time.
             noise_shape = (batch['observation.state'].shape[0], model.model.config.chunk_size,
@@ -268,7 +271,9 @@ def main(args):
             flow_time = float(torch.empty(1, device='cuda').uniform_(0.1, 0.9, generator=gen).item())
             v_clean = _flow_velocity(actor, batch, noise=noise, flow_time=flow_time)
             v_fixed = _flow_velocity(actor, pert_batch, soh=soh, fps=fps, noise=noise, flow_time=flow_time)
-            l_act = F.mse_loss(v_fixed[:, :10, :7].float(), v_clean[:, :10, :7].float().detach())
+            v_fixed_7 = v_fixed[:, :10, :7].float()
+            v_clean_7 = v_clean[:, :10, :7].float().detach()
+            l_act = F.mse_loss(v_fixed_7, v_clean_7) / (v_clean_7.var() + 1e-6)
             # Clean identity: 20% of updates use the clean image and *its own*
             # fingerprint; residual must vanish on Clean.
             if (step % 5) == 0:
@@ -284,12 +289,20 @@ def main(args):
             else:
                 l_id = pred.new_zeros(())
             loss = l_feat + args.act_weight * l_act + args.id_weight * l_id
+            parts.append((float(l_feat.detach()), float(l_act.detach()), float(l_id.detach())))
             opt.zero_grad(set_to_none=True)
             loss.backward()
             torch.nn.utils.clip_grad_norm_(soh.parameters(), 1.0)
             opt.step()
             losses.append(float(loss.detach()))
-        print(json.dumps({'epoch': epoch, 'loss': float(np.mean(losses)), 'n': len(losses)}), flush=True)
+        if parts:
+            arr = np.asarray(parts)
+            lr = float(opt.param_groups[0]['lr'])
+            print(json.dumps({'epoch': epoch, 'loss': float(np.mean(losses)), 'n': len(losses),
+                              'l_feat': float(arr[:, 0].mean()), 'l_act': float(arr[:, 1].mean()),
+                              'l_id': float(arr[:, 2].mean()), 'b_basis_norm': float(soh.b_basis.norm()),
+                              'scale': float(soh.scale), 'lr': lr}), flush=True)
+        scheduler.step()
 
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)
@@ -326,8 +339,8 @@ if __name__ == '__main__':
     p.add_argument('--steps', type=int, default=0)
     p.add_argument('--rank', type=int, default=16)
     p.add_argument('--num-bases', type=int, default=8)
-    p.add_argument('--lr', type=float, default=3e-4)
-    p.add_argument('--id-weight', type=float, default=1.0)
-    p.add_argument('--act-weight', type=float, default=0.5)
+    p.add_argument('--lr', type=float, default=1e-3)
+    p.add_argument('--id-weight', type=float, default=0.5)
+    p.add_argument('--act-weight', type=float, default=1.0)
     p.add_argument('--seed', type=int, default=0)
     main(p.parse_args())
