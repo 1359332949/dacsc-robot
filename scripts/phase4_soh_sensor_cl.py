@@ -49,7 +49,7 @@ def cases():
     return m, cs
 
 
-def preflight(soh_path: Path):
+def preflight(soh_path: Path, ema_beta: float = 0.8):
     m, cs = cases()
     actor = load_actor()
     soh = load_soh(soh_path)
@@ -63,10 +63,10 @@ def preflight(soh_path: Path):
         actor.reset(0); seed_torch(0)
         frozen = actor.act(obs)
         actor.reset(0); seed_torch(0)
-        off = SmolVLASOHAdapter(actor._model, refs, tau, soh, decision_override=False)
+        off = SmolVLASOHAdapter(actor._model, refs, tau, soh, ema_beta=ema_beta, decision_override=False)
         off.begin(); a_off = actor.act(obs); d_off = off.end(); off.close()
         actor.reset(0); seed_torch(0)
-        on = SmolVLASOHAdapter(actor._model, refs, tau, soh, decision_override=True)
+        on = SmolVLASOHAdapter(actor._model, refs, tau, soh, ema_beta=ema_beta, decision_override=True)
         on.begin(); a_on = actor.act(obs); d_on = on.end(); on.close()
         assert np.array_equal(frozen, a_off), 'reject branch differs from Frozen'
         assert np.isfinite(a_on).all(), 'accept branch non-finite'
@@ -91,14 +91,14 @@ def pair_check(rows):
     return dict(initial_state_and_two_view_pixels_exact=True, rng_prefix_exact=True)
 
 
-def worker(soh_path: Path, shard: int):
+def worker(soh_path: Path, shard: int, ema_beta: float = 0.8):
     m, cs = cases()
     actor = load_actor()
     soh = load_soh(soh_path)
     funcs = dict(shift.corruption_functions(), glass_blur=base.glass_blur_exact)
     base.ARMS = ('frozen', 'soh')
     base.SmolVLADeepGate = lambda policy, references, threshold, **kw: SmolVLASOHAdapter(
-        policy, references, threshold, soh, **kw)
+        policy, references, threshold, soh, ema_beta=ema_beta, **kw)
     dest = OUT / 'pairs'; dest.mkdir(parents=True, exist_ok=True)
     for idx, c in enumerate(cs):
         if idx % 4 != shard:
@@ -123,11 +123,12 @@ if __name__ == '__main__':
     p.add_argument('mode', choices=('preflight', 'worker', 'report'))
     p.add_argument('--soh', type=Path, required=True)
     p.add_argument('--shard', type=int, default=0)
+    p.add_argument('--ema-beta', type=float, default=0.8)
     a = p.parse_args()
     OUT.mkdir(parents=True, exist_ok=True)
     if a.mode == 'preflight':
-        preflight(a.soh)
+        preflight(a.soh, a.ema_beta)
     elif a.mode == 'worker':
-        worker(a.soh, a.shard)
+        worker(a.soh, a.shard, a.ema_beta)
     else:
         raise SystemExit('report not implemented')

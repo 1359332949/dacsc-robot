@@ -276,3 +276,35 @@ Interpretation:
 Decision: v2 is a stronger Sensor engine, not a Background fix. Do not run the
 full campaign; the next Background step needs an explicit foreground mask/token
 supervision or a different synthetic perturbation, not simply more epochs.
+
+## SOH v2 Sensor-only paired closed loop (ema_beta=0.0)
+
+20 Sensor conditions, 40 episodes, 220 steps, paired physical/render state and
+RNG. v2 checkpoint, `ema_beta=0.0` to match training (single-frame fingerprint).
+
+| arm | success | rate |
+|---|---:|---:|
+| Frozen | 3/20 | 15.0% |
+| SOH v2 | **9/20** | **45.0%** |
+
+```text
+rescued/harmed = 8/2
+net = +6
+exact two-sided p = 0.109375
+```
+
+Subgroups:
+
+| subgroup | n | Frozen | SOH | net |
+|---|---:|---:|---:|---:|
+| fog | 4 | 2/4 | 3/4 | +1 |
+| gaussian_blur | 4 | 1/4 | 1/4 | +0 |
+| glass_blur | 4 | 0/4 | 1/4 | +1 |
+| motion_blur | 4 | 0/4 | 3/4 | +3 |
+| zoom_blur | 4 | 0/4 | 1/4 | +1 |
+
+Gate accepted 3498/3561 replans (98.56% episode-mean). This meets the pre-set
+9/20 lower bar, but the exact p is 0.109 and the confidence interval is not yet
+computed in this report; it is a strong exploratory closed-loop signal, not a
+confirmatory result. Background is still unresolved, so no full 100-condition
+campaign yet.
