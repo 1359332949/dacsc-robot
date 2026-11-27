@@ -18,7 +18,7 @@ import numpy as np
 import torch
 
 import phase3_smolvla_deepgate_closedloop as base
-from dacsc.smolvla_soh import SOHModule, SmolVLASOHAdapter
+from dacsc.smolvla_soh import SOHModule, SOHModuleV2, SmolVLASOHAdapter
 
 
 def _sha(path: Path) -> str:
@@ -32,11 +32,13 @@ def load_soh(path: Path):
     if 'v_basis' in payload and 'eigenvalues' in payload:
         v_basis = payload['v_basis'].cuda().float()
         eigenvalues = payload['eigenvalues'].cuda().float()
-        soh = SOHModule(v_basis=v_basis, eigenvalues=eigenvalues,
+        cls = SOHModuleV2 if payload.get('arch') == 'v2' else SOHModule
+        soh = cls(v_basis=v_basis, eigenvalues=eigenvalues,
                         rank=int(payload['rank']), num_bases=int(payload['num_bases'])).cuda()
     else:
         u_geo = payload['u_geo'].cuda().float()
-        soh = SOHModule(u_geo, rank=int(payload['rank']), num_bases=int(payload['num_bases'])).cuda()
+        cls = SOHModuleV2 if payload.get('arch') == 'v2' else SOHModule
+        soh = cls(u_geo, rank=int(payload['rank']), num_bases=int(payload['num_bases'])).cuda()
     soh.load_state_dict(payload['state_dict'])
     return soh.eval()
 
