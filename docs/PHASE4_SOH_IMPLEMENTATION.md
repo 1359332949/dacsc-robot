@@ -73,6 +73,19 @@ is the cleanest estimate so far. It is still not sparse enough for the original
 hard k=256 claim. Changing k after seeing the result would be post-hoc; it is
 recorded, not silently applied.
 
+## Step 2 training smoke
+
+A one-task, one-frame, one-step smoke completed on the server:
+
+```text
+collected_task 0 frames 1
+epoch 0 loss 13.3767 n 1
+TRAIN_DONE /tmp/soh_smoke.pt (9.2 MB)
+```
+
+This only proves the training graph, spectral checkpoint save and freeze path are
+runnable; it is **not** a trained model and was not evaluated.
+
 ## Step 2 training status
 
 Implemented: frozen SmolVLA, multiple source Clean frames, four generic
@@ -107,6 +120,7 @@ python scripts/phase4_soh_subspace.py \
 | Step-1 actual 7-DOF Flow gradient | PASS (differentiable, 108 camera gradients) |
 | Step-1 256-dim >85% energy | **FAIL (78.7%)** |
 | spectral W_dom implementation | implemented; k no longer hard-coded |
-| Step-2 training | not run |
+| Step-2 training smoke | PASS (1 task/1 frame/1 step; not a trained model) |
+| Step-2 full training | not run |
 | Step-3 paired closed loop | not run |
 | Step-4 ablations | not run |
