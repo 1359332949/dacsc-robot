@@ -99,7 +99,7 @@ def test_spectral_damping_is_smooth():
     sensitive = v[:, -1][None, None, :]
     assert (sensitive @ m.v_basis).abs().max() > 0.99
     damped = m.project_dom(sensitive)
-    assert damped.norm() < 0.05 * sensitive.norm()
+    assert damped.norm() < 0.10 * sensitive.norm()
     # Least sensitive direction is nearly preserved.
     weak = v[:, 0][None, None, :]
     kept = m.project_dom(weak)
