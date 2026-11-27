@@ -205,3 +205,37 @@ Decision: SOH is now a **conditional, sensor-driven candidate**, not a universal
 Background fix. The next test should be a limited paired closed-loop on the
 Sensor-heavy arm, not a full 100-episode campaign until the Background gap is
 understood.
+
+## Sensor-only paired closed loop (20 conditions, 40 episodes)
+
+Ran on the 20 edbac60 bilateral Sensor severity-3 conditions with the 20-epoch
+checkpoint. Frozen vs SOH, same initial physical/render state, same RNG prefix,
+220 steps, paired pixel cache.
+
+| arm | success | rate |
+|---|---:|---:|
+| Frozen | 3/20 | 15.0% |
+| SOH | 6/20 | 30.0% |
+
+```text
+rescued/harmed = 5/2
+net = +3
+exact two-sided p = 0.453125
+```
+
+Subgroups:
+
+| subgroup | n | Frozen | SOH | net |
+|---|---:|---:|---:|---:|
+| fog | 4 | 2/4 | 2/4 | +0 |
+| gaussian_blur | 4 | 1/4 | 1/4 | +0 |
+| glass_blur | 4 | 0/4 | 0/4 | +0 |
+| motion_blur | 4 | 0/4 | 2/4 | +2 |
+| zoom_blur | 4 | 0/4 | 1/4 | +1 |
+
+Gate accepted 3785/3816 replans (99.2% episode-mean). This is a positive but
+non-significant exploratory result; it does not meet the pre-set 9-12/20
+closed-loop bar. It also does not fix glass_blur.
+
+Decision: keep SOH as an exploratory Sensor candidate; do not launch the full
+100-condition campaign yet.

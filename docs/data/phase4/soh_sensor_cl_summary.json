@@ -1,0 +1,75 @@
+{
+  "n_pairs": 20,
+  "overall": {
+    "n": 20,
+    "frozen": 3,
+    "soh": 6,
+    "rescued": 5,
+    "harmed": 2,
+    "net": 3,
+    "p": 0.453125,
+    "frozen_rate": 0.15,
+    "soh_rate": 0.3
+  },
+  "subgroups": {
+    "fog": {
+      "n": 4,
+      "frozen": 2,
+      "soh": 2,
+      "rescued": 1,
+      "harmed": 1,
+      "net": 0,
+      "p": 1.0,
+      "frozen_rate": 0.5,
+      "soh_rate": 0.5
+    },
+    "gaussian_blur": {
+      "n": 4,
+      "frozen": 1,
+      "soh": 1,
+      "rescued": 1,
+      "harmed": 1,
+      "net": 0,
+      "p": 1.0,
+      "frozen_rate": 0.25,
+      "soh_rate": 0.25
+    },
+    "glass_blur": {
+      "n": 4,
+      "frozen": 0,
+      "soh": 0,
+      "rescued": 0,
+      "harmed": 0,
+      "net": 0,
+      "p": 1.0,
+      "frozen_rate": 0.0,
+      "soh_rate": 0.0
+    },
+    "motion_blur": {
+      "n": 4,
+      "frozen": 0,
+      "soh": 2,
+      "rescued": 2,
+      "harmed": 0,
+      "net": 2,
+      "p": 0.5,
+      "frozen_rate": 0.0,
+      "soh_rate": 0.5
+    },
+    "zoom_blur": {
+      "n": 4,
+      "frozen": 0,
+      "soh": 1,
+      "rescued": 1,
+      "harmed": 0,
+      "net": 1,
+      "p": 1.0,
+      "frozen_rate": 0.0,
+      "soh_rate": 0.25
+    }
+  },
+  "gate_accepted": 3785,
+  "gate_total": 3816,
+  "mean_episode_accept_rate": 0.9922344944774851,
+  "scope": "Sensor-only 20 edbac60 conditions; Frozen vs SOH; 220 steps; paired state/RNG; not a full 100-condition campaign"
+}
