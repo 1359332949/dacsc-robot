@@ -328,3 +328,34 @@ low-frequency noise, local displacement; no fixed-center rainbow peripheral
 texture) was launched to test whether the Background regression was caused by
 the removed mode 6. Results are pending; this file will be updated only after
 the 50-case diagnostic completes.
+
+## Clean-five perturbation ablation (30 epochs)
+
+Removed only the fixed-center rainbow peripheral texture (mode 5); kept FFT
+low-pass, Gaussian blur, colour/brightness, low-frequency noise and local
+displacement. Everything else matched the 6-mode v2 run.
+
+50-case t=0 diagnostic:
+
+| group | n | accepted | clean5 xyz pooled% | clean5 xyz mean% | clean5 rot pooled% | clean5 rot mean% |
+|---|---:|---:|---:|---:|---:|---:|
+| Clean | 10 | 0 | N/A | N/A | N/A | N/A |
+| Lighting | 10 | 0 | +0.00 | +0.00 | +0.00 | +0.00 |
+| Background | 10 | 9 | **+0.10** | **+1.28** | +2.85 | +0.27 |
+| Sensor | 20 | 20 | **+45.33** | **+31.44** | +29.51 | +23.04 |
+
+Comparison:
+
+| checkpoint | Background xyz pooled | Sensor xyz pooled |
+|---|---:|---:|
+| v2 6-mode | -5.27% | +52.02% |
+| v2 clean5 | +0.10% | +45.33% |
+
+Removing mode 5 recovered Background from -5.27% to about zero while retaining
+most Sensor gain. This supports the hypothesis that the fixed-center rainbow
+texture was actively harmful and that the cleaner five-mode version is the
+better universal candidate. It does not yet make Background positive.
+
+No 3-seed closed-loop campaign was started; it should use this clean5 checkpoint
+if Background balance is the priority, or the 6-mode checkpoint if maximum
+Sensor gain is the priority.
