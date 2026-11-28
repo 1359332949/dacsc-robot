@@ -1,4 +1,4 @@
-# Clean5 closed-loop seed 0
+# SOH v2 six-mode Background paired closed loop: seed 0
 
 pairs: 10
 

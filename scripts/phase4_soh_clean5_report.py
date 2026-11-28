@@ -24,7 +24,7 @@ for g in ('Sensor','Background'):
     sub=[r for r in rows if r['case']['group']==g]; summary['groups'][g]=calc(sub)
     summary['subgroups'][g]={sg:calc([r for r in sub if r['case'].get('subgroup')==sg]) for sg in sorted({r['case'].get('subgroup') for r in sub})}
 (a.dir/'summary.json').write_text(json.dumps(summary,indent=2)+'\n')
-lines=['# Clean5 closed-loop seed 0','',f'pairs: {len(rows)}','','| group | n | Frozen | SOH | rescued/harmed | net | p | task-cluster 95% CI pp |','|---|---:|---:|---:|---:|---:|---:|---:|']
+lines=['# SOH paired closed-loop evaluation','',f'pairs: {len(rows)}','','| group | n | Frozen | SOH | rescued/harmed | net | p | task-cluster 95% CI pp |','|---|---:|---:|---:|---:|---:|---:|---:|']
 for g,x in summary['groups'].items():
     lines.append(f"| {g} | {x['n']} | {x['frozen']}/{x['n']} | {x['soh']}/{x['n']} | {x['rescued']}/{x['harmed']} | {x['net']:+d} | {x['p']:.6g} | [{x['ci'][0]:+.1f}, {x['ci'][1]:+.1f}] |")
 for g,subs in summary['subgroups'].items():

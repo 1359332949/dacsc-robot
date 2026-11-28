@@ -1,0 +1,46 @@
+{
+  "status": "PASS",
+  "checks": [
+    {
+      "group": "Clean",
+      "forced_accept": false,
+      "counts": {
+        "prefill": 1,
+        "flow": 10
+      },
+      "encoder": 2,
+      "reject_exact": true
+    },
+    {
+      "group": "Clean",
+      "forced_accept": true,
+      "counts": {
+        "prefill": 1,
+        "flow": 10
+      },
+      "encoder": 4,
+      "reject_exact": false
+    },
+    {
+      "group": "Sensor",
+      "forced_accept": false,
+      "counts": {
+        "prefill": 1,
+        "flow": 10
+      },
+      "encoder": 2,
+      "reject_exact": true
+    },
+    {
+      "group": "Sensor",
+      "forced_accept": true,
+      "counts": {
+        "prefill": 1,
+        "flow": 10
+      },
+      "encoder": 4,
+      "reject_exact": false
+    }
+  ],
+  "soh_sha256": "b4fe1ac8c4d206fa13f445c93b351682a488170de8ac117fb9c799d7145a8ceb"
+}

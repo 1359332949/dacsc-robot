@@ -1,0 +1,1423 @@
+{
+  "protocol": {
+    "suite": "vanilla_libero_10",
+    "max_steps": 520,
+    "warmup": 10,
+    "H": 50,
+    "E": 1,
+    "Euler": 10,
+    "seed": 0,
+    "precision": "native BF16; CPU normalization",
+    "renderer": "EGL",
+    "noise": 0,
+    "ema_beta": 0.0,
+    "calibration": "libero_10 init0 Clean; per-task outer9, inner8+1; gate inner7+1",
+    "evaluation": "init1; one policy seed; development transfer pilot, not untouched confirmation",
+    "transfer": "Spatial-trained SOH frozen; new-suite Clean calibration allowed; NOT zero-shot",
+    "soh_sha256": "b4fe1ac8c4d206fa13f445c93b351682a488170de8ac117fb9c799d7145a8ceb",
+    "upstream_steps": "openvla/openvla c8f03f48af692657d3060c19588038c7220e9af9 experiments/robot/libero/run_libero_eval.py"
+  },
+  "pairs": 30,
+  "groups": {
+    "Clean": {
+      "n": 10,
+      "frozen": 4,
+      "deepgate": 4,
+      "rescued": 0,
+      "harmed": 0,
+      "net": 0,
+      "delta_pp": 0.0,
+      "mcnemar_exact_two_sided": 1.0,
+      "task_cluster_bootstrap95_pp": [
+        0.0,
+        0.0
+      ],
+      "task_clusters": 10,
+      "gate": {
+        "accepted_replans": 299,
+        "total_replans": 4278,
+        "micro_rate": 0.06989247311827956,
+        "episode_macro_rate": 0.06328768308153615,
+        "episodes_ever_accepted": 7,
+        "first_observation_accepted": 0
+      }
+    },
+    "Sensor": {
+      "n": 20,
+      "frozen": 0,
+      "deepgate": 1,
+      "rescued": 1,
+      "harmed": 0,
+      "net": 1,
+      "delta_pp": 5.0,
+      "mcnemar_exact_two_sided": 1.0,
+      "task_cluster_bootstrap95_pp": [
+        0.0,
+        15.0
+      ],
+      "task_clusters": 10,
+      "gate": {
+        "accepted_replans": 7716,
+        "total_replans": 10198,
+        "micro_rate": 0.7566189448911551,
+        "episode_macro_rate": 0.7613461538461539,
+        "episodes_ever_accepted": 20,
+        "first_observation_accepted": 13
+      }
+    }
+  },
+  "subgroups": {
+    "motion_blur": {
+      "n": 4,
+      "frozen": 0,
+      "deepgate": 0,
+      "rescued": 0,
+      "harmed": 0,
+      "net": 0,
+      "delta_pp": 0.0,
+      "mcnemar_exact_two_sided": 1.0,
+      "task_cluster_bootstrap95_pp": [
+        0.0,
+        0.0
+      ],
+      "task_clusters": 4,
+      "gate": {
+        "accepted_replans": 609,
+        "total_replans": 2080,
+        "micro_rate": 0.29278846153846155,
+        "episode_macro_rate": 0.29278846153846155,
+        "episodes_ever_accepted": 4,
+        "first_observation_accepted": 0
+      }
+    },
+    "gaussian_blur": {
+      "n": 4,
+      "frozen": 0,
+      "deepgate": 0,
+      "rescued": 0,
+      "harmed": 0,
+      "net": 0,
+      "delta_pp": 0.0,
+      "mcnemar_exact_two_sided": 1.0,
+      "task_cluster_bootstrap95_pp": [
+        0.0,
+        0.0
+      ],
+      "task_clusters": 4,
+      "gate": {
+        "accepted_replans": 1904,
+        "total_replans": 2080,
+        "micro_rate": 0.9153846153846154,
+        "episode_macro_rate": 0.9153846153846154,
+        "episodes_ever_accepted": 4,
+        "first_observation_accepted": 4
+      }
+    },
+    "zoom_blur": {
+      "n": 4,
+      "frozen": 0,
+      "deepgate": 0,
+      "rescued": 0,
+      "harmed": 0,
+      "net": 0,
+      "delta_pp": 0.0,
+      "mcnemar_exact_two_sided": 1.0,
+      "task_cluster_bootstrap95_pp": [
+        0.0,
+        0.0
+      ],
+      "task_clusters": 4,
+      "gate": {
+        "accepted_replans": 2060,
+        "total_replans": 2080,
+        "micro_rate": 0.9903846153846154,
+        "episode_macro_rate": 0.9903846153846154,
+        "episodes_ever_accepted": 4,
+        "first_observation_accepted": 4
+      }
+    },
+    "glass_blur": {
+      "n": 4,
+      "frozen": 0,
+      "deepgate": 1,
+      "rescued": 1,
+      "harmed": 0,
+      "net": 1,
+      "delta_pp": 25.0,
+      "mcnemar_exact_two_sided": 1.0,
+      "task_cluster_bootstrap95_pp": [
+        0.0,
+        75.0
+      ],
+      "task_clusters": 4,
+      "gate": {
+        "accepted_replans": 1878,
+        "total_replans": 1878,
+        "micro_rate": 1.0,
+        "episode_macro_rate": 1.0,
+        "episodes_ever_accepted": 4,
+        "first_observation_accepted": 4
+      }
+    },
+    "fog": {
+      "n": 4,
+      "frozen": 0,
+      "deepgate": 0,
+      "rescued": 0,
+      "harmed": 0,
+      "net": 0,
+      "delta_pp": 0.0,
+      "mcnemar_exact_two_sided": 1.0,
+      "task_cluster_bootstrap95_pp": [
+        0.0,
+        0.0
+      ],
+      "task_clusters": 4,
+      "gate": {
+        "accepted_replans": 1265,
+        "total_replans": 2080,
+        "micro_rate": 0.6081730769230769,
+        "episode_macro_rate": 0.608173076923077,
+        "episodes_ever_accepted": 4,
+        "first_observation_accepted": 1
+      }
+    }
+  },
+  "calibration": {
+    "folds": {
+      "0": {
+        "outer": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "inner": {
+          "1": [
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ],
+          "2": [
+            1,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ],
+          "3": [
+            1,
+            2,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ],
+          "4": [
+            1,
+            2,
+            3,
+            5,
+            6,
+            7,
+            8,
+            9
+          ],
+          "5": [
+            1,
+            2,
+            3,
+            4,
+            6,
+            7,
+            8,
+            9
+          ],
+          "6": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            7,
+            8,
+            9
+          ],
+          "7": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            8,
+            9
+          ],
+          "8": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            9
+          ],
+          "9": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8
+          ]
+        }
+      },
+      "1": {
+        "outer": [
+          0,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "inner": {
+          "0": [
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ],
+          "2": [
+            0,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ],
+          "3": [
+            0,
+            2,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ],
+          "4": [
+            0,
+            2,
+            3,
+            5,
+            6,
+            7,
+            8,
+            9
+          ],
+          "5": [
+            0,
+            2,
+            3,
+            4,
+            6,
+            7,
+            8,
+            9
+          ],
+          "6": [
+            0,
+            2,
+            3,
+            4,
+            5,
+            7,
+            8,
+            9
+          ],
+          "7": [
+            0,
+            2,
+            3,
+            4,
+            5,
+            6,
+            8,
+            9
+          ],
+          "8": [
+            0,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            9
+          ],
+          "9": [
+            0,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8
+          ]
+        }
+      },
+      "2": {
+        "outer": [
+          0,
+          1,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "inner": {
+          "0": [
+            1,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ],
+          "1": [
+            0,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ],
+          "3": [
+            0,
+            1,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ],
+          "4": [
+            0,
+            1,
+            3,
+            5,
+            6,
+            7,
+            8,
+            9
+          ],
+          "5": [
+            0,
+            1,
+            3,
+            4,
+            6,
+            7,
+            8,
+            9
+          ],
+          "6": [
+            0,
+            1,
+            3,
+            4,
+            5,
+            7,
+            8,
+            9
+          ],
+          "7": [
+            0,
+            1,
+            3,
+            4,
+            5,
+            6,
+            8,
+            9
+          ],
+          "8": [
+            0,
+            1,
+            3,
+            4,
+            5,
+            6,
+            7,
+            9
+          ],
+          "9": [
+            0,
+            1,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8
+          ]
+        }
+      },
+      "3": {
+        "outer": [
+          0,
+          1,
+          2,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "inner": {
+          "0": [
+            1,
+            2,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ],
+          "1": [
+            0,
+            2,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ],
+          "2": [
+            0,
+            1,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ],
+          "4": [
+            0,
+            1,
+            2,
+            5,
+            6,
+            7,
+            8,
+            9
+          ],
+          "5": [
+            0,
+            1,
+            2,
+            4,
+            6,
+            7,
+            8,
+            9
+          ],
+          "6": [
+            0,
+            1,
+            2,
+            4,
+            5,
+            7,
+            8,
+            9
+          ],
+          "7": [
+            0,
+            1,
+            2,
+            4,
+            5,
+            6,
+            8,
+            9
+          ],
+          "8": [
+            0,
+            1,
+            2,
+            4,
+            5,
+            6,
+            7,
+            9
+          ],
+          "9": [
+            0,
+            1,
+            2,
+            4,
+            5,
+            6,
+            7,
+            8
+          ]
+        }
+      },
+      "4": {
+        "outer": [
+          0,
+          1,
+          2,
+          3,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "inner": {
+          "0": [
+            1,
+            2,
+            3,
+            5,
+            6,
+            7,
+            8,
+            9
+          ],
+          "1": [
+            0,
+            2,
+            3,
+            5,
+            6,
+            7,
+            8,
+            9
+          ],
+          "2": [
+            0,
+            1,
+            3,
+            5,
+            6,
+            7,
+            8,
+            9
+          ],
+          "3": [
+            0,
+            1,
+            2,
+            5,
+            6,
+            7,
+            8,
+            9
+          ],
+          "5": [
+            0,
+            1,
+            2,
+            3,
+            6,
+            7,
+            8,
+            9
+          ],
+          "6": [
+            0,
+            1,
+            2,
+            3,
+            5,
+            7,
+            8,
+            9
+          ],
+          "7": [
+            0,
+            1,
+            2,
+            3,
+            5,
+            6,
+            8,
+            9
+          ],
+          "8": [
+            0,
+            1,
+            2,
+            3,
+            5,
+            6,
+            7,
+            9
+          ],
+          "9": [
+            0,
+            1,
+            2,
+            3,
+            5,
+            6,
+            7,
+            8
+          ]
+        }
+      },
+      "5": {
+        "outer": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          6,
+          7,
+          8,
+          9
+        ],
+        "inner": {
+          "0": [
+            1,
+            2,
+            3,
+            4,
+            6,
+            7,
+            8,
+            9
+          ],
+          "1": [
+            0,
+            2,
+            3,
+            4,
+            6,
+            7,
+            8,
+            9
+          ],
+          "2": [
+            0,
+            1,
+            3,
+            4,
+            6,
+            7,
+            8,
+            9
+          ],
+          "3": [
+            0,
+            1,
+            2,
+            4,
+            6,
+            7,
+            8,
+            9
+          ],
+          "4": [
+            0,
+            1,
+            2,
+            3,
+            6,
+            7,
+            8,
+            9
+          ],
+          "6": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            7,
+            8,
+            9
+          ],
+          "7": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            6,
+            8,
+            9
+          ],
+          "8": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            6,
+            7,
+            9
+          ],
+          "9": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            6,
+            7,
+            8
+          ]
+        }
+      },
+      "6": {
+        "outer": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          7,
+          8,
+          9
+        ],
+        "inner": {
+          "0": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            7,
+            8,
+            9
+          ],
+          "1": [
+            0,
+            2,
+            3,
+            4,
+            5,
+            7,
+            8,
+            9
+          ],
+          "2": [
+            0,
+            1,
+            3,
+            4,
+            5,
+            7,
+            8,
+            9
+          ],
+          "3": [
+            0,
+            1,
+            2,
+            4,
+            5,
+            7,
+            8,
+            9
+          ],
+          "4": [
+            0,
+            1,
+            2,
+            3,
+            5,
+            7,
+            8,
+            9
+          ],
+          "5": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            7,
+            8,
+            9
+          ],
+          "7": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            8,
+            9
+          ],
+          "8": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            7,
+            9
+          ],
+          "9": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            7,
+            8
+          ]
+        }
+      },
+      "7": {
+        "outer": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          8,
+          9
+        ],
+        "inner": {
+          "0": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            8,
+            9
+          ],
+          "1": [
+            0,
+            2,
+            3,
+            4,
+            5,
+            6,
+            8,
+            9
+          ],
+          "2": [
+            0,
+            1,
+            3,
+            4,
+            5,
+            6,
+            8,
+            9
+          ],
+          "3": [
+            0,
+            1,
+            2,
+            4,
+            5,
+            6,
+            8,
+            9
+          ],
+          "4": [
+            0,
+            1,
+            2,
+            3,
+            5,
+            6,
+            8,
+            9
+          ],
+          "5": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            6,
+            8,
+            9
+          ],
+          "6": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            8,
+            9
+          ],
+          "8": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            9
+          ],
+          "9": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            8
+          ]
+        }
+      },
+      "8": {
+        "outer": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          9
+        ],
+        "inner": {
+          "0": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            9
+          ],
+          "1": [
+            0,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            9
+          ],
+          "2": [
+            0,
+            1,
+            3,
+            4,
+            5,
+            6,
+            7,
+            9
+          ],
+          "3": [
+            0,
+            1,
+            2,
+            4,
+            5,
+            6,
+            7,
+            9
+          ],
+          "4": [
+            0,
+            1,
+            2,
+            3,
+            5,
+            6,
+            7,
+            9
+          ],
+          "5": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            6,
+            7,
+            9
+          ],
+          "6": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            7,
+            9
+          ],
+          "7": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            9
+          ],
+          "9": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        }
+      },
+      "9": {
+        "outer": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "inner": {
+          "0": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8
+          ],
+          "1": [
+            0,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8
+          ],
+          "2": [
+            0,
+            1,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8
+          ],
+          "3": [
+            0,
+            1,
+            2,
+            4,
+            5,
+            6,
+            7,
+            8
+          ],
+          "4": [
+            0,
+            1,
+            2,
+            3,
+            5,
+            6,
+            7,
+            8
+          ],
+          "5": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            6,
+            7,
+            8
+          ],
+          "6": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            7,
+            8
+          ],
+          "7": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            8
+          ],
+          "8": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        }
+      }
+    },
+    "source": [
+      {
+        "task_id": 0,
+        "task": "LIVING_ROOM_SCENE2_put_both_the_alphabet_soup_and_the_tomato_sauce_in_the_basket",
+        "init_index": 0,
+        "success": true,
+        "steps": 286,
+        "seconds": 192.18724181002472,
+        "moments_sha256": "05bb6e2627ec15046f4a3000624b192bb08b1eaf8a9c1f9586e9f6cb6110f973",
+        "max_steps": 520
+      },
+      {
+        "task_id": 1,
+        "task": "LIVING_ROOM_SCENE2_put_both_the_cream_cheese_box_and_the_butter_in_the_basket",
+        "init_index": 0,
+        "success": false,
+        "steps": 520,
+        "seconds": 345.97541701898444,
+        "moments_sha256": "a6f4128bcc515c6ccad4ebf9b3faddab428fd44102b63ab688fde9185f2fbc6a",
+        "max_steps": 520
+      },
+      {
+        "task_id": 2,
+        "task": "KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it",
+        "init_index": 0,
+        "success": true,
+        "steps": 312,
+        "seconds": 208.1848482900532,
+        "moments_sha256": "aae83cf7c815c255a4593fdedd44243b8c9abdf2e40c8eec8ad2b0e2230aed18",
+        "max_steps": 520
+      },
+      {
+        "task_id": 3,
+        "task": "KITCHEN_SCENE4_put_the_black_bowl_in_the_bottom_drawer_of_the_cabinet_and_close_it",
+        "init_index": 0,
+        "success": true,
+        "steps": 281,
+        "seconds": 186.62024467403535,
+        "moments_sha256": "690b7c4a4547da871f188f18e3491281ed44fb8a1e70e3eaa2621e35f0e0c8bf",
+        "max_steps": 520
+      },
+      {
+        "task_id": 4,
+        "task": "LIVING_ROOM_SCENE5_put_the_white_mug_on_the_left_plate_and_put_the_yellow_and_white_mug_on_the_right_plate",
+        "init_index": 0,
+        "success": false,
+        "steps": 520,
+        "seconds": 343.96681035507936,
+        "moments_sha256": "d2072a4ab9a9eae9c57049070365f40fc16d9f0abd0bae8ddc48059449a7d024",
+        "max_steps": 520
+      },
+      {
+        "task_id": 5,
+        "task": "STUDY_SCENE1_pick_up_the_book_and_place_it_in_the_back_compartment_of_the_caddy",
+        "init_index": 0,
+        "success": true,
+        "steps": 412,
+        "seconds": 264.83730278594885,
+        "moments_sha256": "45cb3919ee1390af5ed9c55d20e26bdf8e01528acd9531d8c5137fb3d8ec8401",
+        "max_steps": 520
+      },
+      {
+        "task_id": 6,
+        "task": "LIVING_ROOM_SCENE6_put_the_white_mug_on_the_plate_and_put_the_chocolate_pudding_to_the_right_of_the_plate",
+        "init_index": 0,
+        "success": true,
+        "steps": 299,
+        "seconds": 199.30281533300877,
+        "moments_sha256": "de9b26ef6f012cfd6699091f707d50c3e67af14ccaa4c4938f29db3542e481bd",
+        "max_steps": 520
+      },
+      {
+        "task_id": 7,
+        "task": "LIVING_ROOM_SCENE1_put_both_the_alphabet_soup_and_the_cream_cheese_box_in_the_basket",
+        "init_index": 0,
+        "success": false,
+        "steps": 520,
+        "seconds": 337.5546563930111,
+        "moments_sha256": "eaed8d139161cc140c85728712eb2576a5bb578553b48d85e1d0dfcb9ce17061",
+        "max_steps": 520
+      },
+      {
+        "task_id": 8,
+        "task": "KITCHEN_SCENE8_put_both_moka_pots_on_the_stove",
+        "init_index": 0,
+        "success": false,
+        "steps": 520,
+        "seconds": 332.6841632379219,
+        "moments_sha256": "ba3faad0ebe8b2098ee5ce6fbb2f52c9e7e93b78152ec83199b13dcb577ec89c",
+        "max_steps": 520
+      },
+      {
+        "task_id": 9,
+        "task": "KITCHEN_SCENE6_put_the_yellow_and_white_mug_in_the_microwave_and_close_it",
+        "init_index": 0,
+        "success": true,
+        "steps": 366,
+        "seconds": 232.25614560896065,
+        "moments_sha256": "35836bd3b35f43e00114be7612ba4950e35412bb8bc20282d587408b861b6006",
+        "max_steps": 520
+      }
+    ],
+    "calib_sha256": "a7e305c04d723eeaed4d13bf0ab141a485c7be610e4af4b382ece1566b73abe3",
+    "source_clean_success": 6,
+    "weighting": "all actual frames, no success filtering"
+  },
+  "preflight": {
+    "status": "PASS",
+    "checks": [
+      {
+        "group": "Clean",
+        "forced_accept": false,
+        "counts": {
+          "prefill": 1,
+          "flow": 10
+        },
+        "encoder": 2,
+        "reject_exact": true
+      },
+      {
+        "group": "Clean",
+        "forced_accept": true,
+        "counts": {
+          "prefill": 1,
+          "flow": 10
+        },
+        "encoder": 4,
+        "reject_exact": false
+      },
+      {
+        "group": "Sensor",
+        "forced_accept": false,
+        "counts": {
+          "prefill": 1,
+          "flow": 10
+        },
+        "encoder": 2,
+        "reject_exact": true
+      },
+      {
+        "group": "Sensor",
+        "forced_accept": true,
+        "counts": {
+          "prefill": 1,
+          "flow": 10
+        },
+        "encoder": 4,
+        "reject_exact": false
+      }
+    ],
+    "soh_sha256": "b4fe1ac8c4d206fa13f445c93b351682a488170de8ac117fb9c799d7145a8ceb"
+  },
+  "raw_sha256": {
+    "l10_clean_t03_i1.json": "7f2580db5cd0cfbf97a7a9cd4151f945d8589815d1eaaafc44ffeb5beaca0570",
+    "l10_clean_t02_i1.json": "0e160ae3ec3a7883610429002982892c9081c83a68b2332ba5166b7030f85961",
+    "l10_clean_t01_i1.json": "ac405089c7d071284a694c334f0b98fa06f564ee6193dc6fe9142fa5e3398c5f",
+    "l10_clean_t00_i1.json": "b0389f9121a7ab285870eac5ca6c2cfaf4b6e90d4f89fe9a133455a14d5421db",
+    "l10_clean_t06_i1.json": "7409a32f08c3a7539229c9d2a00cba6b3d9e8145ddc2f3961e677213ef6f0fd5",
+    "l10_clean_t07_i1.json": "9111aff0be05716c25d291c7ea40cc9df205001d94b297bf0f1aba6e255f85e7",
+    "l10_clean_t05_i1.json": "eef45ccc35dad1b62f6b9a10bb61efbd0e918aa8347a27db95b7ea057f5fa65f",
+    "l10_clean_t04_i1.json": "bf92f9afcf07a56834dd5f643d6a7df419f4a708e95c7b896f9e20aeb77031e3",
+    "l10_clean_t09_i1.json": "bb30ef0117551d2a135be9c245d06b2fa3493bcf1114736d68248bbd09d56b5a",
+    "l10_sensor_motion_blur_t00_i1.json": "c169a280e8b4dfc803c94d4e97634bade32c345061b81cd3fc9f39b3a14a1af8",
+    "l10_sensor_motion_blur_t01_i1.json": "4483f193f1cc0a1b8f7af6a0863cf6d8985c5bdeea51d2c65b907f58913ab6d1",
+    "l10_clean_t08_i1.json": "dfa599d88a30b827812340db155a1ab256e7f60d7ab76baaeea4a460f9a05a19",
+    "l10_sensor_gaussian_blur_t04_i1.json": "39751217511321a3fc3e8ca68a766b405c714af858752c47e1ac38ef1fa24ff0",
+    "l10_sensor_gaussian_blur_t05_i1.json": "44206427e3e4ae7936621b245455dd3a08ecdfac830ab5454fd9a1f273885c19",
+    "l10_sensor_motion_blur_t03_i1.json": "14df0afeb1a4b333da3347c1a618dd054bf450dfbd80d801769d5e3cfd39ae41",
+    "l10_sensor_motion_blur_t02_i1.json": "0f9e899d1b9508bd026b568a078b6ec133697ee1279592aaecaba2e62ecfa4ec",
+    "l10_sensor_gaussian_blur_t07_i1.json": "c65c11b7f1d57ae0dd7635c431711bb7cff5151a406f2d8d97887109fa74676f",
+    "l10_sensor_zoom_blur_t08_i1.json": "ec31ee1ca16a41db30e77befa3b75db3ce6ea2753a5d0bb14b84e5cfd4330eb5",
+    "l10_sensor_gaussian_blur_t06_i1.json": "4b414174d982127c2a0c65c18401b52e7a19a6e5c55809f918574307e4b7b0b1",
+    "l10_sensor_zoom_blur_t09_i1.json": "21a48f3bbdb923f658dbf7b13cd34f901785182f251bf4fdd69dfee8688edad9",
+    "l10_sensor_glass_blur_t02_i1.json": "199cc994580a88be50465ee489a994b26a3f2af47dc70008f013cd25d883feac",
+    "l10_sensor_glass_blur_t03_i1.json": "41813e5cbc8ac9513b342be685d4ef2635f275a4022218b86dd600f1c886b585",
+    "l10_sensor_zoom_blur_t01_i1.json": "31e451bef943b0193d0c8d27ebba1fe5ae46b5a1693e04d8d3ab1eff7c2931c3",
+    "l10_sensor_zoom_blur_t00_i1.json": "f4e0bf94a9aa2a8223d476b1e0b44d900fe4b90412919de8793010b6ef42177b",
+    "l10_sensor_fog_t06_i1.json": "a7d49063c069f3d51c2a62b1d01dcc0bf7ca6a2153165f9375423a67b84c9dd1",
+    "l10_sensor_fog_t07_i1.json": "47f069273ce4f39b30d5bfc8387afcf3471f21731ae5d204a73a4029989d2aec",
+    "l10_sensor_glass_blur_t05_i1.json": "8354b9974d72d112e24393a04c7acba717fff0fde17bbdc3d3bd10795e5003e0",
+    "l10_sensor_glass_blur_t04_i1.json": "08b961ddba4304257f0c7db088421b0721e0e1d1bba5712d879946562c51c600",
+    "l10_sensor_fog_t09_i1.json": "6adef6ed1ff9f43623095db1ca335a6696151e46343e13920993de3b9abf4e73",
+    "l10_sensor_fog_t08_i1.json": "e2ee832d2dfac79f950723a76cbf40aca4c38acb6352f60426733b64dc4cc0f6"
+  }
+}

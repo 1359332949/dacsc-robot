@@ -1,0 +1,23 @@
+{
+  "status": "PASS",
+  "checks": [
+    {
+      "group": "Sensor",
+      "case": "t00_motion_blur_i1",
+      "reject_equals_frozen": true,
+      "accept_finite": true,
+      "reject_encoder_calls": 2,
+      "accept_encoder_calls": 4
+    },
+    {
+      "group": "Background",
+      "case": "t00_table_texture_i1",
+      "reject_equals_frozen": true,
+      "accept_finite": true,
+      "reject_encoder_calls": 2,
+      "accept_encoder_calls": 4
+    }
+  ],
+  "soh_sha256": "b4fe1ac8c4d206fa13f445c93b351682a488170de8ac117fb9c799d7145a8ceb",
+  "ema_beta": 0.0
+}

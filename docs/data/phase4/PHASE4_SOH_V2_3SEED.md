@@ -1,4 +1,4 @@
-# Clean5 closed-loop seed 0
+# SOH v2 six-mode paired closed loop: seeds 0, 1, 2
 
 pairs: 90
 

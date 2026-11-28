@@ -1,0 +1,54 @@
+{
+  "python": "3.10.12 (main, Aug 31 2026, 10:18:17) [GCC 11.4.0]",
+  "modules": {
+    "torch": {
+      "version": "2.10.0+cu128",
+      "file": "/hy-tmp/smolvla_venv/lib/python3.10/site-packages/torch/__init__.py",
+      "module_file_sha256": "d6388b1e3b16c1f9a22a87898e5f205fa13a97bd65c163f4829a157e0d9d602f"
+    },
+    "numpy": {
+      "version": "1.26.4",
+      "file": "/hy-tmp/smolvla_venv/lib/python3.10/site-packages/numpy/__init__.py",
+      "module_file_sha256": "22cd1535fa14d74ef6f457cca149ffdc80875f460be313b8f895273f78bc402e"
+    },
+    "scipy": {
+      "version": "1.15.3",
+      "file": "/hy-tmp/corp_venv/lib/python3.10/site-packages/scipy/__init__.py",
+      "module_file_sha256": "185913aa107512fafd5cf89dfd452a8719b45a6eba833e2dcee2cbfd18b4bbe5"
+    },
+    "mujoco": {
+      "version": "3.2.7",
+      "file": "/hy-tmp/patch-diag/runs/repro_baseline_v2_20261126/author_audit/mujoco327/mujoco/__init__.py",
+      "module_file_sha256": "4af596459182827cbc52c1399c9ef2de1a6aa23f3094013e35d4cddd2aa056ba"
+    },
+    "robosuite": {
+      "version": "1.4.1",
+      "file": "/hy-tmp/corp_venv/lib/python3.10/site-packages/robosuite/__init__.py",
+      "module_file_sha256": "2284b710dbfa04b1e0087d8e5f590277ba4300962df5b9c011161567b02cd981"
+    },
+    "lerobot": {
+      "version": "0.4.4",
+      "file": "/hy-tmp/lerobot_community_revision/lerobot/__init__.py",
+      "module_file_sha256": "d79ffe6fccd9c8cc3b3c67213fe1c590e936175920191eac6ae78d70e9f76729"
+    },
+    "roboeval": {
+      "version": "0.0.1",
+      "file": "/hy-tmp/upstream_repro/harness_pkg/roboeval/__init__.py",
+      "module_file_sha256": "36a1870873b715da208842f4840194665b19de7888936eeecf31f05eb2fb2035"
+    }
+  },
+  "model_sources": {
+    "lerobot.common.policies.smolvla.configuration_smolvla": {
+      "file": "/hy-tmp/lerobot_community_revision/lerobot/common/policies/smolvla/configuration_smolvla.py",
+      "sha256": "ea3c944285dd6de2797ab09b2d62be013e5a19e8022e82c68d36e662f8f84601"
+    },
+    "lerobot.common.policies.smolvla.smolvlm_with_expert": {
+      "file": "/hy-tmp/lerobot_community_revision/lerobot/common/policies/smolvla/smolvlm_with_expert.py",
+      "sha256": "10a3c3cd28a7526dd55681a0d5c74631284f3c1dfa4d9ad3a9194ee1dfc6b6a3"
+    },
+    "lerobot.common.policies.smolvla.modeling_smolvla": {
+      "file": "/hy-tmp/lerobot_community_revision/lerobot/common/policies/smolvla/modeling_smolvla.py",
+      "sha256": "66b69b8fa8ae7f2a53d514b8366d17498804452a5d62cf168a4bd018a37caf7c"
+    }
+  }
+}

@@ -374,7 +374,7 @@ def latency(out):
         instrumentation='no call-count mocks or full cache-pixel checks during timing; same actual evaluation adapter'))
 
 
-def rollout(actor, case, arm, refs, threshold, funcs, pixel_cache):
+def rollout(actor, case, arm, refs, threshold, funcs, pixel_cache, max_steps=220):
     suite, spec, raw = base.setup(case)
     start = None
     observed_start = None
@@ -388,7 +388,7 @@ def rollout(actor, case, arm, refs, threshold, funcs, pixel_cache):
     began = time.monotonic()
     try:
         success = False
-        for step in range(220):
+        for step in range(max_steps):
             raw_state = base.snapshot(suite, raw)
             render = render_state(suite)
             key = (step, *(raw_state[k] for k in ('sim', 'eef', 'quat', 'gripper')), render)

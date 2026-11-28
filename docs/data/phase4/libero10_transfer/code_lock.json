@@ -1,0 +1,13 @@
+{
+  "base_git_commit": "e3f75c0e9069533a4bda3b8fecd0959e89e10220",
+  "sha256": {
+    "scripts/phase4_libero10_transfer.py": "b0ed5cd935436fc6247454a66400c137e4ba5a543da103b598f9963ea1eadec7",
+    "scripts/phase3_smolvla_deepgate_closedloop.py": "e74b6e4e2c6c67df80b351604c1a350f35cb1b89cf7219eb66cd572aa5509189",
+    "scripts/phase4_soh_clean5_eval.py": "6b74e7bbecfc13578f54229753e7e10edbfa240aba127f22a40a934bb31954cb",
+    "scripts/phase3_smolvla_common.py": "791b234f2cc8faed224c38e9290bfc8370e2a4b49e9b1c00bb4f57ab635df0a0",
+    "scripts/phase3_smolvla_shift.py": "6774b71d8be173de9fb52610ec47ba7ed6e52fc39027ac394051cf8ba062d0ae",
+    "scripts/phase3_smolvla_unified_diag.py": "f0597abe16b618621e70c49cd11e40fdf39814087b4c318bf7141340c88b4652",
+    "dacsc/smolvla_soh.py": "f8abc27224704c3a82c3294484afd942e1f0b39a8d72b0f71b7110ae5e484c3e",
+    "dacsc/smolvla_v1_hook.py": "1aa2fe3879c54f91601e2e615fce1828e59088ce14596c113cb096e9bc9eb629"
+  }
+}

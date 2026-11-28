@@ -1,5 +1,8 @@
 # Phase 4 SOH-VLA implementation status
 
+> Historical development log: the status statements below are chronological.
+> For the current combined evidence and limitations, see [PHASE4_CLOSEOUT.md](PHASE4_CLOSEOUT.md).
+
 Status: **code fixed after the second audit; Step-1 now uses only the real
 7-DOF action and two Flow times, but the pre-registered "first 256 dims > 85%
 energy" gate still FAILS (78.7%). Do not start Step-2 or Step-3 as if the

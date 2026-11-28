@@ -1,0 +1,75 @@
+{
+  "status": "PASS",
+  "rows": [
+    {
+      "group": "Clean",
+      "case_id": "l10_clean_t00_i1",
+      "mode": "frozen",
+      "actual_calls": {
+        "encoder": 2,
+        "prefill": 1,
+        "flow": 10
+      },
+      "action_l2_vs_frozen": 0.0
+    },
+    {
+      "group": "Clean",
+      "case_id": "l10_clean_t00_i1",
+      "mode": "forced_reject",
+      "actual_calls": {
+        "encoder": 2,
+        "prefill": 1,
+        "flow": 10
+      },
+      "action_l2_vs_frozen": 0.0
+    },
+    {
+      "group": "Clean",
+      "case_id": "l10_clean_t00_i1",
+      "mode": "forced_accept",
+      "actual_calls": {
+        "encoder": 4,
+        "prefill": 1,
+        "flow": 10
+      },
+      "action_l2_vs_frozen": 0.00720786489546299
+    },
+    {
+      "group": "Sensor",
+      "case_id": "l10_sensor_motion_blur_t00_i1",
+      "mode": "frozen",
+      "actual_calls": {
+        "encoder": 2,
+        "prefill": 1,
+        "flow": 10
+      },
+      "action_l2_vs_frozen": 0.0
+    },
+    {
+      "group": "Sensor",
+      "case_id": "l10_sensor_motion_blur_t00_i1",
+      "mode": "forced_reject",
+      "actual_calls": {
+        "encoder": 2,
+        "prefill": 1,
+        "flow": 10
+      },
+      "action_l2_vs_frozen": 0.0
+    },
+    {
+      "group": "Sensor",
+      "case_id": "l10_sensor_motion_blur_t00_i1",
+      "mode": "forced_accept",
+      "actual_calls": {
+        "encoder": 4,
+        "prefill": 1,
+        "flow": 10
+      },
+      "action_l2_vs_frozen": 0.08459986746311188
+    }
+  ],
+  "weights_frozen_and_versions_unchanged": true,
+  "measurement": "actual hooks on encoder layer0, VLM fill_kv_cache, and native denoise_step",
+  "soh_sha256": "b4fe1ac8c4d206fa13f445c93b351682a488170de8ac117fb9c799d7145a8ceb",
+  "calib_sha256": "a7e305c04d723eeaed4d13bf0ab141a485c7be610e4af4b382ece1566b73abe3"
+}

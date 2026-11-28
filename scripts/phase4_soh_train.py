@@ -233,7 +233,7 @@ def main(args):
         eigenvalues = torch.as_tensor(z['eigenvalues'], device='cuda', dtype=torch.float32)
         cls = SOHModuleV2 if args.v2 else SOHModule
         soh = cls(v_basis=v_basis, eigenvalues=eigenvalues,
-                  rank=args.rank, num_bases=args.num_bases).cuda()
+                  rank=args.rank, num_bases=args.num_bases, damping_beta=args.damping_beta).cuda()
     else:
         cls = SOHModuleV2 if args.v2 else SOHModule
         soh = cls(u_geo, rank=args.rank, num_bases=args.num_bases).cuda()
@@ -364,6 +364,7 @@ if __name__ == '__main__':
     p.add_argument('--rank', type=int, default=16)
     p.add_argument('--num-bases', type=int, default=8)
     p.add_argument('--v2', action='store_true')
+    p.add_argument('--damping-beta', type=float, default=1.0)
     p.add_argument('--num-perturb-modes', type=int, default=6)
     p.add_argument('--lr', type=float, default=1e-3)
     p.add_argument('--id-weight', type=float, default=0.5)

@@ -1,0 +1,26 @@
+{
+  "status": "PASS",
+  "cases": 50,
+  "pooled_reduction_pct": {
+    "Clean": {
+      "xyz": null,
+      "rotation": null,
+      "action7": null
+    },
+    "Lighting": {
+      "xyz": 0.0,
+      "rotation": 0.0,
+      "action7": 0.0
+    },
+    "Background": {
+      "xyz": -5.599636846040834,
+      "rotation": 14.164801245413694,
+      "action7": -5.301778242289656
+    },
+    "Sensor": {
+      "xyz": 45.9947105499437,
+      "rotation": 29.563169171034875,
+      "action7": 45.86702184964185
+    }
+  }
+}

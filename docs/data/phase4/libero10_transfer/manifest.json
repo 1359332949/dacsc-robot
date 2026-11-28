@@ -1,0 +1,342 @@
+{
+  "protocol": {
+    "suite": "vanilla_libero_10",
+    "max_steps": 520,
+    "warmup": 10,
+    "H": 50,
+    "E": 1,
+    "Euler": 10,
+    "seed": 0,
+    "precision": "native BF16; CPU normalization",
+    "renderer": "EGL",
+    "noise": 0,
+    "ema_beta": 0.0,
+    "calibration": "libero_10 init0 Clean; per-task outer9, inner8+1; gate inner7+1",
+    "evaluation": "init1; one policy seed; development transfer pilot, not untouched confirmation",
+    "transfer": "Spatial-trained SOH frozen; new-suite Clean calibration allowed; NOT zero-shot",
+    "soh_sha256": "b4fe1ac8c4d206fa13f445c93b351682a488170de8ac117fb9c799d7145a8ceb",
+    "upstream_steps": "openvla/openvla c8f03f48af692657d3060c19588038c7220e9af9 experiments/robot/libero/run_libero_eval.py"
+  },
+  "cases": [
+    {
+      "id": "l10_clean_t00_i1",
+      "task_id": 0,
+      "base_task": "LIVING_ROOM_SCENE2_put_both_the_alphabet_soup_and_the_tomato_sauce_in_the_basket",
+      "group": "Clean",
+      "subgroup": "clean",
+      "init_index": 1,
+      "scored": true,
+      "language": "put both the alphabet soup and the tomato sauce in the basket"
+    },
+    {
+      "id": "l10_clean_t01_i1",
+      "task_id": 1,
+      "base_task": "LIVING_ROOM_SCENE2_put_both_the_cream_cheese_box_and_the_butter_in_the_basket",
+      "group": "Clean",
+      "subgroup": "clean",
+      "init_index": 1,
+      "scored": true,
+      "language": "put both the cream cheese box and the butter in the basket"
+    },
+    {
+      "id": "l10_clean_t02_i1",
+      "task_id": 2,
+      "base_task": "KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it",
+      "group": "Clean",
+      "subgroup": "clean",
+      "init_index": 1,
+      "scored": true,
+      "language": "turn on the stove and put the moka pot on it"
+    },
+    {
+      "id": "l10_clean_t03_i1",
+      "task_id": 3,
+      "base_task": "KITCHEN_SCENE4_put_the_black_bowl_in_the_bottom_drawer_of_the_cabinet_and_close_it",
+      "group": "Clean",
+      "subgroup": "clean",
+      "init_index": 1,
+      "scored": true,
+      "language": "put the black bowl in the bottom drawer of the cabinet and close it"
+    },
+    {
+      "id": "l10_clean_t04_i1",
+      "task_id": 4,
+      "base_task": "LIVING_ROOM_SCENE5_put_the_white_mug_on_the_left_plate_and_put_the_yellow_and_white_mug_on_the_right_plate",
+      "group": "Clean",
+      "subgroup": "clean",
+      "init_index": 1,
+      "scored": true,
+      "language": "put the white mug on the left plate and put the yellow and white mug on the right plate"
+    },
+    {
+      "id": "l10_clean_t05_i1",
+      "task_id": 5,
+      "base_task": "STUDY_SCENE1_pick_up_the_book_and_place_it_in_the_back_compartment_of_the_caddy",
+      "group": "Clean",
+      "subgroup": "clean",
+      "init_index": 1,
+      "scored": true,
+      "language": "pick up the book and place it in the back compartment of the caddy"
+    },
+    {
+      "id": "l10_clean_t06_i1",
+      "task_id": 6,
+      "base_task": "LIVING_ROOM_SCENE6_put_the_white_mug_on_the_plate_and_put_the_chocolate_pudding_to_the_right_of_the_plate",
+      "group": "Clean",
+      "subgroup": "clean",
+      "init_index": 1,
+      "scored": true,
+      "language": "put the white mug on the plate and put the chocolate pudding to the right of the plate"
+    },
+    {
+      "id": "l10_clean_t07_i1",
+      "task_id": 7,
+      "base_task": "LIVING_ROOM_SCENE1_put_both_the_alphabet_soup_and_the_cream_cheese_box_in_the_basket",
+      "group": "Clean",
+      "subgroup": "clean",
+      "init_index": 1,
+      "scored": true,
+      "language": "put both the alphabet soup and the cream cheese box in the basket"
+    },
+    {
+      "id": "l10_clean_t08_i1",
+      "task_id": 8,
+      "base_task": "KITCHEN_SCENE8_put_both_moka_pots_on_the_stove",
+      "group": "Clean",
+      "subgroup": "clean",
+      "init_index": 1,
+      "scored": true,
+      "language": "put both moka pots on the stove"
+    },
+    {
+      "id": "l10_clean_t09_i1",
+      "task_id": 9,
+      "base_task": "KITCHEN_SCENE6_put_the_yellow_and_white_mug_in_the_microwave_and_close_it",
+      "group": "Clean",
+      "subgroup": "clean",
+      "init_index": 1,
+      "scored": true,
+      "language": "put the yellow and white mug in the microwave and close it"
+    },
+    {
+      "id": "l10_sensor_motion_blur_t00_i1",
+      "task_id": 0,
+      "base_task": "LIVING_ROOM_SCENE2_put_both_the_alphabet_soup_and_the_tomato_sauce_in_the_basket",
+      "group": "Sensor",
+      "subgroup": "motion_blur",
+      "init_index": 1,
+      "scored": true,
+      "language": "put both the alphabet soup and the tomato sauce in the basket",
+      "severity": 3
+    },
+    {
+      "id": "l10_sensor_motion_blur_t01_i1",
+      "task_id": 1,
+      "base_task": "LIVING_ROOM_SCENE2_put_both_the_cream_cheese_box_and_the_butter_in_the_basket",
+      "group": "Sensor",
+      "subgroup": "motion_blur",
+      "init_index": 1,
+      "scored": true,
+      "language": "put both the cream cheese box and the butter in the basket",
+      "severity": 3
+    },
+    {
+      "id": "l10_sensor_motion_blur_t02_i1",
+      "task_id": 2,
+      "base_task": "KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it",
+      "group": "Sensor",
+      "subgroup": "motion_blur",
+      "init_index": 1,
+      "scored": true,
+      "language": "turn on the stove and put the moka pot on it",
+      "severity": 3
+    },
+    {
+      "id": "l10_sensor_motion_blur_t03_i1",
+      "task_id": 3,
+      "base_task": "KITCHEN_SCENE4_put_the_black_bowl_in_the_bottom_drawer_of_the_cabinet_and_close_it",
+      "group": "Sensor",
+      "subgroup": "motion_blur",
+      "init_index": 1,
+      "scored": true,
+      "language": "put the black bowl in the bottom drawer of the cabinet and close it",
+      "severity": 3
+    },
+    {
+      "id": "l10_sensor_gaussian_blur_t04_i1",
+      "task_id": 4,
+      "base_task": "LIVING_ROOM_SCENE5_put_the_white_mug_on_the_left_plate_and_put_the_yellow_and_white_mug_on_the_right_plate",
+      "group": "Sensor",
+      "subgroup": "gaussian_blur",
+      "init_index": 1,
+      "scored": true,
+      "language": "put the white mug on the left plate and put the yellow and white mug on the right plate",
+      "severity": 3
+    },
+    {
+      "id": "l10_sensor_gaussian_blur_t05_i1",
+      "task_id": 5,
+      "base_task": "STUDY_SCENE1_pick_up_the_book_and_place_it_in_the_back_compartment_of_the_caddy",
+      "group": "Sensor",
+      "subgroup": "gaussian_blur",
+      "init_index": 1,
+      "scored": true,
+      "language": "pick up the book and place it in the back compartment of the caddy",
+      "severity": 3
+    },
+    {
+      "id": "l10_sensor_gaussian_blur_t06_i1",
+      "task_id": 6,
+      "base_task": "LIVING_ROOM_SCENE6_put_the_white_mug_on_the_plate_and_put_the_chocolate_pudding_to_the_right_of_the_plate",
+      "group": "Sensor",
+      "subgroup": "gaussian_blur",
+      "init_index": 1,
+      "scored": true,
+      "language": "put the white mug on the plate and put the chocolate pudding to the right of the plate",
+      "severity": 3
+    },
+    {
+      "id": "l10_sensor_gaussian_blur_t07_i1",
+      "task_id": 7,
+      "base_task": "LIVING_ROOM_SCENE1_put_both_the_alphabet_soup_and_the_cream_cheese_box_in_the_basket",
+      "group": "Sensor",
+      "subgroup": "gaussian_blur",
+      "init_index": 1,
+      "scored": true,
+      "language": "put both the alphabet soup and the cream cheese box in the basket",
+      "severity": 3
+    },
+    {
+      "id": "l10_sensor_zoom_blur_t08_i1",
+      "task_id": 8,
+      "base_task": "KITCHEN_SCENE8_put_both_moka_pots_on_the_stove",
+      "group": "Sensor",
+      "subgroup": "zoom_blur",
+      "init_index": 1,
+      "scored": true,
+      "language": "put both moka pots on the stove",
+      "severity": 3
+    },
+    {
+      "id": "l10_sensor_zoom_blur_t09_i1",
+      "task_id": 9,
+      "base_task": "KITCHEN_SCENE6_put_the_yellow_and_white_mug_in_the_microwave_and_close_it",
+      "group": "Sensor",
+      "subgroup": "zoom_blur",
+      "init_index": 1,
+      "scored": true,
+      "language": "put the yellow and white mug in the microwave and close it",
+      "severity": 3
+    },
+    {
+      "id": "l10_sensor_zoom_blur_t00_i1",
+      "task_id": 0,
+      "base_task": "LIVING_ROOM_SCENE2_put_both_the_alphabet_soup_and_the_tomato_sauce_in_the_basket",
+      "group": "Sensor",
+      "subgroup": "zoom_blur",
+      "init_index": 1,
+      "scored": true,
+      "language": "put both the alphabet soup and the tomato sauce in the basket",
+      "severity": 3
+    },
+    {
+      "id": "l10_sensor_zoom_blur_t01_i1",
+      "task_id": 1,
+      "base_task": "LIVING_ROOM_SCENE2_put_both_the_cream_cheese_box_and_the_butter_in_the_basket",
+      "group": "Sensor",
+      "subgroup": "zoom_blur",
+      "init_index": 1,
+      "scored": true,
+      "language": "put both the cream cheese box and the butter in the basket",
+      "severity": 3
+    },
+    {
+      "id": "l10_sensor_glass_blur_t02_i1",
+      "task_id": 2,
+      "base_task": "KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it",
+      "group": "Sensor",
+      "subgroup": "glass_blur",
+      "init_index": 1,
+      "scored": true,
+      "language": "turn on the stove and put the moka pot on it",
+      "severity": 3
+    },
+    {
+      "id": "l10_sensor_glass_blur_t03_i1",
+      "task_id": 3,
+      "base_task": "KITCHEN_SCENE4_put_the_black_bowl_in_the_bottom_drawer_of_the_cabinet_and_close_it",
+      "group": "Sensor",
+      "subgroup": "glass_blur",
+      "init_index": 1,
+      "scored": true,
+      "language": "put the black bowl in the bottom drawer of the cabinet and close it",
+      "severity": 3
+    },
+    {
+      "id": "l10_sensor_glass_blur_t04_i1",
+      "task_id": 4,
+      "base_task": "LIVING_ROOM_SCENE5_put_the_white_mug_on_the_left_plate_and_put_the_yellow_and_white_mug_on_the_right_plate",
+      "group": "Sensor",
+      "subgroup": "glass_blur",
+      "init_index": 1,
+      "scored": true,
+      "language": "put the white mug on the left plate and put the yellow and white mug on the right plate",
+      "severity": 3
+    },
+    {
+      "id": "l10_sensor_glass_blur_t05_i1",
+      "task_id": 5,
+      "base_task": "STUDY_SCENE1_pick_up_the_book_and_place_it_in_the_back_compartment_of_the_caddy",
+      "group": "Sensor",
+      "subgroup": "glass_blur",
+      "init_index": 1,
+      "scored": true,
+      "language": "pick up the book and place it in the back compartment of the caddy",
+      "severity": 3
+    },
+    {
+      "id": "l10_sensor_fog_t06_i1",
+      "task_id": 6,
+      "base_task": "LIVING_ROOM_SCENE6_put_the_white_mug_on_the_plate_and_put_the_chocolate_pudding_to_the_right_of_the_plate",
+      "group": "Sensor",
+      "subgroup": "fog",
+      "init_index": 1,
+      "scored": true,
+      "language": "put the white mug on the plate and put the chocolate pudding to the right of the plate",
+      "severity": 3
+    },
+    {
+      "id": "l10_sensor_fog_t07_i1",
+      "task_id": 7,
+      "base_task": "LIVING_ROOM_SCENE1_put_both_the_alphabet_soup_and_the_cream_cheese_box_in_the_basket",
+      "group": "Sensor",
+      "subgroup": "fog",
+      "init_index": 1,
+      "scored": true,
+      "language": "put both the alphabet soup and the cream cheese box in the basket",
+      "severity": 3
+    },
+    {
+      "id": "l10_sensor_fog_t08_i1",
+      "task_id": 8,
+      "base_task": "KITCHEN_SCENE8_put_both_moka_pots_on_the_stove",
+      "group": "Sensor",
+      "subgroup": "fog",
+      "init_index": 1,
+      "scored": true,
+      "language": "put both moka pots on the stove",
+      "severity": 3
+    },
+    {
+      "id": "l10_sensor_fog_t09_i1",
+      "task_id": 9,
+      "base_task": "KITCHEN_SCENE6_put_the_yellow_and_white_mug_in_the_microwave_and_close_it",
+      "group": "Sensor",
+      "subgroup": "fog",
+      "init_index": 1,
+      "scored": true,
+      "language": "put the yellow and white mug in the microwave and close it",
+      "severity": 3
+    }
+  ]
+}

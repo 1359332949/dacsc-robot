@@ -1,0 +1,5 @@
+benchmark_root: /hy-tmp/LIBERO-vanilla/libero/libero
+bddl_files: /hy-tmp/LIBERO-vanilla/libero/libero/bddl_files
+init_states: /hy-tmp/LIBERO-vanilla/libero/libero/init_files
+assets: /hy-tmp/LIBERO-vanilla/libero/libero/assets
+datasets: /hy-tmp/LIBERO-vanilla/datasets

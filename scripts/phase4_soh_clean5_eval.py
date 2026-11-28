@@ -113,6 +113,7 @@ def worker(soh_path: Path, shard: int, seed: int, groups=GROUPS):
             rows = {}; pixel_cache = {}
             for arm in ('frozen', 'soh'):
                 rows[arm] = base.rollout(actor, c, arm, refs, tau, funcs, pixel_cache)
+                rows[arm]['policy_seed'] = s  # actual stream set by the paired seed wrapper above
                 print('ARM', s, c['id'], arm, rows[arm]['success'], rows[arm]['steps'], flush=True)
             path.write_text(json.dumps(dict(seed=s, case=c, arms=rows, pairing=pair_check(rows)), indent=2) + '\n')
             print('PAIR_DONE', s, c['id'], flush=True)
