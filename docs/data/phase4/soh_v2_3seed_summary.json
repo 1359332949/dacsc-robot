@@ -1,0 +1,146 @@
+{
+  "pairs": 90,
+  "groups": {
+    "Sensor": {
+      "n": 60,
+      "frozen": 12,
+      "soh": 26,
+      "rescued": 19,
+      "harmed": 5,
+      "net": 14,
+      "p": 0.006610751152038574,
+      "ci": [
+        -3.3333333333333335,
+        46.666666666666664
+      ],
+      "gate_accepted": 10598,
+      "gate_total": 10731
+    },
+    "Background": {
+      "n": 30,
+      "frozen": 13,
+      "soh": 12,
+      "rescued": 3,
+      "harmed": 4,
+      "net": -1,
+      "p": 1.0,
+      "ci": [
+        -30.0,
+        16.666666666666668
+      ],
+      "gate_accepted": 4659,
+      "gate_total": 5319
+    }
+  },
+  "subgroups": {
+    "Sensor": {
+      "fog": {
+        "n": 12,
+        "frozen": 7,
+        "soh": 9,
+        "rescued": 3,
+        "harmed": 1,
+        "net": 2,
+        "p": 0.625,
+        "ci": [
+          -16.666666666666668,
+          50.0
+        ],
+        "gate_accepted": 1628,
+        "gate_total": 1656
+      },
+      "gaussian_blur": {
+        "n": 12,
+        "frozen": 2,
+        "soh": 4,
+        "rescued": 4,
+        "harmed": 2,
+        "net": 2,
+        "p": 0.6875,
+        "ci": [
+          -33.333333333333336,
+          66.66666666666667
+        ],
+        "gate_accepted": 2210,
+        "gate_total": 2210
+      },
+      "glass_blur": {
+        "n": 12,
+        "frozen": 0,
+        "soh": 2,
+        "rescued": 2,
+        "harmed": 0,
+        "net": 2,
+        "p": 0.5,
+        "ci": [
+          0.0,
+          50.0
+        ],
+        "gate_accepted": 2434,
+        "gate_total": 2434
+      },
+      "motion_blur": {
+        "n": 12,
+        "frozen": 2,
+        "soh": 5,
+        "rescued": 5,
+        "harmed": 2,
+        "net": 3,
+        "p": 0.453125,
+        "ci": [
+          -41.666666666666664,
+          83.33333333333333
+        ],
+        "gate_accepted": 2085,
+        "gate_total": 2190
+      },
+      "zoom_blur": {
+        "n": 12,
+        "frozen": 1,
+        "soh": 6,
+        "rescued": 5,
+        "harmed": 0,
+        "net": 5,
+        "p": 0.0625,
+        "ci": [
+          16.666666666666668,
+          66.66666666666667
+        ],
+        "gate_accepted": 2241,
+        "gate_total": 2241
+      }
+    },
+    "Background": {
+      "scene_texture": {
+        "n": 15,
+        "frozen": 9,
+        "soh": 6,
+        "rescued": 1,
+        "harmed": 4,
+        "net": -3,
+        "p": 0.375,
+        "ci": [
+          -60.0,
+          13.333333333333334
+        ],
+        "gate_accepted": 2377,
+        "gate_total": 2710
+      },
+      "table_texture": {
+        "n": 15,
+        "frozen": 4,
+        "soh": 6,
+        "rescued": 2,
+        "harmed": 0,
+        "net": 2,
+        "p": 0.5,
+        "ci": [
+          0.0,
+          26.666666666666668
+        ],
+        "gate_accepted": 2282,
+        "gate_total": 2609
+      }
+    }
+  }
+}
